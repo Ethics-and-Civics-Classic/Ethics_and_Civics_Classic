@@ -1,0 +1,636 @@
+##############################
+# Ecologist Environmentalists Faction
+##############################
+
+environmentalists = {
+	election_header = "GFX_faction_header_yellow"
+	guiding_ethic = ethic_green
+	
+	unique = yes
+	support_multiplier = 1
+	
+	is_potential = {
+		is_faction_allowed = yes
+		if = {
+			limit = {
+				has_faction = environmentalists
+				any_pop_faction = {
+					is_pop_faction_type = environmentalists
+					num_pops >= 5
+				}
+			}
+		}
+		else = {
+			count_owned_pop = {
+				count >= 5
+				limit = {
+					has_ethic = ethic_green
+				}
+			}
+		}
+	}
+	
+	resources = {
+		category = pop_factions
+		produces = {
+			unity = 0.5
+		}
+	}
+	
+	parameters = {
+		empire = {
+			type = country
+			valid_objects = {
+				is_same_value = root
+			}
+		}
+	}
+
+	can_join_pre_triggers = {
+		is_enslaved = no
+		is_being_purged = no
+	}
+
+	can_join_faction = {
+		is_shackled_robot = no
+		has_culture_shock = no
+		can_think = yes
+		OR = {
+			has_ethic = ethic_green
+			has_ethic = ethic_fanatic_green
+		}
+	}
+	
+	attraction = {
+		base = 150
+		
+		modifier = {
+			factor = 1.25
+			exists = from
+			from = {
+				exists = leader
+				leader = { leader_class = ruler }
+			}
+		}
+		
+		modifier = {
+			factor = 0.75
+			exists = from
+			from = {
+				NOT = { exists = leader }
+			}
+		}
+		
+		
+	}
+	
+	leader = {
+		base = 100
+		modifier = {
+			factor = 0.0
+			is_event_leader = yes
+		}
+	}
+
+	demand = {
+		title = "POLITICAL_PLURALISM"
+		unfulfilled_title = "POLITICAL_PLURALISM"
+		desc = "POLITICAL_PLURALISM_DESC"
+
+		fulfilled_effect = 10
+
+		potential = {
+			exists = owner
+			owner = {
+				has_valid_civic = civic_parliamentary_system
+			}
+		}
+
+		trigger = {
+			owner = {
+				has_valid_civic = civic_parliamentary_system
+			}
+		}
+	}
+
+	demand = {
+		title = "SELECTIVE_BOMBARDMENT"
+		unfulfilled_title = "SELECTIVE_BOMBARDMENT"
+		desc = "SELECTIVE_BOMBARDMENT_DESC"
+		
+		unfulfilled_effect = -1
+		fulfilled_effect = 10
+		
+		potential = {
+			exists = owner		
+		}
+		
+		trigger = {
+			owner = {
+				has_policy_flag = orbital_bombardment_selective
+			}
+		}
+	}
+
+	demand = {
+		title = "RECYCLING_CAMPAIGN"
+		unfulfilled_title = "NO_RECYCLING_CAMPAIGN"
+		desc = "RECYCLING_CAMPAIGN_DESC"
+		
+		fulfilled_effect = 15
+		
+		potential = {
+			exists = owner
+		}
+		
+		trigger = {
+			exists = owner
+			owner = {
+				has_edict = recycling_campaign
+			}
+		}
+	}
+
+	demand = {
+		title = "DEVELOPED_ENVIRONMENTALISM"
+		unfulfilled_title = "NO_DEVELOPED_ENVIRONMENTALISM"
+		desc = "DEVELOPED_ENVIRONMENTALISM_DESC"
+
+		fulfilled_effect = 5
+
+		potential = { 
+			exists = owner
+
+		}
+
+		trigger = {
+			owner = {
+				OR = {
+					has_valid_civic = civic_environmentalist
+					has_valid_civic = civic_keepers_harmony
+					has_valid_civic = civic_natural_capitalism
+					has_valid_civic = civic_terraforming
+					has_valid_civic = civic_naturalism
+				}
+			}
+		}
+	}
+
+	demand = { # "TRADITIONALIST_NO_TOMB_WORLDS"
+		title = "TRADITIONALIST_NO_TOMB_WORLDS"
+		unfulfilled_title = "TRADITIONALIST_TOMB_WORLDS"
+		desc = "TRADITIONALIST_NO_TOMB_WORLDS_DESC"
+
+		unfulfilled_effect = -5
+		fulfilled_effect = 15
+
+		potential = {
+			exists = owner
+			owner = {
+				has_surveyed_class = pc_nuked
+				NOR = {
+					has_origin = origin_post_apocalyptic
+					has_country_flag = worm_tomb_ending
+				}
+			}
+		}
+
+		trigger = {
+			owner = {
+				NOR = {
+					any_owned_planet = {
+						is_planet_class = pc_nuked
+					}
+					any_planet_within_border = { 
+						is_planet_class = pc_nuked
+						is_terraforming = yes
+					}
+				}
+			}
+		}
+	}
+
+	demand = { # "TRADITIONALIST_GAIA_WORLDS"
+		title = "TRADITIONALIST_GAIA_WORLDS"
+		unfulfilled_title = "TRADITIONALIST_NO_GAIA_WORLDS"
+		desc = "TRADITIONALIST_GAIA_WORLDS_DESC"
+
+		fulfilled_effect = 10
+		unfulfilled_effect = -0.001
+
+		potential = {
+			exists = owner
+			owner = {
+				has_surveyed_class = pc_gaia
+				has_ascension_perk = ap_consecrated_worlds
+			}
+		}
+
+		trigger = {
+			owner = {
+				any_planet_within_border = {
+					is_planet_class = pc_gaia
+					is_colony = no
+					OR = {
+						has_modifier = consecrated_quality_1
+						has_modifier = consecrated_quality_2
+						has_modifier = consecrated_quality_3
+						has_modifier = consecrated_quality_4
+					}
+				}
+			}
+		}
+	}
+	
+	demand = { # "COLONIZED_GAIA_WORLDS"
+		title = "COLONIZED_GAIA_WORLDS"
+		unfulfilled_title = "COLONIZED_GAIA_WORLDS"
+		desc = "COLONIZED_GAIA_WORLDS_DESC"
+
+		fulfilled_effect = 10
+		unfulfilled_effect = -0.001
+
+		potential = {
+			exists = owner
+			owner = {
+				OR = {
+					has_surveyed_class = pc_gaia
+					has_ascension_perk = ap_world_shaper
+				}
+			}
+		}
+
+		trigger = {
+			owner = {
+					any_owned_planet = {
+						is_planet_class = pc_gaia
+					}
+			}
+		}
+	}
+	
+	demand = { # "NATURAL_WONDER"
+		title = "NATURAL_WONDER"
+		unfulfilled_title = "NATURAL_WONDER"
+		desc = "NATURAL_WONDER_DESC"
+
+		fulfilled_effect = 20
+
+		potential = {
+			exists = owner
+			owner = {
+				has_technology = tech_mountain_range
+				has_technology = tech_volcano
+				has_technology = tech_dangerous_wildlife
+				has_technology = tech_dense_jungle
+				has_technology = tech_quicksand_basin
+				has_technology = tech_noxious_swamp
+				has_technology = tech_massive_glacier
+				has_technology = tech_toxic_kelp
+				has_technology = tech_deep_sinkhole
+			}
+		}
+
+		trigger = {
+			owner = {
+				any_owned_planet = {
+					has_deposit = d_massive_glacier
+					has_deposit = d_noxious_swamp
+					has_deposit = d_quicksand_basin
+					has_deposit = d_deep_sinkhole
+					has_deposit = d_toxic_kelp
+					has_deposit = d_dense_jungle
+					has_deposit = d_active_volcano
+					has_deposit = d_mountain_range
+					has_deposit = d_dangerous_wildlife_blocker
+				}
+			}
+		}
+	}
+	
+	demand = { # "ECOSYSTEM_DIVERSITY"
+		title = "ECOSYSTEM_DIVERSITY"
+		unfulfilled_title = "ECOSYSTEM_DIVERSITY"
+		desc = "ECOSYSTEM_DIVERSITY_DESC"
+
+		fulfilled_effect = 15
+
+		potential = {
+			exists = owner
+		}
+
+		trigger = {
+			owner = {
+				any_owned_planet = { is_planet_class = pc_ocean }
+				any_owned_planet = { is_planet_class = pc_continental }
+				any_owned_planet = { is_planet_class = pc_tropical }
+				any_owned_planet = { is_planet_class = pc_alpine }
+				any_owned_planet = { is_planet_class = pc_arctic }
+				any_owned_planet = { is_planet_class = pc_tundra }
+				any_owned_planet = { is_planet_class = pc_arid }
+				any_owned_planet = { is_planet_class = pc_desert }
+				any_owned_planet = { is_planet_class = pc_savannah }
+			}
+		}
+	}
+
+	demand = {
+		title = "PROTECTED_NATURE"
+		unfulfilled_title = "NO_PROTECTED_NATURE"
+		desc = "PROTECTED_NATURE_DESC"
+
+		fulfilled_effect = 10
+
+		potential = {
+			exists = owner
+		}
+
+		trigger = {
+			owner = {
+				any_owned_planet = {		
+					OR = {
+						has_modifier = "lush_planet"
+						has_modifier = "natural_beauty"
+						has_deposit = d_wandering_forests
+						has_deposit = d_migrating_forest_reserve
+						has_deposit = d_migrating_forests
+					}
+				}
+			}
+		}
+	}
+
+	demand = {
+		title = "PROTECTED_WILDLIFE"
+		unfulfilled_title = "NO_PROTECTED_WILDLIFE"
+		desc = "PROTECTED_WILDLIFE_DESC"
+
+		fulfilled_effect = 10
+
+		potential = {
+			exists = owner
+		}
+
+		trigger = {
+			owner = {
+				any_owned_planet = {
+					OR = {
+						has_modifier = "dangerous_wildlife"
+						has_deposit = d_dangerous_wildlife_blocker
+						has_deposit = d_savage_wildlands
+					}
+				}
+			}
+		}
+	}
+
+	demand = {
+		title = "UNIQUE_LIFERORMS"
+		unfulfilled_title = "NO_UNIQUE_LIFERORMS"
+		desc = "UNIQUE_LIFERORMS_DESC"
+
+		fulfilled_effect = 15
+
+		potential = {
+			exists = owner
+		}
+
+		trigger = {
+			owner = {
+				any_owned_planet = {
+					has_modifier = "titanic_life"
+					has_deposit = d_titanic_life_blocker
+					has_deposit = d_alien_pets_deposit					
+				}
+			}
+		}
+	}
+	
+	demand = {
+		title = "ECO_ASCENSION_2"
+		unfulfilled_title = "ECO_NO_ASCENSION_2"
+		desc = "ECO_ASCENSION_2_DESC"
+
+		fulfilled_effect = 10
+
+		potential = {
+			exists = owner
+			owner = {
+				has_technology = tech_climate_restoration
+			}
+		}
+
+		trigger = {
+			owner = {	
+					has_ascension_perk = ap_world_shaper					
+			}
+		}
+	}
+
+	on_create = {
+		pop_faction_event = { id = factions.1 }
+	}
+
+	on_destroy = {
+		if = {
+			limit = {
+				has_modifier = promoted_green
+			}
+			remove_modifier = promoted_green
+		}
+		if = {
+			limit = {
+				has_modifier = suppressed_green
+			}
+			remove_modifier = suppressed_green
+		}
+	}
+	
+	actions = {
+		embrace_faction = {
+			title = "EMBRACE_FACTION"
+			description = "EMBRACE_FACTION_DESC"
+			
+			cost = {
+				unity = 5000
+			}
+			
+			potential = {
+				exists = owner
+				owner = {
+					OR = {
+						is_subject = no
+						NOT = { any_agreement = { agreement_preset = preset_dominion } }
+					}
+				}
+			}
+			
+			valid = {
+				custom_tooltip = {
+					fail_text = EMBRACE_FACTION_COOLDOWN
+					parameter:empire = {
+						NOT = { has_modifier = embraced_faction_timer }
+					}
+				}
+				support > 0.20
+				parameter:empire = {
+					NOT = { has_ethic = "ethic_fanatic_green" }
+				}
+			}
+
+			effect = {
+				add_modifier = { modifier = embraced_faction days = 3600 }
+				parameter:empire = {
+					shift_ethic = ethic_green
+					hidden_effect = {
+						add_modifier = { modifier = embraced_faction_timer days = 3600 }
+						every_pop_faction = {
+							limit = { NOT = { is_same_value = root } }
+							add_modifier = { modifier = embraced_another_faction days = 3600 }
+						}
+					}
+				}
+				hidden_effect = {
+					save_event_target_as = TargetFaction
+					parameter:empire = {
+						every_relation = {
+							limit = {
+								is_ai = no
+								is_country_type = default			
+								has_communications = prev
+								has_intel_level = {
+									who = prev
+									category = government
+									level >= 1
+								}
+							}
+							country_event = { id = factions.2000 }
+						}
+					}
+				}
+			}
+			
+			ai_weight = {
+				base = 1
+				modifier = {
+					factor = 0
+					support < 0.50
+					owner = {
+						has_ethic = ethic_green
+					}
+				}
+				modifier = {
+					factor = 0
+					NOT = { 
+						owner = {
+							exists = ruler
+							ruler = {
+								leader_of_faction = environmentalists
+							}
+						}
+					}
+				}
+				modifier = {
+					factor = 0
+					owner = {
+						count_pop_faction = {
+							count < 4
+						}
+					}
+				}
+			}
+		}
+		promote_faction = {
+			title = "PROMOTE_FACTION"
+			description = "PROMOTE_FACTION_DESC"
+			
+			potential = {
+				exists = owner
+				parameter:empire = { 
+					NOR = { 
+						has_modifier = suppressed_green
+						has_modifier = promoted_green 
+					}
+				}
+			}
+
+			effect = {
+				parameter:empire = {
+					add_modifier = { modifier = promoted_green days = -1 }
+				}
+			}
+			
+			ai_weight = {
+				base = 0
+			}
+		}
+		cancel_promote_faction = {
+			title = "CANCEL_PROMOTE_FACTION"
+			description = "CANCEL_PROMOTE_FACTION_DESC"
+			
+			potential = {
+				exists = owner
+				parameter:empire = { 
+					has_modifier = promoted_green
+				}
+			}
+
+			effect = {
+				parameter:empire = {
+					remove_modifier = promoted_green
+				}
+			}
+			
+			ai_weight = {
+				base = 0
+			}
+		}
+		suppress_faction = {
+			title = "SUPPRESS_FACTION"
+			description = "SUPPRESS_FACTION_DESC"
+			
+			potential = {
+				exists = owner
+				parameter:empire = { 
+					NOR = { 
+						has_modifier = suppressed_green
+						has_modifier = promoted_green 
+					}
+				}
+			}
+
+			effect = {
+				add_modifier = { modifier = suppressed_faction days = -1 }
+				parameter:empire = {
+					add_modifier = { modifier = suppressed_green days = -1 }
+				}
+			}
+			
+			ai_weight = {
+				base = 0
+			}
+		}
+		cancel_suppress_faction = {
+			title = "CANCEL_SUPPRESS_FACTION"
+			description = "CANCEL_SUPPRESS_FACTION_DESC"
+			
+			potential = {
+				exists = owner
+				parameter:empire = { 
+					has_modifier = suppressed_green
+				}
+			}
+
+			effect = {
+				remove_modifier = suppressed_faction
+				parameter:empire = {
+					remove_modifier = suppressed_green
+				}
+			}
+			
+			ai_weight = {
+				base = 0
+			}
+		}
+	}
+}

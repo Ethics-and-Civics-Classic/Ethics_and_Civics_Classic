@@ -1,0 +1,534 @@
+
+
+namespace = toxic_world_search
+
+country_event = {
+	id = toxic_world_search.01
+	hide_window = yes
+	is_triggered_only = yes
+	#fire_only_once = yes
+
+	immediate = {
+		set_country_flag = find_toxic_world
+		IF = {
+			limit = { 
+				any_planet_within_border = {
+					NOT = { has_modifier = toxic_world_candidate }
+				}
+			}
+			every_planet_within_border = {
+				limit = {	   
+						is_planet_class = pc_toxic
+
+				}
+				add_modifier = { modifier = toxic_world_candidate days = -1 }
+			}
+		}
+		country_event = {
+			id = toxic_world_search.02 days = 365
+		}
+	}
+}
+
+country_event = {
+	id = toxic_world_search.02
+	hide_window = yes
+	is_triggered_only = yes
+	#fire_only_once = yes
+
+	immediate = {
+		remove_country_flag = find_toxic_world
+		every_planet_within_border = { remove_modifier = toxic_world_candidate }
+	}
+}
+
+
+
+
+namespace = slave_race
+
+planet_event = {
+	id = slave_race.1
+	hide_window = yes
+	is_triggered_only = yes
+
+	trigger = {
+		FROM = {
+			has_valid_civic = civic_slave_race
+		}
+		FROMFROM = {
+			is_robot_pop = no
+			NOT = {
+				is_same_species = owner_species
+			}
+		}
+		is_controlled_by = FROM
+	}
+
+	immediate = {
+		FROM = {
+			add_monthly_resource_mult = {
+				resource = society_research
+				value = 1
+				min = 1
+				max = 100
+			}
+		}
+	}
+}
+
+namespace = immortal_ruler
+
+country_event = {
+	id = immortal_ruler.1
+	title = "Immortal Ruler"
+	picture = GFX_evt_alien_propaganda
+	show_sound = event_celebration
+	desc = "Our God-like Ruler has achieved immortality."
+	is_triggered_only = yes
+
+	trigger = {
+		is_ai = no
+	}
+
+	immediate = {
+		FROMFROM = {
+			leader = { save_event_target_as = ruler }
+			solar_system = { save_event_target_as = system }
+			leader = { add_trait = trait_ruler_immortal }
+		}
+		
+		set_country_flag = flag_immortal_ruler
+	}
+
+}
+
+
+
+
+namespace = unity_patrons
+
+country_event = {
+	id = unity_patrons.1
+	hide_window = yes
+	is_triggered_only = yes
+	location = ROOT 
+	
+	trigger = {
+		has_valid_civic = civic_symbiotic_race
+	}	
+
+	immediate = { 
+	
+		add_modifier = {
+			modifier = "unity_patrons"
+			days = 3650
+		}
+	
+	}
+	
+}
+
+
+
+
+
+namespace = voice_planet
+
+planet_event = {
+	id = voice_planet.1	
+	hide_window = yes
+	is_triggered_only = yes
+	location = ROOT 
+
+	immediate = {
+			
+			if = {
+				limit = {
+					has_modifier = "dangerous_wildlife"
+				}
+				remove_modifier = "dangerous_wildlife"
+			}				
+					
+			if = {
+				limit = {
+					has_modifier = "bleak_planet"
+				}
+				remove_modifier = "bleak_planet"
+			}	
+			
+			if = {
+				limit = {
+					has_modifier = "hazardous_weather"
+				}
+				remove_modifier = "hazardous_weather"
+			}	
+
+			if = {
+				limit = {
+					has_modifier = "wild_storms"
+				}
+				remove_modifier = "wild_storms"
+			}		
+
+			if = {
+				limit = {
+					has_modifier = "damaged_ecology"
+				}
+				remove_modifier = "damaged_ecology"
+			}	
+
+			if = {
+				limit = {
+					has_modifier = "wasteland_radiation"
+				}
+				remove_modifier = "wasteland_radiation"
+			}	
+
+			if = {
+				limit = {
+					has_modifier = "mutant_stalker"
+				}
+				remove_modifier = "mutant_stalker"
+			}	
+			
+
+#			
+	
+	}
+	
+}
+
+
+
+planet_event = {
+	id = voice_planet.2	
+	hide_window = yes
+	is_triggered_only = yes
+	location = ROOT 
+
+	immediate = {		
+					
+	
+
+
+			if = {
+				limit = {
+					has_modifier = "unstable_tectonics"
+				}
+				remove_modifier = "unstable_tectonics"
+			}
+
+			if = {
+				limit = {
+					has_modifier = "weak_magnetic_field"
+				}
+				remove_modifier = "weak_magnetic_field"
+			}
+					
+
+			if = {
+				limit = {
+					has_modifier = "tidal_locked"
+				}
+				remove_modifier = "tidal_locked"
+			}
+
+
+
+			if = {
+				limit = {
+					has_modifier = "irradiated_planet"
+				}
+				remove_modifier = "irradiated_planet"
+			}
+			
+
+
+			if = {
+				limit = {
+					has_modifier = "damaged_ecology"
+				}
+				remove_modifier = "damaged_ecology"
+			}			
+
+			if = {
+				limit = {
+					has_modifier = "wasteland_radiation"
+				}
+				remove_modifier = "wasteland_radiation"
+			}
+			
+				
+			if = {
+				limit = {
+					has_modifier = "abandoned_terraforming"
+				}
+				remove_modifier = "abandoned_terraforming"
+			}	
+			
+			if = {
+				limit = {
+					has_modifier = "hazardous_weather"
+				}
+				remove_modifier = "hazardous_weather"
+			}	
+
+			if = {
+				limit = {
+					has_modifier = "wild_storms"
+				}
+				remove_modifier = "wild_storms"
+			}		
+			
+			if = {
+				limit = {
+					has_modifier = "magnetic_disruption"
+				}
+				remove_modifier = "magnetic_disruption"
+			}
+		
+	
+	}
+	
+}
+
+
+
+
+
+
+namespace = observation
+
+# Societal Shift towards Individualist
+country_event = {
+	id = observation.0001
+	hide_window = yes
+	
+	trigger = {
+		is_country_type = primitive
+		NOT = { has_ethic = ethic_fanatic_capitalism }
+		capital_scope = {
+			has_observation_outpost = yes
+			observation_outpost = { has_mission = native_indoctrination }
+			observation_outpost_owner = { 
+				OR = {
+					has_ethic = ethic_fanatic_capitalism
+					has_ethic = ethic_capitalism
+				}
+			}
+			any_owned_pop = {
+				has_ethic = ethic_capitalism
+			}		
+			OR = {
+				root = { NOT = { has_ethic = ethic_capitalism } }
+				count_owned_pop = {
+					limit = { has_ethic = ethic_capitalism }
+					count > 1
+				}				
+			}				
+		}
+	}
+	
+	mean_time_to_happen = {
+		months = 12
+	}
+	
+	immediate = {
+		shift_ethic = "ethic_capitalism"
+		capital_scope = {
+			observation_outpost_owner = { country_event = { id = observation.0002 } }
+		}
+	}
+}
+
+country_event = {
+	id = observation.0002
+	title = "observation.0002.name"
+	desc = "observation.0002.desc"
+	picture = GFX_evt_medieval_alien_civilization
+	show_sound = event_primitive_civilization
+	location = from
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "observation.0002.a"
+	}
+}
+
+
+
+# Societal Shift towards Collectivism
+country_event = {
+	id = observation.1001
+	hide_window = yes
+	
+	trigger = {
+		is_country_type = primitive
+		NOT = { has_ethic = ethic_fanatic_socialism }
+		capital_scope = {
+			has_observation_outpost = yes
+			observation_outpost = { has_mission = native_indoctrination }
+			observation_outpost_owner = { 
+				OR = {
+					has_ethic = ethic_fanatic_socialism
+					has_ethic = ethic_socialism
+				}
+			}
+			any_owned_pop = {
+				has_ethic = ethic_socialism
+			}		
+			OR = {
+				root = { NOT = { has_ethic = ethic_socialism } }
+				count_owned_pop = {
+					limit = { has_ethic = ethic_socialism }
+					count > 1
+				}				
+			}				
+		}
+	}
+	
+	mean_time_to_happen = {
+		months = 12
+	}
+	
+	immediate = {
+		shift_ethic = "ethic_socialism"
+		capital_scope = {
+			observation_outpost_owner = { country_event = { id = observation.1002 } }
+		}
+	}
+}
+
+country_event = {
+	id = observation.1002
+	title = "observation.0002.name"
+	desc = "observation.1002.desc"
+	picture = GFX_evt_medieval_alien_civilization
+	show_sound = event_primitive_civilization
+	location = from
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "observation.0002.a"
+	}
+}
+
+# Societal Shift towards Ecologism
+country_event = {
+	id = observation.4001
+	hide_window = yes
+	
+	trigger = {
+		is_country_type = primitive
+		NOT = { has_ethic = ethic_fanatic_green }
+		capital_scope = {
+			has_observation_outpost = yes
+			observation_outpost = { has_mission = native_indoctrination }
+			observation_outpost_owner = { 
+				OR = {
+					has_ethic = ethic_fanatic_green
+					has_ethic = ethic_green
+				}
+			}
+			any_owned_pop = {
+				has_ethic = ethic_green
+			}		
+			OR = {
+				root = { NOT = { has_ethic = ethic_green } }
+				count_owned_pop = {
+					limit = { has_ethic = ethic_green }
+					count > 1
+				}				
+			}				
+		}
+	}
+	
+	mean_time_to_happen = {
+		months = 12
+	}
+	
+	immediate = {
+		shift_ethic = "ethic_green"
+		capital_scope = {
+			observation_outpost_owner = { country_event = { id = observation.4002 } }
+		}
+	}
+}
+
+country_event = {
+	id = observation.4002
+	title = "observation.0002.name"
+	desc = "observation.4002.desc"
+	picture = GFX_evt_medieval_alien_civilization
+	show_sound = event_primitive_civilization
+	location = from
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "observation.0002.a"
+	}
+}
+
+
+
+
+# Societal Shift towards Industrialism
+country_event = {
+	id = observation.5001
+	hide_window = yes
+	
+	trigger = {
+		is_country_type = primitive
+		NOT = { has_ethic = ethic_fanatic_industrial }
+		capital_scope = {
+			has_observation_outpost = yes
+			observation_outpost = { has_mission = native_indoctrination }
+			observation_outpost_owner = { 
+				OR = {
+					has_ethic = ethic_fanatic_industrial
+					has_ethic = ethic_industrial
+				}
+			}
+			any_owned_pop = {
+				has_ethic = ethic_industrial
+			}		
+			OR = {
+				root = { NOT = { has_ethic = ethic_industrial } }
+				count_owned_pop = {
+					limit = { has_ethic = ethic_industrial }
+					count > 1
+				}				
+			}				
+		}
+	}
+	
+	mean_time_to_happen = {
+		months = 12
+	}
+	
+	immediate = {
+		shift_ethic = "ethic_industrial"
+		capital_scope = {
+			observation_outpost_owner = { country_event = { id = observation.5002 } }
+		}
+	}
+}
+
+country_event = {
+	id = observation.5002
+	title = "observation.0002.name"
+	desc = "observation.5002.desc"
+	picture = GFX_evt_medieval_alien_civilization
+	show_sound = event_primitive_civilization
+	location = from
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "observation.0002.a"
+	}
+}

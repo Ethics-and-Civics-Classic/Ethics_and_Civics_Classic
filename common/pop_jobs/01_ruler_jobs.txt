@@ -1,0 +1,594 @@
+###################
+# Fancy Jobs
+###################
+head_researcher = {
+	category = ruler
+	condition_string = RULER_JOB_TRIGGER
+	building_icon = building_institute
+	clothes_texture_index = 1
+	icon = researcher
+
+	possible_pre_triggers = {
+		has_owner = yes
+		is_enslaved = no
+		is_being_purged = no
+		is_being_assimilated = no
+		is_sapient = yes
+	}
+
+	possible_precalc = can_fill_ruler_job
+
+	resources = {
+		category = planet_researchers
+		produces = {
+			unity = 2
+			physics_research = 6
+			engineering_research = 6
+			society_research = 6
+		}
+		upkeep = {
+			consumer_goods = 2
+		}
+		upkeep = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_edict = research_subsidies
+				}
+			}
+			energy = 1
+		}	
+	}
+
+	# This needs to be triggered planet modifier to get the correct scope.
+	triggered_planet_modifier = {
+		potential = {
+			always = yes
+		}
+		planet_amenities_add = 3
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	}
+
+	weight = {
+		weight = @ruler_job_weight
+		mult = value:job_weights_research_modifier|JOB|head_researcher|
+		mult = value:job_weights_modifier|JOB|head_researcher|RESOURCE|unity|FACTOR|0.25|
+		mult = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
+		modifier = {
+			factor = 0.2
+			has_citizenship_rights = no
+			NOT = { has_trait = trait_mechanical }
+		}
+		modifier = {
+			factor = 2
+			has_living_standard = { type = living_standard_academic_privilege }
+		}
+		modifier = {
+			factor = 5
+			has_job = head_researcher
+		}
+		modifier = {
+			factor = 0.01
+			exists = planet
+			exists = planet.controller
+			planet.controller = {
+				OR = {
+					is_country_type = swarm
+					is_country_type = ai_empire
+				}
+			}
+		}
+	}
+}
+
+high_priest = {
+	category = ruler
+	condition_string = RULER_JOB_TRIGGER
+	building_icon = building_citadel_of_faith
+	clothes_texture_index = 1
+
+	possible_pre_triggers = {
+		has_owner = yes
+		is_enslaved = no
+		is_being_purged = no
+		is_being_assimilated = no
+		is_sapient = yes
+	}
+
+	possible_precalc = can_fill_ruler_job
+	possible = {
+		NOT = { has_ethic = ethic_materialist }
+	}
+
+	resources = {
+		category = planet_priests
+		produces = {
+			unity = 6
+		}
+		upkeep = {
+			consumer_goods = 2
+		}
+		produces = {
+			trigger = {
+				exists = owner
+				owner = { has_valid_civic = civic_spiritual_democracy }
+			}
+			society_research = 2
+		}
+		produces = {
+			trigger = {
+				owner = { has_valid_civic = civic_byzantine_bureaucracy }
+			}
+			unity = 1
+		}
+		upkeep = {
+			trigger = {
+				owner = { has_valid_civic = civic_byzantine_bureaucracy }
+			}
+			consumer_goods = -1
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			always = yes
+		}
+		planet_amenities_add = 5
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_valid_civic = civic_machine_cult }
+		}
+		planet_jobs_engineering_research_produces_mult = 0.03
+		planet_jobs_robotic_produces_mult = 0.02
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_valid_civic = civic_spiritual_democracy }
+		}
+		planet_amenities_add = 2
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	}
+
+	triggered_country_modifier = {
+		potential = {
+		    exists = owner
+			owner = { has_valid_civic = civic_byzantine_bureaucracy }
+		}
+		empire_size_pops_mult = -0.005
+	}
+
+	weight = {
+		weight = @ruler_job_weight
+		mult = value:job_weights_modifier|JOB|high_priest|RESOURCE|unity|
+		mult = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
+		modifier = {
+			factor = 0.1
+			has_citizenship_rights = no
+			NOT = { has_trait = trait_mechanical }
+		}
+		modifier = {
+			factor = 1.2
+			has_ethic = ethic_spiritualist
+		}
+		modifier = {
+			factor = 0.1
+			has_ethic = ethic_materialist
+			NOT = { has_job = high_priest }
+		}
+		modifier = {
+			factor = 5
+			has_job = high_priest
+		}
+		# crisis purge
+		modifier = {
+			factor = 0.01
+			exists = planet
+			exists = planet.controller
+			planet.controller = {
+				OR = {
+					is_country_type = swarm
+					is_country_type = ai_empire
+				}
+			}
+		}
+	}
+}
+
+politician = {
+	category = ruler
+	condition_string = RULER_JOB_TRIGGER
+	building_icon = building_capital
+	clothes_texture_index = 1
+	icon = administrator
+
+	possible_pre_triggers = {
+		has_owner = yes
+		is_enslaved = no
+		is_being_purged = no
+		is_being_assimilated = no
+		is_sapient = yes
+	}
+
+	possible_precalc = can_fill_ruler_job
+
+	resources = {
+		category = planet_politicians
+		produces = {
+			unity = 6
+		}
+		upkeep = {
+			consumer_goods = 2
+		}
+		produces = {
+			trigger = {
+				owner = { has_valid_civic = civic_byzantine_bureaucracy }
+			}
+			unity = 1
+		}
+		upkeep = {
+			trigger = {
+				owner = { has_valid_civic = civic_byzantine_bureaucracy }
+			}
+			consumer_goods = -1
+		}
+		produces = {
+			trigger = {
+				owner = { has_valid_civic = civic_byzantine_bureaucracy }
+			}
+			unity = 1
+		}
+		upkeep = {
+			trigger = {
+				owner = { has_valid_civic = civic_byzantine_bureaucracy }
+			}
+			consumer_goods = -1
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			always = yes
+		}
+		planet_amenities_add = 3
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { OR = { has_valid_civic = civic_shadow_council } }
+		}
+		planet_stability_add = 2
+	}
+
+	triggered_country_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_valid_civic = civic_byzantine_bureaucracy }
+		}
+		empire_size_pops_mult = -0.005
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { OR = { has_valid_civic = civic_welfare_state } }
+		}
+		planet_amenities_add = 2
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	}
+
+	triggered_country_modifier = {
+		potential = {
+		    exists = owner
+			owner = { has_valid_civic = civic_byzantine_bureaucracy }
+		}
+		empire_size_pops_mult = -0.005
+	}
+
+	weight = {
+		weight = @ruler_job_weight
+		mult = value:job_weights_modifier|JOB|politician|RESOURCE|unity|
+		mult = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
+		modifier = {
+			factor = 0.1
+			has_citizenship_rights = no
+			NOT = { has_trait = trait_mechanical }
+		}
+		modifier = {
+			factor = 5
+			has_job = politician
+		}
+		# crisis purge
+		modifier = {
+			factor = 0.01
+			exists = planet
+			exists = planet.controller
+			planet.controller = {
+				OR = {
+					is_country_type = swarm
+					is_country_type = ai_empire
+				}
+			}
+		}
+	}
+}
+
+noble = {
+	category = ruler
+	condition_string = RULER_JOB_TRIGGER
+	building_icon = building_palace
+	clothes_texture_index = 1
+
+	possible_pre_triggers = {
+		has_owner = yes
+		is_enslaved = no
+		is_being_purged = no
+		is_being_assimilated = no
+		is_sapient = yes
+	}
+
+	possible_precalc = can_fill_ruler_job
+
+	resources = {
+		category = planet_nobles
+		produces = {
+			unity = 6
+		}
+		upkeep = {
+			consumer_goods = 2
+		}
+		produces = {
+			trigger = {
+				exists = owner
+				owner = { has_valid_civic = civic_harmonious_hierarchy }
+			}
+			unity = 1
+			society_research = 1
+		}
+		produces = {
+			trigger = {
+				owner = { has_valid_civic = civic_byzantine_bureaucracy }
+			}
+			unity = 1
+		}
+		upkeep = {
+			trigger = {
+				owner = { has_valid_civic = civic_byzantine_bureaucracy }
+			}
+			consumer_goods = -1
+		}
+	}
+
+	planet_modifier = {
+		planet_stability_add = 2
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			always = yes
+		}
+		planet_amenities_add = 3
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { OR = { has_valid_civic = civic_harmonious_hierarchy } }
+		}
+		planet_stability_add = 2
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { OR = { has_valid_civic = civic_harmonious_hierarchy } }
+		}
+		planet_amenities_add = 5
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	}
+	
+	triggered_country_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_valid_civic = civic_harmonious_hierarchy }
+		}
+		empire_size_pops_mult = -0.001
+	}
+
+	triggered_country_modifier = {
+		potential = {
+		    exists = owner
+			owner = { has_valid_civic = civic_byzantine_bureaucracy }
+		}
+		empire_size_pops_mult = -0.005
+	}
+
+	weight = {
+		weight = @ruler_job_weight
+		mult = value:job_weights_modifier|JOB|noble|RESOURCE|unity|
+		mult = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
+		modifier = {
+			factor = 0.1
+			has_citizenship_rights = no
+			NOT = { has_trait = trait_mechanical }
+		}
+		modifier = {
+			factor = 0.1
+			is_egalitarian = yes
+			NOT = { has_job = noble }
+		}
+		modifier = {
+			factor = 5
+			has_job = noble
+		}
+		# crisis purge
+		modifier = {
+			factor = 0.01
+			exists = planet
+			exists = planet.controller
+			planet.controller = {
+				OR = {
+					is_country_type = swarm
+					is_country_type = ai_empire
+				}
+			}
+			OR = { # contingency won't purge itself
+				NOT = { exists = event_target:custodian_bot }
+				AND = {
+					exists = event_target:custodian_bot
+					NOT = { species = { is_same_value = event_target:custodian_bot } }
+				}
+			}
+		}
+	}
+}
+
+merchant = {
+	category = ruler
+	condition_string = RULER_JOB_TRIGGER
+	building_icon = building_galactic_stock_exchange
+	clothes_texture_index = 1
+
+	possible_pre_triggers = {
+		has_owner = yes
+		is_enslaved = no
+		is_being_purged = no
+		is_being_assimilated = no
+		is_sapient = yes
+	}
+
+	possible_precalc = can_fill_ruler_job
+
+	resources = {
+		category = planet_merchants
+		upkeep = {
+			consumer_goods = 2
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			always = yes
+		}
+		trade_value_add = 12
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_trade_mult|
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			always = yes
+		}
+		planet_amenities_add = 3
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	}
+
+	weight = {
+		weight = @ruler_job_weight
+		mult = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
+		mult = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_trade_mult|
+		modifier = {
+			factor = 5
+			has_job = merchant
+		}
+		# crisis purge
+		modifier = {
+			factor = 0.01
+			exists = planet
+			exists = planet.controller
+			planet.controller = {
+				OR = {
+					is_country_type = swarm
+					is_country_type = ai_empire
+				}
+			}
+			OR = { # contingency won't purge itself
+				NOT = { exists = event_target:custodian_bot }
+				AND = {
+					exists = event_target:custodian_bot
+					NOT = { species = { is_same_value = event_target:custodian_bot } }
+				}
+			}
+		}
+	}
+}
+
+executive = {
+	category = ruler
+	condition_string = RULER_JOB_TRIGGER
+	building_icon = building_capital
+	clothes_texture_index = 1
+
+	possible_pre_triggers = {
+		has_owner = yes
+		is_enslaved = no
+		is_being_purged = no
+		is_being_assimilated = no
+		is_sapient = yes
+	}
+
+	possible_precalc = can_fill_ruler_job
+
+	resources = {
+		category = planet_executives
+		produces = {
+			unity = 6
+		}
+		upkeep = {
+			consumer_goods = 2
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			always = yes
+		}
+		trade_value_add = 4
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_trade_mult|
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			always = yes
+		}
+		planet_amenities_add = 3
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	}
+
+	weight = {
+		weight = @ruler_job_weight
+		mult = value:job_weights_modifier|JOB|executive|RESOURCE|unity|
+		mult = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
+		mult = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_trade_mult|
+		modifier = {
+			factor = 5
+			has_job = executive
+		}
+		# crisis purge
+		modifier = {
+			factor = 0.01
+			exists = planet
+			exists = planet.controller
+			planet.controller = {
+				OR = {
+					is_country_type = swarm
+					is_country_type = ai_empire
+				}
+			}
+			OR = { # contingency won't purge itself
+				NOT = { exists = event_target:custodian_bot }
+				AND = {
+					exists = event_target:custodian_bot
+					NOT = { species = { is_same_value = event_target:custodian_bot } }
+				}
+			}
+		}
+	}
+}
