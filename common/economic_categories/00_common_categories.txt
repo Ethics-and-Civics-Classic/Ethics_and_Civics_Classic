@@ -7,6 +7,7 @@ country = {
 	hidden = yes
 	generate_mult_modifiers = {
 		produces
+		cost
 	}
 
 	generate_add_modifiers = {
@@ -32,6 +33,10 @@ trade_routes = {
 	parent = trade
 }
 
+situations = {
+	parent = country
+}
+
 resolutions = {
 	parent = country
 	use_for_ai_budget = yes
@@ -42,11 +47,12 @@ edicts = {
 	parent = country
 	generate_mult_modifiers = {
 		cost
+		upkeep
 	}
 }
 
 rare_edicts = {
-	use_for_ai_budget = yes
+	use_for_ai_budget = no
 	parent = edicts
 	generate_mult_modifiers = {
 		cost
@@ -55,11 +61,11 @@ rare_edicts = {
 
 ship_edicts = {
 	parent = rare_edicts
-	use_for_ai_budget = yes
+	use_for_ai_budget = no
 }
 
 campaigns = {
-	use_for_ai_budget = yes
+	use_for_ai_budget = no
 	parent = edicts
 	generate_mult_modifiers = {
 		cost
@@ -88,6 +94,17 @@ megastructures_habitat = {
 	parent = megastructures
 	generate_mult_modifiers = {
 		cost
+	}
+}
+
+megastructures_hyper_relay = {
+	parent = megastructures
+	use_for_ai_budget = yes
+	ai_use_parent_for_resources_upkeep = {
+		energy
+		consumer_goods
+	}
+	generate_add_modifiers = {
 		upkeep
 	}
 }
@@ -121,7 +138,7 @@ ships = {
 		}
 
 		trigger = {
-			is_scope_valid = yes #When called from ship designer the design is not valid yet.
+			is_scope_valid = yes
 			has_ship_owner_type = galactic_community
 		}
 	}
@@ -134,8 +151,11 @@ ships = {
 		}
 
 		trigger = {
-			is_scope_valid = yes #When called from ship designer the design is not valid yet.
-			is_ship_size = corvette
+			is_scope_valid = yes
+			OR = {
+				is_ship_size = corvette
+				is_ship_size = offspring_corvette
+			}
 		}
 	}
 
@@ -147,8 +167,11 @@ ships = {
 		}
 
 		trigger = {
-			is_scope_valid = yes #When called from ship designer the design is not valid yet.
-			is_ship_size = destroyer
+			is_scope_valid = yes
+			OR = {
+				is_ship_size = destroyer
+				is_ship_size = offspring_destroyer
+			}
 		}
 	}
 
@@ -160,8 +183,11 @@ ships = {
 		}
 
 		trigger = {
-			is_scope_valid = yes #When called from ship designer the design is not valid yet.
-			is_ship_size = cruiser
+			is_scope_valid = yes
+			OR = {
+				is_ship_size = cruiser
+				is_ship_size = offspring_cruiser
+			}
 		}
 	}
 
@@ -173,8 +199,11 @@ ships = {
 		}
 
 		trigger = {
-			is_scope_valid = yes #When called from ship designer the design is not valid yet.
-			is_ship_size = battleship
+			is_scope_valid = yes
+			OR = {
+				is_ship_size = battleship
+				is_ship_size = offspring_battleship
+			}
 		}
 	}
 
@@ -186,7 +215,20 @@ ships = {
 		}
 
 		trigger = {
-			is_scope_valid = yes #When called from ship designer the design is not valid yet.
+			is_scope_valid = yes
+			is_ship_size = military_station_small
+		}
+	}
+
+	triggered_upkeep_modifier = {
+		key = shipsize_military_station_small
+		use_parent_icon = yes
+		modifier_types = {
+			mult
+		}
+
+		trigger = {
+			is_scope_valid = yes
 			is_ship_size = military_station_small
 		}
 	}
@@ -199,8 +241,40 @@ ships = {
 		}
 
 		trigger = {
-			is_scope_valid = yes #When called from ship designer the design is not valid yet.
+			is_scope_valid = yes
 			is_ship_class = shipclass_science_ship
+		}
+	}
+
+	triggered_cost_modifier = {
+		key = ship_military
+		use_parent_icon = yes
+		modifier_types = {
+			mult
+		}
+
+		trigger = {
+			is_scope_valid = yes
+			OR = {
+				is_ship_class = shipclass_military
+				is_ship_class = shipclass_military_special
+			}
+		}
+	}
+
+	triggered_upkeep_modifier = {
+		key = ship_military
+		use_parent_icon = yes
+		modifier_types = {
+			mult
+		}
+
+		trigger = {
+			is_scope_valid = yes
+			OR = {
+				is_ship_class = shipclass_military
+				is_ship_class = shipclass_military_special
+			}
 		}
 	}
 }
@@ -306,6 +380,10 @@ starbase_stations = {
 		trigger = {
 			is_scope_valid = yes #When called from ship designer the design is not valid yet.
 			is_ship_size = starbase_outpost
+			OR = {
+				is_ship_size = starbase_outpost
+				is_ship_size = orbital_ring_tier_1 #TODOJM: Remove?
+			}
 		}
 	}
 }
@@ -399,16 +477,35 @@ planet_branch_offices = {
 	}
 }
 
+planet_buildings_hab_capital = {
+	parent = planet_buildings
+
+	generate_mult_modifiers = {
+		upkeep
+	}
+}
+
 planet_branch_office_buildings = {
+	parent = planets
+}
+
+planet_holdings = {
 	parent = planets
 }
 
 planet_districts = {
 	parent = planet_structures
 
-	generate_mult_modifiers = {
+	generate_add_modifiers = {
 		cost
 		upkeep
+		produces
+	}
+	
+	generate_mult_modifiers = {
+		cost
+        upkeep
+		produces
 	}
 }
 
@@ -430,12 +527,51 @@ planet_districts_industrial = {
 	}
 }
 
-planet_districts_hab_industrial = {
+planet_districts_farms = {
 	parent = planet_districts
 
-	generate_mult_modifiers = {
+	generate_add_modifiers = {
 		cost
 		upkeep
+		produces
+	}
+	
+	generate_mult_modifiers = {
+		cost
+        upkeep
+		produces
+	}
+}
+
+planet_districts_mines = {
+	parent = planet_districts
+
+	generate_add_modifiers = {
+		cost
+		upkeep
+		produces
+	}
+	
+	generate_mult_modifiers = {
+		cost
+        upkeep
+		produces
+	}
+}
+
+planet_districts_generators = {
+	parent = planet_districts
+
+	generate_add_modifiers = {
+		cost
+		upkeep
+		produces
+	}
+	
+	generate_mult_modifiers = {
+		cost
+        upkeep
+		produces
 	}
 }
 
@@ -444,6 +580,15 @@ planet_districts_hab_energy = {
 
 	generate_mult_modifiers = {
 		cost
+	}
+}
+
+planet_districts_hab_industrial = {
+	parent = planet_districts
+
+	generate_mult_modifiers = {
+		cost
+		upkeep
 	}
 }
 
@@ -616,6 +761,20 @@ planet_jobs = {
 	}
 
 	triggered_produces_modifier = {
+		key = planet_jobs_complex_and_simple_drone
+		modifier_types = {
+			mult
+		}
+		trigger = {
+			OR = {
+				is_pop_category = complex_drone
+				is_pop_category = simple_drone
+			}
+
+		}
+	}
+
+	triggered_produces_modifier = {
 		key = planet_jobs_robotic
 		modifier_types = {
 			mult
@@ -649,7 +808,7 @@ planet_pop_assemblers = {
 }
 
 planet_farmers = {
-	parent = planet_jobs
+	parent = planet_jobs_productive
 	generate_mult_modifiers = {
 		produces
 	}
@@ -660,7 +819,7 @@ planet_farmers = {
 }
 
 planet_miners = {
-	parent = planet_jobs
+	parent = planet_jobs_productive
 	generate_mult_modifiers = {
 		produces
 	}
@@ -676,35 +835,24 @@ planet_sr_miners = { #added because we don't want miners_minerals_produces_add t
 	generate_add_modifiers = {
 		upkeep
 	}
+	generate_mult_modifiers = {
+		produces
+	}
 }
 
 planet_livestock = {
-	parent = planet_jobs
+	parent = planet_jobs_productive
 	generate_add_modifiers = {
 		produces
 	}
 }
 
 planet_technician = {
-	parent = planet_jobs
+	parent = planet_jobs_productive
 	generate_add_modifiers = {
 		produces
 		upkeep
 	}
-	generate_mult_modifiers = {
-		produces
-	}
-}
-
-planet_executives = {
-	parent = planet_politicians
-	generate_mult_modifiers = {
-		produces
-	}
-}
-
-planet_managers = {
-	parent = planet_jobs
 	generate_mult_modifiers = {
 		produces
 	}
@@ -726,18 +874,23 @@ planet_administrators = {
 	}
 }
 
-planet_bureaucrats = {
-	icon = "job_bureaucrat"
-	parent = planet_jobs
+planet_executives = {
+	parent = planet_politicians
 	generate_mult_modifiers = {
 		produces
-		upkeep
+	}
+}
+
+planet_managers = {
+	parent = planet_administrators
+	generate_mult_modifiers = {
+		produces
 	}
 }
 
 planet_researchers = {
 	icon = "job_researcher"
-	parent = planet_jobs
+	parent = planet_jobs_productive
 	generate_mult_modifiers = {
 		produces
 		upkeep
@@ -749,7 +902,7 @@ planet_researchers = {
 
 planet_metallurgists = {
 	icon = "job_foundry"
-	parent = planet_jobs
+	parent = planet_jobs_productive
 	generate_mult_modifiers = {
 		produces
 		upkeep
@@ -761,21 +914,21 @@ planet_metallurgists = {
 }
 
 planet_culture_workers = {
-	parent = planet_jobs
+	parent = planet_jobs_productive
 	generate_mult_modifiers = {
 		produces
 	}
 }
 
 planet_evaluators = {
-	parent = planet_jobs
+	parent = planet_jobs_productive
 	generate_mult_modifiers = {
 		produces
 	}
 }
 
 planet_synapse_drones = {
-	parent = planet_jobs
+	parent = planet_jobs_productive
 	generate_mult_modifiers = {
 		produces
 	}
@@ -799,21 +952,38 @@ planet_entertainers = {
 
 planet_soldiers = {
 	parent = planet_jobs
+	generate_add_modifiers = {
+		produces
+		upkeep
+	}
 }
 
 planet_priests = {
-	parent = planet_jobs
+	parent = planet_administrators
 	generate_mult_modifiers = {
+		produces
+	}
+	generate_add_modifiers = {
 		produces
 	}
 }
 
 planet_enforcers = {
 	parent = planet_jobs
+	generate_add_modifiers = {
+		produces
+	}
+	generate_mult_modifiers = {
+		produces
+		upkeep
+	}
 }
 
 planet_telepaths = {
-	parent = planet_enforcers
+	parent = planet_administrators
+	generate_add_modifiers = {
+		produces
+	}
 }
 
 planet_doctors = {
@@ -821,29 +991,32 @@ planet_doctors = {
 }
 
 planet_refiners = {
-	parent = planet_jobs
+	parent = planet_jobs_productive
 	generate_mult_modifiers = {
 		produces
+		upkeep
 	}
 }
 
 planet_translucers = {
-	parent = planet_jobs
+	parent = planet_jobs_productive
 	generate_mult_modifiers = {
 		produces
+		upkeep
 	}
 }
 
 planet_chemists = {
-	parent = planet_jobs
+	parent = planet_jobs_productive
 	generate_mult_modifiers = {
 		produces
+		upkeep
 	}
 }
 
 planet_artisans = {
 	icon = "job_artisan"
-	parent = planet_jobs
+	parent = planet_jobs_productive
 	generate_mult_modifiers = {
 		produces
 		upkeep
@@ -894,6 +1067,7 @@ planet_pops = {
 unemployment_resources = {
 	parent = planet_pops
 	generate_add_modifiers = {
+		produces
 		upkeep
 	}
 }
@@ -916,11 +1090,17 @@ pop_category_purge = {
 
 pop_category_bio_trophy = {
 	parent = planet_pops
+	generate_add_modifiers = {
+		upkeep
+	}
 }
 
 pop_category_slave = {
 	parent = planet_pops
 	generate_mult_modifiers = {
+		upkeep
+	}
+	generate_add_modifiers = {
 		upkeep
 	}
 }
@@ -935,14 +1115,23 @@ pop_category_drones = {
 
 pop_category_workers = {
 	parent = planet_pops
+	generate_add_modifiers = {
+		upkeep
+	}
 }
 
 pop_category_specialists = {
 	parent = planet_pops
+	generate_add_modifiers = {
+		upkeep
+	}
 }
 
 pop_category_rulers = {
 	parent = planet_pops
+	generate_add_modifiers = {
+		upkeep
+	}
 }
 
 pop_category_assimilation = {
@@ -972,6 +1161,14 @@ deposit_blockers = {
 	}
 
 	parent = country
+}
+
+deposit_blockers_natural = {
+	generate_add_modifiers = {
+		produces
+	}
+
+	parent = deposit_blockers
 }
 
 armies = {
@@ -1047,20 +1244,6 @@ diplomacy = {
 country_container = {
 	hidden = yes
 	parent = country
-}
-
-country_suppression = {
-	parent = country_container
-	generate_add_modifiers = {
-		upkeep
-	}
-}
-
-country_promotion = {
-	parent = country_container
-	generate_add_modifiers = {
-		upkeep
-	}
 }
 
 country_monuments = {
@@ -1183,9 +1366,13 @@ country_ethic = {
 	}
 }
 
-##
-# dinys
-##
+country_first_league_homeworld = {
+	parent = country_container
+	generate_add_modifiers = {
+		produces
+	}
+}
+
 country_power_projection = {
 	parent = country_container
 	generate_add_modifiers = {
@@ -1260,8 +1447,12 @@ claims = {
 	parent = country
 }
 
-subject_tax = {
+agreement_proposals = {
+	use_for_ai_budget = yes
 	parent = diplomacy
+}
+
+subject_tax = {
 }
 
 envoy_costs = {
@@ -1279,6 +1470,12 @@ diplomatic_networking = {
 subject_integration = {
 }
 
+overlord_subsidy = {
+}
+
+specialist_subject_conversion = {
+}
+
 relics = {
 }
 
@@ -1291,6 +1488,11 @@ sector = {
 menace = {
 }
 
+traditions = {
+		use_for_ai_budget = yes
+		parent = country
+}
+
 operations = {
 	use_for_ai_budget = yes
 	ai_use_parent_for_resources_upkeep = {
@@ -1301,4 +1503,10 @@ operations = {
 		upkeep
 	}
 	parent = country
+}
+
+country_situations = {
+	generate_add_modifiers = {
+		produces
+	}
 }
