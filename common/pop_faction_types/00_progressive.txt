@@ -5,10 +5,10 @@
 progressive = {
 	election_header = "GFX_faction_header_yellow"
 	guiding_ethic = ethic_egalitarian
-	
+
 	unique = yes
 	support_multiplier = 1
-	
+
 	resources = {
 		category = pop_factions
 		produces = {
@@ -19,7 +19,7 @@ progressive = {
 	is_potential = {
 		is_faction_allowed = yes
 	}
-	
+
 	parameters = {
 		empire = {
 			type = country
@@ -28,12 +28,12 @@ progressive = {
 			}
 		}
 	}
-	
+
 	can_join_pre_triggers = {
 		is_enslaved = no
 		is_being_purged = no
 	}
-	
+
 	can_join_faction = {
 		is_shackled_robot = no
 		has_culture_shock = no
@@ -43,10 +43,10 @@ progressive = {
 			has_ethic = ethic_fanatic_egalitarian
 		}
 	}
-	
+
 	attraction = {
 		base = 150
-		
+
 		modifier = {
 			factor = 1.25
 			exists = from
@@ -55,7 +55,7 @@ progressive = {
 				leader = { leader_class = ruler }
 			}
 		}
-		
+
 		modifier = {
 			factor = 0.75
 			exists = from
@@ -63,23 +63,23 @@ progressive = {
 				NOT = { exists = leader }
 			}
 		}
-		
+
 		# Should really check for citizenship instead
 		modifier = {
 			factor = 0.25
 			NOT = { is_same_species = owner_species }
 		}
 	}
-	
+
 	leader = {
 		base = 100
-		
+
 		modifier = {
 			factor = 0
 			leader_class = ruler
 			owner = { has_authority = auth_imperial }
 		}
-		
+
 		modifier = {
 			factor = 0.0
 			is_event_leader = yes
@@ -160,9 +160,6 @@ progressive = {
 		}
 	}
 
-	
-	
-	
 	demand = {
 		title = "FEDERAL_STATE"
 		unfulfilled_title = "NO_FEDERAL_STATE"
@@ -259,6 +256,7 @@ progressive = {
 		trigger = {
 			owner = {
 				NOR = {
+					has_policy_flag = resettlement_allowed
 					any_owned_pop = {
 						has_migration_control = { value = yes }
 						is_sapient = yes
@@ -267,7 +265,6 @@ progressive = {
 						is_shackled_robot = no
 						is_robot_pop = no
 					}
-					has_policy_flag = resettlement_allowed
 				}
 			}
 		}
@@ -278,7 +275,7 @@ progressive = {
 		unfulfilled_title = "PROGRESSIVE_NO_REPRODUCTIVE_FREEDOM"
 		desc = "PROGRESSIVE_REPRODUCTIVE_FREEDOM_DESC"
 
-		fulfilled_effect = 7
+		fulfilled_effect = 5
 		unfulfilled_effect = -20
 
 		potential = {
@@ -292,7 +289,57 @@ progressive = {
 		}
 	}
 
-	
+	demand = {
+		title = "PROGRESSIVE_NO_STRATIFIED"
+		unfulfilled_title = "PROGRESSIVE_STRATIFIED"
+		desc = "PROGRESSIVE_NO_STRATIFIED_DESC"
+
+		unfulfilled_effect = -25
+		fulfilled_effect = 0.001
+
+		potential = {
+			exists = owner
+		}
+
+		trigger = {
+			owner = {
+				NOT = {
+					any_owned_species = {
+						has_living_standard = { type = living_standard_stratified country = prev }
+					}
+				}
+			}
+		}
+	}
+
+	demand = {
+		title = "PROGRESSIVE_NO_ELITISM"
+		unfulfilled_title = "PROGRESSIVE_ELITISM"
+		desc = "PROGRESSIVE_NO_ELITISM_DESC"
+
+		fulfilled_effect = 5
+		unfulfilled_effect = -5
+
+		potential = {
+			exists = owner
+			owner = {
+				OR = {
+					has_technology = tech_selected_lineages
+					has_technology = tech_capacity_boosters
+				}
+			}
+		}
+
+		trigger = {
+			owner = {
+				NOR = {
+					has_policy_flag = leader_enhancement_selected_lineages
+					has_policy_flag = leader_enhancement_capacity_boosters
+				}
+			}
+		}
+	}
+
 	demand = {
 		title = "COOPERATIVE_DIPLO_STANCE"
 		unfulfilled_title = "COOPERATIVE_DIPLO_STANCE"
@@ -340,7 +387,7 @@ progressive = {
 	on_create = {
 		pop_faction_event = { id = factions.1 }
 	}
-	
+
 	on_destroy = {
 		if = {
 			limit = {
@@ -355,16 +402,16 @@ progressive = {
 			remove_modifier = suppressed_egalitarian
 		}
 	}
-	
+
 	actions = {
 		embrace_faction = {
 			title = "EMBRACE_FACTION"
 			description = "EMBRACE_FACTION_DESC"
-			
+
 			cost = {
 				unity = 5000
 			}
-			
+
 			potential = {
 				exists = owner
 				owner = {
@@ -374,7 +421,7 @@ progressive = {
 					}
 				}
 			}
-			
+
 			valid = {
 				custom_tooltip = {
 					fail_text = EMBRACE_FACTION_COOLDOWN
@@ -406,7 +453,7 @@ progressive = {
 						every_relation = {
 							limit = {
 								is_ai = no
-								is_country_type = default			
+								is_country_type = default
 								has_communications = prev
 								has_intel_level = {
 									who = prev
@@ -419,7 +466,7 @@ progressive = {
 					}
 				}
 			}
-			
+
 			ai_weight = {
 				base = 1
 				modifier = {
@@ -435,7 +482,7 @@ progressive = {
 				}
 				modifier = {
 					factor = 0
-					NOT = { 
+					NOT = {
 						owner = {
 							exists = ruler
 							ruler = {
@@ -457,13 +504,13 @@ progressive = {
 		promote_faction = {
 			title = "PROMOTE_FACTION"
 			description = "PROMOTE_FACTION_DESC"
-			
+
 			potential = {
 				exists = owner
-				parameter:empire = { 
-					NOR = { 
+				parameter:empire = {
+					NOR = {
 						has_modifier = suppressed_egalitarian
-						has_modifier = promoted_egalitarian 
+						has_modifier = promoted_egalitarian
 					}
 				}
 			}
@@ -473,7 +520,7 @@ progressive = {
 					add_modifier = { modifier = promoted_egalitarian days = -1 }
 				}
 			}
-			
+
 			ai_weight = {
 				base = 0
 			}
@@ -481,10 +528,10 @@ progressive = {
 		cancel_promote_faction = {
 			title = "CANCEL_PROMOTE_FACTION"
 			description = "CANCEL_PROMOTE_FACTION_DESC"
-			
+
 			potential = {
 				exists = owner
-				parameter:empire = { 
+				parameter:empire = {
 					has_modifier = promoted_egalitarian
 				}
 			}
@@ -494,7 +541,7 @@ progressive = {
 					remove_modifier = promoted_egalitarian
 				}
 			}
-			
+
 			ai_weight = {
 				base = 0
 			}
@@ -502,13 +549,13 @@ progressive = {
 		suppress_faction = {
 			title = "SUPPRESS_FACTION"
 			description = "SUPPRESS_FACTION_DESC"
-			
+
 			potential = {
 				exists = owner
-				parameter:empire = { 
-					NOR = { 
+				parameter:empire = {
+					NOR = {
 						has_modifier = suppressed_egalitarian
-						has_modifier = promoted_egalitarian 
+						has_modifier = promoted_egalitarian
 					}
 				}
 			}
@@ -519,7 +566,7 @@ progressive = {
 					add_modifier = { modifier = suppressed_egalitarian days = -1 }
 				}
 			}
-			
+
 			ai_weight = {
 				base = 0
 			}
@@ -527,10 +574,10 @@ progressive = {
 		cancel_suppress_faction = {
 			title = "CANCEL_SUPPRESS_FACTION"
 			description = "CANCEL_SUPPRESS_FACTION_DESC"
-			
+
 			potential = {
 				exists = owner
-				parameter:empire = { 
+				parameter:empire = {
 					has_modifier = suppressed_egalitarian
 				}
 			}
@@ -541,7 +588,7 @@ progressive = {
 					remove_modifier = suppressed_egalitarian
 				}
 			}
-			
+
 			ai_weight = {
 				base = 0
 			}

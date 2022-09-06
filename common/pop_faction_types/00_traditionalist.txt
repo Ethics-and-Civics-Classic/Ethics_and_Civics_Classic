@@ -5,10 +5,10 @@
 traditionalist = {
 	election_header = "GFX_faction_header_yellow"
 	guiding_ethic = ethic_spiritualist
-	
+
 	unique = yes
 	support_multiplier = 1
-	
+
 	resources = {
 		category = pop_factions
 		produces = {
@@ -19,7 +19,7 @@ traditionalist = {
 	is_potential = {
 		is_faction_allowed = yes
 	}
-	
+
 	parameters = {
 		empire = {
 			type = country
@@ -28,7 +28,7 @@ traditionalist = {
 			}
 		}
 	}
-	
+
 	can_join_pre_triggers = {
 		is_enslaved = no
 		is_being_purged = no
@@ -42,10 +42,10 @@ traditionalist = {
 			has_ethic = ethic_fanatic_spiritualist
 		}
 	}
-	
+
 	attraction = {
 		base = 150
-		
+
 		modifier = {
 			factor = 1.25
 			exists = from
@@ -54,7 +54,7 @@ traditionalist = {
 				leader = { leader_class = ruler }
 			}
 		}
-		
+
 		modifier = {
 			factor = 0.75
 			exists = from
@@ -63,13 +63,13 @@ traditionalist = {
 			}
 		}
 	}
-	
+
 	leader = {
 		base = 100
 		modifier = {
 			factor = 0
 			species = {
-				has_trait = "trait_mechanical"		
+				has_trait = "trait_mechanical"
 			}
 		}
 
@@ -121,27 +121,27 @@ traditionalist = {
 			}
 		}
 	}
-	
+
 	demand = { # "TRADITIONALIST_NO_ROBOTS"
 		title = "TRADITIONALIST_NO_ROBOTS"
 		unfulfilled_title = "TRADITIONALIST_ROBOTS"
 		desc = "TRADITIONALIST_NO_ROBOTS_DESC"
-		
+
 		unfulfilled_effect = -5
 		fulfilled_effect = 0.001
-		
+
 		potential = {
 			exists = owner
 			owner = { NOT = { has_valid_civic = civic_machine_cult } }
 		}
-		
+
 		trigger = {
 			owner = {
 				has_policy_flag = robots_outlawed
 			}
 		}
 	}
-	
+
 	demand = { # "TRADITIONALIST_NO_ROBOT_RIGHTS"
 		title = "TRADITIONALIST_NO_ROBOT_RIGHTS"
 		unfulfilled_title = "TRADITIONALIST_ROBOT_RIGHTS"
@@ -194,19 +194,86 @@ traditionalist = {
 		title = "TRADITIONALIST_SPIRITUALIST_GOVERNMENT"
 		unfulfilled_title = "TRADITIONALIST_SECULAR_GOVERNMENT"
 		desc = "TRADITIONALIST_SPIRITUALIST_GOVERNMENT_DESC"
-		
+
 		fulfilled_effect = 5
 		unfulfilled_effect = -5
-		
+
 		potential = {
 			exists = owner
 		}
-		
+
 		trigger = {
 			owner = {
 				OR = {
 					has_ethic = ethic_fanatic_spiritualist
 					has_ethic = ethic_spiritualist
+				}
+			}
+		}
+	}
+
+	demand = { # "TRADITIONALIST_NO_TOMB_WORLDS"
+		title = "TRADITIONALIST_NO_TOMB_WORLDS"
+		unfulfilled_title = "TRADITIONALIST_TOMB_WORLDS"
+		desc = "TRADITIONALIST_NO_TOMB_WORLDS_DESC"
+
+		unfulfilled_effect = -5
+		fulfilled_effect = 0.001
+
+		potential = {
+			exists = owner
+			owner = {
+				has_surveyed_class = pc_nuked
+				NOR = {
+					has_origin = origin_post_apocalyptic
+					has_country_flag = worm_tomb_ending
+					has_valid_civic = civic_memorialist
+				}
+			}
+		}
+
+		trigger = {
+			owner = {
+				NOR = {
+					any_owned_planet = {
+						is_planet_class = pc_nuked
+					}
+					any_planet_within_border = {
+						is_planet_class = pc_nuked
+						is_terraforming = yes
+					}
+				}
+			}
+		}
+	}
+
+	demand = { # "TRADITIONALIST_GAIA_WORLDS"
+		title = "TRADITIONALIST_GAIA_WORLDS"
+		unfulfilled_title = "TRADITIONALIST_NO_GAIA_WORLDS"
+		desc = "TRADITIONALIST_GAIA_WORLDS_DESC"
+
+		fulfilled_effect = 5
+		unfulfilled_effect = -0.001
+
+		potential = {
+			exists = owner
+			owner = {
+				has_surveyed_class = pc_gaia
+				has_ascension_perk = ap_consecrated_worlds
+			}
+		}
+
+		trigger = {
+			owner = {
+				any_planet_within_border = {
+					is_planet_class = pc_gaia
+					is_colony = no
+					OR = {
+						has_modifier = consecrated_quality_1
+						has_modifier = consecrated_quality_2
+						has_modifier = consecrated_quality_3
+						has_modifier = consecrated_quality_4
+					}
 				}
 			}
 		}
@@ -224,6 +291,7 @@ traditionalist = {
 			host_has_dlc = "Utopia"
 			exists = owner
 			owner = {
+				NOT = { has_origin = origin_shroudwalker_apprentice }
 				OR = {
 					num_ascension_perks > 0
 					num_ascension_perk_slots > 0
@@ -294,23 +362,11 @@ traditionalist = {
 		unfulfilled_effect = -0.001
 
 		potential = {
-			exists = owner
-			exists = owner
-			owner = {
-				pop_percentage = {
-					percentage > 0.09
-					limit = { pop_has_ethic = ethic_spiritualist }
-				}
-			}
+			support >= 0.1
 		}
 
 		trigger = {
-			owner = {
-				pop_percentage = {
-					percentage > 0.24
-					limit = { pop_has_ethic = ethic_spiritualist }
-				}
-			}
+			support >= 0.25
 		}
 	}
 
@@ -323,22 +379,11 @@ traditionalist = {
 		fulfilled_effect = 0.001
 
 		potential = {
-			exists = owner
-			owner = {
-				pop_percentage = {
-					percentage < 0.25
-					limit = { pop_has_ethic = ethic_spiritualist }
-				}
-			}
+			support < 0.25
 		}
 
 		trigger = {
-			owner = {
-				pop_percentage = {
-					percentage > 0.09
-					limit = { pop_has_ethic = ethic_spiritualist }
-				}
-			}
+			support >= 0.1
 		}
 	}
 
@@ -385,7 +430,7 @@ traditionalist = {
 			}
 		}
 	}
-	
+
 	demand = {
 		title = "TRADITIONALIST_RELIGIOUS_FINDING"
 		unfulfilled_title = "TRADITIONALIST_NO_RELIGIOUS_FINDING"
@@ -407,7 +452,7 @@ traditionalist = {
 			}
 		}
 	}
-	
+
 	on_create = {
 		pop_faction_event = { id = factions.1 }
 	}
@@ -426,16 +471,16 @@ traditionalist = {
 			remove_modifier = suppressed_spiritualist
 		}
 	}
-	
+
 	actions = {
 		embrace_faction = {
 			title = "EMBRACE_FACTION"
 			description = "EMBRACE_FACTION_DESC"
-			
+
 			cost = {
 				unity = 5000
 			}
-			
+
 			potential = {
 				exists = owner
 				owner = {
@@ -445,7 +490,7 @@ traditionalist = {
 					}
 				}
 			}
-			
+
 			valid = {
 				custom_tooltip = {
 					fail_text = EMBRACE_FACTION_COOLDOWN
@@ -477,7 +522,7 @@ traditionalist = {
 						every_relation = {
 							limit = {
 								is_ai = no
-								is_country_type = default			
+								is_country_type = default
 								has_communications = prev
 								has_intel_level = {
 									who = prev
@@ -490,7 +535,7 @@ traditionalist = {
 					}
 				}
 			}
-			
+
 			ai_weight = {
 				base = 1
 				modifier = {
@@ -506,7 +551,7 @@ traditionalist = {
 				}
 				modifier = {
 					factor = 0
-					NOT = { 
+					NOT = {
 						owner = {
 							exists = ruler
 							ruler = {
@@ -528,7 +573,7 @@ traditionalist = {
 		promote_faction = {
 			title = "PROMOTE_FACTION"
 			description = "PROMOTE_FACTION_DESC"
-			
+
 			potential = {
 				exists = owner
 				parameter:empire = {
@@ -544,7 +589,7 @@ traditionalist = {
 					add_modifier = { modifier = promoted_spiritualist days = -1 }
 				}
 			}
-			
+
 			ai_weight = {
 				base = 0
 			}
@@ -552,7 +597,7 @@ traditionalist = {
 		cancel_promote_faction = {
 			title = "CANCEL_PROMOTE_FACTION"
 			description = "CANCEL_PROMOTE_FACTION_DESC"
-			
+
 			potential = {
 				exists = owner
 				parameter:empire = {
@@ -565,7 +610,7 @@ traditionalist = {
 					remove_modifier = promoted_spiritualist
 				}
 			}
-			
+
 			ai_weight = {
 				base = 0
 			}
@@ -573,7 +618,7 @@ traditionalist = {
 		suppress_faction = {
 			title = "SUPPRESS_FACTION"
 			description = "SUPPRESS_FACTION_DESC"
-			
+
 			potential = {
 				exists = owner
 				parameter:empire = {
@@ -590,7 +635,7 @@ traditionalist = {
 					add_modifier = { modifier = suppressed_spiritualist days = -1 }
 				}
 			}
-			
+
 			ai_weight = {
 				base = 0
 			}
@@ -598,7 +643,7 @@ traditionalist = {
 		cancel_suppress_faction = {
 			title = "CANCEL_SUPPRESS_FACTION"
 			description = "CANCEL_SUPPRESS_FACTION_DESC"
-			
+
 			potential = {
 				exists = owner
 				parameter:empire = {
@@ -612,7 +657,7 @@ traditionalist = {
 					remove_modifier = suppressed_spiritualist
 				}
 			}
-			
+
 			ai_weight = {
 				base = 0
 			}
