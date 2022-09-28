@@ -1,5 +1,5 @@
 version="3.4.5.3"
-name="Ethics and Civics Classic 3.4"
+name="Ethics and Civics Test Branch"
 tags={
 	"Overhaul"
 }
