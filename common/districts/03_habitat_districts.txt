@@ -4,6 +4,7 @@
 district_hab_housing = {
 	base_buildtime = 240
 	is_capped_by_modifier = no
+	exempt_from_ai_planet_specialization = yes
 
 	show_on_uncolonized = {
 		uses_district_set = habitat
@@ -25,28 +26,6 @@ district_hab_housing = {
 
 	planet_modifier = {
 		planet_housing_add = 8
-	}
-	
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = {
-				OR = { has_valid_civic = civic_peaceful_urbanism }
-			}
-		}
-		modifier = {
-			planet_amenities_add = 5
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = { OR = { has_valid_civic = civic_welfare_state } }
-		}
-		modifier = {
-			planet_housing_add = 2
-		}
 	}
 
 	triggered_planet_modifier = {
@@ -76,6 +55,30 @@ district_hab_housing = {
 		}
 		modifier = {
 			job_maintenance_drone_add = 2
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_valid_civic = civic_peaceful_urbanism
+			}
+		}
+		modifier = {
+			planet_amenities_add = 5
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_valid_civic = civic_welfare_state
+			}
+		}
+		modifier = {
+			planet_housing_add = 2
 		}
 	}
 
@@ -146,22 +149,6 @@ district_hab_energy = {
 			energy = @hab_maintenance
 		}
 	}
-	
-	
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = {
-				OR = {
-					has_valid_civic = civic_labour_unions
-					has_valid_civic = civic_shared_burden
-				}
-			} 
-		}
-		modifier = {
-			planet_housing_add = 1
-		}
-	}
 
 	triggered_planet_modifier = {
 		potential = {
@@ -202,6 +189,21 @@ district_hab_energy = {
 		job_technician_drone_add = 4
 	}
 
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				OR = {
+					has_valid_civic = civic_labour_unions
+					has_valid_civic = civic_shared_burden
+				}
+			} 
+		}
+		modifier = {
+			planet_housing_add = 1
+		}
+	}
+
 	triggered_desc = {
 		trigger = {
 			exists = owner
@@ -225,13 +227,6 @@ district_hab_energy = {
 			owner = { is_fallen_empire_spiritualist = yes }
 		}
 		text = job_fe_acolyte_generator_effect_desc
-	}
-
-	ai_resource_production = {
-		energy = 1
-		trigger = {
-			always = yes
-		}
 	}
 }
 
@@ -268,16 +263,6 @@ district_hab_industrial = {
 
 	planet_modifier = {
 		planet_housing_add = 3
-	}
-	
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = { OR = { has_valid_civic = civic_shared_burden } } 
-		}
-		modifier = {
-			planet_housing_add = 1
-		}
 	}
 
 	triggered_planet_modifier = {
@@ -450,7 +435,7 @@ district_hab_industrial = {
 			exists = owner
 			owner = {
 				is_regular_empire = yes
-				is_crafter_empire = yes
+				is_crafter_empire = no
 				is_catalytic_empire = yes
 			}
 		}
@@ -537,6 +522,18 @@ district_hab_industrial = {
 		modifier = {
 			job_artisan_drone_add = 2
 			job_catalytic_drone_add = -2
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_valid_civic = civic_shared_burden
+			}
+		}
+		modifier = {
+			planet_housing_add = 1
 		}
 	}
 
@@ -760,38 +757,14 @@ district_hab_commercial = {
 	planet_modifier = {
 		planet_housing_add = 3
 	}
-	
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = {
-				OR = { has_valid_civic = civic_consumerism }
-			}
-		}
-		modifier = {
-			job_clerk_add = 1
-		}
-	}
 
 	triggered_planet_modifier = {
 		potential = {
 			exists = owner
-			owner = { has_active_tradition = tr_prosperity_interstellar_franchising }
+			owner = { has_active_tradition = tr_prosperity_interstellar_franchising	}
 		}
 		modifier = {
 			job_clerk_add = 1
-		}
-	}
-	
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = {
-				has_active_tradition = tr_mercantile_commercial_enterprise
-			}
-		}
-		modifier = {
-			job_merchant_add = 1
 		}
 	}
 
@@ -815,14 +788,40 @@ district_hab_commercial = {
 		}
 	}
 
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_active_tradition = tr_mercantile_commercial_enterprise
+			}
+		}
+		modifier = {
+			job_merchant_add = 1
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_valid_civic = civic_consumerism
+			}
+		}
+		modifier = {
+			job_clerk_add = 1
+		}
+	}
+
 	triggered_desc = {
 		text = job_clerk_effect_desc
 	}
-
-	ai_resource_production = {
-		consumer_goods = 1
+	triggered_desc = {
+		text = job_merchant_effect_desc
 		trigger = {
-			always = yes
+			exists = owner
+			owner = {
+				has_active_tradition = tr_mercantile_commercial_enterprise
+			}
 		}
 	}
 }
@@ -855,37 +854,11 @@ district_hab_mining = {
 		}
 		upkeep = {
 			trigger = {
-				owner = { OR = { has_valid_civic = civic_mining_guilds } }
+				owner = {
+					has_valid_civic = civic_mining_guilds
+				}
 			}
 			energy = 0.2
-		}
-	}
-	
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = {
-				has_valid_civic = civic_mining_guilds
-			}
-		}
-		modifier = {
-			planet_housing_add = 1
-			job_miner_add = 1
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = { 
-				OR = {
-					has_valid_civic = civic_labour_unions
-					has_valid_civic = civic_shared_burden
-				}
-			} 
-		}
-		modifier = {
-			planet_housing_add = 1
 		}
 	}
 
@@ -932,6 +905,34 @@ district_hab_mining = {
 		}
 	}
 
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_valid_civic = civic_mining_guilds
+			}
+		}
+		modifier = {
+			planet_housing_add = 1
+			job_miner_add = 1
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { 
+				OR = {
+					has_valid_civic = civic_labour_unions
+					has_valid_civic = civic_shared_burden
+				}
+			} 
+		}
+		modifier = {
+			planet_housing_add = 1
+		}
+	}
+
 	triggered_desc = {
 		trigger = {
 			exists = owner
@@ -957,18 +958,12 @@ district_hab_mining = {
 		}
 		text = job_fe_acolyte_mine_effect_desc
 	}
-
-	ai_resource_production = {
-		minerals = 1
-		trigger = {
-			always = yes
-		}
-	}
 }
 
 district_hab_cultural = {
 	base_buildtime = 240
 	is_capped_by_modifier = no
+	exempt_from_ai_planet_specialization = yes
 
 	show_on_uncolonized = {
 		uses_district_set = habitat
@@ -1123,12 +1118,5 @@ district_hab_cultural = {
 			}
 		}
 		text = job_maintenance_drone_effect_desc
-	}
-
-	ai_resource_production = {
-		unity = 1
-		trigger = {
-			always = yes
-		}
 	}
 }

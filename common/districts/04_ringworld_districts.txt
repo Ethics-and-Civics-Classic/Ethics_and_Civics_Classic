@@ -7,6 +7,7 @@
 district_rw_city = {
 	base_buildtime = @rw_district_buildtime
 	is_capped_by_modifier = no
+	exempt_from_ai_planet_specialization = yes
 
 	show_on_uncolonized = {
 		exists = from
@@ -40,42 +41,6 @@ district_rw_city = {
 		planet_housing_add = 25
 		job_enforcer_add = 2
 	}
-
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = {
-				OR = { has_valid_civic = civic_peaceful_urbanism }
-			}
-		}
-		modifier = {
-			planet_amenities_add = 5
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = {
-				OR = { has_valid_civic = civic_consumerism }
-			}
-		}
-		modifier = {
-			job_clerk_add = 1
-		}
-	}
-
-
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = { or = { has_valid_civic = civic_welfare_state } }
-		}
-		modifier = {
-			planet_housing_add = 5
-		}
-	}
-	
 
 	triggered_planet_modifier = {
 		potential = {
@@ -147,6 +112,42 @@ district_rw_city = {
 		}
 	}
 
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_valid_civic = civic_peaceful_urbanism
+			}
+		}
+		modifier = {
+			planet_amenities_add = 5
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_valid_civic = civic_consumerism
+			}
+		}
+		modifier = {
+			job_clerk_add = 1
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_valid_civic = civic_welfare_state
+			}
+		}
+		modifier = {
+			planet_housing_add = 5
+		}
+	}
+
 	triggered_desc = {
 		trigger = {
 			planet = {
@@ -164,13 +165,12 @@ district_rw_city = {
 		}
 		text = job_clerk_effect_desc
 	}
-
-
 }
 
 district_rw_hive = {
 	base_buildtime = @rw_district_buildtime
 	is_capped_by_modifier = no
+	exempt_from_ai_planet_specialization = yes
 
 	show_on_uncolonized = {
 		exists = from
@@ -251,6 +251,7 @@ district_rw_hive = {
 district_rw_nexus = {
 	base_buildtime = @rw_district_buildtime
 	is_capped_by_modifier = no
+	exempt_from_ai_planet_specialization = yes
 
 	show_on_uncolonized = {
 		exists = from
@@ -344,9 +345,9 @@ district_rw_generator = {
 	}
 
 	potential = {
-		uses_district_set = ring_world
 		exists = owner
 		owner = { is_gestalt = yes }
+		uses_district_set = ring_world
 	}
 
 	convert_to = {
@@ -367,16 +368,6 @@ district_rw_generator = {
 
 	triggered_planet_modifier = {
 		planet_housing_add = 10
-	}
-	
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = { or = { has_valid_civic = civic_labour_unions has_valid_civic = civic_shared_burden } } 
-		}
-		modifier = {
-			planet_housing_add = 2
-		}
 	}
 
 	triggered_planet_modifier = {
@@ -419,6 +410,21 @@ district_rw_generator = {
 		}
 	}
 
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				OR = {
+					has_valid_civic = civic_labour_unions
+					has_valid_civic = civic_shared_burden
+				}
+			} 
+		}
+		modifier = {
+			planet_housing_add = 2
+		}
+	}
+
 	triggered_desc = {
 		trigger = {
 			planet = {
@@ -453,13 +459,6 @@ district_rw_generator = {
 		}
 		text = job_fe_acolyte_generator_effect_desc
 	}
-
-	ai_resource_production = {
-		energy = 10
-		trigger = {
-			always = yes
-		}
-	}
 }
 
 district_rw_commercial = {
@@ -476,12 +475,12 @@ district_rw_commercial = {
 	}
 
 	potential = {
-		uses_district_set = ring_world
 		exists = owner
 		owner = {
 			is_gestalt = no
 			is_fallen_empire = no
 		}
+		uses_district_set = ring_world
 	}
 
 	convert_to = {
@@ -505,7 +504,7 @@ district_rw_commercial = {
 		job_merchant_add = 2
 		job_clerk_add = 6
 	}
-	
+
 	triggered_planet_modifier = {
 		potential = {
 			exists = owner
@@ -517,12 +516,12 @@ district_rw_commercial = {
 			job_merchant_add = 2
 		}
 	}
-	
+
 	triggered_planet_modifier = {
 		potential = {
 			exists = owner
 			owner = {
-				OR = { has_valid_civic = civic_consumerism }
+				has_valid_civic = civic_consumerism
 			}
 		}
 		modifier = {
@@ -547,13 +546,6 @@ district_rw_commercial = {
 
 	triggered_desc = {
 		text = job_clerk_effect_desc
-	}
-
-	ai_resource_production = {
-		energy = 10
-		trigger = {
-			always = yes
-		}
 	}
 }
 
@@ -654,6 +646,12 @@ district_rw_farming = {
 
 	potential = { 
 		uses_district_set = ring_world
+		NOT = {
+			AND = {
+				owner = { is_ai = yes }
+				owner = { country_uses_food = no }
+			}
+		}
 	}
 
 	resources = {
@@ -672,16 +670,6 @@ district_rw_farming = {
 	triggered_planet_modifier = {
 		modifier = {
 			planet_housing_add = 10
-		}
-	}
-	
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = { or = { has_valid_civic = civic_labour_unions has_valid_civic = civic_shared_burden } } 
-		}
-		modifier = {
-			planet_housing_add = 2
 		}
 	}
 
@@ -754,6 +742,21 @@ district_rw_farming = {
 		}
 	}
 
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				OR = {
+					has_valid_civic = civic_labour_unions
+					has_valid_civic = civic_shared_burden
+				}
+			}
+		}
+		modifier = {
+			planet_housing_add = 2
+		}
+	}
+
 	triggered_desc = {
 		trigger = {
 			exists = owner
@@ -777,13 +780,6 @@ district_rw_farming = {
 			owner = { is_fallen_empire_spiritualist = yes }
 		}
 		text = job_fe_acolyte_farm_effect_desc
-	}
-
-	ai_resource_production = {
-		food = 10
-		trigger = {
-			always = yes
-		}
 	}
 }
 
@@ -820,16 +816,6 @@ district_rw_industrial = {
 
 	triggered_planet_modifier = {
 		planet_housing_add = 10
-	}
-	
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = { or = { has_valid_civic = civic_shared_burden } } 
-		}
-		modifier = {
-			planet_housing_add = 2
-		}
 	}
 
 	triggered_planet_modifier = {
@@ -951,8 +937,6 @@ district_rw_industrial = {
 			job_catalytic_drone_add = -1
 		}
 	}
-
-
 
 # Designation Job Changes
 	triggered_planet_modifier = {
@@ -1105,7 +1089,17 @@ district_rw_industrial = {
 		}
 	}
 
-
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_valid_civic = civic_shared_burden
+			}
+		}
+		modifier = {
+			planet_housing_add = 2
+		}
+	}
 
 	triggered_desc = {
 		trigger = {

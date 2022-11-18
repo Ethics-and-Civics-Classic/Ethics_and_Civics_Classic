@@ -27,11 +27,10 @@ ethic_fanatic_authoritarian = {
 	}
 
 	tags = {
-		MORE_ENFORCER_JOBS
-		ETHIC_ONLY_AUTOCRACY
+		ETHIC_ALLOWS_STRATIFIED_SOCIETY
 		ETHIC_ALLOWS_SLAVERY
-		ALLOWS_STRATIFIED
-
+		ETHIC_ONLY_AUTOCRACY
+		MORE_ENFORCER_JOBS
 	}
 
 	random_weight = {
@@ -53,10 +52,10 @@ ethic_authoritarian = {
 	}
 
 	tags = {
-		ENFORCER_JOBS
-		ETHIC_NEVER_DEMOCRACY
-		ETHIC_ALLOWS_SLAVERY
 		ALLOWS_STRATIFIED
+		ETHIC_ALLOWS_SLAVERY
+		ETHIC_NEVER_DEMOCRACY
+		ENFORCER_JOBS
 	}
 
 	random_weight = {
@@ -93,6 +92,46 @@ ethic_authoritarian = {
 	}
 
 	pop_attraction_tag = {
+		desc = POP_ATTRACTION_SLAVERY_POS
+		trigger = {
+			any_enslaved_species = {
+				is_same_species = root
+				is_robotic = no
+			}
+		}
+	}
+
+	pop_attraction_tag = {
+		desc = POP_ATTRACTION_XENO_SLAVES_POS
+		trigger = {
+			any_enslaved_species = {
+				not = { is_same_species = root }
+				is_robotic = no
+			}
+			NOT = {
+				any_enslaved_species = {
+					is_same_species = root
+					is_robotic = no
+				}
+			}
+		}
+	}
+
+	pop_attraction_tag = {
+		desc = POP_ATTRACTION_CONSUMER_GOODS_NEG
+		trigger = {
+			any_owned_planet = {
+				any_owned_pop = {
+					OR = {
+						has_living_standard = { type = living_standard_utopian }
+						has_living_standard = { type = living_standard_good }
+						has_living_standard = { type = living_standard_shared_burden }
+					}
+				}
+			}
+		}
+	}
+	pop_attraction_tag = {
 		desc = POP_ATTRACTION_AUTOCRATIC_GOV_POS
 		trigger = {
 			has_election_type = none
@@ -110,33 +149,6 @@ ethic_authoritarian = {
 		trigger = {
 			any_owned_species = {
 				has_trait = "trait_decadent"
-			}
-		}
-	}
-
-	pop_attraction_tag = {
-		desc = POP_ATTRACTION_CONFORMIST_POS
-		trigger = {
-			any_owned_species = {
-				has_trait = "trait_conformists"
-			}
-		}
-	}
-
-	pop_attraction_tag = {
-		desc = POP_ATTRACTION_DOCILE_POS
-		trigger = {
-			any_owned_species = {
-				has_trait = "trait_docile"
-			}
-		}
-	}
-
-	pop_attraction_tag = {
-		desc = POP_ATTRACTION_UNRULY_NEG
-		trigger = {
-			any_owned_species = {
-				has_trait = "trait_unruly"
 			}
 		}
 	}
@@ -240,18 +252,6 @@ ethic_authoritarian = {
 			has_trait = "trait_decadent"
 		}
 		modifier = {
-			factor = 1.4
-			has_trait = "trait_conformists"
-		}
-		modifier = {
-			factor = 1.5
-			has_trait = "trait_docile"
-		}
-		modifier = {
-			factor = 0.5
-			has_trait = "trait_unruly"
-		}
-		modifier = {
 			factor = 1.5
 			is_enslaved = no
 			from = {
@@ -277,6 +277,14 @@ ethic_authoritarian = {
 				}
 			}
 		}
+		modifier = {
+			factor = 0.75
+			OR = {
+				has_living_standard = { type = living_standard_utopian }
+				has_living_standard = { type = living_standard_good }
+				has_living_standard = { type = living_standard_shared_burden }
+			}
+		}
 	}
 }
 
@@ -293,11 +301,12 @@ ethic_fanatic_egalitarian = {
 
 	tags = {
 		ETHIC_ONLY_DEMOCRACY
+		ETHIC_ALLOWS_UTOPIA
 	}
 
 	country_modifier = {
 		pop_factions_produces_mult = 0.5
-		EMPIRE_SIZE_SYSTEMS_MULT = -0.5
+		empire_size_systems_mult = -0.5
 		country_leader_pool_size = 2
 		pop_ethics_shift_speed_mult = 0.2
 		planet_stability_add = -5
@@ -319,11 +328,12 @@ ethic_egalitarian = {
 
 	tags = {
 		ETHIC_NEVER_AUTOCRACY
+		ETHIC_ALLOWS_UTOPIA
 	}
 
 	country_modifier = {
 		pop_factions_produces_mult = 0.25
-		EMPIRE_SIZE_SYSTEMS_MULT = -0.25
+		empire_size_systems_mult = -0.25
 		country_leader_pool_size = 1
 		pop_ethics_shift_speed_mult = 0.1
 	}
@@ -361,7 +371,20 @@ ethic_egalitarian = {
 		}
 	}
 
-
+	pop_attraction_tag = {
+		desc = POP_ATTRACTION_CONSUMER_GOODS_POS
+		trigger = {
+			any_owned_planet = {
+				any_owned_pop = {
+					OR = {
+						has_living_standard = { type = living_standard_utopian }
+						has_living_standard = { type = living_standard_good }
+						has_living_standard = { type = living_standard_shared_burden }
+					}
+				}
+			}
+		}
+	}
 
 	pop_attraction_tag = {
 		desc = POP_ATTRACTION_EGALITARIAN_DIPLOMACY_POS
@@ -384,7 +407,14 @@ ethic_egalitarian = {
 		}
 	}
 
-
+	pop_attraction_tag = {
+		desc = POP_ATTRACTION_ENSLAVED_POS
+		trigger = {
+			any_enslaved_species = {
+				is_robotic = no
+			}
+		}
+	}
 
 	pop_attraction_tag = {
 		desc = POP_ATTRACTION_DEMOCRATIC_GOV_POS
@@ -405,33 +435,6 @@ ethic_egalitarian = {
 		trigger = {
 			any_owned_species = {
 				has_trait = "trait_decadent"
-			}
-		}
-	}
-
-	pop_attraction_tag = {
-		desc = POP_ATTRACTION_DOCILE_NEG
-		trigger = {
-			any_owned_species = {
-				has_trait = "trait_docile"
-			}
-		}
-	}
-
-	pop_attraction_tag = {
-		desc = POP_ATTRACTION_UNRULY_POS
-		trigger = {
-			any_owned_species = {
-				has_trait = "trait_unruly"
-			}
-		}
-	}
-
-	pop_attraction_tag = {
-		desc = POP_ATTRACTION_DEVIANTS_POS
-		trigger = {
-			any_owned_species = {
-				has_trait = "trait_deviants"
 			}
 		}
 	}
@@ -555,18 +558,6 @@ ethic_egalitarian = {
 			has_trait = "trait_decadent"
 		}
 		modifier = {
-			factor = 0.5
-			has_trait = "trait_docile"
-		}
-		modifier = {
-			factor = 1.5
-			has_trait = "trait_deviants"
-		}
-		modifier = {
-			factor = 1.5
-			has_trait = "trait_unruly"
-		}
-		modifier = {
 			factor = 1.25
 			NOT = { has_citizenship_type = { type = citizenship_full } }
 		}
@@ -574,6 +565,14 @@ ethic_egalitarian = {
 			factor = 1.5
 			is_enslaved = yes
 			is_robot_pop = no
+		}
+		modifier = {
+			factor = 1.25
+			OR = {
+				has_living_standard = { type = living_standard_utopian }
+				has_living_standard = { type = living_standard_good }
+				has_living_standard = { type = living_standard_shared_burden }
+			}
 		}
 	}
 }
@@ -782,6 +781,7 @@ ethic_xenophobe = {
 			any_relation = {
 				is_subject = no
 				has_migration_access = root
+				NOT = { is_same_species = root }
 			}
 		}
 	}
@@ -853,6 +853,7 @@ ethic_xenophobe = {
 			any_relation = {
 				is_subject = no
 				has_migration_access = root
+				NOT = { is_same_species = root }
 			}
 		}
 		modifier = {
@@ -1145,6 +1146,14 @@ ethic_xenophile = {
 		}
 	}
 
+	pop_attraction_tag = {
+		desc = POP_ATTRACTION_NECROPHAGE_NEG
+		trigger = {
+			has_origin = origin_necrophage
+			has_trait = trait_necrophage
+		}
+	}
+
 	country_attraction = {
 		base = 1
 		modifier = {
@@ -1307,6 +1316,10 @@ ethic_xenophile = {
 				}
 			}
 		}
+		modifier = {
+			factor = 0.5
+			has_trait = trait_necrophage
+		}
 	}
 }
 
@@ -1459,8 +1472,10 @@ ethic_militarist = {
 	pop_attraction_tag = {
 		desc = POP_ATTRACTION_WEAK_NEG
 		trigger = {
-			any_owned_species = {
-				has_trait = "trait_weak"
+			any_owned_planet = {
+				any_owned_species = {
+					has_trait = "trait_weak"
+				}
 			}
 		}
 	}
@@ -1601,7 +1616,7 @@ ethic_militarist = {
 			}
 		}
 		modifier = {
-			factor = 1.25
+			factor = 2 #If the empire is losing planets, militarism should increase
 			any_relation = {
 				any_owned_planet = {
 					is_original_owner = root
@@ -1691,7 +1706,6 @@ ethic_fanatic_pacifist = {
 	}
 
 	country_modifier = {
-
 		planet_stability_add = 10
 		empire_size_pops_mult = -0.3
 		country_border_friction_mult = -0.4
@@ -1772,6 +1786,17 @@ ethic_pacifist = {
 		desc = POP_ATTRACTION_INWARDS_PERFECTION_POS
 		trigger = {
 			has_valid_civic = civic_inwards_perfection
+		}
+	}
+
+	pop_attraction_tag = {
+		desc = POP_ATTRACTION_WEAK_POS
+		trigger = {
+			any_owned_planet = {
+				any_owned_species = {
+					has_trait = "trait_weak"
+				}
+			}
 		}
 	}
 
@@ -1924,6 +1949,10 @@ ethic_pacifist = {
 			has_trait = trait_hive_mind
 		}
 		modifier = {
+			factor = 1.1
+			has_trait = "trait_weak"
+		}
+		modifier = {
 			factor = 0.5
 			OR = {
 				has_citizenship_rights = yes
@@ -2028,9 +2057,10 @@ ethic_spiritualist = {
 		desc = POP_ATTRACTION_PSIONICS_POS
 		trigger = {
 			OR = {
-				has_technology = "tech_telepathy"
 				has_technology = "tech_psionic_theory"
+				has_ascension_perk = ap_mind_over_matter
 				has_origin = origin_shroudwalker_apprentice
+				has_ascension_perk = ap_transcendence
 			}
 		}
 	}
@@ -2156,7 +2186,7 @@ ethic_spiritualist = {
 			has_ethic = ethic_fanatic_spiritualist
 		}
 		modifier = {
-			factor = 1.25
+			factor = 1.1
 			is_country_type = default
 			has_technology = "tech_psionic_theory"
 		}
@@ -2221,6 +2251,14 @@ ethic_spiritualist = {
 			has_trait = trait_hive_mind
 		}
 		modifier = {
+			factor = 1.1
+			has_trait = trait_latent_psionic
+		}
+		modifier = {
+			factor = 1.2
+			has_trait = trait_psionic
+		}
+		modifier = {
 			factor = 0.25
 			is_robot_pop = yes
 		}
@@ -2272,9 +2310,9 @@ ethic_materialist = {
 	}
 
 	country_modifier = {
+		planet_pops_robotics_upkeep_mult = -0.1
 		country_physics_tech_research_speed	= 0.07
 		country_engineering_tech_research_speed	= 0.07
-		planet_pops_robotics_upkeep_mult = -0.1
 	}
 
 	random_weight = {
