@@ -27,7 +27,6 @@ civic_franchising = {
 	random_weight = { base = 5 }
 	description = "civic_tooltip_franchising_effects"
 	modifier = {
-		country_subject_power_penalty_mult = -0.33
 		empire_size_branch_office_mult = -0.25
 	}
 }
@@ -57,9 +56,8 @@ civic_media_conglomerate = {
 	}
 	random_weight = { base = 5 }
 	modifier = {
-		country_war_exhaustion_mult = -0.1
+		country_war_exhaustion_mult = -0.05
 		pop_citizen_happiness = 0.05
-		pop_government_ethic_attraction = 0.1
 	}
 }
 
@@ -82,7 +80,7 @@ civic_naval_contractors = {
 		civics = { NOT = { value = civic_citizen_service } }
 	}
 	modifier = {
-		country_naval_cap_mult = 0.25
+		country_naval_cap_mult = 0.15
 	}
 	swap_type = {
 		trigger = {
@@ -104,8 +102,8 @@ civic_free_traders = {
 	}
 	random_weight = { base = 5 }
 	modifier = {
-		trade_value_mult = 0.15
-		branch_office_value_mult = 0.15
+		trade_value_mult = 0.10
+		branch_office_value_mult = 0.10
 	}
 }
 
@@ -158,12 +156,11 @@ civic_ruthless_competition = {
 	}
 	possible = {
 		civics = { NOT = { value = civic_meritocracy } }
-		ethics = { value = ethic_fanatic_capitalism }
 	}
 	random_weight = { base = 5 }
 	modifier = {
 		leader_skill_levels = 1
-		species_leader_exp_gain = 0.25
+		species_leader_exp_gain = 0.1
 		intel_decryption_add = 1
 	}
 }
@@ -201,7 +198,7 @@ civic_private_military_companies = {
 				value = ethic_fanatic_militarist
 			}
 		}
-		civics = { NOT = { value = civic_private_militaries } }
+		civics = { NOT = { value = civic_warrior_culture } }
 	}
 	modifier = {
 		army_starting_experience_add = 100
@@ -229,13 +226,23 @@ civic_indentured_assets = {
 	random_weight = { base = 5 }
 	possible = {
 		ethics = {
-			value = ethic_fanatic_capitalism				
+			OR = {
+				text = civic_tooltip_authoritarian
+				value = ethic_authoritarian
+				value = ethic_fanatic_authoritarian
+			}
+		}
+		civics = {
+			NOR = {
+				value = civic_corporate_hedonism
+				value = civic_slaver_guilds
+				value = civic_pleasure_seekers
+			}
 		}
 	}
 	modifier = {
 		planet_jobs_slave_produces_mult = 0.10
 		country_pop_enslaved_mult = 0.35
-		slave_market_cost_mult = -0.25
 	}
 }
 
@@ -251,8 +258,8 @@ civic_brand_loyalty = {
 	}
 	random_weight = { base = 5 }
 	modifier = {
-		country_unity_produces_mult = 0.2
-		intel_encryption_add = 1
+		country_unity_produces_mult = 0.15
+		country_edict_fund_add = 25
 	}
 }
 
@@ -290,7 +297,7 @@ civic_death_cult_corporate = {
 			NOR = {
 				value = civic_fanatic_purifiers
 				value = civic_inwards_perfection
-				value = civic_ancient_preservers
+				value = civic_death_cult
 			}
 		}
 		ethics = {
@@ -324,12 +331,6 @@ civic_corporate_catalytic_processing = {
 				value = civic_catalytic_processing
 			}
 		}
-		ethics = {
-			NOR = {
-				value = ethic_industrial
-				value = ethic_fanatic_industrial
-			}
-		}
 	}
 	random_weight = { base = 5 }
 }
@@ -346,11 +347,11 @@ civic_corporate_hedonism = {
 		}
 	}
 	possible = {
-		civics = { NOT = { value = civic_indentured_assets } } # would enslave hedonists
-		ethics = {
+		civics = {
 			NOR = {
-				value = ethic_green
-				value = ethic_fanatic_green
+				value = civic_pleasure_seekers
+				value = civic_indentured_assets
+				value = civic_slaver_guilds
 			}
 		}
 	}
@@ -395,12 +396,6 @@ civic_corporate_crafters = {
 		}
 	}
 	possible = {
-		ethics = {
-			OR = {
-				value = ethic_industrial
-				value = ethic_fanatic_industrial
-			}
-		}
 		civics = { NOT = { value = civic_crafters }}
 	}
 	random_weight = {
@@ -454,11 +449,6 @@ civic_corporate_relentless_industrialists = {
 				value = ethic_materialist
 				value = ethic_fanatic_materialist
 			}
-			NOR = {
-				text = civic_tooltip_green
-				value = ethic_green
-				value = ethic_fanatic_green
-			}
 		}
 		origin = { NOT = { value = origin_life_seeded } }
 		civics = {
@@ -468,11 +458,6 @@ civic_corporate_relentless_industrialists = {
 				value = civic_idyllic_bloom
 				value = civic_memorialist
 				value = civic_relentless_industrialists
-				value = civic_naturalism
-				value = civic_keepers_harmony
-				value = civic_environmentalist
-				value = civic_natural_capitalism
-				value = civic_terraforming
 			}
 		}
 	}
@@ -491,13 +476,6 @@ civic_corporate_toxic_baths = {
 	possible = {
 		origin = { NOT = { value = origin_life_seeded } }
 		civics = { NOT = { value = civic_toxic_baths } }
-		ethics = {
-			NOR = {
-				text = civic_tooltip_green
-				value = ethic_green
-				value = ethic_fanatic_green
-			}
-		}
 	}
 }
 
@@ -511,13 +489,29 @@ civic_corporate_scavengers = {
 			civics = { value = civic_galactic_sovereign_megacorp }
 		}
 	}
+}
+
+civic_corporate_ascensionists = {
+	playable = { host_has_dlc = "Utopia" }
+	ai_playable = { host_has_dlc = "Utopia" }
+	potential = {
+		OR = {
+			authority = { value = auth_corporate }
+			civics = { value = civic_galactic_sovereign_megacorp }
+		}
+	}
 	possible = {
 		ethics = {
-			NOR = {
-				text = civic_tooltip_green
-				value = ethic_green
-				value = ethic_fanatic_green
+			OR = {
+				text = civic_tooltip_spiritualist
+				value = ethic_spiritualist
+				value = ethic_fanatic_spiritualist
 			}
 		}
+	}
+	modifier = {
+		planetary_ascension_effect_mult = 0.25
+		planetary_ascension_cost_mult = -0.1
+		tradition_cost_empire_size_mult = -0.25
 	}
 }

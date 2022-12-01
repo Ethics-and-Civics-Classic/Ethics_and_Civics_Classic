@@ -27,6 +27,7 @@
 @xp_to_level_5 = 9600
 
 trade_federation = {
+	base_intel = 50
 	icon = "GFX_trade_federation"
 	ownership_limits = default
 	potential = {
@@ -34,12 +35,28 @@ trade_federation = {
 	}
 	allow = {
 		federation_check_for_subject_trigger = yes
-		custom_tooltip = {
-			fail_text = requires_megacorp_or_merchant
+		if = {
+			limit = { host_has_dlc = "Megacorp" }
 			OR = {
+				#is_megacorp = yes
+				#has_valid_civic = civic_merchant_guilds
 				is_capitalism = yes
+				custom_tooltip = {
+					fail_text = mercantile_traditions_completed
+					has_active_tradition = tr_mercantile_federations_finish
+				}
 			}
 		}
+		else = {
+			OR = {
+				has_valid_civic = civic_corporate_dominion
+				custom_tooltip = {
+					fail_text = mercantile_traditions_completed
+					has_active_tradition = tr_mercantile_federations_finish
+				}
+			}
+		}
+
 		custom_tooltip = {
 			fail_text = requires_actor_not_barbaric_despoilers
 			NOT = { has_valid_civic = civic_barbaric_despoilers }

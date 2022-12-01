@@ -41,7 +41,6 @@ technologist = {
 			is_robot_pop = yes
 		}
 		is_shackled_robot = no
-		has_culture_shock = no
 		can_think = yes
 		NOR = {
 			has_ethic = ethic_spiritualist
@@ -272,13 +271,7 @@ technologist = {
 							has_federation_perk = research_federation_passive
 						}
 					}
-					count_playable_country = {
-						count > 2
-						limit = {
-							exists = this
-							root.owner = { has_research_agreement = prev }
-						}
-					}
+					num_research_agreements > 2
 				}
 			}
 		}
@@ -356,6 +349,47 @@ technologist = {
 				OR = {
 					has_modifier = fallen_empire_gift_databanks
 					has_modifier = curator_insight
+				}
+			}
+		}
+	}
+
+	demand = {
+		title = TECHNOLOGIST_FEDERATION
+		unfulfilled_title = TECHNOLOGIST_FEDERATION_NOT_RESEARCH
+		desc = TECHNOLOGIST_FEDERATION_DESC
+
+		fulfilled_effect = 5
+		unfulfilled_effect = -0.001
+
+		potential = {
+			exists = owner.federation
+			has_federations_dlc = yes
+		}
+
+		trigger = {
+			owner.federation = { has_federation_type = research_federation }
+		}
+	}
+
+	demand = {
+		title = TECHNOLOGIST_FEDERATION_ANTI
+		unfulfilled_title = TECHNOLOGIST_FEDERATION_ANTI_NOT_SPIRITUALIST
+		desc = TECHNOLOGIST_FEDERATION_ANTI_DESC
+
+		unfulfilled_effect = -10
+		fulfilled_effect = 0.001
+
+		potential = {
+			exists = owner.federation
+			owner.federation = { has_federation_type = spiritualist_federation }
+		}
+
+		trigger = {
+			OR = {
+				NOT = { exists = owner.federation }
+				owner.federation = {
+					NOT = { has_federation_type = spiritualist_federation }
 				}
 			}
 		}

@@ -1,78 +1,185 @@
-
-tech_repeatable_improved_trade_value = {
+#00_soc_tech.txt
+tech_interplanetary_commerce = {
+	cost = 0
 	area = society
-	cost = @repeatableTechBaseCost
-	cost_per_level = @repeatableTechLevelCost
-	tier = @repeatableTechTier
+	start_tech = yes
 	category = { good_trading }
-	levels = -1
-	prerequisites = { "tech_interstellar_economics" }
-	weight = @repeatableTechWeight
+	tier = 0
 
-	weight_modifier = {
-		factor = @repatableTechFactor
+	potential = {
+		is_gestalt = no
 	}
 
-	ai_weight = {
-		factor = 1.0
-	}
-
-	weight_groups = {
-		repeatable
-	}
-	mod_weight_if_group_picked = {
-		repeatable = 0.01
-	}
-
-	modifier = {
-		trade_value_mult = 0.05
-	}
+	## unlock commercial zone building
 }
 
-#Atmospheric Purifying
-tech_atm_purifying = {
-	area = society
-	cost = @tier4cost1
-	tier = 4
-	category = { new_worlds }
-	prerequisites = { "tech_climate_restoration" }
-	weight = @tier4weight1
-	is_rare = yes
 
-	prereqfor_desc = {
-		diplo_action = {
-			title = "TECH_UNLOCK_TERRAFORMING_PURIFICATION_TITLE"
-			desc = "TECH_UNLOCK_TERRAFORMING_PURIFICATION_DESC"
-		}
+# Space Trading
+tech_space_trading = {
+	cost = @tier1cost3
+	area = society
+	tier = 1
+	category = { good_trading }
+	prerequisites = { "tech_interplanetary_commerce" }
+	weight = @tier1weight3
+
+	potential = {
+		is_gestalt = no
 	}
 
 	weight_modifier = {
-		modifier = {
-			factor = 0
-			NOT = {
-				has_valid_civic = civic_terraforming
-			}
-		}
-
-		modifier = {
-			factor = 1.5
-			has_valid_civic = civic_terraforming
-		}
-
-		modifier = {
-			factor = 1.5
-			has_ascension_perk = ap_world_shaper
-
-		}
-	}
-
-	ai_weight = {
-	    factor = 8 # rare tech
 		modifier = {
 			factor = 1.25
 			research_leader = {
 				area = society
-				has_trait = "leader_trait_expertise_new_worlds"
+				has_trait = "leader_trait_expertise_good_trading"
+			}
+		}
+		modifier = {
+			factor = 1.25
+			has_tradition = tr_prosperity_adopt
+		}
+
+		modifier = {
+			factor = 2
+			has_policy_flag = economic_stance_market
+		}
+	}
+
+	ai_weight = {
+		factor = 2
+		modifier = {
+			factor = 1.25
+			research_leader = {
+				area = society
+				has_trait = "leader_trait_expertise_good_trading"
+			}
+		}
+	}
+}
+
+# Interstellar Economics
+tech_interstellar_economics = {
+	cost = @tier3cost1
+	area = society
+	tier = 3
+	category = { good_trading }
+	prerequisites = { "tech_space_trading" }
+	weight = @tier3weight1
+
+	potential = {
+		is_gestalt = no
+	}
+
+	weight_modifier = {
+		factor = 2
+
+		modifier = {
+			factor = 0
+			NOR = {
+				has_technology = tech_mine_rare_crystals
+				has_technology = tech_rare_crystals
+				has_country_flag = has_market_access
+			}
+		}
+		modifier = {
+			factor = 1.25
+			research_leader = {
+				area = society
+				has_trait = "leader_trait_expertise_good_trading"
+			}
+		}
+		modifier = {
+			factor = 1.25
+			has_tradition = tr_prosperity_adopt
+		}
+	}
+
+	ai_weight = {
+		factor = 2
+		modifier = {
+			factor = 1.25
+			research_leader = {
+				area = society
+				has_trait = "leader_trait_expertise_good_trading"
+			}
+		}
+	}
+}
+
+# Galactic Markets
+tech_galactic_markets = {
+	cost = @tier4cost1
+	area = society
+	tier = 4
+	category = { good_trading }
+	prerequisites = { "tech_colonial_centralization" "tech_interstellar_economics" }
+	weight = @tier4weight1
+	is_rare = yes
+
+	# unlocks Galactic Stock Exchange empire wonder
+
+	potential = {
+		is_gestalt = no
+		NOT = { has_valid_civic = civic_distributism }
+	}
+
+	weight_modifier = {
+		factor = 0.5
+		modifier = {
+			factor = 0.25
+			NOR = {
+				research_leader = {
+					area = society
+					has_trait = "leader_trait_expertise_good_trading"
+				}
+				research_leader = {
+					area = society
+					has_trait = "leader_trait_curator"
+				}
+			}
+		}
+		modifier = {
+			factor = 2
+			has_policy_flag = economic_stance_market
+		}
+		modifier = {
+			factor = @ap_technological_ascendancy_rare_tech
+			has_ascension_perk = ap_technological_ascendancy
+		}
+		modifier = {
+			factor = @federation_perk_factor
+			has_federation = yes
+			federation = {
+				has_federation_perk = rare_tech_boost
+				any_member = { has_technology = tech_galactic_markets }
+			}
+		}
+		modifier = {
+			factor = 1.25
+			research_leader = {
+				area = society
+				has_trait = "leader_trait_expertise_good_trading"
+			}
+		}
+		modifier = {
+			factor = 0
+			OR = {
+				has_ethic = ethic_fanatic_socialism
+			}
+		}
+		modifier = {
+			factor = 0
+			num_communications < 2
+		}
+	}
+
+	ai_weight = {
+		modifier = {
+			factor = 1.25
+			research_leader = {
+				area = society
+				has_trait = "leader_trait_expertise_good_trading"
 			}
 		}
 	}
@@ -149,7 +256,6 @@ tech_tomb_world_adaption = {
 		}
 	}
 }
-
 
 # ##################
 # Psionics
@@ -275,7 +381,6 @@ tech_psionic_theory = {
 	}
 }
 
-
 #Selected Lineages
 tech_selected_lineages = {
 	cost = @tier3cost2
@@ -360,7 +465,6 @@ tech_selected_lineages = {
 	}
 }
 
-
 #Capacity Boosters
 tech_capacity_boosters = {
 	cost = @tier4cost3
@@ -438,40 +542,6 @@ tech_capacity_boosters = {
 				has_trait = "leader_trait_expertise_biology"
 			}
 		}
-	}
-}
-
-tech_repeatable_improved_core_system_cap = {
-	area = society
-	cost = @repeatableTechBaseCost
-	cost_per_level = @repeatableTechLevelCost
-	tier = @repeatableTechTier
-	category = { statecraft }
-	levels = -1
-	prerequisites = { "tech_galactic_bureaucracy" }
-	weight = @repeatableTechWeight
-
-	weight_modifier = {
-		factor = @repatableTechFactor
-	}
-
-	ai_weight = {
-		factor = 1.0
-	}
-
-	weight_groups = {
-		repeatable
-	}
-	mod_weight_if_group_picked = {
-		repeatable = 0.01
-	}
-
-	modifier = {
-		empire_size_branch_office_mult = -0.02
-		empire_size_districts_mult = -0.02
-		empire_size_systems_mult = -0.02
-		empire_size_colonies_mult = -0.02
-		empire_size_pops_mult = -0.02
 	}
 }
 
@@ -1283,193 +1353,6 @@ tech_deep_sinkhole = {
 	}
 }
 
-tech_interplanetary_commerce = {
-	cost = 0
-	area = society
-	start_tech = yes
-	category = { good_trading }
-	tier = 0
-
-	potential = {
-		is_gestalt = no
-	}
-
-	## unlock commercial zone building
-}
-
-
-# Space Trading
-tech_space_trading = {
-	cost = @tier1cost3
-	area = society
-	tier = 1
-	category = { good_trading }
-	prerequisites = { "tech_interplanetary_commerce" }
-	weight = @tier1weight3
-
-	potential = {
-		is_gestalt = no
-	}
-
-	weight_modifier = {
-		modifier = {
-			factor = 1.25
-			research_leader = {
-				area = society
-				has_trait = "leader_trait_expertise_good_trading"
-			}
-		}
-		modifier = {
-			factor = 1.25
-			has_tradition = tr_prosperity_adopt
-		}
-
-		modifier = {
-			factor = 2
-			has_policy_flag = economic_stance_market
-		}
-	}
-
-	ai_weight = {
-		factor = 2
-		modifier = {
-			factor = 1.25
-			research_leader = {
-				area = society
-				has_trait = "leader_trait_expertise_good_trading"
-			}
-		}
-	}
-}
-
-# Interstellar Economics
-tech_interstellar_economics = {
-	cost = @tier3cost1
-	area = society
-	tier = 3
-	category = { good_trading }
-	prerequisites = { "tech_space_trading" }
-	weight = @tier3weight1
-
-	potential = {
-		is_gestalt = no
-	}
-
-	weight_modifier = {
-		factor = 2
-
-		modifier = {
-			factor = 0
-			NOR = {
-				has_technology = tech_mine_rare_crystals
-				has_technology = tech_rare_crystals
-				has_country_flag = has_market_access
-			}
-		}
-		modifier = {
-			factor = 1.25
-			research_leader = {
-				area = society
-				has_trait = "leader_trait_expertise_good_trading"
-			}
-		}
-		modifier = {
-			factor = 1.25
-			has_tradition = tr_prosperity_adopt
-		}
-	}
-
-	ai_weight = {
-		factor = 2
-		modifier = {
-			factor = 1.25
-			research_leader = {
-				area = society
-				has_trait = "leader_trait_expertise_good_trading"
-			}
-		}
-	}
-}
-
-# Galactic Markets
-tech_galactic_markets = {
-	cost = @tier4cost1
-	area = society
-	tier = 4
-	category = { good_trading }
-	prerequisites = { "tech_colonial_centralization" "tech_interstellar_economics" }
-	weight = @tier4weight1
-	is_rare = yes
-
-	# unlocks Galactic Stock Exchange empire wonder
-
-	potential = {
-		is_gestalt = no
-		NOT = { has_valid_civic = civic_distributism }
-	}
-
-	weight_modifier = {
-		factor = 0.5
-		modifier = {
-			factor = 0.25
-			NOR = {
-				research_leader = {
-					area = society
-					has_trait = "leader_trait_expertise_good_trading"
-				}
-				research_leader = {
-					area = society
-					has_trait = "leader_trait_curator"
-				}
-			}
-		}
-		modifier = {
-			factor = 2
-			has_policy_flag = economic_stance_market
-		}
-		modifier = {
-			factor = @ap_technological_ascendancy_rare_tech
-			has_ascension_perk = ap_technological_ascendancy
-		}
-		modifier = {
-			factor = @federation_perk_factor
-			has_federation = yes
-			federation = {
-				has_federation_perk = rare_tech_boost
-				any_member = { has_technology = tech_galactic_markets }
-			}
-		}
-		modifier = {
-			factor = 1.25
-			research_leader = {
-				area = society
-				has_trait = "leader_trait_expertise_good_trading"
-			}
-		}
-		modifier = {
-			factor = 0
-			OR = {
-				has_ethic = ethic_fanatic_socialism
-			}
-		}
-		modifier = {
-			factor = 0
-			num_communications < 2
-		}
-	}
-
-	ai_weight = {
-		modifier = {
-			factor = 1.25
-			research_leader = {
-				area = society
-				has_trait = "leader_trait_expertise_good_trading"
-			}
-		}
-	}
-}
-
-
 #Global Manufacturing
 tech_global_production_strategy = {
 	cost = @tier3cost1
@@ -1509,7 +1392,42 @@ tech_global_production_strategy = {
 	}
 }
 
+#00_soc_tech_repeatable.txt
+tech_repeatable_improved_core_system_cap = {
+	area = society
+	cost = @repeatableTechBaseCost
+	cost_per_level = @repeatableTechLevelCost
+	tier = @repeatableTechTier
+	category = { statecraft }
+	levels = -1
+	prerequisites = { "tech_galactic_bureaucracy" }
+	weight = @repeatableTechWeight
 
+	weight_modifier = {
+		factor = @repatableTechFactor
+	}
+
+	ai_weight = {
+		factor = 1.0
+	}
+
+	weight_groups = {
+		repeatable
+	}
+	mod_weight_if_group_picked = {
+		repeatable = 0.01
+	}
+
+	modifier = {
+		empire_size_branch_office_mult = -0.02
+		empire_size_districts_mult = -0.02
+		empire_size_systems_mult = -0.02
+		empire_size_colonies_mult = -0.02
+		empire_size_pops_mult = -0.02
+	}
+}
+
+#E&CC Exclusive Techs
 # Free Market
 tech_free_market = {
 	cost = @tier2cost2
@@ -1909,6 +1827,85 @@ tech_federal_state = {
 			research_leader = {
 				area = society
 				has_trait = "leader_trait_expertise_statecraft"
+			}
+		}
+	}
+}
+
+tech_repeatable_improved_trade_value = {
+	area = society
+	cost = @repeatableTechBaseCost
+	cost_per_level = @repeatableTechLevelCost
+	tier = @repeatableTechTier
+	category = { good_trading }
+	levels = -1
+	prerequisites = { "tech_interstellar_economics" }
+	weight = @repeatableTechWeight
+
+	weight_modifier = {
+		factor = @repatableTechFactor
+	}
+
+	ai_weight = {
+		factor = 1.0
+	}
+
+	weight_groups = {
+		repeatable
+	}
+	mod_weight_if_group_picked = {
+		repeatable = 0.01
+	}
+
+	modifier = {
+		trade_value_mult = 0.05
+	}
+}
+
+#Atmospheric Purifying
+tech_atm_purifying = {
+	area = society
+	cost = @tier4cost1
+	tier = 4
+	category = { new_worlds }
+	prerequisites = { "tech_climate_restoration" }
+	weight = @tier4weight1
+	is_rare = yes
+
+	prereqfor_desc = {
+		diplo_action = {
+			title = "TECH_UNLOCK_TERRAFORMING_PURIFICATION_TITLE"
+			desc = "TECH_UNLOCK_TERRAFORMING_PURIFICATION_DESC"
+		}
+	}
+
+	weight_modifier = {
+		modifier = {
+			factor = 0
+			NOT = {
+				has_valid_civic = civic_terraforming
+			}
+		}
+
+		modifier = {
+			factor = 1.5
+			has_valid_civic = civic_terraforming
+		}
+
+		modifier = {
+			factor = 1.5
+			has_ascension_perk = ap_world_shaper
+
+		}
+	}
+
+	ai_weight = {
+	    factor = 8 # rare tech
+		modifier = {
+			factor = 1.25
+			research_leader = {
+				area = society
+				has_trait = "leader_trait_expertise_new_worlds"
 			}
 		}
 	}
