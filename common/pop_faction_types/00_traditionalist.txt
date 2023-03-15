@@ -97,26 +97,16 @@ traditionalist = {
 		}
 	}
 	
-	demand = {
-		title = "FACTION_OUTRAGED_GC"
-		unfulfilled_title = "FACTION_OUTRAGED_GC"
-		desc = "FACTION_OUTRAGED_GC_DESC"
+	# DEMAND: Faction Outraged (by a GalCom Resolution)
+	inline_script = {
+		script = pop_faction_types/demand_faction_outraged
+		FLAG = galcom_resolution_passed_anti_traditionalist
+	}
 
-		fulfilled_effect = -20
-		unfulfilled_effect = -0.001
-
-		potential = {
-			exists = owner
-			owner = {
-				has_country_flag = faction_spiritualist_outraged_gc
-			}
-		}
-
-		trigger = {
-			owner = {
-				has_country_flag = faction_spiritualist_outraged_gc
-			}
-		}
+	# DEMAND: Faction Pleased (by a GalCom Resolution)
+	inline_script = {
+		script = pop_faction_types/demand_faction_pleased
+		FLAG = galcom_resolution_passed_pro_traditionalist
 	}
 
 	demand = { # "TRADITIONALIST_NO_ROBOTS"
@@ -329,7 +319,7 @@ traditionalist = {
 		unfulfilled_title = "TRADITIONALIST_FLESH_IS_WEAK"
 		desc = "TRADITIONALIST_FLESH_IS_STRONG_DESC"
 
-		unfulfilled_effect = -30
+		unfulfilled_effect = -15
 		fulfilled_effect = 0.001
 
 		potential = {
@@ -342,8 +332,9 @@ traditionalist = {
 
 		trigger = {
 			owner = {
-				NOT = {
-					has_tradition = tr_cybernetics_transubstantiation_synthesis
+				NOR = {
+					has_country_flag = cyborg_empire # i.e. has completed "FLESH_IS_WEAK_PROJECT"
+					is_cyborg_empire = yes # checks for the Cybernetic trait
 				}
 			}
 		}
@@ -464,29 +455,6 @@ traditionalist = {
 
 		trigger = {
 			owner.federation = { has_federation_type = spiritualist_federation }
-		}
-	}
-
-	demand = {
-		title = TRADITIONALIST_FEDERATION_ANTI
-		unfulfilled_title = TRADITIONALIST_FEDERATION_ANTI_NOT_RESEARCH
-		desc = TRADITIONALIST_FEDERATION_ANTI_DESC
-
-		unfulfilled_effect = -10
-		fulfilled_effect = 0.001
-
-		potential = {
-			exists = owner.federation
-			owner.federation = { has_federation_type = research_federation }
-		}
-
-		trigger = {
-			OR = {
-				NOT = { exists = owner.federation }
-				owner.federation = {
-					NOT = { has_federation_type = research_federation }
-				}
-			}
 		}
 	}
 

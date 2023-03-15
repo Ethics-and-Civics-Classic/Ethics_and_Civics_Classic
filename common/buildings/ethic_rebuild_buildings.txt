@@ -3,7 +3,7 @@
 @buildings_t3 = 3
 @buildings_t4 = 4
 
-#00_capital_buildings.txt#
+#00_capital_buildings.txt
 
 #############
 # Capital buildings
@@ -426,6 +426,13 @@ building_capital = {
 			}
 		}
 		text = job_supervisor_effect_desc
+	}
+
+	triggered_desc = {
+		trigger = {
+			has_modifier = payback_unified_purpose
+		}
+		text = job_unifier_effect_desc
 	}
 }
 
@@ -877,6 +884,13 @@ building_major_capital = {
 			owner.federation = { has_federation_perk = culture_workers_1 }
 		}
 		text = job_culture_worker_effect_desc
+	}
+
+	triggered_desc = {
+		trigger = {
+			has_modifier = payback_unified_purpose
+		}
+		text = job_unifier_effect_desc
 	}
 
 	upgrades = {
@@ -1339,6 +1353,13 @@ building_system_capital = {
 			owner.federation = { has_federation_perk = culture_workers_1 }
 		}
 		text = job_culture_worker_effect_desc
+	}
+
+	triggered_desc = {
+		trigger = {
+			has_modifier = payback_unified_purpose
+		}
+		text = job_unifier_effect_desc
 	}
 
 	upgrades = {
@@ -3958,6 +3979,7 @@ building_commercial_zone = {
 		exists = owner
 		owner = { is_regular_empire = yes }
 		NOT = { has_modifier = slave_colony }
+		NOT = { has_building = building_low_tech_capital }
 	}
 
 	destroy_trigger = {
@@ -4269,6 +4291,7 @@ building_luxury_residence = {
 				has_valid_civic = civic_functional_architecture
 			}
 		}
+		NOT = { has_building = building_low_tech_capital }
 	}
 
 	destroy_trigger = {
@@ -4518,14 +4541,30 @@ building_clinic = {
 	category = amenity
 
 	potential = {
-		owner = { is_regular_empire = yes }
+		owner = {
+			OR = {
+				is_regular_empire = yes
+				AND = {
+					has_origin = origin_fear_of_the_dark
+					is_country_type = primitive
+				}
+			}
+		}
 		NOT = { has_modifier = slave_colony }
 	}
 
 	destroy_trigger = {
 		exists = owner
 		OR = {
-			owner = { is_regular_empire = no }
+			owner = { 
+				NOR = {
+					is_regular_empire = yes
+					AND = {
+						has_origin = origin_fear_of_the_dark
+						is_country_type = primitive
+					}
+				}
+			}
 			has_modifier = slave_colony
 			AND = {
 				buildings_stop_pop = yes
@@ -4574,6 +4613,56 @@ building_clinic = {
 
 	triggered_desc = {
 		text = job_healthcare_effect_desc
+	}
+
+	on_destroy = {
+		owner = {
+			if = {
+				limit = {
+					has_event_chain = payback_out_of_warranty_chain
+				}
+				end_event_chain = payback_out_of_warranty_chain
+			}
+		}
+	}
+
+	on_repaired = {
+		if = {
+			limit = {
+				owner = {
+					has_event_chain = payback_out_of_warranty_chain
+				}
+			}
+			random_list = {
+				50 = { # still broken
+					planet.owner = {
+						country_event = { id = origin.4302 }
+					}
+				}
+				20 = { # repaired
+					planet.owner = {
+						country_event = { id = origin.4301 }
+					}
+					modifier = {
+						factor = 2
+						planet.owner = { num_research_agreements = 1 }
+					}
+					modifier = {
+						factor = 3
+						planet.owner = { num_research_agreements = 2 }
+					}
+					modifier = {
+						factor = 4
+						planet.owner = { num_research_agreements >= 3 }
+					}
+				}
+				10 = { # broken beyond repair
+					planet = {
+						planet_event = { id = origin.4303 }
+					}
+				}
+			}
+		}
 	}
 }
 
@@ -4652,7 +4741,9 @@ building_hospital = {
 
 building_temple = {
 	base_buildtime = @b1_time
+
 	exempt_from_ai_planet_specialization = no
+
 	category = unity
 
 	potential = {
@@ -5328,6 +5419,7 @@ building_military_academy = {
 	}
 
 	allow = {
+		has_upgraded_capital = yes
 		if = {
 			limit = {
 				exists = owner
@@ -5360,10 +5452,6 @@ building_military_academy = {
 
 	convert_to = {
 		building_dread_encampment
-	}
-
-	allow = {
-		has_upgraded_capital = yes
 	}
 
 	army_modifier = {
@@ -5674,7 +5762,7 @@ building_planetary_shield_generator = {
 	}
 }
 
-#E&C Exclusive Buildings #
+#E&C Exclusive Buildings#
 
 #National Eco-park
 building_national_park = {
@@ -6091,6 +6179,7 @@ building_tribal_council = {
 building_tribal_palace = {
 	base_buildtime = @b4_time
 	base_cap_amount = 1
+
 	category = government
 
 	potential = {
@@ -7147,6 +7236,7 @@ building_collosal_monument = {
 
 building_biofuel_plant = {
 	base_buildtime = 480
+
 	category = manufacturing
 
 	potential = {
@@ -7407,8 +7497,6 @@ building_mecha_monastery = {
 	allow = {
 		has_upgraded_capital = yes
 	}
-
-	allow = { }
 
 	planet_modifier = {
 		job_techno_priest_add = 2

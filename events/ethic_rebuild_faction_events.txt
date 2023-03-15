@@ -1,7 +1,10 @@
-###############################
+#######################################
 # Pop Faction Events
-# by Maximilian Olbers
-###############################
+# by Maximilian Olbers & Gemma Thomson
+#######################################
+
+@RecentFactionsEventTimer = 500 # days until this empire should be eligible for most other 'Faction Reacts' events
+@RecentCommsTimer = 3600 # 10 years, during which parties are considered to have established communications recently
 
 namespace = factions
 
@@ -72,20 +75,17 @@ pop_faction_event = {
 			}
 		}
 	}
-
 	picture = GFX_evt_galactic_senate
 	show_sound = event_factions
-
 	is_triggered_only = yes
 
 	trigger = {
-		#NOT = {
-		#	owner = { has_country_flag = first_faction }
-		#}
-	}
-
-	after = {
-		hidden_effect = { owner = { set_country_flag = first_faction } }
+		NOT = {
+			owner = {
+				has_origin = origin_broken_shackles
+				#has_country_flag = first_faction 
+			}
+		}
 	}
 
 	option = {
@@ -97,6 +97,7 @@ pop_faction_event = {
 						force_faction_evaluation = yes
 					}
 				}
+				set_country_flag = first_faction
 			}
 		}
 	}
@@ -121,6 +122,7 @@ country_event = {
 }
 
 # Established comms
+# via on_post_communications_established | this = country which established the communications; from = country communications were established with
 country_event = {
 	id = factions.11
 	hide_window = yes
@@ -131,6 +133,10 @@ country_event = {
 			is_country_type = default
 			is_country_type = fallen_empire
 			is_country_type = awakened_fallen_empire
+			AND = {
+				is_country_type = primitive
+				current_awareness_level = full
+			}
 		}
 		from = {
 			is_country_type = default
@@ -140,12 +146,12 @@ country_event = {
 	immediate = {
 		set_timed_country_flag = {
 			flag = recent_comms_timed
-			days = 3600 # 10 years
+			days = @RecentCommsTimer
 		}
 		from = {
 			set_timed_country_flag = {
 				flag = recent_comms_timed
-				days = 3600 # 10 years
+				days = @RecentCommsTimer
 			}
 		}
 	}
@@ -273,6 +279,7 @@ country_event = {
 # Xenoist 1000
 
 # Xenoist Uplift Demand
+# via on_uplift_completion = {}
 planet_event = {
 	id = factions.1005
 	hide_window = yes

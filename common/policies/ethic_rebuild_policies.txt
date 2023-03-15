@@ -207,6 +207,10 @@ diplomatic_stance = {
 			}
 			modifier = {
 				factor = 1.3
+				has_valid_civic = civic_machine_exploration_protocol
+			}
+			modifier = {
+				factor = 1.3
 				has_ethic = ethic_fanatic_pacifist
 			}
 			modifier = {
@@ -652,15 +656,19 @@ diplomatic_stance = {
 	}
 
 	option = {
-		name = "diplo_stance_primitive"
+		name = "diplo_stance_ignorant"
 		icon = "GFX_diplomatic_stance_isolationist"
 
 		potential = {
 			is_country_type = primitive
+			current_awareness_level < medium
+			capital_scope = {
+				NOT = { has_modifier = culture_shock_diplomacy }
+			}
 		}
 
 		policy_flags = {
-			diplo_stance_primitive
+			diplo_stance_ignorant
 		}
 
 		modifier = {
@@ -668,6 +676,130 @@ diplomatic_stance = {
 
 		ai_weight = {
 			weight = 1
+		}
+	}
+
+	option = {
+		name = "diplo_stance_questioning"
+		icon = "GFX_diplomatic_stance_expansionist"
+
+		potential = {
+			is_country_type = primitive
+			current_awareness_level = medium
+			capital_scope = {
+				NOT = { has_modifier = culture_shock_diplomacy }
+			}
+		}
+
+		policy_flags = {
+			diplo_stance_questioning
+		}
+
+		modifier = {
+		}
+
+		ai_weight = {
+			weight = 1
+		}
+	}
+
+	option = {
+		name = "diplo_stance_eager"
+		icon = "GFX_diplomatic_stance_cooperative"
+
+		potential = {
+			is_country_type = primitive
+			current_awareness_level >= high
+			is_xenophile = yes
+			capital_scope = {
+				NOT = { has_modifier = culture_shock_diplomacy }
+			}
+		}
+
+		policy_flags = {
+			diplo_stance_eager
+		}
+
+		modifier = {
+		}
+
+		ai_weight = {
+			weight = 1
+		}
+	}
+
+	option = {
+		name = "diplo_stance_fearful"
+		icon = "GFX_diplomatic_stance_withdrawn"
+
+		potential = {
+			is_country_type = primitive
+			current_awareness_level >= high
+			is_xenophobe = yes
+			capital_scope = {
+				NOT = { has_modifier = culture_shock_diplomacy }
+			}
+		}
+
+		policy_flags = {
+			diplo_stance_fearful
+		}
+
+		modifier = {
+		}
+
+		ai_weight = {
+			weight = 1
+		}
+	}
+
+	option = {
+		name = "diplo_stance_uncertain"
+		icon = "GFX_diplomatic_stance_isolationist"
+
+		potential = {
+			is_country_type = primitive
+			current_awareness_level >= high
+			is_xenophile = no
+			is_xenophobe = no
+			capital_scope = {
+				NOT = { has_modifier = culture_shock_diplomacy }
+			}
+		}
+
+		policy_flags = {
+			diplo_stance_uncertain
+		}
+
+		modifier = {
+		}
+
+		ai_weight = {
+			weight = 1
+		}
+	}
+
+	option = {
+		name = "diplo_stance_culture_shock"
+		icon = "GFX_diplomatic_stance_belligerent"
+
+		potential = {
+			is_country_type = primitive
+			capital_scope = {
+				has_modifier = culture_shock_diplomacy
+			}
+		}
+
+		policy_flags = {
+			diplo_stance_culture_shock
+		}
+
+		modifier = {
+			diplo_action_acceptance_add = -100
+		}
+
+		ai_weight = {
+			weight = 100
 		}
 	}
 }
@@ -933,7 +1065,10 @@ border_policy = {
 		}
 
 		potential = {
-			is_country_type = default
+			OR = {
+				is_country_type = default
+				is_primitive = yes
+			}
 		}
 
 		valid = {
@@ -955,7 +1090,7 @@ border_policy = {
 		modifier = {}
 
 		valid = {
-			always = yes
+			is_primitive = no
 		}
 
 		AI_weight = {
@@ -1680,6 +1815,10 @@ slavery = {
 				success_text = is_not_a_signatory_vassal_success
 				fail_text = is_not_a_signatory_vassal_fail
 				NOT = { any_agreement = { agreement_preset = preset_signatory } }
+			}
+			custom_tooltip = {
+				fail_text = is_broken_shackles_origin
+				NOT = { has_origin = origin_broken_shackles }
 			}
 			OR = {
 				is_authoritarian = yes

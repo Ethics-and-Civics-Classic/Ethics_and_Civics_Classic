@@ -1,8 +1,8 @@
-version="3.6.1.3"
-name="Ethics and Civics Classic 3.6"
+version="3.7.2.1"
+name="Ethics and Civics Classic 3.7"
 tags={
 	"Overhaul"
 }
 picture="cover.png"
-supported_version="3.6.*"
+supported_version="3.7.*"
 remote_file_id="1100284147"

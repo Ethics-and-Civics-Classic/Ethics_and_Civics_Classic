@@ -5,7 +5,12 @@
 #	pickable_at_start = yes / no				# default: yes
 #	modification = yes / no						# default: yes, set to no to prevent adding or removing this after creation of the empire
 #
-#	random_weight = { base = 5 }				# scriptable weight for randomizing a civic; required, else the civic will not get assigned randomly
+#	random_weight = { base = 5 }				# scriptable weight for randomizing a civic
+#												# Note: If omitted, a default weight of 1 is used
+#												# Also note: after game start, AI selection of new civics uses the below weight instead
+#	
+#	ai_weight = { base = 5 }					# scriptable weight for AI picking civics in-game (when unlocking a new slot). 
+#												# Note: If omitted, a default weight of 1 is used. Not needed when "modification = no" 
 #
 #	modifier = {}								# modifier added to the country if the civic is selected and valid
 #	can_build_ruler_ship = yes / no				# default: no
@@ -21,17 +26,32 @@
 
 civic_hive_subspace_ephapse = {
 	potential = { authority = { value = auth_hive_mind } }
-	random_weight = { base = 5 }
+	random_weight = { base = @civic_default_random_weight }
+	ai_weight = { 
+		base = @ai_civic_default_base_weight 
+	}
 	modifier = {
 		country_naval_cap_mult = 0.15
 		ship_speed_mult = 0.20
+	}
+
+	swap_type = {
+		name = civic_hive_subspace_ephapse_fircon
+
+		trigger = { #No scope in empire creation but still checked. Otherwise, country scope is valid and the latter condition is checked
+			has_first_contact_dlc = yes
+		}
+		description = "civic_tooltip_hive_subspace_ephapse_fircon_effects"
 	}
 }
 
 civic_hive_natural_neural_network = {
 	potential = { authority = { value = auth_hive_mind } }
 	description = "civic_tooltip_natural_neural_network_effects"
-	random_weight = { base = 5 }
+	random_weight = { base = @civic_default_random_weight }
+	ai_weight = { 
+		base = @ai_civic_default_base_weight 
+	}
 	modifier = {
 		num_tech_alternatives_add = 1
 	}
@@ -39,7 +59,10 @@ civic_hive_natural_neural_network = {
 
 civic_hive_ascetic = {
 	potential = { authority = { value = auth_hive_mind } }
-	random_weight = { base = 5 }
+	random_weight = { base = @civic_default_random_weight }
+	ai_weight = { 
+		base = @ai_civic_default_base_weight 
+	}
 	modifier = {
 		pop_environment_tolerance = 0.05
 		pop_amenities_usage_no_happiness_mult = -0.15
@@ -49,7 +72,16 @@ civic_hive_ascetic = {
 civic_hive_one_mind = {
 	potential = { authority = { value = auth_hive_mind } }
 	description = "civic_hive_one_mind_effects"
-	random_weight = { base = 5 }
+	random_weight = { base = @civic_default_random_weight }
+	ai_weight = { 
+		base = @ai_civic_default_base_weight 
+		modifier = {
+			factor = @ai_civic_personality_mismatch_factor
+			OR = {
+				has_ai_personality = devouring_swarm
+			}
+		}
+	}
 	modifier = {
 		country_unity_produces_mult = 0.15
 	}
@@ -57,7 +89,10 @@ civic_hive_one_mind = {
 
 civic_hive_divided_attention = {
 	potential = { authority = { value = auth_hive_mind } }
-	random_weight = { base = 5 }
+	random_weight = { base = @civic_default_random_weight }
+	ai_weight = { 
+		base = @ai_civic_default_base_weight 
+	}
 	modifier = {
 		empire_size_colonies_mult  = -0.50
 	}
@@ -65,7 +100,16 @@ civic_hive_divided_attention = {
 
 civic_hive_strength_of_legions = {
 	potential = { authority = { value = auth_hive_mind } }
-	random_weight = { base = 5 }
+	random_weight = { base = @civic_default_random_weight }
+	ai_weight = { 
+		base = @ai_civic_default_base_weight 
+		modifier = {
+			factor = @ai_civic_personality_match_factor
+			OR = {
+				has_ai_personality = devouring_swarm
+			}
+		}
+	}
 	description = "civic_tooltip_hive_strength_of_legions_effects"
 	modifier = {
 		army_starting_experience_add = 100
@@ -76,7 +120,10 @@ civic_hive_strength_of_legions = {
 
 civic_hive_subsumed_will = {
 	potential = { authority = { value = auth_hive_mind } }
-	random_weight = { base = 5 }
+	random_weight = { base = @civic_default_random_weight }
+	ai_weight = { 
+		base = @ai_civic_default_base_weight 
+	}
 
 	description = "civic_hive_subsumed_will_effects"
 	modifier = {
@@ -87,7 +134,16 @@ civic_hive_subsumed_will = {
 
 civic_hive_pooled_knowledge = {
 	potential = { authority = { value = auth_hive_mind } }
-	random_weight = { base = 5 }
+	random_weight = { base = @civic_default_random_weight }
+	ai_weight = { 
+		base = @ai_civic_default_base_weight 
+		modifier = {
+			factor = @ai_civic_personality_mismatch_factor
+			OR = {
+				has_ai_personality = devouring_swarm
+			}
+		}
+	}
 	modifier = {
 		leader_skill_levels = 1
 		species_leader_exp_gain = 0.1
@@ -109,7 +165,7 @@ civic_hive_devouring_swarm = {
 			}
 		}
 	}
-	random_weight = { base = 5 }
+	random_weight = { base = @civic_default_random_weight }
 
 	description = "civic_tooltip_devouring_swarm_effects"
 	modifier = {
@@ -159,6 +215,12 @@ civic_hive_empath = {
 			}
 		}
 	}
+	random_weight = {
+		base = @civic_default_random_weight
+	}
+	ai_weight = { 
+		base = @ai_civic_default_base_weight 
+	}
 
 	description = "civic_tooltip_empath_effects"
 	modifier = {
@@ -173,7 +235,10 @@ civic_hive_memorialist = {
 	potential = {
 		authority = { value = auth_hive_mind  }
 	}
-	random_weight = { base = 5 }
+	random_weight = { base = @civic_default_random_weight }
+	ai_weight = { 
+		base = @ai_civic_default_base_weight 
+	}
 	possible = {
 		civics = {
 			NOT = { value = civic_hive_devouring_swarm } #Includes Terravore
@@ -195,7 +260,10 @@ civic_hive_catalytic_processing = {
 			}
 		}
 	}
-	random_weight = { base = 5 }
+	random_weight = { base = @civic_default_random_weight }
+	ai_weight = { 
+		base = 0			# Too dangerous to switch mid-game
+	}
 }
 
 civic_hive_idyllic_bloom = {
@@ -219,6 +287,9 @@ civic_hive_idyllic_bloom = {
 			}
 		}
 	}
+	random_weight = {
+		base = @civic_rare_random_weight
+	}
 }
 
 civic_hive_toxic_baths = {
@@ -230,6 +301,12 @@ civic_hive_toxic_baths = {
 	}
 	possible = {
 		origin = { NOT = { value = origin_life_seeded } }
+	}
+	random_weight = {
+		base = @civic_default_random_weight
+	}
+	ai_weight = { 
+		base = @ai_civic_default_base_weight 
 	}
 }
 
@@ -244,6 +321,18 @@ civic_hive_ascensionists = {
 		planetary_ascension_cost_mult = -0.1
 		tradition_cost_empire_size_mult = -0.25
 	}
+	random_weight = {
+		base = @civic_uncommon_random_weight
+	}
+	ai_weight = { 
+		base = @ai_civic_uncommon_base_weight 
+		modifier = {
+			factor = @ai_civic_personality_mismatch_factor
+			OR = {
+				has_ai_personality = devouring_swarm
+			}
+		}
+	}
 }
 
 civic_hive_cordyceptic_drones = {
@@ -253,10 +342,45 @@ civic_hive_cordyceptic_drones = {
 	potential = {
 		authority = { value = auth_hive_mind }
 	}
-
+	random_weight = {
+		base = @civic_default_random_weight
+	}
+	ai_weight = {
+		base = @ai_civic_default_base_weight 
+	}
 	modifier = {
 		weapon_type_space_fauna_weapon_damage_mult = 0.5
 		weapon_type_space_fauna_weapon_fire_rate_mult = 0.5
+	}
+}
+
+civic_hive_stargazers = {
+	playable = {
+		has_first_contact_dlc = yes
+	}
+
+	ai_playable = {
+		has_first_contact_dlc = yes
+	}
+
+	description = "civic_hive_stargazers_effects"
+	modification = no
+	potential = {
+		authority = { value = auth_hive_mind }
+	}
+
+	modifier = {
+		ship_sensor_range_add = 1
+		ship_hyperlane_range_add = 2
+		country_starbase_influence_cost_distance_mult = -0.2
+	}
+
+	traits = {
+		trait = trait_stargazer
+	}
+
+	random_weight = {
+		base = 0
 	}
 }
 
@@ -281,7 +405,7 @@ civic_machine_servitor = {
 	}
 	modification = no
 	random_weight = {
-		base = 5
+		base = @civic_default_random_weight
 		modifier = {
 			factor = 0
 			NOT = { host_has_dlc = "Synthetic Dawn Story Pack" }
@@ -313,6 +437,8 @@ civic_machine_terminator = {
 			NOR = {
 				value = civic_machine_servitor
 				value = civic_machine_assimilator
+				value = civic_machine_memorialist
+				value = civic_machine_exploration_protocol
 			}
 		}
 		origin = {
@@ -324,7 +450,7 @@ civic_machine_terminator = {
 	}
 	modification = no
 	random_weight = {
-		base = 5
+		base = @civic_default_random_weight
 		modifier = {
 			factor = 0
 			NOT = { host_has_dlc = "Synthetic Dawn Story Pack" }
@@ -346,12 +472,14 @@ civic_machine_assimilator = {
 			NOR = {
 				value = civic_machine_servitor
 				value = civic_machine_terminator
+				value = civic_machine_memorialist
+				value = civic_machine_exploration_protocol
 			}
 		}
 	}
 	modification = no
 	random_weight = {
-		base = 5
+		base = @civic_default_random_weight
 		modifier = {
 			factor = 0
 			NOT = { host_has_dlc = "Synthetic Dawn Story Pack" }
@@ -374,7 +502,10 @@ civic_machine_assimilator = {
 civic_machine_builder = {
 	description = "civic_tooltip_functional_architecture_effects"
 	potential = { authority = { value = auth_machine_intelligence } }
-	random_weight = { base = 5 }
+	random_weight = { base = @civic_default_random_weight }
+	ai_weight = { 
+		base = @ai_civic_default_base_weight 
+	}
 	modifier = {
 		planet_structures_cost_mult = -0.15
 		planet_max_buildings_add = 1
@@ -384,7 +515,10 @@ civic_machine_builder = {
 civic_machine_factory_overclock = {
 	icon = "gfx/interface/icons/governments/civics/civic_machine_factory_overclock.dds"
     potential = { authority = { value = auth_machine_intelligence } }
-    random_weight = { base = 5 }
+	random_weight = { base = @civic_default_random_weight }
+	ai_weight = { 
+		base = @ai_civic_default_base_weight 
+	}
     modifier = {
 		leader_skill_levels = 1
 		species_leader_exp_gain = 0.1
@@ -393,7 +527,10 @@ civic_machine_factory_overclock = {
 
 civic_machine_unitary_cohesion = {
 	potential = { authority = { value = auth_machine_intelligence } }
-	random_weight = { base = 5 }
+	random_weight = { base = @civic_default_random_weight }
+	ai_weight = { 
+		base = @ai_civic_default_base_weight 
+	}
 	modifier = {
 		country_unity_produces_mult = 0.15
 	}
@@ -401,7 +538,10 @@ civic_machine_unitary_cohesion = {
 
 civic_machine_rockbreakers = {
 	potential = { authority = { value = auth_machine_intelligence } }
-	random_weight = { base = 5 }
+	random_weight = { base = @civic_default_random_weight }
+	ai_weight = { 
+		base = @ai_civic_default_base_weight 
+	}
 	modifier = {
 		planet_miners_minerals_produces_add = 1
 	}
@@ -409,7 +549,10 @@ civic_machine_rockbreakers = {
 
 civic_machine_zero_waste_protocols = {
 	potential = { authority = { value = auth_machine_intelligence } }
-	random_weight = { base = 5 }
+	random_weight = { base = @civic_default_random_weight }
+	ai_weight = { 
+		base = @ai_civic_default_base_weight 
+	}
 	modifier = {
 		planet_pops_robotics_upkeep_mult = -0.10
 	}
@@ -421,7 +564,10 @@ civic_machine_built_to_last = {
 			value = auth_ancient_machine_intelligence
 		}
 	}
-	random_weight = { base = 5 }
+	random_weight = { base = @civic_default_random_weight }
+	ai_weight = { 
+		base = @ai_civic_default_base_weight 
+	}
 	modifier = {
 		pop_amenities_usage_no_happiness_mult = -0.15
 	}
@@ -429,7 +575,10 @@ civic_machine_built_to_last = {
 
 civic_machine_ota_updates = {
 	potential = { authority = { value = auth_machine_intelligence } }
-	random_weight = { base = 5 }
+	random_weight = { base = @civic_default_random_weight }
+	ai_weight = { 
+		base = @ai_civic_default_base_weight 
+	}
 	description = civic_machine_ota_updates_effect
 	modifier = {
 		empire_size_pops_mult = -0.20
@@ -446,7 +595,22 @@ civic_machine_warbots = {
 			}
 		}
 	}
-	random_weight = { base = 5 }
+	random_weight = { base = @civic_default_random_weight }
+	ai_weight = { 
+		base = @ai_civic_default_base_weight 
+		modifier = {
+			factor = @ai_civic_personality_match_factor
+			OR = {
+				has_ai_personality = exterminators
+			}
+		}
+		modifier = {
+			factor = @ai_civic_personality_mismatch_factor
+			OR = {
+				has_ai_personality = servitors
+			}
+		}
+	}
 	description = civic_tooltip_machine_warbots_effects
 	modifier = {
 		army_damage_mult = 0.2
@@ -456,7 +620,21 @@ civic_machine_warbots = {
 
 civic_machine_introspective = {
 	potential = { authority = { value = auth_machine_intelligence } }
-	random_weight = { base = 5 }
+	random_weight = { base = @civic_default_random_weight }
+	ai_weight = { 
+		base = @ai_civic_default_base_weight 
+		modifier = {
+			factor = @ai_civic_personality_match_factor
+			OR = {
+			}
+		}
+		modifier = {
+			factor = @ai_civic_personality_mismatch_factor
+			OR = {
+				has_ai_personality = exterminators
+			}
+		}
+	}
 	modifier = {
 		country_engineering_tech_research_speed = 0.20
 		intel_encryption_add = 1
@@ -465,7 +643,21 @@ civic_machine_introspective = {
 
 civic_machine_delegated_functions = {
 	potential = { authority = { value = auth_machine_intelligence } }
-	random_weight = { base = 5 }
+	random_weight = { base = @civic_default_random_weight }
+	ai_weight = { 
+		base = @ai_civic_default_base_weight 
+		modifier = {
+			factor = @ai_civic_personality_match_factor
+			OR = {
+			}
+		}
+		modifier = {
+			factor = @ai_civic_personality_mismatch_factor
+			OR = {
+				has_ai_personality = exterminators
+			}
+		}
+	}
 	modifier = {
 		leaders_upkeep_mult = -0.25
 		country_leader_pool_size = 1
@@ -475,7 +667,10 @@ civic_machine_delegated_functions = {
 
 civic_machine_predictive_analysis = {
 	potential = { authority = { value = auth_machine_intelligence } }
-	random_weight = { base = 5 }
+	random_weight = { base = @civic_default_random_weight }
+	ai_weight = { 
+		base = @ai_civic_default_base_weight 
+	}
 	modifier = {
 		num_tech_alternatives_add = 1
 		intel_decryption_add = 1
@@ -484,7 +679,10 @@ civic_machine_predictive_analysis = {
 
 civic_machine_replication = {
 	potential = { authority = { value = auth_machine_intelligence } }
-	random_weight = { base = 5 }
+	random_weight = { base = @civic_default_random_weight }
+	ai_weight = { 
+		base = @ai_civic_default_base_weight 
+	}
 	modifier = {
 		planet_pop_assembly_mult = 0.20
 	}
@@ -492,7 +690,10 @@ civic_machine_replication = {
 
 civic_machine_maintenance_protocols = {
 	potential = { authority = { value = auth_machine_intelligence } }
-	random_weight = { base = 5 }
+	random_weight = { base = @civic_default_random_weight }
+	ai_weight = { 
+		base = @ai_civic_default_base_weight 
+	}
 	description = civic_tooltip_machine_maintenance_protocols_effects
 }
 
@@ -502,7 +703,10 @@ civic_machine_memorialist = {
 	potential = {
 		authority = { value = auth_machine_intelligence }
 	}
-	random_weight = { base = 5 }
+	random_weight = { base = @civic_default_random_weight }
+	ai_weight = { 
+		base = @ai_civic_default_base_weight
+	}
 	possible = {
 		civics = {
 			NOR = {
@@ -523,7 +727,10 @@ civic_machine_catalytic_processing = {
 	possible = {
 		origin = { NOT = { value = origin_machine } }
 	}
-	random_weight = { base = 5 }
+	random_weight = { base = @civic_default_random_weight }
+	ai_weight = { 
+		base = 0		# Too dangerous to switch mid-game
+	}
 }
 
 civic_machine_toxic_baths = {
@@ -535,6 +742,18 @@ civic_machine_toxic_baths = {
 	}
 	possible = {
 		origin = { NOT = { value = origin_life_seeded } }
+	}
+	random_weight = {
+		base = @civic_uncommon_random_weight
+	}
+	ai_weight = { 
+		base = @ai_civic_uncommon_base_weight 
+		modifier = {
+			factor = @ai_civic_personality_mismatch_factor
+			OR = {
+				has_ai_personality = servitors
+			}
+		}
 	}
 }
 
@@ -548,5 +767,51 @@ civic_machine_ascensionists = {
 		planetary_ascension_effect_mult = 0.25
 		planetary_ascension_cost_mult = -0.1
 		tradition_cost_empire_size_mult = -0.25
+	}
+	random_weight = {
+		base = @civic_uncommon_random_weight
+	}
+	ai_weight = { 
+		base = @ai_civic_uncommon_base_weight 
+		modifier = {
+			factor = @ai_civic_personality_mismatch_factor
+			OR = {
+				has_ai_personality = exterminators
+			}
+		}
+	}
+}
+
+civic_machine_exploration_protocol = {
+	playable = {
+		has_first_contact_dlc = yes
+	}
+
+	ai_playable = {
+		has_first_contact_dlc = yes
+	}
+
+	description = "civic_machine_exploration_protocol_effects"
+	modification = no
+	potential = {
+		authority = { value = auth_machine_intelligence }
+	}
+
+	possible = {
+		civics = {
+			NOR = {
+				value = civic_machine_terminator
+				value = civic_machine_assimilator
+			}
+		}
+	}
+
+	modifier = {
+		first_contact_speed_mult = 0.2
+		station_observers_unity_produces_add = 3
+	}
+
+	random_weight = {
+		base = 0
 	}
 }
