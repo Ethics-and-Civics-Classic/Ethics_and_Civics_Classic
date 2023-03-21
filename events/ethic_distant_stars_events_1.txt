@@ -1,0 +1,581 @@
+namespace = distar
+
+#################################
+#
+# Anomaly Events
+# by Dee Majek
+#
+#################################
+
+# root = ship scope
+# from = planet scope
+
+country_event = { #Spawn Ratlings #Root = Global Event Country
+	id = distar.232
+	hide_window = yes
+
+	is_triggered_only = yes
+
+	fire_only_once = yes
+
+	trigger = {
+		NOT = {
+			has_country_flag = spawned_pre_space_ratlings
+		}
+		any_system = {
+			has_star_flag = ratling_system
+			any_system_planet = {
+				has_planet_flag = ratling_planet
+				NOT = { is_planet_class = "pc_broken" }
+			}
+		}
+	}
+
+	immediate = {
+		create_species = {
+			name = "NAME_Ketling"
+			plural = "NAME_Ketlings"
+			class = MAM
+			portrait = "mam_rat"
+			homeworld = event_target:ratling_capital
+			namelist = "REP4"
+			traits = {
+				trait = "trait_pc_nuked_preference"
+				trait = "trait_psionic"
+				trait = "trait_repugnant"
+				trait = "trait_slow_breeders"
+				trait = "trait_thrifty"
+				trait = "trait_deviants"
+				trait = "trait_fleeting"
+			}
+			effect = {
+				save_global_event_target_as = ratling_species
+			}
+		}
+		create_country = {
+			name = "NAME_Ketlings"
+			adjective = "NAME_Ketling"
+			ethos = {
+				ethic = ethic_materialist
+				ethic = ethic_egalitarian
+				ethic = ethic_pacifist
+				ethic = ethic_fanatic_industrial #E&CC Compatibility
+			}
+			authority = auth_oligarchic
+			civics = {
+				civic = civic_functional_architecture
+				civic = civic_mining_guilds
+			}
+			origin = origin_default
+			flag = {
+				icon = {
+					category = "zoological"
+					file = "flag_zoological_12.dds"
+				}
+				background = {
+					category = "backgrounds"
+					file = "00_solid.dds"
+				}
+				colors = {
+					"light_green"
+					"yellow"
+					"null"
+					"null"
+				}
+			}
+			species = event_target:ratling_species
+			type = ratlings
+			ignore_initial_colony_error = yes
+		}
+		last_created_country = {
+			save_global_event_target_as = ratling_pre_space_country
+		}
+		every_system = {
+			limit = {
+				has_star_flag = ratling_system
+				NOT = { exists = space_owner }
+			}
+			every_system_planet = {
+				limit = {
+					has_planet_flag = ratling_planet
+					is_colony = no
+					is_under_colonization = no
+					NOT = { is_planet_class = "pc_broken" }
+					NOT = { is_planet_class = "pc_shattered" }
+				}
+				set_owner = event_target:ratling_pre_space_country
+				add_building = building_junkheap
+				while = {
+					count = 10
+					create_pop = {
+						species = event_target:ratling_species
+					}
+				}
+				while = {
+					count = 4
+					create_army = {
+						owner = event_target:ratling_pre_space_country
+						species = event_target:ratling_species
+						type = "ketling_army"
+					}
+				}
+				set_planet_entity = {
+					picture = pc_nuked
+				}
+				set_planet_flag = changed_planetview_image
+				switch = { #Planets get renamed in the create_colony effect, we want to maintain names
+					trigger = is_same_value
+					event_target:ratling_capital = {
+						set_name = "NAME_Ruinous_Core"
+					}
+					event_target:ratling_planet_2_tar = {
+						set_name = "NAME_Lost_Encampment"
+					}
+					event_target:ratling_planet_3_tar = {
+						set_name = "NAME_Silent_Colony"
+					}
+					event_target:ratling_planet_4_tar = {
+						set_name = "NAME_Decayed_Hub"
+					}
+					event_target:ratling_planet_5_tar = {
+						set_name = "NAME_Crumbling_Borough"
+					}
+					event_target:ratling_planet_6_tar = {
+						set_name = "NAME_Fallen_Outpost"
+					}
+				}
+			}
+		}
+		set_country_flag = spawned_pre_space_ratlings
+
+		every_country = { #Fire notif event
+			limit = { has_country_flag = discovered_ratlings }
+			country_event = { id = distar.233 days = 1 }
+		}
+		every_playable_country = {
+			establish_communications_no_message = event_target:ratling_pre_space_country
+			establish_contact = { who = this location = this.capital_scope }
+		}
+	}
+}
+
+country_event = { #Create Full Ratling Empire #Root = Global Event Country
+	id = distar.236
+	hide_window = yes
+
+	is_triggered_only = yes
+
+	fire_only_once = yes
+
+	trigger = {
+		NOT = {
+			has_country_flag = spawned_ratling_country
+		}
+		exists = event_target:ratling_pre_space_country
+		any_system = {
+			has_star_flag = ratling_system
+			NOT = { #At least one Ratling system does not have ongoing starbase construction
+				any_ship_in_system = {
+					is_ship_size = constructor
+					is_constructing = starbase
+				}
+			}
+			any_system_planet = {
+				has_planet_flag = ratling_planet
+				exists = owner
+				owner = {
+					is_same_value = event_target:ratling_pre_space_country
+				}
+				NOR = {
+					has_orbital_bombardment = yes
+					has_ground_combat = yes
+					is_planet_class = "pc_broken"
+				}
+			}
+		}
+	}
+
+	immediate = {
+		every_country = {
+			limit = { has_country_flag = discovered_ratlings }
+			country_event = { id = distar.237 days = 1 }
+		}
+		#Create the proper country
+		create_country = {
+			name = "NAME_Ketling_Multitude"
+			ethos = {
+				ethic = ethic_materialist
+				ethic = ethic_egalitarian
+				ethic = ethic_pacifist
+				ethic = ethic_fanatic_industrial #E&CC Compatibility
+			}
+			authority = auth_oligarchic
+			civics = {
+				civic = civic_functional_architecture
+				civic = civic_mining_guilds
+			}
+			flag = {
+				icon = {
+					category = "zoological"
+					file = "flag_zoological_12.dds"
+				}
+				background = {
+					category = "backgrounds"
+					file = "00_solid.dds"
+				}
+				colors = {
+					"light_green"
+					"yellow"
+					"null"
+					"null"
+				}
+			}
+			species = event_target:ratling_species
+			ignore_initial_colony_error = yes
+			type = default
+
+			effect = {
+				set_graphical_culture = mammalian_01
+				save_global_event_target_as = ratling_country
+
+				##Copy technology
+				if = {
+					limit = {
+						any_country = { is_ai = no }
+					}
+					random_country = {
+						limit = { is_ai = no }
+						save_event_target_as = tech_country
+					}
+					copy_techs_from = {
+						target = event_target:tech_country
+						except = {
+							# Horizon Signal
+							tech_akx_worm_1
+							tech_akx_worm_2
+							tech_akx_worm_3
+						}
+					}
+				}
+				else = {
+					random_country = {
+						limit = { is_country_type = default	}
+						save_event_target_as = tech_country
+					}
+					copy_techs_from = {
+						target = event_target:tech_country
+						except = {
+							# Horizon Signal
+							tech_akx_worm_1
+							tech_akx_worm_2
+							tech_akx_worm_3
+						}
+					}
+				}
+				if = {
+					limit = {
+						NOT = { has_technology = tech_starbase_3 }
+					}
+					give_technology = { tech = tech_starbase_3 }
+				}
+				if = {
+					limit = {
+						NOT = { has_technology = tech_destroyers }
+					}
+					give_technology = { tech = tech_destroyers }
+				}
+				if = {
+					limit = {
+						NOT = { has_technology = tech_cruisers }
+					}
+					give_technology = { tech = tech_cruisers }
+				}
+			}
+		}
+
+		##Prepare the planets
+		every_system = {
+			limit = {
+				has_star_flag = ratling_system
+				NOT = { exists = owner }
+			}
+			every_system_planet = {
+				limit = {
+					has_planet_flag = ratling_planet
+					AND = {
+						exists = owner
+						owner = {
+							is_same_value = event_target:ratling_pre_space_country
+						}
+					}
+					NOR = {
+						has_orbital_bombardment = yes
+						has_ground_combat = yes
+						is_planet_class = "pc_broken"
+					}
+				}
+				set_owner = event_target:ratling_country
+				remove_building = building_junkheap
+				clear_blockers = yes
+				remove_all_armies = yes
+				while = {
+					count = 25
+					create_pop = {
+						species = event_target:ratling_species
+					}
+				}
+				while = {
+					count = 4
+					add_district_and_planet_size_if_needed_effect = {
+						district = district_city
+					}
+				}
+				while = {
+					count = 2
+					add_district_and_planet_size_if_needed_effect = {
+						district = district_industrial
+					}
+				}
+				while = {
+					count = 3
+					add_district_and_planet_size_if_needed_effect = {
+						district = district_farming
+					}
+				}
+				while = {
+					count = 3
+					add_district_and_planet_size_if_needed_effect = {
+						district = district_mining
+					}
+				}
+				while = {
+					count = 3
+					add_district_and_planet_size_if_needed_effect = {
+						district = district_generator
+					}
+				}
+				add_building = building_capital
+				add_building = building_research_lab_1
+				add_building = building_foundry_1
+				add_building = building_commercial_zone
+				add_building = building_food_processing_facility
+				add_building = building_energy_grid
+				add_building = building_mineral_purification_plant
+				add_building = building_bureaucratic_1
+			}
+
+			##Build Starbases
+			create_starbase = {
+				size = starbase_starhold
+				owner = event_target:ratling_country
+				module = shipyard
+				building = crew_quarters
+				effect = {
+					set_starbase_module = {
+						slot = 1
+						module = anchorage
+					}
+					set_starbase_module = {
+						slot = 2
+						module = anchorage
+					}
+					set_starbase_module = {
+						slot = 3
+						module = trading_hub
+					}
+				}
+			}
+		}
+
+		##Destroy old country
+		event_target:ratling_pre_space_country = {
+			every_owned_pop = { #In case any pops are left behind
+				kill_pop = yes
+			}
+			destroy_country = yes
+		}
+
+		#So we don't get "orphaned" pops with no job categories in case of non-Ketling system owners
+		every_system = {
+			limit = {
+				has_star_flag = ratling_system
+				OR = {
+					NOT = { exists = owner }
+					AND = {
+						exists = owner
+						NOT = {
+							owner = { is_same_value = event_target:ratling_country }
+						}
+					}
+				}
+			}
+			every_system_planet = {
+				limit = {
+					has_planet_flag = ratling_planet
+					any_owned_pop = {
+						is_same_species = event_target:ratling_species
+						NOT = { exists = owner }
+					}
+				}
+				every_owned_pop = {
+					limit = {
+						is_same_species = event_target:ratling_species
+						NOT = { exists = owner }
+					}
+					kill_pop = yes
+				}
+			}
+		}
+
+		#Create a Capital
+		IF = { #If the old capital belongs to Ratlings, use it
+			limit = {
+				exists = event_target:ratling_capital
+				event_target:ratling_capital = {
+					exists = owner
+					owner = {
+						is_same_value = event_target:ratling_country
+					}
+				}
+			}
+			event_target:ratling_capital = {
+				set_capital = yes
+			}
+		}
+		ELSE = { #Otherwise, make a new Capital
+			random_system = {
+				limit = { has_star_flag = ratling_system }
+				random_system_planet = {
+					limit = {
+						has_planet_flag = ratling_planet
+						exists = owner
+						owner = {
+							is_same_value = event_target:ratling_country
+						}
+						planet_size > 12
+						NOT = { is_planet_class = "pc_broken" }
+					}
+					save_global_event_target_as = ratling_capital
+					set_capital = yes
+				}
+			}
+		}
+
+		event_target:ratling_country = {
+
+			##Add resources
+			add_resource = { minerals = 7000 }
+			add_resource = { energy = 7000 }
+			add_resource = { food = 3000 }
+			add_resource = { consumer_goods = 3000 }
+			add_resource = { alloys = 2000 }
+			add_resource = { influence = 1000 }
+			add_resource = { unity = 27000 }
+
+			event_target:ratling_country = {
+				##Create Mining Stations
+				every_planet_within_border = {
+					limit = {
+						has_deposit_for = shipclass_mining_station
+					}
+					create_mining_station = { owner = event_target:ratling_country }
+				}
+				##Create fleets
+				create_fleet = {
+					effect = {
+						set_owner = event_target:ratling_country
+						while = {
+							count = 5
+							create_ship = {
+								name = random
+								random_existing_design = corvette
+								graphical_culture = "reptilian_01"
+							}
+						}
+						while = {
+							limit = { owner = { has_technology = tech_destroyers } }
+							count = 4
+							create_ship = {
+								name = random
+								random_existing_design = destroyer
+								graphical_culture = "reptilian_01"
+							}
+						}
+						while = {
+							count = 2
+							limit = { owner = { has_technology = tech_cruisers } }
+							create_ship = {
+								name = random
+								random_existing_design = cruiser
+								graphical_culture = "reptilian_01"
+							}
+						}
+						set_location = {
+							target = event_target:ratling_capital
+							distance = 10
+							angle = random
+						}
+					}
+				}
+				create_fleet = {
+					effect = {
+						set_owner = event_target:ratling_country
+						create_ship = {
+							name = random
+							random_existing_design = constructor
+							graphical_culture = "reptilian_01"
+						}
+						set_location = {
+							target = event_target:ratling_capital
+							distance = 10
+							angle = random
+						}
+					}
+				}
+				create_fleet = {
+					effect = {
+						set_owner = event_target:ratling_country
+						create_ship = {
+							name = random
+							random_existing_design = science
+							graphical_culture = "reptilian_01"
+						}
+						set_location = {
+							target = event_target:ratling_capital
+							distance = 10
+							angle = random
+						}
+					}
+				}
+			}
+
+			##Add leaders
+			while = {
+				count = 4
+				create_leader = {
+					class = scientist
+					species = event_target:ratling_species
+					name = random
+					skill = 3
+				}
+			}
+			while = {
+				count = 1
+				create_leader = {
+					class = admiral
+					species = event_target:ratling_species
+					name = random
+					skill = 3
+				}
+			}
+			create_leader = {
+				class = governor
+				species = event_target:ratling_species
+				name = random
+				skill = 3
+			}
+		}
+
+		set_country_flag = spawned_ratling_country
+	}
+}

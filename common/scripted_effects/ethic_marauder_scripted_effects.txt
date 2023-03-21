@@ -1,0 +1,1031 @@
+create_first_diadochi = {
+	if = {
+		limit = {
+			exists = event_target:first_diadochi_origin
+		}
+		create_country = {
+			name_list = random
+			species = event_target:marauder_species
+			type = default
+			authority = auth_imperial
+			civics = { civic = civic_diadochi }
+			origin = "origin_khan_successor"
+			ethos = {
+				ethic = ethic_fanatic_militarist
+				ethic = ethic_xenophobe
+				ethic = ethic_authoritarian #E&CC Compatibility
+			}
+			ignore_initial_colony_error = yes
+		}
+		last_created_country = {
+			save_event_target_as = first_diadochi
+			set_country_flag = diadochi_1
+			set_country_flag = diadochi
+			set_name = random
+		}
+		# Flip Starbases
+		every_system_within_border = {
+			limit = {
+				has_star_flag = first_diadochi_system
+				exists = starbase
+			}
+			starbase = {
+				set_owner = event_target:first_diadochi
+			}
+		}
+		# Flip Planets
+		every_owned_planet = {
+			limit = {
+				solar_system = { has_star_flag = first_diadochi_system }
+			}
+			set_owner = event_target:first_diadochi
+			set_controller = event_target:first_diadochi
+		}
+		event_target:first_diadochi = {
+			add_resource = {
+				minerals = 20000
+				energy = 20000
+				alloys = 20000
+				consumer_goods = 20000
+				food = 20000
+				influence = 1000
+			}
+			copy_techs_from = { target = root }
+			every_owned_starbase = {
+				set_starbase_size = starbase_outpost
+			}
+			if = {
+				limit = {
+					any_owned_starbase = { has_starbase_size = starbase_outpost }
+				}
+				random_owned_starbase = {
+					limit = { has_starbase_size = starbase_outpost }
+					set_starbase_size = starbase_starhold
+					set_starbase_module = {
+						slot = 1
+						module = shipyard
+					}
+					set_starbase_module = {
+						slot = 2
+						module = shipyard
+					}
+					set_starbase_module = {
+						slot = 3
+						module = shipyard
+					}
+				}
+			}
+			if = {
+				limit = {
+					any_owned_starbase = { has_starbase_size = starbase_outpost }
+				}
+				random_owned_starbase = {
+					limit = { has_starbase_size = starbase_outpost }
+					set_starbase_size = starbase_starhold
+				}
+			}
+			if = {
+				limit = {
+					any_owned_starbase = { has_starbase_size = starbase_outpost }
+				}
+				random_owned_starbase = {
+					limit = { has_starbase_size = starbase_outpost }
+					set_starbase_size = starbase_starhold
+				}
+			}
+			# Survey Own Space
+			every_planet_within_border = {
+				set_surveyed = {
+					surveyed = yes
+					surveyor = event_target:first_diadochi
+				}
+			}
+			# Survey Rest of Marauder's Space
+			root = {
+				every_planet_within_border = {
+					set_surveyed = {
+						surveyed = yes
+						surveyor = event_target:first_diadochi
+					}
+				}
+			}
+			# Mining and Research Stations
+			every_planet_within_border = {
+				limit = {
+					has_deposit_for = shipclass_mining_station
+					has_mining_station = no
+				}
+				create_mining_station = {
+					owner = event_target:first_diadochi
+				}
+			}
+			every_planet_within_border = {
+				limit = {
+					has_deposit_for = shipclass_research_station
+					has_research_station = no
+				}
+				create_research_station = {
+					owner = event_target:first_diadochi
+				}
+			}
+			### Units
+			create_ship_design = { design = "NAME_Pirate_Transport" }
+			add_ship_design = last_created_design
+			create_ship_design = { design = "NAME_Clan_Builder" }
+			add_ship_design = last_created_design
+			random_owned_planet = { save_event_target_as = unit_spawn_point }
+			# Fleet
+			create_leader = {
+				class = admiral
+				species = owner_main_species
+				name = random
+				skill = 3
+				leader_age_min = 25
+				leader_age_max = 45
+				traits = {
+					trait = leader_trait_mercenary_warrior
+					trait = random_trait
+				}
+			}
+			create_fleet = {
+				effect = {
+					set_owner = event_target:first_diadochi
+					while = {
+						count = 16
+						create_ship = {
+							name = random
+							design = "NAME_Outrider"
+							prefix = no
+							graphical_culture = "pirate_01"
+						}
+					}
+					while = {
+						count = 8
+						create_ship = {
+							name = random
+							design = "NAME_Lancer"
+							prefix = no
+							graphical_culture = "pirate_01"
+						}
+					}
+					while = {
+						count = 6
+						create_ship = {
+							name = random
+							design = "NAME_Void_Champion"
+							prefix = no
+							graphical_culture = "pirate_01"
+						}
+					}
+					while = {
+						count = 1
+						create_ship = {
+							name = random
+							design = "NAME_Ancestral_Glory"
+							prefix = no
+							graphical_culture = "pirate_01"
+						}
+					}
+					assign_leader = last_created_leader
+					set_location = {
+						target = event_target:unit_spawn_point
+						distance = 45
+						angle = random
+					}
+				}
+				settings = {
+					uses_naval_capacity = no
+				}
+			}
+			# Armies
+			create_leader = {
+				class = general
+				species = owner_main_species
+				name = random
+				skill = 3
+				traits = {
+					trait = random_trait
+				}
+			}
+			create_fleet = {
+				effect = {
+					set_owner = event_target:first_diadochi
+					while = {
+						count = 12
+						create_army_transport = {
+							ship_name = "NAME_Pirate_Transport"
+							graphical_culture = "mammalian_01"
+							army_type = "assault_army"
+							species = event_target:first_diadochi
+						}
+					}
+					set_location = {
+						target = event_target:unit_spawn_point
+						distance = 20
+						angle = random
+					}
+				}
+			}
+			last_created_army = { assign_leader = last_created_leader }
+			# Constructor
+			create_fleet = {
+				effect = {
+					set_owner = event_target:first_diadochi
+					create_ship = {
+						name = random
+						design = "NAME_Clan_Builder"
+					}
+					set_location = {
+						target = event_target:unit_spawn_point
+						distance = 20
+						angle = random
+					}
+				}
+			}
+		}
+		# Establish Communications
+		every_country = {
+			limit = {
+				OR = {
+					has_communications = root
+					has_government = gov_diadochi
+				}
+			}
+			establish_communications_no_message = event_target:first_diadochi
+		}
+	}
+}
+
+create_second_diadochi = {
+	if = {
+		limit = {
+			exists = event_target:second_diadochi_origin
+		}
+		create_country = {
+			name_list = random
+			species = event_target:marauder_species
+			type = default
+			authority = auth_imperial
+			civics = { civic = civic_diadochi }
+			origin = "origin_khan_successor"
+			ethos = {
+				ethic = ethic_fanatic_militarist
+				ethic = ethic_xenophobe
+				ethic = ethic_authoritarian #E&CC Compatibility
+			}
+			ignore_initial_colony_error = yes
+		}
+		last_created_country = {
+			save_event_target_as = second_diadochi
+			set_country_flag = diadochi_2
+			set_country_flag = diadochi
+			set_name = random
+		}
+		# Flip Starbases
+		every_system_within_border = {
+			limit = {
+				has_star_flag = second_diadochi_system
+				exists = starbase
+			}
+			starbase = {
+				set_owner = event_target:second_diadochi
+			}
+		}
+		# Flip Planets
+		every_owned_planet = {
+			limit = {
+				solar_system = { has_star_flag = second_diadochi_system }
+			}
+			set_owner = event_target:second_diadochi
+			set_controller = event_target:second_diadochi
+		}
+		event_target:second_diadochi = {
+			add_resource = {
+				minerals = 20000
+				energy = 20000
+				alloys = 20000
+				consumer_goods = 20000
+				food = 20000
+				influence = 1000
+			}
+			copy_techs_from = { target = root }
+			every_owned_starbase = {
+				set_starbase_size = starbase_outpost
+			}
+			if = {
+				limit = {
+					any_owned_starbase = { has_starbase_size = starbase_outpost }
+				}
+				random_owned_starbase = {
+					limit = { has_starbase_size = starbase_outpost }
+					set_starbase_size = starbase_starhold
+					set_starbase_module = {
+						slot = 1
+						module = shipyard
+					}
+					set_starbase_module = {
+						slot = 2
+						module = shipyard
+					}
+					set_starbase_module = {
+						slot = 3
+						module = shipyard
+					}
+				}
+			}
+			if = {
+				limit = {
+					any_owned_starbase = { has_starbase_size = starbase_outpost }
+				}
+				random_owned_starbase = {
+					limit = { has_starbase_size = starbase_outpost }
+					set_starbase_size = starbase_starhold
+				}
+			}
+			if = {
+				limit = {
+					any_owned_starbase = { has_starbase_size = starbase_outpost }
+				}
+				random_owned_starbase = {
+					limit = { has_starbase_size = starbase_outpost }
+					set_starbase_size = starbase_starhold
+				}
+			}
+			# Survey Own Space
+			every_planet_within_border = {
+				set_surveyed = {
+					surveyed = yes
+					surveyor = event_target:second_diadochi
+				}
+			}
+			# Survey Rest of Marauder's Space
+			root = {
+				every_planet_within_border = {
+					set_surveyed = {
+						surveyed = yes
+						surveyor = event_target:second_diadochi
+					}
+				}
+			}
+			# Mining and Research Stations
+			every_planet_within_border = {
+				limit = {
+					has_deposit_for = shipclass_mining_station
+					has_mining_station = no
+				}
+				create_mining_station = {
+					owner = event_target:second_diadochi
+				}
+			}
+			every_planet_within_border = {
+				limit = {
+					has_deposit_for = shipclass_research_station
+					has_research_station = no
+				}
+				create_research_station = {
+					owner = event_target:second_diadochi
+				}
+			}
+			### Units
+			create_ship_design = { design = "NAME_Pirate_Transport" }
+			add_ship_design = last_created_design
+			create_ship_design = { design = "NAME_Clan_Builder" }
+			add_ship_design = last_created_design
+			random_owned_planet = { save_event_target_as = unit_spawn_point }
+			# Fleet
+			create_leader = {
+				class = admiral
+				species = owner_main_species
+				name = random
+				skill = 3
+				leader_age_min = 25
+				leader_age_max = 45
+				traits = {
+					trait = leader_trait_mercenary_warrior
+					trait = random_trait
+				}
+			}
+			create_fleet = {
+				effect = {
+					set_owner = event_target:second_diadochi
+					while = {
+						count = 16
+						create_ship = {
+							name = random
+							design = "NAME_Outrider"
+							prefix = no
+							graphical_culture = "pirate_01"
+						}
+					}
+					while = {
+						count = 8
+						create_ship = {
+							name = random
+							design = "NAME_Lancer"
+							prefix = no
+							graphical_culture = "pirate_01"
+						}
+					}
+					while = {
+						count = 6
+						create_ship = {
+							name = random
+							design = "NAME_Void_Champion"
+							prefix = no
+							graphical_culture = "pirate_01"
+						}
+					}
+					while = {
+						count = 1
+						create_ship = {
+							name = random
+							design = "NAME_Ancestral_Glory"
+							prefix = no
+							graphical_culture = "pirate_01"
+						}
+					}
+					assign_leader = last_created_leader
+					set_location = {
+						target = event_target:unit_spawn_point
+						distance = 45
+						angle = random
+					}
+				}
+				settings = {
+					uses_naval_capacity = no
+				}
+			}
+			# Armies
+			create_leader = {
+				class = general
+				species = owner_main_species
+				name = random
+				skill = 3
+				traits = {
+					trait = random_trait
+				}
+			}
+			create_fleet = {
+				effect = {
+					set_owner = event_target:second_diadochi
+					while = {
+						count = 12
+						create_army_transport = {
+							ship_name = "NAME_Pirate_Transport"
+							graphical_culture = "mammalian_01"
+							army_type = "assault_army"
+							species = event_target:second_diadochi
+						}
+					}
+					set_location = {
+						target = event_target:unit_spawn_point
+						distance = 20
+						angle = random
+					}
+				}
+			}
+			last_created_army = { assign_leader = last_created_leader }
+			# Constructor
+			create_fleet = {
+				effect = {
+					set_owner = event_target:second_diadochi
+					create_ship = {
+						name = random
+						design = "NAME_Clan_Builder"
+					}
+					set_location = {
+						target = event_target:unit_spawn_point
+						distance = 20
+						angle = random
+					}
+				}
+			}
+		}
+		# Establish Communications
+		every_country = {
+			limit = {
+				OR = {
+					has_communications = root
+					has_government = gov_diadochi
+				}
+			}
+			establish_communications_no_message = event_target:second_diadochi
+		}
+	}
+}
+
+create_third_diadochi = {
+	if = {
+		limit = {
+			exists = event_target:third_diadochi_origin
+		}
+		create_country = {
+			name_list = random
+			species = event_target:marauder_species
+			type = default
+			authority = auth_imperial
+			civics = { civic = civic_diadochi }
+			origin = "origin_khan_successor"
+			ethos = {
+				ethic = ethic_fanatic_militarist
+				ethic = ethic_xenophobe
+				ethic = ethic_authoritarian #E&CC Compatibility
+			}
+			ignore_initial_colony_error = yes
+		}
+		last_created_country = {
+			save_event_target_as = third_diadochi
+			set_country_flag = diadochi_3
+			set_country_flag = diadochi
+			set_name = random
+		}
+		# Flip Starbases
+		every_system_within_border = {
+			limit = {
+				has_star_flag = third_diadochi_system
+				exists = starbase
+			}
+			starbase = {
+				set_owner = event_target:third_diadochi
+			}
+		}
+		# Flip Planets
+		every_owned_planet = {
+			limit = {
+				solar_system = { has_star_flag = third_diadochi_system }
+			}
+			set_owner = event_target:third_diadochi
+			set_controller = event_target:third_diadochi
+		}
+		event_target:third_diadochi = {
+			add_resource = {
+				minerals = 20000
+				energy = 20000
+				alloys = 20000
+				consumer_goods = 20000
+				food = 20000
+				influence = 1000
+			}
+			copy_techs_from = { target = root }
+			every_owned_starbase = {
+				set_starbase_size = starbase_outpost
+			}
+			if = {
+				limit = {
+					any_owned_starbase = { has_starbase_size = starbase_outpost }
+				}
+				random_owned_starbase = {
+					limit = { has_starbase_size = starbase_outpost }
+					set_starbase_size = starbase_starhold
+					set_starbase_module = {
+						slot = 1
+						module = shipyard
+					}
+					set_starbase_module = {
+						slot = 2
+						module = shipyard
+					}
+					set_starbase_module = {
+						slot = 3
+						module = shipyard
+					}
+				}
+			}
+			if = {
+				limit = {
+					any_owned_starbase = { has_starbase_size = starbase_outpost }
+				}
+				random_owned_starbase = {
+					limit = { has_starbase_size = starbase_outpost }
+					set_starbase_size = starbase_starhold
+				}
+			}
+			if = {
+				limit = {
+					any_owned_starbase = { has_starbase_size = starbase_outpost }
+				}
+				random_owned_starbase = {
+					limit = { has_starbase_size = starbase_outpost }
+					set_starbase_size = starbase_starhold
+				}
+			}
+			# Survey Own Space
+			every_planet_within_border = {
+				set_surveyed = {
+					surveyed = yes
+					surveyor = event_target:third_diadochi
+				}
+			}
+			# Survey Rest of Marauder's Space
+			root = {
+				every_planet_within_border = {
+					set_surveyed = {
+						surveyed = yes
+						surveyor = event_target:third_diadochi
+					}
+				}
+			}
+			# Mining and Research Stations
+			every_planet_within_border = {
+				limit = {
+					has_deposit_for = shipclass_mining_station
+					has_mining_station = no
+				}
+				create_mining_station = {
+					owner = event_target:third_diadochi
+				}
+			}
+			every_planet_within_border = {
+				limit = {
+					has_deposit_for = shipclass_research_station
+					has_research_station = no
+				}
+				create_research_station = {
+					owner = event_target:third_diadochi
+				}
+			}
+			### Units
+			create_ship_design = { design = "NAME_Pirate_Transport" }
+			add_ship_design = last_created_design
+			create_ship_design = { design = "NAME_Clan_Builder" }
+			add_ship_design = last_created_design
+			random_owned_planet = { save_event_target_as = unit_spawn_point }
+			# Fleet
+			create_leader = {
+				class = admiral
+				species = owner_main_species
+				name = random
+				skill = 3
+				leader_age_min = 25
+				leader_age_max = 45
+				traits = {
+					trait = leader_trait_mercenary_warrior
+					trait = random_trait
+				}
+			}
+			create_fleet = {
+				effect = {
+					set_owner = event_target:third_diadochi
+					while = {
+						count = 16
+						create_ship = {
+							name = random
+							design = "NAME_Outrider"
+							prefix = no
+							graphical_culture = "pirate_01"
+						}
+					}
+					while = {
+						count = 8
+						create_ship = {
+							name = random
+							design = "NAME_Lancer"
+							prefix = no
+							graphical_culture = "pirate_01"
+						}
+					}
+					while = {
+						count = 6
+						create_ship = {
+							name = random
+							design = "NAME_Void_Champion"
+							prefix = no
+							graphical_culture = "pirate_01"
+						}
+					}
+					while = {
+						count = 1
+						create_ship = {
+							name = random
+							design = "NAME_Ancestral_Glory"
+							prefix = no
+							graphical_culture = "pirate_01"
+						}
+					}
+					assign_leader = last_created_leader
+					set_location = {
+						target = event_target:unit_spawn_point
+						distance = 45
+						angle = random
+					}
+				}
+				settings = {
+					uses_naval_capacity = no
+				}
+			}
+			# Armies
+			create_leader = {
+				class = general
+				species = owner_main_species
+				name = random
+				skill = 3
+				traits = {
+					trait = random_trait
+				}
+			}
+			create_fleet = {
+				effect = {
+					set_owner = event_target:third_diadochi
+					while = {
+						count = 12
+						create_army_transport = {
+							ship_name = "NAME_Pirate_Transport"
+							graphical_culture = "mammalian_01"
+							army_type = "assault_army"
+							species = event_target:third_diadochi
+						}
+					}
+					set_location = {
+						target = event_target:unit_spawn_point
+						distance = 20
+						angle = random
+					}
+				}
+			}
+			last_created_army = { assign_leader = last_created_leader }
+			# Constructor
+			create_fleet = {
+				effect = {
+					set_owner = event_target:third_diadochi
+					create_ship = {
+						name = random
+						design = "NAME_Clan_Builder"
+					}
+					set_location = {
+						target = event_target:unit_spawn_point
+						distance = 20
+						angle = random
+					}
+				}
+			}
+		}
+		# Establish Communications
+		every_country = {
+			limit = {
+				OR = {
+					has_communications = root
+					has_government = gov_diadochi
+				}
+			}
+			establish_communications_no_message = event_target:third_diadochi
+		}
+	}
+}
+
+create_fourth_diadochi = {
+	if = {
+		limit = {
+			exists = event_target:fourth_diadochi_origin
+		}
+		create_country = {
+			name_list = random
+			species = event_target:marauder_species
+			type = default
+			authority = auth_imperial
+			civics = { civic = civic_diadochi }
+			origin = "origin_khan_successor"
+			ethos = {
+				ethic = ethic_fanatic_militarist
+				ethic = ethic_xenophobe
+				ethic = ethic_authoritarian #E&CC Compatibility
+			}
+			ignore_initial_colony_error = yes
+		}
+		last_created_country = {
+			save_event_target_as = fourth_diadochi
+			set_country_flag = diadochi_4
+			set_country_flag = diadochi
+			set_name = random
+		}
+		# Flip Starbases
+		every_system_within_border = {
+			limit = {
+				has_star_flag = fourth_diadochi_system
+				exists = starbase
+			}
+			starbase = {
+				set_owner = event_target:fourth_diadochi
+			}
+		}
+		# Flip Planets
+		every_owned_planet = {
+			limit = {
+				solar_system = { has_star_flag = fourth_diadochi_system }
+			}
+			set_owner = event_target:fourth_diadochi
+			set_controller = event_target:fourth_diadochi
+		}
+		event_target:fourth_diadochi = {
+			add_resource = {
+				minerals = 20000
+				energy = 20000
+				alloys = 20000
+				consumer_goods = 20000
+				food = 20000
+				influence = 1000
+			}
+			copy_techs_from = { target = root }
+			every_owned_starbase = {
+				set_starbase_size = starbase_outpost
+			}
+			if = {
+				limit = {
+					any_owned_starbase = { has_starbase_size = starbase_outpost }
+				}
+				random_owned_starbase = {
+					limit = { has_starbase_size = starbase_outpost }
+					set_starbase_size = starbase_starhold
+					set_starbase_module = {
+						slot = 1
+						module = shipyard
+					}
+					set_starbase_module = {
+						slot = 2
+						module = shipyard
+					}
+					set_starbase_module = {
+						slot = 3
+						module = shipyard
+					}
+				}
+			}
+			if = {
+				limit = {
+					any_owned_starbase = { has_starbase_size = starbase_outpost }
+				}
+				random_owned_starbase = {
+					limit = { has_starbase_size = starbase_outpost }
+					set_starbase_size = starbase_starhold
+				}
+			}
+			if = {
+				limit = {
+					any_owned_starbase = { has_starbase_size = starbase_outpost }
+				}
+				random_owned_starbase = {
+					limit = { has_starbase_size = starbase_outpost }
+					set_starbase_size = starbase_starhold
+				}
+			}
+			# Survey Own Space
+			every_planet_within_border = {
+				set_surveyed = {
+					surveyed = yes
+					surveyor = event_target:fourth_diadochi
+				}
+			}
+			# Survey Rest of Marauder's Space
+			root = {
+				every_planet_within_border = {
+					set_surveyed = {
+						surveyed = yes
+						surveyor = event_target:fourth_diadochi
+					}
+				}
+			}
+			# Mining and Research Stations
+			every_planet_within_border = {
+				limit = {
+					has_deposit_for = shipclass_mining_station
+					has_mining_station = no
+				}
+				create_mining_station = {
+					owner = event_target:fourth_diadochi
+				}
+			}
+			every_planet_within_border = {
+				limit = {
+					has_deposit_for = shipclass_research_station
+					has_research_station = no
+				}
+				create_research_station = {
+					owner = event_target:fourth_diadochi
+				}
+			}
+			### Units
+			create_ship_design = { design = "NAME_Pirate_Transport" }
+			add_ship_design = last_created_design
+			create_ship_design = { design = "NAME_Clan_Builder" }
+			add_ship_design = last_created_design
+			random_owned_planet = { save_event_target_as = unit_spawn_point }
+			# Fleet
+			create_leader = {
+				class = admiral
+				species = owner_main_species
+				name = random
+				skill = 3
+				leader_age_min = 25
+				leader_age_max = 45
+				traits = {
+					trait = leader_trait_mercenary_warrior
+					trait = random_trait
+				}
+			}
+			create_fleet = {
+				effect = {
+					set_owner = event_target:fourth_diadochi
+					while = {
+						count = 16
+						create_ship = {
+							name = random
+							design = "NAME_Outrider"
+							prefix = no
+							graphical_culture = "pirate_01"
+						}
+					}
+					while = {
+						count = 8
+						create_ship = {
+							name = random
+							design = "NAME_Lancer"
+							prefix = no
+							graphical_culture = "pirate_01"
+						}
+					}
+					while = {
+						count = 6
+						create_ship = {
+							name = random
+							design = "NAME_Void_Champion"
+							prefix = no
+							graphical_culture = "pirate_01"
+						}
+					}
+					while = {
+						count = 1
+						create_ship = {
+							name = random
+							design = "NAME_Ancestral_Glory"
+							prefix = no
+							graphical_culture = "pirate_01"
+						}
+					}
+					assign_leader = last_created_leader
+					set_location = {
+						target = event_target:unit_spawn_point
+						distance = 45
+						angle = random
+					}
+				}
+				settings = {
+					uses_naval_capacity = no
+				}
+			}
+			# Armies
+			create_leader = {
+				class = general
+				species = owner_main_species
+				name = random
+				skill = 3
+				traits = {
+					trait = random_trait
+				}
+			}
+			create_fleet = {
+				effect = {
+					set_owner = event_target:fourth_diadochi
+					while = {
+						count = 12
+						create_army_transport = {
+							ship_name = "NAME_Pirate_Transport"
+							graphical_culture = "mammalian_01"
+							army_type = "assault_army"
+							species = event_target:fourth_diadochi
+						}
+					}
+					set_location = {
+						target = event_target:unit_spawn_point
+						distance = 20
+						angle = random
+					}
+				}
+			}
+			last_created_army = { assign_leader = last_created_leader }
+			# Constructor
+			create_fleet = {
+				effect = {
+					set_owner = event_target:fourth_diadochi
+					create_ship = {
+						name = random
+						design = "NAME_Clan_Builder"
+					}
+					set_location = {
+						target = event_target:unit_spawn_point
+						distance = 20
+						angle = random
+					}
+				}
+			}
+		}
+		# Establish Communications
+		every_country = {
+			limit = {
+				OR = {
+					has_communications = root
+					has_government = gov_diadochi
+				}
+			}
+			establish_communications_no_message = event_target:fourth_diadochi
+		}
+	}
+}
