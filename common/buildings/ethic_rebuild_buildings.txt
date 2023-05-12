@@ -1,13 +1,16 @@
-@buildings_t1 = 1
-@buildings_t2 = 2
-@buildings_t3 = 3
-@buildings_t4 = 4
-
 #00_capital_buildings.txt
 
 #############
 # Capital buildings
 #############
+@buildings_t1 = 1
+@buildings_t2 = 2
+@buildings_t3 = 3
+@buildings_t4 = 4
+
+@tier_2_capital_defense_armies = 4
+@tier_3_capital_defense_armies = 8
+@tier_4_capital_defense_armies = 16
 
 # Planetary Administration
 building_capital = {
@@ -65,6 +68,11 @@ building_capital = {
 		planet_amenities_add = 5
 		planet_max_buildings_add = @buildings_t2
 		planet_max_branch_office_buildings_add = 1
+		defense_armies_add = @tier_2_capital_defense_armies
+	}
+
+	inline_script = {
+		script = buildings/on_all_capital_buildings
 	}
 
 	triggered_planet_modifier = {
@@ -303,6 +311,17 @@ building_capital = {
 		pop_growth_speed = 0.10
 	}
 
+	triggered_country_modifier = {
+		potential = {
+			is_capital = yes
+			owner = {
+				has_councilor = { COUNCILOR = "councilor_feudal_realm" } 
+			}
+		}
+		country_naval_cap_add = 1
+		mult = value:naval_cap_vassals_councilor_feudal_realm
+	}
+
 	resources = {
 		category = planet_buildings
 		cost = {
@@ -487,6 +506,11 @@ building_major_capital = {
 		planet_amenities_add = 8
 		planet_max_buildings_add = @buildings_t3
 		planet_max_branch_office_buildings_add = 2
+		defense_armies_add = @tier_3_capital_defense_armies
+	}
+
+	inline_script = {
+		script = buildings/on_all_capital_buildings
 	}
 
 	triggered_planet_modifier = {
@@ -755,6 +779,17 @@ building_major_capital = {
 		pop_growth_speed = 0.10
 	}
 
+	triggered_country_modifier = {
+		potential = {
+			is_capital = yes
+			owner = {
+				has_councilor = { COUNCILOR = "councilor_feudal_realm" } 
+			}
+		}
+		country_naval_cap_add = 1
+		mult = value:naval_cap_vassals_councilor_feudal_realm
+	}
+
 	resources = {
 		category = planet_buildings
 		cost = {
@@ -949,6 +984,11 @@ building_system_capital = {
 		planet_amenities_add = 12
 		planet_max_buildings_add = @buildings_t4
 		planet_max_branch_office_buildings_add = 4
+		defense_armies_add = @tier_4_capital_defense_armies
+	}
+
+	inline_script = {
+		script = buildings/on_all_capital_buildings
 	}
 
 	triggered_planet_modifier = {
@@ -1229,6 +1269,17 @@ building_system_capital = {
 		pop_growth_speed = 0.10
 	}
 
+	triggered_country_modifier = {
+		potential = {
+			is_capital = yes
+			owner = {
+				has_councilor = { COUNCILOR = "councilor_feudal_realm" } 
+			}
+		}
+		country_naval_cap_add = 1
+		mult = value:naval_cap_vassals_councilor_feudal_realm
+	}
+
 	resources = {
 		category = planet_buildings
 		cost = {
@@ -1410,6 +1461,11 @@ building_imperial_capital = {
 		planet_amenities_add = 18
 		planet_max_buildings_add = 11
 		planet_max_branch_office_buildings_add = 4
+		defense_armies_add = @tier_4_capital_defense_armies
+	}
+
+	inline_script = {
+		script = buildings/on_all_capital_buildings
 	}
 
 	triggered_planet_modifier = {
@@ -1657,6 +1713,17 @@ building_imperial_capital = {
 		pop_growth_speed = 0.10
 	}
 
+	triggered_country_modifier = {
+		potential = {
+			is_capital = yes
+			owner = {
+				has_councilor = { COUNCILOR = "councilor_feudal_realm" } 
+			}
+		}
+		country_naval_cap_add = 1
+		mult = value:naval_cap_vassals_councilor_feudal_realm
+	}
+
 	resources = {
 		category = planet_buildings
 		cost = {
@@ -1824,6 +1891,11 @@ building_hab_major_capital = {
 		planet_amenities_add = 5
 		planet_max_buildings_add = @buildings_t2
 		planet_max_branch_office_buildings_add = 1
+		defense_armies_add = @tier_2_capital_defense_armies
+	}
+
+	inline_script = {
+		script = buildings/on_all_capital_buildings
 	}
 
 	triggered_planet_modifier = {
@@ -2633,15 +2705,8 @@ building_precinct_house = {
 			OR = {
 				owner = { is_ai = no }
 				AND = {
-					planet_crime > 15
-					NOR = {
-						AND = {
-							has_building = building_precinct_house
-							owner = { has_technology = tech_colonial_centralization }
-						}
-						has_building = building_hall_judgment
-						num_buildings = { type = building_precinct_house value = 3 }
-					}
+					NOT = { has_forbidden_jobs = enforcer }
+					NOT = { has_available_jobs = enforcer }
 				}
 			}
 		}
@@ -2704,6 +2769,13 @@ building_hall_judgment = {
 	potential = {
 		owner = { is_regular_empire = yes }
 		NOT = { has_modifier = slave_colony }
+		if = {
+			limit = {
+				owner = { is_ai = yes }
+			}
+			NOT = { has_forbidden_jobs = enforcer }
+			NOT = { has_available_jobs = enforcer }
+		}
 	}
 
 	destroy_trigger = {
@@ -4551,6 +4623,18 @@ building_clinic = {
 			}
 		}
 		NOT = { has_modifier = slave_colony }
+
+		OR = {
+			owner = {
+				NOT = { is_ai = yes }
+			}
+			AND = {
+				NOT = { has_available_jobs = entertainer }
+				NOT = { has_forbidden_jobs = entertainer }
+				planet_stability < 50
+				free_amenities < 0
+			}
+		}
 	}
 
 	destroy_trigger = {
@@ -4567,8 +4651,11 @@ building_clinic = {
 			}
 			has_modifier = slave_colony
 			AND = {
-				buildings_stop_pop = yes
-				owner = { is_ai = yes }
+				owner = {
+					is_ai = yes
+				}
+				planet_stability > 70
+				free_amenities > 20
 			}
 		}
 	}
@@ -4682,6 +4769,17 @@ building_hospital = {
 
 	allow = {
 		has_upgraded_capital = yes
+		OR = {
+			owner = {
+				is_ai = no
+			}
+			AND = {
+				NOT = { has_available_jobs = entertainer }
+				NOT = { has_forbidden_jobs = entertainer }
+				planet_stability < 55
+				free_amenities < 5
+			}
+		}
 	}
 
 	destroy_trigger = {
@@ -5414,7 +5512,7 @@ building_citadel_of_faith = {
 building_military_academy = {
 	base_buildtime = @b2_time
 	base_cap_amount = 1
-
+	can_be_ruined = no
 	category = army
 
 	potential = {
@@ -5534,7 +5632,7 @@ building_military_academy = {
 building_stronghold = {
 	base_buildtime = 240
 	position_priority = 100
-
+	can_be_ruined = no
 	category = army
 	exempt_from_ai_planet_specialization = no
 
@@ -5625,7 +5723,7 @@ building_fortress = {
 	can_build = no
 	planetary_ftl_inhibitor = yes
 	position_priority = 100
-
+	can_be_ruined = no
 	category = army
 
 	allow = {
@@ -5720,7 +5818,7 @@ building_planetary_shield_generator = {
 	base_buildtime = @b3_time
 	base_cap_amount = 1
 	position_priority = 100
-
+	can_be_ruined = no
 	category = army
 
 	allow = {
