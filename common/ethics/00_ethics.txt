@@ -1,8 +1,7 @@
-
 ethic_fanatic_authoritarian = {
 	cost = 2
 	category = "col"
-	category_value= 0
+	category_value = 0
 
 	use_for_pops = no
 
@@ -30,9 +29,17 @@ ethic_fanatic_authoritarian = {
 ethic_authoritarian = {
 	cost = 1
 	category = "col"
-	category_value= 1
+	category_value = 1
 
 	fanatic_variant = ethic_fanatic_authoritarian
+
+	leader_background_job_weight = {
+		politician = 25
+		noble = 25
+		executive = 25
+		bureaucrat = 25
+		manager = 25
+	}
 
 	country_modifier = {
 		country_base_influence_produces_add = 0.75
@@ -64,14 +71,6 @@ ethic_authoritarian = {
 			is_authoritarian = no
 
 			has_faction = totalitarian
-		}
-	}
-
-	pop_attraction_tag = {
-		desc = POP_ATTRACTION_RULER_FACTION_POS
-		trigger = {
-			exists = ruler
-			ruler = { leader_of_faction = totalitarian }
 		}
 	}
 
@@ -121,8 +120,8 @@ ethic_authoritarian = {
 					has_living_standard = { type = living_standard_shared_burden country = root }
 				}
 			}
-					}
-				}
+		}
+	}
 	pop_attraction_tag = {
 		desc = POP_ATTRACTION_STRATIFIED_POS
 		trigger = {
@@ -198,6 +197,22 @@ ethic_authoritarian = {
 		}
 	}
 
+	# Check for any leader on the Council with Faction's Ethic.
+	pop_attraction_tag = {
+		desc = POP_ATTRACTION_REPRESENTED_ON_COUNCIL
+		trigger = {
+			owner = {
+				any_owned_leader = {
+					OR = {
+						is_ruler = yes
+						is_councilor = yes
+					}
+					has_ethic = ethic_authoritarian
+				}
+			}
+		}
+	}
+
 	country_attraction = {
 		base = 1
 		modifier = {
@@ -208,7 +223,7 @@ ethic_authoritarian = {
 				AND = {
 					is_country_type = primitive
 					has_country_flag = preftl_societal_enlightenment_pact
-					capital_scope = {	
+					capital_scope = {
 						has_observation_outpost = yes
 						observation_outpost_owner = {
 							is_authoritarian = yes
@@ -243,11 +258,6 @@ ethic_authoritarian = {
 			has_faction = totalitarian
 		}
 		modifier = {
-			factor = 1.5
-			exists = ruler
-			ruler = { leader_of_faction = totalitarian }
-		}
-		modifier = {
 			exists = overlord
 			has_loyalty > 0
 			mult = value:ethics_from_overlord|ETHIC|authoritarian|
@@ -275,6 +285,11 @@ ethic_authoritarian = {
 		modifier = {
 			factor = 0.75
 			has_election_type = democratic
+		}
+
+		# Check for any leader on the Council with Faction's Ethic.
+		modifier = {
+			factor = value:count_councilors_with_ethic|ETHIC|egalitarian|
 		}
 	}
 
@@ -354,7 +369,7 @@ ethic_authoritarian = {
 ethic_fanatic_egalitarian = {
 	cost = 2
 	category = "col"
-	category_value= 4
+	category_value = 4
 
 	category_opposite = yes
 
@@ -383,7 +398,7 @@ ethic_fanatic_egalitarian = {
 ethic_egalitarian = {
 	cost = 1
 	category = "col"
-	category_value= 3
+	category_value = 3
 
 	fanatic_variant = ethic_fanatic_egalitarian
 
@@ -392,6 +407,24 @@ ethic_egalitarian = {
 	tags = {
 		ETHIC_NEVER_AUTOCRACY
 		ETHIC_ALLOWS_UTOPIA
+	}
+
+	leader_background_job_weight = {
+		colonist = 25
+		culture_worker = 25
+		pearl_diver = 25
+		clerk = 25
+		technician = 25
+		miner = 25
+		crystal_miner = 25
+		gas_extractor = 25
+		mote_harvester = 25
+		farmer = 25
+		scrap_miner = 25
+		angler = 25
+		ranger = 25
+		squire = 25
+		puddle_technician = 25
 	}
 
 	country_modifier = {
@@ -421,19 +454,11 @@ ethic_egalitarian = {
 	}
 
 	pop_attraction_tag = {
-		desc = POP_ATTRACTION_RULER_FACTION_POS
-		trigger = {
-			exists = ruler
-			ruler = { leader_of_faction = progressive }
-		}
-	}
-
-	pop_attraction_tag = {
 		desc = POP_ATTRACTION_CONSUMER_GOODS_POS
 		trigger = {
 			is_authoritarian = no
 			any_owned_species = {
-					OR = {
+				OR = {
 					has_living_standard = { type = living_standard_utopian country = root }
 					has_living_standard = { type = living_standard_good country = root }
 					has_living_standard = { type = living_standard_shared_burden country = root }
@@ -531,6 +556,22 @@ ethic_egalitarian = {
 		}
 	}
 
+	# Check for any leader on the Council with Faction's Ethic.
+	pop_attraction_tag = {
+		desc = POP_ATTRACTION_REPRESENTED_ON_COUNCIL
+		trigger = {
+			owner = {
+				any_owned_leader = {
+					OR = {
+						is_ruler = yes
+						is_councilor = yes
+					}
+					has_ethic = ethic_egalitarian
+				}
+			}
+		}
+	}
+
 	country_attraction = {
 		base = 1
 		modifier = {
@@ -575,11 +616,6 @@ ethic_egalitarian = {
 			has_faction = progressive
 		}
 		modifier = {
-			factor = 1.5
-			exists = ruler
-			ruler = { leader_of_faction = progressive }
-		}
-		modifier = {
 			factor = 2
 			has_ethic = ethic_egalitarian
 		}
@@ -619,6 +655,12 @@ ethic_egalitarian = {
 				count = 0
 			}
 		}
+
+		# Check for any leader on the Council with Faction's Ethic.
+		modifier = {
+			factor = value:count_councilors_with_ethic|ETHIC|egalitarian|
+		}
+
 		mult = value:egalitarian_ethics_from_relations
 	}
 
@@ -662,7 +704,7 @@ ethic_egalitarian = {
 ethic_fanatic_xenophobe = {
 	cost = 2
 	category = "xen"
-	category_value= 0
+	category_value = 0
 
 	xenophobe = yes #used for a few hardcoded checks (mainly tooltips)
 
@@ -696,7 +738,7 @@ ethic_fanatic_xenophobe = {
 ethic_xenophobe = {
 	cost = 1
 	category = "xen"
-	category_value= 1
+	category_value = 1
 
 	xenophobe = yes #used for a few hardcoded checks (mainly tooltips)
 
@@ -757,25 +799,12 @@ ethic_xenophobe = {
 	}
 
 	pop_attraction_tag = {
-		desc = POP_ATTRACTION_RULER_FACTION_POS
-		trigger = {
-			exists = ruler
-			ruler = {
-				OR = {
-					leader_of_faction = supremacist
-					leader_of_faction = isolationist
-				}
-			}
-		}
-	}
-
-	pop_attraction_tag = {
 		desc = POP_ATTRACTION_DEFENSIVE_XENO_WAR_POS
 		trigger = {
 			is_at_war = yes
 			any_war = {
 				any_defender = {
-					is_same_value= prevprev
+					is_same_value = prevprev
 				}
 				any_attacker = {
 					NOT = { is_same_species = root }
@@ -890,15 +919,15 @@ ethic_xenophobe = {
 	pop_attraction_tag = {
 		desc = POP_ATTRACTION_FREE_XENOS_NEG
 		trigger = {
-				any_owned_pop = {
-					not = { is_same_species = root }
-					is_enslaved = no
-					is_being_purged = no
-					is_sapient = yes
-					is_robot_pop = no
-				}
+			any_owned_pop = {
+				not = { is_same_species = root }
+				is_enslaved = no
+				is_being_purged = no
+				is_sapient = yes
+				is_robot_pop = no
 			}
 		}
+	}
 
 	pop_attraction_tag = {
 		desc = POP_ATTRACTION_MIGRATION_TREATIES_NEG
@@ -907,6 +936,23 @@ ethic_xenophobe = {
 				is_subject = no
 				has_migration_access = root
 				NOT = { is_same_species = root }
+			}
+		}
+	}
+
+
+	# Check for any leader on the Council with Faction's Ethic.
+	pop_attraction_tag = {
+		desc = POP_ATTRACTION_REPRESENTED_ON_COUNCIL
+		trigger = {
+			owner = {
+				any_owned_leader = {
+					OR = {
+						is_ruler = yes
+						is_councilor = yes
+					}
+					has_ethic = ethic_xenophobe
+				}
 			}
 		}
 	}
@@ -939,16 +985,7 @@ ethic_xenophobe = {
 				has_faction = isolationist
 			}
 		}
-		modifier = {
-			factor = 1.5
-			exists = ruler
-			ruler = {
-				OR = {
-					leader_of_faction = supremacist
-					leader_of_faction = isolationist
-				}
-			}
-		}
+
 		modifier = {
 			factor = 2
 			has_ethic = ethic_xenophobe
@@ -979,7 +1016,7 @@ ethic_xenophobe = {
 			factor = 3.0
 			any_war = {
 				any_defender = {
-					is_same_value= prevprev
+					is_same_value = prevprev
 				}
 				any_attacker = {
 					NOT = { is_same_species = root }
@@ -1033,6 +1070,11 @@ ethic_xenophobe = {
 				has_observation_outpost = yes
 				observation_outpost_owner = { has_ethic = ethic_xenophobe }
 			}
+		}
+
+		# Check for any leader on the Council with Faction's Ethic.
+		modifier = {
+			factor = value:count_councilors_with_ethic|ETHIC|xenophobe|
 		}
 	}
 
@@ -1094,7 +1136,7 @@ ethic_xenophobe = {
 ethic_fanatic_xenophile = {
 	cost = 2
 	category = "xen"
-	category_value= 4
+	category_value = 4
 
 	xenophile = yes #used for a few hardcoded checks (mainly tooltips)
 
@@ -1129,7 +1171,7 @@ ethic_fanatic_xenophile = {
 ethic_xenophile = {
 	cost = 1
 	category = "xen"
-	category_value= 3
+	category_value = 3
 
 	xenophile = yes #used for a few hardcoded checks (mainly tooltips)
 
@@ -1142,6 +1184,10 @@ ethic_xenophile = {
 		ETHIC_ALWAYS_REFUGEES
 		ETHIC_DISALLOWS_SLAVERY
 		ETHIC_DISALLOWS_DISPLACE
+	}
+
+	leader_background_job_weight = {
+		xeno_zoo_keeper = 25
 	}
 
 	country_modifier = {
@@ -1169,14 +1215,6 @@ ethic_xenophile = {
 		trigger = {
 			is_xenophile = no
 			has_faction = xenoist
-		}
-	}
-
-	pop_attraction_tag = {
-		desc = POP_ATTRACTION_RULER_FACTION_POS
-		trigger = {
-			exists = ruler
-			ruler = { leader_of_faction = xenoist }
 		}
 	}
 
@@ -1326,6 +1364,22 @@ ethic_xenophile = {
 		}
 	}
 
+	# Check for any leader on the Council with Faction's Ethic.
+	pop_attraction_tag = {
+		desc = POP_ATTRACTION_REPRESENTED_ON_COUNCIL
+		trigger = {
+			owner = {
+				any_owned_leader = {
+					OR = {
+						is_ruler = yes
+						is_councilor = yes
+					}
+					has_ethic = ethic_xenophile
+				}
+			}
+		}
+	}
+
 	country_attraction = {
 		base = 1
 		modifier = {
@@ -1350,12 +1404,6 @@ ethic_xenophile = {
 			is_country_type = default
 				is_xenophile = no
 			has_faction = xenoist
-		}
-		modifier = {
-			factor = 1.5
-			is_country_type = default
-			exists = ruler
-			ruler = { leader_of_faction = xenoist }
 		}
 		modifier = {
 			factor = 2
@@ -1433,6 +1481,10 @@ ethic_xenophile = {
 				observation_outpost_owner = { has_ethic = ethic_xenophile }
 			}
 		}
+		# Check for any leader on the Council with Faction's Ethic.
+		modifier = {
+			factor = value:count_councilors_with_ethic|ETHIC|xenophile|
+		}
 	}
 
 	# from = planet
@@ -1492,7 +1544,7 @@ ethic_xenophile = {
 ethic_fanatic_militarist = {
 	cost = 2
 	category = "mil"
-	category_value= 0
+	category_value = 0
 
 	use_for_pops = no
 
@@ -1518,7 +1570,7 @@ ethic_fanatic_militarist = {
 ethic_militarist = {
 	cost = 1
 	category = "mil"
-	category_value= 1
+	category_value = 1
 
 	fanatic_variant = ethic_fanatic_militarist
 
@@ -1549,14 +1601,6 @@ ethic_militarist = {
 		trigger = {
 			is_militarist = no
 			has_faction = imperialist
-		}
-	}
-
-	pop_attraction_tag = {
-		desc = POP_ATTRACTION_RULER_FACTION_POS
-		trigger = {
-			exists = ruler
-			ruler = { leader_of_faction = imperialist }
 		}
 	}
 
@@ -1720,6 +1764,22 @@ ethic_militarist = {
 		}
 	}
 
+	# Check for any leader on the Council with Faction's Ethic.
+	pop_attraction_tag = {
+		desc = POP_ATTRACTION_REPRESENTED_ON_COUNCIL
+		trigger = {
+			owner = {
+				any_owned_leader = {
+					OR = {
+						is_ruler = yes
+						is_councilor = yes
+					}
+					has_ethic = ethic_militarist
+				}
+			}
+		}
+	}
+
 	# from = planet
 	country_attraction = {
 		base = 1
@@ -1748,12 +1808,6 @@ ethic_militarist = {
 			has_faction = imperialist
 		}
 
-		modifier = {
-			factor = 1.5
-			is_country_type = default
-			exists = ruler
-			ruler = { leader_of_faction = imperialist }
-		}
 		modifier = {
 			factor = 1.5
 			has_federation = yes
@@ -1895,6 +1949,11 @@ ethic_militarist = {
 			factor = 0.75
 			has_policy_flag = no_wars
 		}
+
+		# Check for any leader on the Council with Faction's Ethic.
+		modifier = {
+			factor = value:count_councilors_with_ethic|ETHIC|militarist|
+		}
 	}
 
 	# from = planet
@@ -1937,7 +1996,7 @@ ethic_militarist = {
 ethic_fanatic_pacifist = {
 	cost = 2
 	category = "mil"
-	category_value= 4
+	category_value = 4
 
 	category_opposite = yes
 
@@ -1959,18 +2018,25 @@ ethic_fanatic_pacifist = {
 	}
 
 	random_weight = {
-		base = 33 		# rare ethic
+		base = 33		# rare ethic
 	}
 }
 
 ethic_pacifist = {
 	cost = 1
 	category = "mil"
-	category_value= 3
+	category_value = 3
 
 	category_opposite = yes
 
 	fanatic_variant = ethic_fanatic_pacifist
+
+	leader_background_job_weight = {
+		healthcare = 25
+		unifier = 25
+		entertainer = 25
+		artisan = 25
+	}
 
 	country_modifier = {
 		empire_size_pops_mult = -0.15
@@ -2000,14 +2066,6 @@ ethic_pacifist = {
 		trigger = {
 			is_pacifist = no
 			has_faction = prosperity
-		}
-	}
-
-	pop_attraction_tag = {
-		desc = POP_ATTRACTION_RULER_FACTION_POS
-		trigger = {
-			exists = ruler
-			ruler = { leader_of_faction = prosperity }
 		}
 	}
 
@@ -2092,6 +2150,22 @@ ethic_pacifist = {
 		}
 	}
 
+	# Check for any leader on the Council with Faction's Ethic.
+	pop_attraction_tag = {
+		desc = POP_ATTRACTION_REPRESENTED_ON_COUNCIL
+		trigger = {
+			owner = {
+				any_owned_leader = {
+					OR = {
+						is_ruler = yes
+						is_councilor = yes
+					}
+					has_ethic = ethic_pacifist
+				}
+			}
+		}
+	}
+
 	country_attraction = {
 		base = 1
 		modifier = {
@@ -2125,12 +2199,7 @@ ethic_pacifist = {
 			factor = 0.5
 			has_valid_civic = civic_fanatic_purifiers
 		}
-		modifier = {
-			factor = 1.5
-			is_country_type = default
-			exists = ruler
-			ruler = { leader_of_faction = prosperity }
-		}
+
 		modifier = {
 			factor = 2
 			has_ethic = ethic_pacifist
@@ -2207,6 +2276,10 @@ ethic_pacifist = {
 			factor = 0.75
 			has_policy_flag = unrestricted_wars
 		}
+		# Check for any leader on the Council with Faction's Ethic.
+		modifier = {
+			factor = value:count_councilors_with_ethic|ETHIC|pacifist|
+		}
 		mult = value:pacifist_ethics_from_pacts
 	}
 
@@ -2251,7 +2324,7 @@ ethic_pacifist = {
 ethic_fanatic_spiritualist = {
 	cost = 2
 	category = "spi"
-	category_value= 0
+	category_value = 0
 
 	regular_variant = ethic_spiritualist
 
@@ -2278,13 +2351,24 @@ ethic_fanatic_spiritualist = {
 ethic_spiritualist = {
 	cost = 1
 	category = "spi"
-	category_value= 1
+	category_value = 1
 
 	fanatic_variant = ethic_fanatic_spiritualist
 
 	tags = {
 		ETHIC_ALLOWS_TEMPLE
 		ETHIC_DISALLOW_AI
+	}
+
+	leader_background_job_weight = {
+		high_priest = 25
+		priest = 25
+		death_priest = 25
+		telepath = 25
+		death_chronicler = 25
+		necro_apprentice = 25
+		preacher = 25
+		mortal_initiate = 25
 	}
 
 	country_modifier = {
@@ -2299,7 +2383,7 @@ ethic_spiritualist = {
 	}
 
 	pop_attraction_tag = {
-		desc = 	POP_ATTRACTION_SPIRITUALIST_POS
+		desc =	POP_ATTRACTION_SPIRITUALIST_POS
 		trigger = {
 			is_spiritualist = yes
 		}
@@ -2310,14 +2394,6 @@ ethic_spiritualist = {
 		trigger = {
 			is_spiritualist = no
 			has_faction = traditionalist
-		}
-	}
-
-	pop_attraction_tag = {
-		desc = POP_ATTRACTION_RULER_FACTION_POS
-		trigger = {
-			exists = ruler
-			ruler = { leader_of_faction = traditionalist }
 		}
 	}
 
@@ -2427,6 +2503,22 @@ ethic_spiritualist = {
 		}
 	}
 
+	# Check for any leader on the Council with Faction's Ethic.
+	pop_attraction_tag = {
+		desc = POP_ATTRACTION_REPRESENTED_ON_COUNCIL
+		trigger = {
+			owner = {
+				any_owned_leader = {
+					OR = {
+						is_ruler = yes
+						is_councilor = yes
+					}
+					has_ethic = ethic_spiritualist
+				}
+			}
+		}
+	}
+
 	country_attraction = {
 		base = 1
 		modifier = {
@@ -2450,7 +2542,7 @@ ethic_spiritualist = {
 		modifier = {
 			factor = 20
 			is_country_type = primitive
-					has_country_flag = preftl_societal_enlightenment_pact
+			has_country_flag = preftl_societal_enlightenment_pact
 			capital_scope = {
 				has_observation_outpost = yes
 				observation_outpost_owner = { has_ethic = ethic_fanatic_spiritualist }
@@ -2459,15 +2551,15 @@ ethic_spiritualist = {
 		modifier = {
 			factor = 10
 			is_country_type = primitive
-					has_country_flag = preftl_societal_enlightenment_pact
+			has_country_flag = preftl_societal_enlightenment_pact
 			capital_scope = {
 				has_observation_outpost = yes
 				observation_outpost_owner = { has_ethic = ethic_spiritualist }
 			}
 		}
 		modifier = {
-			is_country_type = default
 			factor = 2
+			is_country_type = default
 			is_spiritualist = no
 			has_faction = traditionalist
 		}
@@ -2485,12 +2577,6 @@ ethic_spiritualist = {
 				has_federation_type = spiritualist_federation
 				has_federation_perk = spiritualist_envoys_1
 			}
-		}
-		modifier = {
-			factor = 1.5
-			is_country_type = default
-			exists = ruler
-			ruler = { leader_of_faction = traditionalist }
 		}
 		modifier = {
 			factor = 2
@@ -2524,6 +2610,10 @@ ethic_spiritualist = {
 			exists = overlord
 			has_loyalty > 0
 			mult = value:ethics_from_overlord|ETHIC|spiritualist|
+		}
+		# Check for any leader on the Council with Faction's Ethic.
+		modifier = {
+			factor = value:count_councilors_with_ethic|ETHIC|spiritualist|
 		}
 		mult = value:spiritualist_ethics_from_relations
 	}
@@ -2564,7 +2654,7 @@ ethic_spiritualist = {
 ethic_fanatic_materialist = {
 	cost = 2
 	category = "spi"
-	category_value= 4
+	category_value = 4
 
 	regular_variant = ethic_materialist
 
@@ -2593,7 +2683,7 @@ ethic_fanatic_materialist = {
 ethic_materialist = {
 	cost = 1
 	category = "spi"
-	category_value= 3
+	category_value = 3
 
 	fanatic_variant = ethic_fanatic_materialist
 
@@ -2603,6 +2693,21 @@ ethic_materialist = {
 		ETHIC_ALLOWS_ACADEMIC_PRIVILEGE
 		ETHIC_DISALLOW_BAN_AI
 		ETHIC_DISALLOW_BAN_ROBOTS
+	}
+
+	leader_background_job_weight = {
+		head_researcher = 25
+		merchant = 25
+		researcher = 25
+		chemist = 25
+		translucer = 25
+		gas_refiner = 25
+		roboticist = 25
+		bluelotus_technician = 25
+		foundry = 25
+		catalytic_technician = 25
+		artificer = 25
+		reassigner = 25
 	}
 
 	country_modifier = {
@@ -2634,14 +2739,6 @@ ethic_materialist = {
 		desc = POP_ATTRACTION_MECHANIST_POS
 		trigger = {
 			has_origin = origin_mechanists
-		}
-	}
-
-	pop_attraction_tag = {
-		desc = POP_ATTRACTION_RULER_FACTION_POS
-		trigger = {
-			exists = ruler
-			ruler = { leader_of_faction = technologist }
 		}
 	}
 
@@ -2754,6 +2851,22 @@ ethic_materialist = {
 		}
 	}
 
+	# Check for any leader on the Council with Faction's Ethic.
+	pop_attraction_tag = {
+		desc = POP_ATTRACTION_REPRESENTED_ON_COUNCIL
+		trigger = {
+			owner = {
+				any_owned_leader = {
+					OR = {
+						is_ruler = yes
+						is_councilor = yes
+					}
+					has_ethic = ethic_materialist
+				}
+			}
+		}
+	}
+
 	country_attraction = {
 		base = 1
 		modifier = {
@@ -2798,12 +2911,7 @@ ethic_materialist = {
 				is_materialist = no
 			has_faction = technologist
 		}
-		modifier = {
-			factor = 1.5
-			is_country_type = default
-			exists = ruler
-			ruler = { leader_of_faction = technologist }
-		}
+
 		modifier = {
 			factor = 1.5
 			has_federation = yes
@@ -2832,6 +2940,9 @@ ethic_materialist = {
 			exists = overlord
 			has_loyalty > 0
 			mult = value:ethics_from_overlord|ETHIC|materialist|
+		}
+		modifier = {
+			factor = value:count_councilors_with_ethic|ETHIC|materialist|
 		}
 		mult = value:materialist_ethics_from_relations
 	}
@@ -2895,7 +3006,7 @@ ethic_gestalt_consciousness = {
 
 	cost = 5
 	category = "hive"
-	category_value= 0
+	category_value = 0
 	use_for_pops = no
 
 	country_modifier = {
