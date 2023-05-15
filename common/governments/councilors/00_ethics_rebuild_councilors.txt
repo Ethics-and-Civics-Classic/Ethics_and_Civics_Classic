@@ -9,6 +9,20 @@
 #	 conditional_tooltip = "LOC_KEY"	Custom tooltip text shown for the requirements of the council position.
 # }
 
+#joakim.westergaard: Wee need a councilor the Direct Democracy Authority which has been introduced by E&CC. Change modifiers if you find anything else more appropriate
+councilor_ruler_direct_democratic = {
+	leader_class = { governor admiral scientist general }
+	possible = { always = no }
+	is_leader_possible = { always = yes }
+	modifier = {
+		country_physics_research_produces_mult = 0.02
+		country_society_research_produces_mult = 0.02
+		country_engineering_research_produces_mult = 0.02
+		country_edict_fund_add = 5
+	}
+	icon = "GFX_icon_councilor_ruler"
+}
+
 councilor_anarchy_ideals = { #Free folk representative
 	leader_class = { admiral general scientist governor }
 	is_leader_possible = {
@@ -371,7 +385,7 @@ councilor_martial_brotherhood = { #Military Theorist
 	}
 	civic = civic_martial_brotherhood
 	modifier = { #Pushes military theory to its limits HOOAH
-		category_military_theory_research_speed_mult: 0.1
+		category_military_theory_research_speed_mult = 0.1
 	}
 }
 
@@ -496,7 +510,7 @@ councilor_genetic_aristocracy = { #Genetic Librarian
 	}
 	civic = civic_genetic_aristocracy
 	modifier = { #Increases country leader cap and pool
-		country_leader_cap_mult = 0.05
+		country_leader_cap_add = 1 #country_leader_cap_mult = 0.05 #joakim.westergaard: There is no mult modifier for leader_cap (wouldn't make that much sence so I dont think we should introduce it), i.e. if we want to go that way it shoud be country_leader_cap_add
 		country_leader_pool_size = 0.25
 	}
 }
@@ -683,7 +697,10 @@ councilor_spiritual_democracy = { #Popular Pope
 	modifier = { #Attraction toward libertarian and spiritualist beliefs and improvement to unity
 		pop_ethic_egalitarian_attraction_mult = 0.04
 		pop_ethic_spiritualist_attraction_mult = 0.04
-		planet_unity_produces_mult = 0.01
+		#planet_unity_produces_mult = 0.01 #joakim.westergaard: Doesn't exist and I don't believe we can create it, i.e. we need to split it into different modifier components (one of which needed to be created) as seen in the three lines below. Should there be more?
+		planet_jobs_unity_produces_mult = 0.01
+		planet_districts_unity_produces_mult = 0.01
+		planet_buildings_unity_produces_mult = 0.01
 	}
 }
 
@@ -712,11 +729,7 @@ councilor_divine_council = { #Council Representative (Camerlengo)
 			leader_class = governor
 		}
 	}
-	civic = 
-		OR = {
-			civic_divine_council
-			civic_military_junta
-		}
+	civic = civic_divine_council #civic_military_junta #joakim.westergaard: OR does not work here, so if we want similar copuncillors for the two civics we need to make duplcates, e.g. councilor_divine_council_1 and councilor_divine_council_2
 	modifier = { #Reduces edict costs across the board
 		edicts_cost_mult = -0.01
 	}
@@ -748,9 +761,10 @@ councilor_science_directorate = { #Representative of the Directorate
 	modifier = { #Considerably increases scientist pay and technology research
 		leader_scientists_upkeep_mult = 0.1
 		all_technology_research_speed = 0.01
-		planet_jobs_researcher_upkeep_produces_mult = 0.02
-		planet_jobs_head_researcher_upkeep_produces_mult = 0.04
-		planet_jobs_dimensional_portal_researcher_upkeep_produces_mult = 0.02
+		planet_researchers_upkeep_mult = 0.02 #joakim.westergaard: planet_jobs_researcher_upkeep_produces_mult doesn't work. IF we want both upkeep and produces affected we should use two modifiers like now
+		planet_researchers_produces_mult = 0.02 #joakim.westergaard: planet_jobs_researcher_upkeep_produces_mult doesn't work. IF we want both upkeep and produces affected we should use two modifiers like now
+		#planet_jobs_head_researcher_upkeep_produces_mult = 0.04 #joakim.westergaard: Job uses the planet_researcher modifiers (don't want to change this), i.e. already gets bonus and we can't give them another one specificaly for this job
+		#planet_jobs_dimensional_portal_researcher_upkeep_produces_mult = 0.02 #joakim.westergaard: Job uses the planet_researcher modifiers (don't want to change this), i.e. already gets bonus and we can't give them another one specificaly for this job
 	}
 }
 
@@ -764,9 +778,10 @@ councilor_innovative_economy = { #Cooperative Representative
 	civic = civic_innovative_economy
 	modifier = { #Considerably increases scientist pay and technology research
 		all_technology_research_speed = 0.01
-		planet_jobs_researcher_upkeep_produces_mult = 0.04
-		planet_jobs_head_researcher_upkeep_produces_mult = 0.02
-		planet_jobs_dimensional_portal_researcher_upkeep_produces_mult = 0.04
+		planet_researchers_upkeep_mult = 0.04 #joakim.westergaard: planet_jobs_researcher_upkeep_produces_mult doesn't work. IF we want both upkeep and produces affected we should use two modifiers like now
+		planet_researchers_produces_mult = 0.04 #joakim.westergaard: planet_jobs_researcher_upkeep_produces_mult doesn't work. IF we want both upkeep and produces affected we should use two modifiers like now
+		#planet_jobs_head_researcher_upkeep_produces_mult = 0.02 #joakim.westergaard: Job uses the planet_researcher modifiers (don't want to change this), i.e. already gets bonus and we can't give them another one specificaly for this job
+		#planet_jobs_dimensional_portal_researcher_upkeep_produces_mult = 0.04 #joakim.westergaard: Job uses the planet_researcher modifiers (don't want to change this), i.e. already gets bonus and we can't give them another one specificaly for this job
 	}
 }
 
@@ -843,7 +858,7 @@ councilor_stratocracy = { #Internal Security Director
 	civic = civic_stratocracy
 	modifier = { #Reduces crime across the board and improves enforcer unity
 		planet_crime_mult = -0.01
-		planet_enforcer_unity_production_mult = 0.05
+		planet_enforcers_unity_produces_mult = 0.05
 	}
 }
 
