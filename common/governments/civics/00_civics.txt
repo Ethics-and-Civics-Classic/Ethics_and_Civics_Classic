@@ -13,16 +13,20 @@
 #												# Note: If omitted, a default weight of 1 is used. Not needed when "modification = no"
 #
 #	modifier = {}								# modifier added to the country if the civic is selected and valid
+#	hide_modifiers = yes / no					# default: no; if yes will hide the modifiers from the origin/civic tooltip.
 #	can_build_ruler_ship = yes / no				# default: no
 #	traits = { trait = ... }					# default: empty; trait set to enforce on the primary species. They cannot be removed, but more can be added if points/picks permit
 #	has_secondary_species = {					# default: none; if present, will enable secondary species customization in empire designer and will create secondary species & pops at galaxy generation time (see empire_init_create_capital_secondary_pops)
 #		traits = { trait = ... }					# default: empty; trait set to enforce on the secondary species. They cannot be removed, but more can be added if points/picks permit
 #	}
 #	is_origin = yes / no						# default: no, set to yes if civic should be treated as an Origin
+#	description = LOC_KEY						# Custom text that will appear under the "Effects" heading.
+#	negative_description = LOC_KEY				# Custom text that will appear under the "Penalties" heading.
 #
 #	swap_type = {								# triggered name, desc, custom desc and modifiers
 #		name = ...
 #		description = ...
+#		negative_description = ...
 #		trigger = {								# In empire creation / galaxy setup, this has no scope. During the game, when there are actual countries existing, it is set to country scope.
 #			local_human_species_class = ..		# If you want to use country scope here, you must always check is_scope_valid first (see civic_devouring_swarm), or you will get errors or it won't work as intended.
 #		}
@@ -1644,6 +1648,7 @@ civic_fanatic_purifiers = {
 			NOR = {
 				value = civic_barbaric_despoilers
 				value = civic_crusader_spirit
+				value = civic_selective_kinship
 			}
 		}
 		origin = {
@@ -1661,6 +1666,10 @@ civic_fanatic_purifiers = {
 		modifier = {
 			factor = 0
 			NOT = { host_has_dlc = "Utopia" }
+		}
+		modifier = {
+			factor = 0
+			blocks_disruptive_gameplay = yes
 		}
 	}
 
@@ -1741,6 +1750,10 @@ civic_barbaric_despoilers = {
 			# civic has no effect after galaxy generation, disable for random generation
 			factor = 0
 			has_global_flag = game_started
+		}
+		modifier = {
+			factor = 0
+			blocks_disruptive_gameplay = yes
 		}
 	}
 	description = "civic_tooltip_barbaric_despoilers_effects"
@@ -2014,7 +2027,6 @@ civic_death_cult = {
 			NOR = {
 				value = civic_fanatic_purifiers
 				value = civic_inwards_perfection
-				value = civic_ancient_preservers
 				value = civic_death_cult_corporate
 			}
 		}
@@ -2368,6 +2380,7 @@ civic_pompous_purists = {
 	modifier = {
 		country_trust_growth = 0.30
 		envoys_add = 2
+		diplo_weight_opposing_mult = 0.1
 	}
 }
 
@@ -2565,6 +2578,7 @@ civic_ascensionists = {
 	random_weight = {
 		base = @civic_uncommon_random_weight
 	}
+	description = "civic_tooltip_ascensionists_effects"
 	ai_weight = {
 		base = @ai_civic_uncommon_base_weight
 		modifier = {
@@ -2771,6 +2785,50 @@ civic_dystopian_society = {
 	}
 
 	description = civic_tooltip_dystopian_society_effects
+}
+
+civic_selective_kinship = {
+	playable = { has_lithoids = yes }
+	ai_playable = { has_lithoids = yes }
+	random_weight = {
+		base = 4
+	}
+	description = "civic_selective_kinship"
+	potential = {
+		ethics = { NOT = { value = ethic_gestalt_consciousness } }
+		authority = { NOT = { value = auth_corporate } }
+	}
+	modifier = {
+		citizen_pop_same_species_class_happiness = 0.075
+		citizen_pop_different_species_class_happiness = 0.025
+	}
+	possible = {
+		ethics = {
+			NOR = {
+				text = civic_tooltip_not_xenophile_or_fan_egalitarian
+				value = ethic_xenophile
+				value = ethic_fanatic_xenophile
+				value = ethic_fanatic_egalitarian
+			}
+		}
+		civics = {
+			NOR = {
+				value = civic_fanatic_purifiers
+			}
+		}
+		origin = {
+			NOT = {
+				value = origin_broken_shackles
+			}
+		}
+		species_archetype = {
+			NOT = {
+				text = disabled_by_synthetic_ascension
+				value = ROBOT
+			}
+		}
+	}
+	description = civic_tooltip_selective_kinship_effects
 }
 
 #E&CC Exclusive Civics
