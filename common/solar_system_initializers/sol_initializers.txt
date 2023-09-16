@@ -182,7 +182,7 @@ sol_system_initializer = {
 			class = "pc_frozen"
 			size = 6
 			orbit_distance = 2.5
-			orbit_angle = 10
+			orbit_angle = 190
 			has_ring = no
 		}
 		moon = {
@@ -454,6 +454,7 @@ sol_neighbor_t1_first_colony = {
 		size = { min = 12 max = 18 }
 
 		init_effect = {
+			prevent_anomaly = yes
 			set_planet_flag = prescripted_ideal		# used by code, do not remove
 		}
 	}
@@ -684,6 +685,7 @@ sol_neighbor_t2_second_colony = {
 		size = { min = 14 max = 24 }
 
 		init_effect = {
+			prevent_anomaly = yes
 			set_planet_flag = prescripted_ideal		# used by code, do not remove
 		}
 
@@ -814,7 +816,7 @@ com_sol_system = {
 	usage_odds = {
 		base = 0
 		modifier = {
-			any_country = {
+			any_playable_country = {
 				has_country_flag = human_2
 				is_human_species = yes
 			}
@@ -902,6 +904,7 @@ com_sol_system = {
 			prevent_anomaly = yes
 			random_country = {
 				limit = { has_country_flag = human_2 }
+				set_country_flag = parent_system_spawned
 				save_event_target_as = commonwealth
 				owner_species = {
 					save_event_target_as = human_species
@@ -1080,7 +1083,7 @@ com_sol_system = {
 			class = "pc_frozen"
 			size = 6
 			orbit_distance = 2.5
-			orbit_angle = 10
+			orbit_angle = 190
 			has_ring = no
 		}
 		moon = {
@@ -1210,7 +1213,404 @@ com_sol_system = {
 			owner = event_target:npc_UNoE
 			effect = {
 				set_starbase_module = {
-					slot = 1
+					slot = 2
+					module = trading_hub
+				}
+			}
+		}
+	}
+
+	neighbor_system = {
+		hyperlane_jumps = { min = 1 max = @jumps }
+		initializer = "com_sol_neighbor_t1"
+	}
+	neighbor_system = {
+		hyperlane_jumps = { min = 1 max = @jumps }
+		initializer = "com_sol_neighbor_t1_first_colony"
+	}
+}
+
+ai_sol_system = {
+	name = "NAME_Sol"
+	class = "sc_g"
+
+	asteroid_belt = {
+		type = rocky_asteroid_belt
+		radius = 145
+	}
+	asteroid_belt = {
+		type = icy_asteroid_belt
+		radius = 290
+	}
+	flags = { sol_system com_sol sol empire_home_system }
+
+	usage = misc_system_init
+
+	init_effect = {
+		every_neighbor_system = {
+			set_star_flag = empire_cluster
+			every_neighbor_system = {
+				set_star_flag = empire_cluster
+			}
+		}
+		generate_home_system_resources = yes
+	}
+
+	planet = {
+		name = "NAME_Sol"
+		class = "pc_g_star"
+		orbit_distance = 0
+		orbit_angle = 1
+		size = 30
+		has_ring = no
+	}
+
+	planet = {
+		name = "NAME_Mercury"
+		class = "pc_molten"
+		orbit_distance = 40
+		orbit_angle = 15
+		size = 10
+		has_ring = no
+		init_effect = {
+			set_planet_entity = {
+				entity = molten_planet_mercury_entity
+				atmosphere_color = hsv { 0.8 0.1 0.2 }
+				atmosphere_intensity = 0.1
+				atmosphere_width = 1.0
+			}
+		}
+	}
+
+	planet = {
+		name = "NAME_Venus"
+		class = "pc_toxic"
+		orbit_distance = 25
+		orbit_angle = 125
+		size = 17
+		has_ring = no
+		init_effect = {
+			set_planet_entity = {
+				entity = toxic_planet_venus_entity
+				atmosphere_color = hsv { 0.854 0.072 0.7 }
+				atmosphere_intensity = 0.2
+				atmosphere_width = 1.0
+			}
+		}
+	}
+
+	planet = {
+		class = "pc_continental"
+		orbit_distance = 25
+		orbit_angle = 120
+		size = 18
+		starting_planet = yes
+		has_ring = no
+		entity = "continental_planet_earth_entity"
+		deposit_blockers = none
+		modifiers = none
+		flags = { planet_earth }
+
+		init_effect = {
+			save_global_event_target_as = sol_system_earth
+			create_species = {
+				name = NAME_Human
+				plural = NAME_Human_plural
+				class = "HUM"
+				portrait = "human"
+				homeworld = THIS
+				traits = {
+					trait = "trait_adaptive"
+					trait = "trait_nomadic"
+					trait = "trait_wasteful"
+				}
+			}
+			last_created_species = {
+				save_event_target_as = human_species
+			}
+			prevent_anomaly = yes
+			create_country = {
+				name = "NAME_United_Nations_of_Earth"
+				adjective = "PRESCRIPTED_adjective_humans1"
+				authority = auth_democratic
+				civics = {
+					civic = civic_beacon_of_liberty
+					civic = civic_idealistic_foundation
+				}
+				species = event_target:human_species
+				name_list = "HUMAN1"
+				ship_prefix = "UNS"
+				ethos = {
+					ethic = "ethic_xenophile"
+					ethic = "ethic_fanatic_egalitarian"
+				}
+				flag = {
+					icon = {
+						category = "human"
+						file = "flag_human_8.dds"
+					}
+					background = {
+						category = "backgrounds"
+						file = "00_solid.dds"
+					}
+					colors = {
+						"dark_blue"
+						"dark_blue"
+						"null"
+						"null"
+					}
+				}
+				type = default
+				origin = "origin_default"
+				effect = {
+					save_event_target_as = npc_UNoE
+					add_resource = {
+						minerals = 2400
+						energy = 2400
+						food = 2400
+						alloys = 800
+						consumer_goods = 1200
+						influence = 600
+					}
+				}
+			}
+			create_colony = {
+				owner = event_target:npc_UNoE
+			}
+			generate_earth_deposits_and_blockers = yes
+			set_earth_entity = yes
+			clear_blockers = yes
+			generate_start_buildings_and_districts = yes
+			generate_start_pops = yes
+			generate_lost_colony_parent_bonus = yes
+			event_target:npc_UNoE = {
+				set_country_flag = human_1
+				create_starting_leaders = yes
+				country_event = { id = game_start.9 }
+				country_event = { id = game_start.33 days = 1 } # needs delay for system ownership to settle
+			}
+			set_name = "NAME_Earth"
+		}
+
+		moon = {
+			name = "NAME_Luna"
+			class = "pc_barren_cold"
+			size = 5
+			orbit_distance = 12
+			orbit_angle = 40
+			has_ring = no
+			entity = "cold_barren_planet_luna_entity"
+		}
+	}
+
+	planet = {
+		name = "NAME_Mars"
+		class = "pc_barren"
+		orbit_distance = 25
+		orbit_angle = 60
+		size = 13
+		has_ring = no
+		entity = "barren_planet_mars_entity"
+		flags = { planet_mars }
+
+		init_effect = {
+			add_modifier = {
+				modifier = "terraforming_candidate"
+				days = -1
+			}
+		}
+	}
+
+	planet = {
+		name = "NAME_1_Ceres"
+		class = "pc_asteroid"
+		orbit_distance = 30
+		orbit_angle = -210
+		size = 5
+		has_ring = no
+	}
+
+	planet = {
+		name = "NAME_2_Pallas"
+		class = "pc_asteroid"
+		orbit_distance = 0
+		orbit_angle = -95
+		size = 5
+		has_ring = no
+	}
+
+	planet = {
+		name = "NAME_3_Juno"
+		class = "pc_asteroid"
+		orbit_distance = 0
+		orbit_angle = 285
+		size = 5
+		has_ring = no
+	}
+
+	planet = {
+		name = "NAME_4_Vesta"
+		class = "pc_asteroid"
+		orbit_distance = 0
+		orbit_angle = -80
+		size = 5
+		has_ring = no
+	}
+
+	planet = {
+		name = "NAME_Jupiter"
+		class = "pc_gas_giant"
+		orbit_distance = 40
+		orbit_angle = -160
+		size = 35
+		has_ring = no
+		entity = "gas_giant_jupiter_entity"
+		change_orbit = 6
+
+		moon = {
+			name = "NAME_Io"
+			class = "pc_molten"
+			size = 6
+			orbit_distance = 10
+			orbit_angle = 110
+			has_ring = no
+		}
+		moon = {
+			name = "NAME_Europa"
+			class = "pc_frozen"
+			size = 6
+			orbit_distance = 2.5
+			orbit_angle = 190
+			has_ring = no
+		}
+		moon = {
+			name = "NAME_Ganymede"
+			class = "pc_frozen"
+			size = 9
+			orbit_distance = 2.5
+			orbit_angle = 80
+			has_ring = no
+		}
+		moon = {
+			name = "NAME_Callisto"
+			class = "pc_frozen"
+			size = 7
+			orbit_distance = 2.5
+			orbit_angle = -155
+			has_ring = no
+		}
+	}
+
+	planet = {
+		name = "NAME_Saturn"
+		class = "pc_gas_giant"
+		orbit_distance = 25
+		orbit_angle = 170
+		size = 30
+		has_ring = yes
+		entity = "gas_giant_05_entity"
+		change_orbit = 7
+
+		moon = {
+			name = "NAME_Titan"
+			class = "pc_frozen"
+			size = 8
+			orbit_distance = 12
+			orbit_angle = 320
+			has_ring = no
+		}
+	}
+
+	planet = {
+		name = "NAME_Uranus"
+		class = "pc_gas_giant"
+		orbit_distance = 25
+		orbit_angle = 125
+		size = 20
+		has_ring = no
+		init_effect = {
+			set_planet_entity = {
+				entity = gas_giant_uranus_entity
+				atmosphere_color = hsv { 0.548 0.519 0.9 }
+				atmosphere_intensity = 0.1
+				atmosphere_width = 1.0
+			}
+		}
+	}
+
+	planet = {
+		name = "NAME_Neptune"
+		class = "pc_gas_giant"
+		orbit_distance = 25
+		orbit_angle = -195
+		size = 20
+		has_ring = no
+		change_orbit = 4
+
+		moon = {
+			name = "NAME_Triton"
+			class = "pc_frozen"
+			size = 6
+			orbit_distance = 7
+			orbit_angle = 115
+			has_ring = no
+		}
+
+		init_effect = {
+			set_planet_entity = {
+				entity = gas_giant_neptune_entity
+				atmosphere_color = hsv { 0.626 0.782 0.9 }
+				atmosphere_intensity = 0.1
+				atmosphere_width = 1.0
+			}
+		}
+	}
+
+	planet = {
+		name = "NAME_134340_Pluto"
+		class = "pc_asteroid"
+		orbit_distance = 30
+		orbit_angle = -210
+		size = 5
+		has_ring = no
+	}
+
+	planet = {
+		name = "NAME_136472_Makemake"
+		class = "pc_ice_asteroid"
+		orbit_distance = 0
+		orbit_angle = -95
+		size = 5
+		has_ring = no
+	}
+
+	planet = {
+		name = "NAME_136108_Haumea"
+		class = "pc_ice_asteroid"
+		orbit_distance = 0
+		orbit_angle = 285
+		size = 5
+		has_ring = no
+	}
+
+	planet = {
+		name = "NAME_20000_Varuna"
+		class = "pc_ice_asteroid"
+		orbit_distance = 0
+		orbit_angle = -80
+		size = 5
+		has_ring = no
+	}
+
+	init_effect = {
+		create_starbase = {
+			size = starbase_starport
+			module = shipyard
+			building = crew_quarters
+			owner = event_target:npc_UNoE
+			effect = {
+				set_starbase_module = {
+					slot = 2
 					module = trading_hub
 				}
 			}
@@ -1538,10 +1938,10 @@ lost_colony_sol_system = {
 	usage_odds = {
 		base = 0
 		modifier = {
-			any_country = {
+			any_playable_country = {
+				has_origin = origin_lost_colony
 				is_human_species = yes
 				NOT = { has_country_flag = human_2 }
-				has_origin = origin_lost_colony
 			}
 			NOT = { any_system = { has_star_flag = sol } }
 			NOT = { has_star_flag = empire_cluster }
@@ -1625,57 +2025,20 @@ lost_colony_sol_system = {
 		init_effect = {
 			save_global_event_target_as = sol_system_earth
 
-			random_country = {
+			random_playable_country = {
 				limit = {
 					is_human_species = yes
 					has_origin = origin_lost_colony
 				}
+				set_country_flag = parent_system_spawned
+				set_country_flag = human_lost_colony
 				save_event_target_as = human_lost_colony
 				owner_species = {
 					save_event_target_as = human_species
 					set_species_homeworld = prevprev
 				}
 			}
-			random_list = {
-				50 = {
-					create_country = {
-						species = event_target:human_species
-						name_list = HUMAN1
-						type = default
-						origin = "origin_default"
-						effect = {
-							save_event_target_as = lost_colony_parent
-							add_resource = {
-								minerals = 2400
-								energy = 2400
-								food = 2400
-								alloys = 800
-								consumer_goods = 1200
-								influence = 600
-							}
-						}
-					}
-				}
-				50 = {
-					create_country = {
-						species = event_target:human_species
-						name_list = HUMAN2
-						type = default
-						origin = "origin_default"
-						effect = {
-							save_event_target_as = lost_colony_parent
-							add_resource = {
-								minerals = 2400
-								energy = 2400
-								food = 2400
-								alloys = 800
-								consumer_goods = 1200
-								influence = 600
-							}
-						}
-					}
-				}
-			}
+			lost_colony_generate_parent_human_effect = yes
 			create_colony = {
 				owner = event_target:lost_colony_parent
 			}
@@ -1786,7 +2149,7 @@ lost_colony_sol_system = {
 			class = "pc_frozen"
 			size = 6
 			orbit_distance = 2.5
-			orbit_angle = 10
+			orbit_angle = 190
 			has_ring = no
 		}
 		moon = {
@@ -1915,9 +2278,22 @@ lost_colony_sol_system = {
 			building = crew_quarters
 			owner = event_target:lost_colony_parent
 			effect = {
-				set_starbase_module = {
-					slot = 1
-					module = trading_hub
+				if = {
+					limit = {
+						event_target:lost_colony_parent = {
+							is_gestalt = yes
+						}
+					}
+					set_starbase_module = {
+						slot = 1
+						module = solar_panel_network
+					}
+				}
+				else = {
+					set_starbase_module = {
+						slot = 1
+						module = trading_hub
+					}
 				}
 			}
 		}
@@ -2021,6 +2397,14 @@ lost_colony_sol_neighbor_t1_first_colony = {
 		init_effect = {
 			create_colony = {
 				owner = event_target:lost_colony_parent
+			}
+			if = {
+				limit = {
+					event_target:lost_colony_parent = {
+						has_origin = origin_progenitor_hive
+					}
+				}
+				add_building = building_offspring_nest
 			}
 		}
 	}
@@ -2172,6 +2556,14 @@ lost_colony_sol_neighbor_t2_second_colony = {
 		init_effect = {
 			create_colony = {
 				owner = event_target:lost_colony_parent
+			}
+			if = {
+				limit = {
+					event_target:lost_colony_parent = {
+						has_origin = origin_progenitor_hive
+					}
+				}
+				add_building = building_offspring_nest
 			}
 		}
 
@@ -2327,8 +2719,17 @@ toxic_knights_sol_start = {
 
 		init_effect = {
 			save_global_event_target_as = sol_system_earth
-
 			prevent_anomaly = yes
+		}
+
+		moon = {
+			name = "NAME_Luna_Habitat"
+			class = "pc_habitat"
+			size = 6
+			orbit_distance = 12
+			orbit_angle = 40
+			flags = { toxic_knights_habitat habitat }
+			deposit_blockers = none
 		}
 
 		moon = {
@@ -2343,21 +2744,9 @@ toxic_knights_sol_start = {
 			init_effect = {
 				clear_deposits = yes
 				clear_planet_modifiers = yes
-				set_planet_flag = megastructure
-				set_planet_flag = habitat
 			}
 
 			change_orbit = @base_moon_distance
-
-			moon = {
-				name = "NAME_Luna_Habitat"
-				class = "pc_habitat"
-				size = 6
-				orbit_distance = 12
-				orbit_angle = 40
-				flags = { toxic_knights_habitat megastructure habitat }
-				deposit_blockers = none
-			}
 		}
 	}
 
@@ -2431,7 +2820,7 @@ toxic_knights_sol_start = {
 			class = "pc_frozen"
 			size = 6
 			orbit_distance = 2.5
-			orbit_angle = 10
+			orbit_angle = 190
 			has_ring = no
 		}
 		moon = {
@@ -2506,7 +2895,7 @@ toxic_knights_sol_start = {
 			orbit_angle = 115
 			has_ring = no
 		}
-		
+
 		init_effect = {
 			set_planet_entity = {
 				entity = gas_giant_neptune_entity
@@ -2571,9 +2960,7 @@ toxic_knights_sol_start = {
 
 ### Fear of the Dark Sol System
 sol_system_fear_of_the_dark_system = {
-
 	name = "NAME_Sol"
-
 	class = "sc_g"
 	asteroid_belt = {
 		type = rocky_asteroid_belt
@@ -2738,7 +3125,7 @@ sol_system_fear_of_the_dark_system = {
 			class = "pc_frozen"
 			size = 6
 			orbit_distance = 2.5
-			orbit_angle = 10
+			orbit_angle = 190
 			has_ring = no
 		}
 		moon = {
@@ -2876,3 +3263,294 @@ sol_system_fear_of_the_dark_system = {
 	}
 }
 
+# Sol System (Nuclear Wasteland)
+special_init_04 = {
+	name = "NAME_Sol"
+	class = "sc_g"
+	asteroid_belt = {
+		type = rocky_asteroid_belt
+		radius = 145
+	}
+	asteroid_belt = {
+		type = icy_asteroid_belt
+		radius = 290
+	}
+
+	usage = misc_system_init
+
+	usage_odds = {
+		base = 0
+		modifier = {
+			any_country = {
+				has_country_flag = human_1
+				is_human_species = yes
+			}
+			any_system = { has_star_flag = deneb_system }
+			NOR = {
+				any_system = { has_star_flag = sol }
+				has_star_flag = empire_cluster
+				any_country = {
+					has_origin = origin_broken_shackles
+					is_human_species = yes
+				}
+			}
+			num_ai_empires_setting >= 1
+			add = 99999
+		}
+	}
+
+	max_instances = 1
+
+	flags = { nuked_sol sol }
+
+	planet = {
+		name = "NAME_Sol"
+		class = "pc_g_star"
+		orbit_distance = 0
+		orbit_angle = 1
+		size = 30
+		has_ring = no
+	}
+
+	planet = {
+		class = "pc_molten"
+		orbit_distance = 40
+		orbit_angle = 15
+		size = 10
+		has_ring = no
+		init_effect = {
+			set_planet_entity = {
+				entity = molten_planet_mercury_entity
+				atmosphere_color = hsv { 0.8 0.1 0.2 }
+				atmosphere_intensity = 0.1
+				atmosphere_width = 1.0
+			}
+		}
+	}
+
+	planet = {
+		class = "pc_toxic"
+		orbit_distance = 25
+		orbit_angle = 125
+		size = 20
+		has_ring = no
+		init_effect = {
+			set_planet_entity = {
+				entity = toxic_planet_venus_entity
+				atmosphere_color = hsv { 0.854 0.072 0.7 }
+				atmosphere_intensity = 0.2
+				atmosphere_width = 1.0
+			}
+		}
+	}
+
+	planet = {
+		class = "pc_nuked"
+		orbit_distance = 25
+		orbit_angle = 120
+		size = 18
+		has_ring = no
+		anomaly = "sol_wasteland_category"
+		flags = { nuked_earth }
+
+		init_effect = {
+			save_global_event_target_as = sol_system_earth
+
+			if = {
+				limit = {
+					any_country = {
+						is_human_species = yes
+						has_origin = origin_broken_shackles
+					}
+				}
+				set_name = "NAME_Earth"
+			}
+		}
+
+		moon = {
+			class = "pc_barren_cold"
+			size = 5
+			orbit_distance = 12
+			orbit_angle = 40
+			has_ring = no
+			entity = "cold_barren_planet_luna_entity"
+		}
+	}
+
+	planet = {
+		class = "pc_barren"
+		orbit_distance = 25
+		orbit_angle = 60
+		size = 13
+		has_ring = no
+		entity = "barren_planet_mars_entity"
+		init_effect = {
+			add_modifier = {
+				modifier = "terraforming_candidate"
+				days = -1
+			}
+		}
+	}
+
+	planet = {
+		class = "pc_asteroid"
+		orbit_distance = 30
+		orbit_angle = -210
+		size = 5
+		has_ring = no
+	}
+
+	planet = {
+		class = "pc_asteroid"
+		orbit_distance = 0
+		orbit_angle = -95
+		size = 5
+		has_ring = no
+	}
+
+	planet = {
+		class = "pc_asteroid"
+		orbit_distance = 0
+		orbit_angle = 285
+		size = 5
+		has_ring = no
+	}
+
+	planet = {
+		class = "pc_asteroid"
+		orbit_distance = 0
+		orbit_angle = -80
+		size = 5
+		has_ring = no
+	}
+
+	planet = {
+		class = "pc_gas_giant"
+		orbit_distance = 40
+		orbit_angle = -160
+		size = 35
+		has_ring = no
+		entity = "gas_giant_jupiter_entity"
+		change_orbit = 6
+
+		moon = {
+			class = "pc_molten"
+			size = 6
+			orbit_distance = 10
+			orbit_angle = 110
+			has_ring = no
+		}
+		moon = {
+			class = "pc_frozen"
+			size = 6
+			orbit_distance = 2.5
+			orbit_angle = 10
+			has_ring = no
+		}
+		moon = {
+			class = "pc_frozen"
+			size = 9
+			orbit_distance = 2.5
+			orbit_angle = 80
+			has_ring = no
+		}
+		moon = {
+			class = "pc_frozen"
+			size = 7
+			orbit_distance = 2.5
+			orbit_angle = -155
+			has_ring = no
+		}
+	}
+
+	planet = {
+		class = "pc_gas_giant"
+		orbit_distance = 25
+		orbit_angle = 170
+		size = 30
+		has_ring = yes
+		change_orbit = 7
+		entity = "gas_giant_05_entity"
+
+		moon = {
+			class = "pc_frozen"
+			size = 8
+			orbit_distance = 12
+			orbit_angle = 320
+			has_ring = no
+		}
+	}
+
+	planet = {
+		class = "pc_gas_giant"
+		orbit_distance = 25
+		orbit_angle = 125
+		size = 20
+		has_ring = no
+		init_effect = {
+			set_planet_entity = {
+				entity = gas_giant_uranus_entity
+				atmosphere_color = hsv { 0.548 0.519 0.9 }
+				atmosphere_intensity = 0.1
+				atmosphere_width = 1.0
+			}
+		}
+	}
+
+	planet = {
+		class = "pc_gas_giant"
+		orbit_distance = 25
+		orbit_angle = -195
+		size = 20
+		has_ring = no
+		init_effect = {
+			set_planet_entity = {
+				entity = gas_giant_neptune_entity
+				atmosphere_color = hsv { 0.626 0.782 0.9 }
+				atmosphere_intensity = 0.1
+				atmosphere_width = 1.0
+			}
+		}
+		change_orbit = 4
+
+		moon = {
+			class = "pc_frozen"
+			size = 6
+			orbit_distance = 7
+			orbit_angle = 115
+			has_ring = no
+		}
+	}
+
+	planet = {
+		class = "pc_asteroid"
+		orbit_distance = 30
+		orbit_angle = -210
+		size = 5
+		has_ring = no
+	}
+
+	planet = {
+		class = "pc_ice_asteroid"
+		orbit_distance = 0
+		orbit_angle = -95
+		size = 5
+		has_ring = no
+	}
+
+	planet = {
+		class = "pc_ice_asteroid"
+		orbit_distance = 0
+		orbit_angle = 285
+		size = 5
+		has_ring = no
+	}
+
+	planet = {
+		class = "pc_ice_asteroid"
+		orbit_distance = 0
+		orbit_angle = -80
+		size = 5
+		has_ring = no
+	}
+}
