@@ -1,0 +1,81 @@
+@hab_cost = 500
+@hab_maintenance = 2
+@low_hab_maintenance = 0.2
+
+district_orders_demesne = {
+	base_buildtime = 240
+	is_capped_by_modifier = no
+
+	show_on_uncolonized = {
+		uses_district_set = habitat
+		OR = {
+			has_planet_flag = toxic_knights_habitat
+			has_building = building_order_castle
+		}
+	}
+
+	potential = {
+		uses_district_set = habitat
+		exists = owner
+		owner = { has_origin = origin_toxic_knights }
+		OR = {
+			has_planet_flag = toxic_knights_habitat
+			has_building = building_order_castle
+		}
+	}
+
+	convert_to = {
+		district_hab_housing
+	}
+
+	resources = {
+		category = planet_districts_orders_demesne
+		cost = {
+			minerals = @hab_cost
+		}
+		upkeep = {
+			energy = @hab_maintenance
+			alloys = @low_hab_maintenance
+		}
+	}
+
+	planet_modifier = {
+		planet_max_buildings_add = 0.50
+		planet_housing_add = 6
+		job_squire_add = 2
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			owner = {
+				is_void_dweller_empire = yes
+			}
+		}
+		job_squire_add = 1
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			has_deposit = d_dimensional_manipulation_device
+			exists = owner
+			NOT = {
+				owner = { has_deficit = sr_dark_matter }
+			}
+		}
+		planet_max_buildings_add = 0.5
+		planet_housing_add = 1
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			has_deposit = d_dimensional_manipulation_device
+			exists = owner
+			owner = { has_deficit = sr_dark_matter }
+		}
+		planet_housing_add = -1
+	}
+
+	triggered_desc = {
+		text = job_squire_effect_desc
+	}
+}
