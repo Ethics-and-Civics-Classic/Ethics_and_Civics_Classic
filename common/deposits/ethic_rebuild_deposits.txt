@@ -1,33 +1,25 @@
 ## Possible Deposit Variables ##
 # resources, resource and amount
 # potential trigger (planet scope)
-# blocked_modifier - applied to planet
+# planet_modifier - applied to planet only when deposit blocker has been cleared
 # constant_modifier - applied to planet always
 # station = station class in orbit to gather
-# blocker_swap_types = {}
-# all_blocker_swap_types = yes/no
-# use_weights_for_blocker_swap_types = yes/no
-# terraforming_swap_types = { }
-# should_swap_deposit_on_terraforming = yes/no
-# all_terraforming_swap_types = yes/no
-# use_weights_for_terraforming_swap_types = yes/no
-
-@high = 16
-@med = 8
-@low = 4
-@ranger_small_production = 0.5
-@ranger_large_production = 1
-
-@high_rare = 0.5
-@mid_rare = 0.25
-@low_rare = 0.1
-
-@planet_type_bonus = 1.5
+# ai_weight = AI willingness to clear blocker. Note: weight 1 is default and is treated specially - 
+#	it is set to weight 0 if the planet has no need of more max districts or of districts
+#   of the type gained from clearing the blocker.
 
 @blocker_high = 10
 @blocker_low = 5
 @ranger_small_production = 0.5
 @ranger_large_production = 1
+
+@high = 16
+@med = 8
+@low = 4
+
+@high_rare = 0.5
+@mid_rare = 0.25
+@low_rare = 0.1
 
 #01_blocker_deposits.txt#
 
@@ -308,14 +300,16 @@ d_mountain_range = {
 	}
 
 	on_cleared = {
-		if = {
-			limit = {
-				exists = owner
-				owner = {
-					has_valid_civic = civic_terraforming
+		hidden_effect = {
+			if = {
+				limit = {
+					exists = owner
+					owner = {
+						has_civic = civic_terraforming
+					}
 				}
+				owner = { add_resource = { minerals = 300 } }
 			}
-			owner = { add_resource = { minerals = 300 } }
 		}
 	}
 
@@ -410,7 +404,7 @@ d_active_volcano = {
 			exists = owner
 			owner = { has_civic = civic_environmentalist }
 		}
-		planet_rangers_minerals_produces_add = @ranger_large_production
+		planet_rangers_energy_produces_add = @ranger_large_production
 	}
 
 	inline_script = deposits/ai_weight_natural_blocker
@@ -624,14 +618,16 @@ d_active_volcano = {
 	}
 
 	on_cleared = {
-		if = {
-			limit = {
-				exists = owner
-				owner = {
-					has_valid_civic = civic_terraforming
+		hidden_effect = {
+			if = {
+				limit = {
+					exists = owner
+					owner = {
+						has_civic = civic_terraforming
+					}
 				}
+				owner = { add_resource = { minerals = 200 energy = 200 } }
 			}
-			owner = { add_resource = { minerals = 200 energy = 200 } }
 		}
 	}
 
@@ -721,10 +717,8 @@ d_dangerous_wildlife_blocker = {
 			exists = owner
 			owner = { has_civic = civic_environmentalist }
 		}
-		planet_rangers_minerals_produces_add = @ranger_large_production
+		planet_rangers_society_research_produces_add = @ranger_large_production
 	}
-
-	inline_script = deposits/ai_weight_natural_blocker
 
 	triggered_planet_modifier = {
 		potential = {
@@ -850,40 +844,42 @@ d_dangerous_wildlife_blocker = {
 	}
 
 	on_cleared = {
-		if = {
-			limit = {
-				exists = owner
-				owner = {
-					has_civic = civic_hive_devouring_swarm
+		hidden_effect = {
+			if = {
+				limit = {
+					exists = owner
+					owner = {
+						has_civic = civic_hive_devouring_swarm
+					}
 				}
+				owner = { add_resource = { food = 200 } }
 			}
-			owner = { add_resource = { food = 200 } }
-		}
-
-		if = {
-			limit = {
-				exists = owner
-				owner = {
-					has_valid_civic = civic_terraforming
+			if = {
+				limit = {
+					exists = owner
+					owner = {
+						has_civic = civic_terraforming
+					}
 				}
+				owner = { add_resource = { society_research = 200 } }
 			}
-			owner = { add_resource = { society_research = 200 } }
 		}
 	}
+
+	inline_script = deposits/ai_weight_natural_blocker
 
 	drop_weight = {
 		weight = @blocker_low
 		modifier = {
-			factor = 2
-			has_modifier = "dangerous_wildlife"
-		}
-		modifier = {
-			factor = 10
-			has_modifier = "titanic_life"
-		}
-		modifier = {
 			factor = 0.5
 			planet_size < 15
+		}
+		modifier = {
+			factor = 0
+			num_free_districts = {
+				type = district_city
+				value < 2
+			}
 		}
 	}
 
@@ -1081,14 +1077,16 @@ d_dense_jungle = {
 	}
 
 	on_cleared = {
-		if = {
-			limit = {
-				exists = owner
-				owner = {
-					has_valid_civic = civic_terraforming
+		hidden_effect = {
+			if = {
+				limit = {
+					exists = owner
+					owner = {
+						has_civic = civic_terraforming
+					}
 				}
+				owner = { add_resource = { food = 200 } }
 			}
-			owner = { add_resource = { food = 200 } }
 		}
 	}
 
@@ -1304,14 +1302,16 @@ d_toxic_kelp = {
 	}
 
 	on_cleared = {
-		if = {
-			limit = {
-				exists = owner
-				owner = {
-					has_valid_civic = civic_terraforming
+		hidden_effect = {
+			if = {
+				limit = {
+					exists = owner
+					owner = {
+						has_civic = civic_terraforming
+					}
 				}
+				owner = { add_resource = { food = 100 } }
 			}
-			owner = { add_resource = { food = 100 } }
 		}
 	}
 
@@ -1397,7 +1397,7 @@ d_deep_sinkhole = {
 			exists = owner
 			owner = { has_civic = civic_environmentalist }
 		}
-		planet_rangers_food_produces_add = @ranger_small_production
+		planet_rangers_energy_produces_add = @ranger_small_production
 	}
 
 	all_blocker_swap_types = yes
@@ -1484,14 +1484,16 @@ d_deep_sinkhole = {
 	}
 
 	on_cleared = {
-		if = {
-			limit = {
-				exists = owner
-				owner = {
-					has_valid_civic = civic_terraforming
+		hidden_effect = {
+			if = {
+				limit = {
+					exists = owner
+					owner = {
+						has_civic = civic_terraforming
+					}
 				}
+				owner = { add_resource = { minerals = 200 } }
 			}
-			owner = { add_resource = { minerals = 200 } }
 		}
 	}
 
@@ -1515,6 +1517,7 @@ d_deep_sinkhole = {
 
 	prerequisites = { "tech_deep_sinkhole" }
 }
+
 
 d_quicksand_basin = {
 	time = 180
@@ -1580,7 +1583,7 @@ d_quicksand_basin = {
 			exists = owner
 			owner = { has_civic = civic_environmentalist }
 		}
-		planet_rangers_food_produces_add = @ranger_small_production
+		planet_rangers_minerals_produces_add = @ranger_small_production
 	}
 
 	all_blocker_swap_types = yes
@@ -1668,14 +1671,16 @@ d_quicksand_basin = {
 	}
 
 	on_cleared = {
-		if = {
-			limit = {
-				exists = owner
-				owner = {
-					has_valid_civic = civic_terraforming
+		hidden_effect = {
+			if = {
+				limit = {
+					exists = owner
+					owner = {
+						has_civic = civic_terraforming
+					}
 				}
+				owner = { add_resource = { minerals = 100 } }
 			}
-			owner = { add_resource = { minerals = 100 } }
 		}
 	}
 
@@ -1888,14 +1893,16 @@ d_noxious_swamp = {
 	}
 
 	on_cleared = {
-		if = {
-			limit = {
-				exists = owner
-				owner = {
-					has_valid_civic = civic_terraforming
+		hidden_effect = {
+			if = {
+				limit = {
+					exists = owner
+					owner = {
+						has_civic = civic_terraforming
+					}
 				}
+				owner = { add_resource = { food = 100 } }
 			}
-			owner = { add_resource = { food = 100 } }
 		}
 	}
 
@@ -1981,7 +1988,7 @@ d_massive_glacier = {
 			exists = owner
 			owner = { has_civic = civic_environmentalist }
 		}
-		planet_rangers_food_produces_add = @ranger_small_production
+		planet_rangers_minerals_produces_add = @ranger_small_production
 	}
 
 	all_blocker_swap_types = yes
@@ -2068,14 +2075,16 @@ d_massive_glacier = {
 	}
 
 	on_cleared = {
-		if = {
-			limit = {
-				exists = owner
-				owner = {
-					has_valid_civic = civic_terraforming
+		hidden_effect = {
+			if = {
+				limit = {
+					exists = owner
+					owner = {
+						has_civic = civic_terraforming
+					}
 				}
+				owner = { add_resource = { minerals = 100 } }
 			}
-			owner = { add_resource = { minerals = 100 } }
 		}
 	}
 
@@ -2101,10 +2110,10 @@ d_massive_glacier = {
 }
 
 d_wandering_forests = {
+	icon = d_dense_jungle
 
 	is_for_colonizable = yes
 	category = deposit_cat_blockers
-	icon = d_dense_jungle
 
 	potential = {
 		always = no
@@ -2203,9 +2212,8 @@ d_titanic_life_blocker = {#Added via event
 	category = deposit_cat_rare
 
 	potential = { always = no }
-	
+
 	resources = {
-		category = planet_deposits
 		produces = {
 			society_research = 8
 		}
@@ -2403,7 +2411,6 @@ d_alien_pets_deposit = {
 #02_event_planetary_deposits.txt#
 
 d_migrating_forests = {
-
 	is_for_colonizable = yes
 	category = deposit_cat_rare
 
@@ -2424,7 +2431,7 @@ d_migrating_forests = {
 		district_farming_max = -1
 		district_generator_max = -1
 	}
-	
+
 	triggered_planet_modifier = {
 		potential = {
 			exists = owner
@@ -2497,12 +2504,11 @@ d_migrating_forests = {
 }
 
 d_migrating_forest_reserve = {
-
 	is_for_colonizable = yes
 	category = deposit_cat_rare
 
 	icon = d_huge_tree
-	
+
 	resources = {
 		produces = {
 			trigger = {
@@ -2515,6 +2521,36 @@ d_migrating_forest_reserve = {
 
 	planet_modifier = {
 		planet_jobs_society_research_produces_mult = 0.2
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { is_regular_empire = yes }
+		}
+		modifier = {
+			job_researcher_add = 2
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { is_hive_empire = yes }
+		}
+		modifier = {
+			job_brain_drone_add = 2
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { is_machine_empire = yes }
+		}
+		modifier = {
+			job_calculator_add = 2
+		}
 	}
 
 	triggered_planet_modifier = {
@@ -2583,43 +2619,12 @@ d_migrating_forest_reserve = {
 		}
 	}
 
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = { is_regular_empire = yes }
-		}
-		modifier = {
-			job_researcher_add = 2
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = { is_hive_empire = yes }
-		}
-		modifier = {
-			job_brain_drone_add = 2
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = { is_machine_empire = yes }
-		}
-		modifier = {
-			job_calculator_add = 2
-		}
-	}
-
 	drop_weight = {
 		weight = 0
 	}
 }
 
 d_savage_wildlands = {
-
 	is_for_colonizable = yes
 	category = deposit_cat_rare
 
@@ -2637,6 +2642,36 @@ d_savage_wildlands = {
 
 	planet_modifier = {
 		planet_jobs_society_research_produces_mult = 0.1
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { is_regular_empire = yes }
+		}
+		modifier = {
+			job_researcher_add = 1
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { is_hive_empire = yes }
+		}
+		modifier = {
+			job_brain_drone_add = 1
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { is_machine_empire = yes }
+		}
+		modifier = {
+			job_calculator_add = 1
+		}
 	}
 
 	triggered_planet_modifier = {
@@ -2696,36 +2731,6 @@ d_savage_wildlands = {
 		}
 		modifier = {
 			job_merchant_add = 1
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = { is_regular_empire = yes }
-		}
-		modifier = {
-			job_researcher_add = 1
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = { is_hive_empire = yes }
-		}
-		modifier = {
-			job_brain_drone_add = 1
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = { is_machine_empire = yes }
-		}
-		modifier = {
-			job_calculator_add = 1
 		}
 	}
 
