@@ -128,6 +128,133 @@ uav_dispatcher = {
 	}
 }
 
+planetary_guard = {
+	category = worker
+	condition_string = SOLDIER_JOB_TRIGGER
+	building_icon = building_colony_shelter
+	clothes_texture_index = 4
+
+	resources = {
+		category = planet_soldiers
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_valid_civic = civic_martial_brotherhood
+				}
+			}
+			unity = 2
+		}
+	}
+	
+	pop_modifier = {
+		pop_defense_armies_add = 4
+	}
+
+	triggered_pop_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				any_owned_leader = {
+					is_councilor = yes
+					has_trait = leader_trait_bellicose
+				}
+			}
+		}
+
+		modifier = {
+			pop_defense_armies_add = 1
+		}
+		mult = value:bellicose_naval_cap
+	}
+
+	triggered_planet_modifier = {
+		modifier = {
+			planet_stability_add = 1
+		}
+		mult = planet.modifier:job_soldier_stability_add
+	}
+	triggered_planet_modifier = {
+		potential = {
+			has_councilor = { COUNCILOR = "councilor_private_military_companies" }
+		}
+
+		modifier = {
+			planet_stability_add = @councilor_private_military_companies_stability
+		}
+
+		mult = value:councilor_level|TYPE|councilor_private_military_companies|
+	}
+	possible_pre_triggers = {
+		has_owner = yes
+		is_being_purged = no
+		is_being_assimilated = no
+		is_sapient = yes
+	}
+	possible = {
+		soldier_job_check_trigger = yes
+		owner = { is_gestalt = no }
+	}
+	weight = {
+		weight = @soldier_job_weight
+		modifier = {
+			factor = 10
+			exists = planet
+			planet = { has_modifier = martial_law }
+		}
+		modifier = {
+			factor = 2
+			has_trait = trait_resilient
+		}
+		modifier = {
+			factor = 2
+			has_trait = trait_very_strong
+		}
+		modifier = {
+			factor = 1.5
+			has_trait = trait_strong
+		}
+		modifier = {
+			factor = 0.5
+			has_trait = trait_weak
+		}
+		modifier = {
+			factor = 0.1
+			is_enslaved = yes
+			NOT = { has_slavery_type = { type = slavery_military } }
+		}
+		modifier = {
+			factor = 10
+			is_enslaved = yes
+			has_slavery_type = { type = slavery_military }
+		}
+		modifier = {
+			factor = 0.1
+			can_take_servant_job = yes
+		}
+		modifier = {
+			factor = 1.1
+			has_trait = trait_cybernetic
+		}
+		modifier = {
+			factor = 2
+			has_trait = trait_presapient_earthbound
+		}
+		modifier = {
+			factor = 1.1
+			has_trait = trait_limited_regeneration
+		}
+		modifier = {
+			factor = 0
+			species = { can_be_soldier = no }
+		}
+		modifier = {
+			factor = 2
+			has_trait = trait_lithoid
+		}
+	}
+}
+
 slave_master = {
 	category = ruler
 	condition_string = RULER_JOB_TRIGGER
