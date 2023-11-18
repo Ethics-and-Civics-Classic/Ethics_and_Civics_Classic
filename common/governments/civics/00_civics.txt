@@ -3,7 +3,9 @@
 #	potential = {}								# requirements list, see ../readme_requirements.txt
 #	possible = {}								# requirements list, see ../readme_requirements.txt
 #	pickable_at_start = yes / no				# default: yes
-#	modification = yes / no						# default: yes, set to no to prevent adding or removing this after creation of the empire
+#	modification = { add = {} remove = {} } | yes/no # Can be a set of two triggers, add to check if can be added later under certain conditions, remove to check if can be removed later under certain conditions
+#												# default: yes, set to no to prevent adding or removing this after creation of the empire
+#	custom_tooltip_with_modifiers = ...			# Appends localization key to the end of auto-generated modifier effect text.
 #
 #	random_weight = { base = 5 }				# scriptable weight for randomizing a civic
 #												# Note: If omitted, a default weight of 1 is used
@@ -22,6 +24,8 @@
 #	is_origin = yes / no						# default: no, set to yes if civic should be treated as an Origin
 #	description = LOC_KEY						# Custom text that will appear under the "Effects" heading.
 #	negative_description = LOC_KEY				# Custom text that will appear under the "Penalties" heading.
+#   alternate_civic_version = civic_key			# Key of the civic that will try to replace the current one during a government reform if the current civic is locked (ex: corporate version of the civic that will replace it when attempting to reform to Megacorporation)
+#												# Note: if no replacement civic is indicated, it fallback to non-moddable civics behaviour, i.e. you can't change authority
 #
 #	swap_type = {								# triggered name, desc, custom desc and modifiers
 #		name = ...
@@ -131,6 +135,7 @@ civic_imperial_cult = {
 			}
 		}
 	}
+	description = civic_imperial_cult_effects
 	modifier = {
 		country_edict_fund_add = 100
 	}
@@ -316,8 +321,7 @@ civic_philosopher_king = {
 		}
 	}
 	modifier = {
-		councilor_exp_gain = 0.4
-		negative_traits_country = -1
+		ruler_skill_add = 5
 		edicts_cost_mult = -0.15
 		edicts_upkeep_mult = -0.15
 	}
@@ -540,11 +544,12 @@ civic_feudal_realm = {
 			}
 		}
 	}
-
-	modifier = {
-		country_subject_power_penalty_mult = -0.5
-	}
 	description = "civic_tooltip_feudal_realm_effects"
+	modifier = {
+		country_naval_capacity_contribution_from_subjects_mult = 0.05
+		divided_patrongage_max_subjects = 1
+		country_subject_acceptance_add = 25
+	}
 }
 
 civic_police_state = {
@@ -776,6 +781,7 @@ civic_slaver_guilds = {
 civic_inwards_perfection = {
 	modification = no
 	#description = "civic_tooltip_inward_perfection_effects"
+	negative_description = "BLOCKS_COUNCILOR_STATE"
 	potential = {
 		ethics = { NOT = { value = ethic_gestalt_consciousness } }
 		authority = { NOT = { value = auth_corporate } }
@@ -804,6 +810,8 @@ civic_inwards_perfection = {
 			NOR = {
 				#value = civic_pompous_purists
 				value = civic_eager_explorers
+				value = civic_sovereign_guardianship
+				value = civic_corporate_sovereign_guardianship
 			}
 		}
 	}
@@ -924,7 +932,7 @@ civic_warrior_culture = {
 }
 
 civic_distinguished_admiralty = {
-	description = civic_tooltip_distinguished_admiralty_effects
+	#description = civic_tooltip_distinguished_admiralty_effects
 	potential = {
 		ethics = { NOT = { value = ethic_gestalt_consciousness } }
 		authority = { NOT = { value = auth_corporate } }
@@ -969,8 +977,9 @@ civic_distinguished_admiralty = {
 	}
 	modifier = {
 		ship_fire_rate_mult = 0.10
-		admiral_exp_gain = 0.2
+		commander_exp_gain = 0.2
 		command_limit_add = 10
+		commander_initial_skill = 2
 	}
 }
 
@@ -1098,6 +1107,9 @@ civic_corporate_dominion = {
 			}
 		}
 	}
+	#modifier = {
+	#	external_leader_pool_add = 1
+	#}
 	random_weight = {
 		base = @civic_uncommon_random_weight
 		modifier = {
@@ -1493,9 +1505,9 @@ civic_aristocratic_elite = {
 		authority = { NOT = { value = auth_corporate } }
 	}
 	modifier = {
-		governor_exp_gain = 0.8
-		leader_governors_cost_mult = 0.15
-		leader_governors_upkeep_mult = 0.15
+		#governor_exp_gain = 0.8	XXX
+		leader_officials_cost_mult = 0.15
+		leader_officials_upkeep_mult = 0.15
 	}
 	possible = {
 		ethics = {
@@ -1647,6 +1659,8 @@ civic_fanatic_purifiers = {
 		civics = {
 			NOR = {
 				value = civic_barbaric_despoilers
+				value = civic_sovereign_guardianship
+				value = civic_corporate_sovereign_guardianship
 				value = civic_crusader_spirit
 				value = civic_selective_kinship
 			}
@@ -1674,6 +1688,7 @@ civic_fanatic_purifiers = {
 	}
 
 	description = "civic_tooltip_fanatic_purifiers_effects"
+	negative_description = "BLOCKS_COUNCILOR_STATE"
 	modifier = {
 		ship_fire_rate_mult = 0.33
 		army_damage_mult = 0.33
@@ -1912,7 +1927,10 @@ civic_reanimated_armies = {
 			}
 		}
 		civics = {
-			NOT = { value = civic_citizen_service }
+			NOR = {
+				value = civic_citizen_service
+				value = civic_sovereign_guardianship
+			}
 		}
 		species_archetype = {
 			NOT = {
@@ -2028,6 +2046,8 @@ civic_death_cult = {
 				value = civic_fanatic_purifiers
 				value = civic_inwards_perfection
 				value = civic_death_cult_corporate
+				value = civic_dimensional_worship
+				value = civic_corporate_dimensional_worship
 			}
 		}
 		ethics = {
@@ -2378,9 +2398,10 @@ civic_pompous_purists = {
 	}
 
 	modifier = {
-		country_trust_growth = 0.30
-		envoys_add = 2
-		diplo_weight_opposing_mult = 0.1
+		envoy_improve_relations_mult = 0.25
+		envoys_add = 1
+		diplo_weight_opposing_mult = 0.15
+		external_leader_pool_add = -1
 	}
 }
 
@@ -2555,8 +2576,18 @@ civic_scavengers = {
 }
 
 civic_ascensionists = {
-	playable = { host_has_dlc = "Utopia" }
-	ai_playable = { host_has_dlc = "Utopia" }
+	playable = {
+		OR = {
+			host_has_dlc = "Utopia"
+			has_astral_planes_dlc = yes
+		}
+	}
+	ai_playable = {
+		OR = {
+			host_has_dlc = "Utopia"
+			has_astral_planes_dlc = yes
+		}
+	}
 	potential = {
 		ethics = { NOT = { value = ethic_gestalt_consciousness } }
 		authority = { NOT = { value = auth_corporate } }
@@ -2627,6 +2658,7 @@ civic_memory_vault = {
 	}
 	modifier = {
 		councilor_skill_add = 1
+		leader_initial_skill = 1
 	}
 }
 
@@ -2714,8 +2746,12 @@ civic_eager_explorers = {
 			}
 		}
 		civics = {
-			NOT = {
+			NOR = {
 				value = civic_inwards_perfection
+				value = civic_hyperspace_specialty
+				value = civic_corporate_hyperspace_specialty
+				value = civic_sovereign_guardianship
+				value = civic_corporate_sovereign_guardianship
 			}
 		}
 	}
@@ -2727,9 +2763,75 @@ civic_eager_explorers = {
 		category_voidcraft_draw_chance_mult = 0.5
 	}
 
+	swap_type = {
+		description = "civic_eager_explorers_effects"
+		trigger = {
+			has_astral_planes_dlc = yes
+		}
+
+		modifier = {
+			country_astral_rift_speed_mult = 0.05
+		}
+	}
+
 	random_weight = {
 		base = 0
 	}
+}
+
+civic_hyperspace_specialty = {
+	playable = { has_astral_planes_dlc = yes }
+	ai_playable = { has_astral_planes_dlc = yes }
+	description = "civic_hyperspace_specialty_effects"
+	potential = {
+		ethics = { NOT = { value = ethic_gestalt_consciousness } }
+		authority = { NOT = { value = auth_corporate } }
+		civics = { NOT = { value = civic_corporate_hyperspace_specialty } }
+	}
+	possible = {
+		civics = {
+			NOR = {
+				value = civic_privatized_exploration
+				value = civic_eager_explorers
+			}
+		}
+	}
+	modifier = {
+		planet_sensor_range_add = 2
+		ship_speed_mult = 0.1
+		country_physics_tech_research_speed = 0.15
+	}
+}
+
+civic_dimensional_worship = {
+	playable = { has_astral_planes_dlc = yes }
+	ai_playable = { has_astral_planes_dlc = yes }
+	description = "civic_dimensional_worship_effects"
+	potential = {
+		ethics = { NOT = { value = ethic_gestalt_consciousness } }
+		authority = { NOT = { value = auth_corporate } }
+		civics = { NOT = { value = civic_corporate_dimensional_worship } }
+	}
+	possible = {
+		civics = {
+			NOR = {
+                text = civic_tooltip_not_death_cult
+				value = civic_death_cult
+				value = civic_death_cult_corporate
+			}
+		}
+		ethics = {
+			OR = {
+				text = civic_tooltip_spiritualist
+				value = ethic_spiritualist
+				value = ethic_fanatic_spiritualist
+			}
+		}
+	}
+	modifier = {
+		country_astral_threads_produces_mult = 0.25
+	}
+	custom_tooltip_with_modifiers = "civic_dimensional_worship_effects_additional"
 }
 
 civic_heroic_tales = {
@@ -2738,7 +2840,7 @@ civic_heroic_tales = {
 	random_weight = {
 		base = 4
 	}
-	description = "civic_heroic_tales_effects"
+	#description = "civic_heroic_tales_effects"
 	potential = {
 		ethics = { NOT = { value = ethic_gestalt_consciousness } }
 		authority = { NOT = { value = auth_corporate } }
@@ -2746,7 +2848,9 @@ civic_heroic_tales = {
 	possible = {
 	}
 	modifier = {
-		negative_traits_country = -2 #-1
+		country_official_cap_add = 1
+		country_commander_cap_add = 1
+		country_scientist_cap_add = 1
 	}
 }
 
@@ -2780,7 +2884,7 @@ civic_dystopian_society = {
 		}
 	}
 	modifier = {
-		country_leader_cap_add = 1
+		country_commander_cap_add = 1
 		leaders_upkeep_mult = -0.2
 	}
 
@@ -2829,6 +2933,102 @@ civic_selective_kinship = {
 		}
 	}
 	description = civic_tooltip_selective_kinship_effects
+}
+
+civic_dark_consortium = {
+	playable = { has_astral_planes_dlc = yes }
+	ai_playable = { has_astral_planes_dlc = yes }
+	description = "civic_dark_consortium_effects"
+	potential = {
+		ethics = {
+			NOT = {
+				value = ethic_gestalt_consciousness
+			}
+		}
+		authority = {
+			NOT = { value = auth_corporate }
+		}
+		civics = {
+			NOT = { value = civic_corporate_dark_consortium }
+		}
+	}
+	modification = {
+		add = {
+			has_technology = tech_mine_dark_matter
+		}
+		remove = {
+			NOT = { has_country_flag = civic_dark_consortium_locked }
+		}
+	}
+	alternate_civic_version = civic_corporate_dark_consortium
+
+	random_weight = {
+		base = @civic_rare_random_weight
+	}
+	ai_weight = {
+		base = @civic_rare_random_weight
+	}
+}
+
+civic_sovereign_guardianship = {
+	playable = { has_astral_planes_dlc = yes }
+	ai_playable = { has_astral_planes_dlc = yes }
+	description = "civic_sovereign_guardianship_effects"
+	potential = {
+		ethics = {
+			NOT = {
+				value = ethic_gestalt_consciousness
+			}
+		}
+		authority = {
+			NOT = { value = auth_corporate }
+		}
+	}
+	possible = {
+		ethics = {
+			OR = {
+				text = civic_tooltip_militarist
+				value = ethic_militarist
+				value = ethic_fanatic_militarist
+			}
+		}
+		origin = {
+			NOR = {
+				value = origin_fear_of_the_dark
+				value = origin_payback
+				value = origin_broken_shackles
+			}
+		}
+		civics = {
+			NOR = {
+				value = civic_corporate_sovereign_guardianship
+				value = civic_inwards_perfection
+				value = civic_eager_explorers
+				value = civic_privatized_exploration
+				value = civic_reanimated_armies
+				value = civic_fanatic_purifiers
+			}
+		}
+	}
+	modification = no
+
+	modifier = {
+		empire_size_colonies_mult = 1
+		empire_size_branch_office_mult = 1
+		empire_size_systems_mult = 1.50
+		empire_size_pops_mult = -0.50
+		empire_size_districts_mult = -0.50
+		diplo_weight_mult = 0.2
+
+		planet_soldiers_unity_produces_add = @sovereign_guardianship_soldier_unity
+	}
+
+	random_weight = {
+		base = @civic_rare_random_weight
+	}
+	ai_weight = {
+		base = @civic_rare_random_weight
+	}
 }
 
 #E&CC Exclusive Civics
@@ -3449,7 +3649,7 @@ civic_evangelism = {
 		country_trust_growth = 0.5
 		country_trust_cap_add = 50
 		diplo_weight_pops_mult = 0.15
-		diplo_weight_envoys_mult = 0.15
+		diplo_weight_delegate_mult = 0.15
 		planet_emigration_push_mult = 0.15
 	}
 
@@ -3868,7 +4068,7 @@ civic_harmonious_hierarchy = {
 		ethics = { NOT = { value = ethic_gestalt_consciousness } }
 	}
 	modifier = {
-		governor_exp_gain = 0.4
+		#governor_exp_gain = 0.4	XXX
 	}
 	possible = {
 		ethics = {
@@ -3941,7 +4141,7 @@ civic_genetic_aristocracy = {
 	random_weight = { base = @civic_default_random_weight }
 	modifier = {
 		species_leader_exp_gain = 0.6
-		leader_age = 10
+		leader_lifespan_add = 10
 		planet_jobs_ruler_produces_mult = 0.05
 		pop_cat_specialist_political_power = -1.5
 		pop_cat_specialist_happiness = -0.05
@@ -4438,11 +4638,9 @@ civic_military_junta = {
 	}
 	random_weight = { base = @civic_default_random_weight }
 	modifier = {
-		admiral_exp_gain = 0.6
-		general_exp_gain = 0.6
+		commander_exp_gain = 0.6
+		leader_commanders_upkeep_mult = 0.25
 		job_commandante_per_pop = 0.04
-		leader_admirals_upkeep_mult = 0.25
-		leader_generals_upkeep_mult = 0.25
 	}
 }
 
