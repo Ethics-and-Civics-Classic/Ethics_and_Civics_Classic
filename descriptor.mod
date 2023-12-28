@@ -1,4 +1,4 @@
-version="3.10.3.5"
+version="3.10.4.1"
 name="Ethics and Civics Classic 3.10"
 tags={
 	"Overhaul"
