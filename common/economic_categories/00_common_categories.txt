@@ -30,6 +30,7 @@ country_base = {
 }
 
 trade = {
+	parent = country
 	use_for_ai_budget = yes
 }
 
@@ -123,6 +124,15 @@ megastructures_habitat = {
 	generate_mult_modifiers = {
 		cost
 		upkeep
+	}
+	modifier_category = megastructure
+}
+
+megastructures_gateways = {
+	use_for_ai_budget = yes
+	parent = megastructures
+	generate_mult_modifiers = {
+		cost
 	}
 	modifier_category = megastructure
 }
@@ -418,7 +428,7 @@ starbase_stations = {
 			is_scope_valid = yes #When called from ship designer the design is not valid yet.
 			OR = {
 				is_ship_size = starbase_outpost
-				is_ship_size = orbital_ring_tier_1 #TODOJM: Remove?
+				is_ship_size = orbital_ring_tier_1
 			}
 		}
 	}
@@ -924,6 +934,7 @@ planet_pop_assemblers = {
 	modifier_category = pop
 
 	generate_add_modifiers = {
+		upkeep
 		produces
 	}
 	modifier_category = pop
@@ -975,8 +986,34 @@ planet_livestock = {
 		produces
 	}
 	modifier_category = pop
+	# Inherited Modifiers
+	triggered_produces_modifier = {
+		key = planet_farmers
+		modifier_types = {
+			mult
+			add
+		}
+		trigger = {
+			has_job = livestock	# This check is done so that livestock working zoo jobs don't inherit the modifier
+			is_organic_species = yes
+			is_lithoid = no
+		}
+		use_parent_icon = yes
+	}
+	triggered_produces_modifier = {
+		key = planet_miners
+		modifier_types = {
+			mult
+			add
+		}
+		trigger = {
+			has_job = livestock	# This check is done so that livestock working zoo jobs don't inherit the modifier
+			is_organic_species = yes
+			is_lithoid = yes
+		}
+		use_parent_icon = yes
+	}
 }
-
 planet_technician = {
 	parent = planet_jobs_productive
 	generate_add_modifiers = {
@@ -1123,7 +1160,62 @@ planet_soldiers = {
 }
 
 planet_squires = {
-	parent = planet_jobs
+	parent = planet_jobs_productive
+	generate_add_modifiers = {
+		produces
+	}
+}
+
+planet_knights = {
+	parent = planet_jobs_productive
+	modifier_category = pop
+	generate_mult_modifiers = {
+		produces
+	}
+# Inherited Modifiers
+	triggered_produces_modifier = {
+		key = planet_researchers
+		modifier_types = {
+			mult
+			add
+		}
+		trigger = {
+			always = yes
+		}
+		use_parent_icon = yes
+	}
+	triggered_upkeep_modifier = {
+		key = planet_researchers
+		modifier_types = {
+			mult
+			add
+		}
+		trigger = {
+			always = yes
+		}
+		use_parent_icon = yes
+	}
+	triggered_produces_modifier = {
+		key = planet_administrators
+		modifier_types = {
+			mult
+			add
+		}
+		trigger = {
+			always = yes
+		}
+		use_parent_icon = yes
+	}
+	triggered_upkeep_modifier = {
+		key = planet_administrators
+		modifier_types = {
+			mult
+		}
+		trigger = {
+			always = yes
+		}
+		use_parent_icon = yes
+	}
 }
 
 planet_priests = {
@@ -1229,14 +1321,6 @@ planet_bath_attendants_hive = {
 planet_bath_attendants_machine = {
 	icon = "job_bath_attendant"
 	parent = planet_jobs
-}
-
-#DO NOT ASSIGN A PARENT TO THIS.
-#It is a special hack. The normal job modifiers apply via knights_unity/research_output_modifier script values in the jobs
-knights_independent_category = {
-	generate_mult_modifiers = {
-		produces
-	}
 }
 
 planet_pops = {
@@ -1380,9 +1464,6 @@ planet_deposits = {
 
 hab_deposits = {
 	parent = planet_deposits
-	generate_mult_modifiers = {
-		produces
-	}
 }
 
 orbital_mining_deposits = {
@@ -1395,16 +1476,10 @@ orbital_research_deposits = {
 
 hab_mining_deposits = {
 	parent = orbital_mining_deposits
-	generate_mult_modifiers = {
-		produces
-	}
 }
 
 hab_research_deposits = {
 	parent = station_researchers
-	generate_mult_modifiers = {
-		produces
-	}
 }
 
 deposit_blockers = {
