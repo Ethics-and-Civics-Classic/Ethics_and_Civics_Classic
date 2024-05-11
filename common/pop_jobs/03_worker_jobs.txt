@@ -33,13 +33,16 @@ colonist = {
 		category = planet_jobs
 		produces = {
 			trigger = {
-				is_lithoid = no
+				has_food_upkeep = yes
 			}
 			food = 1
 		}
 		produces = {
 			trigger = {
-				is_lithoid = yes
+				OR = {
+					has_mineral_upkeep = yes
+					has_energy_upkeep = yes
+				}
 			}
 			minerals = 1
 		}
@@ -85,6 +88,8 @@ colonist = {
 			owner = { has_civic = civic_star_settlers }
 		}
 	}
+
+	inline_script = "jobs/automodding_priority_amenities"
 }
 
 clerk = {
@@ -104,6 +109,48 @@ clerk = {
 
 	resources = {
 		category = planet_clerks
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_synth_corporate = no
+			}
+		}
+		trade_value_mult = 0.01
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_policy_flag = computation_core_production
+			}
+		}
+		planet_jobs_alloys_produces_mult = 0.005
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_policy_flag = computation_core_stability
+			}
+		}
+		planet_jobs_unity_produces_mult = 0.005
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_policy_flag = computation_core_research
+			}
+		}
+		planet_jobs_physics_research_produces_mult = 0.005
+		planet_jobs_society_research_produces_mult = 0.005
+		planet_jobs_engineering_research_produces_mult = 0.005
 	}
 
 	planet_modifier = {
@@ -249,6 +296,17 @@ clerk = {
 		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
 	}
 
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_active_tradition = tr_virtuality_5 }
+		}
+
+		modifier = {
+			planet_virtual_jobs_produces_mult = 0.01
+		}
+	}
+
 	weight = {
 		weight = @clerk_job_weight
 		mult = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
@@ -290,6 +348,8 @@ clerk = {
 			owner = { is_fallen_empire = yes }
 		}
 	}
+
+	inline_script = "jobs/automodding_priority_amenities"
 }
 
 technician = {
@@ -425,6 +485,8 @@ technician = {
 			}
 		}
 	}
+
+	inline_script = "jobs/automodding_priority_energy"
 }
 
 miner = {
@@ -557,7 +619,14 @@ miner = {
 				}
 			}
 		}
+
+		modifier = {
+			factor = 5
+			has_trait = trait_cyborg_creed_of_labor
+		}
 	}
+
+	inline_script = "jobs/automodding_priority_minerals"
 }
 
 crystal_miner = {
@@ -617,6 +686,10 @@ crystal_miner = {
 			factor = 0.1
 			can_take_servant_job = yes
 		}
+		modifier = {
+			factor = 5
+			has_trait = trait_cyborg_creed_of_labor
+		}
 	}
 }
 
@@ -672,6 +745,10 @@ gas_extractor = {
 		modifier = {
 			factor = 0.1
 			can_take_servant_job = yes
+		}
+		modifier = {
+			factor = 5
+			has_trait = trait_cyborg_creed_of_labor
 		}
 	}
 }
@@ -729,6 +806,16 @@ mote_harvester = {
 			factor = 0.1
 			can_take_servant_job = yes
 		}
+		modifier = {
+			factor = 5
+			has_trait = trait_cyborg_creed_of_labor
+		}
+	}
+
+	auto_trait_prio = {
+		trait_industrious
+		trait_very_strong
+		trait_strong
 	}
 }
 
@@ -864,7 +951,7 @@ farmer = {
 		}
 		# low income modifier
 		modifier = {
-			factor = 1.2
+			factor = 3
 			exists = planet
 			planet = {
 				has_available_jobs = farmer
@@ -885,13 +972,21 @@ farmer = {
 
 			owner = {
 				is_lithoid_empire = yes
+				country_uses_food = no
 				has_monthly_income = {
 					resource = food
 					value >= 0
 				}
 			}
 		}
+
+		modifier = {
+			factor = 5
+			has_trait = trait_cyborg_creed_of_labor
+		}
 	}
+
+	inline_script = "jobs/automodding_priority_food"
 }
 
 soldier = {
@@ -981,6 +1076,18 @@ soldier = {
 
 	triggered_planet_modifier = {
 		potential = {
+			planet = {
+				exists = owner
+				owner = { has_tradition = "tr_modularity_3" }
+			}
+		}
+		modifier = {
+			planet_stability_add = 0.25
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
 			has_councilor = { COUNCILOR = "councilor_private_military_companies" }
 		}
 
@@ -1065,6 +1172,10 @@ soldier = {
 			factor = 2
 			has_trait = trait_lithoid
 		}
+		modifier = {
+			factor = 5
+			has_trait = trait_cyborg_creed_of_war
+		}
 	}
 }
 
@@ -1085,8 +1196,11 @@ mortal_initiate = {
 
 	possible_precalc = can_fill_worker_job
 	possible = {
-		NOT = { has_trait = trait_mechanical } #No machines
-		NOT = { has_trait = trait_zombie } #How do you kill that which has no life?
+		NOR = {
+			has_trait = trait_mechanical #No robots
+			has_trait = trait_zombie #How do you kill that which has no life?
+			has_virtual_species_trait = yes #You'd just print more
+		}
 	}
 
 	resources = {
@@ -1128,6 +1242,8 @@ mortal_initiate = {
 			can_take_servant_job = yes
 		}
 	}
+
+	inline_script = "jobs/automodding_priority_unity"
 }
 
 scrap_miner = {
@@ -1201,6 +1317,8 @@ scrap_miner = {
 			}
 		}
 	}
+
+	inline_script = "jobs/automodding_priority_minerals"
 }
 
 angler = {
@@ -1237,6 +1355,14 @@ angler = {
 
 			food = @councilor_anglers_angler_food_bonus
 			mult = value:councilor_level|TYPE|councilor_anglers|
+		}
+		produces = {
+			trigger = {
+				has_councilor = { COUNCILOR = "councilor_machine_anglers" }
+			}
+
+			food = @councilor_machine_anglers_angler_food_bonus
+			mult = value:councilor_level|TYPE|councilor_machine_anglers|
 		}
 		produces = {
 			trigger = {
@@ -1309,6 +1435,8 @@ angler = {
 			can_take_servant_job = yes
 		}
 	}
+
+	inline_script = "jobs/automodding_priority_food"
 }
 
 ranger = {
@@ -1350,6 +1478,8 @@ ranger = {
 			has_job = ranger
 		}
 	}
+
+	inline_script = "jobs/automodding_priority_research"
 }
 
 squire = {
@@ -1412,4 +1542,6 @@ squire = {
 		weight = @worker_job_weight
 		factor = 1.2
 	}
+
+	inline_script = "jobs/automodding_priority_amenities"
 }
