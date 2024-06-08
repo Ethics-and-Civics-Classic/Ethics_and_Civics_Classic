@@ -1674,18 +1674,21 @@ trade_policy = {
 }
 
 artificial_intelligence_policy = {
-
 	potential = {
 		NOT = { has_ethic = ethic_gestalt_consciousness }
 		OR = {
 			can_set_ai_policy = yes
 			has_country_flag = synthetic_empire
+			is_individual_machine = yes
 		}
 	}
 
 	option = {
 		name = "ai_outlawed"
 
+		potential = {
+			is_individual_machine = no
+		}
 		valid = {
 			NOR = {
 				is_materialist = yes
@@ -1743,7 +1746,12 @@ artificial_intelligence_policy = {
 	option = {
 		name = "ai_servitude"
 
+		potential = {
+			is_individual_machine = no
+		}
+
 		valid = {
+			NOT = {	has_origin = origin_synthetic_fertility }
 			custom_tooltip = {
 				fail_text = is_a_synthetic_empire_fail
 				NOT = { has_country_flag = synthetic_empire }
@@ -1752,6 +1760,7 @@ artificial_intelligence_policy = {
 				is_country_type = fallen_empire
 				NOT = { has_valid_civic = civic_machine_cult }
 			}
+			is_individual_machine = no
 		}
 
 		policy_flags = {
@@ -1792,6 +1801,10 @@ artificial_intelligence_policy = {
 					}
 				}
 			}
+			modifier = {
+				factor = 0.1
+				is_individual_machine = yes
+			}
 		}
 	}
 
@@ -1806,6 +1819,7 @@ artificial_intelligence_policy = {
 				}
 				is_spiritualist = no
 				has_valid_civic = civic_machine_cult
+				is_individual_machine = yes
 			}
 			NOT = { has_policy_flag = robots_outlawed }
 		}
@@ -1851,7 +1865,10 @@ artificial_intelligence_policy = {
 robot_pop_policy = {
 
 	potential = {
-		NOT = { has_ethic = ethic_gestalt_consciousness }
+		NOR = {
+			has_ethic = ethic_gestalt_consciousness
+			is_individual_machine = yes
+		}
 	}
 
 	option = {
@@ -1861,8 +1878,10 @@ robot_pop_policy = {
 			NOR = {
 				is_materialist = yes
 				has_valid_civic = civic_machine_cult
+				has_origin = origin_synthetic_fertility
 			}
 			NOT = { has_policy_flag = ai_full_rights }
+			is_individual_machine = no
 		}
 
 		policy_flags = {
@@ -1911,6 +1930,14 @@ robot_pop_policy = {
 
 		policy_flags = {
 			robots_allowed
+		}
+
+		on_enabled = {
+			hidden_effect = {
+				country_event = {
+					id = action.56 # Failsafe if you don't have a robot species to assemble.
+				}
+			}
 		}
 
 		AI_weight = {
@@ -2061,6 +2088,7 @@ slavery = {
 				NOR = {
 					has_valid_civic = "civic_slaver_guilds"
 					has_trait = "trait_decadent"
+					has_trait = "trait_robot_decadent"
 				}
 			}
 		}

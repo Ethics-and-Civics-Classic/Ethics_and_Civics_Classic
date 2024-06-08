@@ -33,6 +33,7 @@ building_capital = {
 			has_modifier = resort_colony
 			has_modifier = slave_colony
 			uses_habitat_capitals = yes
+            is_planet_class = pc_cosmogenesis_world
 		}
 	}
 
@@ -43,6 +44,7 @@ building_capital = {
 		building_slave_capital
 		building_ancient_control_center
 		building_ancient_palace
+        building_capital_nanotech
 	}
 
 	allow = {
@@ -75,6 +77,21 @@ building_capital = {
 		script = buildings/on_all_capital_buildings
 	}
 
+    inline_script = {
+		script = buildings/regular_empire_capital_jobs
+		PRIMARY_JOB = 1
+		SECONDARY_JOB = 1
+		TERTIARY_JOB = 2
+	}
+
+    triggered_planet_modifier = {
+		potential = {
+			exists = owner.federation
+			owner.federation = { has_federation_perk = culture_workers_1 }
+		}
+		job_culture_worker_add = 1
+	}
+
 	triggered_planet_modifier = {
 		potential = {
 			exists = owner
@@ -85,14 +102,6 @@ building_capital = {
 		modifier = {
 			planet_housing_add = 1
 		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = { has_active_tradition = tr_synthetics_finish }
-		}
-		job_roboticist_add = 1
 	}
 
 	triggered_planet_modifier = {
@@ -317,6 +326,14 @@ building_capital = {
 
 	triggered_desc = {
 		trigger = {
+			exists = owner.federation
+			owner.federation = { has_federation_perk = culture_workers_1 }
+		}
+		text = job_culture_worker_effect_desc
+	}
+
+	triggered_desc = {
+		trigger = {
 			exists = owner
 			owner = {
 				OR = {
@@ -382,15 +399,6 @@ building_capital = {
 	triggered_desc = {
 		trigger = {
 			exists = owner
-			owner = { has_active_tradition = tr_synthetics_finish }
-		}
-
-		text = job_roboticist_effect_desc
-	}
-
-	triggered_desc = {
-		trigger = {
-			exists = owner
 			owner = {
 				is_megacorp = yes
 				is_worker_coop_empire = no
@@ -420,6 +428,16 @@ building_capital = {
 			owner = { has_valid_civic = civic_private_healthcare_corporate }
 		}
 		text = job_healthcare_effect_desc
+	}
+
+    triggered_desc = {
+		trigger = {
+			exists = owner
+			owner = {
+				is_pleasure_seeker = yes
+			}
+		}
+		text = job_entertainer_effect_desc
 	}
 
 	triggered_desc = {
@@ -495,6 +513,7 @@ building_major_capital = {
 		building_slave_major_capital
 		building_ancient_control_center
 		building_ancient_palace
+        building_major_capital_nanotech
 	}
 
 	prerequisites = {
@@ -519,6 +538,13 @@ building_major_capital = {
 		script = buildings/on_all_capital_buildings
 	}
 
+	inline_script = {
+		script = buildings/regular_empire_capital_jobs
+		PRIMARY_JOB = 2
+		SECONDARY_JOB = 1
+		TERTIARY_JOB = 2
+	}
+
 	triggered_planet_modifier = {
 		potential = {
 			exists = owner
@@ -529,14 +555,6 @@ building_major_capital = {
 		modifier = {
 			planet_housing_add = 1
 		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = { has_active_tradition = tr_synthetics_finish }
-		}
-		job_roboticist_add = 1
 	}
 
 	triggered_planet_modifier = {
@@ -716,8 +734,8 @@ building_major_capital = {
 			}
 		}
 		modifier = {
-			job_politician_add = 1
-			job_supervisor_add = -1
+			job_politician_add = -1
+			job_supervisor_add = 1
 		}
 	}
 
@@ -888,14 +906,6 @@ building_major_capital = {
 	triggered_desc = {
 		trigger = {
 			exists = owner
-			owner = { has_active_tradition = tr_synthetics_finish }
-		}
-		text = job_roboticist_effect_desc
-	}
-
-	triggered_desc = {
-		trigger = {
-			exists = owner
 			owner = {
 				is_megacorp = yes
 				is_worker_coop_empire = no
@@ -947,6 +957,7 @@ building_major_capital = {
 	}
 }
 
+
 building_system_capital = {
 	base_buildtime = @b4_time
 	capital = yes
@@ -978,6 +989,7 @@ building_system_capital = {
 		building_slave_major_capital
 		building_ancient_control_center
 		building_ancient_palace
+        building_system_capital_nanotech
 	}
 
 	allow = {
@@ -1006,6 +1018,13 @@ building_system_capital = {
 		script = buildings/on_all_capital_buildings
 	}
 
+	inline_script = {
+		script = buildings/regular_empire_capital_jobs
+		PRIMARY_JOB = 2
+		SECONDARY_JOB = 2
+		TERTIARY_JOB = 2
+	}
+
 	triggered_planet_modifier = {
 		potential = {
 			exists = owner
@@ -1021,9 +1040,13 @@ building_system_capital = {
 	triggered_planet_modifier = {
 		potential = {
 			exists = owner
-			owner = { has_active_tradition = tr_synthetics_finish }
+			owner = {
+				has_active_tradition = tr_domination_imperious_architecture
+			}
 		}
-		job_roboticist_add = 1
+		modifier = {
+			planet_housing_add = 1
+		}
 	}
 
 	triggered_planet_modifier = {
@@ -1347,14 +1370,6 @@ building_system_capital = {
 	triggered_desc = {
 		trigger = {
 			exists = owner
-			owner = { has_active_tradition = tr_synthetics_finish }
-		}
-		text = job_roboticist_effect_desc
-	}
-
-	triggered_desc = {
-		trigger = {
-			exists = owner
 			owner = {
 				is_megacorp = yes
 				is_worker_coop_empire = no
@@ -1545,19 +1560,6 @@ building_hab_major_capital = {
 	triggered_planet_modifier = {
 		potential = {
 			exists = owner
-			owner = {
-				is_machine_empire = yes
-				has_active_tradition = tr_synthetics_finish_machine
-			}
-		}
-		modifier = {
-			job_replicator_add = 1
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
 			owner = { has_active_tradition = tr_synthetics_finish }
 		}
 		job_roboticist_add = 1
@@ -1569,6 +1571,16 @@ building_hab_major_capital = {
 			owner = { has_valid_civic = civic_private_healthcare_corporate }
 		}
 		job_healthcare_add = 1
+	}
+
+    triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_individual_machine = yes
+			}
+		}
+		job_roboticist_add = 1
 	}
 
 	triggered_planet_modifier = {
@@ -1584,6 +1596,16 @@ building_hab_major_capital = {
 			job_knight_commander_add = 1
 			job_knight_add = 1
 		}
+	}
+
+    triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_pleasure_seeker = yes
+			}
+		}
+		job_entertainer_add = 1
 	}
 
 	triggered_planet_modifier = {
@@ -1635,6 +1657,39 @@ building_hab_major_capital = {
 		modifier = {
 			job_politician_add = -1
 			job_high_priest_add = 1
+		}
+	}
+
+    # Exalted Priesthood Civic
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			NOT = { has_planet_flag = toxic_knights_habitat }
+			owner = {
+				has_civic = civic_exalted_priesthood
+				NOR = {
+					has_origin = origin_toxic_knights
+					has_origin = origin_cybernetic_creed
+				}
+			}
+		}
+		modifier = {
+			job_politician_add = 1
+			job_high_priest_add = 1
+		}
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			NOT = { has_planet_flag = toxic_knights_habitat }
+			owner = {
+				has_civic = civic_exalted_priesthood
+				has_origin = origin_cybernetic_creed # therefore not 'origin_toxic_knights'
+			}
+		}
+		modifier = {
+			job_politician_add = 1
+			job_technophant_add = 1
 		}
 	}
 
@@ -1717,6 +1772,32 @@ building_hab_major_capital = {
 			planet_jobs_productive_upkeep_mult = 0.1
 			planet_jobs_productive_produces_mult = 0.1
 		}
+	}
+
+    	triggered_desc = {
+		trigger = {
+			exists = owner
+			NOT = { has_planet_flag = toxic_knights_habitat }
+			owner = {
+				has_civic = civic_exalted_priesthood
+				NOR = {
+					has_origin = origin_toxic_knights
+					has_origin = origin_cybernetic_creed
+				}
+			}
+		}
+		text = job_high_priest_effect_desc
+	}
+	triggered_desc = {
+		trigger = {
+			exists = owner
+			NOT = { has_planet_flag = toxic_knights_habitat }
+			owner = {
+				has_civic = civic_exalted_priesthood
+				has_origin = origin_cybernetic_creed # therefore not 'origin_toxic_knights'
+			}
+		}
+		text = job_technophant_effect_desc
 	}
 
 	triggered_planet_modifier = {
@@ -1890,7 +1971,15 @@ building_hab_major_capital = {
 	triggered_desc = {
 		trigger = {
 			exists = owner
-			owner = { has_active_tradition = tr_synthetics_finish }
+			owner = {
+				OR = {
+					is_individual_machine = yes
+					AND = {
+						is_regular_empire = yes
+						has_active_tradition = tr_synthetics_finish
+					}
+				}
+			}
 		}
 		text = job_roboticist_effect_desc
 	}
@@ -2155,19 +2244,6 @@ building_hab_system_capital = {
 	triggered_planet_modifier = {
 		potential = {
 			exists = owner
-			owner = {
-				is_machine_empire = yes
-				has_active_tradition = tr_synthetics_finish_machine
-			}
-		}
-		modifier = {
-			job_replicator_add = 1
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
 			owner = { has_active_tradition = tr_synthetics_finish }
 		}
 		job_roboticist_add = 1
@@ -2179,6 +2255,16 @@ building_hab_system_capital = {
 			owner = { has_valid_civic = civic_private_healthcare_corporate }
 		}
 		job_healthcare_add = 1
+	}
+
+    triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_pleasure_seeker = yes
+			}
+		}
+		job_entertainer_add = 1
 	}
 
 	triggered_planet_modifier = {
@@ -2535,6 +2621,16 @@ building_hab_system_capital = {
 			}
 		}
 		text = job_politician_effect_desc
+	}
+
+	triggered_desc = {
+		trigger = {
+			exists = owner
+			owner = {
+				is_pleasure_seeker = yes
+			}
+		}
+		text = job_entertainer_effect_desc
 	}
 
 	triggered_desc = {
