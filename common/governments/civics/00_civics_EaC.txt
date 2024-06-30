@@ -575,6 +575,7 @@ civic_environmentalist = {
 			NOR = {
 				#text = civic_tooltip_not_relentless_industrialists	#Removed Vanilla Code
 				value = civic_relentless_industrialists				#Modded
+				value = civic_relentless_industrialists_machine_cult#Modded
 				value = civic_dystopian_society						#Modded
 				value = civic_corporate_relentless_industrialists	#Modded
 			}
@@ -1017,6 +1018,7 @@ civic_agrarian_idyll = {
 			NOR = {
 				text = civic_tooltip_not_relentless_industrialists
 				value = civic_relentless_industrialists
+				value = civic_relentless_industrialists_machine_cult#Modded
 				value = civic_corporate_relentless_industrialists
 				value = civic_dystopian_society						#Modded
 				value = civic_industrial_economy					#Modded
@@ -1949,6 +1951,7 @@ civic_idyllic_bloom = {
 			NOR = {
 				text = civic_tooltip_not_relentless_industrialists
 				value = civic_relentless_industrialists
+				value = civic_relentless_industrialists_machine_cult	#Modded
 				value = civic_corporate_relentless_industrialists
 			}
 		}
@@ -2047,6 +2050,83 @@ civic_toxic_baths = {
 	}
 }
 
+civic_corporate_relentless_industrialists = {
+	playable = { has_toxoids = yes }
+	ai_playable = { has_toxoids = yes }
+	description = "civic_tooltip_relentless_industrialists_effects"
+	potential = {
+		OR = {
+			authority = { value = auth_corporate }
+			civics = { value = civic_galactic_sovereign_megacorp }
+		}
+	}
+	possible = {
+		ethics = {
+			#OR = {
+			#	text = civic_tooltip_materialist				#removed vanilla code
+			#	value = ethic_materialist	
+			#	value = ethic_fanatic_materialist
+			#}
+			NOT = { value = ethic_fanatic_spiritualist}			#Modded to represent vanilla constraint of being materialist
+			OR = {
+				text = civic_tooltip_industrial					#Modded
+				value = ethic_industrial						#Modded
+				value = ethic_fanatic_industrial				#Modded
+			}
+		}
+		origin = { NOT = { value = origin_life_seeded } }
+		civics = {
+			NOR = {
+				value = civic_environmentalist
+				value = civic_agrarian_idyll
+				value = civic_idyllic_bloom
+				value = civic_memorialist
+				value = civic_relentless_industrialists
+				value = civic_relentless_industrialists_machine_cult	#Modded
+				value = civic_naturalism								#Modded
+				value = civic_keepers_harmony							#Modded
+				value = civic_natural_capitalism						#Modded
+				value = civic_terraforming								#Modded
+			}
+		}
+	}
+	random_weight = {
+		base = @civic_uncommon_random_weight
+	}
+	ai_weight = {
+		base = @ai_civic_uncommon_base_weight
+		modifier = {
+			factor = @ai_civic_personality_match_factor
+			OR = {
+				has_ai_personality = ruthless_capitalists
+				has_ai_personality = slaving_despots
+				has_ai_personality = decadent_hierarchy
+			}
+		}
+		modifier = {
+			factor = @ai_civic_personality_mismatch_factor
+			OR = {
+				has_ai_personality = honorbound_warriors
+				has_ai_personality = peaceful_traders
+				has_ai_personality = federation_builders
+				has_ai_personality = xenophobic_isolationists
+				has_ai_personality = fanatic_befrienders
+				has_ai_personality = fanatic_purifiers
+			}
+		}
+		modifier = {
+			factor = @ai_civic_personality_forbid_factor
+			OR = {
+				has_ai_personality = evangelising_zealots
+				has_ai_personality = erudite_explorers
+				has_ai_personality = spiritual_seekers
+				has_ai_personality = democratic_crusaders
+				has_ai_personality = harmonious_hierarchy
+			}
+		}
+	}
+}
+
 civic_relentless_industrialists = {
 	playable = { has_toxoids = yes }
 	ai_playable = { has_toxoids = yes }
@@ -2061,12 +2141,12 @@ civic_relentless_industrialists = {
 			#	text = civic_tooltip_materialist			#removed vanilla code
 			#	value = ethic_materialist	
 			#	value = ethic_fanatic_materialist
-			#}
-			NOT = { value = ethic_fanatic_spiritualist }	#Modded to represent vanilla constraint of being materialist
+			#}	
+			NOT = { value = ethic_fanatic_spiritualist}			#Modded to represent vanilla constraint of being materialist
 			OR = {
-				text = civic_tooltip_industrial				#Modded
-				value = ethic_industrial					#Modded
-				value = ethic_fanatic_industrial			#Modded
+				text = civic_tooltip_industrial					#Modded
+				value = ethic_industrial						#Modded
+				value = ethic_fanatic_industrial				#Modded
 			}
 		}
 		origin = { NOT = { value = origin_life_seeded } }
@@ -2184,6 +2264,74 @@ civic_scavengers = {
 
 #E&CC Exclusive Civics
 
+civic_relentless_industrialists_machine_cult = {
+	picture = GFX_relentless_industrialists_machine_cult
+	playable = { has_toxoids = yes }
+	ai_playable = { has_toxoids = yes }
+	description = "civic_tooltip_relentless_industrialists_effects"
+	potential = {
+		ethics = { NOT = { value = ethic_gestalt_consciousness } }
+		authority = { NOT = { value = auth_corporate } }
+	}
+	possible = {
+		origin = { NOT = { value = origin_life_seeded } }
+		ethics = {
+			value = ethic_fanatic_spiritualist
+			value = ethic_fanatic_industrial
+		}
+		civics = {
+			value = civic_machine_cult
+			NOR = {
+				value = civic_environmentalist
+				value = civic_agrarian_idyll
+				value = civic_idyllic_bloom
+				value = civic_memorialist
+				value = civic_corporate_relentless_industrialists	
+				value = civic_naturalism							
+				value = civic_keepers_harmony						
+				value = civic_environmentalist						
+				value = civic_natural_capitalism					
+				value = civic_terraforming							
+			}
+		}
+	}
+	random_weight = {
+		base = @civic_uncommon_random_weight
+	}
+	ai_weight = {
+		base = @ai_civic_uncommon_base_weight
+		modifier = {
+			factor = @ai_civic_personality_match_factor
+			OR = {
+				has_ai_personality = ruthless_capitalists
+				has_ai_personality = slaving_despots
+				has_ai_personality = decadent_hierarchy
+			}
+		}
+		modifier = {
+			factor = @ai_civic_personality_mismatch_factor
+			OR = {
+				has_ai_personality = honorbound_warriors
+				has_ai_personality = peaceful_traders
+				has_ai_personality = federation_builders
+				has_ai_personality = xenophobic_isolationists
+				has_ai_personality = fanatic_befrienders
+				has_ai_personality = fanatic_purifiers
+			}
+		}
+		modifier = {
+			factor = @ai_civic_personality_forbid_factor
+			OR = {
+				has_ai_personality = evangelising_zealots
+				has_ai_personality = erudite_explorers
+				has_ai_personality = spiritual_seekers
+				has_ai_personality = democratic_crusaders
+				has_ai_personality = harmonious_hierarchy
+			}
+		}
+	}
+}
+
 #Anarchy Ideals : §YForced Resettlement§!, §YPopulation Control§! are not allowed
 civic_anarchy_ideals = {
 	potential = {
@@ -2248,6 +2396,7 @@ civic_eco_warfare = {
 		civics = {
 			NOR = {
 				value = civic_relentless_industrialists
+				value = civic_relentless_industrialists_machine_cult
 				value = civic_corporate_relentless_industrialists
 			}
 		}
@@ -2323,6 +2472,7 @@ civic_naturalism = {
 		civics = {
 			NOR = {
 				value = civic_relentless_industrialists
+				value = civic_relentless_industrialists_machine_cult
 				value = civic_corporate_relentless_industrialists
 			}
 		}
@@ -2481,6 +2631,7 @@ civic_keepers_harmony = {
 		civics = {
 			NOR = {
 				value = civic_relentless_industrialists
+				value = civic_relentless_industrialists_machine_cult
 				value = civic_corporate_relentless_industrialists
 			}
 		}
@@ -2557,6 +2708,7 @@ civic_natural_capitalism = {
 		civics = {
 			NOR = {
 				value = civic_relentless_industrialists
+				value = civic_relentless_industrialists_machine_cult
 				value = civic_corporate_relentless_industrialists
 			}
 		}
@@ -2780,6 +2932,7 @@ civic_terraforming = {
 		civics = {
 			NOR = {
 				value = civic_relentless_industrialists
+				value = civic_relentless_industrialists_machine_cult
 				value = civic_corporate_relentless_industrialists
 			}
 		}
