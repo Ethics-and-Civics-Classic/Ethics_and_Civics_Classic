@@ -69,7 +69,8 @@ civic_imperial_cult = {
 		civics = {
 			NOR = {
 				value = civic_philosopher_king		#Modded
-				value = civic_military_dictatorship	#Modded
+				value = civic_military_dictatorship				#Modded
+				value = civic_military_dictatorship_corporate	#Modded
 				#value = civic_aristocratic_elite  	#Modded joakim.westergaard - Disabled as this causes problems with vanilla file central_crystal_events.txt
 				value = civic_merchant_guilds		#Modded
 				value = civic_state_monopoly		#Modded
@@ -217,7 +218,8 @@ civic_exalted_priesthood = {
 				value = civic_imperial_cult				#Modded
 				value = civic_divine_council			#Modded
 				value = civic_spiritual_democracy		#Modded
-				value = civic_military_dictatorship		#Modded
+				value = civic_military_dictatorship				#Modded
+				value = civic_military_dictatorship_corporate	#Modded
 				value = civic_military_junta			#Modded
 				value = civic_citizen_service			#Modded
 				value = civic_executive_committee		#Modded
@@ -811,6 +813,8 @@ civic_warrior_culture = {
 			NOR = {
 				value = civic_dystopian_society
 				value = civic_pleasure_seekers
+				value = civic_private_military_companies
+				value = civic_private_militaries
 			}
 		}
 	}
@@ -1357,7 +1361,8 @@ civic_aristocratic_elite = {
 				value = civic_cyber_dictatorship	#Modded
 				value = civic_science_directorate	#Modded
 				value = civic_cyber_demos_cratos	#Modded
-				value = civic_military_dictatorship	#Modded
+				value = civic_military_dictatorship				#Modded
+				value = civic_military_dictatorship_corporate	#Modded
 				value = civic_military_junta		#Modded
 				#value = civic_citizen_service 		#joakim.westergaard - Disabled as this causes problems with vanilla file overlord_subject_events.txt
 				value = civic_executive_committee	#Modded
@@ -1714,7 +1719,8 @@ civic_merchant_guilds = {
 				value = civic_cyber_dictatorship		#modded
 				value = civic_science_directorate		#modded
 				value = civic_cyber_demos_cratos		#modded
-				value = civic_military_dictatorship		#modded
+				value = civic_military_dictatorship				#Modded
+				value = civic_military_dictatorship_corporate	#Modded
 				value = civic_military_junta			#modded
 				value = civic_citizen_service			#modded
 				value = civic_executive_committee		#modded
@@ -2570,7 +2576,8 @@ civic_state_monopoly = {
 				value = civic_cyber_dictatorship
 				value = civic_science_directorate
 				value = civic_cyber_demos_cratos
-				value = civic_military_dictatorship
+				value = civic_military_dictatorship				#Modded
+				value = civic_military_dictatorship_corporate	#Modded
 				value = civic_military_junta
 				value = civic_citizen_service
 				value = civic_executive_committee
@@ -3305,6 +3312,7 @@ civic_private_militaries = {
 	potential = {
 		ethics = { NOT = { value = ethic_gestalt_consciousness } }
 		authority = { NOT = { value = auth_corporate } }
+		
 	}
 	possible = {
 		ethics = {
@@ -3319,13 +3327,133 @@ civic_private_militaries = {
 				value = ethic_fanatic_militarist
 			}
 		}
+		civics = { 
+			NOT = { 
+				value = civic_warrior_culture
+				value = civic_private_military_companies
+			}
+		}
 	}
 	random_weight = { base = @civic_default_random_weight }
+	ai_weight = {
+		base = @ai_civic_default_base_weight
+		modifier = {
+			factor = @ai_civic_personality_match_factor
+			OR = {
+				has_ai_personality = ruthless_capitalists
+				has_ai_personality = hegemonic_imperialists
+				has_ai_personality = slaving_despots
+				has_ai_personality = decadent_hierarchy
+			}
+		}
+		modifier = {
+			factor = @ai_civic_personality_mismatch_factor
+			OR = {
+				has_ai_personality = erudite_explorers
+				has_ai_personality = spiritual_seekers
+				has_ai_personality = peaceful_traders
+				has_ai_personality = harmonious_hierarchy
+				has_ai_personality = federation_builders
+				has_ai_personality = xenophobic_isolationists
+				has_ai_personality = fanatic_befrienders
+			}
+		}
+		modifier = {
+			factor = @ai_civic_personality_forbid_factor
+			OR = {
+				has_ai_personality = fanatic_purifiers
+			}
+		}
+	}
 	modifier = {
 		job_mercenary_per_pop = 0.06
-		army_starting_experience_add = 200
+		army_starting_experience_add = 100
 		planet_army_build_speed_mult = 0.5
 		armies_upkeep_mult = 0.05
+		commander_initial_skill = 1
+		army_damage_mult = 0.15
+	}
+	swap_type = {
+		trigger = {
+			host_has_dlc = "Overlord"
+		}
+
+		modifier = {
+			country_enclave_capacity_add = 1
+		}
+	}
+	
+}
+
+civic_private_military_companies = {
+	potential = {
+		OR = {
+			authority = { value = auth_corporate }
+			civics = { value = civic_galactic_sovereign_megacorp }
+		}
+	}
+	random_weight = { base = @civic_default_random_weight }
+	ai_weight = {
+		base = @ai_civic_default_base_weight
+		modifier = {
+			factor = @ai_civic_personality_match_factor
+			OR = {
+				has_ai_personality = ruthless_capitalists
+				has_ai_personality = hegemonic_imperialists
+				has_ai_personality = slaving_despots
+				has_ai_personality = decadent_hierarchy
+			}
+		}
+		modifier = {
+			factor = @ai_civic_personality_mismatch_factor
+			OR = {
+				has_ai_personality = erudite_explorers
+				has_ai_personality = spiritual_seekers
+				has_ai_personality = peaceful_traders
+				has_ai_personality = harmonious_hierarchy
+				has_ai_personality = federation_builders
+				has_ai_personality = xenophobic_isolationists
+				has_ai_personality = fanatic_befrienders
+			}
+		}
+		modifier = {
+			factor = @ai_civic_personality_forbid_factor
+			OR = {
+				has_ai_personality = fanatic_purifiers
+			}
+		}
+	}
+	possible = {
+		ethics = {
+			OR = {
+				text = civic_tooltip_militarist
+				value = ethic_militarist
+				value = ethic_fanatic_militarist
+			}
+		}
+		civics = { 
+			NOT = { 
+				value = civic_warrior_culture
+				value = civic_private_militaries
+			}
+		}
+	}
+	modifier = {
+		job_mercenary_per_pop = 0.06
+		army_starting_experience_add = 100
+		planet_army_build_speed_mult = 0.5
+		armies_upkeep_mult = 0.05
+		commander_initial_skill = 1
+		army_damage_mult = 0.15
+	}
+	swap_type = {
+		trigger = {
+			host_has_dlc = "Overlord"
+		}
+
+		modifier = {
+			country_enclave_capacity_add = 1
+		}
 	}
 }
 
@@ -3401,7 +3529,8 @@ civic_harmonious_hierarchy = {
 				value = civic_cyber_dictatorship
 				value = civic_science_directorate
 				value = civic_cyber_demos_cratos
-				value = civic_military_dictatorship
+				value = civic_military_dictatorship				#Modded
+				value = civic_military_dictatorship_corporate	#Modded
 				value = civic_military_junta
 				value = civic_citizen_service
 				value = civic_executive_committee
@@ -3757,6 +3886,7 @@ civic_military_dictatorship = {
 		}
 		civics = {
 			NOR = {
+				value = civic_military_dictatorship_corporate
 				value = civic_imperial_cult
 				value = civic_cyber_dictatorship
 				value = civic_aristocratic_elite
@@ -3778,6 +3908,144 @@ civic_military_dictatorship = {
 		ship_piracy_suppression_add = 5
 		country_starbase_influence_cost_mult = -0.15
 		category_statecraft_research_speed_mult = -0.5
+	}
+	swap_type = {
+		trigger = {
+			host_has_dlc = "Overlord"
+		}
+
+		modifier = {
+			country_enclave_capacity_add = 1
+		}
+	}
+}
+
+civic_military_dictatorship_corporate = {
+	potential = {
+		ethics = { NOT = { value = ethic_gestalt_consciousness } }
+	}
+	possible = {
+		ethics = { value = ethic_fanatic_militarist }
+		authority = {
+			value = auth_corporate
+		}
+		civics = {
+			value = civic_crusader_spirit_corporate
+			NOR = {
+				value = civic_military_dictatorship
+				value = civic_cyber_dictatorship
+				value = civic_aristocratic_elite
+				value = civic_merchant_guilds
+				value = civic_state_monopoly
+				value = civic_exalted_priesthood
+				value = civic_technocracy
+				value = civic_bureaucracy
+				value = civic_stratocracy
+				value = civic_stratocracy
+			}
+		}
+	}
+
+	can_build_ruler_ship = yes
+
+	random_weight = { base = @civic_default_random_weight }
+	modifier = {
+		max_rivalries = 2
+		ship_piracy_suppression_add = 5
+		country_starbase_influence_cost_mult = -0.15
+		category_statecraft_research_speed_mult = -0.5
+	}
+	swap_type = {
+		trigger = {
+			host_has_dlc = "Overlord"
+		}
+
+		modifier = {
+			country_enclave_capacity_add = 1
+		}
+	}
+}
+
+civic_crusader_spirit_corporate = {
+	playable = { host_has_dlc = "Galactic Paragons" }
+	ai_playable = { host_has_dlc = "Galactic Paragons" }
+	random_weight = {
+		base = 4
+	}
+	description = "civic_tooltip_crusader_spirit_corporate_effects"
+	potential = {
+		OR = {
+			authority = { value = auth_corporate }
+			civics = { value = civic_galactic_sovereign_megacorp }
+		}
+		ethics = {
+			NOT = {
+				value = ethic_gestalt_consciousness
+			}
+		}
+	}
+	possible = {
+		ethics = {
+			OR = {
+				text = civic_tooltip_authoritarian_or_militarist
+				value = ethic_militarist
+				value = ethic_fanatic_militarist
+				value = ethic_authoritarian
+				value = ethic_fanatic_authoritarian
+			}
+			NOR = {
+				text = civic_tooltip_not_pacifist
+				value = ethic_pacifist
+				value = ethic_fanatic_pacifist
+			}
+		}
+	}
+	modifier = {
+		local_trade_protection_add = 20
+		ships_upkeep_mult = -0.05
+	}
+	swap_type = {
+		trigger = {
+			host_has_dlc = "Overlord"
+		}
+		description = "civic_tooltip_crusader_spirit_corporate_effects"
+		modifier = {
+			country_enclave_capacity_add = 1
+		}
+	}
+}
+
+civic_criminal_heritage = {
+	modification = no
+	potential = {
+		OR = {
+			authority = { value = auth_corporate }
+			civics = { value = civic_galactic_sovereign_megacorp }
+		}
+	}
+	random_weight = {
+		base = @civic_default_random_weight
+		modifier = {
+			factor = 0
+			blocks_disruptive_gameplay = yes
+		}
+	}
+	modifier = {
+		planet_branch_offices_cost_mult = -0.20
+		spy_network_daily_value_mult = 0.20
+		intel_decryption_add = 1
+	}
+
+	description = "civic_tooltip_criminal_heritage_effects"
+
+	swap_type = {
+		trigger = {
+			has_first_contact_dlc = yes
+		}
+		description = "civic_tooltip_criminal_heritage_effects"
+		modifier = {
+			ship_cloaking_strength_add = 1
+		}
 	}
 }
 
@@ -4061,7 +4329,8 @@ civic_cyber_dictatorship = {
 		}
 		civics = {
 			NOR = {
-				value = civic_military_dictatorship
+				value = civic_military_dictatorship				#Modded
+				value = civic_military_dictatorship_corporate	#Modded
 				value = civic_philosopher_king
 				value = civic_aristocratic_elite
 				value = civic_state_monopoly
@@ -4166,7 +4435,8 @@ civic_stratocracy = {
 				value = civic_cyber_dictatorship
 				value = civic_science_directorate
 				value = civic_cyber_demos_cratos
-				value = civic_military_dictatorship
+				value = civic_military_dictatorship				#Modded
+				value = civic_military_dictatorship_corporate	#Modded
 				value = civic_military_junta
 				value = civic_citizen_service
 			}
