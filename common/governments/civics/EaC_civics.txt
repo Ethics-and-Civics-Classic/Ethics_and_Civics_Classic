@@ -3920,7 +3920,9 @@ civic_military_dictatorship = {
 	}
 }
 
+#Pirate Lord
 civic_military_dictatorship_corporate = {
+	modification = no
 	potential = {
 		ethics = { NOT = { value = ethic_gestalt_consciousness } }
 	}
@@ -3932,6 +3934,7 @@ civic_military_dictatorship_corporate = {
 		civics = {
 			value = civic_crusader_spirit_corporate
 			NOR = {
+				value = civic_criminal_heritage
 				value = civic_military_dictatorship
 				value = civic_cyber_dictatorship
 				value = civic_aristocratic_elite
@@ -3948,18 +3951,130 @@ civic_military_dictatorship_corporate = {
 
 	can_build_ruler_ship = yes
 
-	random_weight = { base = @civic_default_random_weight }
+	random_weight = {
+		base = @civic_default_random_weight
+		modifier = {
+			factor = 0
+			blocks_disruptive_gameplay = yes
+		}
+	}
 	modifier = {
 		max_rivalries = 2
 		ship_piracy_suppression_add = 5
 		country_starbase_influence_cost_mult = -0.15
 		category_statecraft_research_speed_mult = -0.5
+		planet_branch_offices_cost_mult = -0.20
+		spy_network_daily_value_mult = 0.20
+		intel_decryption_add = 1
+	}
+
+	description = "civic_tooltip_criminal_heritage_effects"
+
+	swap_type = {
+		trigger = {
+			has_first_contact_dlc = yes
+		}
+		description = "civic_tooltip_criminal_heritage_effects"
+		modifier = {
+			ship_cloaking_strength_add = 1
+		}
 	}
 	swap_type = {
 		trigger = {
 			host_has_dlc = "Overlord"
 		}
 
+		modifier = {
+			country_enclave_capacity_add = 1
+		}
+	}
+}
+
+civic_pirate_mercenary_enclave = {
+	modification = no
+	icon = "gfx/interface/icons/governments/civics/civic_mercenaries.dds"
+	potential = {
+		country_type = { value = enclave_mercenary }
+		ethics = { NOT = { value = ethic_gestalt_consciousness } }
+	}
+	random_weight = { base = @civic_default_random_weight }
+	modifier = {
+		
+	}
+}
+
+civic_barbaric_despoilers_corporate = {
+	playable = {
+		host_has_dlc = "Apocalypse"
+	}
+	ai_playable = {
+		host_has_dlc = "Apocalypse"
+	}
+	potential = {
+		OR = {
+			authority = { value = auth_corporate }
+			civics = { value = civic_galactic_sovereign_megacorp }
+		}
+		ethics = {
+			NOT = {
+				value = ethic_gestalt_consciousness
+			}
+		}
+	}
+	possible = {
+		ethics = {
+			OR = {
+				text = civic_tooltip_militarist
+				value = ethic_fanatic_militarist
+				value = ethic_militarist
+			}
+			OR = {
+				value = ethic_fanatic_authoritarian
+				value = ethic_authoritarian
+				value = ethic_fanatic_xenophobe
+				value = ethic_xenophobe
+			}
+			NOR = {
+				value = ethic_xenophile
+				value = ethic_fanatic_xenophile
+			}
+		}
+		civics = {
+			value = civic_military_dictatorship_corporate
+			NOR = {
+				value = civic_fanatic_purifiers
+			}
+		}
+		origin = {
+			NOR = {
+				value = origin_common_ground
+				value = origin_slavers			#Modded
+			}
+		}
+	}
+	modification = no
+	random_weight = {
+		base = @civic_uncommon_random_weight
+		modifier = {
+			factor = 0
+			NOT = { host_has_dlc = "Apocalypse" }
+		}
+		modifier = {
+			# civic has no effect after galaxy generation, disable for random generation
+			factor = 0
+			has_global_flag = game_started
+		}
+		modifier = {
+			factor = 0
+			blocks_disruptive_gameplay = yes
+		}
+	}
+	description = "civic_tooltip_barbaric_despoilers_effects"
+	swap_type = {
+		description = "civic_tooltip_barbaric_despoilers_effects"
+		trigger = {
+			host_has_dlc = "Overlord"
+		}
 		modifier = {
 			country_enclave_capacity_add = 1
 		}
@@ -3973,6 +4088,7 @@ civic_crusader_spirit_corporate = {
 		base = 4
 	}
 	description = "civic_tooltip_crusader_spirit_corporate_effects"
+	modification = no
 	potential = {
 		OR = {
 			authority = { value = auth_corporate }
@@ -4011,40 +4127,6 @@ civic_crusader_spirit_corporate = {
 		description = "civic_tooltip_crusader_spirit_corporate_effects"
 		modifier = {
 			country_enclave_capacity_add = 1
-		}
-	}
-}
-
-civic_criminal_heritage = {
-	modification = no
-	potential = {
-		OR = {
-			authority = { value = auth_corporate }
-			civics = { value = civic_galactic_sovereign_megacorp }
-		}
-	}
-	random_weight = {
-		base = @civic_default_random_weight
-		modifier = {
-			factor = 0
-			blocks_disruptive_gameplay = yes
-		}
-	}
-	modifier = {
-		planet_branch_offices_cost_mult = -0.20
-		spy_network_daily_value_mult = 0.20
-		intel_decryption_add = 1
-	}
-
-	description = "civic_tooltip_criminal_heritage_effects"
-
-	swap_type = {
-		trigger = {
-			has_first_contact_dlc = yes
-		}
-		description = "civic_tooltip_criminal_heritage_effects"
-		modifier = {
-			ship_cloaking_strength_add = 1
 		}
 	}
 }

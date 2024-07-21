@@ -1,0 +1,187 @@
+#################################################
+#												#
+# Machine Age DLC Digitization Situation Events	#
+#												#
+#################################################
+
+namespace = synth
+
+@synth_approach_mult = 5
+
+# Fired by: on_digitization_situation_random_events_list
+situation_event = { # Stage 2 Opportunity
+	id = synth.220
+	title = "synth.220.name"
+	desc = "synth.220.desc"
+	picture = GFX_evt_emergency_workers
+	show_sound = event_life_support_fail
+	situation = this
+	is_triggered_only = yes
+
+	trigger = {
+		situation_progress > 250
+	}
+
+	weight_multiplier = {
+		factor = 1
+		modifier = {
+			factor = @synth_approach_mult
+			current_situation_approach = situation_digitization_errorcorrecting
+		}
+		modifier = {
+			factor = 0
+			OR = {
+				has_situation_flag = synth_220_happened
+				situation_monthly_progress = 0
+			}
+		}
+	}
+
+	immediate = {
+		set_situation_flag = situation_digitization_pause
+		set_situation_flag = synth_220_happened
+	}
+
+	option = {
+		name = "synth.220.a"
+		random_list = {
+			50 = {
+				custom_tooltip = "synth.220.a.tt.negative"
+				set_timed_situation_flag = {
+					flag = synth_negative_media_coverage
+					months = 6
+				}
+			}
+			50 = {
+				custom_tooltip = "synth.220.a.tt.positive"
+				set_timed_situation_flag = {
+					flag = synth_positive_media_coverage
+					months = 6
+				}
+			}
+		}
+	}
+
+	option = {
+		name = "synth.220.b"
+	}
+	option = {
+		name = "synth.220.c"
+		custom_tooltip = "synth.220.c.tt"
+		trigger = {
+			owner = {
+				OR = {
+					has_valid_civic = civic_criminal_heritage
+					has_valid_civic = civic_military_dictatorship_corporate
+					has_valid_civic = civic_public_relations_specialists
+					has_valid_civic = civic_shadow_council
+				}
+			}
+		}
+		owner = {
+			add_modifier = {
+				modifier = synth_AI_actor
+				months = 12
+			}
+		}
+	}
+
+	after = {
+		remove_situation_flag = situation_digitization_pause
+	}
+}
+
+# Fired by: on_synthshock_chain_identity_events_list
+country_event = { # Organic Cravings
+	id = synth.620
+	title = "synth.620.name"
+	desc = synth.620.desc
+	picture = GFX_evt_synth_life
+	show_sound = event_cityscape
+	location = from
+	event_chain = synthshock_chain
+	is_triggered_only = yes
+
+	option = { # Physical World Focus
+		name = synth.620.a
+		custom_tooltip = synth.social_consequences.tt
+		hidden_effect = {
+			change_variable = {
+				which = "synth_physical_society"
+				value = 1
+			}
+		}
+		add_modifier = {
+			modifier = synth_cravings_imperfections
+			days = 9000
+		}
+		ai_chance = {
+			factor = 1
+		}
+	}
+	option = { # Virtual World Focus
+		name = synth.620.b
+		custom_tooltip = synth.social_consequences.tt
+		hidden_effect = {
+			change_variable = {
+				which = "synth_virtual_society"
+				value = 1
+			}
+		}
+		add_modifier = {
+			modifier = synth_cravings_simulation
+			days = 9000
+		}
+		ai_chance = {
+			factor = 1
+		}
+	}
+	option = { # Neutral
+		name = synth.620.c
+		add_modifier = {
+			modifier = synth_cravings_stop
+			days = 9000
+		}
+		ai_chance = {
+			factor = 1
+		}
+	}
+
+	option = { # Pain simulations
+		name = synth.620.d
+		custom_tooltip = synth.social_consequences.tt
+		custom_tooltip = synth.620.d.tt
+		trigger = {
+			owner = {
+				OR = {
+					has_valid_civic = civic_barbaric_despoilers
+					has_valid_civic = civic_barbaric_despoilers_corporate
+					has_valid_civic = civic_warrior_culture
+				}
+			}
+		}
+		hidden_effect = {
+			change_variable = {
+				which = "synth_virtual_society"
+				value = 1
+			}
+		}
+		add_modifier = {
+			modifier = synth_cravings_pain
+			days = 9000
+		}
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 3
+				is_militarist = yes
+			}
+		}
+	}
+
+	after = {
+		hidden_effect = {
+			country_event = { id = synth.1000 days = 180 random = 90 }
+		}
+	}
+}

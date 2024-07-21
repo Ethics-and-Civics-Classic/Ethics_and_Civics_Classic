@@ -4559,3 +4559,78 @@ techno_priest = {
 
 	inline_script = "jobs/automodding_priority_unity"
 }
+
+############
+#Crime Jobs#
+############
+criminal = {
+	category = criminal
+	is_capped_by_modifier = yes
+	can_set_priority = no
+	clothes_texture_index = 2
+	building_icon = building_residence
+	contributes_to_diplo_weight = no
+	ignores_favorite = yes #this means that if you favorite e.g. clerks, the +1000 bonus will not matter for jobs working as criminals
+
+	possible_pre_triggers = {
+		has_owner = yes
+		is_sapient = yes
+	}
+
+	possible = {
+		# check that this is not a robot in servitude
+		NOT = {
+			has_citizenship_type = {
+				country = owner
+				type = citizenship_robot_servitude
+			}
+		}
+		owner = {
+			is_gestalt = no
+		}
+	}
+
+	planet_modifier = {
+		trade_value_add = -5
+		branch_office_criminal_syndicate_value_add = 7.5
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			planet = {
+				has_branch_office = yes
+				branch_office_owner = {
+					has_councilor = { COUNCILOR = "councilor_criminal_heritage" }
+				}
+			}
+		}
+
+		branch_office_criminal_syndicate_value_add = 0.25
+		mult = value:pop_branch_office_councilor_level|TYPE|councilor_criminal_heritage|
+	}
+	
+	triggered_planet_modifier = {
+		potential = {
+			planet = {
+				OWNER = {
+					has_valid_civic = civic_military_dictatorship_corporate
+					any_system_within_border = {
+						any_ship_in_system = {
+							is_ship_size = enclave_mercenary_station
+							distance = {
+								source = PREVPREVPREV
+								same_solar_system = yes
+							}
+						}
+					}
+				}
+			}
+			trade_value_add = 7
+		}
+		
+	}
+
+	weight = {
+		weight = @criminal_job_weight
+	}
+}

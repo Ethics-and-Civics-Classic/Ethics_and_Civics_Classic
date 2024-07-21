@@ -1,0 +1,78 @@
+#################################################
+#												#
+# Machine Age DLC Cyberization Situation Events #
+#												#
+#################################################
+
+namespace = cyber
+
+@cyber_approach_mult = 5
+
+# Fired by: situation stage on_first_enter
+situation_event = { # Independent rival
+	id = cyber.425
+	title = "cyber.425.name"
+	desc = "cyber.425.desc"
+	picture = GFX_evt_synth_sabotage
+	show_sound = event_espionage_concluded
+	situation = this
+	is_triggered_only = yes
+
+	trigger = {
+		owner = { has_country_flag = cyber_rival_independent }
+	}
+
+	immediate = {
+		set_situation_flag = situation_cyberization_pause
+	}
+
+	option = {
+		name = "cyber.425.a"
+		allow = {
+			owner = {
+				resource_stockpile_compare = {
+					resource = energy
+					value >= 5000
+				}
+			}
+		}
+		owner = {
+			add_resource = {
+				energy = -5000
+			}
+		}
+		set_situation_flag = cyber_ransom_paid
+	}
+	option = {
+		name = "cyber.425.b"
+		custom_tooltip = "cyber.425.b.tt"
+		set_timed_situation_flag = {
+			flag = cyber_rewrite_implant_software
+			months = 12
+		}
+	}
+	option = {
+		name = "cyber.425.c"
+		custom_tooltip = "cyber.425.c.tt"
+		trigger = {
+			owner = {
+				OR = {
+					has_valid_civic = civic_criminal_heritage
+					has_valid_civic = civic_military_dictatorship_corporate
+				}
+			}
+		}
+		owner = {
+			add_monthly_resource_mult = {
+				resource = physics_research
+				value = @tier4researchreward
+				min = @tier4researchmin
+				max = @tier4researchmax
+			}
+		}
+	}
+
+	after = {
+		remove_situation_flag = situation_cyberization_pause
+	}
+}

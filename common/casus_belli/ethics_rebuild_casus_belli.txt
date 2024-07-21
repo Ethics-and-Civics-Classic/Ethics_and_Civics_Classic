@@ -1,0 +1,56 @@
+#my_casus_belli = {
+#	potential = { ... }		# trigger to make some CBs invalid for certain types of countries; this = attacker (CB owner); default: { always = yes }
+#	is_valid = { ... }		# trigger, evaluated daily to check if CB should be created or destroyed automatically, does not affect CBs granted via script;
+#								# this = attacker (CB owner), from = defender (target country); default: { always = yes }
+#	destroy_if = { ... }	# trigger, evaluated daily to destroy CBs that have been granted via script ahead of expiration date;
+#								# this = attacker (CB owner), from = defender (target country); default: { always = no }
+#	show_notification = no/yes	# optional (default = yes), flag to control whether this CB will generate a notification (to avoid duplicate
+#								# notification when a claim CB is generated)
+#}
+
+cb_despoliation = {
+	show_in_diplomacy = no
+	show_notification = no
+	potential = {
+		is_country_type = default
+		OR = {
+			has_valid_civic = civic_barbaric_despoilers
+			has_valid_civic = civic_barbaric_despoilers_corporate
+		}
+	}
+	is_valid = {
+		has_total_war_cb = no
+		NOT = { is_overlord_to = FROM }
+		OR = {
+			is_subject = no
+			overlord = { NOT = { is_same_value = from } }
+		}
+	}
+}
+
+cb_hostile_takeover = {
+	show_in_diplomacy = yes
+	show_notification = yes
+	potential = {
+		is_country_type = default
+		has_authority = auth_corporate
+		NOT = { 
+			has_valid_civic = civic_criminal_heritage 
+			has_valid_civic = civic_military_dictatorship_corporate 
+		}
+	}
+	is_valid = {
+		from = { has_authority = auth_corporate }
+		NOT = { is_in_federation_with = from }
+		NOT = { from = { is_overlord_to = root } }
+		any_country = {
+			OR = {
+				has_commercial_pact = root
+				is_in_federation_with = root
+			}
+			any_owned_planet = {
+				has_branch_office = from
+			}
+		}
+	}
+}

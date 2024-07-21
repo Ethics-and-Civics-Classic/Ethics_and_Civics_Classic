@@ -1,0 +1,177 @@
+################################
+#
+# Federation Succession Events
+# Written by Henrik Thyrwall, Douglas Furén & Gemma Thomson
+#
+###############################
+
+@goldenrule_flagtimer = 360
+
+namespace = fedel
+
+#############################################################
+### BIDDING WAR EVENT - WINNER'S DECISION (challenge winner)
+#############################################################
+country_event = {
+	id = fedel.904
+	title = fedel.904.name
+	desc = fedel.904.desc
+	picture = GFX_evt_treasure_pile
+	show_sound = event_default
+
+	is_triggered_only = yes
+
+	immediate = {
+		federation = {
+			set_variable = {
+				which = reward_variable
+				value = event_target:bidding_federation_leader.current_pot_variable
+			}
+			multiply_variable = {
+				which = reward_variable
+				value = 0.9 #taxes and fees
+			}
+		}
+	}
+
+	### Invest
+	option = {
+		name = fedel.904.a
+		custom_tooltip = fedel.904.a.tooltip
+		federation = {
+			every_member = {
+				add_modifier = {
+					modifier = "business_is_booming"
+					days = 360
+				}
+			}
+		}
+		hidden_effect = {
+			federation = {
+				set_federation_flag = winner_decision_invest
+			}
+		}
+		ai_chance = {
+			factor = 10
+			modifier = {
+				factor = 5
+				is_megacorp = yes
+			}
+			modifier = {
+				factor = 2
+				has_civic = civic_trading_posts
+			}
+			modifier = {
+				factor = 2
+				has_civic = civic_free_traders
+			}
+		}
+	}
+
+	### Distribute
+	option = {
+		name = fedel.904.b
+		custom_tooltip = fedel.904.b.tooltip
+		hidden_effect = {
+			event_target:bidding_federation_leader = {
+				federation = {
+					divide_variable = {
+						which = reward_variable
+						value = trigger:num_members
+					}
+					every_member = {
+						add_resource = {
+							energy = 1
+							mult = prev.reward_variable
+						}
+					}
+				}
+			}
+			federation = {
+				set_federation_flag = winner_decision_distribute
+			}
+		}
+		ai_chance = {
+			factor = 10
+			modifier = {
+				factor = 5
+				has_ethic = ethic_egalitarian
+			}
+			modifier = {
+				factor = 7
+				has_ethic = ethic_fanatic_egalitarian
+			}
+		}
+	}
+
+	### Appropriate
+	option = {
+		name = fedel.904.c
+		custom_tooltip = fedel.904.c.tooltip
+		hidden_effect = {
+			add_resource = {
+				energy = 1
+				mult = federation.reward_variable
+			}
+			add_modifier = {
+				modifier = "midas_stigma"
+				days = 1800
+			}
+			federation = {
+				set_federation_flag = winner_decision_appropriate
+			}
+		}
+		ai_chance = {
+			factor = 10
+			modifier = {
+				factor = 2
+				has_ethic = ethic_authoritarian
+			}
+			modifier = {
+				factor = 3
+				has_ethic = ethic_fanatic_authoritarian
+			}
+			modifier = {
+				factor = 2
+				has_ethic = ethic_xenophobe
+			}
+			modifier = {
+				factor = 3
+				has_ethic = ethic_fanatic_xenophobe
+			}
+			modifier = {
+				factor = 3
+				has_ethic = ethic_gestalt_consciousness
+			}
+			modifier = {
+				factor = 5
+				OR = {
+					has_civic = civic_criminal_heritage
+					has_civic = civic_military_dictatorship_corporate
+				}
+			}
+			modifier = {
+				factor = 5
+				has_civic = civic_ruthless_competition
+			}
+		}
+	}
+
+	after = {
+		hidden_effect = {
+			country_event = { id = fedel.905 days = @goldenrule_flagtimer }
+			event_target:bidding_federation_leader = {
+				clear_variable = current_pot_variable
+			}
+			federation = {
+				every_member = {
+					limit = {
+						NOT = { has_country_flag = the_golden_rule_challenge_winner }
+					}
+					country_event = { id = fedel.906 days = 2 }
+				}
+				clear_variable = reward_variable
+			}
+		}
+	}
+}

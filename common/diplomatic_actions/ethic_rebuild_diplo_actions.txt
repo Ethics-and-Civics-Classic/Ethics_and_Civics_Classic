@@ -1,5 +1,218 @@
 #civic_peacekeepers
 
+# Creates a migration treaty that allows pops to move freely between two empires. Only possible if both empires have suitable worlds for each others' pops.
+# Usable by regular empires only. Raises trust over time.
+action_form_migration_pact = {
+	icon = "GFX_diplomacy_status_migration_pact"
+	diplo_view_acceptance_icon = yes
+	should_notify_all_communications = yes
+	requires_actor_independence = no
+	requires_recipient_independence = no
+	AI_acceptance_base_value = -50
+	action_type = positive
+	possible = {
+		custom_tooltip = {
+			fail_text = "requires_actor_not_fanatic_purifiers"
+			OR = {
+				is_same_species = from
+				NOT = { has_valid_civic = civic_fanatic_purifiers }
+			}
+		}
+		custom_tooltip = {
+			fail_text = "requires_recipient_not_fanatic_purifiers"
+			OR = {
+				is_same_species = from
+				from = { NOT = { has_valid_civic = civic_fanatic_purifiers } }
+			}
+		}
+		custom_tooltip = {
+			fail_text = "requires_actor_not_gestalt_consciousness"
+			NOT = { has_ethic = ethic_gestalt_consciousness	}
+		}
+		custom_tooltip = {
+			fail_text = "requires_recipient_not_gestalt_consciousness"
+			from = { NOT = { has_ethic = ethic_gestalt_consciousness } }
+		}
+		if = {
+			limit = { from = { has_valid_civic = civic_inwards_perfection } }
+			if = {
+				limit = {
+					has_intel = {
+						who = from
+						intel = civics
+					}
+				}
+				custom_tooltip = {
+					fail_text = requires_recipient_not_inward_perfection
+					always = no
+				}
+			}
+			else = {
+				custom_tooltip = {
+					fail_text = diplo_action_no_low_intel
+					always = no
+				}
+			}
+		}
+		custom_tooltip = {
+			fail_text = "requires_actor_not_inward_perfection"
+			NOT = { has_valid_civic = civic_inwards_perfection }
+		}
+		if = {
+			limit = {
+				from = {
+					has_valid_civic = civic_selective_kinship
+					NOT = { is_same_species_class = ROOT }
+				}
+			}
+			if = {
+				limit = {
+					has_intel = {
+						who = from
+						intel = civics
+					}
+				}
+				custom_tooltip = {
+					fail_text = requires_recipient_not_selective_kinship
+					always = no
+				}
+			}
+			else = {
+				custom_tooltip = {
+					fail_text = diplo_action_no_low_intel
+					always = no
+				}
+			}
+		}
+		custom_tooltip = {
+			fail_text = "requires_actor_not_selective_kinship"
+			NAND = {
+				has_valid_civic = civic_selective_kinship
+				NOT = { from = { is_same_species_class = root } }
+			}
+		}
+		if = {
+			limit = { 
+				from = { 
+					OR = {
+						has_valid_civic = civic_barbaric_despoilers 
+						has_valid_civic = civic_barbaric_despoilers_corporate
+					}
+				} 
+			}
+			if = {
+				limit = {
+					has_intel = {
+						who = from
+						intel = civics
+					}
+				}
+				custom_tooltip = {
+					fail_text = requires_recipient_not_barbaric_despoilers
+					always = no
+				}
+			}
+			else = {
+				custom_tooltip = {
+					fail_text = diplo_action_no_low_intel
+					always = no
+				}
+			}
+		}
+		custom_tooltip = {
+			fail_text = "requires_actor_not_barbaric_despoilers"
+			NOT = { has_valid_civic = civic_barbaric_despoilers }
+		}
+		custom_tooltip = {
+			fail_text = "federation_internal_migration"
+			NOT = {
+				AND = {
+					has_federation = yes
+					federation = { any_member = { is_same_value = root.from } }
+					federation = { has_federation_law = free_migration_yes }
+				}
+			}
+		}
+		custom_tooltip = {
+			fail_text = "federation_actor_no_separate_treaties"
+			NOT = {
+				AND = {
+					has_federation = yes
+					federation = { has_federation_law = treaties_separate_no }
+					NOT = { federation = { any_member = { is_same_value = root.from } } }
+				}
+			}
+		}
+		custom_tooltip = {
+			fail_text = "federation_recipient_no_separate_treaties"
+			from = {
+				NOT = {
+					AND = {
+						has_federation = yes
+						federation = {
+							has_federation_law = treaties_separate_no
+						}
+						NOT = { federation = { any_member = { is_same_value = root } } }
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				from = { has_valid_civic = civic_pompous_purists }
+				NOT = { root = { is_overlord_to = from } }
+			}
+			if = {
+				limit = {
+					has_intel = {
+						who = from
+						intel = civics
+					}
+				}
+				custom_tooltip = {
+					fail_text = requires_recipient_not_pompous
+					always = no
+				}
+			}
+			else = {
+				custom_tooltip = {
+					fail_text = diplo_action_no_low_intel
+					always = no
+				}
+			}
+		}
+		custom_tooltip = {
+			fail_text = "requires_actor_not_pompous"
+			NOT = { has_valid_civic = civic_pompous_purists	}
+		}
+		# Requirements:
+		# - 20 Trust OR Good Opinion
+		# - An Embassy OR the Diplomatic Networking tradition.
+		custom_tooltip = {
+			fail_text = requires_20_trust_or_good
+			OR = {
+				opinion_level = {
+					who = from
+					level >= good
+				}
+				from = {
+					trust = {
+						who = root
+						value >= 20
+					}
+				}
+			}
+		}
+		custom_tooltip = {
+			fail_text = requires_embassy_or_diplomatic_networking
+			OR = {
+				has_embassy = from
+				has_active_tradition = tr_diplomacy_diplomatic_networking
+			}
+		}
+	}
+}
+
 # Set any empire as your rival, gains influence but hurts relations. Usable by regular, fallen & awakened empires.
 action_make_rival = {
 	icon = "GFX_diplomacy_status_rivalry"

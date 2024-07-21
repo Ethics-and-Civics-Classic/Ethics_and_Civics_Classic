@@ -1,0 +1,117 @@
+###################################################
+#
+# "Overlord" Enclave Events
+# By Gemma Thomson, Hadrien Buytaers & Chad Inglis
+#
+###################################################
+namespace = enclave
+
+# enclave.1xxx	general-purpose
+# enclave.2xxx	Mercenary enclave
+# enclave.3xxx	Salvager enclave
+# enclave.4xxx	Shroudwalker enclave
+# enclave.5xxx	Divination events
+# enclave.6xxx	Shroud Tunnel events
+# enclave.7xxx	Shroudwalker enclave (appendix)
+
+
+
+
+
+
+
+
+
+
+##################
+# GENERAL-PURPOSE
+##################
+
+# Salvager Enclave: Commissioned Salvage Delivery
+# This = player country; event_target:salvager_enclave_country = enclave country
+country_event = {
+	id = enclave.365
+	title = enclave.365.name
+	desc = enclave.365.desc
+	picture = GFX_evt_salvager_enclave_disassembly
+	show_sound = evn_ove_salvager_enclave_disassembly
+	is_triggered_only = yes
+
+	immediate = {
+		remove_country_flag = salvager_enclave_salvage_commission_active
+	}
+
+	option = {
+		name = enclave.365.a
+		trigger = {
+			is_gestalt = no
+			NOR = {
+				has_ethic = ethic_xenophobe
+				has_ethic = ethic_fanatic_xenophobe
+				has_valid_civic = civic_barbaric_despoilers
+				has_valid_civic = civic_barbaric_despoilers_corporate
+			}
+		}
+	}
+	option = {
+		name = enclave.365.b
+		trigger = {
+			is_gestalt = no
+			OR = {
+				has_ethic = ethic_xenophobe
+				has_ethic = ethic_fanatic_xenophobe
+				has_valid_civic = civic_barbaric_despoilers
+				has_valid_civic = civic_barbaric_despoilers_corporate
+			}
+		}
+	}
+	option = {
+		name = CURIOUS
+		trigger = {
+			is_gestalt = yes
+		}
+	}
+	option = {
+		name = enclave.365.d
+		trigger = {
+			event_target:salvager_enclave_country = {
+				trust = {
+					who = root
+					value >= 20
+				}
+			}
+			count_available_debris = { count > 0 }
+		}
+		hidden_effect = {
+			country_event = { id = enclave.340 } # Commission Salvage
+		}
+	}
+
+	after = {
+		custom_tooltip = enclave.365.tt
+		if = {
+			limit = {
+				check_variable = {
+					which = salvage_commission_debris_taken
+					value > 2
+				}
+			}
+			add_resource = { engineering_research = @SalvageTier3Tech }
+			add_resource = { alloys = @SalvageTier2Alloys }
+		}
+		else_if = {
+			limit = {
+				check_variable = {
+					which = salvage_commission_debris_taken
+					value = 2
+				}
+			}
+			add_resource = { engineering_research = @SalvageTier2Tech }
+			add_resource = { alloys = @SalvageTier1Alloys }
+		}
+		else = {
+			add_resource = { engineering_research = @SalvageTier1Tech }
+			add_resource = { minerals = @SalvageTier1Minerals }
+		}
+	}
+}

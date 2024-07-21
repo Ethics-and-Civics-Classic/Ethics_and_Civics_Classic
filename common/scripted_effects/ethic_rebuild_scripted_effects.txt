@@ -1,0 +1,148 @@
+#	Example:
+#
+#	example_effect = {
+#		add_resource = { energy = -100 }
+#	}
+#
+#
+#	In a script file:
+#
+#	effect = {
+#		example_effect = yes
+#	}
+#
+
+######################
+# "Overlord" Enclaves
+######################
+
+#NB: Mercenary enclaves are created after galaxy start, and not as part of system initialisers.
+
+#Fleet scope | owner = original empire
+create_pirate_mercenary_enclave_country = {
+	create_country = {
+		name = random
+		type = enclave_mercenary
+		authority = "auth_oligarchic"
+		civics = {
+			civic = civic_mercenary_enclave
+			civic = civic_pirate_mercenary_enclave
+		}
+		origin = "origin_default"
+		species = event_target:mercenary_enclave_species
+		flag = random
+		ethos = {
+			ethic = ethic_fanatic_capitalism
+			ethic = ethic_fanatic_militarist
+			ethic = $INHERITED_ETHIC$
+		}
+		ignore_initial_colony_error = yes
+		effect = {
+			save_event_target_as = mercenary_enclave_country
+			set_country_flag = mercenary_enclave_country
+			#set_graphical_culture = root.owner 
+			set_graphical_culture = pirate_01
+			create_fleet = {
+				settings = { spawn_debris = no }
+				effect = {
+					set_owner = prev
+					create_ship = {
+						name = random
+						design = "NAME_Mercenary_Enclave_Station"
+						graphical_culture = pirate_01
+					}
+					set_location = {
+						target = event_target:mercenary_enclave_planet
+						distance = 90
+					}
+					save_event_target_as = mercenary_enclave_station
+				}
+			}
+			set_custom_capital_location = event_target:mercenary_enclave_planet
+			#Create ruler
+			set_leader = event_target:mercenary_enclave_leader
+			establish_communications_no_message = root.from
+		}
+	}
+}
+
+############
+############
+############
+# Debug scope printing
+set_merchant_government_effect = {
+	if = {
+		limit = { 
+			OR = {
+				has_civic = civic_criminal_heritage 
+				has_civic = civic_military_dictatorship_corporate
+			}
+		}
+		if = {
+			limit = { has_technology = tech_galactic_administration }
+			if = {
+				limit = { has_civic = civic_barbaric_despoilers }
+				set_country_flag = civic_barbaric_despoilers_corporate_flag
+			}
+			change_government = {
+				authority = auth_oligarchic
+				cooldown = no
+				remove_invalid_civics = yes
+				civics = { civic = civic_merchant_guilds civic = civic_dystopian_society civic = random }
+			}
+			if = {
+				limit = { has_country_flag = civic_barbaric_despoilers_corporate_flag }
+				remove_country_flag = civic_barbaric_despoilers_corporate_flag
+				force_add_civic = civic_barbaric_despoilers
+			}
+		}
+		else = {
+			change_government = {
+				authority = auth_oligarchic
+				cooldown = no
+				remove_invalid_civics = yes
+				civics = { civic = civic_merchant_guilds civic = civic_dystopian_society }
+			}
+		}
+	}
+	else_if = {
+		limit = { has_civic = civic_worker_coop }
+		shift_ethic = ethic_fanatic_egalitarian
+		if = {
+			limit = { has_technology = tech_galactic_administration }
+			change_government = {
+				authority = auth_democratic
+				cooldown = no
+				remove_invalid_civics = yes
+				civics = { civic = civic_merchant_guilds civic = civic_shared_burden civic = random }
+			}
+		}
+		else = {
+			change_government = {
+				authority = auth_democratic
+				cooldown = no
+				remove_invalid_civics = yes
+				civics = { civic = civic_merchant_guilds civic = civic_shared_burden }
+			}
+		}
+	}
+	else = {
+		if = {
+			limit = { has_technology = tech_galactic_administration }
+			change_government = {
+				authority = auth_oligarchic
+				cooldown = no
+				remove_invalid_civics = yes
+				civics = { civic = civic_merchant_guilds civic = random civic = random }
+			}
+		}
+		else = {
+			change_government = {
+				authority = auth_oligarchic
+				cooldown = no
+				remove_invalid_civics = yes
+				civics = { civic = civic_merchant_guilds civic = random }
+			}
+		}
+	}
+}

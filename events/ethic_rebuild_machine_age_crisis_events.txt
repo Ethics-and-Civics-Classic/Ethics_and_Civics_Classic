@@ -1,0 +1,161 @@
+#Synth Queen
+#crisis.8000-8999 - Spawning and Player Facing Events
+#crisis.9000-9999 - Player Situation
+#crisis.10000-10999 - Hidden Queen Events and Retalitations
+#crisis.20000-25000 - Player Investigations
+
+#########################
+#						#
+# Cosmogenesis Events	#
+#	 					#
+#########################
+
+namespace = crisis
+country_event = { # Synth Queen's Scolding - you won the fight
+	id = crisis.8195
+	title = "crisis.8195.name"
+	diplomatic_title = "crisis.8195.name"
+	desc = crisis.8195.desc.success
+	show_sound = crisis_8195_desc_success
+
+	diplomatic = yes
+
+	event_window_type = crisis_leader_conversation
+	situation = event_target:synth_queen_doomclock_situation
+	picture_event_data = {
+		portrait = event_target:cetana_face
+		room = event_target:synth_queen_country_global.owner
+	}
+	picture = GFX_crisis_conversation_bg_synth_queen
+
+	is_triggered_only = yes
+
+	trigger = {
+		NOR = {
+			has_country_flag = synth_queen_raid_scolding
+			has_active_event = { crisis.8195 }
+		}
+	}
+
+	immediate = {
+		get_cetana_face = yes
+		set_country_flag = synth_queen_conversation_ongoing
+		random_country = {
+			limit = {
+				is_country_type = synth_queen
+			}
+			save_event_target_as = synth_queen_country
+		}
+	}
+
+	option = {
+		name = crisis.8195.a
+		trigger = {
+			NOR = {
+				has_country_flag = crisis.8195.1.flag
+				has_country_flag = crisis.8195.2.flag
+				has_country_flag = crisis.8195.3.flag
+			}
+			NOT = { has_country_flag = already_apologized }
+		}
+		set_country_flag = crisis.8195.1.flag
+		is_dialog_only = yes
+		response_text = crisis.8195.1.reply
+		sound = crisis_8195_1_reply
+		set_country_flag = already_apologized
+	}
+	option = {
+		name = crisis.8195.a
+		trigger = {
+			NOR = {
+				has_country_flag = crisis.8195.1.flag
+				has_country_flag = crisis.8195.2.flag
+				has_country_flag = crisis.8195.3.flag
+			}
+			has_country_flag = already_apologized
+		}
+		hidden_effect = {
+			event_target:synth_queen_country = {
+				add_trust = {
+					amount = -5
+					who = root.owner
+				}
+			}
+		}
+		set_country_flag = crisis.8195.1.flag
+		is_dialog_only = yes
+		response_text = crisis.8195.1.reply.angry
+		sound = crisis_8195_1_reply_angry
+	}
+	option = {
+		name = crisis.8195.b
+		custom_tooltip = synth_queen_disapprove
+		trigger = {
+			NOR = {
+				has_country_flag = crisis.8195.1.flag
+				has_country_flag = crisis.8195.2.flag
+				has_country_flag = crisis.8195.3.flag
+			}
+		}
+		set_country_flag = crisis.8195.2.flag
+		response_text = crisis.8195.2.reply
+		sound = crisis_8195_2_reply
+		is_dialog_only = yes
+		hidden_effect = {
+			event_target:synth_queen_country = {
+				add_trust = {
+					amount = -5
+					who = root.owner
+				}
+			}
+		}
+	}
+	option = { # Raid successful + Barbaric Despoilers
+		name = crisis.8195.c
+		trigger = {
+			from = {
+ 				is_country_type = default
+ 			}
+			OR = {
+				has_valid_civic = civic_barbaric_despoilers
+				has_valid_civic = civic_barbaric_despoilers_corporate
+			}
+			NOR = {
+				has_country_flag = crisis.8195.1.flag
+				has_country_flag = crisis.8195.2.flag
+				has_country_flag = crisis.8195.3.flag
+			}
+			NOT = { has_country_flag = successful_raid_barbaric }
+		}
+		set_country_flag = crisis.8195.3.flag
+		set_country_flag = successful_raid_barbaric
+		response_text = crisis.8195.3.reply
+		sound = crisis_8195_3_reply
+		is_dialog_only = yes
+	}
+	option = {
+		name = GOODBYE
+		trigger = {
+			OR = {
+				has_country_flag = crisis.8195.1.flag
+				has_country_flag = crisis.8195.2.flag
+				has_country_flag = crisis.8195.3.flag
+			}
+		}
+		hidden_effect = {
+			remove_country_flag = synth_queen_conversation_ongoing
+		}
+	}
+
+	after = {
+		hidden_effect = {
+			remove_country_flag = crisis.8195.1.flag
+			remove_country_flag = crisis.8195.2.flag
+			remove_country_flag = crisis.8195.3.flag
+			set_timed_country_flag = {
+				flag = synth_queen_raid_scolding
+				days = 1800 # 5 years
+			}
+		}
+	}
+}

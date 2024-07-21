@@ -1,0 +1,254 @@
+######################################
+# Astral Rifts Events - 2000 to 2900 #
+######################################
+
+#####################################
+# Astral Rift - Research Lab Events #
+#####################################
+
+namespace = astral_rift
+astral_rift_event = {
+	id = astral_rift.2810
+	title = astral_rift.2810.name
+	desc = {
+		trigger = {
+			explorer = { is_unfriendly = no }
+		}
+		text = astral_rift.2810.desc.default
+	}
+	desc = {
+		trigger = {
+			explorer = { 
+				OR = {
+					has_valid_civic = civic_barbaric_despoilers 
+					has_valid_civic = civic_barbaric_despoilers_corporate
+				}
+			}
+		}
+		text = astral_rift.2810.desc.barbaric_despoilers
+	}
+	desc = {
+		trigger = {
+			explorer = { is_homicidal = yes }
+		}
+		text = astral_rift.2810.desc.homicidal
+	}
+	picture = GFX_evt_astral_rift_tiny_planet
+	show_sound = ap_rift_event_28_tiny_alien_voices_radio
+	difficulty = @astral_rift_transition_difficulty
+	astral_rift = yes
+
+	is_triggered_only = yes
+
+	option = {
+		trigger = {
+			explorer = { is_unfriendly = no }
+		}
+		name = astral_rift.2810.a
+		set_next_astral_rift_event = { id = astral_rift.2815 }
+
+		ai_chance = {
+			inline_script = astral_rift/rift_difficulty_ai_weight
+		}
+	}
+	option = {
+		trigger = {
+			explorer = { is_unfriendly = no }
+		}
+		name = astral_rift.2810.b
+		set_next_astral_rift_event = { id = astral_rift.2830 }
+
+		ai_chance = {
+			inline_script = astral_rift/rift_difficulty_ai_weight
+			modifier = {
+				factor = 0
+				explorer = {
+					OR = {
+						is_spiritualist = yes
+						is_xenophile = yes
+						is_pacifist = yes
+					}
+				}
+			}
+		}
+	}
+	option = {
+		trigger = {
+			explorer = {
+				OR = {
+					has_valid_civic = civic_barbaric_despoilers 
+					has_valid_civic = civic_barbaric_despoilers_corporate
+				}
+			}
+		}
+		name = astral_rift.2810.c
+		set_next_astral_rift_event = { id = astral_rift.2815 }
+
+		ai_chance = {
+			inline_script = astral_rift/rift_difficulty_ai_weight
+		}
+	}
+	option = {
+		trigger = {
+			explorer = { is_homicidal = yes }
+		}
+		name = astral_rift.2810.d
+		set_next_astral_rift_event = { id = astral_rift.2815 }
+
+		ai_chance = {
+			inline_script = astral_rift/rift_difficulty_ai_weight
+		}
+	}
+	option = {
+		trigger = {
+			explorer = { is_unfriendly = yes }
+		}
+		name = astral_rift.2810.e
+		set_next_astral_rift_event = { id = astral_rift.2830 }
+
+		ai_chance = {
+			inline_script = astral_rift/rift_difficulty_ai_weight
+		}
+	}
+
+	after = {
+		explorer = {
+			add_monthly_resource_mult = {
+				resource = society_research
+				value = @tier2researchreward
+				min = @tier2researchmin
+				max = @tier2researchmax
+			}
+		}
+	}
+}
+
+astral_rift_event = {
+	id = astral_rift.2815
+	title = astral_rift.2815.name
+	desc = {
+		trigger = {
+			switch = {
+				trigger = has_astral_rift_flag
+				description_xenophile = { text = astral_rift.2815.desc.xenophile }
+				description_pacifist = { text = astral_rift.2815.desc.pacifist }
+				default = {
+					if = {
+						limit = {
+							explorer = { is_homicidal = yes }
+						}
+						text = astral_rift.2815.desc.homicidal
+					}
+					else_if = {
+						limit = {
+							explorer = { 
+								OR = {
+									has_valid_civic = civic_barbaric_despoilers 
+									has_valid_civic = civic_barbaric_despoilers_corporate
+								}
+							}
+						}
+						text = astral_rift.2815.desc.barbaric_despoilers
+					}
+					else = {
+						text = astral_rift.2815.desc.default
+					}
+				}
+			}
+		}
+	}
+	picture = GFX_evt_astral_rift_tiny_planet
+	show_sound = ap_rift_event_28_tiny_alien_voices_radio
+	difficulty = @astral_rift_hard_difficulty
+	astral_rift = yes
+
+	is_triggered_only = yes
+
+	immediate = {
+		set_astral_rift_flag = communications_established
+	}
+
+	option = {
+		trigger = {
+			explorer = { is_unfriendly = no }
+		}
+		name = astral_rift.2815.a
+		set_next_astral_rift_event = { id = astral_rift.2820 }
+
+		ai_chance = {
+			inline_script = astral_rift/rift_difficulty_ai_weight
+			modifier = {
+				factor = 0
+				explorer = {
+					is_xenophile = no
+					is_pacifist = no
+				}
+			}
+		}
+	}
+	option = {
+		name = astral_rift.2815.b
+		trigger = {
+			explorer = {
+				is_pacifist = no
+				is_xenophile = no
+			}
+		}
+		set_next_astral_rift_event = { id = astral_rift.2825 }
+
+		ai_chance = {
+			inline_script = astral_rift/rift_difficulty_ai_weight
+		}
+	}
+	option = {
+		trigger = {
+			explorer = { is_unfriendly = no }
+		}
+		name = astral_rift.2815.c
+		hidden_effect = {
+			add_stage_modifier = { modifier = astral_rift_difficulty_decrease_2 }
+		}
+		set_next_astral_rift_event = { id = astral_rift.2830 }
+
+		ai_chance = {
+			inline_script = astral_rift/rift_difficulty_ai_weight
+			modifier = {
+				factor = 0
+				explorer = {
+					is_xenophile = yes
+				}
+			}
+		}
+	}
+	option = {
+		trigger = {
+			explorer = { is_unfriendly = yes }
+		}
+		name = astral_rift.2815.d
+		hidden_effect = {
+			add_stage_modifier = { modifier = astral_rift_difficulty_decrease_2 }
+		}
+		if = {
+			limit = {
+				explorer = { is_homicidal = yes }
+			}
+			explorer = {
+				add_monthly_resource_mult = {
+					resource = unity
+					value = @tier3unityreward
+					min = @tier3unitymin
+					max = @tier3unitymax
+				}
+			}
+		}
+		set_next_astral_rift_event = { id = astral_rift.2830 }
+
+		ai_chance = {
+			inline_script = astral_rift/rift_difficulty_ai_weight
+		}
+	}
+
+	after = {
+		explorer = { astral_thread_small_reward = yes }
+	}
+}

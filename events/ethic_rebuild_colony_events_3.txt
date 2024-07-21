@@ -1,0 +1,151 @@
+##############################
+# Colony Events
+##############################
+
+namespace = colony_mod
+
+planet_event = { # third opportunity - green care - can lower the upkeep or increase production
+	id = colony.9270
+	title = "colony.9270.name"
+	desc = "colony.9270.desc"
+	picture = GFX_evt_decryption
+	location = ROOT
+
+	pre_triggers = {
+		has_owner = yes
+		is_homeworld = no
+		original_owner = yes
+		is_ai = no
+		has_ground_combat = no
+		is_capital = no
+		original_owner = yes
+		is_occupied_flag = no
+	}
+
+	is_triggered_only = yes
+
+	immediate = {
+	}
+
+	option = { # casual - opportunity random
+		name = colony.9270.a
+		custom_tooltip = colony.9270.a.desc
+		hidden_effect = {
+			random_list = {
+				34 = {
+					set_planet_flag = manufactorium_random_good
+				}
+				66 = {
+				}
+			}
+			planet_event = {
+				id = colony.9280
+				days = 360
+				random = 360
+			}
+		}
+	}
+	option = { # Environmentalist - lowered upkeep
+		name = colony.9270.b
+		custom_tooltip = colony.9270.b.desc
+		trigger = {
+			owner = {
+				OR = {
+					has_civic = civic_environmentalist
+					has_civic = civic_machine_zero_waste_protocols
+					has_civic = civic_hive_ascetic
+				}
+			}
+		}
+		set_planet_flag = manufactorium_environmentalists
+		hidden_effect = {
+			planet_event = {
+				id = colony.9280
+				days = 360
+				random = 360
+			}
+		}
+	}
+	option = { # Barbaric Despoilers - increased production
+		name = colony.9270.c
+		custom_tooltip = colony.9270.c.desc
+		trigger = {
+			owner = {
+				OR = {
+					has_civic = civic_barbaric_despoilers
+					has_civic = civic_barbaric_despoilers_corporate
+					has_civic = civic_fanatic_purifiers
+					has_civic = civic_machine_terminator
+					has_civic = civic_hive_devouring_swarm
+				}
+			}
+		}
+		set_planet_flag = manufactorium_despoilers
+		hidden_effect = {
+			planet_event = {
+				id = colony.9280
+				days = 360
+				random = 360
+			}
+		}
+	}
+}
+
+situation_event = {
+	id = colony.9860
+	title = colony.9860.name
+	desc = colony.9860.desc
+	is_triggered_only = yes
+	picture = GFX_evt_ancient_artifact
+	show_sound = event_administrative_work
+	situation = this
+
+	trigger = {
+		current_situation_approach = approach_save_b_world
+		owner = { is_gestalt = no }
+	}
+
+	option = {
+		allow = {
+			owner = {
+				OR = {
+					NOR = {
+						has_valid_civic = civic_barbaric_despoilers
+						has_valid_civic = civic_barbaric_despoilers_corporate
+						has_ascension_perk = ap_nihilistic_acquisition
+					}
+					root.target = {
+						has_modifier = multiple_stolen_great_works
+					}
+				}
+			}
+		}
+		name = colony.9860.a
+		owner = { add_resource = { unity = -150 } }
+	}
+	option = {
+		name = {
+			trigger = { NOT = { target = { has_modifier = stolen_great_work } } }
+			text = colony.9860.b
+		}
+		name = {
+			trigger = { target = { has_modifier = stolen_great_work } }
+			text = colony.9860.c
+		}
+		add_situation_progress = 20
+		target = {
+			if = {
+				limit = { has_modifier = stolen_great_work }
+				remove_modifier = stolen_great_work
+				add_modifier = { modifier = multiple_stolen_great_works days = -1 }
+				add_situation_progress = 25
+			}
+			else = {
+				add_modifier = { modifier = stolen_great_work days = -1 }
+			}
+		}
+		hidden_effect = {
+			situation_event = { id = colony.9860 days = 120 }
+		}
+	}
+}
