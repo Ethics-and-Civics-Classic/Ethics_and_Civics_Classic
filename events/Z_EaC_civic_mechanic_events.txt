@@ -2380,12 +2380,30 @@ fleet_event = {
 	is_triggered_only = yes
 	
 	desc = {
-		trigger = { OWNER = { NOT = { has_civic = civic_military_dictatorship_corporate } } }
-		text = "enclave.2.desc"
-	}
-	desc = {
 		trigger = { OWNER = { has_civic = civic_military_dictatorship_corporate } }
 		text = "EaC_civic_mechanic_events.2.desc"
+	}
+	desc = {
+		trigger = { 
+			OWNER = { 
+				has_civic = civic_criminal_heritage
+				has_civic = civic_crusader_spirit_corporate
+			} 
+		}
+		text = "EaC_civic_mechanic_events.2.desc.criminal_heritage"
+	}
+	desc = {
+		trigger = { 
+			OWNER = {
+				if = { 
+					limit = { has_civic = civic_criminal_heritage }
+					NOT = { has_civic = civic_crusader_spirit_corporate }
+				}
+				else = { NOT = { has_civic = civic_military_dictatorship_corporate } }
+			}
+		
+		}
+		text = "enclave.2.desc"
 	}
 	
 	trigger = {
@@ -2399,7 +2417,15 @@ fleet_event = {
 	option = {
 		name = DEAL
 		custom_tooltip = "enclave.2.a.tooltip"
-		trigger = { OWNER = { NOT = { has_civic = civic_military_dictatorship_corporate } } }
+		trigger = { 
+			OWNER = {
+				if = { 
+					limit = { has_civic = civic_criminal_heritage }
+					NOT = { has_civic = civic_crusader_spirit_corporate }
+				}
+				else = { NOT = { has_civic = civic_military_dictatorship_corporate } }
+			}
+		}
 		allow = {
 			is_merc_enclave_founding_allowed = yes
 			owner = {
@@ -2486,7 +2512,74 @@ fleet_event = {
 		}
 
 		ai_chance = {
-			factor = 10
+			factor = 1000
+			modifier = {
+				factor = 0
+				owner = {
+					has_ethic = ethic_fanatic_pacifist
+				}
+			}
+			modifier = {
+				factor = 0.1
+				owner = {
+					has_ethic = ethic_pacifist
+				}
+			}
+			modifier = {
+				factor = 5
+				owner = {
+					has_ethic = ethic_militarist
+				}
+			}
+			modifier = {
+				factor = 10
+				owner = {
+					has_ethic = ethic_fanatic_militarist
+				}
+			}
+			modifier = {
+				factor = 5
+				owner = {
+					has_authority = auth_corporate
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = EaC_civic_mechanic_events.2.a.criminal_heritage
+		custom_tooltip = "EaC_civic_mechanic_events.2.a.tooltip"
+		trigger = { 
+			OWNER = {
+				has_civic = civic_criminal_heritage
+				has_civic = civic_crusader_spirit_corporate
+			}
+		}
+		allow = {
+			is_merc_enclave_founding_allowed = yes
+			owner = {
+				resource_stockpile_compare = { resource = energy value >= 1500 }
+				resource_stockpile_compare = { resource = alloys value >= 2000 }
+				resource_stockpile_compare = { resource = influence value >= 100 }
+			}
+		}
+		owner = {
+			add_resource = {
+				energy = -1500
+				alloys = -2000
+				influence = -100
+			}
+		}
+
+		hidden_effect = {
+			owner = {
+				set_country_flag = tutorial_met_mercenary_enclave
+			}
+			fleet_event = { id = EaC_civic_mechanic_events.21 }
+		}
+
+		ai_chance = {
+			factor = 100
 			modifier = {
 				factor = 0
 				owner = {
@@ -2895,6 +2988,7 @@ country_event = {
 			solar_system = {
 				save_event_target_as = merc_system
 				remove_star_flag = enclave
+				remove_star_flag = EaC_civic_mechanic_events.pirate_enclave.star_flag
 			}
 		}
 		FROM = {
@@ -3062,6 +3156,7 @@ fleet_event = {
 		#Set up the enclave starbase
 		solar_system = {
 			set_star_flag = enclave
+			set_star_flag = EaC_civic_mechanic_events.pirate_enclave.star_flag
 			set_star_flag = mercenary_enclave_system
 			#Set up on a moon only if an asteroid isn't available
 			if = {
@@ -3226,7 +3321,7 @@ country_event = {
 			is_country_type = enclave_mercenary
 			has_civic = civic_pirate_mercenary_enclave
 			FROMFROM = {
-				is_ship_size = enclave_mercenary_station
+				is_ship_size = enclave_pirate_mercenary_station
 			}
 		}
 	}
@@ -3236,6 +3331,7 @@ country_event = {
 			solar_system = {
 				save_event_target_as = merc_system
 				remove_star_flag = enclave
+				remove_star_flag = EaC_civic_mechanic_events.pirate_enclave.star_flag
 			}
 		}
 		FROM = {
@@ -3339,8 +3435,8 @@ country_event = {
 		is_country_type = enclave_mercenary
 		has_civic = civic_pirate_mercenary_enclave
 		OR = {
-			FromFrom = { is_ship_size = enclave_mercenary_station }
-			FromFromFrom = { is_ship_size = enclave_mercenary_station }
+			FromFrom = { is_ship_size = enclave_pirate_mercenary_station }
+			FromFromFrom = { is_ship_size = enclave_pirate_mercenary_station }
 		}
 	}
 
@@ -3348,7 +3444,7 @@ country_event = {
 		save_event_target_as = mercenary_enclave_country
 		random_owned_fleet = {
 			limit = {
-				is_ship_size = enclave_mercenary_station
+				is_ship_size = enclave_pirate_mercenary_station
 			}
 			solar_system = {
 				save_event_target_as = mercenary_home_system
@@ -3666,7 +3762,7 @@ country_event = {
 			}
 			random_owned_fleet = {
 				limit = {
-					is_ship_size = enclave_mercenary_station
+					is_ship_size = enclave_pirate_mercenary_station
 				}
 				solar_system = {
 					save_event_target_as = mercenary_enclave_system
@@ -3849,7 +3945,7 @@ country_event = {
 				is_hostile = event_target:mercenary_enclave_country
 				#is_homicidal = yes
 			}
-			NOT = { has_country_flag = mercenary_enclave_bought_mercenary_garrison }
+			NOT = { has_country_flag = pirate_mercenary_enclave_bought_pirate_mercenary_garrison }
 			event_target:mercenary_enclave_country = {
 				trust = {
 					who = root
@@ -3990,7 +4086,10 @@ country_event = {
 		name = EaC_civic_mechanic_events.205.h
 		custom_tooltip = mercenary_tt_patron
 		trigger = {
-			NOT = { has_civic = civic_military_dictatorship_corporate }
+			NOT = { 
+				has_civic = civic_military_dictatorship_corporate
+				has_civic = civic_criminal_heritage
+			}
 			NOR = {
 				is_hostile = event_target:mercenary_enclave_country
 				#is_homicidal = yes
@@ -4010,6 +4109,26 @@ country_event = {
 		custom_tooltip = mercenary_tt_patron
 		trigger = {
 			has_civic = civic_military_dictatorship_corporate
+			NOR = {
+				is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+			exists = event_target:mercenary_patron
+			event_target:mercenary_patron = {
+				is_same_empire = root
+			}
+		}
+		hidden_effect = {
+			country_event = { id = EaC_civic_mechanic_events.280 }
+		}
+	}
+	
+	#Is Criminal Heritage
+	option = {
+		name = EaC_civic_mechanic_events.205.k
+		custom_tooltip = mercenary_tt_patron
+		trigger = {
+			has_civic = civic_criminal_heritage
 			NOR = {
 				is_hostile = event_target:mercenary_enclave_country
 				#is_homicidal = yes
@@ -4075,6 +4194,7 @@ country_event = {
 					traits = {
 						trait = leader_trait_mercenary_warrior
 						trait = leader_trait_aggressive_2
+						trait = leader_trait_corsair
 					}
 				}
 			}
@@ -4280,9 +4400,9 @@ country_event = {
 					who = root
 					amount = 15
 				}
-				set_country_flag = mercenary_garrison@root
+				set_country_flag = pirate_mercenary_garrison@root
 			}
-			set_country_flag = mercenary_enclave_bought_mercenary_garrison
+			set_country_flag = pirate_mercenary_enclave_bought_pirate_mercenary_garrison
 			country_event = { id = EaC_civic_mechanic_events.225 }
 		}
 	}
@@ -4398,7 +4518,7 @@ country_event = {
 					modifier = mercenary_fleet_size_upgrade_1
 					days = -1
 				}
-				upgrade_mercenary_starbase = {
+				upgrade_pirate_mercenary_starbase = {
 					TIER = 1
 				}
 			}
@@ -4431,7 +4551,7 @@ country_event = {
 					modifier = mercenary_fleet_size_upgrade_2
 					days = -1
 				}
-				upgrade_mercenary_starbase = {
+				upgrade_pirate_mercenary_starbase = {
 					TIER = 2
 				}
 			}
@@ -4465,7 +4585,7 @@ country_event = {
 					modifier = mercenary_fleet_size_upgrade_3
 					days = -1
 				}
-				upgrade_mercenary_starbase = {
+				upgrade_pirate_mercenary_starbase = {
 					TIER = 3
 				}
 			}
@@ -4498,7 +4618,7 @@ country_event = {
 					modifier = mercenary_fleet_size_upgrade_4
 					days = -1
 				}
-				upgrade_mercenary_starbase = {
+				upgrade_pirate_mercenary_starbase = {
 					TIER = 4
 				}
 			}
@@ -4531,7 +4651,7 @@ country_event = {
 					modifier = mercenary_fleet_size_upgrade_5
 					days = -1
 				}
-				upgrade_mercenary_starbase = {
+				upgrade_pirate_mercenary_starbase = {
 					TIER = 5
 				}
 				set_country_flag = maximally_effective_achievement
@@ -5092,7 +5212,7 @@ country_event = {
 		#Check who owns the system the enclave is in and register them as the target for the payment event.
 		random_owned_fleet = {
 			limit = {
-				is_ship_size = enclave_mercenary_station
+				is_ship_size = enclave_pirate_mercenary_station
 			}
 			solar_system = {
 				if = {
@@ -5151,7 +5271,13 @@ country_event = {
 	desc = {
 		trigger = {
 			ROOT = { 
-				has_civic = civic_military_dictatorship_corporate
+				OR = { 
+					has_civic = civic_military_dictatorship_corporate
+					AND = {
+						has_civic = civic_criminal_heritage
+						has_civic = civic_crusader_spirit_corporate
+					}
+				}
 				their_opinion = { who = event_target:mercenary_enclave_country value > 79 }
 			}
 		}
@@ -5160,7 +5286,13 @@ country_event = {
 	desc = {
 		trigger = {
 			ROOT = { 
-				has_civic = civic_military_dictatorship_corporate
+				OR = { 
+					has_civic = civic_military_dictatorship_corporate
+					AND = {
+						has_civic = civic_criminal_heritage
+						has_civic = civic_crusader_spirit_corporate
+					}
+				}
 				their_opinion = { who = event_target:mercenary_enclave_country value < 80 }
 				their_opinion = { who = event_target:mercenary_enclave_country value > 30 }
 			}
@@ -5170,7 +5302,13 @@ country_event = {
 	desc = {
 		trigger = {
 			ROOT = { 
-				has_civic = civic_military_dictatorship_corporate
+				OR = { 
+					has_civic = civic_military_dictatorship_corporate
+					AND = {
+						has_civic = civic_criminal_heritage
+						has_civic = civic_crusader_spirit_corporate
+					}
+				}
 				their_opinion = { who = event_target:mercenary_enclave_country value < 29 }
 				their_opinion = { who = event_target:mercenary_enclave_country value > -30 }
 			}
@@ -5180,7 +5318,13 @@ country_event = {
 	desc = {
 		trigger = {
 			ROOT = { 
-				has_civic = civic_military_dictatorship_corporate
+				OR = { 
+					has_civic = civic_military_dictatorship_corporate
+					AND = {
+						has_civic = civic_criminal_heritage
+						has_civic = civic_crusader_spirit_corporate
+					}
+				}
 				their_opinion = { who = event_target:mercenary_enclave_country value < -31 }
 			}
 		}
@@ -5188,7 +5332,13 @@ country_event = {
 	}
 	desc = {
 		trigger = {
-			NOT = { has_civic = civic_military_dictatorship_corporate }
+			ROOT = {
+				if = { 
+					limit = { has_civic = civic_criminal_heritage }
+					NOT = { has_civic = civic_crusader_spirit_corporate }
+				}
+				else = { NOT = { has_civic = civic_military_dictatorship_corporate } }
+			}
 		}
 		text = EaC_civic_mechanic_events.280.a.desc
 		text = EaC_civic_mechanic_events.280.b.desc
@@ -5517,7 +5667,7 @@ country_event = {
 		}
 		random_owned_fleet = {
 			limit = {
-				is_ship_size = enclave_mercenary_station
+				is_ship_size = enclave_pirate_mercenary_station
 			}
 			solar_system = {
 				save_event_target_as = mercenary_home_system
@@ -5577,6 +5727,7 @@ country_event = {
 					traits = {
 						trait = leader_trait_mercenary_warrior
 						trait = leader_trait_aggressive_2
+						trait = leader_trait_corsair
 					}
 				}
 			}
@@ -6707,6 +6858,10 @@ country_event = {
 					event_leader = yes
 					name = random
 					skill = 1
+					traits = {
+						trait = leader_trait_mercenary_warrior
+						trait = leader_trait_corsair
+					}
 				}
 				set_leader = last_created_leader
 			}
@@ -7160,7 +7315,7 @@ event = {
 				limit = {
 					event_target:mercenary_enclave_country = {
 						any_owned_fleet = {
-							is_ship_size = enclave_mercenary_station
+							is_ship_size = enclave_pirate_mercenary_station
 							solar_system = {
 								exists = space_owner
 								space_owner = {
@@ -7196,7 +7351,7 @@ event = {
 				event_target:mercenary_enclave_country = {
 					random_owned_fleet = {
 						limit = {
-							is_ship_size = enclave_mercenary_station
+							is_ship_size = enclave_pirate_mercenary_station
 							exists = solar_system
 						}
 						solar_system = {
@@ -7468,7 +7623,7 @@ country_event = {
 			solar_system = {
 				NOT = {
 					any_ship_in_system = {
-						is_ship_size = enclave_mercenary_station
+						is_ship_size = enclave_pirate_mercenary_station
 					}
 				}
 			}
@@ -7478,7 +7633,7 @@ country_event = {
 	immediate = {
 		random_owned_fleet = {
 			limit = {
-				is_ship_size = enclave_mercenary_station
+				is_ship_size = enclave_pirate_mercenary_station
 			}
 			save_event_target_as = mercenary_enclave_station
 		}
@@ -7521,6 +7676,7 @@ country_event = { # Assign an admiral to hired merc fleet if they lose theirs
 			skill = 3
 			traits = {
 				trait = leader_trait_mercenary_warrior
+				trait = leader_trait_corsair
 			}
 		}
 		random_owned_fleet = {
@@ -7589,5 +7745,33 @@ fleet_event = {
 				set_owner = from
 			}
 		}
+	}
+}
+
+# FROM = fleet
+# THIS = SYSTEM
+# FROM.OWNER = Country that owns it
+# Is fired immediately after off world trading post module is removed
+fleet_event = {
+	id = EaC_civic_mechanic_events.2090
+	hide_window = yes
+	is_triggered_only = yes
+
+	immediate = {
+		solar_system = { set_star_flag = EaC_civic_mechanic_events.pirate_enclave.offworld_trading_company.star_flag }
+	}
+}
+
+# FROM = fleet
+# THIS = SYSTEM
+# FROM.OWNER = Country that owns it
+# Is fired immediately after off world trading post module is removed
+fleet_event = {
+	id = EaC_civic_mechanic_events.2091
+	hide_window = yes
+	is_triggered_only = yes
+
+	immediate = {
+		solar_system = { remove_star_flag = EaC_civic_mechanic_events.pirate_enclave.offworld_trading_company.star_flag }
 	}
 }

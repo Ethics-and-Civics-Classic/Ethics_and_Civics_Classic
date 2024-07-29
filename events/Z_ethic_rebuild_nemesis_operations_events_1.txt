@@ -1,0 +1,324 @@
+namespace = operation
+
+# Finalé | from = operation; fromfrom = target (starbase)
+country_event = {
+	id = operation.2005
+	title = operation.2005.name
+	desc = {
+		text = operation.2005.desc.military
+		trigger = {
+			from.target.owner = {
+				OR = {
+					has_country_flag = anchorage_sabotaged
+					has_country_flag = gun_battery_sabotaged
+					has_country_flag = hangar_bay_sabotaged
+					has_country_flag = missile_battery_sabotaged
+					has_country_flag = command_center_sabotaged
+					has_country_flag = communications_jammer_sabotaged
+					has_country_flag = deep_space_black_site_sabotaged
+					has_country_flag = disruption_field_sabotaged
+					has_country_flag = fleet_academy_sabotaged
+					has_country_flag = naval_logistics_office_sabotaged
+					has_country_flag = target_uplink_computer_sabotaged
+					has_country_flag = warp_fluctuator_sabotaged
+					has_country_flag = mercenary_garrison_sabotaged
+					has_country_flag = pirate_mercenary_garrison_sabotaged
+					has_country_flag = orbital_ring_anchorage_sabotaged
+					has_country_flag = orbital_ring_gun_battery_sabotaged
+					has_country_flag = orbital_ring_hangar_bay_sabotaged
+					has_country_flag = orbital_ring_missile_battery_sabotaged
+					has_country_flag = offspring_outlook_sabotaged
+					has_country_flag = archaeo_rampart_sabotaged
+					has_country_flag = detection_array_sabotaged
+					has_country_flag = dark_matter_listening_post_sabotaged
+					has_country_flag = dark_matter_detector_sabotaged
+					has_country_flag = cordyceptic_reanimation_facility_sabotaged
+					has_country_flag = irassian_naval_yards_sabotaged
+					has_country_flag = yuht_detection_array_sabotaged
+					has_country_flag = zroni_storm_caster_sabotaged
+					has_country_flag = archaeo_overcharger_sabotaged
+				}
+			}
+		}
+	}
+	desc = {
+		text = operation.2005.desc.trade
+		trigger = {
+			from.target.owner = {
+				OR = {
+					has_country_flag = trading_hub_sabotaged
+					has_country_flag = offworld_trading_company_sabotaged
+					has_country_flag = resource_silo_sabotaged
+					has_country_flag = trader_proxy_office_sabotaged
+					has_country_flag = orbital_ring_trading_hub_sabotaged
+					has_country_flag = ring_trade_hub_sabotaged
+				}
+			}
+		}
+	}
+	desc = {
+		text = operation.2005.desc.civic
+		trigger = {
+			from.target.owner = {
+				OR = {
+					has_country_flag = art_college_sabotaged
+					has_country_flag = black_hole_observatory_sabotaged
+					has_country_flag = hydroponics_bay_sabotaged
+					has_country_flag = missile_battery_sabotaged
+					has_country_flag = crew_quarters_sabotaged
+					has_country_flag = curator_think_tank_sabotaged
+					has_country_flag = nebula_refinery_sabotaged
+					has_country_flag = solar_panel_network_sabotaged
+					has_country_flag = astromining_bay_sabotaged
+					has_country_flag = astromining_hub_sabotaged 
+					has_country_flag = ice_mining_station_sabotaged
+					has_country_flag = salvager_workshop_sabotaged
+					has_country_flag = transit_hub_sabotaged
+					# has_country_flag = orbital_ring_solar_panel_network_sabotaged
+					has_country_flag = ring_alloys_hub_sabotaged
+					has_country_flag = ring_bureaucracy_hub_sabotaged
+					has_country_flag = ring_consumer_goods_hub_sabotaged
+					has_country_flag = ring_energy_hub_sabotaged
+					has_country_flag = ring_food_hub_sabotaged
+					has_country_flag = ring_maintenance_hub_sabotaged
+					has_country_flag = ring_minerals_hub_sabotaged
+					has_country_flag = ring_synapse_hub_sabotaged
+					has_country_flag = orbital_ring_habitation_sabotaged
+					has_country_flag = cybrex_mining_hub_sabotaged
+					has_country_flag = orbital_ring_feeder_sabotaged
+					has_country_flag = feeder_sabotaged
+				}
+			}
+		}
+	}
+	location = event_target:sabotaged_starbase_system
+	picture = GFX_evt_archaeologists_escaping
+	show_sound = event_espionage_concluded
+	is_triggered_only = yes
+
+	trigger = {
+		exists = from
+		exists = event_target:sabotaged_starbase
+	}
+
+	immediate = {
+		from.target = {
+			if = {
+				limit = {
+					count_starbase_modules = {
+						type != shipyard
+						count >= 1
+					}
+				}
+				espionage_sabotage_starbase_module = yes
+			}
+			else_if = {
+				limit = { has_nonshipyard_starbase_buildings = yes }
+				espionage_sabotage_starbase_building = yes
+			}
+		}
+		#Bonus actions
+		if = {
+			limit = {
+				from = { has_espionage_asset_sabotage = yes }
+			}
+			random_list = {
+				1 = { #Take down another module
+					modifier = {
+						factor = 5
+						from = { has_espionage_asset_technology = yes }
+					}
+					modifier = {
+						factor = 0
+						from.target = {
+							count_starbase_modules = {
+								type != shipyard
+								count < 2
+							}
+						}
+					}
+					set_country_flag = sabotage_starbase_collateral@from.target.owner
+				}
+				1 = { #Take down a defense platform
+					modifier = {
+						factor = 5
+						from = { has_espionage_asset_military = yes }
+					}
+					set_country_flag = sabotage_starbase_defence@from.target.owner
+				}
+				4 = {
+					modifier = {
+						factor = 3
+						root = {
+							relative_encryption_decryption = { target = from.target.owner value < 0.6 }
+						}
+					}
+					#No bonus action
+				}
+			}
+		}
+	}
+
+	option = { #We're done here (smooth)
+		name = operation.2005.a
+		trigger = {
+			from.target.owner = {
+				NOR = {
+					has_hostile_espionage_operation_ethics = yes
+					has_closed_borders = root
+					is_at_war_with = root
+				}
+			}
+		}
+		from.spynetwork = {
+			add_spy_network_level_on_success_effect = { VALUE = -30 }
+		}
+		owner = {
+			if = {
+				limit = { has_ascension_perk = ap_become_the_crisis }
+				complete_crisis_objective = crisobj_perform_upsetting_operations
+			}
+		}
+	}
+	option = { #We're done here (messy)
+		name = operation.2005.a
+		trigger = {
+			from.target.owner = {
+				OR = {
+					has_hostile_espionage_operation_ethics = yes
+					has_closed_borders = root
+					is_at_war_with = root
+				}
+			}
+		}
+		from.spynetwork = {
+			add_spy_network_level_on_success_effect = { VALUE = -45 }
+		}
+		owner = {
+			if = {
+				limit = { has_ascension_perk = ap_become_the_crisis }
+				complete_crisis_objective = crisobj_perform_upsetting_operations
+			}
+		}
+	}
+	option = { #Collateral damage (module)
+		name = {
+			trigger = {
+				from.target = { is_normal_starbase = yes }
+			}
+			text = operation.2005.b
+		}
+		name = {
+			trigger = {
+				from.target = { is_orbital_ring = yes }
+			}
+			text = operation.2005.b.orb
+		}
+		icon = {
+			icon = GFX_espionage_asset_icon
+			text = ESPIONAGE_OPERATION_ASSET_EVENT_OPTION
+		}
+		trigger = {
+			has_country_flag = sabotage_starbase_collateral@from.target.owner
+		}
+		hidden_effect = {
+			remove_country_flag = sabotage_starbase_collateral@from.target.owner
+		}
+		from = {
+			if = {
+				limit = { has_espionage_asset_technology = yes }
+				destroy_espionage_asset_technology = yes
+			}
+			target = {
+				remove_random_starbase_module = {
+					type != shipyard
+					count = 1
+				}
+			}
+			spynetwork = {
+				add_spy_network_level_on_success_effect = { VALUE = -45 }
+			}
+		}
+		owner = {
+			if = {
+				limit = { has_ascension_perk = ap_become_the_crisis }
+				complete_crisis_objective = crisobj_perform_upsetting_operations
+			}
+		}
+	}
+	option = { #Collateral damage (defense platform)
+		name = operation.2005.c
+		icon = {
+			icon = GFX_espionage_asset_icon
+			text = ESPIONAGE_OPERATION_ASSET_EVENT_OPTION
+		}
+		trigger = {
+			has_country_flag = sabotage_starbase_defence@from.target.owner
+		}
+		custom_tooltip = operation.2005.c.tooltip
+		allow = {
+			custom_tooltip = {
+				fail_text = STARBASE_NO_PLATFORMS
+				from.target = {
+					fleet = {
+						count_controlled_ship = {
+							count > 0
+							limit = {
+								exists = owner
+								is_ship_size = military_station_small
+							}
+						}
+					}
+				}
+			}
+			resource_stockpile_compare = { resource = volatile_motes value >= 2 }
+		}
+		hidden_effect = {
+			from.target = {
+				fleet = {
+					random_controlled_ship = {
+						limit = { is_ship_size = military_station_small }
+						destroy_ship = this
+					}
+				}
+			}
+		}
+		root = {
+			add_resource = { volatile_motes = -2 }
+		}
+		from.spynetwork = {
+			add_spy_network_level_on_success_effect = { VALUE = -45 }
+		}
+		owner = {
+			if = {
+				limit = { has_ascension_perk = ap_become_the_crisis }
+				complete_crisis_objective = crisobj_perform_upsetting_operations
+			}
+		}
+	}
+
+	after = {
+		hidden_effect = {
+			if = {
+				limit = {
+					owner = { NOT = { has_country_flag = operation_complete_sabotage_starbase } }
+				}
+				owner = {
+					change_variable = {
+						which = tinker_tailor_soldier_blorg_achievement_count
+						value = 1
+					}
+					set_country_flag = operation_complete_sabotage_starbase
+				}
+			}
+			from.target.owner = {
+				set_timed_country_flag = {
+					flag = sabotaged_starbase_alert@root
+					days = @SabotageStarbaseTimer
+				}
+				country_event = { id = operation.2010 } #Notification of sabotage
+			}
+		}
+		destroy_espionage_operation = from
+	}
+}
