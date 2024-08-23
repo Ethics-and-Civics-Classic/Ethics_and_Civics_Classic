@@ -1,5 +1,6 @@
 namespace = EaC_civic_mechanic_events
 namespace = enclave
+namespace = crime
 
 #Modder Note:
 #This file is where civic mechanic events are placed. Please only use EaC_civic_mechanic_events namespace, as adding multiple namespaces is very laggy.
@@ -7773,5 +7774,1977 @@ fleet_event = {
 
 	immediate = {
 		solar_system = { remove_star_flag = EaC_civic_mechanic_events.pirate_enclave.offworld_trading_company.star_flag }
+	}
+}
+
+#EaC_civic_mechanic_events.3 - Crime & General Strike Mechanics
+#################################################################################################################################
+#################################################################################################################################
+#################################################################################################################################
+#####																														#####
+#####								GENERAL STRIKES & CRIME MECHANICS														#####
+#####																														#####
+#################################################################################################################################
+#################################################################################################################################
+#################################################################################################################################
+
+# Undgerground Labor Movement (Unemployment) (Reworked Criminal Underworld)
+planet_event = {
+	id = crime.1
+	title = EaC_civic_mechanic_events.1.name
+	desc = {
+		trigger = {
+			owner = {
+				NOT = { has_ethic = ethic_gestalt_consciousness }
+			}
+		}
+		text = EaC_civic_mechanic_events.1.desc
+	}
+	desc = {
+		trigger = {
+			owner = { has_authority = auth_hive_mind }
+		}
+		text = crime.1.b.desc
+	}
+	desc = {
+		trigger = {
+			owner = { has_authority = auth_machine_intelligence }
+		}
+		text = crime.1.c.desc
+	}
+	picture = {
+		trigger = {
+			owner = {
+				NOT = { has_ethic = ethic_gestalt_consciousness }
+			}
+		}
+		picture = GFX_evt_dark_alley
+	}
+	picture = {
+		trigger = {
+			owner = { has_authority = auth_hive_mind }
+		}
+		picture = GFX_evt_hive_mind
+	}
+	picture = {
+		trigger = {
+			owner = { has_authority = auth_machine_intelligence }
+		}
+		picture = GFX_evt_glitchy_matrix
+	}
+	show_sound = event_criminal_activity
+	location = root
+	is_triggered_only = yes
+
+	pre_triggers = {
+		has_owner = yes
+	}
+
+	trigger = {
+		is_under_colonization = no
+		is_colony = yes
+		owner = { is_country_type = default }
+		num_pops > 3
+		num_unemployed > 3 #early out before the expensive count_owned_pop to come
+		NOR = {
+			has_planet_flag = criminal_underworld_disappeared # Cooldown
+			has_planet_flag = criminal_underworld_event_up
+			has_planet_flag = EaC_labor_movements_disappeared # Cooldown	#Modded
+			has_planet_flag = EaC_labor_movements_event_up					#Modded
+			has_planet_flag = EaC_underground_railroad_event_up				#Modded
+			has_planet_flag = shattered_frontier_planet
+			has_modifier = unemployment_benefits
+			has_modifier = activity_program
+			has_modifier = standby_mode
+			has_modifier = criminal_underworld
+			has_modifier = EaC_labor_movements					#Modded
+			has_modifier = drone_deviancy
+			has_modifier = drone_corruption
+			has_modifier = gang_wars
+			has_modifier = EaC_slave_revolts					#Modded
+			has_modifier = center_of_drug_trade
+			has_modifier = EaC_underground_railroad_expanded 	#Modded
+			has_modifier = mob_rule
+			has_modifier = EaC_worker_commune					#Modded
+		}
+		OR = {
+			AND = {
+				owner = { is_gestalt = no }
+				count_owned_pop = {
+					limit = {
+						is_unemployed = yes
+						is_shackled_robot = no
+						NOR = {
+							has_living_standard = { type = living_standard_utopian }
+							has_living_standard = { type = living_standard_good }
+							has_living_standard = { type = living_standard_shared_burden }
+							has_living_standard = { type = living_standard_worker_ownership }
+						}
+					}
+					count > 3
+				}
+			}
+			AND = {
+				owner = { is_gestalt = yes }
+				count_owned_pop = {
+					limit = {
+						is_unemployed = yes
+						NOT = { has_living_standard = { type = living_standard_organic_trophy } }
+					}
+					count > 10
+				}
+			}
+		}
+	}
+
+	immediate = {
+		set_planet_flag = criminal_underworld_event_up
+		set_planet_flag = EaC_labor_movements_event_up
+		set_planet_flag = EaC_underground_railroad_event_up
+	}
+
+	weight_multiplier = {
+		factor = 1
+		modifier = {
+			factor = 2.0
+			num_assigned_jobs = {
+				job = unemployed
+				value > 5
+			}
+		}
+		modifier = {
+			factor = 2.0
+			num_assigned_jobs = {
+				job = unemployed
+				value > 7
+			}
+		}
+		modifier = {
+			factor = 2.0
+			num_assigned_jobs = {
+				job = unemployed
+				value > 9
+			}
+		}
+		modifier = {
+			factor = 2.0
+			num_assigned_jobs = {
+				job = unemployed
+				value > 11
+			}
+		}
+	}
+
+	option = {
+		name = EaC_civic_mechanic_events.1.a
+		trigger = {
+			owner = {
+				NOT = { has_ethic = ethic_gestalt_consciousness }
+			}
+		}
+		add_modifier = { modifier = "unemployment_benefits" days = 3600 }
+	}
+	option = {
+		name = crime.1.a2
+		trigger = {
+			owner = { has_authority = auth_hive_mind }
+		}
+		add_modifier = { modifier = "activity_program" days = 3600 }
+	}
+	option = {
+		name = crime.1.a3
+		custom_tooltip = crime.1.a3.tooltip
+		trigger = {
+			owner = { has_authority = auth_machine_intelligence }
+		}
+		hidden_effect = { add_modifier = { modifier = "standby_mode" days = 3600 } }
+	}
+	option = {
+		name = EaC_civic_mechanic_events.1.b
+		trigger = {
+			owner = {
+				NOT = { has_ethic = ethic_gestalt_consciousness }
+			}
+		}
+		add_modifier = { modifier = criminal_underworld days = -1 }
+		add_modifier = { modifier = EaC_labor_movements days = -1 }
+	}
+	option = {
+		name = crime.1.b2
+		trigger = {
+			owner = { has_authority = auth_hive_mind }
+		}
+		add_modifier = { modifier = drone_deviancy days = -1 }
+	}
+	option = {
+		name = crime.1.b3
+		trigger = {
+			owner = { has_authority = auth_machine_intelligence }
+		}
+		add_modifier = { modifier = drone_corruption days = -1 }
+	}
+
+	after = {
+		hidden_effect = { 
+			remove_planet_flag = criminal_underworld_event_up 
+			remove_planet_flag = EaC_labor_movements_event_up
+			remove_planet_flag = EaC_underground_railroad_event_up
+		}
+	}
+}
+
+# GENERIC
+
+# Bribed Officials - #Reflavored to fit with general strike mechanic
+planet_event = {
+	id = crime.2
+	title = EaC_civic_mechanic_events.2.name
+	desc = {
+		trigger = { 
+			has_modifier = EaC_labor_movements 
+			owner = { OR = { has_ethic = ethic_authoritarian has_ethic = ethic_fanatic_authoritarian } } 
+		}
+		text = EaC_civic_mechanic_events.2.desc.has_authoritarian_ethic
+	}
+	desc = {
+		trigger = { 
+			has_modifier = EaC_labor_movements 
+			owner = { NOT = { has_ethic = ethic_authoritarian has_ethic = ethic_fanatic_authoritarian } }
+		}
+		text = EaC_civic_mechanic_events.2.desc.not_authoritarian_ethic
+	}
+	desc = {
+		trigger = { owner = { NOT = { has_modifier = EaC_labor_movements } } }
+		text = crime.2.desc
+	}
+	picture = GFX_evt_dark_alley
+	show_sound = event_criminal_activity
+	location = root
+	is_triggered_only = yes
+
+	pre_triggers = {
+		has_owner = yes
+	}
+
+	trigger = {
+		has_modifier = criminal_underworld
+	}
+
+	immediate = {
+		add_modifier = { modifier = bribed_officials days = 3600 }
+		set_timed_planet_flag = {
+			flag = planet_crime_flag
+			days = 3600
+		}
+		if = {
+			limit = { has_modifier = EaC_labor_movements  }
+			set_timed_planet_flag = {
+				flag = EaC_planet_general_strike_flag
+				days = 3600
+			}
+		}
+	}
+
+	option = {
+		name = EaC_civic_mechanic_events.2.a
+		trigger = { owner = { NOT = { has_ethic = ethic_authoritarian has_ethic = ethic_fanatic_authoritarian } } }
+		tooltip = {
+			add_modifier = { modifier = bribed_officials days = 3600 }
+		}
+		if = {
+			limit = { has_modifier = EaC_labor_movements  }
+			custom_tooltip = EaC_planet_general_strike_flag_tooltip
+		}
+	}
+	
+	option = {
+		name = EaC_civic_mechanic_events.2.b
+		trigger = { owner = { OR = { has_ethic = ethic_authoritarian has_ethic = ethic_fanatic_authoritarian } } }
+		tooltip = {
+			add_modifier = { modifier = bribed_officials days = 3600 }
+		}
+		if = {
+			limit = { has_modifier = EaC_labor_movements  }
+			custom_tooltip = EaC_planet_general_strike_flag_tooltip
+		}
+	}
+	
+	option = {
+		name = EaC_civic_mechanic_events.2.c
+		trigger = { 
+			has_modifier = EaC_labor_movements 
+			owner = { NOT = { has_ethic = ethic_authoritarian has_ethic = ethic_fanatic_authoritarian } }
+		}
+		tooltip = {
+			add_modifier = { modifier = bribed_officials days = 3600 }
+		}
+		hidden_effect = { 
+			remove_planet_flag = EaC_planet_general_strike_flag
+		}
+		OWNER = {
+			create_leader = {
+				name = random
+				species = owner_species
+				class = official
+				skill = 1
+				set_age = 30
+				traits = { trait = leader_trait_labor_advocate }
+			}
+			last_created_leader = { assign_leader = ROOT }
+		}
+	}
+}
+
+# Drug Trade #Reflavoring an existing crime event about drug abuse - adding modded flavor
+planet_event = {
+	id = crime.3
+	title = crime.3.name
+	desc = {
+		trigger = {
+			owner = {
+				NOT = { has_policy_flag = private_healthcare }
+			}
+		}
+		text = EaC_civic_mechanic_events.3.desc.has_public_healthcare
+	}
+	desc = {
+		trigger = {
+			owner = {
+				has_policy_flag = private_healthcare
+			}
+		}
+		text = EaC_civic_mechanic_events.3.desc.has_private_healthcare
+	}
+	picture = GFX_evt_dark_alley
+	show_sound = event_criminal_activity
+	location = root
+	is_triggered_only = yes
+
+	pre_triggers = {
+		has_owner = yes
+	}
+
+	trigger = {
+		has_modifier = criminal_underworld
+	}
+
+	immediate = {
+		add_modifier = { modifier = substance_abuse days = 3600 }
+		set_timed_planet_flag = {
+			flag = planet_crime_flag
+			days = 3600
+		}
+		if = {
+			limit = { has_modifier = EaC_labor_movements has_policy_flag = private_healthcare }
+			set_timed_planet_flag = {
+				flag = EaC_planet_general_strike_flag
+				days = 3600
+			}
+		}
+	}
+
+	option = {
+		name = EaC_civic_mechanic_events.3.a
+		trigger = { OWNER = { has_ethic = ethic_gestalt_consciousness } }
+		tooltip = {
+			add_modifier = { modifier = substance_abuse days = 3600 }
+		}
+	}
+	
+	option = {
+		name = EaC_civic_mechanic_events.3.a.has_public_healthcare
+		trigger = { 
+			OWNER = { 
+				NOT = { has_ethic = ethic_gestalt_consciousness } 
+				NOT = { has_policy_flag = private_healthcare }
+			}
+		}
+		tooltip = {
+			add_modifier = { modifier = substance_abuse days = 3600 }
+		}
+	}
+	
+	option = {
+		name = EaC_civic_mechanic_events.3.b.has_private_healthcare
+		trigger = { 
+			has_modifier = EaC_labor_movements
+			OWNER = { 
+				NOT = { has_ethic = ethic_gestalt_consciousness } 
+				has_policy_flag = private_healthcare
+			}
+		}
+		tooltip = {
+			add_modifier = { modifier = substance_abuse days = 3600 }
+		}
+		if = { 
+			limit = { has_modifier = EaC_labor_movements has_policy_flag = private_healthcare }
+			custom_tooltip = EaC_planet_general_strike_flag_tooltip
+		}
+	}
+	
+	option = {
+		name = EaC_civic_mechanic_events.3.b.has_private_healthcare
+		trigger = { 
+			NOT = { has_modifier = EaC_labor_movements }
+			OWNER = { 
+				NOT = { has_ethic = ethic_gestalt_consciousness } 
+				has_policy_flag = private_healthcare
+			}
+		}
+		tooltip = {
+			add_modifier = { modifier = substance_abuse days = 3600 }
+		}
+	}
+	
+	option = {
+		name = EaC_civic_mechanic_events.3.c.not_public_healthcare
+		trigger = { 
+			OWNER = { 
+				NOT = { has_ethic = ethic_gestalt_consciousness } 
+				can_set_policy = { policy = healthcare option = public_healthcare }
+				NOT = { has_policy_flag = public_healthcare }
+			}
+		}
+		tooltip = {
+			add_modifier = { modifier = substance_abuse days = 3600 }
+		}
+		if = { 
+			limit = { has_modifier = EaC_labor_movements has_policy_flag = private_healthcare }
+			hidden_effect = { remove_planet_flag = EaC_planet_general_strike_flag }
+		}
+		OWNER = { set_policy = { policy = healthcare option = public_healthcare cooldown = true } }
+	}
+}
+
+# Enforcers Clash with Strikers
+planet_event = {
+	id = EaC_civic_mechanic_events.3004
+	title = EaC_civic_mechanic_events.4.name
+	desc = {
+		trigger = { NOT = { has_modifier = anticrime_campaign } }
+		text = EaC_civic_mechanic_events.4.desc.not_anticrime_campaign
+	}
+	desc = {
+		trigger = { has_modifier = anticrime_campaign }
+		text = EaC_civic_mechanic_events.4.desc.has_anticrime_campaign
+	}
+	picture = GFX_evt_derelict_interior
+	show_sound = event_ground_battle
+	location = root
+	is_triggered_only = yes
+
+	pre_triggers = {
+		has_owner = yes
+	}
+
+	trigger = {
+		has_modifier = EaC_labor_movements #changed copy of --> criminal_underworld
+	}
+
+	immediate = {
+		add_planet_devastation = 15
+		set_timed_planet_flag = {
+			flag = EaC_planet_general_strike_flag #changed copy of --> planet_crime_flag
+			days = 3600
+		}
+	}
+
+	option = {
+		name = EaC_civic_mechanic_events.4.not_anticrime_campaign.a
+		trigger = { NOT = { has_modifier = anticrime_campaign } }
+		tooltip = {
+			add_planet_devastation = 15
+		}
+		add_modifier = { modifier = "anticrime_campaign" days = -1 }
+		custom_tooltip = EaC_planet_general_strike_flag_tooltip
+	} 
+	
+	option = {
+		name = EaC_civic_mechanic_events.4.not_anticrime_campaign.b
+		trigger = { NOT = { has_modifier = anticrime_campaign } }
+		tooltip = {
+			add_planet_devastation = 15
+		}
+		hidden_effect = { remove_planet_flag = EaC_planet_general_strike_flag }
+	}
+	
+	option = {
+		name = EaC_civic_mechanic_events.4.has_anticrime_campaign.c
+		trigger = { has_modifier = anticrime_campaign }
+		tooltip = {
+			add_planet_devastation = 20
+		}
+		custom_tooltip = EaC_planet_general_strike_flag_tooltip
+	}
+	
+	option = {
+		name = EaC_civic_mechanic_events.4.has_anticrime_campaign.d
+		trigger = { has_modifier = anticrime_campaign }
+		tooltip = {
+			add_planet_devastation = 20
+		}
+		remove_modifier = anticrime_campaign
+		hidden_effect = { remove_planet_flag = EaC_planet_general_strike_flag }
+	}
+}
+
+# Smugglers --> Underground Railroad Reported
+planet_event = {
+	id = EaC_civic_mechanic_events.3005
+	title = EaC_civic_mechanic_events.5.name
+	desc = EaC_civic_mechanic_events.5.desc
+	picture = GFX_evt_ship_offloading_cargo
+	show_sound = event_criminal_activity
+	location = root
+	is_triggered_only = yes
+
+	pre_triggers = {
+		has_owner = yes
+	}
+
+	trigger = {
+		has_modifier = EaC_underground_railroad_activity
+	}
+
+	immediate = {
+		add_modifier = { modifier = EaC_underground_railroad_smuggling days = 3600 }
+		set_timed_planet_flag = {
+			flag = EaC_planet_underground_railroad_flag #was changed to seperate EaC_planet_general_strike_flag type events
+			days = 3600
+		}
+	}
+
+	option = {
+		name = EaC_civic_mechanic_events.5.a
+		tooltip = {
+			add_modifier = { modifier = EaC_underground_railroad_smuggling days = 3600 }
+		}
+	}
+	
+	option = {
+		name = EaC_civic_mechanic_events.5.b
+		tooltip = {
+			add_modifier = { modifier = EaC_underground_railroad_smuggling days = 3600 }
+		}
+	}
+}
+
+# Crime Wave --> Slave Runaway
+planet_event = {
+	id = EaC_civic_mechanic_events.3006
+	title = EaC_civic_mechanic_events.6.name
+	desc = EaC_civic_mechanic_events.6.desc
+	picture = GFX_evt_dark_alley
+	show_sound = event_criminal_activity
+	location = root
+	is_triggered_only = yes
+
+	pre_triggers = {
+		has_owner = yes
+	}
+
+	trigger = {
+		has_modifier = EaC_underground_railroad_activity
+	}
+
+	immediate = {
+		add_modifier = { modifier = EaC_inspired_slave_resistance days = 3600 }	#crime_wave --> EaC_inspired_slave_resistance
+		set_timed_planet_flag = {
+			flag = EaC_planet_underground_railroad_flag
+			days = 3600
+		}
+	}
+
+	option = {
+		name = EaC_civic_mechanic_events.6.a
+		tooltip = {
+			add_modifier = { modifier = EaC_inspired_slave_resistance days = 3600 }
+		}
+	}
+	
+	option = {
+		name = EaC_civic_mechanic_events.6.b
+		tooltip = {
+			add_modifier = { modifier = EaC_inspired_slave_resistance days = 3600 }
+		}
+	}
+}
+
+# Contraband Seized
+planet_event = {
+	id = EaC_civic_mechanic_events.3007
+	title = EaC_civic_mechanic_events.7.name
+	desc = EaC_civic_mechanic_events.7.desc
+	picture = GFX_evt_ship_offloading_cargo
+	show_sound = event_criminal_activity
+	location = root
+	is_triggered_only = yes
+
+	pre_triggers = {
+		has_owner = yes
+	}
+
+	trigger = {
+		has_modifier = EaC_underground_railroad_activity
+	}
+
+	immediate = {
+		set_timed_planet_flag = {
+			flag = EaC_planet_underground_railroad_flag
+			days = 3600
+		}
+	}
+
+	option = {
+		name = EaC_civic_mechanic_events.7.a
+		
+	}
+	
+	option = {
+		name = EaC_civic_mechanic_events.7.b
+		
+	}
+}
+
+# Crime Boss Arrested
+planet_event = {
+	id = EaC_civic_mechanic_events.3008
+	title = EaC_civic_mechanic_events.8.name
+	desc = EaC_civic_mechanic_events.8.desc
+	picture = GFX_evt_dark_alley
+	show_sound = event_criminal_activity
+	location = root
+	is_triggered_only = yes
+
+	pre_triggers = {
+		has_owner = yes	
+	}
+
+	trigger = {
+		has_modifier = EaC_underground_railroad_activity
+	}
+
+	immediate = {
+		set_timed_planet_flag = {
+			flag = EaC_planet_underground_railroad_flag
+			days = 3600
+		}
+		add_modifier = { modifier = EaC_underground_railroad_conductor_arrested days = 3600 }
+	}
+
+	option = {
+		name = EaC_civic_mechanic_events.8.a
+		tooltip = {
+			add_modifier = { modifier = EaC_underground_railroad_conductor_arrested days = 3600 }
+		}
+	}
+	
+	option = {
+		name = EaC_civic_mechanic_events.8.b
+		tooltip = {
+			add_modifier = { modifier = EaC_underground_railroad_conductor_arrested days = 3600 }
+		}
+	}
+}
+
+# Criminal Underworld Appears (High Crime)
+planet_event = {
+	id = EaC_civic_mechanic_events.3040
+	title = EaC_civic_mechanic_events.40.name
+	desc = {
+		trigger = {
+			count_enslaved_species = { count = 1 }
+			owner = {
+				NOT = { has_ethic = ethic_gestalt_consciousness }
+			}
+		}
+		text = EaC_civic_mechanic_events.40.desc
+	}
+	desc = {
+		trigger = {
+			count_enslaved_species = { count = 0 }
+			owner = {
+				NOT = { has_ethic = ethic_gestalt_consciousness }
+			}
+		}
+		text = EaC_civic_mechanic_events.40.desc
+	}
+	#desc = {
+	#	trigger = {
+	#		owner = { has_authority = auth_hive_mind }
+	#	}
+	#	text = EaC_civic_mechanic_events.40.b.desc
+	#}
+	#desc = {
+	#	trigger = {
+	#		owner = { has_authority = auth_machine_intelligence }
+	#	}
+	#	text = EaC_civic_mechanic_events.40.c.desc
+	#}
+	picture = {
+		trigger = {
+			owner = {
+				NOT = { has_ethic = ethic_gestalt_consciousness }
+			}
+		}
+		picture = GFX_evt_dark_alley
+	}
+	#picture = {
+	#	trigger = {
+	#		owner = { has_authority = auth_hive_mind }
+	#	}
+	#	picture = GFX_evt_hive_mind
+	#}
+	#picture = {
+	#	trigger = {
+	#		owner = { has_authority = auth_machine_intelligence }
+	#	}
+	#	picture = GFX_evt_glitchy_matrix
+	#}
+	show_sound = event_criminal_activity
+	location = root
+	is_triggered_only = yes
+
+	pre_triggers = {
+		has_owner = yes	
+	}
+
+	trigger = {
+		count_pops = { 
+			limit = {
+				OR = {
+					has_living_standard = { country = owner type = living_standard_dystopian_society }
+					has_living_standard = { country = owner type = living_standard_stratified }
+					has_living_standard = { country = owner type = living_standard_subsistence }
+				}
+				OR = {
+					pop_has_ethic = ethic_socialism
+					pop_has_ethic = ethic_fanatic_socialism
+					pop_has_ethic = ethic_egalitarian
+					pop_has_ethic = ethic_fanatic_egalitarian
+				} 
+			} 
+			count > 0 
+		}
+		owner = { is_country_type = default }
+		planet_crime >= 30
+		NOR = {
+			has_planet_flag = EaC_labor_movements_event_up
+			has_planet_flag = EaC_underground_railroad_event_up
+			has_modifier = unemployment_benefits
+			#has_modifier = activity_program
+			#has_modifier = standby_mode
+			has_modifier = EaC_labor_movements
+			has_modifier = EaC_underground_railroad_activity
+			#has_modifier = drone_deviancy
+			#has_modifier = drone_corruption
+			has_modifier = EaC_slave_revolts
+			has_modifier = EaC_underground_railroad_expanded
+			has_modifier = EaC_worker_commune
+		}
+		NOT = { has_planet_flag = EaC_labor_movements_disappeared } # Cooldown
+	}
+
+	weight_multiplier = {
+		factor = 1
+		modifier = {
+			factor = 2.0
+			planet_crime >= 50
+		}
+		modifier = {
+			factor = 2.0
+			planet_crime >= 70
+		}
+		modifier = {
+			factor = 2.0
+			planet_crime >= 90
+		}
+	}
+
+	immediate = {
+		set_planet_flag = EaC_labor_movements_event_up
+		set_planet_flag = EaC_underground_railroad_event_up
+		set_timed_planet_flag = { flag = EaC_labor_movements_appeared days = 3600 }
+		if = {
+			limit = { any_owned_pop = { is_enslaved = yes } }
+			set_timed_planet_flag = { flag = EaC_underground_railroad_appeared days = 3600 }
+		}
+		if = {
+			limit = {
+				owner = {
+					NOT = { has_ethic = ethic_gestalt_consciousness }
+				}
+			}
+			add_modifier = { modifier = "EaC_labor_movements" days = -1 }
+			break = yes
+		}
+		if = {
+			limit = {
+				count_pops = { 
+					limit = {
+						OR = {
+							pop_has_ethic = ethic_egalitarian
+							pop_has_ethic = ethic_fanatic_egalitarian
+						} 
+					} 
+					count > 0 
+				}
+				owner = {
+					NOT = { has_ethic = ethic_gestalt_consciousness }
+				}
+				any_owned_pop = { is_enslaved = yes }
+			}
+			add_modifier = { modifier = "EaC_underground_railroad_activity" days = -1 }
+			break = yes
+		}
+		#if = {
+		#	limit = {
+		#		owner = { has_authority = auth_hive_mind }
+		#	}
+		#	add_modifier = { modifier = "drone_deviancy" days = -1 }
+		#	break = yes
+		#}
+		#if = {
+		#	limit = {
+		#		owner = { has_authority = auth_machine_intelligence }
+		#	}
+		#	add_modifier = { modifier = "drone_corruption" days = -1 }
+		#}
+	}
+
+	option = {
+		name = EaC_civic_mechanic_events.40.a
+		trigger = {
+			owner = {
+				NOT = { has_ethic = ethic_gestalt_consciousness }
+			}
+		}
+		tooltip = {
+			add_modifier = { modifier = "EaC_labor_movements" days = -1 }
+			if = {
+				limit = { has_modifier = EaC_underground_railroad_activity }
+				add_modifier = { modifier = "EaC_underground_railroad_activity" days = -1 }
+			}
+		}
+	}
+	#option = {
+	#	name = EaC_civic_mechanic_events.40.b
+	#	trigger = {
+	#		owner = { has_authority = auth_hive_mind }
+	#	}
+	#	tooltip = {
+	#		add_modifier = { modifier = "drone_deviancy" days = -1 }
+	#	}
+	#}
+	#option = {
+	#	name = EaC_civic_mechanic_events.40.c
+	#	trigger = {
+	#		owner = { has_authority = auth_machine_intelligence }
+	#	}
+	#	tooltip = {
+	#		add_modifier = { modifier = "drone_corruption" days = -1 }
+	#	}
+	#}
+
+	after = {
+		hidden_effect = {
+			remove_planet_flag = EaC_labor_movements_event_up
+			remove_planet_flag = EaC_underground_railroad_event_up
+		}
+	}
+}
+
+# Criminal Underworld Disappears (Low Crime) OR (Low Ideology)
+planet_event = {
+	id = EaC_civic_mechanic_events.3041
+	title = EaC_civic_mechanic_events.41.name
+	desc = {
+		trigger = {
+			count_enslaved_species = { count = 1 }
+			owner = {
+				NOT = { has_ethic = ethic_gestalt_consciousness }
+			}
+		}
+		text = EaC_civic_mechanic_events.41.desc
+	}
+	desc = {
+		trigger = {
+			count_enslaved_species = { count = 0 }
+			owner = {
+				NOT = { has_ethic = ethic_gestalt_consciousness }
+			}
+		}
+		text = EaC_civic_mechanic_events.41.desc
+	}
+	#desc = {
+	#	trigger = {
+	#		owner = { has_authority = auth_hive_mind }
+	#	}
+	#	text = EaC_civic_mechanic_events.41.b.desc
+	#}
+	#desc = {
+	#	trigger = {
+	#		owner = { has_authority = auth_machine_intelligence }
+	#	}
+	#	text = EaC_civic_mechanic_events.41.c.desc
+	#}
+	picture = {
+		trigger = {
+			owner = {
+				NOT = { has_ethic = ethic_gestalt_consciousness }
+			}
+		}
+		picture = GFX_evt_dark_alley
+	}
+	#picture = {
+	#	trigger = {
+	#		owner = { has_authority = auth_hive_mind }
+	#	}
+	#	picture = GFX_evt_hive_mind
+	#}
+	#picture = {
+	#	trigger = {
+	#		owner = { has_authority = auth_machine_intelligence }
+	#	}
+	#	picture = GFX_evt_circuitry_modification
+	#}
+	show_sound = event_cityscape
+	location = root
+	is_triggered_only = yes
+
+	pre_triggers = {
+		has_owner = yes
+	}
+
+	trigger = {
+		owner = { 
+			is_country_type = default 
+			NOT = { has_ethic = ethic_gestalt_consciousness }
+		}
+		OR = {
+			has_modifier = EaC_labor_movements
+			has_modifier = EaC_underground_railroad_activity
+			#has_modifier = drone_deviancy
+			#has_modifier = drone_corruption
+			has_modifier = EaC_slave_revolts
+			has_modifier = EaC_underground_railroad_expanded
+			has_modifier = EaC_worker_commune
+		}
+		NOT = { has_planet_flag = EaC_labor_movements_appeared } # Cooldown
+		if = {
+			limit = { planet_crime <= 10 }
+			num_pops > 0
+		}
+		else = {
+			num_pops > 0
+			count_pops = { 
+				limit = {
+					OR = {
+						has_living_standard = { country = owner type = living_standard_dystopian_society }
+						has_living_standard = { country = owner type = living_standard_stratified }
+						has_living_standard = { country = owner type = living_standard_subsistence }
+					}
+					OR = {
+						pop_has_ethic = ethic_socialism
+						pop_has_ethic = ethic_fanatic_socialism
+						pop_has_ethic = ethic_egalitarian
+						pop_has_ethic = ethic_fanatic_egalitarian
+					} 
+				} 
+				count < 1 
+			}
+		}
+	}
+
+	weight_multiplier = {
+		factor = 1
+		modifier = {
+			factor = 2.0
+			count_owned_pop = {
+				limit = {
+					OR = {
+						has_job = enforcer
+						has_job = coordinator
+					}
+				}
+				count > 2
+			}
+		}
+		modifier = {
+			factor = 2.0
+			count_owned_pop = {
+				limit = {
+					OR = {
+						has_job = enforcer
+						has_job = coordinator
+					}
+				}
+				count > 3
+			}
+		}
+		modifier = {
+			factor = 2.0
+			count_owned_pop = {
+				limit = {
+					OR = {
+						has_job = enforcer
+						has_job = coordinator
+					}
+				}
+				count > 4
+			}
+		}
+	}
+
+	option = {
+		name = GOOD
+		if = {
+			limit = { has_modifier = EaC_labor_movements }
+			remove_modifier = EaC_labor_movements
+		}
+		if = {
+			limit = { has_modifier = EaC_underground_railroad_activity }
+			remove_modifier = EaC_underground_railroad_activity
+		}
+		if = {
+			limit = { has_modifier = EaC_slave_revolts }
+			remove_modifier = EaC_slave_revolts
+		}
+		if = {
+			limit = { has_modifier = EaC_underground_railroad_expanded }
+			remove_modifier = EaC_underground_railroad_expanded
+		}
+		if = {
+			limit = { has_modifier = EaC_worker_commune }
+			remove_modifier = EaC_worker_commune
+		}
+		if = {
+			limit = { has_modifier = bribed_officials }
+			remove_modifier = bribed_officials
+		}
+		if = {
+			limit = { has_modifier = substance_abuse }
+			remove_modifier = substance_abuse
+		}
+		if = {
+			limit = { has_modifier = EaC_underground_railroad_smuggling }
+			remove_modifier = EaC_underground_railroad_smuggling
+		}
+		if = {
+			limit = { has_modifier = EaC_inspired_slave_resistance }
+			remove_modifier = EaC_inspired_slave_resistance
+		}
+		if = {
+			limit = { has_modifier = EaC_slave_resistance }
+			remove_modifier = EaC_slave_resistance
+		}
+		if = {
+			limit = { has_modifier = EaC_labor_propaganda }
+			remove_modifier = EaC_labor_propaganda
+		}
+		if = {
+			limit = { has_modifier = EaC_administration_strikes }
+			remove_modifier = EaC_administration_strikes
+		}
+		if = {
+			limit = { has_modifier = EaC_worker_commune_means_of_production }
+			remove_modifier = EaC_worker_commune_means_of_production
+		}
+		# Hive Minds
+		#if = {
+		#	limit = { has_modifier = drone_deviancy }
+		#	remove_modifier = drone_deviancy
+		#}
+		#if = {
+		#	limit = { has_modifier = deviant_interference }
+		#	remove_modifier = deviant_interference
+		#}
+		# Machine Intelligences
+		#if = {
+		#	limit = { has_modifier = drone_corruption }
+		#	remove_modifier = drone_corruption
+		#}
+		#if = {
+		#	limit = { has_modifier = drone_signal_interference }
+		#	remove_modifier = drone_signal_interference
+		#}
+		hidden_effect = {
+			set_timed_planet_flag = { flag = EaC_labor_movements_disappeared days = 3600 }
+		}
+	}
+}
+
+# Crime Gatekeeper
+event = {
+	id = EaC_civic_mechanic_events.3050
+	hide_window = yes
+
+	is_triggered_only = yes
+
+	immediate = {
+		every_playable_country = {
+			limit = {
+				NOT = { has_ethic = ethic_gestalt_consciousness }
+				any_owned_planet = {
+					OR = {
+						has_modifier = EaC_labor_movements
+						has_modifier = EaC_underground_railroad_activity
+						has_modifier = EaC_slave_revolts
+						has_modifier = EaC_underground_railroad_expanded
+						has_modifier = EaC_worker_commune
+					}
+					NOR = {
+						has_planet_flag = EaC_planet_general_strike_flag
+						has_modifier = crime_lord_deal
+					}
+				}
+			}
+			country_event = { id = EaC_civic_mechanic_events.3051 }
+		}
+	}
+}
+
+# Crime Gatekeeper (Normies)
+country_event = {
+	id = EaC_civic_mechanic_events.3051
+	hide_window = yes
+
+	is_triggered_only = yes
+
+	immediate = {
+		random_owned_planet = {
+			limit = {
+				OR = {
+					has_modifier = EaC_labor_movements
+					has_modifier = EaC_underground_railroad_activity
+					has_modifier = EaC_slave_revolts
+					has_modifier = EaC_underground_railroad_expanded
+					has_modifier = EaC_worker_commune
+				}
+				NOR = {
+					has_planet_flag = EaC_planet_general_strike_flag
+					has_modifier = crime_lord_deal
+				}
+			}
+			random_list = {
+				300 = {}
+				#10 = {
+				#	modifier = {
+				#		factor = 0
+				#		NOT = { has_modifier = EaC_labor_movements }
+				#	}
+				#	planet_event = { id = crime.2 days = 1 random = 300 }	#Vanilla event was not cloned, only reflavored
+				#}
+				#10 = {
+				#	modifier = {
+				#		factor = 0
+				#		NOT = { has_modifier = EaC_labor_movements }
+				#	}
+				#	planet_event = { id = crime.3 days = 1 random = 300 }	#Vanilla event was not cloned, only reflavored
+				#}
+				#10 = {
+				#	modifier = {
+				#		factor = 0
+				#		NOT = { has_modifier = EaC_labor_movements }
+				#	}
+				#	planet_event = { id = crime.4 days = 1 random = 300 }
+				#}
+				10 = {
+					modifier = {
+						factor = 0
+						NOT = { has_modifier = EaC_underground_railroad_activity }
+					}
+					planet_event = { id = EaC_civic_mechanic_events.3005 days = 1 random = 300 }
+				}
+				10 = {
+					modifier = {
+						factor = 0
+						NOT = { has_modifier = EaC_underground_railroad_activity }
+					}
+					planet_event = { id = EaC_civic_mechanic_events.3006 days = 1 random = 300 }
+				}
+				10 = {
+					modifier = {
+						factor = 0
+						NOT = { has_modifier = EaC_underground_railroad_activity }
+					}
+					planet_event = { id = EaC_civic_mechanic_events.3007 days = 1 random = 300 }
+				}
+				10 = {
+					modifier = {
+						factor = 0
+						NOT = { has_modifier = EaC_underground_railroad_activity }
+					}
+					planet_event = { id = EaC_civic_mechanic_events.3008 days = 1 random = 300 }
+				}
+				10 = { # Gang Wars
+					modifier = {
+						factor = 0
+						NOT = { has_modifier = EaC_underground_railroad_activity }
+						planet_crime < 50
+					}
+					planet_event = { id = EaC_civic_mechanic_events.3100 days = 1 random = 300 }
+				}
+				10 = { # Center of Drug Trade
+					modifier = {
+						factor = 0
+						NOT = { has_modifier = EaC_underground_railroad_activity }
+						planet_crime < 50
+					}
+					planet_event = { id = EaC_civic_mechanic_events.3200 days = 1 random = 300 }
+				}
+				10 = { # Mob Rule
+					modifier = {
+						factor = 0
+						NOT = { has_modifier = EaC_labor_movements }
+						planet_crime < 50
+					}
+					planet_event = { id = EaC_civic_mechanic_events.3300 days = 1 random = 300 }
+				}
+				10 = {
+					modifier = {
+						factor = 0
+						NOT = { has_modifier = EaC_slave_revolts }
+					}
+					planet_event = { id = EaC_civic_mechanic_events.3101 days = 1 random = 300 }
+				}
+				10 = {
+					modifier = {
+						factor = 0
+						NOT = { has_modifier = EaC_slave_revolts }
+					}
+					planet_event = { id = EaC_civic_mechanic_events.3102 days = 1 random = 300 }
+				}
+				10 = {
+					modifier = {
+						factor = 0
+						NOT = { has_modifier = EaC_slave_revolts }
+					}
+					planet_event = { id = EaC_civic_mechanic_events.3103 days = 1 random = 300 }
+				}
+				10 = {
+					modifier = {
+						factor = 0
+						NOT = { has_modifier = EaC_slave_revolts }
+					}
+					planet_event = { id = EaC_civic_mechanic_events.3104 days = 1 random = 300 }
+				}
+				10 = {
+					modifier = {
+						factor = 0
+						NOT = { has_modifier = EaC_underground_railroad_expanded }
+					}
+					planet_event = { id = EaC_civic_mechanic_events.3201 days = 1 random = 300 }
+				}
+				10 = {
+					modifier = {
+						factor = 0
+						NOT = { has_modifier = EaC_underground_railroad_expanded }
+					}
+					planet_event = { id = EaC_civic_mechanic_events.3202 days = 1 random = 300 }
+				}
+				10 = {
+					modifier = {
+						factor = 0
+						NOT = { has_modifier = EaC_underground_railroad_expanded }
+					}
+					planet_event = { id = EaC_civic_mechanic_events.3203 days = 1 random = 300 }
+				}
+				10 = {
+					modifier = {
+						factor = 0
+						NOT = { has_modifier = EaC_underground_railroad_expanded }
+					}
+					planet_event = { id = EaC_civic_mechanic_events.3204 days = 1 random = 300 }
+				}
+				10 = {
+					modifier = {
+						factor = 0
+						NOT = { has_modifier = EaC_worker_commune }
+					}
+					planet_event = { id = EaC_civic_mechanic_events.3301 days = 1 random = 300 }
+				}
+				10 = {
+					modifier = {
+						factor = 0
+						NOT = { has_modifier = EaC_worker_commune }
+					}
+					planet_event = { id = EaC_civic_mechanic_events.3302 days = 1 random = 300 }
+				}
+				10 = {
+					modifier = {
+						factor = 0
+						OR = {
+							NOT = { has_modifier = EaC_worker_commune }
+							NOT = { exists = leader }
+							owner = { has_country_flag = EaC_worker_commune_killed_governor }
+						}
+					}
+					modifier = {
+						factor = 0
+						exists = leader
+						leader = {
+							OR = {
+								has_chosen_one_leader_trait = yes
+								has_leader_flag = legendary_leader
+							}
+						}
+					}
+					planet_event = { id = EaC_civic_mechanic_events.3303 days = 1 random = 300 }
+				}
+				10 = {
+					modifier = {
+						factor = 0
+						NOT = { has_modifier = EaC_worker_commune }
+					}
+					planet_event = { id = EaC_civic_mechanic_events.3304 days = 1 random = 300 }
+				}
+			}
+		}
+	}
+}
+
+#Underground Railroad Events - Slave Revolt in System
+
+# Gang Wars --> Slave Revolt
+planet_event = {
+	id = EaC_civic_mechanic_events.3100
+	title = EaC_civic_mechanic_events.100.name
+	desc = EaC_civic_mechanic_events.100.desc
+	picture = GFX_evt_dark_alley
+	show_sound = event_criminal_activity
+	location = root
+	is_triggered_only = yes
+
+	pre_triggers = {
+		has_owner = yes
+	}
+
+	trigger = {
+		has_modifier = EaC_underground_railroad_activity
+		NOT = { has_modifier = EaC_slave_revolts }
+	}
+
+	immediate = {
+		remove_modifier = EaC_underground_railroad_activity
+		add_modifier = { modifier = "EaC_slave_revolts" days = -1 } #gang_wars changed to --> EaC_slave_revolts
+	}
+
+	option = {
+		name = EaC_civic_mechanic_events.100.a
+		tooltip = {
+			remove_modifier = EaC_underground_railroad_activity
+			add_modifier = { modifier = "EaC_slave_revolts" days = -1 }
+		}
+	}
+}
+
+# Gangs Ambush Enforcers
+planet_event = {
+	id = EaC_civic_mechanic_events.3101
+	title = EaC_civic_mechanic_events.101.name
+	desc = EaC_civic_mechanic_events.101.desc
+	picture = GFX_evt_derelict_interior
+	show_sound = event_ground_battle
+	location = root
+	is_triggered_only = yes
+
+	pre_triggers = {
+		has_owner = yes
+	}
+
+	trigger = {
+		has_modifier = EaC_slave_revolts
+		any_owned_pop = { has_job = enforcer }
+	}
+
+	immediate = {
+		random_owned_pop = {
+			limit = { has_job = enforcer }
+			kill_pop = yes
+		}
+	}
+
+	option = {
+		name = EaC_civic_mechanic_events.200.a
+		custom_tooltip = EaC_civic_mechanic_events.101.tooltip
+	}
+}
+
+# Gang Warfare Spreads into Space
+planet_event = {
+	id = EaC_civic_mechanic_events.3102
+	title = EaC_civic_mechanic_events.102.name
+	desc = EaC_civic_mechanic_events.102.desc
+	picture = GFX_evt_pirates_attacking_cargo
+	show_sound = event_space_battle
+	location = root
+	is_triggered_only = yes
+
+	pre_triggers = {
+		has_owner = yes
+	}
+
+	trigger = {
+		owner = {
+			#has_country_flag = birth_of_piracy						#Vanilla code tieing in piracy, however this event is unrelated to piracy
+			NOT = { has_country_flag = EaC_slave_revolt_spawned }	#crime_pirates_spawned --> EaC_slave_revolt_spawned
+		}
+		has_modifier = EaC_slave_revolts
+	}
+
+	immediate = {
+		owner = {
+			set_timed_country_flag = { flag = EaC_slave_revolt_spawned days = 3600 }
+			owner_species = { save_event_target_as = owner_species }
+		}
+		solar_system = {
+			save_event_target_as = EaC_slave_revolt_system
+			EaC_create_normal_slave_revolt_country = yes
+			EaC_create_slave_revolt_fleet = yes
+		}
+	}
+
+	option = {
+		name = EaC_civic_mechanic_events.200.a
+		custom_tooltip = EaC_civic_mechanic_events.102.tooltip
+	}
+}
+
+# Pitched Battle
+planet_event = {
+	id = EaC_civic_mechanic_events.3103
+	title = EaC_civic_mechanic_events.103.name
+	desc = EaC_civic_mechanic_events.103.desc
+	picture = GFX_evt_derelict_interior
+	show_sound = event_ground_battle
+	location = root
+	is_triggered_only = yes
+
+	pre_triggers = {
+		has_owner = yes
+	}
+
+	trigger = {
+		has_modifier = EaC_slave_revolts
+	}
+
+	immediate = {
+		if = {
+			limit = { any_country = { has_policy_flag = refugees_allowed } } #if refugees_allowed country exists
+			random_country = {
+				limit = { has_policy_flag = refugees_allowed }
+				random_owned_planet = {
+					resettle_pop = { pop = ROOT.random_owned_pop planet = THIS }
+					resettle_pop = { pop = ROOT.random_owned_pop planet = THIS }
+					resettle_pop = { pop = ROOT.random_owned_pop planet = THIS }
+				}
+				#an event then fires notifying the country who got the pops
+			}
+		}
+		else = {
+			random_owned_pop = { kill_pop = yes }	
+			random_owned_pop = { kill_pop = yes }
+			random_owned_pop = { kill_pop = yes }
+		}
+		add_planet_devastation = 15
+	}
+
+	option = {
+		name = DISCONCERTING
+		custom_tooltip = EaC_civic_mechanic_events.103.tooltip
+		tooltip = { add_planet_devastation = 15 }
+	}
+}
+
+# Traders Steer Clear
+planet_event = {
+	id = EaC_civic_mechanic_events.3104
+	title = EaC_civic_mechanic_events.104.name
+	desc = EaC_civic_mechanic_events.104.desc
+	picture = GFX_evt_cargoship_caravan
+	show_sound = event_criminal_activity
+	location = root
+	is_triggered_only = yes
+
+	pre_triggers = {
+		has_owner = yes
+	}
+
+	trigger = {
+		has_modifier = EaC_slave_revolts
+	}
+
+	immediate = {
+		add_modifier = { modifier = "travel_advisory" days = 3600 }
+		set_timed_planet_flag = {
+			flag = EaC_planet_general_strike_flag
+			days = 3600
+		}
+	}
+
+	option = {
+		name = WORRYING
+		tooltip = {
+			add_modifier = { modifier = "travel_advisory" days = 3600 }
+		}
+	}
+}
+
+# Center of Drug Trade --> Underground Railroad Expands
+planet_event = {
+	id = EaC_civic_mechanic_events.3200
+	title = EaC_civic_mechanic_events.200.name
+	desc = EaC_civic_mechanic_events.200.desc
+	picture = GFX_evt_smugglers_in_bar
+	show_sound = event_criminal_activity
+	location = root
+	is_triggered_only = yes
+
+	pre_triggers = {
+		has_owner = yes
+	}
+
+	trigger = {
+		has_modifier = EaC_underground_railroad_activity
+		NOT = { has_modifier = EaC_underground_railroad_expanded }
+	}
+
+	immediate = {
+		remove_modifier = EaC_underground_railroad_activity
+		add_modifier = { modifier = "EaC_underground_railroad_expanded" days = -1 }
+	}
+
+	option = {
+		name = EaC_civic_mechanic_events.200.a
+		tooltip = {
+			add_modifier = { modifier = "EaC_underground_railroad_expanded" days = -1 }
+		}
+	}
+}
+
+# Drug Related Deaths
+planet_event = {
+	id = EaC_civic_mechanic_events.3201
+	title = EaC_civic_mechanic_events.201.name
+	desc = EaC_civic_mechanic_events.201.desc
+	picture = GFX_evt_disease_outbreak
+	show_sound = event_life_support_fail
+	location = root
+	is_triggered_only = yes
+
+	pre_triggers = {
+		has_owner = yes
+	}
+
+	trigger = {
+		has_modifier = EaC_underground_railroad_expanded
+		num_pops > 4
+	}
+
+
+	immediate = {
+		if = {
+			limit = { any_country = { has_policy_flag = refugees_allowed } } #if refugees_allowed country exists
+			random_country = {
+				limit = { has_policy_flag = refugees_allowed }
+				random_owned_planet = {
+					resettle_pop = { pop = ROOT.random_owned_pop planet = THIS }
+					resettle_pop = { pop = ROOT.random_owned_pop planet = THIS }
+					resettle_pop = { pop = ROOT.random_owned_pop planet = THIS }
+					resettle_pop = { pop = ROOT.random_owned_pop planet = THIS }
+				}
+				#an event then fires notifying the country who got the pops
+			}
+		}
+		else = {
+			random_owned_pop = { kill_pop = yes }	
+			random_owned_pop = { kill_pop = yes }
+			random_owned_pop = { kill_pop = yes }
+			random_owned_pop = { kill_pop = yes }
+		}
+	}
+
+	option = {
+		name = WORRYING
+		custom_tooltip = EaC_civic_mechanic_events.201.tooltip
+	}
+}
+
+# Drug Cartels Clash
+planet_event = {
+	id = EaC_civic_mechanic_events.3202
+	title = EaC_civic_mechanic_events.202.name
+	desc = EaC_civic_mechanic_events.202.desc
+	picture = GFX_evt_derelict_interior
+	show_sound = event_ground_battle
+	location = root
+	is_triggered_only = yes
+
+	pre_triggers = {
+		has_owner = yes
+	}
+
+	trigger = {
+		has_modifier = EaC_underground_railroad_expanded
+	}
+
+	immediate = {
+		add_modifier = { modifier = "EaC_slave_resistance" days = 3600 }
+		set_timed_planet_flag = {
+			flag = EaC_planet_general_strike_flag
+			days = 3600
+		}
+	}
+
+	option = {
+		name = EaC_civic_mechanic_events.203.a
+		tooltip = {
+			add_modifier = { modifier = "EaC_slave_resistance" days = 3600 }
+		}
+	}
+}
+
+# Drug Smuggler Crash
+planet_event = {
+	id = EaC_civic_mechanic_events.3203
+	title = EaC_civic_mechanic_events.203.name
+	desc = EaC_civic_mechanic_events.203.desc
+	picture = GFX_evt_nuclear_explosion
+	show_sound = event_super_explosion
+	location = root
+	is_triggered_only = yes
+
+	pre_triggers = {
+		has_owner = yes
+	}
+
+	trigger = {
+		has_modifier = EaC_underground_railroad_expanded
+	}
+
+	immediate = {
+		random_owned_pop = { kill_pop = yes }
+		random_owned_pop = { kill_pop = yes }
+		random_owned_pop = { kill_pop = yes }
+		add_planet_devastation = 15
+	}
+
+	option = {
+		name = EaC_civic_mechanic_events.203.a
+		custom_tooltip = EaC_civic_mechanic_events.103.tooltip
+		tooltip = { add_planet_devastation = 15 }
+	}
+}
+
+# Drug Trade Continues
+planet_event = {
+	id = EaC_civic_mechanic_events.3204
+	title = EaC_civic_mechanic_events.204.name
+	desc = EaC_civic_mechanic_events.204.desc
+	picture = GFX_evt_dark_alley
+	show_sound = event_criminal_activity
+	location = root
+	is_triggered_only = yes
+
+	pre_triggers = {
+		has_owner = yes
+	}
+
+	trigger = {
+		has_modifier = EaC_underground_railroad_expanded
+		owner = {
+			has_country_resource = { type = exotic_gases amount > 10 }
+		}
+	}
+
+	immediate = {
+		owner = {
+			add_resource = { exotic_gases = -10 }
+		}
+	}
+
+	option = {
+		name = EaC_civic_mechanic_events.204.a
+		tooltip = {
+			owner = {
+				add_resource = { exotic_gases = -10 }
+			}
+		}
+	}
+}
+
+# Mob Rule
+planet_event = {
+	id = EaC_civic_mechanic_events.3300
+	title = EaC_civic_mechanic_events.300.name
+	desc = EaC_civic_mechanic_events.300.desc
+	picture = GFX_evt_dark_alley
+	show_sound = event_criminal_activity
+	location = root
+	is_triggered_only = yes
+
+	pre_triggers = {
+		has_owner = yes
+	}
+
+	trigger = {
+		has_modifier = EaC_labor_movements
+		NOT = { has_modifier = EaC_worker_commune }
+	}
+
+	immediate = {
+		remove_modifier = EaC_labor_movements
+		add_modifier = { modifier = "EaC_worker_commune" days = -1 }	#mob_rule replaced with --> EaC_worker_commune
+	}
+
+	option = {
+		name = EaC_civic_mechanic_events.300.a
+		tooltip = {
+			remove_modifier = EaC_labor_movements
+			add_modifier = { modifier = "EaC_worker_commune" days = -1 }
+		}
+	}
+}
+
+# Protection Racket
+planet_event = {
+	id = EaC_civic_mechanic_events.3301
+	title = EaC_civic_mechanic_events.301.name
+	desc = EaC_civic_mechanic_events.301.desc
+	picture = GFX_evt_dark_alley
+	show_sound = event_criminal_activity
+	location = root
+	is_triggered_only = yes
+
+	pre_triggers = {
+		has_owner = yes
+	}
+
+	trigger = {
+		has_modifier = EaC_worker_commune
+	}
+
+	immediate = {
+		add_modifier = { modifier = "EaC_labor_propaganda" days = 3600 }	#protection_racket changed to --> EaC_labor_propaganda
+		set_timed_planet_flag = {
+			flag = EaC_planet_general_strike_flag
+			days = 3600
+		}
+	}
+
+	option = {
+		name = EaC_civic_mechanic_events.301.a
+		tooltip = {
+			add_modifier = { modifier = "EaC_labor_propaganda" days = 3600 }
+		}
+	}
+}
+
+# Corrupt Administration
+planet_event = {
+	id = EaC_civic_mechanic_events.3302
+	title = EaC_civic_mechanic_events.302.name
+	desc = EaC_civic_mechanic_events.302.desc
+	picture = GFX_evt_dark_alley
+	show_sound = event_criminal_activity
+	location = root
+	is_triggered_only = yes
+
+	pre_triggers = {
+		has_owner = yes
+	}
+
+	trigger = {
+		has_modifier = EaC_worker_commune
+	}
+
+	immediate = {
+		add_modifier = { modifier = "EaC_administration_strikes" days = 3600 }		#corrupt_administration changed to --> EaC_administration_strikes
+		set_timed_planet_flag = {
+			flag = EaC_planet_general_strike_flag
+			days = 3600
+		}
+	}
+
+	option = {
+		name = EaC_civic_mechanic_events.302.a
+		tooltip = {
+			add_modifier = { modifier = "EaC_administration_strikes" days = 3600 }
+		}
+	}
+}
+
+# Gangsters Assassinate Governor
+planet_event = {
+	id = EaC_civic_mechanic_events.3303
+	title = EaC_civic_mechanic_events.303.name
+	desc = EaC_civic_mechanic_events.303.desc
+	picture = GFX_evt_dark_alley
+	show_sound = event_criminal_activity
+	location = root
+	is_triggered_only = yes
+
+	pre_triggers = {
+		has_owner = yes
+	}
+
+	trigger = {
+		has_modifier = EaC_worker_commune
+		exists = leader
+	}
+
+	immediate = {
+		leader = { save_event_target_as = governor_target }
+		
+		owner = { set_country_flag = EaC_worker_commune_killed_governor }	#gangsters_killed_governor changed to --> EaC_worker_commune_killed_governor
+	}
+
+	option = {
+		name = EaC_civic_mechanic_events.303.a
+		leader = { kill_leader = { show_notification = no } }
+	}
+}
+
+# Gangsters Take Control of Trade
+planet_event = {
+	id = EaC_civic_mechanic_events.3304
+	title = EaC_civic_mechanic_events.304.name
+	desc = EaC_civic_mechanic_events.304.desc
+	picture = GFX_evt_ship_offloading_cargo
+	show_sound = event_criminal_activity
+	location = root
+	is_triggered_only = yes
+
+	pre_triggers = {
+		has_owner = yes
+	}
+
+	trigger = {
+		has_modifier = EaC_worker_commune
+	}
+
+	immediate = {
+		add_modifier = { modifier = "EaC_worker_commune_means_of_production" days = 3600 }			#trade_pilfering changed to --> EaC_worker_commune_means_of_production
+		set_timed_planet_flag = {
+			flag = EaC_planet_general_strike_flag
+			days = 3600
+		}
+	}
+
+	option = {
+		name = EaC_civic_mechanic_events.40.a
+		tooltip = {
+			add_modifier = { modifier = "EaC_worker_commune_means_of_production" days = 3600 }
+		}
+	}
+}
+
+# Criminal Branch Office Closes
+event = {
+	id = EaC_civic_mechanic_events.31000
+	hide_window = yes
+
+	is_triggered_only = yes
+
+	trigger = {
+		any_playable_country = {
+			any_owned_planet = {
+				has_branch_office = yes
+				branch_office_owner = {
+					is_criminal_syndicate = yes
+					NOT = { has_country_flag = criminal_branch_closed_cooldown }
+				}
+				planet_crime < 1
+			}
+		}
+	}
+
+	immediate = {
+		random_list = {
+			19 = {}
+			1 = {
+				random_playable_country = {
+					limit = {
+						any_owned_planet = {
+							has_branch_office = yes
+							branch_office_owner = {
+								is_criminal_syndicate = yes
+								NOT = { has_country_flag = criminal_branch_closed_cooldown }
+							}
+							planet_crime < 1
+						}
+					}
+					random_owned_planet = {
+						limit = {
+							has_branch_office = yes
+							branch_office_owner = {
+								is_criminal_syndicate = yes
+								NOT = { has_country_flag = criminal_branch_closed_cooldown }
+							}
+							planet_crime < 1
+						}
+						branch_office_owner = { save_event_target_as = office_owner }
+						planet_event = { id = EaC_civic_mechanic_events.31001 days = 360 random = 40 }
+					}
+				}
+			}
+		}
+	}
+}
+
+# Criminal Branch Office Closes (Planet Owner)
+planet_event = {
+	id = EaC_civic_mechanic_events.31001
+	title = EaC_civic_mechanic_events.1001.name
+	desc = EaC_civic_mechanic_events.1001.desc
+	picture = GFX_evt_dark_alley
+	show_sound = event_criminal_activity
+	location = root
+
+	is_triggered_only = yes
+
+	trigger = {
+		planet_crime < 1
+		has_branch_office = yes
+		branch_office_owner = {
+			is_criminal_syndicate = yes
+			NOT = { has_country_flag = criminal_branch_closed_cooldown }
+		}
+	}
+
+	immediate = {
+		# 10 year cooldown
+		branch_office_owner = {
+			set_timed_country_flag = { flag = criminal_branch_closed_cooldown days = 3600 }
+		}
+	}
+
+	option = {
+		name = EaC_civic_mechanic_events.1001.a
+		close_branch_office = yes
+		hidden_effect = {
+			set_timed_planet_flag = { flag = criminal_branch_closed_cooldown_planet@event_target:office_owner days = 3600 }
+			 event_target:office_owner = {
+				country_event = { id = EaC_civic_mechanic_events.31002 }
+			}
+		}
+	}
+}
+
+# Criminal Branch Office Closes (Office Owner)
+country_event = {
+	id = EaC_civic_mechanic_events.31002
+	title = EaC_civic_mechanic_events.1002.name
+	desc = EaC_civic_mechanic_events.1002.desc
+	picture = GFX_evt_dark_alley
+	show_sound = event_criminal_activity
+	location = from
+
+	is_triggered_only = yes
+
+	option = {
+		name = UNFORTUNATE
+		custom_tooltip = EaC_civic_mechanic_events.1002.tooltip
 	}
 }
