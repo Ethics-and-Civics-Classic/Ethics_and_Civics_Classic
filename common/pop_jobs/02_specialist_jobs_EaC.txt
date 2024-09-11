@@ -911,6 +911,19 @@ duelist = {
 		planet_amenities_add = 1
 		mult = value:scripted_modifier_councilor_level_mult|MODIFIER|pop_job_amenities_mult|TYPE|councilor_warrior_culture|
 	}
+	
+	triggered_planet_modifier = {
+		potential = {
+			owner = { 
+				OR = {
+					has_valid_civic = civic_consumerism 			#Modded
+					has_valid_civic = civic_consumerism_corporate	#Modded
+				}
+			}
+		}
+		planet_amenities_add = 2												#Modded
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|	#Modded
+	}
 
 	triggered_planet_modifier = {
 		potential = {
@@ -2003,6 +2016,109 @@ artisan = {
 			}
 		}
 	}
+}
+
+artificer = {
+	category = specialist
+	condition_string = SPECIALIST_JOB_TRIGGER
+	building_icon = building_factory_1
+	clothes_texture_index = 3
+
+	possible_pre_triggers = {
+		has_owner = yes
+		is_being_purged = no
+		is_being_assimilated = no
+	}
+
+	possible_precalc = can_fill_specialist_job
+	possible = {
+		hidden_trigger = { exists = owner }
+		owner = {
+			is_gestalt = no
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			always = yes
+		}
+		trade_value_add = 2
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_trade_mult|
+	}
+
+
+	resources = {
+		category = planet_artisans
+		produces = {
+			consumer_goods = 7
+		}
+		upkeep = {
+			minerals = 6
+		}
+		produces = {
+			trigger = {
+				planet = {
+					has_planet_flag = has_produce_requisitorium
+					exists = owner.overlord
+					owner.overlord = { country_uses_consumer_goods = yes }
+				}
+			}
+			consumer_goods = @requisitorium_consumer_goods_reduction
+		}
+		produces = {
+			trigger = {
+				exists = owner											#Modded
+				owner = { 
+					OR = {
+						has_valid_civic = civic_consumerism 			#Modded
+						has_valid_civic = civic_consumerism_corporate	#Modded
+					}
+				}			
+			}
+			consumer_goods = 1											#Modded
+		}
+		upkeep = {
+			trigger = {
+				planet = {
+					has_planet_flag = has_produce_requisitorium
+					exists = owner.overlord
+					owner.overlord = { country_uses_consumer_goods = yes }
+				}
+			}
+			minerals = 1
+		}
+	}
+
+	overlord_resources = {
+		category = planet_requisitioned_consumer_goods
+		produces = {
+			trigger = {
+				planet = {
+					has_planet_flag = has_produce_requisitorium
+					exists = owner.overlord
+					owner.overlord = { country_uses_consumer_goods = yes }
+				}
+			}
+			consumer_goods = @requisitorium_consumer_goods_overlord
+		}
+	}
+
+	weight = {
+		weight = @specialist_job_weight
+		mult = value:job_weights_multiple_resources_modifier|JOB|artificer|RESOURCE1|consumer_goods|WEIGHT1|0.8|RESOURCE2|engineering_research|WEIGHT2|0.2|
+		mult = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_trade_mult|
+		modifier = {
+			factor = 2
+			is_enslaved = yes
+			can_take_servant_job = no
+		}
+		modifier = {
+			factor = 5
+			has_job = artificer
+		}
+	}
+
+	inline_script = "jobs/automodding_priority_trade"
 }
 
 #Trader - Entirely Modded
