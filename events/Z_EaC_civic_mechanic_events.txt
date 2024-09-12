@@ -8135,7 +8135,10 @@ planet_event = {
 			days = 3600
 		}
 		if = {
-			limit = { has_modifier = EaC_labor_movements has_policy_flag = private_healthcare }
+			limit = { 
+				has_modifier = EaC_labor_movements 
+				OWNER = { has_policy_flag = private_healthcare }
+			}
 			set_timed_planet_flag = {
 				flag = EaC_planet_general_strike_flag
 				days = 3600
@@ -8177,7 +8180,10 @@ planet_event = {
 			add_modifier = { modifier = substance_abuse days = 3600 }
 		}
 		if = { 
-			limit = { has_modifier = EaC_labor_movements has_policy_flag = private_healthcare }
+			limit = { 
+				has_modifier = EaC_labor_movements 
+				OWNER = { has_policy_flag = private_healthcare }
+			}
 			custom_tooltip = EaC_planet_general_strike_flag_tooltip
 		}
 	}
@@ -8209,10 +8215,13 @@ planet_event = {
 			add_modifier = { modifier = substance_abuse days = 3600 }
 		}
 		if = { 
-			limit = { has_modifier = EaC_labor_movements has_policy_flag = private_healthcare }
+			limit = { 
+				has_modifier = EaC_labor_movements 
+				OWNER = { has_policy_flag = private_healthcare }
+			}
 			hidden_effect = { remove_planet_flag = EaC_planet_general_strike_flag }
 		}
-		OWNER = { set_policy = { policy = healthcare option = public_healthcare cooldown = true } }
+		OWNER = { set_policy = { policy = healthcare option = public_healthcare cooldown = yes } }
 	}
 }
 
@@ -8510,7 +8519,10 @@ planet_event = {
 	}
 
 	trigger = {
-		count_pops = { 
+		owner = {
+			NOT = { has_ethic = ethic_gestalt_consciousness }
+		}
+		count_owned_pop = {
 			limit = {
 				OR = {
 					has_living_standard = { country = owner type = living_standard_dystopian_society }
@@ -8561,26 +8573,6 @@ planet_event = {
 	immediate = {
 		set_planet_flag = EaC_labor_movements_event_up
 		set_timed_planet_flag = { flag = EaC_labor_movements_appeared days = 3600 }
-		count_pops = {
-			limit = {
-				OR = {
-					has_living_standard = { country = owner type = living_standard_dystopian_society }
-					has_living_standard = { country = owner type = living_standard_stratified }
-					has_living_standard = { country = owner type = living_standard_subsistence }
-				}
-				OR = {
-					pop_has_ethic = ethic_socialism
-					pop_has_ethic = ethic_fanatic_socialism
-					pop_has_ethic = ethic_egalitarian
-					pop_has_ethic = ethic_fanatic_egalitarian
-				} 
-				is_enslaved = no
-			} 
-			count > 0 
-		}
-		owner = {
-			NOT = { has_ethic = ethic_gestalt_consciousness }
-		}
 		add_modifier = { modifier = "EaC_labor_movements" days = -1 }
 		break = yes
 		#if = {
@@ -8698,8 +8690,11 @@ planet_event = {
 	}
 
 	trigger = {
+		owner = {
+			NOT = { has_ethic = ethic_gestalt_consciousness }
+		}
 		any_owned_pop = { is_enslaved = yes }
-		count_pops = { 
+		count_owned_pop = { 
 			limit = {
 				OR = {
 					pop_has_ethic = ethic_egalitarian
@@ -8741,15 +8736,8 @@ planet_event = {
 	immediate = {
 		set_planet_flag = EaC_underground_railroad_event_up
 		set_timed_planet_flag = { flag = EaC_underground_railroad_appeared days = 3600 }
-		if = {
-			limit = {
-				owner = {
-					NOT = { has_ethic = ethic_gestalt_consciousness }
-				}
-			}
-			add_modifier = { modifier = "EaC_underground_railroad_activity" days = -1 }
-			break = yes
-		}
+		add_modifier = { modifier = "EaC_underground_railroad_activity" days = -1 }
+		break = yes
 		#if = {
 		#	limit = {
 		#		owner = { has_authority = auth_hive_mind }
@@ -8801,8 +8789,9 @@ planet_event = {
 		}
 	}
 }
-
-# Criminal Underworld Disappears (Low Crime) OR (Low Ideology)	- Labor Movements
+###################################################################################
+# Criminal Underworld Disappears (Low Crime) OR (Low Ideology)	- Labor Movements #
+###################################################################################
 planet_event = {
 	id = EaC_civic_mechanic_events.30411
 	title = EaC_civic_mechanic_events.41.name
@@ -8810,7 +8799,7 @@ planet_event = {
 	desc = {
 		trigger = {
 			count_enslaved_species = { count = 1 }
-			count_pops = { 
+			count_owned_pop = { 
 				limit = {
 					OR = {
 						has_living_standard = { country = owner type = living_standard_dystopian_society }
@@ -8836,7 +8825,7 @@ planet_event = {
 	desc = {
 		trigger = {
 			count_enslaved_species = { count = 0 }
-			count_pops = { 
+			count_owned_pop = { 
 				limit = {
 					OR = {
 						has_living_standard = { country = owner type = living_standard_dystopian_society }
@@ -8863,7 +8852,7 @@ planet_event = {
 	desc = {
 		trigger = {
 			count_enslaved_species = { count = 1 }
-			count_pops = { 
+			count_owned_pop = { 
 				limit = {
 					OR = {
 						has_living_standard = { country = owner type = living_standard_dystopian_society }
@@ -8889,7 +8878,7 @@ planet_event = {
 	desc = {
 		trigger = {
 			count_enslaved_species = { count = 0 }
-			count_pops = { 
+			count_owned_pop = { 
 				limit = {
 					OR = {
 						has_living_standard = { country = owner type = living_standard_dystopian_society }
@@ -8959,21 +8948,37 @@ planet_event = {
 		}
 		OR = {
 			has_modifier = EaC_labor_movements
-			has_modifier = EaC_underground_railroad_activity
+			#has_modifier = EaC_underground_railroad_activity
 			#has_modifier = drone_deviancy
 			#has_modifier = drone_corruption
-			has_modifier = EaC_slave_revolts
-			has_modifier = EaC_underground_railroad_expanded
+			#has_modifier = EaC_slave_revolts
+			#has_modifier = EaC_underground_railroad_expanded
 			has_modifier = EaC_worker_commune
 		}
-		NOT = { has_planet_flag = EaC_labor_movements_appeared } # Cooldown
-		if = {
-			limit = { planet_crime <= 10 }
-			num_pops > 0
+		OR = {
+			NOT = { has_planet_flag = EaC_labor_movements_appeared } 	# Cooldown that lasts 3600 days.
+			count_owned_pop = { #This should be checking that the nobody has labor ideology while living in poor conditions. Excludes slaves from count.
+				limit = {
+					OR = {
+						has_living_standard = { country = owner type = living_standard_dystopian_society }
+						has_living_standard = { country = owner type = living_standard_stratified }
+						has_living_standard = { country = owner type = living_standard_subsistence }
+					}
+					OR = {
+						pop_has_ethic = ethic_socialism
+						pop_has_ethic = ethic_fanatic_socialism
+						pop_has_ethic = ethic_egalitarian
+						pop_has_ethic = ethic_fanatic_egalitarian
+					} 
+					is_enslaved = no
+				} 
+				count = 0 
+			}
 		}
-		else = {
-			num_pops > 0
-			count_pops = { 
+		num_pops > 0
+		OR = {
+			planet_crime <= 10
+			count_owned_pop = { #This should be checking that the nobody has labor ideology while living in poor conditions. Excludes slaves from count.
 				limit = {
 					OR = {
 						has_living_standard = { country = owner type = living_standard_dystopian_society }
@@ -9039,42 +9044,42 @@ planet_event = {
 			limit = { has_modifier = EaC_labor_movements }
 			remove_modifier = EaC_labor_movements
 		}
-		if = {
-			limit = { has_modifier = EaC_underground_railroad_activity }
-			remove_modifier = EaC_underground_railroad_activity
-		}
-		if = {
-			limit = { has_modifier = EaC_slave_revolts }
-			remove_modifier = EaC_slave_revolts
-		}
-		if = {
-			limit = { has_modifier = EaC_underground_railroad_expanded }
-			remove_modifier = EaC_underground_railroad_expanded
-		}
+		#if = {
+		#	limit = { has_modifier = EaC_underground_railroad_activity }
+		#	remove_modifier = EaC_underground_railroad_activity
+		#}
+		#if = {
+		#	limit = { has_modifier = EaC_slave_revolts }
+		#	remove_modifier = EaC_slave_revolts
+		#}
+		#if = {
+		#	limit = { has_modifier = EaC_underground_railroad_expanded }
+		#	remove_modifier = EaC_underground_railroad_expanded
+		#}
 		if = {
 			limit = { has_modifier = EaC_worker_commune }
 			remove_modifier = EaC_worker_commune
 		}
-		if = {
-			limit = { has_modifier = bribed_officials }
-			remove_modifier = bribed_officials
-		}
-		if = {
-			limit = { has_modifier = substance_abuse }
-			remove_modifier = substance_abuse
-		}
-		if = {
-			limit = { has_modifier = EaC_underground_railroad_smuggling }
-			remove_modifier = EaC_underground_railroad_smuggling
-		}
-		if = {
-			limit = { has_modifier = EaC_inspired_slave_resistance }
-			remove_modifier = EaC_inspired_slave_resistance
-		}
-		if = {
-			limit = { has_modifier = EaC_slave_resistance }
-			remove_modifier = EaC_slave_resistance
-		}
+		#if = {
+		#	limit = { has_modifier = bribed_officials }
+		#	remove_modifier = bribed_officials
+		#}
+		#if = {
+		#	limit = { has_modifier = substance_abuse }
+		#	remove_modifier = substance_abuse
+		#}
+		#if = {
+		#	limit = { has_modifier = EaC_underground_railroad_smuggling }
+		#	remove_modifier = EaC_underground_railroad_smuggling
+		#}
+		#if = {
+		#	limit = { has_modifier = EaC_inspired_slave_resistance }
+		#	remove_modifier = EaC_inspired_slave_resistance
+		#}
+		#if = {
+		#	limit = { has_modifier = EaC_slave_resistance }
+		#	remove_modifier = EaC_slave_resistance
+		#}
 		if = {
 			limit = { has_modifier = EaC_labor_propaganda }
 			remove_modifier = EaC_labor_propaganda
@@ -9107,11 +9112,16 @@ planet_event = {
 		#}
 		hidden_effect = {
 			set_timed_planet_flag = { flag = EaC_labor_movements_disappeared days = 3600 }
+			if = { 
+				limit = { has_planet_flag = EaC_labor_movements_appeared } 	# Cooldown that lasts 3600 days should be removed
+				remove_planet_flag = EaC_labor_movements_appeared			#This can only happen if ideology/living standards changed, which 
+			}
 		}
 	}
 }
-
-# Criminal Underworld Disappears (Low Crime) OR (Low Ideology) - 	Underground Railroad
+##########################################################################################
+# Criminal Underworld Disappears (Low Crime) OR (Low Ideology) - 	Underground Railroad #
+##########################################################################################
 planet_event = {
 	id = EaC_civic_mechanic_events.30412
 	title = EaC_civic_mechanic_events.41.name
@@ -9119,7 +9129,7 @@ planet_event = {
 	desc = {
 		trigger = {
 			count_enslaved_species = { count = 1 }
-			count_pops = { 
+			count_owned_pop = { 
 				limit = {
 					OR = {
 						has_living_standard = { country = owner type = living_standard_dystopian_society }
@@ -9145,7 +9155,7 @@ planet_event = {
 	desc = {
 		trigger = {
 			count_enslaved_species = { count = 0 }
-			count_pops = { 
+			count_owned_pop = { 
 				limit = {
 					OR = {
 						has_living_standard = { country = owner type = living_standard_dystopian_society }
@@ -9172,7 +9182,7 @@ planet_event = {
 	desc = {
 		trigger = {
 			count_enslaved_species = { count = 1 }
-			count_pops = { 
+			count_owned_pop = { 
 				limit = {
 					OR = {
 						has_living_standard = { country = owner type = living_standard_dystopian_society }
@@ -9198,7 +9208,7 @@ planet_event = {
 	desc = {
 		trigger = {
 			count_enslaved_species = { count = 0 }
-			count_pops = { 
+			count_owned_pop = { 
 				limit = {
 					OR = {
 						has_living_standard = { country = owner type = living_standard_dystopian_society }
@@ -9273,24 +9283,31 @@ planet_event = {
 			has_modifier = EaC_slave_revolts
 			has_modifier = EaC_underground_railroad_expanded
 		}
-		#NOT = { has_planet_flag = EaC_labor_movements_appeared } # Cooldown
 		OR = {
-			AND = {
-				planet_crime <= 10
-				num_pops > 0
-			}
-			AND = {
-				num_pops > 0
-				count_pops = { 
-					limit = {
-						OR = {
-							pop_has_ethic = ethic_egalitarian
-							pop_has_ethic = ethic_fanatic_egalitarian
-						} 
-						is_enslaved = no
+			#NOT = { has_planet_flag = EaC_labor_movements_appeared } # Cooldown
+			count_owned_pop = {
+				limit = {
+					OR = {
+						pop_has_ethic = ethic_egalitarian
+						pop_has_ethic = ethic_fanatic_egalitarian
 					} 
-					count = 0 
-				}
+					is_enslaved = no
+				} 
+				count = 0 
+			}
+		}
+		num_pops > 0
+		OR = {
+			planet_crime <= 10
+			count_owned_pop = { 
+				limit = {
+					OR = {
+						pop_has_ethic = ethic_egalitarian
+						pop_has_ethic = ethic_fanatic_egalitarian
+					} 
+					is_enslaved = no
+				} 
+				count = 0 
 			}
 		}
 	}
@@ -9337,10 +9354,10 @@ planet_event = {
 
 	option = {
 		name = GOOD
-		if = {
-			limit = { has_modifier = EaC_labor_movements }
-			remove_modifier = EaC_labor_movements
-		}
+		#if = {
+		#	limit = { has_modifier = EaC_labor_movements }
+		#	remove_modifier = EaC_labor_movements
+		#}
 		if = {
 			limit = { has_modifier = EaC_underground_railroad_activity }
 			remove_modifier = EaC_underground_railroad_activity
@@ -9353,18 +9370,18 @@ planet_event = {
 			limit = { has_modifier = EaC_underground_railroad_expanded }
 			remove_modifier = EaC_underground_railroad_expanded
 		}
-		if = {
-			limit = { has_modifier = EaC_worker_commune }
-			remove_modifier = EaC_worker_commune
-		}
-		if = {
-			limit = { has_modifier = bribed_officials }
-			remove_modifier = bribed_officials
-		}
-		if = {
-			limit = { has_modifier = substance_abuse }
-			remove_modifier = substance_abuse
-		}
+		#if = {
+		#	limit = { has_modifier = EaC_worker_commune }
+		#	remove_modifier = EaC_worker_commune
+		#}
+		#if = {
+		#	limit = { has_modifier = bribed_officials }
+		#	remove_modifier = bribed_officials
+		#}
+		#if = {
+		#	limit = { has_modifier = substance_abuse }
+		#	remove_modifier = substance_abuse
+		#}
 		if = {
 			limit = { has_modifier = EaC_underground_railroad_smuggling }
 			remove_modifier = EaC_underground_railroad_smuggling
@@ -9377,18 +9394,18 @@ planet_event = {
 			limit = { has_modifier = EaC_slave_resistance }
 			remove_modifier = EaC_slave_resistance
 		}
-		if = {
-			limit = { has_modifier = EaC_labor_propaganda }
-			remove_modifier = EaC_labor_propaganda
-		}
-		if = {
-			limit = { has_modifier = EaC_administration_strikes }
-			remove_modifier = EaC_administration_strikes
-		}
-		if = {
-			limit = { has_modifier = EaC_worker_commune_means_of_production }
-			remove_modifier = EaC_worker_commune_means_of_production
-		}
+		#if = {
+		#	limit = { has_modifier = EaC_labor_propaganda }
+		#	remove_modifier = EaC_labor_propaganda
+		#}
+		#if = {
+		#	limit = { has_modifier = EaC_administration_strikes }
+		#	remove_modifier = EaC_administration_strikes
+		#}
+		#if = {
+		#	limit = { has_modifier = EaC_worker_commune_means_of_production }
+		#	remove_modifier = EaC_worker_commune_means_of_production
+		#}
 		# Hive Minds
 		#if = {
 		#	limit = { has_modifier = drone_deviancy }
@@ -9462,7 +9479,7 @@ country_event = {
 				}
 				NOR = {
 					has_planet_flag = EaC_planet_general_strike_flag
-					has_modifier = crime_lord_deal
+					#has_modifier = crime_lord_deal						#Perhaps this can be represented by a deal with unions? Possibly given by the 'Trade Union' civic?
 				}
 			}
 			random_list = {
