@@ -1,6 +1,7 @@
 namespace = EaC_civic_mechanic_events
 namespace = enclave
 namespace = crime
+namespace = action
 
 #Modder Note:
 #This file is where civic mechanic events are placed. Please only use EaC_civic_mechanic_events namespace, as adding multiple namespaces is very laggy.
@@ -10307,5 +10308,314 @@ country_event = {
 	option = {
 		name = UNFORTUNATE
 		custom_tooltip = EaC_civic_mechanic_events.1002.tooltip
+	}
+}
+
+#####################################################################################################
+
+#####################################################################################################
+# Pop Abducted
+pop_event = {
+	id = action.121
+	title = OK
+	desc = OK
+
+	hide_window = yes
+	is_triggered_only = yes
+	
+	trigger = { FROM = { NOT = { has_orbital_bombardment_stance = EaC_liberate_slaves } } }
+
+	immediate = {
+		create_message = {
+			type = MESSAGE_TYPE_POP_ABDUCTED
+			localization = MESSAGE_POP_ABDUCTED
+			days = 30
+			target = from
+			variable = {
+				type = name
+				localization = SPECIES
+				scope = root.species
+			}
+			variable = {
+				type = name
+				localization = TARGET_PLANET
+				scope = root.planet
+			}
+			variable = {
+				type = name
+				localization = PLANET
+				scope = from
+			}
+		}
+		if = {
+			limit = {
+				exists = from.owner
+			}
+			from.owner = {
+				create_message = {
+					type = MESSAGE_TYPE_POP_ABDUCTED_FROM_US
+					localization = MESSAGE_POP_ABDUCTED_FROM_US
+					days = 30
+					target = from
+					variable = {
+						type = name
+						localization = SPECIES
+						scope = root.species
+					}
+					variable = {
+						type = name
+						localization = ABDUCTER
+						scope = root.planet.owner
+					}
+					variable = {
+						type = name
+						localization = PLANET
+						scope = from
+					}
+				}
+			}
+		}
+	}
+}
+
+# Last Primitive Pop Abducted (HIDDEN)
+pop_event = {
+	id = action.122
+	hide_window = yes
+
+	is_triggered_only = yes
+
+	trigger = {
+		from = { num_pops = 0 }
+	}
+
+	immediate = {
+		from = {
+			if = {
+				limit = { has_observation_outpost = yes }
+				observation_outpost = {
+					owner = {
+						save_event_target_as = obsv_post_owner
+						country_event = { id = action.123 }
+					}
+					dismantle = yes
+				}
+			}
+		}
+		owner = {
+			if = {
+				limit = {
+					OR = {
+						NOT = { exists = event_target:obsv_post_owner }
+						NOT = { is_same_value = event_target:obsv_post_owner }
+					}
+				}
+				save_event_target_as = abductor
+				country_event = { id = action.123 }
+			}
+		}
+		from = {
+			solar_system = {
+				if = {
+					limit = { exists = space_owner }
+					space_owner = {
+						if = {
+							limit = {
+								NOT = { is_same_value = event_target:abductor }
+								OR = {
+									NOT = { exists = event_target:obsv_post_owner }
+									NOT = { is_same_value = event_target:obsv_post_owner }
+								}
+							}
+							country_event = { id = action.123 }
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+# Last Primitive Pop Abducted
+country_event = {
+	id = action.123
+	title = "action.123.name"
+	desc = "action.123.desc"
+	picture = GFX_evt_surrender
+	show_sound = event_screams
+	location = fromfrom
+
+	is_triggered_only = yes
+
+	option = {
+		trigger = {
+			NOT = {
+				from = {
+					owner = { is_same_value = root }
+				}
+			}
+		}
+		name = DISCONCERTING
+	}
+	option = {
+		trigger = {
+			from = {
+				owner = { is_same_value = root }
+			}
+		}
+		name = action.123.a
+	}
+}
+###################################################################
+# Pop Abducted
+pop_event = {
+	id = EaC_civic_mechanic_events.4121
+	title = OK
+	desc = OK
+
+	hide_window = yes
+	is_triggered_only = yes
+	
+	trigger = { FROM = { has_orbital_bombardment_stance = EaC_liberate_slaves } }
+
+	immediate = {
+		create_message = {
+			type = EaC_MESSAGE_TYPE_POP_ABDUCTED
+			localization = EaC_MESSAGE_POP_ABDUCTED
+			days = 30
+			target = from
+			variable = {
+				type = name
+				localization = SPECIES
+				scope = root.species
+			}
+			variable = {
+				type = name
+				localization = TARGET_PLANET
+				scope = root.planet
+			}
+			variable = {
+				type = name
+				localization = PLANET
+				scope = from
+			}
+		}
+		if = {
+			limit = {
+				exists = from.owner
+			}
+			from.owner = {
+				create_message = {
+					type = EaC_MESSAGE_TYPE_POP_ABDUCTED_FROM_US
+					localization = EaC_MESSAGE_POP_ABDUCTED_FROM_US
+					days = 30
+					target = from
+					variable = {
+						type = name
+						localization = SPECIES
+						scope = root.species
+					}
+					variable = {
+						type = name
+						localization = ABDUCTER
+						scope = root.planet.owner
+					}
+					variable = {
+						type = name
+						localization = PLANET
+						scope = from
+					}
+				}
+			}
+		}
+	}
+}
+
+# Last Primitive Pop Abducted (HIDDEN)
+pop_event = {
+	id = EaC_civic_mechanic_events.4122
+	hide_window = yes
+
+	is_triggered_only = yes
+
+	trigger = {
+		from = { num_pops = 0 }
+	}
+
+	immediate = {
+		from = {
+			if = {
+				limit = { has_observation_outpost = yes }
+				observation_outpost = {
+					owner = {
+						save_event_target_as = obsv_post_owner
+						country_event = { id = EaC_civic_mechanic_events.4123 }
+					}
+					dismantle = yes
+				}
+			}
+		}
+		owner = {
+			if = {
+				limit = {
+					OR = {
+						NOT = { exists = event_target:obsv_post_owner }
+						NOT = { is_same_value = event_target:obsv_post_owner }
+					}
+				}
+				save_event_target_as = abductor
+				country_event = { id = EaC_civic_mechanic_events.4123 }
+			}
+		}
+		from = {
+			solar_system = {
+				if = {
+					limit = { exists = space_owner }
+					space_owner = {
+						if = {
+							limit = {
+								NOT = { is_same_value = event_target:abductor }
+								OR = {
+									NOT = { exists = event_target:obsv_post_owner }
+									NOT = { is_same_value = event_target:obsv_post_owner }
+								}
+							}
+							country_event = { id = EaC_civic_mechanic_events.4123 }
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+# Last Primitive Pop Abducted
+country_event = {
+	id = EaC_civic_mechanic_events.4123
+	title = "EaC_civic_mechanic_events.4123.name"
+	desc = "EaC_civic_mechanic_events.4123.desc"
+	picture = GFX_evt_surrender
+	show_sound = event_screams
+	location = fromfrom
+
+	is_triggered_only = yes
+
+	option = {
+		trigger = {
+			NOT = {
+				from = {
+					owner = { is_same_value = root }
+				}
+			}
+		}
+		name = DISCONCERTING
+	}
+	option = {
+		trigger = {
+			from = {
+				owner = { is_same_value = root }
+			}
+		}
+		name = EaC_civic_mechanic_events.4123.a
 	}
 }

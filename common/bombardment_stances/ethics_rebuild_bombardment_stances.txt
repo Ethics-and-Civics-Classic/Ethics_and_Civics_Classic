@@ -26,6 +26,84 @@
 #	}
 #}
 
+EaC_liberate_slaves = {
+	trigger = {
+		OR = {
+			owner = { has_valid_civic = civic_anarchy_ideals }
+			owner = { has_origin = origin_broken_shackles }
+			AND = {
+				owner = { is_country_type = enclave_mercenary }
+				controller = {
+					OR = {
+						has_valid_civic = civic_anarchy_ideals
+						has_origin = origin_broken_shackles
+					}
+				}
+			}
+		}
+	}
+
+	default = no
+
+	stop_when_armies_dead = no
+	abduct_pops = yes
+
+	planet_damage = 0.5
+	army_damage = 0.5
+
+	kill_pop_chance = { # Should only target organics
+ 		base = 0.15
+ 		modifier = {
+ 			factor = 0
+ 			is_enslaved = no
+ 		}
+ 	}
+	min_pops_to_kill_pop = 2
+
+	# root = fleet
+	# from = planet
+	ai_weight = {
+		weight = 100
+		modifier = {
+			factor = 0
+			exists = from
+			from = {
+				OR = {
+					num_pops < 2
+					owner = { NOT = { is_hostile = root.owner } }
+				}
+			}
+			#NOT = {
+			#	owner = { has_origin = origin_slavers }
+			#}
+		}
+		modifier = {
+			factor = 0
+			exists = from
+			FROM = { 
+				count_owned_pop = {
+					count = 1
+					limit = { is_enslaved = yes }
+				}
+			}
+		}
+		modifier = {
+			factor = 0.01
+			exists = from
+			from = {
+				owner = { has_claim = root.solar_system }
+			}
+			#NOT = {
+			#	owner = { has_origin = origin_slavers }
+			#}
+		}
+		#modifier = {
+		#	factor = 100
+		#	owner = { has_origin = origin_slavers }
+		#}
+	}
+}
+
 raiding = {
 	trigger = {
 		OR = {
