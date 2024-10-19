@@ -1,0 +1,333 @@
+##################
+### TECH COSTS ###
+##################
+#If you change any of these, use replace in files so the values are the same across all files
+
+#@tier0cost1 = 200
+#@tier0cost2 = 250
+#@tier0cost3 = 300
+
+#@tier1cost1 = 500
+#@tier1cost2 = 640
+#@tier1cost3 = 780
+
+#@tier2cost1 = 1000
+#@tier2cost2 = 1500
+#@tier2cost3 = 2000
+
+#@tier3cost1 = 3000
+#@tier3cost2 = 4000
+#@tier3cost3 = 5000
+
+#@tier4cost1 = 6000
+#@tier4cost2 = 8000
+#@tier4cost3 = 10000
+
+#@tier5cost1 = 14000
+#@tier5cost2 = 17000
+#@tier5cost3 = 20000
+
+####################
+### TECH WEIGHTS ###
+####################
+
+#@tier0weight1 = 400
+#@tier0weight2 = 300
+#@tier0weight3 = 200
+
+#@tier1weight1 = 100
+#@tier1weight2 = 95
+#@tier1weight3 = 90
+
+#@tier2weight1 = 85
+#@tier2weight2 = 75
+#@tier2weight3 = 70
+
+#@tier3weight1 = 65
+#@tier3weight2 = 60
+#@tier3weight3 = 50
+
+#@tier4weight1 = 45
+#@tier4weight2 = 40
+#@tier4weight3 = 35
+
+#@tier5weight1 = 30
+#@tier5weight2 = 25
+#@tier5weight3 = 20
+
+# ##################
+# Basic army
+# ##################
+
+# ##################
+# Farming
+# ##################
+
+#tech_industrial_farming = {
+#	cost = 0
+#	area = society
+#	tier = 0
+#	category = { biology }
+#	start_tech = yes
+#
+#	# unlocks farming districts
+#}
+
+# ##################
+# Biolab and Colonization
+# ##################
+
+#Bio Lab 1
+tech_biolab_1 = {
+	cost = @tier1cost1
+	area = society
+	tier = 1
+	category = { biology }
+	weight = @tier1weight1
+	prerequisites = { "tech_planetary_government" }
+	modifier = {
+		country_society_tech_research_speed = 0.25
+	}
+	
+	weight_modifier = {
+		modifier = {
+			factor = 5
+			is_ai = yes
+		}	
+		modifier = {
+			factor = 2
+			years_passed > 5
+		}
+		modifier = {
+			factor = 2
+			years_passed > 10
+		}		
+		modifier = {
+			factor = 2
+			years_passed > 15
+		}		
+		modifier = {
+			factor = 2
+			years_passed > 20
+		}		
+	}
+	
+	ai_weight = {
+		weight = 10000
+	}
+}
+
+#Bio Lab 2
+tech_biolab_2 = {
+	cost = @tier2cost3
+	area = society
+	tier = 2
+	category = { biology }
+	prerequisites = { "tech_biolab_1" "tech_colonial_centralization"}
+	weight = @tier2weight3
+	
+	modifier = {
+		country_society_tech_research_speed = 0.25
+	}
+	
+	weight_modifier = {
+		modifier = {
+			factor = 0
+			OR = {
+				has_origin = origin_primitive_player_pre_industrial_age 
+				has_origin = origin_primitive_player_industrial_age 
+				has_origin = origin_primitive_player_machine_age 
+				has_origin = origin_primitive_player_atomic_age 
+			}
+		}
+		modifier = {
+			factor = 2
+			years_passed > 5
+		}
+		modifier = {
+			factor = 2
+			years_passed > 10
+		}		
+		modifier = {
+			factor = 2
+			years_passed > 15
+		}		
+		modifier = {
+			factor = 2
+			years_passed > 20
+		}			
+	}	
+	
+	ai_weight = {
+		weight = 1000
+	}
+}
+
+#Bio Lab 3
+tech_biolab_3 = {
+	cost = @tier4cost2
+	area = society
+	tier = 4
+	category = { biology }	
+	prerequisites = { "tech_biolab_2" "tech_galactic_administration" }
+	weight = @tier4weight2
+	
+	modifier = {
+		country_society_tech_research_speed = 0.25
+	}
+	
+	weight_modifier = {
+		modifier = {
+			factor = 2
+			years_passed > 25
+		}
+		modifier = {
+			factor = 2
+			years_passed > 30
+		}		
+		modifier = {
+			factor = 2
+			years_passed > 35
+		}		
+		modifier = {
+			factor = 2
+			years_passed > 40
+		}	
+	}
+	
+	ai_weight = {
+		weight = 100
+	}
+}
+
+#New Worlds Protocol
+tech_colonization_1 = {
+	cost = @tier0cost2
+	area = society
+	tier = 0
+	weight = @tier0weight2
+	category = { new_worlds }
+	prerequisites = { "tech_space_exploration" }
+	start_tech = yes
+
+	starting_potential = {
+		has_origin_primitive_player = no # So primitive players don't start with it unlocked
+	}
+	
+	prereqfor_desc = {
+		ship = {
+			title = "TECH_UNLOCK_COLONY_SHIP_CONSTRUCTION_TITLE"
+			desc = "TECH_UNLOCK_COLONY_SHIP_CONSTRUCTION_DESC"
+		}
+	}
+	
+	weight_modifier = {
+		factor = 1000
+	}
+	
+	ai_weight = {
+		weight = 100000
+	}
+}
+
+# ##################
+# Empire Management
+# ##################
+
+tech_planetary_government = {
+	cost = @tier0cost1
+	area = society
+	tier = 0
+	weight = @tier0weight1
+	category = { statecraft }
+	start_tech = yes
+	
+	# unlocks Planetary Outpost
+	modifier = {
+		pop_government_ethic_attraction = 0.05
+		country_resource_unity_mult = 0.2
+	}
+	
+	starting_potential = {
+		is_low_tech_start = no # So Broken Shackles origin players don't start with it
+		NOT = {
+			has_origin = origin_primitive_player_pre_industrial_age 
+			has_origin = origin_primitive_player_industrial_age 
+			has_origin = origin_primitive_player_machine_age 
+			has_origin = origin_primitive_player_atomic_age	
+		}
+	}
+	
+	weight_modifier = {
+		factor = 4
+		modifier = {
+			factor = 0.75
+			NOT = {
+				OR = {
+					has_ethic = ethic_pacifist
+					has_ethic = ethic_fanatic_pacifist
+				}
+			}
+		}
+		modifier = {
+			factor = 0
+			OR = {
+				has_origin = origin_primitive_player_pre_industrial_age 
+				has_origin = origin_primitive_player_industrial_age 
+				has_origin = origin_primitive_player_machine_age 	
+			}
+		}
+	}
+	
+	ai_weight = {
+		factor = 2000
+		modifier = {
+			factor = 0.75
+			NOT = {
+				OR = {
+					has_ethic = ethic_pacifist
+					has_ethic = ethic_fanatic_pacifist
+				}
+			}
+		}
+		modifier = {
+			factor = 1.25
+			has_ethic = ethic_authoritarian
+		}
+		modifier = {
+			factor = 1.5
+			has_ethic = ethic_fanatic_authoritarian
+		}
+	}
+}
+
+# ##################
+# Unity
+# ##################
+
+tech_cultural_heritage = {
+	cost = @tier0cost1
+	area = society
+	start_tech = yes
+	category = { statecraft }
+	tier = 0
+	weight = @tier0weight1
+	
+	modifier = {
+		pop_government_ethic_attraction = 0.05
+		country_resource_unity_mult = 0.1
+	}
+	
+	starting_potential = {
+		# So primitive players don't start with it unlocked
+		NOT = { has_origin = origin_primitive_player_pre_industrial_age }
+	}
+	
+	weight_modifier = {
+		
+	}
+	
+	ai_weight = {
+		factor = 100
+	}
+}
