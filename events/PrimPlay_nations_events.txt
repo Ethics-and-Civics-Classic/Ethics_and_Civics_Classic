@@ -1,0 +1,4887 @@
+namespace = nations
+
+# Mercenary Enclave Greetings: Gatekeeper event
+# Via on_custom_diplomacy | this = target country (player); from = country being contacted
+country_event = {
+	id = nations.11200
+	hide_window = yes
+	is_triggered_only = yes
+
+	trigger = {
+		from = {
+			is_country_type = PrimPlayer_ethic_fanatic_nation
+			has_country_flag = ethic_fanatic_authoritarian_nation@root
+		}
+		NOT = {
+			has_active_event = {
+				nations.11205 #GREETINGS
+				nations.11210 #HIRE FLEET
+				nations.11211 #THANKS FOR RENTAL
+				nations.11215 #MANAGE HIRED FLEET
+				nations.11220 #MERCENARY GARRISON starbase building
+				nations.11235 #Expand Mercenary Fleet
+				nations.11240 #Tactical Appraisal
+				nations.11245 #Tactical Appraisal Khan
+				nations.11250 #Tactical Appraisal Gray Tempest
+				nations.11255 #Tactical Appraisal Prethoryn
+				nations.11260 #Tactical Appraisal Unbidden
+				nations.11270 #Hire Armies
+				nations.11275 #Merc Pays Back Patron
+				nations.11280 #Patron Panel
+				nations.11285 #Recall Fleet
+			}
+		}
+	}
+
+	immediate = {
+		ai_trade_facility = {
+			#offer_hire_mercenary_fleet = yes
+			#offer_prolong_fleet_contract = yes
+			from = {
+				#save_event_target_as = mercenary_enclave_country
+				#Failsafe to catch if fleets are no longer on loan
+				#remove_loaning_fleet_flag = yes
+			}
+			country_event = { id = nations.11205 }
+		}
+	}
+}
+
+# Mercenary Enclave: GREETINGS
+# This = player country; FROMFROM = Fanatic Nation
+country_event = {
+	id = nations.11205
+	title = nations.11205.name
+	desc = {
+		trigger = {
+			NOR = {
+				is_hostile = event_target:mercenary_enclave_country
+			}
+		}
+		text = nations.11205.desc
+	}
+	desc = {
+		trigger = {
+			is_hostile = event_target:mercenary_enclave_country
+		}
+		text = nations.11205.desc.hostile
+	}
+
+	is_triggered_only = yes
+
+	diplomatic = yes
+	show_sound = event_mysterious_signal
+	#custom_gui = "enclave_mercenary_window"
+	#custom_gui_option = "enclave_mercenary_option"
+	picture_event_data = {
+		portrait = FROMFROM
+		room = "personality_democratic_crusaders_room"
+	}
+	location = ROOT.capital_scope
+
+	immediate = {
+		
+	}
+
+	# Hostility options
+	option = {
+		name = nations.11205.i
+		trigger = {
+			is_hostile = event_target:mercenary_enclave_country
+			#NOT = { is_homicidal = yes }
+		}
+		allow = {
+			resource_stockpile_compare = {
+				resource = energy
+				value >= 2500
+			}
+		}
+		add_resource = {
+			energy = -2500
+		}
+		hidden_effect = {
+			#event_target:mercenary_enclave_country = {
+			#	set_faction_hostility = {
+			#		target = root
+			#		set_neutral = yes
+			#	}
+			#}
+		}
+	}
+
+	#Hire fleet
+	option = {
+		name = nations.11205.a
+		trigger = {
+
+		}
+		allow = {
+			custom_tooltip = {
+				fail_text = nations.11205.tooltip.a
+				#event_target:mercenary_enclave_country = {
+				#	NOT = {
+				#		
+				#	}
+				#}
+			}
+			custom_tooltip = {
+				fail_text = nations.11205.tooltip.b
+				
+			}
+		}
+		ai_trade_facility = {
+			custom_tooltip = mercenary_tt_hirefleet
+			#offer_hire_mercenary_fleet = yes
+			#offer_prolong_fleet_contract = yes
+			hidden_effect = {
+				country_event = { id = nations.11210 }
+			}
+		}
+	}
+	#Manage hired fleet (extend loan, recall)
+	option = {
+		name = nations.11205.b
+		custom_tooltip = mercenary_tt_managefleet
+		trigger = {
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+		}
+		hidden_effect = {
+			country_event = { id = nations.11215 }
+		}
+	}
+	#Mercenary Garrison starbase building
+	option = {
+		name = nations.11205.c
+		custom_tooltip = mercenary_tt_garrison
+		trigger = {
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+			#event_target:mercenary_enclave_country = {
+			#	trust = {
+			#		who = root
+			#		value >= 30
+			#	}
+			#}
+		}
+		allow = {
+			#event_target:mercenary_enclave_country = {
+			#	trust = {
+			#		who = root
+			#		value >= 40
+			#	}
+			#}
+		}
+		hidden_effect = {
+			country_event = { id = nations.11220 }
+		}
+	}
+
+	#Tactical Appraisal
+	option = {
+		name = nations.11205.e
+		custom_tooltip = mercenary_tt_tactical
+		trigger = {
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+			#event_target:mercenary_enclave_country = {
+			#	trust = {
+			#		who = root
+			#		value >= 50
+			#	}
+			#}
+		}
+		hidden_effect = {
+			country_event = { id = nations.11240 }
+		}
+	}
+
+	#Recruit Armies
+	option = {
+		name = nations.11205.f
+		custom_tooltip = mercenary_tt_hirearmies
+		trigger = {
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+		}
+		allow = {
+			#event_target:mercenary_enclave_country = {
+			#	trust = {
+			#		who = root
+			#		value >= 20
+			#	}
+			#}
+		}
+		hidden_effect = {
+			country_event = { id = nations.11270 }
+		}
+	}
+
+	#Mercenary Logistic Services
+	option = {
+		name = nations.11205.g
+		custom_tooltip = mercenary_tt_logistic
+		trigger = {
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+			#event_target:mercenary_enclave_country = {
+			#	trust = {
+			#		who = root
+			#		value >= 20
+			#	}
+			#}
+		}
+		allow = {
+			custom_tooltip = {
+				fail_text = nations.11205.g.tooltip
+				#NOT = {
+				#	has_modifier = mercenary_enclave_logistic_help
+				#}
+			}
+			#event_target:mercenary_enclave_country = {
+			#	trust = {
+			#		who = root
+			#		value >= 30
+			#	}
+			#}
+		}
+
+		hidden_effect = {
+			country_event = { id = nations.112030 }
+		}
+	}
+
+	#Patron Panel
+	option = {
+		name = nations.11205.h
+		custom_tooltip = mercenary_tt_patron
+		trigger = {
+			#NOT = { 
+			#	has_civic = civic_military_dictatorship_corporate
+			#	has_civic = civic_criminal_heritage
+			#}
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+			#exists = event_target:mercenary_patron
+			#event_target:mercenary_patron = {
+			#	is_same_empire = root
+			#}
+		}
+		hidden_effect = {
+			country_event = { id = nations.11280 }
+		}
+	}
+	#Is Pirate Lord
+	option = {
+		name = nations.11205.j
+		custom_tooltip = mercenary_tt_patron
+		trigger = {
+			#has_civic = civic_military_dictatorship_corporate
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+			#exists = event_target:mercenary_patron
+			#event_target:mercenary_patron = {
+			#	is_same_empire = root
+			#}
+		}
+		hidden_effect = {
+			country_event = { id = nations.11280 }
+		}
+	}
+	
+	#Is Criminal Heritage
+	option = {
+		name = nations.11205.k
+		custom_tooltip = mercenary_tt_patron
+		trigger = {
+			#has_civic = civic_criminal_heritage
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+			#exists = event_target:mercenary_patron
+			#event_target:mercenary_patron = {
+			#	is_same_empire = root
+			#}
+		}
+		hidden_effect = {
+			country_event = { id = nations.11280 }
+		}
+	}
+
+	#Cease dialog
+	option = {
+		name = GOODBYE
+		trigger = {
+			NOT = {
+				#is_hostile = event_target:mercenary_enclave_country
+			}
+		}
+		default_hide_option = yes
+	}
+
+	after = {
+		hidden_effect = {
+			set_country_flag = mercenary_enclave_diplomacy_engaged
+		}
+	}
+}
+
+######################################################################################################################################################################################################
+######################################################################################################################################################################################################
+######################################################################################################################################################################################################
+######################################################################################################################################################################################################
+# Mercenary Enclave Greetings: Gatekeeper event
+# Via on_custom_diplomacy | this = target country (player); from = country being contacted
+country_event = {
+	id = nations.12200
+	hide_window = yes
+	is_triggered_only = yes
+
+	trigger = {
+		from = {
+			is_country_type = PrimPlayer_ethic_fanatic_nation
+			has_country_flag = ethic_fanatic_egalitarian_nation@root
+		}
+		NOT = {
+			has_active_event = {
+				nations.12205 #GREETINGS
+				nations.12210 #HIRE FLEET
+				nations.12211 #THANKS FOR RENTAL
+				nations.12215 #MANAGE HIRED FLEET
+				nations.12220 #MERCENARY GARRISON starbase building
+				nations.12235 #Expand Mercenary Fleet
+				nations.12240 #Tactical Appraisal
+				nations.1212245 #Tactical Appraisal Khan
+				nations.12250 #Tactical Appraisal Gray Tempest
+				nations.12255 #Tactical Appraisal Prethoryn
+				nations.12260 #Tactical Appraisal Unbidden
+				nations.12270 #Hire Armies
+				nations.12275 #Merc Pays Back Patron
+				nations.12280 #Patron Panel
+				nations.12285 #Recall Fleet
+			}
+		}
+	}
+
+	immediate = {
+		ai_trade_facility = {
+			#offer_hire_mercenary_fleet = yes
+			#offer_prolong_fleet_contract = yes
+			from = {
+				#save_event_target_as = mercenary_enclave_country
+				#Failsafe to catch if fleets are no longer on loan
+				#remove_loaning_fleet_flag = yes
+			}
+			country_event = { id = nations.12205 }
+		}
+	}
+}
+
+# Mercenary Enclave: GREETINGS
+# This = player country; event_target:mercenary_enclave_country = enclave country
+country_event = {
+	id = nations.12205
+	title = nations.12205.name
+	desc = {
+		trigger = {
+			NOR = {
+				is_hostile = event_target:mercenary_enclave_country
+			}
+		}
+		text = nations.12205.desc
+	}
+	desc = {
+		trigger = {
+			is_hostile = event_target:mercenary_enclave_country
+		}
+		text = nations.12205.desc.hostile
+	}
+
+	is_triggered_only = yes
+
+	diplomatic = yes
+	show_sound = event_mysterious_signal
+	#custom_gui = "enclave_mercenary_window"
+	#custom_gui_option = "enclave_mercenary_option"
+	picture_event_data = {
+		portrait = FROMFROM
+		room = personality_ruthless_capitalists_room
+	}
+	location = ROOT.capital_scope
+
+	immediate = {
+		
+	}
+
+	# Hostility options
+	option = {
+		name = nations.12205.i
+		trigger = {
+			is_hostile = event_target:mercenary_enclave_country
+			#NOT = { is_homicidal = yes }
+		}
+		allow = {
+			resource_stockpile_compare = {
+				resource = energy
+				value >= 2500
+			}
+		}
+		add_resource = {
+			energy = -2500
+		}
+		hidden_effect = {
+			#event_target:mercenary_enclave_country = {
+			#	set_faction_hostility = {
+			#		target = root
+			#		set_neutral = yes
+			#	}
+			#}
+		}
+	}
+
+	#Hire fleet
+	option = {
+		name = nations.12205.a
+		trigger = {
+
+		}
+		allow = {
+			custom_tooltip = {
+				fail_text = nations.12205.tooltip.a
+				#event_target:mercenary_enclave_country = {
+				#	NOT = {
+				#		
+				#	}
+				#}
+			}
+			custom_tooltip = {
+				fail_text = nations.12205.tooltip.b
+				
+			}
+		}
+		ai_trade_facility = {
+			custom_tooltip = mercenary_tt_hirefleet
+			#offer_hire_mercenary_fleet = yes
+			#offer_prolong_fleet_contract = yes
+			hidden_effect = {
+				country_event = { id = nations.12210 }
+			}
+		}
+	}
+	#Manage hired fleet (extend loan, recall)
+	option = {
+		name = nations.12205.b
+		custom_tooltip = mercenary_tt_managefleet
+		trigger = {
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+		}
+		hidden_effect = {
+			country_event = { id = nations.12215 }
+		}
+	}
+	#Mercenary Garrison starbase building
+	option = {
+		name = nations.12205.c
+		custom_tooltip = mercenary_tt_garrison
+		trigger = {
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+			#event_target:mercenary_enclave_country = {
+			#	trust = {
+			#		who = root
+			#		value >= 30
+			#	}
+			#}
+		}
+		allow = {
+			#event_target:mercenary_enclave_country = {
+			#	trust = {
+			#		who = root
+			#		value >= 40
+			#	}
+			#}
+		}
+		hidden_effect = {
+			country_event = { id = nations.12220 }
+		}
+	}
+
+	#Tactical Appraisal
+	option = {
+		name = nations.12205.e
+		custom_tooltip = mercenary_tt_tactical
+		trigger = {
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+			#event_target:mercenary_enclave_country = {
+			#	trust = {
+			#		who = root
+			#		value >= 50
+			#	}
+			#}
+		}
+		hidden_effect = {
+			country_event = { id = nations.12240 }
+		}
+	}
+
+	#Recruit Armies
+	option = {
+		name = nations.12205.f
+		custom_tooltip = mercenary_tt_hirearmies
+		trigger = {
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+		}
+		allow = {
+			#event_target:mercenary_enclave_country = {
+			#	trust = {
+			#		who = root
+			#		value >= 20
+			#	}
+			#}
+		}
+		hidden_effect = {
+			country_event = { id = nations.12270 }
+		}
+	}
+
+	#Mercenary Logistic Services
+	option = {
+		name = nations.12205.g
+		custom_tooltip = mercenary_tt_logistic
+		trigger = {
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+			#event_target:mercenary_enclave_country = {
+			#	trust = {
+			#		who = root
+			#		value >= 20
+			#	}
+			#}
+		}
+		allow = {
+			custom_tooltip = {
+				fail_text = nations.12205.g.tooltip
+				#NOT = {
+				#	has_modifier = mercenary_enclave_logistic_help
+				#}
+			}
+			#event_target:mercenary_enclave_country = {
+			#	trust = {
+			#		who = root
+			#		value >= 30
+			#	}
+			#}
+		}
+
+		hidden_effect = {
+			country_event = { id = nations.122030 }
+		}
+	}
+
+	#Patron Panel
+	option = {
+		name = nations.12205.h
+		custom_tooltip = mercenary_tt_patron
+		trigger = {
+			#NOT = { 
+			#	has_civic = civic_military_dictatorship_corporate
+			#	has_civic = civic_criminal_heritage
+			#}
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+			#exists = event_target:mercenary_patron
+			#event_target:mercenary_patron = {
+			#	is_same_empire = root
+			#}
+		}
+		hidden_effect = {
+			country_event = { id = nations.12280 }
+		}
+	}
+	#Is Pirate Lord
+	option = {
+		name = nations.12205.j
+		custom_tooltip = mercenary_tt_patron
+		trigger = {
+			#has_civic = civic_military_dictatorship_corporate
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+			#exists = event_target:mercenary_patron
+			#event_target:mercenary_patron = {
+			#	is_same_empire = root
+			#}
+		}
+		hidden_effect = {
+			country_event = { id = nations.12280 }
+		}
+	}
+	
+	#Is Criminal Heritage
+	option = {
+		name = nations.12205.k
+		custom_tooltip = mercenary_tt_patron
+		trigger = {
+			#has_civic = civic_criminal_heritage
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+			#exists = event_target:mercenary_patron
+			#event_target:mercenary_patron = {
+			#	is_same_empire = root
+			#}
+		}
+		hidden_effect = {
+			country_event = { id = nations.12280 }
+		}
+	}
+
+	#Cease dialog
+	option = {
+		name = GOODBYE
+		trigger = {
+			NOT = {
+				#is_hostile = event_target:mercenary_enclave_country
+			}
+		}
+		default_hide_option = yes
+	}
+
+	after = {
+		hidden_effect = {
+			set_country_flag = mercenary_enclave_diplomacy_engaged
+		}
+	}
+}
+
+######################################################################################################################################################################################################
+######################################################################################################################################################################################################
+######################################################################################################################################################################################################
+######################################################################################################################################################################################################
+# Mercenary Enclave Greetings: Gatekeeper event
+# Via on_custom_diplomacy | this = target country (player); from = country being contacted
+country_event = {
+	id = nations.13200
+	hide_window = yes
+	is_triggered_only = yes
+
+	trigger = {
+		from = {
+			is_country_type = PrimPlayer_ethic_fanatic_nation
+			has_country_flag = ethic_fanatic_xenophobe_nation@root
+		}
+		NOT = {
+			has_active_event = {
+				nations.13205 #GREETINGS
+				nations.13210 #HIRE FLEET
+				nations.13211 #THANKS FOR RENTAL
+				nations.13215 #MANAGE HIRED FLEET
+				nations.13220 #MERCENARY GARRISON starbase building
+				nations.13235 #Expand Mercenary Fleet
+				nations.13240 #Tactical Appraisal
+				nations.13245 #Tactical Appraisal Khan
+				nations.13250 #Tactical Appraisal Gray Tempest
+				nations.13255 #Tactical Appraisal Prethoryn
+				nations.13260 #Tactical Appraisal Unbidden
+				nations.13270 #Hire Armies
+				nations.13275 #Merc Pays Back Patron
+				nations.13280 #Patron Panel
+				nations.13285 #Recall Fleet
+			}
+		}
+	}
+
+	immediate = {
+		ai_trade_facility = {
+			#offer_hire_mercenary_fleet = yes
+			#offer_prolong_fleet_contract = yes
+			from = {
+				#save_event_target_as = mercenary_enclave_country
+				#Failsafe to catch if fleets are no longer on loan
+				#remove_loaning_fleet_flag = yes
+			}
+			country_event = { id = nations.13205 }
+		}
+	}
+}
+
+# Mercenary Enclave: GREETINGS
+# This = player country; event_target:mercenary_enclave_country = enclave country
+country_event = {
+	id = nations.13205
+	title = nations.13205.name
+	picture = GFX_evt_throne_room
+	desc = {
+		trigger = {
+			NOR = {
+				is_hostile = event_target:mercenary_enclave_country
+			}
+		}
+		text = nations.13205.desc
+	}
+	desc = {
+		trigger = {
+			is_hostile = event_target:mercenary_enclave_country
+		}
+		text = nations.13205.desc.hostile
+	}
+
+	is_triggered_only = yes
+
+	diplomatic = yes
+	show_sound = event_mysterious_signal
+	#custom_gui = "enclave_mercenary_window"
+	#custom_gui_option = "enclave_mercenary_option"
+	picture_event_data = {
+		portrait = FROMFROM
+		room = personality_fanatic_purifier_room
+	}
+	location = ROOT.capital_scope
+
+	immediate = {
+		
+	}
+
+	# Hostility options
+	option = {
+		name = nations.13205.i
+		trigger = {
+			is_hostile = event_target:mercenary_enclave_country
+			#NOT = { is_homicidal = yes }
+		}
+		allow = {
+			resource_stockpile_compare = {
+				resource = energy
+				value >= 2500
+			}
+		}
+		add_resource = {
+			energy = -2500
+		}
+		hidden_effect = {
+			#event_target:mercenary_enclave_country = {
+			#	set_faction_hostility = {
+			#		target = root
+			#		set_neutral = yes
+			#	}
+			#}
+		}
+	}
+
+	#Hire fleet
+	option = {
+		name = nations.13205.a
+		trigger = {
+
+		}
+		allow = {
+			custom_tooltip = {
+				fail_text = nations.13205.tooltip.a
+				#event_target:mercenary_enclave_country = {
+				#	NOT = {
+				#		
+				#	}
+				#}
+			}
+			custom_tooltip = {
+				fail_text = nations.13205.tooltip.b
+				
+			}
+		}
+		ai_trade_facility = {
+			custom_tooltip = mercenary_tt_hirefleet
+			#offer_hire_mercenary_fleet = yes
+			#offer_prolong_fleet_contract = yes
+			hidden_effect = {
+				country_event = { id = nations.13210 }
+			}
+		}
+	}
+	#Manage hired fleet (extend loan, recall)
+	option = {
+		name = nations.13205.b
+		custom_tooltip = mercenary_tt_managefleet
+		trigger = {
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+		}
+		hidden_effect = {
+			country_event = { id = nations.13215 }
+		}
+	}
+	#Mercenary Garrison starbase building
+	option = {
+		name = nations.13205.c
+		custom_tooltip = mercenary_tt_garrison
+		trigger = {
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+			#event_target:mercenary_enclave_country = {
+			#	trust = {
+			#		who = root
+			#		value >= 30
+			#	}
+			#}
+		}
+		allow = {
+			#event_target:mercenary_enclave_country = {
+			#	trust = {
+			#		who = root
+			#		value >= 40
+			#	}
+			#}
+		}
+		hidden_effect = {
+			country_event = { id = nations.13220 }
+		}
+	}
+
+	#Tactical Appraisal
+	option = {
+		name = nations.13205.e
+		custom_tooltip = mercenary_tt_tactical
+		trigger = {
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+			#event_target:mercenary_enclave_country = {
+			#	trust = {
+			#		who = root
+			#		value >= 50
+			#	}
+			#}
+		}
+		hidden_effect = {
+			country_event = { id = nations.13240 }
+		}
+	}
+
+	#Recruit Armies
+	option = {
+		name = nations.13205.f
+		custom_tooltip = mercenary_tt_hirearmies
+		trigger = {
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+		}
+		allow = {
+			#event_target:mercenary_enclave_country = {
+			#	trust = {
+			#		who = root
+			#		value >= 20
+			#	}
+			#}
+		}
+		hidden_effect = {
+			country_event = { id = nations.13270 }
+		}
+	}
+
+	#Mercenary Logistic Services
+	option = {
+		name = nations.13205.g
+		custom_tooltip = mercenary_tt_logistic
+		trigger = {
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+			#event_target:mercenary_enclave_country = {
+			#	trust = {
+			#		who = root
+			#		value >= 20
+			#	}
+			#}
+		}
+		allow = {
+			custom_tooltip = {
+				fail_text = nations.13205.g.tooltip
+				#NOT = {
+				#	has_modifier = mercenary_enclave_logistic_help
+				#}
+			}
+			#event_target:mercenary_enclave_country = {
+			#	trust = {
+			#		who = root
+			#		value >= 30
+			#	}
+			#}
+		}
+
+		hidden_effect = {
+			country_event = { id = nations.132030 }
+		}
+	}
+
+	#Patron Panel
+	option = {
+		name = nations.13205.h
+		custom_tooltip = mercenary_tt_patron
+		trigger = {
+			#NOT = { 
+			#	has_civic = civic_military_dictatorship_corporate
+			#	has_civic = civic_criminal_heritage
+			#}
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+			#exists = event_target:mercenary_patron
+			#event_target:mercenary_patron = {
+			#	is_same_empire = root
+			#}
+		}
+		hidden_effect = {
+			country_event = { id = nations.13280 }
+		}
+	}
+	#Is Pirate Lord
+	option = {
+		name = nations.13205.j
+		custom_tooltip = mercenary_tt_patron
+		trigger = {
+			#has_civic = civic_military_dictatorship_corporate
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+			#exists = event_target:mercenary_patron
+			#event_target:mercenary_patron = {
+			#	is_same_empire = root
+			#}
+		}
+		hidden_effect = {
+			country_event = { id = nations.13280 }
+		}
+	}
+	
+	#Is Criminal Heritage
+	option = {
+		name = nations.13205.k
+		custom_tooltip = mercenary_tt_patron
+		trigger = {
+			#has_civic = civic_criminal_heritage
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+			#exists = event_target:mercenary_patron
+			#event_target:mercenary_patron = {
+			#	is_same_empire = root
+			#}
+		}
+		hidden_effect = {
+			country_event = { id = nations.13280 }
+		}
+	}
+
+	#Cease dialog
+	option = {
+		name = GOODBYE
+		trigger = {
+			NOT = {
+				#is_hostile = event_target:mercenary_enclave_country
+			}
+		}
+		default_hide_option = yes
+	}
+
+	after = {
+		hidden_effect = {
+			set_country_flag = mercenary_enclave_diplomacy_engaged
+		}
+	}
+}
+
+######################################################################################################################################################################################################
+######################################################################################################################################################################################################
+######################################################################################################################################################################################################
+######################################################################################################################################################################################################
+# Mercenary Enclave Greetings: Gatekeeper event
+# Via on_custom_diplomacy | this = target country (player); from = country being contacted
+country_event = {
+	id = nations.14200
+	hide_window = yes
+	is_triggered_only = yes
+
+	trigger = {
+		from = {
+			is_country_type = PrimPlayer_ethic_fanatic_nation
+			has_country_flag = ethic_fanatic_xenophile_nation@root
+		}
+		NOT = {
+			has_active_event = {
+				nations.14205 #GREETINGS
+				nations.14210 #HIRE FLEET
+				nations.14211 #THANKS FOR RENTAL
+				nations.14215 #MANAGE HIRED FLEET
+				nations.14220 #MERCENARY GARRISON starbase building
+				nations.14235 #Expand Mercenary Fleet
+				nations.14240 #Tactical Appraisal
+				nations.14245 #Tactical Appraisal Khan
+				nations.14250 #Tactical Appraisal Gray Tempest
+				nations.14255 #Tactical Appraisal Prethoryn
+				nations.14260 #Tactical Appraisal Unbidden
+				nations.14270 #Hire Armies
+				nations.14275 #Merc Pays Back Patron
+				nations.14280 #Patron Panel
+				nations.14285 #Recall Fleet
+			}
+		}
+	}
+
+	immediate = {
+		ai_trade_facility = {
+			#offer_hire_mercenary_fleet = yes
+			#offer_prolong_fleet_contract = yes
+			from = {
+				#save_event_target_as = mercenary_enclave_country
+				#Failsafe to catch if fleets are no longer on loan
+				#remove_loaning_fleet_flag = yes
+			}
+			country_event = { id = nations.14205 }
+		}
+	}
+}
+
+# Mercenary Enclave: GREETINGS
+# This = player country; event_target:mercenary_enclave_country = enclave country
+country_event = {
+	id = nations.14205
+	title = nations.14205.name
+	desc = {
+		trigger = {
+			NOR = {
+				is_hostile = event_target:mercenary_enclave_country
+			}
+		}
+		text = nations.14205.desc
+	}
+	desc = {
+		trigger = {
+			is_hostile = event_target:mercenary_enclave_country
+		}
+		text = nations.14205.desc.hostile
+	}
+
+	is_triggered_only = yes
+
+	diplomatic = yes
+	show_sound = event_mysterious_signal
+	#custom_gui = "enclave_mercenary_window"
+	#custom_gui_option = "enclave_mercenary_option"
+	picture_event_data = {
+		portrait = FROMFROM
+		room = personality_harmonious_hierarchy_room
+	}
+	location = ROOT.capital_scope
+
+	immediate = {
+		
+	}
+
+	# Hostility options
+	option = {
+		name = nations.14205.i
+		trigger = {
+			is_hostile = event_target:mercenary_enclave_country
+			#NOT = { is_homicidal = yes }
+		}
+		allow = {
+			resource_stockpile_compare = {
+				resource = energy
+				value >= 2500
+			}
+		}
+		add_resource = {
+			energy = -2500
+		}
+		hidden_effect = {
+			#event_target:mercenary_enclave_country = {
+			#	set_faction_hostility = {
+			#		target = root
+			#		set_neutral = yes
+			#	}
+			#}
+		}
+	}
+
+	#Hire fleet
+	option = {
+		name = nations.14205.a
+		trigger = {
+
+		}
+		allow = {
+			custom_tooltip = {
+				fail_text = nations.14205.tooltip.a
+				#event_target:mercenary_enclave_country = {
+				#	NOT = {
+				#		
+				#	}
+				#}
+			}
+			custom_tooltip = {
+				fail_text = nations.14205.tooltip.b
+				
+			}
+		}
+		ai_trade_facility = {
+			custom_tooltip = mercenary_tt_hirefleet
+			#offer_hire_mercenary_fleet = yes
+			#offer_prolong_fleet_contract = yes
+			hidden_effect = {
+				country_event = { id = nations.14210 }
+			}
+		}
+	}
+	#Manage hired fleet (extend loan, recall)
+	option = {
+		name = nations.14205.b
+		custom_tooltip = mercenary_tt_managefleet
+		trigger = {
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+		}
+		hidden_effect = {
+			country_event = { id = nations.14215 }
+		}
+	}
+	#Mercenary Garrison starbase building
+	option = {
+		name = nations.14205.c
+		custom_tooltip = mercenary_tt_garrison
+		trigger = {
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+			#event_target:mercenary_enclave_country = {
+			#	trust = {
+			#		who = root
+			#		value >= 30
+			#	}
+			#}
+		}
+		allow = {
+			#event_target:mercenary_enclave_country = {
+			#	trust = {
+			#		who = root
+			#		value >= 40
+			#	}
+			#}
+		}
+		hidden_effect = {
+			country_event = { id = nations.14220 }
+		}
+	}
+
+	#Tactical Appraisal
+	option = {
+		name = nations.14205.e
+		custom_tooltip = mercenary_tt_tactical
+		trigger = {
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+			#event_target:mercenary_enclave_country = {
+			#	trust = {
+			#		who = root
+			#		value >= 50
+			#	}
+			#}
+		}
+		hidden_effect = {
+			country_event = { id = nations.14240 }
+		}
+	}
+
+	#Recruit Armies
+	option = {
+		name = nations.14205.f
+		custom_tooltip = mercenary_tt_hirearmies
+		trigger = {
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+		}
+		allow = {
+			#event_target:mercenary_enclave_country = {
+			#	trust = {
+			#		who = root
+			#		value >= 20
+			#	}
+			#}
+		}
+		hidden_effect = {
+			country_event = { id = nations.14270 }
+		}
+	}
+
+	#Mercenary Logistic Services
+	option = {
+		name = nations.14205.g
+		custom_tooltip = mercenary_tt_logistic
+		trigger = {
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+			#event_target:mercenary_enclave_country = {
+			#	trust = {
+			#		who = root
+			#		value >= 20
+			#	}
+			#}
+		}
+		allow = {
+			custom_tooltip = {
+				fail_text = nations.14205.g.tooltip
+				#NOT = {
+				#	has_modifier = mercenary_enclave_logistic_help
+				#}
+			}
+			#event_target:mercenary_enclave_country = {
+			#	trust = {
+			#		who = root
+			#		value >= 30
+			#	}
+			#}
+		}
+
+		hidden_effect = {
+			country_event = { id = nations.142030 }
+		}
+	}
+
+	#Patron Panel
+	option = {
+		name = nations.14205.h
+		custom_tooltip = mercenary_tt_patron
+		trigger = {
+			#NOT = { 
+			#	has_civic = civic_military_dictatorship_corporate
+			#	has_civic = civic_criminal_heritage
+			#}
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+			#exists = event_target:mercenary_patron
+			#event_target:mercenary_patron = {
+			#	is_same_empire = root
+			#}
+		}
+		hidden_effect = {
+			country_event = { id = nations.14280 }
+		}
+	}
+	#Is Pirate Lord
+	option = {
+		name = nations.14205.j
+		custom_tooltip = mercenary_tt_patron
+		trigger = {
+			#has_civic = civic_military_dictatorship_corporate
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+			#exists = event_target:mercenary_patron
+			#event_target:mercenary_patron = {
+			#	is_same_empire = root
+			#}
+		}
+		hidden_effect = {
+			country_event = { id = nations.14280 }
+		}
+	}
+	
+	#Is Criminal Heritage
+	option = {
+		name = nations.14205.k
+		custom_tooltip = mercenary_tt_patron
+		trigger = {
+			#has_civic = civic_criminal_heritage
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+			#exists = event_target:mercenary_patron
+			#event_target:mercenary_patron = {
+			#	is_same_empire = root
+			#}
+		}
+		hidden_effect = {
+			country_event = { id = nations.14280 }
+		}
+	}
+
+	#Cease dialog
+	option = {
+		name = GOODBYE
+		trigger = {
+			NOT = {
+				#is_hostile = event_target:mercenary_enclave_country
+			}
+		}
+		default_hide_option = yes
+	}
+
+	after = {
+		hidden_effect = {
+			set_country_flag = mercenary_enclave_diplomacy_engaged
+		}
+	}
+}
+
+######################################################################################################################################################################################################
+######################################################################################################################################################################################################
+######################################################################################################################################################################################################
+######################################################################################################################################################################################################
+# Mercenary Enclave Greetings: Gatekeeper event
+# Via on_custom_diplomacy | this = target country (player); from = country being contacted
+country_event = {
+	id = nations.15200
+	hide_window = yes
+	is_triggered_only = yes
+
+	trigger = {
+		from = {
+			is_country_type = PrimPlayer_ethic_fanatic_nation
+			has_country_flag = ethic_fanatic_militarist_nation@root
+		}
+		NOT = {
+			has_active_event = {
+				nations.15205 #GREETINGS
+				nations.15210 #HIRE FLEET
+				nations.15211 #THANKS FOR RENTAL
+				nations.15215 #MANAGE HIRED FLEET
+				nations.15220 #MERCENARY GARRISON starbase building
+				nations.15235 #Expand Mercenary Fleet
+				nations.15240 #Tactical Appraisal
+				nations.15245 #Tactical Appraisal Khan
+				nations.15250 #Tactical Appraisal Gray Tempest
+				nations.15255 #Tactical Appraisal Prethoryn
+				nations.15260 #Tactical Appraisal Unbidden
+				nations.15270 #Hire Armies
+				nations.15275 #Merc Pays Back Patron
+				nations.15280 #Patron Panel
+				nations.15285 #Recall Fleet
+			}
+		}
+	}
+
+	immediate = {
+		ai_trade_facility = {
+			#offer_hire_mercenary_fleet = yes
+			#offer_prolong_fleet_contract = yes
+			from = {
+				#save_event_target_as = mercenary_enclave_country
+				#Failsafe to catch if fleets are no longer on loan
+				#remove_loaning_fleet_flag = yes
+			}
+			country_event = { id = nations.15205 }
+		}
+	}
+}
+
+# Mercenary Enclave: GREETINGS
+# This = player country; event_target:mercenary_enclave_country = enclave country
+country_event = {
+	id = nations.15205
+	title = nations.15205.name
+	desc = {
+		trigger = {
+			NOR = {
+				is_hostile = event_target:mercenary_enclave_country
+			}
+		}
+		text = nations.15205.desc
+	}
+	desc = {
+		trigger = {
+			is_hostile = event_target:mercenary_enclave_country
+		}
+		text = nations.15205.desc.hostile
+	}
+
+	is_triggered_only = yes
+
+	diplomatic = yes
+	show_sound = event_mysterious_signal
+	#custom_gui = "enclave_mercenary_window"
+	#custom_gui_option = "enclave_mercenary_option"
+	picture_event_data = {
+		portrait = FROMFROM
+		room = personality_honorbound_warriors_room
+	}
+	location = ROOT.capital_scope
+
+	immediate = {
+		
+	}
+
+	# Hostility options
+	option = {
+		name = nations.15205.i
+		trigger = {
+			is_hostile = event_target:mercenary_enclave_country
+			#NOT = { is_homicidal = yes }
+		}
+		allow = {
+			resource_stockpile_compare = {
+				resource = energy
+				value >= 2500
+			}
+		}
+		add_resource = {
+			energy = -2500
+		}
+		hidden_effect = {
+			#event_target:mercenary_enclave_country = {
+			#	set_faction_hostility = {
+			#		target = root
+			#		set_neutral = yes
+			#	}
+			#}
+		}
+	}
+
+	#Hire fleet
+	option = {
+		name = nations.15205.a
+		trigger = {
+
+		}
+		allow = {
+			custom_tooltip = {
+				fail_text = nations.15205.tooltip.a
+				#event_target:mercenary_enclave_country = {
+				#	NOT = {
+				#		
+				#	}
+				#}
+			}
+			custom_tooltip = {
+				fail_text = nations.15205.tooltip.b
+				
+			}
+		}
+		ai_trade_facility = {
+			custom_tooltip = mercenary_tt_hirefleet
+			#offer_hire_mercenary_fleet = yes
+			#offer_prolong_fleet_contract = yes
+			hidden_effect = {
+				country_event = { id = nations.15210 }
+			}
+		}
+	}
+	#Manage hired fleet (extend loan, recall)
+	option = {
+		name = nations.15205.b
+		custom_tooltip = mercenary_tt_managefleet
+		trigger = {
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+		}
+		hidden_effect = {
+			country_event = { id = nations.15215 }
+		}
+	}
+	#Mercenary Garrison starbase building
+	option = {
+		name = nations.15205.c
+		custom_tooltip = mercenary_tt_garrison
+		trigger = {
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+			#event_target:mercenary_enclave_country = {
+			#	trust = {
+			#		who = root
+			#		value >= 30
+			#	}
+			#}
+		}
+		allow = {
+			#event_target:mercenary_enclave_country = {
+			#	trust = {
+			#		who = root
+			#		value >= 40
+			#	}
+			#}
+		}
+		hidden_effect = {
+			country_event = { id = nations.15220 }
+		}
+	}
+
+	#Tactical Appraisal
+	option = {
+		name = nations.15205.e
+		custom_tooltip = mercenary_tt_tactical
+		trigger = {
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+			#event_target:mercenary_enclave_country = {
+			#	trust = {
+			#		who = root
+			#		value >= 50
+			#	}
+			#}
+		}
+		hidden_effect = {
+			country_event = { id = nations.15240 }
+		}
+	}
+
+	#Recruit Armies
+	option = {
+		name = nations.15205.f
+		custom_tooltip = mercenary_tt_hirearmies
+		trigger = {
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+		}
+		allow = {
+			#event_target:mercenary_enclave_country = {
+			#	trust = {
+			#		who = root
+			#		value >= 20
+			#	}
+			#}
+		}
+		hidden_effect = {
+			country_event = { id = nations.15270 }
+		}
+	}
+
+	#Mercenary Logistic Services
+	option = {
+		name = nations.15205.g
+		custom_tooltip = mercenary_tt_logistic
+		trigger = {
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+			#event_target:mercenary_enclave_country = {
+			#	trust = {
+			#		who = root
+			#		value >= 20
+			#	}
+			#}
+		}
+		allow = {
+			custom_tooltip = {
+				fail_text = nations.15205.g.tooltip
+				#NOT = {
+				#	has_modifier = mercenary_enclave_logistic_help
+				#}
+			}
+			#event_target:mercenary_enclave_country = {
+			#	trust = {
+			#		who = root
+			#		value >= 30
+			#	}
+			#}
+		}
+
+		hidden_effect = {
+			country_event = { id = nations.152030 }
+		}
+	}
+
+	#Patron Panel
+	option = {
+		name = nations.15205.h
+		custom_tooltip = mercenary_tt_patron
+		trigger = {
+			#NOT = { 
+			#	has_civic = civic_military_dictatorship_corporate
+			#	has_civic = civic_criminal_heritage
+			#}
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+			#exists = event_target:mercenary_patron
+			#event_target:mercenary_patron = {
+			#	is_same_empire = root
+			#}
+		}
+		hidden_effect = {
+			country_event = { id = nations.15280 }
+		}
+	}
+	#Is Pirate Lord
+	option = {
+		name = nations.15205.j
+		custom_tooltip = mercenary_tt_patron
+		trigger = {
+			#has_civic = civic_military_dictatorship_corporate
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+			#exists = event_target:mercenary_patron
+			#event_target:mercenary_patron = {
+			#	is_same_empire = root
+			#}
+		}
+		hidden_effect = {
+			country_event = { id = nations.15280 }
+		}
+	}
+	
+	#Is Criminal Heritage
+	option = {
+		name = nations.15205.k
+		custom_tooltip = mercenary_tt_patron
+		trigger = {
+			#has_civic = civic_criminal_heritage
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+			#exists = event_target:mercenary_patron
+			#event_target:mercenary_patron = {
+			#	is_same_empire = root
+			#}
+		}
+		hidden_effect = {
+			country_event = { id = nations.15280 }
+		}
+	}
+
+	#Cease dialog
+	option = {
+		name = GOODBYE
+		trigger = {
+			NOT = {
+				#is_hostile = event_target:mercenary_enclave_country
+			}
+		}
+		default_hide_option = yes
+	}
+
+	after = {
+		hidden_effect = {
+			set_country_flag = mercenary_enclave_diplomacy_engaged
+		}
+	}
+}
+
+######################################################################################################################################################################################################
+######################################################################################################################################################################################################
+######################################################################################################################################################################################################
+######################################################################################################################################################################################################
+# Mercenary Enclave Greetings: Gatekeeper event
+# Via on_custom_diplomacy | this = target country (player); from = country being contacted
+country_event = {
+	id = nations.16200
+	hide_window = yes
+	is_triggered_only = yes
+
+	trigger = {
+		from = {
+			is_country_type = PrimPlayer_ethic_fanatic_nation
+			has_country_flag = ethic_fanatic_pacifist_nation@root
+		}
+		NOT = {
+			has_active_event = {
+				nations.16205 #GREETINGS
+				nations.16210 #HIRE FLEET
+				nations.16211 #THANKS FOR RENTAL
+				nations.16215 #MANAGE HIRED FLEET
+				nations.16220 #MERCENARY GARRISON starbase building
+				nations.16235 #Expand Mercenary Fleet
+				nations.16240 #Tactical Appraisal
+				nations.16245 #Tactical Appraisal Khan
+				nations.16250 #Tactical Appraisal Gray Tempest
+				nations.16255 #Tactical Appraisal Prethoryn
+				nations.16260 #Tactical Appraisal Unbidden
+				nations.16270 #Hire Armies
+				nations.16275 #Merc Pays Back Patron
+				nations.16280 #Patron Panel
+				nations.16285 #Recall Fleet
+			}
+		}
+	}
+
+	immediate = {
+		ai_trade_facility = {
+			#offer_hire_mercenary_fleet = yes
+			#offer_prolong_fleet_contract = yes
+			from = {
+				#save_event_target_as = mercenary_enclave_country
+				#Failsafe to catch if fleets are no longer on loan
+				#remove_loaning_fleet_flag = yes
+			}
+			country_event = { id = nations.16205 }
+		}
+	}
+}
+
+# Mercenary Enclave: GREETINGS
+# This = player country; event_target:mercenary_enclave_country = enclave country
+country_event = {
+	id = nations.16205
+	title = nations.16205.name
+	desc = {
+		trigger = {
+			NOR = {
+				is_hostile = event_target:mercenary_enclave_country
+			}
+		}
+		text = nations.16205.desc
+	}
+	desc = {
+		trigger = {
+			is_hostile = event_target:mercenary_enclave_country
+		}
+		text = nations.16205.desc.hostile
+	}
+
+	is_triggered_only = yes
+
+	diplomatic = yes
+	show_sound = event_mysterious_signal
+	#custom_gui = "enclave_mercenary_window"
+	#custom_gui_option = "enclave_mercenary_option"
+	picture_event_data = {
+		portrait = FROMFROM
+		room = personality_fanatic_befrienders_room
+	}
+	location = ROOT.capital_scope
+
+	immediate = {
+		
+	}
+
+	# Hostility options
+	option = {
+		name = nations.16205.i
+		trigger = {
+			is_hostile = event_target:mercenary_enclave_country
+			#NOT = { is_homicidal = yes }
+		}
+		allow = {
+			resource_stockpile_compare = {
+				resource = energy
+				value >= 2500
+			}
+		}
+		add_resource = {
+			energy = -2500
+		}
+		hidden_effect = {
+			#event_target:mercenary_enclave_country = {
+			#	set_faction_hostility = {
+			#		target = root
+			#		set_neutral = yes
+			#	}
+			#}
+		}
+	}
+
+	#Hire fleet
+	option = {
+		name = nations.16205.a
+		trigger = {
+
+		}
+		allow = {
+			custom_tooltip = {
+				fail_text = nations.16205.tooltip.a
+				#event_target:mercenary_enclave_country = {
+				#	NOT = {
+				#		
+				#	}
+				#}
+			}
+			custom_tooltip = {
+				fail_text = nations.16205.tooltip.b
+				
+			}
+		}
+		ai_trade_facility = {
+			custom_tooltip = mercenary_tt_hirefleet
+			#offer_hire_mercenary_fleet = yes
+			#offer_prolong_fleet_contract = yes
+			hidden_effect = {
+				country_event = { id = nations.16210 }
+			}
+		}
+	}
+	#Manage hired fleet (extend loan, recall)
+	option = {
+		name = nations.16205.b
+		custom_tooltip = mercenary_tt_managefleet
+		trigger = {
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+		}
+		hidden_effect = {
+			country_event = { id = nations.16215 }
+		}
+	}
+	#Mercenary Garrison starbase building
+	option = {
+		name = nations.16205.c
+		custom_tooltip = mercenary_tt_garrison
+		trigger = {
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+			#event_target:mercenary_enclave_country = {
+			#	trust = {
+			#		who = root
+			#		value >= 30
+			#	}
+			#}
+		}
+		allow = {
+			#event_target:mercenary_enclave_country = {
+			#	trust = {
+			#		who = root
+			#		value >= 40
+			#	}
+			#}
+		}
+		hidden_effect = {
+			country_event = { id = nations.16220 }
+		}
+	}
+
+	#Tactical Appraisal
+	option = {
+		name = nations.16205.e
+		custom_tooltip = mercenary_tt_tactical
+		trigger = {
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+			#event_target:mercenary_enclave_country = {
+			#	trust = {
+			#		who = root
+			#		value >= 50
+			#	}
+			#}
+		}
+		hidden_effect = {
+			country_event = { id = nations.16240 }
+		}
+	}
+
+	#Recruit Armies
+	option = {
+		name = nations.16205.f
+		custom_tooltip = mercenary_tt_hirearmies
+		trigger = {
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+		}
+		allow = {
+			#event_target:mercenary_enclave_country = {
+			#	trust = {
+			#		who = root
+			#		value >= 20
+			#	}
+			#}
+		}
+		hidden_effect = {
+			country_event = { id = nations.16270 }
+		}
+	}
+
+	#Mercenary Logistic Services
+	option = {
+		name = nations.16205.g
+		custom_tooltip = mercenary_tt_logistic
+		trigger = {
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+			#event_target:mercenary_enclave_country = {
+			#	trust = {
+			#		who = root
+			#		value >= 20
+			#	}
+			#}
+		}
+		allow = {
+			custom_tooltip = {
+				fail_text = nations.16205.g.tooltip
+				#NOT = {
+				#	has_modifier = mercenary_enclave_logistic_help
+				#}
+			}
+			#event_target:mercenary_enclave_country = {
+			#	trust = {
+			#		who = root
+			#		value >= 30
+			#	}
+			#}
+		}
+
+		hidden_effect = {
+			country_event = { id = nations.162030 }
+		}
+	}
+
+	#Patron Panel
+	option = {
+		name = nations.16205.h
+		custom_tooltip = mercenary_tt_patron
+		trigger = {
+			#NOT = { 
+			#	has_civic = civic_military_dictatorship_corporate
+			#	has_civic = civic_criminal_heritage
+			#}
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+			#exists = event_target:mercenary_patron
+			#event_target:mercenary_patron = {
+			#	is_same_empire = root
+			#}
+		}
+		hidden_effect = {
+			country_event = { id = nations.16280 }
+		}
+	}
+	#Is Pirate Lord
+	option = {
+		name = nations.16205.j
+		custom_tooltip = mercenary_tt_patron
+		trigger = {
+			#has_civic = civic_military_dictatorship_corporate
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+			#exists = event_target:mercenary_patron
+			#event_target:mercenary_patron = {
+			#	is_same_empire = root
+			#}
+		}
+		hidden_effect = {
+			country_event = { id = nations.16280 }
+		}
+	}
+	
+	#Is Criminal Heritage
+	option = {
+		name = nations.16205.k
+		custom_tooltip = mercenary_tt_patron
+		trigger = {
+			#has_civic = civic_criminal_heritage
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+			#exists = event_target:mercenary_patron
+			#event_target:mercenary_patron = {
+			#	is_same_empire = root
+			#}
+		}
+		hidden_effect = {
+			country_event = { id = nations.16280 }
+		}
+	}
+
+	#Cease dialog
+	option = {
+		name = GOODBYE
+		trigger = {
+			NOT = {
+				#is_hostile = event_target:mercenary_enclave_country
+			}
+		}
+		default_hide_option = yes
+	}
+
+	after = {
+		hidden_effect = {
+			set_country_flag = mercenary_enclave_diplomacy_engaged
+		}
+	}
+}
+
+######################################################################################################################################################################################################
+######################################################################################################################################################################################################
+######################################################################################################################################################################################################
+######################################################################################################################################################################################################
+# Mercenary Enclave Greetings: Gatekeeper event
+# Via on_custom_diplomacy | this = target country (player); from = country being contacted
+country_event = {
+	id = nations.17200
+	hide_window = yes
+	is_triggered_only = yes
+
+	trigger = {
+		from = {
+			is_country_type = PrimPlayer_ethic_fanatic_nation
+			has_country_flag = ethic_fanatic_spiritualist_nation@root
+		}
+		NOT = {
+			has_active_event = {
+				nations.17205 #GREETINGS
+				nations.17210 #HIRE FLEET
+				nations.17211 #THANKS FOR RENTAL
+				nations.17215 #MANAGE HIRED FLEET
+				nations.17220 #MERCENARY GARRISON starbase building
+				nations.17235 #Expand Mercenary Fleet
+				nations.17240 #Tactical Appraisal
+				nations.17245 #Tactical Appraisal Khan
+				nations.17250 #Tactical Appraisal Gray Tempest
+				nations.17255 #Tactical Appraisal Prethoryn
+				nations.17260 #Tactical Appraisal Unbidden
+				nations.17270 #Hire Armies
+				nations.17275 #Merc Pays Back Patron
+				nations.17280 #Patron Panel
+				nations.17285 #Recall Fleet
+			}
+		}
+	}
+
+	immediate = {
+		ai_trade_facility = {
+			#offer_hire_mercenary_fleet = yes
+			#offer_prolong_fleet_contract = yes
+			from = {
+				#save_event_target_as = mercenary_enclave_country
+				#Failsafe to catch if fleets are no longer on loan
+				#remove_loaning_fleet_flag = yes
+			}
+			country_event = { id = nations.17205 }
+		}
+	}
+}
+
+# Mercenary Enclave: GREETINGS
+# This = player country; event_target:mercenary_enclave_country = enclave country
+country_event = {
+	id = nations.17205
+	title = nations.17205.name
+	desc = {
+		trigger = {
+			NOR = {
+				is_hostile = event_target:mercenary_enclave_country
+			}
+		}
+		text = nations.17205.desc
+	}
+	desc = {
+		trigger = {
+			is_hostile = event_target:mercenary_enclave_country
+		}
+		text = nations.17205.desc.hostile
+	}
+
+	is_triggered_only = yes
+
+	diplomatic = yes
+	show_sound = event_mysterious_signal
+	#custom_gui = "enclave_mercenary_window"
+	#custom_gui_option = "enclave_mercenary_option"
+	picture_event_data = {
+		portrait = FROMFROM
+		room = personality_evangelizing_zealots_room
+	}
+	location = ROOT.capital_scope
+
+	immediate = {
+		
+	}
+
+	# Hostility options
+	option = {
+		name = nations.17205.i
+		trigger = {
+			is_hostile = event_target:mercenary_enclave_country
+			#NOT = { is_homicidal = yes }
+		}
+		allow = {
+			resource_stockpile_compare = {
+				resource = energy
+				value >= 2500
+			}
+		}
+		add_resource = {
+			energy = -2500
+		}
+		hidden_effect = {
+			#event_target:mercenary_enclave_country = {
+			#	set_faction_hostility = {
+			#		target = root
+			#		set_neutral = yes
+			#	}
+			#}
+		}
+	}
+
+	#Hire fleet
+	option = {
+		name = nations.17205.a
+		trigger = {
+
+		}
+		allow = {
+			custom_tooltip = {
+				fail_text = nations.17205.tooltip.a
+				#event_target:mercenary_enclave_country = {
+				#	NOT = {
+				#		
+				#	}
+				#}
+			}
+			custom_tooltip = {
+				fail_text = nations.17205.tooltip.b
+				
+			}
+		}
+		ai_trade_facility = {
+			custom_tooltip = mercenary_tt_hirefleet
+			#offer_hire_mercenary_fleet = yes
+			#offer_prolong_fleet_contract = yes
+			hidden_effect = {
+				country_event = { id = nations.17210 }
+			}
+		}
+	}
+	#Manage hired fleet (extend loan, recall)
+	option = {
+		name = nations.17205.b
+		custom_tooltip = mercenary_tt_managefleet
+		trigger = {
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+		}
+		hidden_effect = {
+			country_event = { id = nations.17215 }
+		}
+	}
+	#Mercenary Garrison starbase building
+	option = {
+		name = nations.17205.c
+		custom_tooltip = mercenary_tt_garrison
+		trigger = {
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+			#event_target:mercenary_enclave_country = {
+			#	trust = {
+			#		who = root
+			#		value >= 30
+			#	}
+			#}
+		}
+		allow = {
+			#event_target:mercenary_enclave_country = {
+			#	trust = {
+			#		who = root
+			#		value >= 40
+			#	}
+			#}
+		}
+		hidden_effect = {
+			country_event = { id = nations.17220 }
+		}
+	}
+
+	#Tactical Appraisal
+	option = {
+		name = nations.17205.e
+		custom_tooltip = mercenary_tt_tactical
+		trigger = {
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+			#event_target:mercenary_enclave_country = {
+			#	trust = {
+			#		who = root
+			#		value >= 50
+			#	}
+			#}
+		}
+		hidden_effect = {
+			country_event = { id = nations.17240 }
+		}
+	}
+
+	#Recruit Armies
+	option = {
+		name = nations.17205.f
+		custom_tooltip = mercenary_tt_hirearmies
+		trigger = {
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+		}
+		allow = {
+			#event_target:mercenary_enclave_country = {
+			#	trust = {
+			#		who = root
+			#		value >= 20
+			#	}
+			#}
+		}
+		hidden_effect = {
+			country_event = { id = nations.17270 }
+		}
+	}
+
+	#Mercenary Logistic Services
+	option = {
+		name = nations.17205.g
+		custom_tooltip = mercenary_tt_logistic
+		trigger = {
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+			#event_target:mercenary_enclave_country = {
+			#	trust = {
+			#		who = root
+			#		value >= 20
+			#	}
+			#}
+		}
+		allow = {
+			custom_tooltip = {
+				fail_text = nations.17205.g.tooltip
+				#NOT = {
+				#	has_modifier = mercenary_enclave_logistic_help
+				#}
+			}
+			#event_target:mercenary_enclave_country = {
+			#	trust = {
+			#		who = root
+			#		value >= 30
+			#	}
+			#}
+		}
+
+		hidden_effect = {
+			country_event = { id = nations.172030 }
+		}
+	}
+
+	#Patron Panel
+	option = {
+		name = nations.17205.h
+		custom_tooltip = mercenary_tt_patron
+		trigger = {
+			#NOT = { 
+			#	has_civic = civic_military_dictatorship_corporate
+			#	has_civic = civic_criminal_heritage
+			#}
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+			#exists = event_target:mercenary_patron
+			#event_target:mercenary_patron = {
+			#	is_same_empire = root
+			#}
+		}
+		hidden_effect = {
+			country_event = { id = nations.17280 }
+		}
+	}
+	#Is Pirate Lord
+	option = {
+		name = nations.17205.j
+		custom_tooltip = mercenary_tt_patron
+		trigger = {
+			#has_civic = civic_military_dictatorship_corporate
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+			#exists = event_target:mercenary_patron
+			#event_target:mercenary_patron = {
+			#	is_same_empire = root
+			#}
+		}
+		hidden_effect = {
+			country_event = { id = nations.17280 }
+		}
+	}
+	
+	#Is Criminal Heritage
+	option = {
+		name = nations.17205.k
+		custom_tooltip = mercenary_tt_patron
+		trigger = {
+			#has_civic = civic_criminal_heritage
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+			#exists = event_target:mercenary_patron
+			#event_target:mercenary_patron = {
+			#	is_same_empire = root
+			#}
+		}
+		hidden_effect = {
+			country_event = { id = nations.17280 }
+		}
+	}
+
+	#Cease dialog
+	option = {
+		name = GOODBYE
+		trigger = {
+			NOT = {
+				#is_hostile = event_target:mercenary_enclave_country
+			}
+		}
+		default_hide_option = yes
+	}
+
+	after = {
+		hidden_effect = {
+			set_country_flag = mercenary_enclave_diplomacy_engaged
+		}
+	}
+}
+
+######################################################################################################################################################################################################
+######################################################################################################################################################################################################
+######################################################################################################################################################################################################
+######################################################################################################################################################################################################
+# Mercenary Enclave Greetings: Gatekeeper event
+# Via on_custom_diplomacy | this = target country (player); from = country being contacted
+country_event = {
+	id = nations.18200
+	hide_window = yes
+	is_triggered_only = yes
+
+	trigger = {
+		from = {
+			is_country_type = PrimPlayer_ethic_fanatic_nation
+			has_country_flag = ethic_fanatic_materialist_nation@root
+		}
+		NOT = {
+			has_active_event = {
+				nations.18205 #GREETINGS
+				nations.18210 #HIRE FLEET
+				nations.18211 #THANKS FOR RENTAL
+				nations.18215 #MANAGE HIRED FLEET
+				nations.18220 #MERCENARY GARRISON starbase building
+				nations.18235 #Expand Mercenary Fleet
+				nations.18240 #Tactical Appraisal
+				nations.18245 #Tactical Appraisal Khan
+				nations.18250 #Tactical Appraisal Gray Tempest
+				nations.18255 #Tactical Appraisal Prethoryn
+				nations.18260 #Tactical Appraisal Unbidden
+				nations.18270 #Hire Armies
+				nations.18275 #Merc Pays Back Patron
+				nations.18280 #Patron Panel
+				nations.18285 #Recall Fleet
+			}
+		}
+	}
+
+	immediate = {
+		ai_trade_facility = {
+			#offer_hire_mercenary_fleet = yes
+			#offer_prolong_fleet_contract = yes
+			from = {
+				#save_event_target_as = mercenary_enclave_country
+				#Failsafe to catch if fleets are no longer on loan
+				#remove_loaning_fleet_flag = yes
+			}
+			country_event = { id = nations.18205 }
+		}
+	}
+}
+
+# Mercenary Enclave: GREETINGS
+# This = player country; event_target:mercenary_enclave_country = enclave country
+country_event = {
+	id = nations.18205
+	title = nations.18205.name
+	desc = {
+		trigger = {
+			NOR = {
+				is_hostile = event_target:mercenary_enclave_country
+			}
+		}
+		text = nations.18205.desc
+	}
+	desc = {
+		trigger = {
+			is_hostile = event_target:mercenary_enclave_country
+		}
+		text = nations.18205.desc.hostile
+	}
+
+	is_triggered_only = yes
+
+	diplomatic = yes
+	show_sound = event_mysterious_signal
+	#custom_gui = "enclave_mercenary_window"
+	#custom_gui_option = "enclave_mercenary_option"
+	picture_event_data = {
+		portrait = FROMFROM
+		room = personality_metalheads_room
+	}
+	location = ROOT.capital_scope
+
+	immediate = {
+		
+	}
+
+	# Hostility options
+	option = {
+		name = nations.18205.i
+		trigger = {
+			is_hostile = event_target:mercenary_enclave_country
+			#NOT = { is_homicidal = yes }
+		}
+		allow = {
+			resource_stockpile_compare = {
+				resource = energy
+				value >= 2500
+			}
+		}
+		add_resource = {
+			energy = -2500
+		}
+		hidden_effect = {
+			#event_target:mercenary_enclave_country = {
+			#	set_faction_hostility = {
+			#		target = root
+			#		set_neutral = yes
+			#	}
+			#}
+		}
+	}
+
+	#Hire fleet
+	option = {
+		name = nations.18205.a
+		trigger = {
+
+		}
+		allow = {
+			custom_tooltip = {
+				fail_text = nations.18205.tooltip.a
+				#event_target:mercenary_enclave_country = {
+				#	NOT = {
+				#		
+				#	}
+				#}
+			}
+			custom_tooltip = {
+				fail_text = nations.18205.tooltip.b
+				
+			}
+		}
+		ai_trade_facility = {
+			custom_tooltip = mercenary_tt_hirefleet
+			#offer_hire_mercenary_fleet = yes
+			#offer_prolong_fleet_contract = yes
+			hidden_effect = {
+				country_event = { id = nations.18210 }
+			}
+		}
+	}
+	#Manage hired fleet (extend loan, recall)
+	option = {
+		name = nations.18205.b
+		custom_tooltip = mercenary_tt_managefleet
+		trigger = {
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+		}
+		hidden_effect = {
+			country_event = { id = nations.18215 }
+		}
+	}
+	#Mercenary Garrison starbase building
+	option = {
+		name = nations.18205.c
+		custom_tooltip = mercenary_tt_garrison
+		trigger = {
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+			#event_target:mercenary_enclave_country = {
+			#	trust = {
+			#		who = root
+			#		value >= 30
+			#	}
+			#}
+		}
+		allow = {
+			#event_target:mercenary_enclave_country = {
+			#	trust = {
+			#		who = root
+			#		value >= 40
+			#	}
+			#}
+		}
+		hidden_effect = {
+			country_event = { id = nations.18220 }
+		}
+	}
+
+	#Tactical Appraisal
+	option = {
+		name = nations.18205.e
+		custom_tooltip = mercenary_tt_tactical
+		trigger = {
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+			#event_target:mercenary_enclave_country = {
+			#	trust = {
+			#		who = root
+			#		value >= 50
+			#	}
+			#}
+		}
+		hidden_effect = {
+			country_event = { id = nations.18240 }
+		}
+	}
+
+	#Recruit Armies
+	option = {
+		name = nations.18205.f
+		custom_tooltip = mercenary_tt_hirearmies
+		trigger = {
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+		}
+		allow = {
+			#event_target:mercenary_enclave_country = {
+			#	trust = {
+			#		who = root
+			#		value >= 20
+			#	}
+			#}
+		}
+		hidden_effect = {
+			country_event = { id = nations.18270 }
+		}
+	}
+
+	#Mercenary Logistic Services
+	option = {
+		name = nations.18205.g
+		custom_tooltip = mercenary_tt_logistic
+		trigger = {
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+			#event_target:mercenary_enclave_country = {
+			#	trust = {
+			#		who = root
+			#		value >= 20
+			#	}
+			#}
+		}
+		allow = {
+			custom_tooltip = {
+				fail_text = nations.18205.g.tooltip
+				#NOT = {
+				#	has_modifier = mercenary_enclave_logistic_help
+				#}
+			}
+			#event_target:mercenary_enclave_country = {
+			#	trust = {
+			#		who = root
+			#		value >= 30
+			#	}
+			#}
+		}
+
+		hidden_effect = {
+			country_event = { id = nations.182030 }
+		}
+	}
+
+	#Patron Panel
+	option = {
+		name = nations.18205.h
+		custom_tooltip = mercenary_tt_patron
+		trigger = {
+			#NOT = { 
+			#	has_civic = civic_military_dictatorship_corporate
+			#	has_civic = civic_criminal_heritage
+			#}
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+			#exists = event_target:mercenary_patron
+			#event_target:mercenary_patron = {
+			#	is_same_empire = root
+			#}
+		}
+		hidden_effect = {
+			country_event = { id = nations.18280 }
+		}
+	}
+	#Is Pirate Lord
+	option = {
+		name = nations.18205.j
+		custom_tooltip = mercenary_tt_patron
+		trigger = {
+			#has_civic = civic_military_dictatorship_corporate
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+			#exists = event_target:mercenary_patron
+			#event_target:mercenary_patron = {
+			#	is_same_empire = root
+			#}
+		}
+		hidden_effect = {
+			country_event = { id = nations.18280 }
+		}
+	}
+	
+	#Is Criminal Heritage
+	option = {
+		name = nations.18205.k
+		custom_tooltip = mercenary_tt_patron
+		trigger = {
+			#has_civic = civic_criminal_heritage
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+			#exists = event_target:mercenary_patron
+			#event_target:mercenary_patron = {
+			#	is_same_empire = root
+			#}
+		}
+		hidden_effect = {
+			country_event = { id = nations.18280 }
+		}
+	}
+
+	#Cease dialog
+	option = {
+		name = GOODBYE
+		trigger = {
+			NOT = {
+				#is_hostile = event_target:mercenary_enclave_country
+			}
+		}
+		default_hide_option = yes
+	}
+
+	after = {
+		hidden_effect = {
+			set_country_flag = mercenary_enclave_diplomacy_engaged
+		}
+	}
+}
+
+######################################################################################################################################################################################################
+######################################################################################################################################################################################################
+######################################################################################################################################################################################################
+######################################################################################################################################################################################################
+# Mercenary Enclave Greetings: Gatekeeper event
+# Via on_custom_diplomacy | this = target country (player); from = country being contacted
+country_event = {
+	id = nations.19200
+	hide_window = yes
+	is_triggered_only = yes
+
+	trigger = {
+		from = {
+			is_country_type = PrimPlayer_ethic_fanatic_nation
+			has_country_flag = ethic_fanatic_green_nation@root
+		}
+		NOT = {
+			has_active_event = {
+				nations.19205 #GREETINGS
+				nations.19210 #HIRE FLEET
+				nations.19211 #THANKS FOR RENTAL
+				nations.19215 #MANAGE HIRED FLEET
+				nations.19220 #MERCENARY GARRISON starbase building
+				nations.19235 #Expand Mercenary Fleet
+				nations.19240 #Tactical Appraisal
+				nations.19245 #Tactical Appraisal Khan
+				nations.19250 #Tactical Appraisal Gray Tempest
+				nations.19255 #Tactical Appraisal Prethoryn
+				nations.19260 #Tactical Appraisal Unbidden
+				nations.19270 #Hire Armies
+				nations.19275 #Merc Pays Back Patron
+				nations.19280 #Patron Panel
+				nations.19285 #Recall Fleet
+			}
+		}
+	}
+
+	immediate = {
+		ai_trade_facility = {
+			#offer_hire_mercenary_fleet = yes
+			#offer_prolong_fleet_contract = yes
+			from = {
+				#save_event_target_as = mercenary_enclave_country
+				#Failsafe to catch if fleets are no longer on loan
+				#remove_loaning_fleet_flag = yes
+			}
+			country_event = { id = nations.19205 }
+		}
+	}
+}
+
+# Mercenary Enclave: GREETINGS
+# This = player country; event_target:mercenary_enclave_country = enclave country
+country_event = {
+	id = nations.19205
+	title = nations.19205.name
+	desc = {
+		trigger = {
+			NOR = {
+				is_hostile = event_target:mercenary_enclave_country
+			}
+		}
+		text = nations.19205.desc
+	}
+	desc = {
+		trigger = {
+			is_hostile = event_target:mercenary_enclave_country
+		}
+		text = nations.19205.desc.hostile
+	}
+
+	is_triggered_only = yes
+
+	diplomatic = yes
+	show_sound = event_mysterious_signal
+	#custom_gui = "enclave_mercenary_window"
+	#custom_gui_option = "enclave_mercenary_option"
+	picture_event_data = {
+		portrait = FROMFROM
+		room = personality_spiritual_seekers_room
+	}
+	location = ROOT.capital_scope
+
+	immediate = {
+		
+	}
+
+	# Hostility options
+	option = {
+		name = nations.19205.i
+		trigger = {
+			is_hostile = event_target:mercenary_enclave_country
+			#NOT = { is_homicidal = yes }
+		}
+		allow = {
+			resource_stockpile_compare = {
+				resource = energy
+				value >= 2500
+			}
+		}
+		add_resource = {
+			energy = -2500
+		}
+		hidden_effect = {
+			#event_target:mercenary_enclave_country = {
+			#	set_faction_hostility = {
+			#		target = root
+			#		set_neutral = yes
+			#	}
+			#}
+		}
+	}
+
+	#Hire fleet
+	option = {
+		name = nations.19205.a
+		trigger = {
+
+		}
+		allow = {
+			custom_tooltip = {
+				fail_text = nations.19205.tooltip.a
+				#event_target:mercenary_enclave_country = {
+				#	NOT = {
+				#		
+				#	}
+				#}
+			}
+			custom_tooltip = {
+				fail_text = nations.19205.tooltip.b
+				
+			}
+		}
+		ai_trade_facility = {
+			custom_tooltip = mercenary_tt_hirefleet
+			#offer_hire_mercenary_fleet = yes
+			#offer_prolong_fleet_contract = yes
+			hidden_effect = {
+				country_event = { id = nations.19210 }
+			}
+		}
+	}
+	#Manage hired fleet (extend loan, recall)
+	option = {
+		name = nations.19205.b
+		custom_tooltip = mercenary_tt_managefleet
+		trigger = {
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+		}
+		hidden_effect = {
+			country_event = { id = nations.19215 }
+		}
+	}
+	#Mercenary Garrison starbase building
+	option = {
+		name = nations.19205.c
+		custom_tooltip = mercenary_tt_garrison
+		trigger = {
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+			#event_target:mercenary_enclave_country = {
+			#	trust = {
+			#		who = root
+			#		value >= 30
+			#	}
+			#}
+		}
+		allow = {
+			#event_target:mercenary_enclave_country = {
+			#	trust = {
+			#		who = root
+			#		value >= 40
+			#	}
+			#}
+		}
+		hidden_effect = {
+			country_event = { id = nations.19220 }
+		}
+	}
+
+	#Tactical Appraisal
+	option = {
+		name = nations.19205.e
+		custom_tooltip = mercenary_tt_tactical
+		trigger = {
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+			#event_target:mercenary_enclave_country = {
+			#	trust = {
+			#		who = root
+			#		value >= 50
+			#	}
+			#}
+		}
+		hidden_effect = {
+			country_event = { id = nations.19240 }
+		}
+	}
+
+	#Recruit Armies
+	option = {
+		name = nations.19205.f
+		custom_tooltip = mercenary_tt_hirearmies
+		trigger = {
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+		}
+		allow = {
+			#event_target:mercenary_enclave_country = {
+			#	trust = {
+			#		who = root
+			#		value >= 20
+			#	}
+			#}
+		}
+		hidden_effect = {
+			country_event = { id = nations.19270 }
+		}
+	}
+
+	#Mercenary Logistic Services
+	option = {
+		name = nations.19205.g
+		custom_tooltip = mercenary_tt_logistic
+		trigger = {
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+			#event_target:mercenary_enclave_country = {
+			#	trust = {
+			#		who = root
+			#		value >= 20
+			#	}
+			#}
+		}
+		allow = {
+			custom_tooltip = {
+				fail_text = nations.19205.g.tooltip
+				#NOT = {
+				#	has_modifier = mercenary_enclave_logistic_help
+				#}
+			}
+			#event_target:mercenary_enclave_country = {
+			#	trust = {
+			#		who = root
+			#		value >= 30
+			#	}
+			#}
+		}
+
+		hidden_effect = {
+			country_event = { id = nations.192030 }
+		}
+	}
+
+	#Patron Panel
+	option = {
+		name = nations.19205.h
+		custom_tooltip = mercenary_tt_patron
+		trigger = {
+			#NOT = { 
+			#	has_civic = civic_military_dictatorship_corporate
+			#	has_civic = civic_criminal_heritage
+			#}
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+			#exists = event_target:mercenary_patron
+			#event_target:mercenary_patron = {
+			#	is_same_empire = root
+			#}
+		}
+		hidden_effect = {
+			country_event = { id = nations.19280 }
+		}
+	}
+	#Is Pirate Lord
+	option = {
+		name = nations.19205.j
+		custom_tooltip = mercenary_tt_patron
+		trigger = {
+			#has_civic = civic_military_dictatorship_corporate
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+			#exists = event_target:mercenary_patron
+			#event_target:mercenary_patron = {
+			#	is_same_empire = root
+			#}
+		}
+		hidden_effect = {
+			country_event = { id = nations.19280 }
+		}
+	}
+	
+	#Is Criminal Heritage
+	option = {
+		name = nations.19205.k
+		custom_tooltip = mercenary_tt_patron
+		trigger = {
+			#has_civic = civic_criminal_heritage
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+			#exists = event_target:mercenary_patron
+			#event_target:mercenary_patron = {
+			#	is_same_empire = root
+			#}
+		}
+		hidden_effect = {
+			country_event = { id = nations.19280 }
+		}
+	}
+
+	#Cease dialog
+	option = {
+		name = GOODBYE
+		trigger = {
+			NOT = {
+				#is_hostile = event_target:mercenary_enclave_country
+			}
+		}
+		default_hide_option = yes
+	}
+
+	after = {
+		hidden_effect = {
+			set_country_flag = mercenary_enclave_diplomacy_engaged
+		}
+	}
+}
+
+######################################################################################################################################################################################################
+######################################################################################################################################################################################################
+######################################################################################################################################################################################################
+######################################################################################################################################################################################################
+# Mercenary Enclave Greetings: Gatekeeper event
+# Via on_custom_diplomacy | this = target country (player); from = country being contacted
+country_event = {
+	id = nations.20200
+	hide_window = yes
+	is_triggered_only = yes
+
+	trigger = {
+		from = {
+			is_country_type = PrimPlayer_ethic_fanatic_nation
+			has_country_flag = ethic_fanatic_industrial_nation@root
+		}
+		NOT = {
+			has_active_event = {
+				nations.20205 #GREETINGS
+				nations.20210 #HIRE FLEET
+				nations.20211 #THANKS FOR RENTAL
+				nations.20215 #MANAGE HIRED FLEET
+				nations.20220 #MERCENARY GARRISON starbase building
+				nations.20235 #Expand Mercenary Fleet
+				nations.20240 #Tactical Appraisal
+				nations.20245 #Tactical Appraisal Khan
+				nations.20250 #Tactical Appraisal Gray Tempest
+				nations.20255 #Tactical Appraisal Prethoryn
+				nations.20260 #Tactical Appraisal Unbidden
+				nations.20270 #Hire Armies
+				nations.20275 #Merc Pays Back Patron
+				nations.20280 #Patron Panel
+				nations.20285 #Recall Fleet
+			}
+		}
+	}
+
+	immediate = {
+		ai_trade_facility = {
+			#offer_hire_mercenary_fleet = yes
+			#offer_prolong_fleet_contract = yes
+			from = {
+				#save_event_target_as = mercenary_enclave_country
+				#Failsafe to catch if fleets are no longer on loan
+				#remove_loaning_fleet_flag = yes
+			}
+			country_event = { id = nations.20205 }
+		}
+	}
+}
+
+# Mercenary Enclave: GREETINGS
+# This = player country; event_target:mercenary_enclave_country = enclave country
+country_event = {
+	id = nations.20205
+	title = nations.20205.name
+	desc = {
+		trigger = {
+			NOR = {
+				is_hostile = event_target:mercenary_enclave_country
+			}
+		}
+		text = nations.20205.desc
+	}
+	desc = {
+		trigger = {
+			is_hostile = event_target:mercenary_enclave_country
+		}
+		text = nations.20205.desc.hostile
+	}
+
+	is_triggered_only = yes
+
+	diplomatic = yes
+	show_sound = event_mysterious_signal
+	#custom_gui = "enclave_mercenary_window"
+	#custom_gui_option = "enclave_mercenary_option"
+	picture_event_data = {
+		portrait = FROMFROM
+		room = scrappy_room
+	}
+	location = ROOT.capital_scope
+
+	immediate = {
+		
+	}
+
+	# Hostility options
+	option = {
+		name = nations.20205.i
+		trigger = {
+			is_hostile = event_target:mercenary_enclave_country
+			#NOT = { is_homicidal = yes }
+		}
+		allow = {
+			resource_stockpile_compare = {
+				resource = energy
+				value >= 2500
+			}
+		}
+		add_resource = {
+			energy = -2500
+		}
+		hidden_effect = {
+			#event_target:mercenary_enclave_country = {
+			#	set_faction_hostility = {
+			#		target = root
+			#		set_neutral = yes
+			#	}
+			#}
+		}
+	}
+
+	#Hire fleet
+	option = {
+		name = nations.20205.a
+		trigger = {
+
+		}
+		allow = {
+			custom_tooltip = {
+				fail_text = nations.20205.tooltip.a
+				#event_target:mercenary_enclave_country = {
+				#	NOT = {
+				#		
+				#	}
+				#}
+			}
+			custom_tooltip = {
+				fail_text = nations.20205.tooltip.b
+				
+			}
+		}
+		ai_trade_facility = {
+			custom_tooltip = mercenary_tt_hirefleet
+			#offer_hire_mercenary_fleet = yes
+			#offer_prolong_fleet_contract = yes
+			hidden_effect = {
+				country_event = { id = nations.20210 }
+			}
+		}
+	}
+	#Manage hired fleet (extend loan, recall)
+	option = {
+		name = nations.20205.b
+		custom_tooltip = mercenary_tt_managefleet
+		trigger = {
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+		}
+		hidden_effect = {
+			country_event = { id = nations.20215 }
+		}
+	}
+	#Mercenary Garrison starbase building
+	option = {
+		name = nations.20205.c
+		custom_tooltip = mercenary_tt_garrison
+		trigger = {
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+			#event_target:mercenary_enclave_country = {
+			#	trust = {
+			#		who = root
+			#		value >= 30
+			#	}
+			#}
+		}
+		allow = {
+			#event_target:mercenary_enclave_country = {
+			#	trust = {
+			#		who = root
+			#		value >= 40
+			#	}
+			#}
+		}
+		hidden_effect = {
+			country_event = { id = nations.20220 }
+		}
+	}
+
+	#Tactical Appraisal
+	option = {
+		name = nations.20205.e
+		custom_tooltip = mercenary_tt_tactical
+		trigger = {
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+			#event_target:mercenary_enclave_country = {
+			#	trust = {
+			#		who = root
+			#		value >= 50
+			#	}
+			#}
+		}
+		hidden_effect = {
+			country_event = { id = nations.20240 }
+		}
+	}
+
+	#Recruit Armies
+	option = {
+		name = nations.20205.f
+		custom_tooltip = mercenary_tt_hirearmies
+		trigger = {
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+		}
+		allow = {
+			#event_target:mercenary_enclave_country = {
+			#	trust = {
+			#		who = root
+			#		value >= 20
+			#	}
+			#}
+		}
+		hidden_effect = {
+			country_event = { id = nations.20270 }
+		}
+	}
+
+	#Mercenary Logistic Services
+	option = {
+		name = nations.20205.g
+		custom_tooltip = mercenary_tt_logistic
+		trigger = {
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+			#event_target:mercenary_enclave_country = {
+			#	trust = {
+			#		who = root
+			#		value >= 20
+			#	}
+			#}
+		}
+		allow = {
+			custom_tooltip = {
+				fail_text = nations.20205.g.tooltip
+				#NOT = {
+				#	has_modifier = mercenary_enclave_logistic_help
+				#}
+			}
+			#event_target:mercenary_enclave_country = {
+			#	trust = {
+			#		who = root
+			#		value >= 30
+			#	}
+			#}
+		}
+
+		hidden_effect = {
+			country_event = { id = nations.202030 }
+		}
+	}
+
+	#Patron Panel
+	option = {
+		name = nations.20205.h
+		custom_tooltip = mercenary_tt_patron
+		trigger = {
+			#NOT = { 
+			#	has_civic = civic_military_dictatorship_corporate
+			#	has_civic = civic_criminal_heritage
+			#}
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+			#exists = event_target:mercenary_patron
+			#event_target:mercenary_patron = {
+			#	is_same_empire = root
+			#}
+		}
+		hidden_effect = {
+			country_event = { id = nations.20280 }
+		}
+	}
+	#Is Pirate Lord
+	option = {
+		name = nations.20205.j
+		custom_tooltip = mercenary_tt_patron
+		trigger = {
+			#has_civic = civic_military_dictatorship_corporate
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+			#exists = event_target:mercenary_patron
+			#event_target:mercenary_patron = {
+			#	is_same_empire = root
+			#}
+		}
+		hidden_effect = {
+			country_event = { id = nations.20280 }
+		}
+	}
+	
+	#Is Criminal Heritage
+	option = {
+		name = nations.20205.k
+		custom_tooltip = mercenary_tt_patron
+		trigger = {
+			#has_civic = civic_criminal_heritage
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+			#exists = event_target:mercenary_patron
+			#event_target:mercenary_patron = {
+			#	is_same_empire = root
+			#}
+		}
+		hidden_effect = {
+			country_event = { id = nations.20280 }
+		}
+	}
+
+	#Cease dialog
+	option = {
+		name = GOODBYE
+		trigger = {
+			NOT = {
+				#is_hostile = event_target:mercenary_enclave_country
+			}
+		}
+		default_hide_option = yes
+	}
+
+	after = {
+		hidden_effect = {
+			set_country_flag = mercenary_enclave_diplomacy_engaged
+		}
+	}
+}
+
+######################################################################################################################################################################################################
+######################################################################################################################################################################################################
+######################################################################################################################################################################################################
+######################################################################################################################################################################################################
+# Mercenary Enclave Greetings: Gatekeeper event
+# Via on_custom_diplomacy | this = target country (player); from = country being contacted
+country_event = {
+	id = nations.21200
+	hide_window = yes
+	is_triggered_only = yes
+
+	trigger = {
+		from = {
+			is_country_type = PrimPlayer_ethic_fanatic_nation
+			has_country_flag = ethic_fanatic_socialism_nation@root
+		}
+		NOT = {
+			has_active_event = {
+				nations.21205 #GREETINGS
+				nations.21210 #HIRE FLEET
+				nations.21211 #THANKS FOR RENTAL
+				nations.21215 #MANAGE HIRED FLEET
+				nations.21220 #MERCENARY GARRISON starbase building
+				nations.21235 #Expand Mercenary Fleet
+				nations.21240 #Tactical Appraisal
+				nations.21245 #Tactical Appraisal Khan
+				nations.21250 #Tactical Appraisal Gray Tempest
+				nations.21255 #Tactical Appraisal Prethoryn
+				nations.21260 #Tactical Appraisal Unbidden
+				nations.21270 #Hire Armies
+				nations.21275 #Merc Pays Back Patron
+				nations.21280 #Patron Panel
+				nations.21285 #Recall Fleet
+			}
+		}
+	}
+
+	immediate = {
+		ai_trade_facility = {
+			#offer_hire_mercenary_fleet = yes
+			#offer_prolong_fleet_contract = yes
+			from = {
+				#save_event_target_as = mercenary_enclave_country
+				#Failsafe to catch if fleets are no longer on loan
+				#remove_loaning_fleet_flag = yes
+			}
+			country_event = { id = nations.21205 }
+		}
+	}
+}
+
+# Mercenary Enclave: GREETINGS
+# This = player country; event_target:mercenary_enclave_country = enclave country
+country_event = {
+	id = nations.21205
+	title = nations.21205.name
+	desc = {
+		trigger = {
+			NOR = {
+				is_hostile = event_target:mercenary_enclave_country
+			}
+		}
+		text = nations.21205.desc
+	}
+	desc = {
+		trigger = {
+			is_hostile = event_target:mercenary_enclave_country
+		}
+		text = nations.21205.desc.hostile
+	}
+
+	is_triggered_only = yes
+
+	diplomatic = yes
+	show_sound = event_mysterious_signal
+	#custom_gui = "enclave_mercenary_window"
+	#custom_gui_option = "enclave_mercenary_option"
+	picture_event_data = {
+		portrait = FROMFROM
+		room = personality_xenophobic_isolationists_room
+	}
+	location = ROOT.capital_scope
+
+	immediate = {
+		
+	}
+
+	# Hostility options
+	option = {
+		name = nations.21205.i
+		trigger = {
+			is_hostile = event_target:mercenary_enclave_country
+			#NOT = { is_homicidal = yes }
+		}
+		allow = {
+			resource_stockpile_compare = {
+				resource = energy
+				value >= 2500
+			}
+		}
+		add_resource = {
+			energy = -2500
+		}
+		hidden_effect = {
+			#event_target:mercenary_enclave_country = {
+			#	set_faction_hostility = {
+			#		target = root
+			#		set_neutral = yes
+			#	}
+			#}
+		}
+	}
+
+	#Hire fleet
+	option = {
+		name = nations.21205.a
+		trigger = {
+
+		}
+		allow = {
+			custom_tooltip = {
+				fail_text = nations.21205.tooltip.a
+				#event_target:mercenary_enclave_country = {
+				#	NOT = {
+				#		
+				#	}
+				#}
+			}
+			custom_tooltip = {
+				fail_text = nations.21205.tooltip.b
+				
+			}
+		}
+		ai_trade_facility = {
+			custom_tooltip = mercenary_tt_hirefleet
+			#offer_hire_mercenary_fleet = yes
+			#offer_prolong_fleet_contract = yes
+			hidden_effect = {
+				country_event = { id = nations.21210 }
+			}
+		}
+	}
+	#Manage hired fleet (extend loan, recall)
+	option = {
+		name = nations.21205.b
+		custom_tooltip = mercenary_tt_managefleet
+		trigger = {
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+		}
+		hidden_effect = {
+			country_event = { id = nations.21215 }
+		}
+	}
+	#Mercenary Garrison starbase building
+	option = {
+		name = nations.21205.c
+		custom_tooltip = mercenary_tt_garrison
+		trigger = {
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+			#event_target:mercenary_enclave_country = {
+			#	trust = {
+			#		who = root
+			#		value >= 30
+			#	}
+			#}
+		}
+		allow = {
+			#event_target:mercenary_enclave_country = {
+			#	trust = {
+			#		who = root
+			#		value >= 40
+			#	}
+			#}
+		}
+		hidden_effect = {
+			country_event = { id = nations.21220 }
+		}
+	}
+
+	#Tactical Appraisal
+	option = {
+		name = nations.21205.e
+		custom_tooltip = mercenary_tt_tactical
+		trigger = {
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+			#event_target:mercenary_enclave_country = {
+			#	trust = {
+			#		who = root
+			#		value >= 50
+			#	}
+			#}
+		}
+		hidden_effect = {
+			country_event = { id = nations.21240 }
+		}
+	}
+
+	#Recruit Armies
+	option = {
+		name = nations.21205.f
+		custom_tooltip = mercenary_tt_hirearmies
+		trigger = {
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+		}
+		allow = {
+			#event_target:mercenary_enclave_country = {
+			#	trust = {
+			#		who = root
+			#		value >= 20
+			#	}
+			#}
+		}
+		hidden_effect = {
+			country_event = { id = nations.21270 }
+		}
+	}
+
+	#Mercenary Logistic Services
+	option = {
+		name = nations.21205.g
+		custom_tooltip = mercenary_tt_logistic
+		trigger = {
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+			#event_target:mercenary_enclave_country = {
+			#	trust = {
+			#		who = root
+			#		value >= 20
+			#	}
+			#}
+		}
+		allow = {
+			custom_tooltip = {
+				fail_text = nations.21205.g.tooltip
+				#NOT = {
+				#	has_modifier = mercenary_enclave_logistic_help
+				#}
+			}
+			#event_target:mercenary_enclave_country = {
+			#	trust = {
+			#		who = root
+			#		value >= 30
+			#	}
+			#}
+		}
+
+		hidden_effect = {
+			country_event = { id = nations.212030 }
+		}
+	}
+
+	#Patron Panel
+	option = {
+		name = nations.21205.h
+		custom_tooltip = mercenary_tt_patron
+		trigger = {
+			#NOT = { 
+			#	has_civic = civic_military_dictatorship_corporate
+			#	has_civic = civic_criminal_heritage
+			#}
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+			#exists = event_target:mercenary_patron
+			#event_target:mercenary_patron = {
+			#	is_same_empire = root
+			#}
+		}
+		hidden_effect = {
+			country_event = { id = nations.21280 }
+		}
+	}
+	#Is Pirate Lord
+	option = {
+		name = nations.21205.j
+		custom_tooltip = mercenary_tt_patron
+		trigger = {
+			#has_civic = civic_military_dictatorship_corporate
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+			#exists = event_target:mercenary_patron
+			#event_target:mercenary_patron = {
+			#	is_same_empire = root
+			#}
+		}
+		hidden_effect = {
+			country_event = { id = nations.21280 }
+		}
+	}
+	
+	#Is Criminal Heritage
+	option = {
+		name = nations.21205.k
+		custom_tooltip = mercenary_tt_patron
+		trigger = {
+			#has_civic = civic_criminal_heritage
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+			#exists = event_target:mercenary_patron
+			#event_target:mercenary_patron = {
+			#	is_same_empire = root
+			#}
+		}
+		hidden_effect = {
+			country_event = { id = nations.21280 }
+		}
+	}
+
+	#Cease dialog
+	option = {
+		name = GOODBYE
+		trigger = {
+			NOT = {
+				#is_hostile = event_target:mercenary_enclave_country
+			}
+		}
+		default_hide_option = yes
+	}
+
+	after = {
+		hidden_effect = {
+			set_country_flag = mercenary_enclave_diplomacy_engaged
+		}
+	}
+}
+
+######################################################################################################################################################################################################
+######################################################################################################################################################################################################
+######################################################################################################################################################################################################
+######################################################################################################################################################################################################
+# Mercenary Enclave Greetings: Gatekeeper event
+# Via on_custom_diplomacy | this = target country (player); from = country being contacted
+country_event = {
+	id = nations.22200
+	hide_window = yes
+	is_triggered_only = yes
+
+	trigger = {
+		from = {
+			is_country_type = PrimPlayer_ethic_fanatic_nation
+			has_country_flag = ethic_fanatic_capitalism_nation@root
+		}
+		NOT = {
+			has_active_event = {
+				nations.22205 #GREETINGS
+				nations.22210 #HIRE FLEET
+				nations.22211 #THANKS FOR RENTAL
+				nations.22215 #MANAGE HIRED FLEET
+				nations.22220 #MERCENARY GARRISON starbase building
+				nations.22235 #Expand Mercenary Fleet
+				nations.22240 #Tactical Appraisal
+				nations.22245 #Tactical Appraisal Khan
+				nations.22250 #Tactical Appraisal Gray Tempest
+				nations.22255 #Tactical Appraisal Prethoryn
+				nations.22260 #Tactical Appraisal Unbidden
+				nations.22270 #Hire Armies
+				nations.22275 #Merc Pays Back Patron
+				nations.22280 #Patron Panel
+				nations.22285 #Recall Fleet
+			}
+		}
+	}
+
+	immediate = {
+		ai_trade_facility = {
+			#offer_hire_mercenary_fleet = yes
+			#offer_prolong_fleet_contract = yes
+			from = {
+				#save_event_target_as = mercenary_enclave_country
+				#Failsafe to catch if fleets are no longer on loan
+				#remove_loaning_fleet_flag = yes
+			}
+			country_event = { id = nations.22205 }
+		}
+	}
+}
+
+# Mercenary Enclave: GREETINGS
+# This = player country; event_target:mercenary_enclave_country = enclave country
+country_event = {
+	id = nations.22205
+	title = nations.22205.name
+	desc = {
+		trigger = {
+			NOR = {
+				is_hostile = event_target:mercenary_enclave_country
+			}
+		}
+		text = nations.22205.desc
+	}
+	desc = {
+		trigger = {
+			is_hostile = event_target:mercenary_enclave_country
+		}
+		text = nations.22205.desc.hostile
+	}
+
+	is_triggered_only = yes
+
+	diplomatic = yes
+	show_sound = event_mysterious_signal
+	#custom_gui = "enclave_mercenary_window"
+	#custom_gui_option = "enclave_mercenary_option"
+	picture_event_data = {
+		portrait = FROMFROM
+		room = personality_decadent_hierarchy_room
+	}
+	location = ROOT.capital_scope
+
+	immediate = {
+		
+	}
+
+	# Hostility options
+	option = {
+		name = nations.22205.i
+		trigger = {
+			is_hostile = event_target:mercenary_enclave_country
+			#NOT = { is_homicidal = yes }
+		}
+		allow = {
+			resource_stockpile_compare = {
+				resource = energy
+				value >= 2500
+			}
+		}
+		add_resource = {
+			energy = -2500
+		}
+		hidden_effect = {
+			#event_target:mercenary_enclave_country = {
+			#	set_faction_hostility = {
+			#		target = root
+			#		set_neutral = yes
+			#	}
+			#}
+		}
+	}
+
+	#Hire fleet
+	option = {
+		name = nations.22205.a
+		trigger = {
+
+		}
+		allow = {
+			custom_tooltip = {
+				fail_text = nations.22205.tooltip.a
+				#event_target:mercenary_enclave_country = {
+				#	NOT = {
+				#		
+				#	}
+				#}
+			}
+			custom_tooltip = {
+				fail_text = nations.22205.tooltip.b
+				
+			}
+		}
+		ai_trade_facility = {
+			custom_tooltip = mercenary_tt_hirefleet
+			#offer_hire_mercenary_fleet = yes
+			#offer_prolong_fleet_contract = yes
+			hidden_effect = {
+				country_event = { id = nations.22210 }
+			}
+		}
+	}
+	#Manage hired fleet (extend loan, recall)
+	option = {
+		name = nations.22205.b
+		custom_tooltip = mercenary_tt_managefleet
+		trigger = {
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+		}
+		hidden_effect = {
+			country_event = { id = nations.22215 }
+		}
+	}
+	#Mercenary Garrison starbase building
+	option = {
+		name = nations.22205.c
+		custom_tooltip = mercenary_tt_garrison
+		trigger = {
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+			#event_target:mercenary_enclave_country = {
+			#	trust = {
+			#		who = root
+			#		value >= 30
+			#	}
+			#}
+		}
+		allow = {
+			#event_target:mercenary_enclave_country = {
+			#	trust = {
+			#		who = root
+			#		value >= 40
+			#	}
+			#}
+		}
+		hidden_effect = {
+			country_event = { id = nations.22220 }
+		}
+	}
+
+	#Tactical Appraisal
+	option = {
+		name = nations.22205.e
+		custom_tooltip = mercenary_tt_tactical
+		trigger = {
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+			#event_target:mercenary_enclave_country = {
+			#	trust = {
+			#		who = root
+			#		value >= 50
+			#	}
+			#}
+		}
+		hidden_effect = {
+			country_event = { id = nations.22240 }
+		}
+	}
+
+	#Recruit Armies
+	option = {
+		name = nations.22205.f
+		custom_tooltip = mercenary_tt_hirearmies
+		trigger = {
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+		}
+		allow = {
+			#event_target:mercenary_enclave_country = {
+			#	trust = {
+			#		who = root
+			#		value >= 20
+			#	}
+			#}
+		}
+		hidden_effect = {
+			country_event = { id = nations.22270 }
+		}
+	}
+
+	#Mercenary Logistic Services
+	option = {
+		name = nations.22205.g
+		custom_tooltip = mercenary_tt_logistic
+		trigger = {
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+			#event_target:mercenary_enclave_country = {
+			#	trust = {
+			#		who = root
+			#		value >= 20
+			#	}
+			#}
+		}
+		allow = {
+			custom_tooltip = {
+				fail_text = nations.22205.g.tooltip
+				#NOT = {
+				#	has_modifier = mercenary_enclave_logistic_help
+				#}
+			}
+			#event_target:mercenary_enclave_country = {
+			#	trust = {
+			#		who = root
+			#		value >= 30
+			#	}
+			#}
+		}
+
+		hidden_effect = {
+			country_event = { id = nations.222030 }
+		}
+	}
+
+	#Patron Panel
+	option = {
+		name = nations.22205.h
+		custom_tooltip = mercenary_tt_patron
+		trigger = {
+			#NOT = { 
+			#	has_civic = civic_military_dictatorship_corporate
+			#	has_civic = civic_criminal_heritage
+			#}
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+			#exists = event_target:mercenary_patron
+			#event_target:mercenary_patron = {
+			#	is_same_empire = root
+			#}
+		}
+		hidden_effect = {
+			country_event = { id = nations.22280 }
+		}
+	}
+	#Is Pirate Lord
+	option = {
+		name = nations.22205.j
+		custom_tooltip = mercenary_tt_patron
+		trigger = {
+			#has_civic = civic_military_dictatorship_corporate
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+			#exists = event_target:mercenary_patron
+			#event_target:mercenary_patron = {
+			#	is_same_empire = root
+			#}
+		}
+		hidden_effect = {
+			country_event = { id = nations.22280 }
+		}
+	}
+	
+	#Is Criminal Heritage
+	option = {
+		name = nations.22205.k
+		custom_tooltip = mercenary_tt_patron
+		trigger = {
+			#has_civic = civic_criminal_heritage
+			NOR = {
+				#is_hostile = event_target:mercenary_enclave_country
+				#is_homicidal = yes
+			}
+			#exists = event_target:mercenary_patron
+			#event_target:mercenary_patron = {
+			#	is_same_empire = root
+			#}
+		}
+		hidden_effect = {
+			country_event = { id = nations.22280 }
+		}
+	}
+
+	#Cease dialog
+	option = {
+		name = GOODBYE
+		trigger = {
+			NOT = {
+				#is_hostile = event_target:mercenary_enclave_country
+			}
+		}
+		default_hide_option = yes
+	}
+
+	after = {
+		hidden_effect = {
+			set_country_flag = mercenary_enclave_diplomacy_engaged
+		}
+	}
+}
+
+######################################################################################################################################################################################################
+######################################################################################################################################################################################################
+######################################################################################################################################################################################################
+######################################################################################################################################################################################################
+
+
+
+
+#player chooses tile cleared and attitude
+planet_event = {
+	id = nations.100
+	title = "Tile Cleared"
+	desc = "An independent nation on our homeworld has expressed alarm over our recent activity near their borders"
+	diplomatic = yes
+	picture_event_data = { #Specifies picture for diplomatic event. Most options are optional here
+		portrait = owner #Animated portrait. Accepts country, leader or species scope as an input
+		planet_background = owner #Planet background, if your picture has a window
+		graphical_culture = owner #City on the planet in the window
+		city_level = owner #The size of the city. Usable to make planet behind look like capital
+		room = owner.ruler #Static background. Can use static pictures or scopes as the input
+	}
+
+	is_triggered_only = yes
+	
+	trigger = { 
+		is_same_value = owner.capital_scope
+		owner = { is_ai = no } 
+	}
+	
+	option = {
+		name = "Merely infrastructure development. (Clearing a normal tile blocker)"
+		random_list = {
+			1 = { planet_event = { id = nations.3 } }
+			99 = {}
+		}
+	}
+	
+	option = {
+		name = "Ask them to join our government. (Peacefully absorb your own species)"
+		random_list ={
+			10 = { planet_event = { id = nations.3 } }
+			40 = { planet_event = { id = nations.2 } }
+			50 = { best_tile_for_pop = { set_blocker = tb_enemy } }
+		}
+	}
+	
+	option = {
+		name = "Demand they submit. (War to conquer the pop)"
+		planet_event = { id = nations.3 }
+	}
+	
+	option = {
+		name = "Ask them to join us. (Peacefully absorb your syncretic / organic species)"
+		allow = {
+			owner = {
+				OR = {
+					has_civic = civic_machine_assimilator
+					has_civic = civic_machine_servitor
+					has_civic = civic_syncretic_evolution
+					any_owned_pop = { owner_species = { is_same_species  = no } } 
+				}
+			}
+		}
+		random_list ={
+			10 = { planet_event = { id = nations.301 } }
+			20 = { planet_event = { id = nations.201 } }
+			70 = { best_tile_for_pop = { set_blocker = tb_2nd_enemy } }
+		}
+	}
+	
+	option = {
+		name = "Demand they submit. (War to conquer the pop)"
+		allow = {
+			owner = {
+				OR = {
+					has_civic = civic_machine_assimilator
+					has_civic = civic_machine_servitor
+					has_civic = civic_syncretic_evolution
+					any_owned_pop = { owner_species = { is_same_species  = no } } 
+				}
+			}
+		}
+		planet_event = { id = nations.301 }
+	}
+}
+
+# own species joins
+planet_event = {
+	id = nations.2
+	hide_window = yes
+	title = "Peaceful Integration"
+#	desc = "setup2 worked"
+	is_triggered_only = yes
+	
+	immediate = {
+		best_tile_for_pop = { 
+			random_list = {
+				1 = {
+					modifier = {
+						factor = 0
+							not = { owner = { is_militarist = yes } }
+					}	
+					create_pop = { species = owner_species ethos = random }
+					last_created_pop = { pop_change_ethic = ethic_pacifist }
+				}
+				1 = {
+					modifier = {
+						factor = 0
+						not = { owner = { is_pacifist = yes } }
+					}
+					create_pop = { species = owner_species ethos = random }
+					last_created_pop = { pop_change_ethic = ethic_militarist }
+				}
+				1 = {
+					modifier = {
+						factor = 0
+						not = { owner = { is_spiritualist = yes } }
+					}
+					create_pop = { species = owner_species ethos = random }
+					last_created_pop = { pop_change_ethic = ethic_materialist }
+				}
+				1 = {
+					modifier = {
+						factor = 0
+						not = { owner = { is_materialist = yes } }
+					}
+					create_pop = { species = owner_species ethos = random }
+					last_created_pop = { pop_change_ethic = ethic_spiritualist }
+				}
+				1 = {
+					modifier = {
+						factor = 0
+						not = { owner = { is_authoritarian = yes } }
+					}
+					create_pop = { species = owner_species ethos = random }
+					last_created_pop = { pop_change_ethic = ethic_egalitarian }
+				}
+				1 = {
+					modifier = {
+						factor = 0
+						not = { owner = { is_egalitarian = yes } }
+					}
+					create_pop = { species = owner_species ethos = random }
+					last_created_pop = { pop_change_ethic = ethic_authoritarian }
+				}
+				1 = {
+					modifier = {
+						factor = 0
+						not = { owner = { is_xenophobe = yes } }
+					}
+					create_pop = { species = owner_species ethos = random }
+					last_created_pop = { pop_change_ethic = ethic_xenophile }
+				}
+				1 = {
+					modifier = {
+						factor = 0
+						not = { owner = { is_xenophile = yes } }
+					}
+					create_pop = { species = owner_species ethos = random }
+					last_created_pop = { pop_change_ethic = ethic_xenophobe }
+				}
+			}
+		}
+	}
+}
+
+# 2nd species joins
+planet_event = {
+	id = nations.201
+	hide_window = yes
+	title = "Peaceful Subjugation"
+#	desc = "setup2 worked"
+	is_triggered_only = yes
+	
+	immediate = {
+		best_tile_for_pop = { 
+			random_list = {
+				1 = {
+					modifier = {
+						factor = 0
+							not = { owner = { is_militarist = yes } }
+					}	
+					create_pop = { species = owner_species ethos = random }
+					last_created_pop = { pop_change_ethic = ethic_pacifist }
+				}
+				1 = {
+					modifier = {
+						factor = 0
+						not = { owner = { is_pacifist = yes } }
+					}
+					create_pop = { species = owner_species ethos = random }
+					last_created_pop = { pop_change_ethic = ethic_militarist }
+				}
+				1 = {
+					modifier = {
+						factor = 0
+						not = { owner = { is_spiritualist = yes } }
+					}
+					create_pop = { species = owner_species ethos = random }
+					last_created_pop = { pop_change_ethic = ethic_materialist }
+				}
+				1 = {
+					modifier = {
+						factor = 0
+						not = { owner = { is_materialist = yes } }
+					}
+					create_pop = { species = owner_species ethos = random }
+					last_created_pop = { pop_change_ethic = ethic_spiritualist }
+				}
+				1 = {
+					modifier = {
+						factor = 0
+						not = { owner = { is_authoritarian = yes } }
+					}
+					create_pop = { species = owner_species ethos = random }
+					last_created_pop = { pop_change_ethic = ethic_egalitarian }
+				}
+				1 = {
+					modifier = {
+						factor = 0
+						not = { owner = { is_egalitarian = yes } }
+					}
+					create_pop = { species = owner_species ethos = random }
+					last_created_pop = { pop_change_ethic = ethic_authoritarian }
+				}
+				1 = {
+					modifier = {
+						factor = 0
+						not = { owner = { is_xenophobe = yes } }
+					}
+					create_pop = { species = owner_species ethos = random }
+					last_created_pop = { pop_change_ethic = ethic_xenophile }
+				}
+				1 = {
+					modifier = {
+						factor = 0
+						not = { owner = { is_xenophile = yes } }
+					}
+					create_pop = { species = owner_species ethos = random }
+					last_created_pop = { pop_change_ethic = ethic_xenophobe }
+				}
+			}
+		}
+	}
+}
+
+#War starts
+planet_event = {
+	id = nations.3
+	title = "War on our homeworld!"
+	picture = GFX_evt_ground_combat
+	show_sound = event_ground_battle
+	location = this
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		create_rebels = {
+			species = owner.owner_species
+			ethos = random
+			authority = random
+			name = random
+			flag = random
+			effect = {
+				set_country_flag = standard_unrest_rebels
+				save_global_event_target_as = homeworld_rebels
+				establish_communications_no_message = root.owner
+			}
+		}
+		create_army = {
+			owner = event_target:homeworld_rebels
+			species = event_target:homeworld_rebels
+			type = "rebel_army"
+		}
+		create_army = {
+			owner = event_target:homeworld_rebels
+			species = event_target:homeworld_rebels
+			type = "postatomic_army"
+		}
+		every_tile = { limit = { has_blocker = tb_enemy }
+			planet = {
+				if = { limit = { owner = { has_technology = tech_assault_armies } }
+					create_army = {
+						owner = event_target:homeworld_rebels
+						species = event_target:homeworld_rebels
+						type = "assault_army"
+					}
+					else = {
+						create_army = {
+							owner = event_target:homeworld_rebels
+							species = event_target:homeworld_rebels
+							type = "postatomic_army"
+						}
+					}
+				}
+			}
+		}
+	}	
+}
+
+#war with 2nd species 301 home_2nd_rebels
+planet_event = {
+	id = nations.301
+	title = "War on our homeworld!"
+	picture = GFX_evt_ground_combat
+	show_sound = event_ground_battle
+	location = this
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		create_rebels = {
+			species = owner.owner_species
+			ethos = random
+			authority = random
+			name = random
+			flag = random
+			effect = {
+				set_country_flag = standard_unrest_rebels
+				save_global_event_target_as = homeworld_rebels
+				establish_communications_no_message = root.owner
+			}
+		}
+		create_army = {
+			owner = event_target:homeworld_rebels
+			species = event_target:homeworld_rebels
+			type = "rebel_army"
+		}
+		create_army = {
+			owner = event_target:homeworld_rebels
+			species = event_target:homeworld_rebels
+			type = "postatomic_army"
+		}
+		every_tile = { limit = { has_blocker = tb_enemy }
+			planet = {
+				if = { limit = { owner = { has_technology = tech_assault_armies } }
+					create_army = {
+						owner = event_target:homeworld_rebels
+						species = event_target:homeworld_rebels
+						type = "assault_army"
+					}
+					else = {
+						create_army = {
+							owner = event_target:homeworld_rebels
+							species = event_target:homeworld_rebels
+							type = "postatomic_army"
+						}
+					}
+				}
+			}
+		}
+	}	
+}
+
+#Enemy reinforces 31
+planet_event = {
+	id = nations.31
+	title = "Enemy Reinforcements!"
+	picture = GFX_evt_ground_combat
+	show_sound = event_ground_battle
+	location = this
+	
+	trigger = { 
+		exists = owner
+        has_owner = yes 
+        original_owner = yes
+        is_homeworld = yes 
+        owner = { is_ai = no } 
+        has_ground_combat = yes 
+        is_capital = yes 	
+		any_tile = { has_blocker = tb_enemy }
+	}
+	
+	mean_time_to_happen = { days = 90 }
+	
+	immediate = {
+		every_tile = { limit = { has_blocker = tb_enemy }
+			random_list = {
+				1 = {
+					owner.capital_scope = { 
+						create_army = {
+							owner = event_target:homeworld_rebels
+							species = event_target:homeworld_rebels
+							type = "postatomic_army"
+						}
+					}
+				}
+				1 = {
+					owner.capital_scope = { 
+						create_army = {
+							owner = event_target:homeworld_rebels
+							species = event_target:homeworld_rebels
+							type = "rebel_army"
+						}
+					}
+				}
+				1 = {}
+			}
+		}
+	}
+
+	option = {
+		name = "Our troops will handle the situation."
+	}
+	
+	option = {
+		name = "Mobilize the reserves."
+		allow = {
+			owner = { has_country_resource = { type = minerals amount > 25 }}
+		}
+		owner = {
+			every_owned_pop = { #limit = { planet = { is_same_value = prev.capital_scope } }
+				while = { 
+					limit = { owner = { has_country_resource = { type = minerals amount > 25 } } }				
+					random_list = {
+						1 = {
+							prev.capital_scope = {
+								create_army = {
+									owner = prev.owner
+									species = prev.owner_species
+									type = "postatomic_army"
+								}
+							}
+							owner = { add_minerals = -25 }
+						}
+						1 = {}
+					}
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = "Call for volunteers."
+		allow = {
+			owner = { 
+				has_country_resource = { type = minerals amount > 5 }
+				has_country_resource = { type = influence amount > 1 }
+			}
+		}
+		owner = {
+			every_owned_pop = { #limit = { planet = { is_same_value = prev.capital_scope } }
+				while = {
+					limit = { 
+						owner = { 
+							has_country_resource = { type = minerals amount > 5 } 
+							has_country_resource = { type = influence amount > 1 }
+						}
+					}
+					random_list = {
+						1 = {
+							prev.capital_scope = {
+								create_army = {
+									owner = prev.owner
+									species = prev.owner_species
+									type = "rebel_army"
+								}
+							}
+							owner = { add_minerals = -5 add_influence = -1 }
+						}
+						1 = {}
+					}
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = "Order limited nuclear strikes."
+		allow = {
+			owner = { 
+				has_country_resource = { type = unity amount > 20 }
+				has_country_resource = { type = influence amount > 20 }
+			}
+		}
+		owner = {
+			add_influence = -20
+			add_unity = -20
+#			add_planet_unrest = 10	
+		}
+		
+		best_tile_for_pop = { set_blocker = "tb_radioactive_wasteland" }
+		
+		event_target:homeworld_rebels = {
+			while = {
+				count = 5
+				random_owned_army = { #limit = { planet = { is_same_value = PREVPREV } } 
+					remove_army = yes 
+				}
+			}
+		}
+		
+		random_list = {
+			1 = {}
+			2 = {
+				random_tile = { 
+					limit = { 
+						has_grown_pop = yes 
+						has_building = yes 
+					} 
+				set_blocker = "tb_bomb_crater"
+				}
+			}
+			4 = {
+				owner = {
+					while ={
+						count = 5
+						random_owned_army = { remove_army = yes }
+					}
+				}
+				best_tile_for_pop = { set_blocker = "tb_radioactive_wasteland" }
+			}
+			1 = {
+				change_pc = pc_nuked
+				random_tile = { set_blocker = "tb_radioactive_wasteland" }
+				random_tile = { set_blocker = "tb_radioactive_wasteland" }
+				random_tile = { limit = { has_building = yes } set_blocker = "tb_bomb_crater" }
+				random_tile = { limit = { has_building = yes } set_blocker = "tb_bomb_crater" }
+				random_tile = { limit = { has_building = yes } set_blocker = "tb_city_ruins" }
+				random_tile = { limit = { has_building = yes } set_blocker = "tb_city_ruins" }
+				
+				owner = { 
+					every_owned_pop = {
+						random_list = {
+							3 = { kill_pop = yes }
+							1 = {}
+						}
+					}
+					while = { count = 50 random_owned_army = { remove_army = yes } }
+				}
+				
+				event_target:homeworld_rebels = { while =  { count = 50 random_owned_army = { remove_army = yes } }	}			
+			}
+		}
+	}
+}
+
+
+#Hostiles expand
+planet_event = {
+	id = nations.4
+	title = "Hostile expansion"
+	desc = "An independent nation on our homeworld has laid claim to additional territory."
+	location = capital_scope
+	diplomatic = yes
+	picture_event_data = { #Specifies picture for diplomatic event. Most options are optional here
+		portrait = owner #Animated portrait. Accepts country, leader or species scope as an input
+		planet_background = owner #Planet background, if your picture has a window
+		graphical_culture = owner #City on the planet in the window
+		city_level = owner #The size of the city. Usable to make planet behind look like capital
+		room = owner.ruler #Static background. Can use static pictures or scopes as the input
+	}
+	
+	trigger = { 
+		exists = owner
+        has_owner = yes 
+        original_owner = yes
+        is_homeworld = yes 
+        owner = { is_ai = no } 
+        has_ground_combat = no 
+        free_pop_tiles > 0
+        is_capital = yes 	
+		owner.capital_scope = { any_tile = { has_blocker = tb_enemy } }
+	}
+	
+	mean_time_to_happen = { years = 10 }
+	
+	option = {
+		name = "Grudgingly tolerate it."
+		best_tile_for_pop = {
+			set_blocker = tb_enemy
+		}
+	}
+	
+	option = {
+		name = "Diplomatically suggest they reconsider."
+		random_list = {
+			45 = { }
+			50 = { best_tile_for_pop = { set_blocker = tb_enemy } }
+			5 = { 
+				best_tile_for_pop = { set_blocker = tb_enemy }
+				planet_event = { id = nations.3 } 
+			}
+		}
+	}
+	
+	option = {
+		name = "Demand they cease."
+		random_list ={
+			20 = { }
+			50 = { best_tile_for_pop = { set_blocker = tb_enemy } }
+			30 = { 
+				best_tile_for_pop = { set_blocker = tb_enemy }
+				planet_event = { id = nations.3 } 
+			}
+		}
+	}
+	
+	option = {
+		name = "Punish their insolence."
+		best_tile_for_pop = { set_blocker = tb_enemy }
+		planet_event = { id = nations.3 }			
+	}
+}
+	
+#Hostile 2ndaries expand
+
+#Hostile own species defeated	
+# defender = planet owner
+# Triggers country_event for the defender upon victory
+# Root = country, planet owner
+# From = country, attack leader
+# FromFrom = planet	
+country_event = {
+	id = nations.6
+	hide_window = yes
+
+	
+	is_triggered_only = yes
+	
+	trigger = { 
+		root = { is_ai = no }
+		root.capital_scope = { any_tile = { has_blocker = tb_enemy } }
+	}
+	
+	immediate = { 
+		root.capital_scope = {
+			best_tile_for_pop = { 
+				random_list = {
+					1 = {
+						modifier = {
+							factor = 0
+							not = { root = { is_militarist = yes } }
+						}	
+						create_pop = { species = root.owner_species ethos = random }
+						last_created_pop = { 
+							pop_change_ethic = ethic_pacifist 
+							add_modifier = {
+								modifier = pop_recently_conquered
+								years = 5
+							}
+						}
+					}
+					1 = {
+						modifier = {
+							factor = 0
+							not = { root = { is_pacifist = yes } }
+						}
+						create_pop = { species = root.owner_species ethos = random }
+						last_created_pop = { 
+							pop_change_ethic = ethic_militarist 
+							add_modifier = {
+								modifier = pop_recently_conquered
+								years = 5
+							}
+						}
+					}
+					1 = {
+						modifier = {
+							factor = 0
+							not = { root = { is_spiritualist = yes } }
+						}
+						create_pop = { species = root.owner_species ethos = random }
+						last_created_pop = { 
+							pop_change_ethic = ethic_materialist 
+							add_modifier = {
+								modifier = pop_recently_conquered
+								years = 5
+							}
+						}
+					}
+					1 = {
+						modifier = {
+							factor = 0
+							not = { root = { is_materialist = yes } }
+						}
+						create_pop = { species = root.owner_species ethos = random }
+						last_created_pop = { 
+							pop_change_ethic = ethic_spiritualist 
+							add_modifier = {
+								modifier = pop_recently_conquered
+								years = 5
+							}
+						}
+					}
+					1 = {
+						modifier = {
+							factor = 0
+							not = { root = { is_authoritarian = yes } }
+						}
+						create_pop = { species = root.owner_species ethos = random }
+						last_created_pop = { 
+							pop_change_ethic = ethic_egalitarian 
+							add_modifier = {
+								modifier = pop_recently_conquered
+								years = 5
+							}
+						}
+					}
+					1 = {
+						modifier = {
+							factor = 0
+							not = { root = { is_egalitarian = yes } }
+						}
+						create_pop = { species = root.owner_species ethos = random }
+						last_created_pop = { 
+							pop_change_ethic = ethic_authoritarian 
+							add_modifier = {
+								modifier = pop_recently_conquered
+								years = 5
+							}
+						}
+					}
+					1 = {
+						modifier = {
+							factor = 0
+							not = { root = { is_xenophobe = yes } }
+						}
+						create_pop = { species = root.owner_species ethos = random }
+						last_created_pop = { 
+							pop_change_ethic = ethic_xenophile 
+							add_modifier = {
+								modifier = pop_recently_conquered
+								years = 5
+							}
+						}
+					}
+					1 = {
+						modifier = {
+							factor = 0
+							not = { root = { is_xenophile = yes } }
+						}
+						create_pop = { species = root.owner_species ethos = random }
+						last_created_pop = { 
+							pop_change_ethic = ethic_xenophobe 
+							add_modifier = {
+								modifier = pop_recently_conquered
+								years = 5
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+# 2nd species defeated

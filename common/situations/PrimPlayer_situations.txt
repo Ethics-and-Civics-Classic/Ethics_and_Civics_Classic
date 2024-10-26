@@ -1,0 +1,180 @@
+###################################
+# Shroudwalker Enclave Divinations
+###################################
+PrimPlayer_situation = {
+	picture = GFX_evt_clocks
+	complete_icon_frame = GFX_situation_outcome_frame_blue
+	complete_icon = GFX_situation_outcome_unknown
+	abort_trigger = {
+		#OR = {
+		#	NOT = { exists = event_target:shroudwalker_enclave_country }
+		#	owner = { is_hostile = event_target:shroudwalker_enclave_country }
+		#}
+		always = no
+	}
+	modifier = {
+		#all_technology_research_speed = -0.75
+	}
+	stages = {
+		stage_1 = {
+			icon = GFX_PrimPlay_situation_stage_pre_industrial_age
+			icon_background = GFX_situation_stage_frame_blue
+			end = 10
+			on_first_enter = {
+				#OWNER = { set_origin = origin_primitive_player_pre_industrial_age }	#If you start here, you are already pre industrial age
+				
+			}
+			custom_tooltip = set_origin_primitive_player_pre_industrial_age
+		}
+		
+		stage_2 = {
+			icon = GFX_PrimPlay_situation_stage_industrial_age
+			icon_background = GFX_situation_stage_frame_blue
+			end = 30
+			on_first_enter = {
+				if = {
+					limit = { 
+						has_origin = origin_primitive_player_pre_industrial_age
+					}
+					OWNER = { set_origin = origin_primitive_player_industrial_age }
+				}
+				
+			}
+			custom_tooltip = set_origin_primitive_player_industrial_age
+		}
+		
+		stage_3 = {
+			icon = GFX_PrimPlay_situation_stage_machine_age
+			icon_background = GFX_situation_stage_frame_blue
+			end = 50
+			on_first_enter = {
+				if = {
+					limit = { 
+						has_origin = origin_primitive_player_industrial_age
+					}
+					OWNER = { set_origin = origin_primitive_player_machine_age }
+				}
+				
+			}
+			custom_tooltip = set_origin_primitive_player_machine_age
+		}
+		
+		stage_4 = {
+			icon = GFX_PrimPlay_situation_stage_atomic_age
+			icon_background = GFX_situation_stage_frame_blue
+			end = 85
+			on_first_enter = {
+				if = {
+					limit = { 
+						has_origin = origin_primitive_player_machine_age
+					}
+					OWNER = { set_origin = origin_primitive_player_atomic_age }
+				}
+				
+			}
+			custom_tooltip = set_origin_primitive_player_atomic_age
+		}
+		
+		stage_5 = {
+			icon = GFX_PrimPlay_situation_stage_early_space_age
+			icon_background = GFX_situation_stage_frame_blue
+			end = 135
+			on_first_enter = {
+				if = {
+					limit = { 
+						has_origin = origin_primitive_player_atomic_age
+					}
+					OWNER = { set_origin = origin_primitive_player_early_space_age }
+				}
+				
+			}
+			custom_tooltip = set_origin_primitive_player_early_space_age
+		}
+	}
+	on_monthly = {
+		#events = {
+		#	enclave.5556
+		#}
+		#random_events = {
+		#	10 = 0
+		#	1 = enclave.5000 # "All Too Lucid"
+		#	1 = enclave.5050 # "Shrouded"
+		#	1 = enclave.5500 # "Shattered Frontier" (> 50% progress)
+		#	1 = enclave.5125 # "Floating Parts" (> 10% progress)
+		#	1 = enclave.5150 # Lightshow - anomaly.235 (>10% progress)
+		#	1 = enclave.5155 # Grimacing - anomaly.230 (>10% progress)
+		#	1 = enclave.5160 # Improbable Teapot - anomaly.4060
+		#	1 = enclave.5185 # Terminal Orbit - anomaly.2570 (>15% progress)
+		#	1 = enclave.5180 # The Color of Science - anomaly.6740 (>15% progress)
+		#}
+	}
+	monthly_progress = {
+		base = 0 #total: 100
+		#Player actions & policies:
+		#modifier = {
+		#	add = 2
+		#	desc = divination_locus_embrace
+		#	owner = {
+		#		OR = {
+		#			has_policy_flag = diplo_stance_cooperative
+		#			has_policy_flag = first_contact_proactive
+		#			has_policy_flag = border_policy_open
+		#		}
+		#	}
+		#}
+		#modifier = {
+		#	add = -2
+		#	desc = divination_locus_denied
+		#	owner = {
+		#		OR = {
+		#			has_policy_flag = diplo_stance_isolationist
+		#			has_policy_flag = first_contact_cautious
+		#			has_policy_flag = border_policy_closed
+		#		}
+		#	}
+		#}
+		#Situation event outcomes:
+		#modifier = {
+		#	add = 5
+		#	desc = divination_locus_embrace
+		#	OR = {
+		#		has_situation_flag = shattered_frontier_embraced
+		#	}
+		#}
+		#modifier = {
+		#	add = -5
+		#	desc = divination_locus_denied
+		#	OR = {
+		#		has_situation_flag = shattered_frontier_denied
+		#	}
+		#}
+	}
+	on_progress_complete = {
+		custom_tooltip = PrimPlayer_reached_space_age
+		OWNER = { set_origin = origin_default }
+		#hidden_effect = {
+		#	if = {
+		#		limit = {
+		#			has_situation_flag = divination_occurring
+		#		}
+		#		situation_event = { id = enclave.416 }
+		#	}
+		#	else = {
+		#		situation_event = { id = enclave.5557 }
+		#	}
+		#}
+	}
+	on_fail = {
+		custom_tooltip = PrimPlayer_situation_end
+		hidden_effect = { destroy_situation = this }
+	}
+	approach = {
+		name = into_the_unknown
+		icon = GFX_situation_approach_unity
+		icon_background = GFX_situation_approach_bg_green
+		default = yes
+		on_select = {
+			custom_tooltip = deficit_approach_do_nothing_tooltip
+		}
+	}
+}

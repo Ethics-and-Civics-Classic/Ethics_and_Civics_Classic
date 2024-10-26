@@ -1,0 +1,470 @@
+#civic_example = {
+#	playable = {}								# AND trigger, no scope; use this to prevent the civic from being selectable by the player (UI)
+#	potential = {}								# requirements list, see ../readme_requirements.txt
+#	possible = {}								# requirements list, see ../readme_requirements.txt
+#	pickable_at_start = yes / no				# default: yes
+#	modification = { add = {} remove = {} } | yes/no # Can be a set of two triggers, add to check if can be added later under certain conditions, remove to check if can be removed later under certain conditions
+#												# default: yes, set to no to prevent adding or removing this after creation of the empire
+#	custom_tooltip_with_modifiers = ...			# Appends localization key to the end of auto-generated modifier effect text.
+#
+#	random_weight = { base = 5 }				# scriptable weight for randomizing a civic
+#												# Note: If omitted, a default weight of 1 is used
+#												# Also note: after game start, AI selection of new civics uses the below weight instead
+#
+#	ai_weight = { base = 5 }					# scriptable weight for AI picking civics in-game (when unlocking a new slot).
+#												# Note: If omitted, a default weight of 1 is used. Not needed when "modification = no"
+#
+#	modifier = {}								# modifier added to the country if the civic is selected and valid
+#	hide_modifiers = yes / no					# default: no; if yes will hide the modifiers from the origin/civic tooltip.
+#	can_build_ruler_ship = yes / no				# default: no
+#	traits = { trait = ... }					# default: empty; trait set to enforce on the primary species. They cannot be removed, but more can be added if points/picks permit
+#	has_secondary_species = {					# default: none; if present, will enable secondary species customization in empire designer and will create secondary species & pops at galaxy generation time (see empire_init_create_capital_secondary_pops)
+#		traits = { trait = ... }					# default: empty; trait set to enforce on the secondary species. They cannot be removed, but more can be added if points/picks permit
+#	}
+#	is_origin = yes / no						# default: no, set to yes if civic should be treated as an Origin
+#	description = LOC_KEY						# Custom text that will appear under the "Effects" heading.
+#	negative_description = LOC_KEY				# Custom text that will appear under the "Penalties" heading.
+#   alternate_civic_version = civic_key			# Key of the civic that will try to replace the current one during a government reform if the current civic is locked (ex: corporate version of the civic that will replace it when attempting to reform to Megacorporation)
+#												# Note: if no replacement civic is indicated, it fallback to non-moddable civics behaviour, i.e. you can't change authority
+#
+#	swap_type = {								# triggered name, desc, custom desc and modifiers
+#		name = ...
+#		description = ...
+#		negative_description = ...
+#		trigger = {								# In empire creation / galaxy setup, this has no scope. During the game, when there are actual countries existing, it is set to country scope.
+#			local_human_species_class = ..		# If you want to use country scope here, you must always check is_scope_valid first (see civic_devouring_swarm), or you will get errors or it won't work as intended.
+#		}
+#		modifier = {							# modifier that is applied to the country when triggers are evaluated as true
+#			...
+#		}
+#	}
+#	ai_playable = {}							# Similar to "playable", for AI
+#}
+
+PrimPlayer_civic_fortress_nation = {
+	#description = "civic_tooltip_police_state_effects"
+	modification = {
+		remove = {
+			NOT = {
+				value = origin_primitive_player_pre_industrial_age
+				value = origin_primitive_player_industrial_age
+				value = origin_primitive_player_machine_age
+			}
+		}
+	}
+	potential = {
+		origin = { 
+			OR = {
+				value = origin_primitive_player_pre_industrial_age
+				value = origin_primitive_player_industrial_age
+				value = origin_primitive_player_machine_age
+			}
+		}
+	}
+	possible = {
+		
+	}
+	modifier = {
+		
+	}
+	random_weight = { base = @civic_default_random_weight }
+	ai_weight = {
+		base = @ai_civic_default_base_weight
+		#modifier = {
+		#	factor = @ai_civic_personality_match_factor
+		#	
+		#}
+		#modifier = {
+		#	factor = @ai_civic_personality_mismatch_factor
+		#	
+		#}
+		#modifier = {
+		#	factor = @ai_civic_personality_forbid_factor
+		#	
+		#}
+	}
+}
+
+PrimPlayer_civic_electrifying_nation = {
+	#description = "civic_tooltip_police_state_effects"
+	modification = {
+		remove = {
+			NOT = {
+				value = origin_primitive_player_pre_industrial_age
+				value = origin_primitive_player_industrial_age
+			}
+		}
+	}
+	potential = {
+		origin = { 
+			OR = {
+				value = origin_primitive_player_pre_industrial_age
+				value = origin_primitive_player_industrial_age
+				value = origin_primitive_player_machine_age
+			}
+		}
+	}
+	possible = {
+		ethics = {
+			OR = {
+				text = civic_tooltip_materialist_or_industrial
+				value = ethic_materialist	
+				value = ethic_fanatic_materialist
+				value = ethic_industrial
+				value = ethic_fanatic_industrial
+			}
+		}
+	}
+	modifier = {
+		
+	}
+	random_weight = { base = @civic_default_random_weight }
+	ai_weight = {
+		base = @ai_civic_default_base_weight
+		#modifier = {
+		#	factor = @ai_civic_personality_match_factor
+		#	
+		#}
+		#modifier = {
+		#	factor = @ai_civic_personality_mismatch_factor
+		#	
+		#}
+		#modifier = {
+		#	factor = @ai_civic_personality_forbid_factor
+		#	
+		#}
+	}
+}
+
+PrimPlayer_civic_agrarian_nation = {
+	#description = "civic_tooltip_police_state_effects"
+	modification = {
+		remove = {
+			NOT = {
+				value = origin_primitive_player_pre_industrial_age
+				value = origin_primitive_player_industrial_age
+			}
+		}
+	}
+	potential = {
+		origin = { 
+			OR = {
+				value = origin_primitive_player_pre_industrial_age
+				value = origin_primitive_player_industrial_age
+				value = origin_primitive_player_machine_age
+			}
+		}
+	}
+	possible = {
+		ethics = {
+			NOT = {
+				text = civic_tooltip_not_industrial
+				value = ethic_industrial
+				value = ethic_fanatic_industrial
+			}
+		}
+	}
+	modifier = {
+		
+	}
+	random_weight = { base = @civic_default_random_weight }
+	ai_weight = {
+		base = @ai_civic_default_base_weight
+		#modifier = {
+		#	factor = @ai_civic_personality_match_factor
+		#	
+		#}
+		#modifier = {
+		#	factor = @ai_civic_personality_mismatch_factor
+		#	
+		#}
+		#modifier = {
+		#	factor = @ai_civic_personality_forbid_factor
+		#	
+		#}
+	}
+}
+
+PrimPlayer_civic_industrializing_nation = {
+	#description = "civic_tooltip_police_state_effects"
+	modification = {
+		remove = {
+			NOT = {
+				value = origin_primitive_player_pre_industrial_age
+				value = origin_primitive_player_industrial_age
+			}
+		}
+	}
+	potential = {
+		origin = { 
+			OR = {
+				value = origin_primitive_player_pre_industrial_age
+				value = origin_primitive_player_industrial_age
+				value = origin_primitive_player_machine_age
+			}
+		}
+	}
+	possible = {
+		ethics = {
+			OR = {
+				text = civic_tooltip_industrial
+				value = ethic_industrial
+				value = ethic_fanatic_industrial
+			}
+		}
+	}
+	modifier = {
+		
+	}
+	random_weight = { base = @civic_default_random_weight }
+	ai_weight = {
+		base = @ai_civic_default_base_weight
+		#modifier = {
+		#	factor = @ai_civic_personality_match_factor
+		#	
+		#}
+		#modifier = {
+		#	factor = @ai_civic_personality_mismatch_factor
+		#	
+		#}
+		#modifier = {
+		#	factor = @ai_civic_personality_forbid_factor
+		#	
+		#}
+	}
+}
+
+PrimPlayer_civic_the_obelisk = {
+	description = "PrimPlayer_civic_the_obelisk_effects"
+	modification = {
+		remove = {
+			NOT = {
+				value = origin_primitive_player_pre_industrial_age
+				value = origin_primitive_player_industrial_age
+				value = origin_primitive_player_machine_age
+				value = origin_primitive_player_atomic_age
+				value = origin_primitive_player_early_space_age
+			}
+		}
+	}
+	modification = {
+		remove = {
+			always = no
+		}
+	}
+	potential = {
+		origin = { 
+			OR = {
+				value = origin_primitive_player_pre_industrial_age
+				value = origin_primitive_player_industrial_age
+				value = origin_primitive_player_machine_age
+			}
+		}
+	}
+	possible = {
+	}
+	modifier = {
+		
+	}
+	random_weight = { base = @civic_default_random_weight }
+	ai_weight = {
+		base = @ai_civic_default_base_weight
+		#modifier = {
+		#	factor = @ai_civic_personality_match_factor
+		#	
+		#}
+		#modifier = {
+		#	factor = @ai_civic_personality_mismatch_factor
+		#	
+		#}
+		#modifier = {
+		#	factor = @ai_civic_personality_forbid_factor
+		#	
+		#}
+	}
+}
+
+PrimPlayer_civic_star_gazers = {
+	#description = "civic_tooltip_police_state_effects"
+	modification = {
+		remove = {
+			NOT = {
+				value = origin_primitive_player_pre_industrial_age
+				value = origin_primitive_player_industrial_age
+				value = origin_primitive_player_machine_age
+			}
+		}
+	}
+	potential = {
+		origin = { 
+			OR = {
+				value = origin_primitive_player_pre_industrial_age
+				value = origin_primitive_player_industrial_age
+				value = origin_primitive_player_machine_age
+			}
+		}
+	}
+	possible = {
+
+	}
+	modifier = {
+		
+	}
+	random_weight = { base = @civic_default_random_weight }
+	ai_weight = {
+		base = @ai_civic_default_base_weight
+		#modifier = {
+		#	factor = @ai_civic_personality_match_factor
+		#	
+		#}
+		#modifier = {
+		#	factor = @ai_civic_personality_mismatch_factor
+		#	
+		#}
+		#modifier = {
+		#	factor = @ai_civic_personality_forbid_factor
+		#	
+		#}
+	}
+}
+
+PrimPlayer_civic_symbiotic_presapients = {
+	description = "PrimPlayer_civic_symbiotic_presapients_effects"
+	modification = {
+		remove = {
+			always = no
+		}
+	}
+	potential = {
+		origin = { 
+			OR = {
+				value = origin_primitive_player_pre_industrial_age
+				value = origin_primitive_player_industrial_age
+				value = origin_primitive_player_machine_age
+			}
+		}
+	}
+	possible = {
+	}
+	modifier = {
+		
+	}
+	random_weight = { base = @civic_default_random_weight }
+	ai_weight = {
+		base = @ai_civic_default_base_weight
+		#modifier = {
+		#	factor = @ai_civic_personality_match_factor
+		#	
+		#}
+		#modifier = {
+		#	factor = @ai_civic_personality_mismatch_factor
+		#	
+		#}
+		#modifier = {
+		#	factor = @ai_civic_personality_forbid_factor
+		#	
+		#}
+	}
+}
+
+PrimPlayer_civic_trading_nation = {
+	#description = "civic_tooltip_police_state_effects"
+	modification = {
+		remove = {
+			NOT = {
+				value = origin_primitive_player_pre_industrial_age
+				value = origin_primitive_player_industrial_age
+				value = origin_primitive_player_machine_age
+			}
+		}
+	}
+	potential = {
+		origin = { 
+			OR = {
+				value = origin_primitive_player_pre_industrial_age
+				value = origin_primitive_player_industrial_age
+				value = origin_primitive_player_machine_age
+			}
+		}
+	}
+	possible = {
+	}
+	modifier = {
+		
+	}
+	random_weight = { base = @civic_default_random_weight }
+	ai_weight = {
+		base = @ai_civic_default_base_weight
+		#modifier = {
+		#	factor = @ai_civic_personality_match_factor
+		#	
+		#}
+		#modifier = {
+		#	factor = @ai_civic_personality_mismatch_factor
+		#	
+		#}
+		#modifier = {
+		#	factor = @ai_civic_personality_forbid_factor
+		#	
+		#}
+	}
+}
+
+PrimPlayer_civic_environmental_synergy = {
+	description = "PrimPlayer_civic_environmental_synergy_effects"
+	modification = {
+		remove = {
+			NOT = {
+				value = origin_primitive_player_pre_industrial_age
+				value = origin_primitive_player_industrial_age
+				value = origin_primitive_player_machine_age
+			}
+		}
+	}
+	potential = {
+		origin = { 
+			OR = {
+				value = origin_primitive_player_pre_industrial_age
+				value = origin_primitive_player_industrial_age
+				value = origin_primitive_player_machine_age
+			}
+		}
+	}
+	possible = {
+
+		ethics = {
+			OR = {
+				text = civic_tooltip_green
+				value = ethic_green
+				value = ethic_fanatic_green
+			}
+		}
+	}
+	modifier = {
+		
+	}
+	random_weight = { base = @civic_default_random_weight }
+	ai_weight = {
+		base = @ai_civic_default_base_weight
+		#modifier = {
+		#	factor = @ai_civic_personality_match_factor
+		#	
+		#}
+		#modifier = {
+		#	factor = @ai_civic_personality_mismatch_factor
+		#	
+		#}
+		#modifier = {
+		#	factor = @ai_civic_personality_forbid_factor
+		#	
+		#}
+	}
+}
+
+
+
+
+
+
+
+

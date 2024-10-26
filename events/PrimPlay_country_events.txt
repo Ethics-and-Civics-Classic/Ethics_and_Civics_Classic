@@ -5,28 +5,29 @@ country_event = {
 	id = country.200
 	title = "country.200.name"
 	desc = "country.200.desc"
-	picture = GFX_evt_big_landing_ship
+	picture = GFX_evt_alien_propaganda
 	show_sound = event_ship_thrusters
 	location = event_target:cultist_ship
-	
+	event_chain = radical_cult
+
 	is_triggered_only = yes
-	
+
 	trigger = {
 		NOR = {
 			has_ethic = ethic_gestalt_consciousness
 			has_country_flag = starting_event
 		}
-		has_technology = "tech_starbase_2"
+		has_technology = "tech_starbase_2"	#Cogger note - For PrimPlay compatibility, may break event without it
 		is_ai = no
 	}
-	
+
 	immediate = {
 		set_country_flag = starting_event
 		save_event_target_as = owner_country
 		capital_scope = {
 			solar_system = {
 				random_system_planet = {
-					limit = { 
+					limit = {
 						is_capital = no
 						is_asteroid = no
 						is_star = no
@@ -49,14 +50,10 @@ country_event = {
 				establish_communications_no_message = root
 				establish_contact = { who = root location = root.capital_scope }
 				create_leader = {
-					type = admiral
+					class = commander
 					species = owner_main_species
 					name = random
 					skill = 2
-					traits = {
-						trait = random_trait
-						trait = random_trait
-					}
 				}
 				create_fleet = {
 					name = "NAME_Hijacked_Fleet"
@@ -99,19 +96,22 @@ country_event = {
 				add_ship_design = last_created_design
 				save_event_target_as = radical_cult
 				set_name = random
-				set_relation_flag = {
-					who = ROOT
-					flag = cultist_rebels
-				}
+				set_country_flag = cultist_rebels_of@root
 			}
 		}
-	}
-	
-	option = {
-		name = "country.200.a"
 		begin_event_chain = {
 			event_chain = "radical_cult"
 			target = ROOT
+		}
+	}
+
+	option = {
+		name = "country.200.a"
+		tooltip = {
+			begin_event_chain = {
+				event_chain = "radical_cult"
+				target = ROOT
+			}
 		}
 		hidden_effect = {
 			create_point_of_interest = {
@@ -125,77 +125,78 @@ country_event = {
 	}
 }
 
-# 1050 final catchup with scientist
-ship_event = {
-	id = country.1050
-	title = "country.1050.name"
-	desc = "country.1050.desc"
-	show_sound = event_scanner
-	picture = GFX_evt_ship_in_orbit
-	location = root
-
-	is_triggered_only = yes
-
-	trigger = {
-		FROM = { has_star_flag = scientist_system_5 }
-		owner = {
-			has_event_chain = "rogue_scientist_3_chain"
-			NOT = { has_country_flag = scisys_5 }
-		}
-	}
-
-	immediate = {
-		owner = {
-			set_country_flag = scisys_5
-			random_owned_leader = {
-				limit = {
-					leader_class = scientist
-				}
-				save_event_target_as = scientist_portrait
-			}
-		}
-		solar_system = {
-			random_system_planet = {
-				limit = { is_star = yes }
-				save_event_target_as = ship_position
-			}
-		}
-		owner = {
-			save_event_target_as = owner_country
-			remove_point_of_interest = scientist_system_5
-			add_event_chain_counter = {
-				event_chain = "rogue_scientist_3_chain"
-				counter = "scientist_apprehended"
-				amount = 1
-			}
-			create_fleet = {
-				name = "NAME_Burnt-Out_Science_Ship"
-				effect = {
-					set_owner = prev
-					create_ship_design = {
-						design = "NAME_Prototype"
-					}
-					create_ship = {
-						name = "NAME_Research_Expedition_Vessel"
-						prefix = no
-						design = last_created_design
-						graphical_culture = event_target:owner_country
-#						upgradable = no
-						effect = {
-							set_ship_flag = wandering_scientist_ship
-							set_disabled = yes
-							save_event_target_as = wandering_ship
-						}
-					}
-					set_fleet_flag = wandering_scientist_fleet_flag
-					set_location = event_target:ship_position
-				}
-			}
-		}
-	}
-
-	option = {
-		name = ONSCREEN
-		hidden_effect = { owner = { country_event = { id = country.1051 } } }
-	}
-}
+## 1050 final catchup with scientist	#Cogger Note - Overwriting vanilla is not worth doing for unless it breaks this event
+#ship_event = {
+#	id = country.1050
+#	title = "country.1050.name"
+#	desc = "country.1050.desc"
+#	show_sound = event_scanner
+#	picture = GFX_evt_ship_in_orbit
+#	location = root
+#
+#	is_triggered_only = yes
+#
+#	trigger = {
+#		FROM = { has_star_flag = scientist_system_5 }
+#		owner = {
+#			has_event_chain = "rogue_scientist_3_chain"
+#			NOT = { has_country_flag = scisys_5 }
+#		}
+#	}
+#
+#	immediate = {
+#		owner = {
+#			set_country_flag = scisys_5
+#			random_owned_leader = {				#Cogger Note - PrimPlay used this limit, seems like deprecated code.
+#				limit = {
+#					leader_class = scientist
+#				}
+#				save_event_target_as = scientist_portrait
+#			}
+#		}
+#		solar_system = {
+#			random_system_planet = {
+#				limit = { is_star = yes }
+#				save_event_target_as = ship_position
+#			}
+#		}
+#		owner = {
+#			save_event_target_as = owner_country
+#			remove_point_of_interest = scientist_system_5
+#			add_event_chain_counter = {
+#				event_chain = "rogue_scientist_3_chain"
+#				counter = "scientist_apprehended"
+#				amount = 1
+#			}
+#			create_fleet = {
+#				name = "NAME_Burnt-Out_Science_Ship"
+#				effect = {
+#					set_owner = prev
+#					create_ship_design = {
+#						design = "NAME_Prototype"
+#					}
+#					create_ship = {
+#						name = "NAME_Research_Expedition_Vessel"
+#						prefix = no
+#						design = last_created_design
+#						graphical_culture = event_target:owner_country
+##						upgradable = no		#Cogger Note - PrimPlay allowed this to be upgraded.
+#						effect = {
+#							set_ship_flag = wandering_scientist_ship
+#							set_disabled = yes
+#							save_event_target_as = wandering_ship
+#						}
+#					}
+#					set_fleet_flag = wandering_scientist_fleet_flag
+#					set_location = event_target:ship_position
+#				}
+#			}
+#		}
+#	}
+#
+#	option = {
+#		name = ONSCREEN
+#		hidden_effect = { owner = { country_event = { id = country.1051 } } }
+#	}
+#}
+#

@@ -1,0 +1,562 @@
+#namespace = primethos
+#
+##Sets blockers and creates new pops as needed		#Deprecated Vanilla Event - Tile system no longer exists
+#event = {
+#	id = primethos.1
+#	hide_window = yes
+#	is_triggered_only = yes
+#	
+#	immediate = {
+#		every_country = { limit = { is_ai = no }
+#			
+#			if = { 
+#				limit = {  
+#					OR = {
+#						has_civic = civic_barbaric_despoilers
+#						has_authority = auth_hive_mind
+#					} 
+#				}	
+#				capital_scope = {	# 16 total, 8 v 8, unified ethics, same species
+#					every_tile = { limit = { has_blocker = yes }
+#						remove_blocker = yes
+#					}
+#					while = { 
+#						count = 8
+#						random_tile = {
+#							limit = { 
+#								has_grown_pop = no  
+#								not = { has_building = "building_colony_shelter" }
+#							}
+#							set_blocker = "tb_enemy"
+#						}
+#					}
+#				}
+#			}
+#			
+#			if ={ limit = { has_authority = auth_machine_intelligence }	
+#				capital_scope = {	# 16 total, 8 v 8, unified ethics, 2ndary species
+#					every_tile = { limit = { has_blocker = yes }
+#						remove_blocker = yes
+#					}
+#					while = { 
+#						count = 8
+#						random_tile = {
+#							limit = { 
+#								has_grown_pop = no  
+#								not = { has_building = "building_colony_shelter" }
+#							}
+#							set_blocker = "tb_2nd_enemy"
+#						}
+#					}
+#				}
+#			}
+#			
+#			if = { limit = { has_civic = civic_post_apocalyptic } 
+#				capital_scope = {	#8 total, all ethics = 5v3 or 6v2
+#					planet_event = { id = primethos.101 } 
+#				}
+#			}
+#			
+#			if = { limit = { has_civic = civic_mechanists } 
+#				capital_scope = {	#16 total, 12 + 4 bots, 8 of all ethics + 4 enemy = 5+4v7 or 6+4v6
+#					every_tile = { limit = { has_blocker = yes }
+#						remove_blocker = yes
+#					}
+#					while = { 
+#						count = 4
+#						random_tile = {
+#							limit = { 
+#								has_grown_pop = no  
+#								not = { has_building = "building_colony_shelter" }
+#							}
+#							set_blocker = "tb_enemy"
+#						}
+#					}
+#					while = { 
+#						count = 2
+#						every_owned_pop = { limit = { owner.owner_species = { is_same_species  = no } } 
+#							best_tile_for_pop = {
+#								create_pop = { species = PREV ethos = random } # grow two bots
+#							}
+#						}
+#					}
+#				}
+#				capital_scope = { planet_event = { id = primethos.101 }	}
+#			}
+#			
+#			if = { limit = { 
+##					has_civic = civic_syncretic_evolution 	#comment this out for mod support
+#					not = { has_authority = auth_machine_intelligence }
+#				}	
+#				every_owned_pop = { limit = { owner.owner_species = { is_same_species  = no } } 
+#					capital_scope = {	# 16 total, 8 of all ethics + 8 blockers
+#						every_tile = { limit = { has_blocker = yes }
+#							remove_blocker = yes
+#						}
+#						while = { 
+#							count = 8
+#							random_tile = {
+#								limit = { 
+#									has_grown_pop = no  
+#									not = { has_building = "building_colony_shelter" }
+#								}
+#								set_blocker = "tb_2nd_enemy"
+#							}
+#						}
+#						planet_event = { id = primethos.101 } 
+#					}
+#				}
+#			}
+#			
+#			capital_scope = { # Vanilla, Life Seeded, and modded	16 total, all ethics 10v6 or 12v4
+#				every_tile = { limit = { has_blocker = yes }
+#					remove_blocker = yes
+#				}
+#				while = { 
+#					count = 8
+#					create_pop = { species = owner_species ethos = random }
+#				}
+#				planet_event = { id = primethos.102 }
+#			}
+#		}
+#	}
+#}
+#
+##clears ethics and makes 1 in 8 pops have each ethic
+#planet_event = {
+#	id = primethos.101
+#	hide_window = yes
+#	is_triggered_only = yes
+#	
+#	immediate = {
+#		
+#		every_owned_pop = { limit = { is_same_species = owner_species } clear_ethos = yes }
+#	
+#		random_owned_pop = {
+#			limit = { is_same_species = owner_species }
+#			pop_force_add_ethic = ethic_pacifist
+#		}
+#			
+#		random_owned_pop = {
+#			limit = { 
+#				is_same_species = owner_species
+#				not = { has_ethic = ethic_pacifist } 
+#			}
+#			pop_force_add_ethic = ethic_militarist
+#		}
+#		
+#		random_owned_pop = {
+#			limit = { 
+#				is_same_species = owner_species
+#				not = { 
+#					has_ethic = ethic_pacifist 
+#					has_ethic = ethic_militarist
+#				}
+#			}
+#			pop_force_add_ethic = ethic_materialist
+#		}
+#		
+#		random_owned_pop = {
+#			limit = { 
+#				is_same_species = owner_species
+#				not = { 
+#					has_ethic = ethic_pacifist 
+#					has_ethic = ethic_militarist
+#					has_ethic = ethic_materialist
+#				}
+#			}
+#			pop_force_add_ethic = ethic_authoritarian
+#		}
+#		
+#		random_owned_pop = {
+#			limit = { 
+#				is_same_species = owner_species
+#				not = { 
+#					has_ethic = ethic_pacifist 
+#					has_ethic = ethic_militarist
+#					has_ethic = ethic_materialist
+#					has_ethic = ethic_authoritarian
+#				}
+#			}
+#			pop_force_add_ethic = ethic_egalitarian
+#		}
+#		
+#		random_owned_pop = {
+#			limit = { 
+#				is_same_species = owner_species
+#				not = { 
+#					has_ethic = ethic_pacifist 
+#					has_ethic = ethic_militarist
+#					has_ethic = ethic_materialist
+#					has_ethic = ethic_authoritarian
+#					has_ethic = ethic_egalitarian
+#				}
+#			}
+#			pop_force_add_ethic = ethic_xenophile
+#		}
+#		
+#		random_owned_pop = {
+#			limit = { 
+#				is_same_species = owner_species
+#				not = { 
+#					has_ethic = ethic_pacifist 
+#					has_ethic = ethic_militarist
+#					has_ethic = ethic_materialist
+#					has_ethic = ethic_authoritarian
+#					has_ethic = ethic_egalitarian
+#					has_ethic = ethic_xenophile
+#				}
+#			}
+#			pop_force_add_ethic = ethic_spiritualist
+#		}
+#		
+#		random_owned_pop = {
+#			limit = { 
+#				is_same_species = owner_species
+#				not = { 
+#					has_ethic = ethic_pacifist 
+#					has_ethic = ethic_militarist
+#					has_ethic = ethic_materialist
+#					has_ethic = ethic_authoritarian
+#					has_ethic = ethic_egalitarian
+#					has_ethic = ethic_xenophile
+#					has_ethic = ethic_spiritualist
+#				}
+#			}
+#			pop_force_add_ethic = ethic_xenophobe
+#		}
+#				
+#		planet_event = { id = primethos.103 }
+#	}
+#}
+#
+##clears ethics and makes 2 in 16 pops have each ethic
+#planet_event = {
+#	id = primethos.102
+#	hide_window = yes
+#	is_triggered_only = yes
+#	
+#	immediate = {
+#		
+#		every_owned_pop = { limit = { is_same_species = owner_species } clear_ethos = yes }
+#	
+#		while = { 
+#			count = 2 
+#			random_owned_pop = {
+#				limit = { 
+#					is_same_species = owner_species
+#					not = { has_ethic = ethic_pacifist } 
+#				}
+#				pop_force_add_ethic = ethic_pacifist
+#			}
+#		}
+#		while = {
+#			count = 2
+#			random_owned_pop = {
+#				limit = { 
+#					is_same_species = owner_species
+#					not = { 
+#						has_ethic = ethic_pacifist 
+#						has_ethic = ethic_militarist
+#					}
+#				}
+#				pop_force_add_ethic = ethic_militarist
+#			}
+#		}
+#		
+#		while = {
+#			count = 2
+#			random_owned_pop = {
+#				limit = { 
+#					is_same_species = owner_species
+#					not = { 
+#						has_ethic = ethic_pacifist 
+#						has_ethic = ethic_militarist
+#						has_ethic = ethic_materialist
+#					}
+#				}
+#				pop_force_add_ethic = ethic_materialist
+#			}
+#		}
+#		
+#		while = {
+#			count = 2
+#			random_owned_pop = {
+#				limit = { 
+#					is_same_species = owner_species
+#					not = { 
+#						has_ethic = ethic_pacifist 
+#						has_ethic = ethic_militarist
+#						has_ethic = ethic_materialist
+#						has_ethic = ethic_authoritarian
+#					}
+#				}
+#				pop_force_add_ethic = ethic_authoritarian
+#			}
+#		}
+#		
+#		while = {
+#			count = 2
+#			random_owned_pop = {
+#				limit = { 
+#					is_same_species = owner_species
+#					not = { 
+#						has_ethic = ethic_pacifist 
+#						has_ethic = ethic_militarist
+#						has_ethic = ethic_materialist
+#						has_ethic = ethic_authoritarian
+#						has_ethic = ethic_egalitarian
+#					}
+#				}
+#				pop_force_add_ethic = ethic_egalitarian
+#			}
+#		}
+#		
+#		while = {
+#			count = 2
+#			random_owned_pop = {
+#				limit = { 
+#					is_same_species = owner_species
+#					not = { 
+#						has_ethic = ethic_pacifist 
+#						has_ethic = ethic_militarist
+#						has_ethic = ethic_materialist
+#						has_ethic = ethic_authoritarian
+#						has_ethic = ethic_egalitarian
+#						has_ethic = ethic_xenophile
+#					}
+#				}
+#				pop_force_add_ethic = ethic_xenophile
+#			}
+#		}
+#		
+#		while = {
+#			count = 2
+#			random_owned_pop = {
+#				limit = { 
+#					is_same_species = owner_species
+#					not = { 
+#						has_ethic = ethic_pacifist 
+#						has_ethic = ethic_militarist
+#						has_ethic = ethic_materialist
+#						has_ethic = ethic_authoritarian
+#						has_ethic = ethic_egalitarian
+#						has_ethic = ethic_xenophile
+#						has_ethic = ethic_spiritualist
+#					}
+#				}
+#				pop_force_add_ethic = ethic_spiritualist
+#			}
+#		}
+#		
+#		while = {
+#			count = 2
+#			random_owned_pop = {
+#				limit = { 
+#					is_same_species = owner_species
+#					not = { 
+#						has_ethic = ethic_pacifist 
+#						has_ethic = ethic_militarist
+#						has_ethic = ethic_materialist
+#						has_ethic = ethic_authoritarian
+#						has_ethic = ethic_egalitarian
+#						has_ethic = ethic_xenophile
+#						has_ethic = ethic_spiritualist
+#						has_ethic = ethic_xenophobe
+#					}
+#				}
+#				pop_force_add_ethic = ethic_xenophobe
+#			}
+#		}
+#				
+#		planet_event = { id = primethos.103 }
+#	}
+#}
+#
+#
+## convert hostile pops to tile blockers
+#planet_event = {
+#	id = primethos.103
+#	hide_window = yes
+#	is_triggered_only = yes
+#	
+#	immediate = {
+#	
+#		every_tile = {
+#			limit = {
+#				has_grown_pop = yes
+#				owner = { is_militarist = yes }
+#				pop = { has_ethic = ethic_pacifist }				
+#			}
+#			if = { limit = { has_building = "building_colony_shelter" }
+#				kill_pop = yes
+#				FROM = { 
+#					random_tile = {
+#						limit = {
+#							not = { has_building = "building_colony_shelter" }
+#							has_grown_pop = no
+#							has_blocker = no
+#						}
+#						set_blocker = "tb_enemy"
+#					}
+#				}
+#				else = { set_blocker = "tb_enemy" }
+#			}
+#		}
+#		
+#		every_tile = {
+#			limit = {
+#				has_grown_pop = yes
+#				owner = { is_pacifist = yes }
+#				pop = { has_ethic = ethic_militarist }				
+#			}
+#			if = { limit = { has_building = "building_colony_shelter" }
+#				kill_pop = yes
+#				FROM = { 
+#					random_tile = {
+#						limit = {
+#							not = { has_building = "building_colony_shelter" }
+#							has_grown_pop = no
+#							has_blocker = no
+#						}
+#					set_blocker = "tb_enemy"
+#					}
+#				}
+#				else = { set_blocker = "tb_enemy" }
+#			}
+#		}
+#		
+#		every_tile = {
+#			limit = {
+#				has_grown_pop = yes
+#				owner = { is_spiritualist = yes }
+#				pop = { has_ethic = ethic_materialist }				
+#			}
+#			if = { limit = { has_building = "building_colony_shelter" }
+#				kill_pop = yes
+#				FROM = { 
+#					random_tile = {
+#						limit = {
+#							not = { has_building = "building_colony_shelter" }
+#							has_grown_pop = no
+#							has_blocker = no
+#						}
+#						set_blocker = "tb_enemy"
+#					}
+#				}
+#				else = { set_blocker = "tb_enemy" }
+#			}
+#		}
+#		
+#		every_tile = {
+#			limit = {
+#				has_grown_pop = yes
+#				owner = { is_materialist = yes }
+#				pop = { has_ethic = ethic_spiritualist }				
+#			}
+#			if = { limit = { has_building = "building_colony_shelter" }
+#				kill_pop = yes
+#				FROM = { 
+#					random_tile = {
+#						limit = {
+#							not = { has_building = "building_colony_shelter" }
+#							has_grown_pop = no
+#							has_blocker = no
+#						}
+#						set_blocker = "tb_enemy"
+#					}
+#				}
+#				else = { set_blocker = "tb_enemy" }
+#			}
+#		}
+#		
+#		every_tile = {
+#			limit = {
+#				has_grown_pop = yes
+#				owner = { is_authoritarian = yes }
+#				pop = { has_ethic = ethic_egalitarian }				
+#			}
+#			if = { limit = { has_building = "building_colony_shelter" }
+#				kill_pop = yes
+#				FROM = { 
+#					random_tile = {
+#						limit = {
+#							not = { has_building = "building_colony_shelter" }
+#							has_grown_pop = no
+#							has_blocker = no
+#						}
+#						set_blocker = "tb_enemy"
+#					}
+#				}
+#				else = { set_blocker = "tb_enemy" }
+#			}
+#		}
+#		
+#		every_tile = {
+#			limit = {
+#				has_grown_pop = yes
+#				owner = { is_egalitarian = yes }
+#				pop = { has_ethic = ethic_authoritarian }				
+#			}
+#			if = { limit = { has_building = "building_colony_shelter" }
+#				kill_pop = yes
+#				FROM = { 
+#					random_tile = {
+#						limit = {
+#							not = { has_building = "building_colony_shelter" }
+#							has_grown_pop = no
+#							has_blocker = no
+#						}
+#						set_blocker = "tb_enemy"
+#					}
+#				}
+#				else = { set_blocker = "tb_enemy" }
+#			}
+#		}
+#
+#		every_tile = {
+#			limit = {
+#				has_grown_pop = yes
+#				owner = { is_xenophobe = yes }
+#				pop = { has_ethic = ethic_xenophile }				
+#			}
+#			if = { limit = { has_building = "building_colony_shelter" }
+#				kill_pop = yes
+#				FROM = { 
+#					random_tile = {
+#						limit = {
+#							not = { has_building = "building_colony_shelter" }
+#							has_grown_pop = no
+#							has_blocker = no
+#						}
+#						set_blocker = "tb_enemy"
+#					}
+#				}
+#				else = { set_blocker = "tb_enemy" }
+#			}
+#		}
+#		
+#		every_tile = {
+#			limit = {
+#				has_grown_pop = yes
+#				owner = { is_xenophile = yes }
+#				pop = { has_ethic = ethic_xenophobe }				
+#			}
+#			if = { limit = { has_building = "building_colony_shelter" }
+#				kill_pop = yes
+#				FROM = { 
+#					random_tile = {
+#						limit = {
+#							not = { has_building = "building_colony_shelter" }
+#							has_grown_pop = no
+#							has_blocker = no
+#						}
+#						set_blocker = "tb_enemy"
+#					}
+#				}
+#				else = { set_blocker = "tb_enemy" }
+#			}
+#		}
+#	}
+#}
+#						

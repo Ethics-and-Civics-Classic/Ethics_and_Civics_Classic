@@ -1,0 +1,455 @@
+#namespace = game_start
+
+### Countdown to Nomad Fleet	#Cogger Note - Not necessary as start-date is no longer 2100
+#event = {
+#	id = game_start.5
+#	hide_window = yes
+#	is_triggered_only = yes
+#
+#	immediate = {
+#		every_country = {
+#			limit = { is_ai = no }
+#			random_list = {
+#				#1 = { country_event = { id = nomad.1 days = 1 } } # DEBUG
+#				30 = { country_event = { id = nomad.1 days = 43300 random = 500 } } # 125 years
+#				35 = { country_event = { id = nomad.1 days = 50600 random = 500 } } # 140 years
+#				35 = { country_event = { id = nomad.1 days = 56075 random = 500 } } # 155 years
+#				0 = { } # No nomads
+#			}
+#		}
+#	}
+#}
+#
+#### Country-scope start event for advanced empires		#Cogger Note - Technology is now done via starting_potential = { }
+#country_event = {
+#	id = game_start.6
+#	hide_window = yes
+#	is_triggered_only = yes
+#
+#	immediate = {
+#		# Advanced AI techs
+#		give_technology = { tech = "tech_biolab_1" message = no }
+#		give_technology = { tech = "tech_engineering_lab_1" message = no }
+#		give_technology = { tech = "tech_physics_lab_1" message = no }
+#		give_technology = { tech = "tech_planetary_unification" message = no }
+#		# Phys start techs		
+#		give_technology = { tech = "tech_reactor_boosters_1" message = no }
+#		give_technology = { tech = "tech_shields_1" message = no }
+#		give_technology = { tech = "tech_power_plant_1" message = no }
+#		# Eng start techs		
+#		give_technology = { tech = "tech_space_exploration" message = no }
+#		give_technology = { tech = "tech_corvettes" message = no }
+#		give_technology = { tech = "tech_starbase_1" message = no }
+#		give_technology = { tech = "tech_starbase_2" message = no }
+#		give_technology = { tech = "tech_assault_armies" message = no }
+#		give_technology = { tech = "tech_space_defense_station_1" message = no }
+#		give_technology = { tech = "tech_basic_industry" message = no }
+#		give_technology = { tech = "tech_space_construction" message = no }
+#		# Soc start techs		
+#		give_technology = { tech = "tech_colonization_1" message = no }
+#		give_technology = { tech = "tech_planetary_government" message = no }
+#		give_technology = { tech = "tech_cultural_heritage" message = no }
+#		#give_technology = { tech = "tech_eco_simulation" message = no }	#Deprecated Vanilla Code
+#		
+#		#science
+#		create_fleet = {
+#			effect = {
+#				set_owner = prev
+#
+#				create_ship = {
+#					name = random
+#					random_existing_design = science
+#				}
+#
+#				set_fleet_stance = evasive				
+#				#set_location = prev.capital_star
+#				set_location = prev.capital_scope.star
+#				
+#				owner = {
+#					create_leader = {
+#						type = scientist
+#						sub_type = survey
+#						name = random
+#						species = owner_main_species
+#					}
+#				}
+#				set_leader = last_created_leader
+#			}			
+#		}
+#			
+#		#constructor
+#		create_fleet = {
+#			effect = {
+#				set_owner = prev
+#				
+#				create_ship = {
+#					name = random
+#					random_existing_design = constructor
+#				}
+#				
+#				set_fleet_stance = evasive
+#				set_location = prev.capital_star
+#			}
+#		}
+#
+#		#military
+#		create_fleet = {
+#			set_take_point = yes
+#			effect = {
+#				set_owner = prev
+#				
+#				while = {
+#					count = 3
+#					create_ship = {
+#						name = random
+#						random_existing_design = corvette
+#					}
+#				}
+#				
+#				set_location = prev.capital_star
+#			}
+#		}
+#	}
+#}
+#
+#### Empire init - add ships	#Cogger Note - Can be done as an on_start action instead of modifying vanilla code.
+#country_event = {
+#	id = game_start.9
+#	hide_window = yes
+#	is_triggered_only = yes
+#
+#	immediate = {
+#		if = { limit = { is_ai = yes }
+#			#science
+#			create_fleet = {
+#				effect = {
+#					set_owner = prev
+#
+#					create_ship = {
+#						name = random
+#						random_existing_design = science
+#					}
+#
+#					set_fleet_stance = evasive				
+#					#set_location = prev.capital_star
+#					set_location = prev.capital_scope.star
+#					
+#					owner = {
+#						create_leader = {
+#							type = scientist
+#							sub_type = survey
+#							name = random
+#							species = owner_main_species
+#						}
+#					}
+#					set_leader = last_created_leader
+#				}			
+#			}
+#				
+#			#constructor
+#			create_fleet = {
+#				effect = {
+#					set_owner = prev
+#					
+#					create_ship = {
+#						name = random
+#						random_existing_design = constructor
+#					}
+#					
+#					set_fleet_stance = evasive
+#					set_location = prev.capital_star
+#				}
+#			}
+#
+#			#military
+#			create_fleet = {
+#				set_take_point = yes
+#				effect = {
+#					set_owner = prev
+#					
+#					while = {
+#						count = 3
+#						create_ship = {
+#							name = random
+#							random_existing_design = corvette
+#						}
+#					}
+#					
+#					set_location = prev.capital_star
+#				}
+#			}
+#		}
+#	
+#		if = { limit = { is_ai = no }
+#			every_owned_fleet = {
+#				limit = { is_ship_class = shipclass_starbase }
+#				destroy_fleet = this
+#			}
+#			
+#			create_fleet = {
+#				name = "NAME_Space_Station" 
+#				effect = {
+#					set_owner = prev
+#					create_ship = {
+#						name = "NAME_Space_Station"
+#						design = "Space Station"
+#					}
+#					set_location = prev.capital_scope
+#				}
+#			}
+#		}
+#	}
+#}
+#
+## secondary species: assign trait_machine_unit, turn into robotics, then create pops	#Deprecated Vanilla Event game_start.11
+## this: capital planet
+## from: secondary species
+#planet_event = {
+#	id = game_start.11
+#	hide_window = yes
+#	is_triggered_only = yes
+#
+#	immediate = {
+#		from = { save_event_target_as = secondary_species }
+#
+#		if = { limit = { from = { is_species_class = MACHINE } }
+#			modify_species = {
+#				species = from
+#				add_trait = trait_machine_unit
+#				add_traits_at_start_of_list = yes
+#			}
+#			last_created_species = { save_event_target_as = secondary_species }
+#		}
+#
+#		event_target:secondary_species = {
+#			if = { limit = { is_species_class = MACHINE }
+#				apply_robotic_pop_growth_behavior = yes
+#			}
+#		}
+#
+#		if = { limit = { owner = { has_valid_civic = civic_syncretic_evolution } }
+#			event_target:secondary_species = {
+#				set_citizenship_type = {
+#					country = root.owner
+#					type = citizenship_slavery
+#				}
+#			}
+#			while = {
+#				count = 4
+#				random_tile = {
+#					limit = {
+#						OR = {
+#							#has_building = building_mining_network_1	#Deprecated Vanilla Code
+#							#has_building = building_hydroponics_farm_1	#Deprecated Vanilla Code
+#							has_building = building_primitive_farm
+#							has_building = building_primitive_factory
+#						}
+#						has_pop = no
+#					}
+#					create_pop = {
+#						species = event_target:secondary_species
+#						ethos = random
+#					}
+#				}
+#			}
+#		}
+#
+#		if = { limit = { owner = { has_valid_civic = civic_machine_servitor } }
+#			event_target:secondary_species = {
+#				set_citizenship_type = {
+#					country = root.owner
+#					type = citizenship_limited
+#				}
+#				set_living_standard = {
+#					country = root.owner
+#					type = living_standard_organic_trophy
+#				}
+#			}
+#			while = {
+#				count = 2
+#				random_tile = {
+#					limit = {	
+#						OR = {
+#							has_blocker = "tb_decrepit_dwellings"
+#							has_blocker = "tb_unsupervised_settlement"						
+#						}
+#					}
+#					remove_blocker = yes
+#					clear_deposits = yes			
+#					create_pop = {
+#						species = event_target:secondary_species
+#						ethos = random
+#					}
+#					last_created_pop = {
+#						clear_ethos = yes
+#					}
+#					set_building = "building_organic_sanctuary"
+#				}
+#			}
+#			random_tile = {
+#				limit = {	
+#					OR = {
+#						has_blocker = "tb_decrepit_dwellings"
+#						has_blocker = "tb_unsupervised_settlement"						
+#					}
+#				}
+#				set_deposit = d_rich_energy_deposit
+#			}
+#		}
+#
+#		if = { limit = { owner = { has_valid_civic = civic_machine_assimilator } }
+#			event_target:secondary_species = {
+#				set_citizenship_type = {
+#					country = root.owner
+#					type = citizenship_full_machine
+#				}
+#				set_living_standard = {
+#					country = root.owner
+#					type = living_standard_hive_mind
+#				}
+#			}
+#			while = {
+#				count = 4
+#				create_pop = {
+#					species = event_target:secondary_species
+#					ethos = random
+#				}
+#				last_created_pop = {
+#					clear_ethos = yes
+#				}
+#			}
+#		}
+#	}
+#}
+#
+## assign trait_hive_mind or trait_machine_unit, turn into robotics, then create pops	#Deprecated Vanilla Code. Event completely changed.
+## this: capital planet
+## from: founder species
+#planet_event = {
+#	id = game_start.12
+#	hide_window = yes
+#	is_triggered_only = yes
+#
+#	immediate = {
+#		from = {
+#			if = { limit = { is_species_class = MACHINE }
+#				apply_robotic_pop_growth_behavior = yes
+#			}
+#		}
+#
+#		if = { limit = { owner = { has_valid_civic = civic_mechanists } }
+#			while = {
+#				count = 2
+#				random_tile = {
+#					limit = {
+#						#OR ={
+#							#has_building = building_mining_network_1	#Deprecated Vanilla Code
+#							has_building = building_primitive_factory
+#						#}
+#						has_pop = no
+#					}
+#					build_pop = {
+#						name = buildable_robot_pop_1
+#					}
+#				}
+#			}
+#		}
+#
+#		while = {
+#			limit = {
+#				OR = {
+#					AND = {
+#						owner = { NOT = { has_valid_civic = civic_machine_servitor } }
+#						num_pops < 8
+#					}
+#					AND = {
+#						owner = { has_valid_civic = civic_machine_servitor }
+#						num_pops < 10	# 2 extra pops are useless bio trophies, see game_start.11
+#					}
+#				}
+#			}
+#			create_pop = {
+#				species = owner_main_species
+#				ethos = random
+#			}
+#		}
+#	}
+#}
+#
+## replace some buildings for special empires		#Deprecated Vanilla Event game_start.13
+## this: capital planet
+## from: founder species
+#planet_event = {
+#	id = game_start.13
+#	hide_window = yes
+#	is_triggered_only = yes
+#
+#	immediate = {
+#		# machine capital & replace farms by power plants
+#		if = { limit = { owner = { has_authority = auth_machine_intelligence } }
+#			every_tile = {
+#				limit = { has_building = building_primitive_farm }
+#				remove_building = yes
+#				set_building = building_primitive_power_plant
+#				clear_deposits = yes
+#			}
+#			#every_tile = {		#Deprecated Vanilla Code
+#			#	limit = { has_building = building_hydroponics_farm_1 }
+#			#	remove_building = yes
+#			#	set_building = building_power_plant_1
+#			#	clear_deposits = yes
+#			#}
+#			every_tile = {
+#				limit = { has_building = building_capital_1 }
+#				remove_building = yes
+#				set_building = building_machine_capital_1
+#			}
+#		}
+#
+#		# Nutrient Paste Facility for Servitors instead of Science Lab
+#		if = { limit = { owner = { has_government = gov_machine_servitor } }
+#			random_tile = {
+#				limit = { has_building = building_basic_science_lab_1 }
+#				remove_building = yes
+#				set_building = building_nutrient_paste_facility
+#				set_deposit = d_farmland_deposit
+#			}
+#		}			
+#	}
+#}
+#
+#### Empire init - populate home system		#Deprecated Vanilla Code - Code has completely changed.
+#country_event = {
+#	id = game_start.33
+#	hide_window = yes
+#	is_triggered_only = yes
+#	
+#	trigger = {
+#		is_country_type = default
+#		is_ai = yes
+#	}
+#
+#	immediate = { 
+#		every_planet_within_border = {
+#			limit = { 
+#				has_deposit_for = shipclass_mining_station
+#				has_planet_flag = starting_mining_target
+#				has_mining_station = no
+#			}
+#			create_mining_station = {
+#				owner = ROOT
+#			}
+#		}
+#		every_planet_within_border = {
+#			limit = { 
+#				has_deposit_for = shipclass_research_station 
+#				has_planet_flag = starting_research_target
+#				has_research_station = no
+#			}
+#			create_research_station = {
+#				owner = ROOT
+#			}
+#		}
+#	}
+#}
+#

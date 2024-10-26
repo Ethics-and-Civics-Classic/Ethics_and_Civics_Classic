@@ -2,6 +2,67 @@
 
 # Creates a migration treaty that allows pops to move freely between two empires. Only possible if both empires have suitable worlds for each others' pops.
 # Usable by regular empires only. Raises trust over time.
+# Build Spy Network
+action_build_spy_network = {
+	icon = "GFX_envoy_action_build_spy_network"
+	auto_accepted = yes
+	require_envoy = yes
+	envoy_assignment = spy_network
+	requires_actor_independence = no
+	requires_recipient_independence = no
+	action_type = positive
+	sound = fc_ui_spy_network_button
+
+	potential = {
+		hidden_trigger = {
+			is_country_type = default
+			from = {
+				OR = {
+					is_country_type = default
+					AND = {
+						is_country_type = primitive
+						observation_owner_is_actor = yes
+					}
+					is_country_type = PrimPlayer_ethic_fanatic_nation
+				}
+				NOR = {
+					has_country_flag = fotd_seperatist_country
+					AND = {
+						has_country_flag = solarpunk_country
+						is_country_type = primitive
+					}
+				}
+			}
+		}
+	}
+
+	possible = {
+		custom_tooltip = {
+			fail_text = "diplomacy_wrong_interference_policy"
+			OR = {
+				from = { is_country_type = default }
+				from = { is_fallen_empire = yes }
+				AND = {
+					from = { is_country_type = primitive }
+					NOT = { has_policy_flag = interference_not_allowed }
+				}
+				from = { is_country_type = PrimPlayer_ethic_fanatic_nation }
+			}
+		}
+		custom_tooltip = {
+			fail_text = "BLANK_STRING"
+			if = {
+				limit = {
+					from = {
+						is_primitive = no
+					}
+				}
+				from = { is_fallen_empire = no }
+			}
+		}
+	}
+}
+
 action_form_migration_pact = {
 	icon = "GFX_diplomacy_status_migration_pact"
 	diplo_view_acceptance_icon = yes
