@@ -283,6 +283,12 @@
 # Pre-FTL Buildings #
 #####################
 
+
+
+###########################
+# Primitive Age Buildings #
+###########################
+
 building_crude_huts = {
 	capital = yes
 	can_build = yes
@@ -401,6 +407,110 @@ building_primitive_dwellings = {
 	}
 }
 
+################################
+# Pre-Industrial Age Buildings #
+################################
+building_heritage_museum = {
+	base_buildtime = @b1_time
+	base_cap_amount = 1
+	category = unity
+
+	potential = {
+		exists = owner
+		owner = {
+			is_hive_empire = no
+			OR = {
+				has_origin = origin_primitive_player_pre_industrial_age
+				has_origin = origin_primitive_player_industrial_age
+				has_origin = origin_primitive_player_machine_age
+				has_origin = origin_primitive_player_atomic_age
+				has_origin = origin_primitive_player_early_space_age
+				AND = {
+					OR = {
+						has_country_flag = bronze_age
+						has_country_flag = iron_age
+						has_country_flag = late_medieval_age
+						has_country_flag = renaissance_age
+						has_country_flag = steam_age
+					}
+					is_primitive = yes
+				}
+			}
+			NOR = {
+				is_gestalt = yes
+				is_megacorp = yes
+				is_memorialist_empire = yes
+			}
+		}
+		owner = {
+			is_ai = no
+		}
+	}
+
+	destroy_trigger = {
+		exists = owner
+		owner = {
+			NOT = {
+				has_origin = origin_primitive_player_pre_industrial_age
+				has_origin = origin_primitive_player_industrial_age
+				has_origin = origin_primitive_player_machine_age
+				has_origin = origin_primitive_player_atomic_age
+				has_origin = origin_primitive_player_early_space_age
+				is_primitive = yes
+				is_gestalt = yes
+				is_megacorp = yes
+				is_memorialist_empire = yes
+			}
+		}
+	}
+
+	resources = {
+		category = planet_buildings
+		produces = {
+			trigger = { exists = owner }
+			unity = 1
+			multiplier = owner.trigger:num_ascension_perks
+		}
+		cost = {
+			minerals = @b1_minerals
+		}
+	}
+
+	planet_modifier = {
+		planet_jobs_unity_produces_mult = 0.025
+		job_culture_worker_add = @b1_jobs
+	}
+
+	triggered_desc = {
+		text = building_autochthon_monument_effect
+	}
+
+	triggered_desc = {
+		text = job_culture_worker_effect_desc
+	}
+
+	prerequisites = {
+		"tech_primimtive_historical_archives"
+	}
+
+	upgrades = {
+		building_heritage_monument
+	}
+
+	convert_to = {
+		building_corporate_monument
+		building_simulation_1
+		building_galactic_memorial_1
+		building_sensorium_1
+	}
+
+	show_tech_unlock_if = {
+		is_gestalt = no
+		is_megacorp = no
+		is_memorialist_empire = no
+	}
+}
+
 building_stone_palace = {
 	capital = yes
 	can_build = no
@@ -468,7 +578,7 @@ building_stone_palace = {
 		planet_housing_add = 3
 		planet_amenities_add = 25
 		planet_crime_add = -10
-		planet_max_buildings_add = 3
+		planet_max_buildings_add = 4
 	}
 	
 	prerequisites = {
@@ -733,6 +843,10 @@ building_primitive_farm = {
 	}
 }
 
+############################
+# Industrial Age Buildings #
+############################
+
 building_primitive_capital = {
 	capital = yes
 	can_build = no
@@ -848,7 +962,7 @@ building_primitive_capital = {
 	}
 	
 	prerequisites = {
-		"tech_pre_industrial_steel_construction"
+		"tech_pre_industrial_steel_construction" "tech_primimtive_nation_state_government"
 	}
 	
 	upgrades = {

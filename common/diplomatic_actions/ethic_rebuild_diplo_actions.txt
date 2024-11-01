@@ -1,5 +1,120 @@
 #civic_peacekeepers
 
+# Improve opinion
+action_improve_relation = {
+	icon = "GFX_diplomacy_improve_relation"
+	auto_accepted = yes
+	require_envoy = yes
+	envoy_assignment = improve_relations
+	requires_actor_independence = no
+	requires_recipient_independence = no
+	action_type = positive
+
+	potential = {
+		hidden_trigger = {
+			is_country_type = default
+			from = {
+				OR = {
+					is_country_type = default
+					AND = {
+						is_country_type = primitive
+						NOT = {
+							has_country_flag = solarpunk_country
+						}
+						current_awareness_level = full
+						observation_owner_is_actor = yes
+					}
+					is_country_type = PrimPlayer_ethic_fanatic_nation
+				}
+			}
+		}
+	}
+
+	possible = {
+		custom_tooltip = {
+			fail_text = "DIPLOMACY_STATUS_WAR"
+			NOT = { is_at_war_with = from }
+		}
+		custom_tooltip = {
+			fail_text = "requires_actor_not_fanatic_purifiers"
+			OR = {
+				is_same_species = from
+				NOT = { has_valid_civic = civic_fanatic_purifiers	}
+			}
+		}
+		custom_tooltip = {
+			fail_text = "requires_recipient_not_fanatic_purifiers"
+			OR = {
+				is_same_species = from
+				from = { NOT = { has_valid_civic = civic_fanatic_purifiers } }
+			}
+		}
+		custom_tooltip = {
+			fail_text = "requires_actor_not_devouring_swarm"
+			NOT = { has_valid_civic = civic_hive_devouring_swarm	}
+		}
+		custom_tooltip = {
+			fail_text = "requires_recipient_not_devouring_swarm"
+			from = { NOT = { has_valid_civic = civic_hive_devouring_swarm } }
+		}
+		custom_tooltip = {
+			fail_text = "requires_actor_not_machine_terminator"
+			OR = {
+				is_same_species = from
+				NOT = { has_civic = civic_machine_terminator }
+				AND = {
+					has_civic = civic_machine_terminator
+					from = {
+						OR = {
+							has_country_flag = synthetic_empire
+							is_machine_empire = yes
+							is_individual_machine = yes
+						}
+					}
+				}
+			}
+		}
+		custom_tooltip = {
+			fail_text = "requires_recipient_not_machine_terminator"
+			OR = {
+				is_same_species = from
+				from = { NOT = { has_civic = civic_machine_terminator } }
+				AND = {
+					from = { has_civic = civic_machine_terminator }
+					OR = {
+						has_country_flag = synthetic_empire
+						is_machine_empire = yes
+						is_individual_machine = yes
+					}
+				}
+			}
+		}
+		custom_tooltip = {
+			fail_text = "ACTION_CANNOT_INTERFERE_POLICY"
+			OR = {
+				has_policy_flag = interference_subtle
+				has_policy_flag = interference_active
+				from = {
+					NOT = {
+						is_country_type = primitive
+					}
+				}
+			}
+		}
+		custom_tooltip = {
+			fail_text = "requires_recipient_not_fotd_seperatist"
+			from = { NOT = { has_country_flag =  fotd_seperatist_country@root } }
+		}
+	}
+
+	proposable = {
+		custom_tooltip = {
+			fail_text = "requires_envoy_not_harming_relations"
+			NOT = { is_harming_relations_with = from }
+		}
+	}
+}
+
 # Creates a migration treaty that allows pops to move freely between two empires. Only possible if both empires have suitable worlds for each others' pops.
 # Usable by regular empires only. Raises trust over time.
 # Build Spy Network
@@ -59,6 +174,173 @@ action_build_spy_network = {
 				}
 				from = { is_fallen_empire = no }
 			}
+		}
+	}
+}
+
+# Manage Spy Network
+action_manage_spy_network = {
+	icon = "GFX_envoy_action_build_spy_network"
+	auto_accepted = yes
+	requires_actor_independence = no
+	requires_recipient_independence = no
+	action_type = neutral
+	sound = fc_ui_spy_network_button
+
+	potential = {
+		hidden_trigger = {
+			is_country_type = default
+			from = {
+				OR = {
+					is_country_type = default
+					AND = {
+						is_country_type = primitive
+						observation_owner_is_actor = yes
+					}
+					is_country_type = PrimPlayer_ethic_fanatic_nation
+				}
+			}
+		}
+	}
+
+	possible = {
+		custom_tooltip = {
+			fail_text = "diplomacy_wrong_interference_policy"
+			OR = {
+				from = { is_country_type = default }
+				from = { is_fallen_empire = yes }
+				AND = {
+					from = { is_country_type = primitive }
+					NOT = { has_policy_flag = interference_not_allowed }
+				}
+				from = { is_country_type = PrimPlayer_ethic_fanatic_nation }
+			}
+		}
+		custom_tooltip = {
+			fail_text = "BLANK_STRING"
+			if = {
+				limit = {
+					from = {
+						is_primitive = no
+					}
+				}
+				from = { is_fallen_empire = no }
+			}
+		}
+	}
+}
+
+# Harm opinion
+action_harm_relation = {
+	icon = "GFX_diplomacy_harm_relation"
+	auto_accepted = yes
+	require_envoy = yes
+	envoy_assignment = harm_relations
+	requires_actor_independence = no
+	requires_recipient_independence = no
+	action_type = negative
+
+	potential = {
+		hidden_trigger = {
+			is_country_type = default
+			from = {
+				OR = {
+					is_country_type = default
+					AND = {
+						is_country_type = primitive
+						NOT = {
+							has_country_flag = solarpunk_country
+						}
+						current_awareness_level = full
+						observation_owner_is_actor = yes
+					}
+					is_country_type = PrimPlayer_ethic_fanatic_nation
+				}
+			}
+		}
+	}
+
+	possible = {
+		custom_tooltip = {
+			fail_text = "DIPLOMACY_STATUS_WAR"
+			NOT = { is_at_war_with = from }
+		}
+		custom_tooltip = {
+			fail_text = "requires_actor_not_fanatic_purifiers"
+			OR = {
+				is_same_species = from
+				NOT = { has_valid_civic = civic_fanatic_purifiers	}
+			}
+		}
+		custom_tooltip = {
+			fail_text = "requires_recipient_not_fanatic_purifiers"
+			OR = {
+				is_same_species = from
+				from = { NOT = { has_valid_civic = civic_fanatic_purifiers } }
+			}
+		}
+		custom_tooltip = {
+			fail_text = "requires_actor_not_devouring_swarm"
+			NOT = { has_valid_civic = civic_hive_devouring_swarm	}
+		}
+		custom_tooltip = {
+			fail_text = "requires_recipient_not_devouring_swarm"
+			from = { NOT = { has_valid_civic = civic_hive_devouring_swarm } }
+		}
+		custom_tooltip = {
+			fail_text = "requires_actor_not_machine_terminator"
+			OR = {
+				is_same_species = from
+				NOT = { has_civic = civic_machine_terminator }
+				AND = {
+					has_civic = civic_machine_terminator
+					from = {
+						OR = {
+							has_country_flag = synthetic_empire
+							is_machine_empire = yes
+							is_individual_machine = yes
+						}
+					}
+				}
+			}
+		}
+		custom_tooltip = {
+			fail_text = "requires_recipient_not_machine_terminator"
+			OR = {
+				is_same_species = from
+				from = { NOT = { has_civic = civic_machine_terminator } }
+				AND = {
+					from = { has_civic = civic_machine_terminator }
+					OR = {
+						has_country_flag = synthetic_empire
+						is_machine_empire = yes
+						is_individual_machine = yes
+					}
+				}
+			}
+		}
+		custom_tooltip = {
+			fail_text = "ACTION_CANNOT_INTERFERE_POLICY"
+			OR = {
+				has_policy_flag = interference_subtle
+				has_policy_flag = interference_active
+				from = {
+					NOT = {
+						is_country_type = primitive
+					}
+				}
+			}
+		}
+		custom_tooltip = {
+			fail_text = "requires_recipient_not_fotd_seperatist"
+			from = { NOT = { has_country_flag =  fotd_seperatist_country@root } }
+		}
+	}
+
+	proposable = {
+		custom_tooltip = {
+			fail_text = "requires_envoy_not_improving_relations"
+			NOT = { is_improving_relations_with = from }
 		}
 	}
 }

@@ -784,9 +784,30 @@ country_event = {
 			####District Set Up###
 			remove_all_districts = yes					#remove district buildings
 			add_deposit = d_PrimPlayer_nation_deposit	#Add Special Empire Deposit
-			add_district = district_city
+			if = { 
+				limit = { OWNER = { has_origin = origin_primitive_player_pre_industrial_age } }
+				#Nothing
+			}
+			else_if = { 
+				limit = { OWNER = { has_origin = origin_primitive_player_industrial_age } }
+				add_district = district_city
+				add_district = district_mining
+			}
+			else = {
+				add_district = district_city
+				add_district = district_generator
+				add_district = district_industrial
+				add_district = district_mining
+			}
 			if = {										
-				limit = {
+				limit = { OWNER = { has_origin = origin_primitive_player_pre_industrial_age } }
+				#Nothing
+				random_owned_pop = { kill_pop = yes }	
+				random_owned_pop = { kill_pop = yes }
+				random_owned_pop = { kill_pop = yes }
+			}
+			else_if = { 
+				limit = { 
 					OWNER = { is_anglers_empire = yes }	# Replace farming districts with uncapped ones for anglers civic on ocean worlds
 					is_planet_class = pc_ocean
 				}
@@ -797,23 +818,26 @@ country_event = {
 			else = {
 				add_district = district_farming
 			}
-			add_district = district_mining
-			if = { 
-				limit = { OWNER = { NOT = { has_origin = origin_primitive_player_pre_industrial_age } } }
-				add_district = district_generator
-				add_district = district_industrial
-			}
 			###Building Set Up###
 			remove_all_buildings = yes
 			if = {
 				limit = { OWNER = { has_origin = origin_primitive_player_pre_industrial_age } }
 				add_building = building_stone_palace
 				add_building = building_primitive_dwellings
+				add_building = building_primitive_dwellings
+				add_building = building_primitive_mine
+				add_building = building_primitive_power_plant
+			}
+			else_if = {
+				limit = { OWNER = { has_origin = origin_primitive_player_industrial_age } }
+				add_building = building_primitive_capital
+				add_building = building_heritage_museum
+				add_building = building_primitive_power_plant
+				add_building = building_primitive_factory
 			}
 			else = {
 				add_building = building_primitive_capital
-				add_building = building_urban_dwellings
-				add_building = building_primitive_power_plant
+				add_building = building_heritage_museum
 			}
 			if = {
 				limit = { 
@@ -827,7 +851,6 @@ country_event = {
 				}
 				add_building = building_temple
 			}
-			add_building = building_primitive_factory
 			
 		}
 	}
