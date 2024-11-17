@@ -31,9 +31,9 @@
 ### TECH WEIGHTS ###
 ####################
 
-#@tier0weight1 = 400
-#@tier0weight2 = 300
-#@tier0weight3 = 200
+@tier0weight1 = 400
+@tier0weight2 = 300
+@tier0weight3 = 200
 
 #@tier1weight1 = 100
 #@tier1weight2 = 95
@@ -58,6 +58,31 @@
 #@ftlweight = 30
 #@ftlaifactor = 3
 #@ftl2years = 20
+
+# ##################
+# Point-Defense
+# ##################
+
+#Active Countermeasures
+tech_pd_tracking_1 = {
+	area = physics
+	tier = 0
+	category = { computing }
+	ai_update_type = military
+	start_tech = yes
+	prerequisites = { "tech_flak_batteries_1" "tech_primitive_ai_computing_technology" }
+	
+	starting_potential = {
+		# So primitive players don't start with it unlocked
+		NOT = {
+			has_origin = origin_primitive_player_pre_industrial_age 
+			has_origin = origin_primitive_player_industrial_age
+			has_origin = origin_primitive_player_machine_age
+			has_origin = origin_primitive_player_atomic_age
+			has_origin = origin_primitive_player_early_space_age
+		}
+	}
+}
 
 # ## physics technologies
 
@@ -124,6 +149,7 @@ tech_lasers_1 = {
 	category = { particles }
 	ai_update_type = military
 	start_tech = yes
+	prerequisites = { "tech_primitive_quantum_electronics_theory" }
 	
 	starting_potential = {
 		NOT = {
@@ -137,54 +163,16 @@ tech_lasers_1 = {
 	# # unlock basic science lab lvl 1
 	weight_modifier = {
 		modifier = {
-			add = 10000
+			add = 100
 		}
-		modifier = {
-			factor = 0
-			OR = {
-				has_origin = origin_primitive_player_pre_industrial_age 
-				has_origin = origin_primitive_player_industrial_age 
-				has_origin = origin_primitive_player_machine_age 
-			}
-		}	
-	}
-}
-
-# ##################
-# Point-Defense
-# ##################
-
-#Active Countermeasures
-tech_pd_tracking_1 = {
-	cost = @tier0cost2
-	area = physics
-	tier = 0
-	category = { computing }
-	ai_update_type = military
-	start_tech = yes
-	
-	starting_potential = {
-		NOT = {
-			has_origin = origin_primitive_player_pre_industrial_age 
-			has_origin = origin_primitive_player_industrial_age 
-			has_origin = origin_primitive_player_machine_age 
-			has_origin = origin_primitive_player_atomic_age
-		}
-	}
-	
-	# # unlock basic science lab lvl 1
-	weight_modifier = {
-		modifier = {
-			add = 10000
-		}
-		modifier = {
-			factor = 0
-			OR = {
-				has_origin = origin_primitive_player_pre_industrial_age 
-				has_origin = origin_primitive_player_industrial_age 
-				has_origin = origin_primitive_player_machine_age 
-			}
-		}	
+		#modifier = {
+		#	factor = 0
+		#	OR = {
+		#		has_origin = origin_primitive_player_pre_industrial_age 
+		#		has_origin = origin_primitive_player_industrial_age 
+		#		has_origin = origin_primitive_player_machine_age 
+		#	}
+		#}	
 	}
 }
 
@@ -192,42 +180,8 @@ tech_pd_tracking_1 = {
 # Basic Science Lab
 # ##################
 
-tech_basic_science_lab_1 = {
-	cost = @tier0cost1
-	area = physics
-	tier = 0
-	category = { computing }
-	start_tech = yes
-	prerequisites = { "tech_primitive_ai_computing_technology" }
-
-	# # unlock basic science lab lvl 1
-	weight_modifier = {
-		modifier = {
-			add = 10000
-		}
-		modifier = {
-			factor = 0
-			OR = {
-				has_origin = origin_primitive_player_pre_industrial_age 
-				has_origin = origin_primitive_player_industrial_age 
-				has_origin = origin_primitive_player_machine_age 
-				has_origin = origin_primitive_player_atomic_age
-			}
-		}	
-	}
-
-	ai_weight = {
-		weight = 10000
-	}
-
-	starting_potential = {
-		is_low_tech_start = no # So Broken Shackles origin players don't start with it
-		has_origin_primitive_player = no # So primitive players don't start with it unlocked
-	}
-}
-
 tech_primitive_scientific_method = {
-	cost = @tier0cost1
+	cost = @tier0cost2
 	area = physics
 	tier = 0
 	category = { computing }
@@ -280,13 +234,41 @@ tech_primitive_combustion_technology = {
 	}
 }
 
-tech_primitive_electromagnetism_theory = {
+tech_primitive_radiowave_theory = {
 	cost = @tier0cost1
 	area = physics
 	tier = 0
 	category = { computing }
 	start_tech = yes
 	prerequisites = { "tech_primitive_scientific_method" "tech_primimtive_universities" }
+
+	# # unlock basic science lab lvl 1
+	weight_modifier = {
+		modifier = {
+			add = 10
+		}
+	}
+
+	ai_weight = {
+		weight = 10000
+	}
+
+	starting_potential = {
+		# So primitive players don't start with it unlocked
+		NOT = {
+			has_origin = origin_primitive_player_pre_industrial_age 
+			has_origin = origin_primitive_player_industrial_age 
+		}
+	}
+}
+
+tech_primitive_electromagnetism_theory = {
+	cost = @tier0cost1
+	area = physics
+	tier = 0
+	category = { computing }
+	start_tech = yes
+	prerequisites = { "tech_primitive_scientific_method" "tech_primitive_radiowave_theory" "tech_primimtive_universities" }
 
 	# # unlock basic science lab lvl 1
 	weight_modifier = {
@@ -304,12 +286,13 @@ tech_primitive_electromagnetism_theory = {
 		NOT = {
 			has_origin = origin_primitive_player_pre_industrial_age 
 			has_origin = origin_primitive_player_industrial_age 
+			has_origin = origin_primitive_player_machine_age
 		}
 	}
 }
 
 tech_primitive_nuclear_physics = {
-	cost = @tier0cost1
+	cost = @tier0cost2
 	area = physics
 	tier = 0
 	category = { computing }
@@ -338,11 +321,12 @@ tech_primitive_nuclear_physics = {
 }
 
 tech_primitive_quantum_mechanics_theory = {
-	cost = @tier0cost1
+	cost = @tier0cost2
 	area = physics
 	tier = 0
 	category = { computing }
 	start_tech = yes
+	is_rare = yes
 	prerequisites = { "tech_primitive_nuclear_physics" "tech_primitive_combustion_technology" }
 
 	# # unlock basic science lab lvl 1
@@ -368,76 +352,13 @@ tech_primitive_quantum_mechanics_theory = {
 	}
 }
 
-
-
-# ##################
-# Physics Lab and Computers/AI
-# ##################
-
-tech_primitive_computing_technology = {
-	cost = @tier0cost1
+tech_primitive_quantum_electronics_theory = {
+	cost = @tier0cost2
 	area = physics
 	tier = 0
 	category = { computing }
 	start_tech = yes
-
-	# # unlock basic science lab lvl 1
-	weight_modifier = {
-		modifier = {
-			add = 10000
-		}
-	}
-
-	ai_weight = {
-		weight = 10000
-	}
-
-	starting_potential = {
-		# So primitive players don't start with it unlocked
-		NOT = {
-			has_origin = origin_primitive_player_pre_industrial_age 
-			has_origin = origin_primitive_player_industrial_age 
-			has_origin = origin_primitive_player_machine_age 
-		}
-	}
-}
-
-tech_primitive_atomic_era_computing_technology = {
-	cost = @tier0cost1
-	area = physics
-	tier = 0
-	category = { computing }
-	start_tech = yes
-	prerequisites = { "tech_primitive_computing_technology" }
-
-	# # unlock basic science lab lvl 1
-	weight_modifier = {
-		modifier = {
-			add = 10000
-		}
-	}
-
-	ai_weight = {
-		weight = 10000
-	}
-
-	starting_potential = {
-		# So primitive players don't start with it unlocked
-		NOT = {
-			has_origin = origin_primitive_player_pre_industrial_age 
-			has_origin = origin_primitive_player_industrial_age 
-			has_origin = origin_primitive_player_machine_age 
-		}
-	}
-}
-
-tech_primitive_quantum_computing_technology = {
-	cost = @tier0cost1
-	area = physics
-	tier = 0
-	category = { computing }
-	start_tech = yes
-	prerequisites = { "tech_primitive_atomic_era_computing_technology" "tech_primitive_quantum_mechanics_theory" }
+	prerequisites = { "tech_primitive_quantum_mechanics_theory" }
 
 	# # unlock basic science lab lvl 1
 	weight_modifier = {
@@ -462,12 +383,167 @@ tech_primitive_quantum_computing_technology = {
 	}
 }
 
-tech_primitive_ai_computing_technology = {
+tech_primitive_radiowave_telescope = { #Discovered in Machine Age
+	cost = @tier0cost1
+	area = physics
+	tier = 0
+	is_rare = yes
+	category = { computing }
+	start_tech = yes
+	prerequisites = { "tech_primitive_scientific_method" "tech_primitive_radiowave_theory" }
+
+	# # unlock basic science lab lvl 1
+	weight_modifier = {
+		modifier = {
+			add = 10
+		}
+	}
+
+	ai_weight = {
+		weight = 10000
+	}
+
+	starting_potential = {
+		# So primitive players don't start with it unlocked
+		NOT = {
+			has_origin = origin_primitive_player_pre_industrial_age 
+			has_origin = origin_primitive_player_industrial_age 
+			has_origin = origin_primitive_player_machine_age 
+		}
+	}
+}
+
+tech_basic_science_lab_1 = {
 	cost = @tier0cost1
 	area = physics
 	tier = 0
 	category = { computing }
 	start_tech = yes
+	prerequisites = { "tech_primitive_ai_computing_technology" "tech_primitive_quantum_electronics_theory" }
+
+	# # unlock basic science lab lvl 1
+	weight_modifier = {
+		modifier = {
+			add = 10000
+		}
+		#modifier = {
+		#	factor = 0
+		#	OR = {
+		#		has_origin = origin_primitive_player_pre_industrial_age 
+		#		has_origin = origin_primitive_player_industrial_age 
+		#		has_origin = origin_primitive_player_machine_age 
+		#		has_origin = origin_primitive_player_atomic_age
+		#	}
+		#}	
+	}
+
+	ai_weight = {
+		weight = 10000
+	}
+
+	starting_potential = {
+		is_low_tech_start = no # So Broken Shackles origin players don't start with it
+		has_origin_primitive_player = no # So primitive players don't start with it unlocked
+	}
+}
+
+
+
+# ##################
+# Physics Lab and Computers/AI
+# ##################
+
+tech_primitive_computing_technology = {
+	cost = @tier0cost2
+	area = physics
+	tier = 0
+	category = { computing }
+	start_tech = yes
+
+	weight_modifier = {
+		modifier = {
+			add = 10000
+		}
+	}
+
+	ai_weight = {
+		weight = 10000
+	}
+
+	starting_potential = {
+		# So primitive players don't start with it unlocked
+		NOT = {
+			has_origin = origin_primitive_player_pre_industrial_age 
+			has_origin = origin_primitive_player_industrial_age 
+		}
+	}
+}
+
+tech_primitive_atomic_era_computing_technology = {
+	cost = @tier0cost2
+	area = physics
+	tier = 0
+	category = { computing }
+	start_tech = yes
+	prerequisites = { "tech_primitive_computing_technology" }
+
+	weight_modifier = {
+		modifier = {
+			add = 10000
+		}
+	}
+
+	ai_weight = {
+		weight = 10000
+	}
+
+	starting_potential = {
+		# So primitive players don't start with it unlocked
+		NOT = {
+			has_origin = origin_primitive_player_pre_industrial_age 
+			has_origin = origin_primitive_player_industrial_age 
+			has_origin = origin_primitive_player_machine_age 
+		}
+	}
+}
+
+tech_primitive_quantum_computing_technology = {
+	cost = @tier0cost2
+	area = physics
+	tier = 0
+	category = { computing }
+	start_tech = yes
+	prerequisites = { "tech_primitive_atomic_era_computing_technology" "tech_primitive_quantum_mechanics_theory" }
+
+	weight_modifier = {
+		modifier = {
+			add = 10000
+		}
+	}
+
+	ai_weight = {
+		weight = 10000
+	}
+
+	starting_potential = {
+		# So primitive players don't start with it unlocked
+		NOT = {
+			has_origin = origin_primitive_player_pre_industrial_age 
+			has_origin = origin_primitive_player_industrial_age 
+			has_origin = origin_primitive_player_machine_age 
+			has_origin = origin_primitive_player_atomic_age
+			has_origin = origin_primitive_player_early_space_age
+		}
+	}
+}
+
+tech_primitive_ai_computing_technology = {
+	cost = @tier0cost3
+	area = physics
+	tier = 0
+	category = { computing }
+	start_tech = yes
+	is_rare = yes
 	prerequisites = { "tech_primitive_quantum_computing_technology" }
 
 	# # unlock basic science lab lvl 1
@@ -635,6 +711,38 @@ tech_physics_lab_3 = {
 }
 
 # ##################
+# Global Energy Management
+# ##################
+
+#Global Energy Management
+tech_power_hub_1 = {
+	cost = @tier1cost3
+	area = physics
+	tier = 1
+	category = { field_manipulation }
+	prerequisites = { "tech_power_plant_1" "tech_primitive_unified_planet" }
+	weight = @tier1weight3
+
+	weight_modifier = {
+		factor = 2
+		modifier = {
+			factor = 1.25
+			has_tradition = tr_prosperity_adopt
+		}
+
+		modifier = {
+			factor = 1.5
+			is_specialist_subject_type = { TYPE = prospectorium }
+		}
+	}
+
+	ai_weight = {
+		factor = @energy_grid_ai_factor # Energy grid
+
+	}
+}
+
+# ##################
 # Ship Reactors
 # ##################
 
@@ -644,7 +752,7 @@ tech_fission_power = {
 	tier = 0
 	start_tech = yes
 	category = { particles }
-	prerequisites = { "tech_power_plant_1" "tech_primitive_nuclear_physics"}
+	prerequisites = { "tech_space_international_space_station" "tech_primitive_nuclear_physics"}
 	ai_update_type = all
 	
 	starting_potential = {
@@ -653,17 +761,19 @@ tech_fission_power = {
 			has_origin = origin_primitive_player_pre_industrial_age 
 			has_origin = origin_primitive_player_industrial_age 
 			has_origin = origin_primitive_player_machine_age 
+			has_origin = origin_primitive_player_atomic_age
+			has_origin = origin_primitive_player_early_space_age 
 		}
 	}
 	
 	weight_modifier = {
-		modifier = {
-			factor = 0
-			OR = {
-				has_origin = origin_primitive_player_pre_industrial_age 
-				has_origin = origin_primitive_player_industrial_age 
-			}
-		}
+		#modifier = {
+		#	factor = 0
+		#	OR = {
+		#		has_origin = origin_primitive_player_pre_industrial_age 
+		#		has_origin = origin_primitive_player_industrial_age 
+		#	}
+		#}
 	}
 
 	prereqfor_desc = {
@@ -696,15 +806,15 @@ tech_fusion_power = {
 	}
 	
 	weight_modifier = {
-		modifier = {
-			factor = 0
-			OR = {
-				has_origin = origin_primitive_player_pre_industrial_age 
-				has_origin = origin_primitive_player_industrial_age 
-				has_origin = origin_primitive_player_machine_age 
-				has_origin = origin_primitive_player_atomic_age
-			}
-		}
+		#modifier = {
+		#	factor = 0
+		#	OR = {
+		#		has_origin = origin_primitive_player_pre_industrial_age 
+		#		has_origin = origin_primitive_player_industrial_age 
+		#		has_origin = origin_primitive_player_machine_age 
+		#		has_origin = origin_primitive_player_atomic_age
+		#	}
+		#}
 	}
 
 	gateway = power_generation
@@ -746,15 +856,15 @@ tech_reactor_boosters_1 = {
 	}
 	
 	weight_modifier = {
-		modifier = {
-			factor = 0
-			OR = {
-				has_origin = origin_primitive_player_pre_industrial_age 
-				has_origin = origin_primitive_player_industrial_age 
-				has_origin = origin_primitive_player_machine_age 
-				has_origin = origin_primitive_player_atomic_age
-			}
-		}
+		#modifier = {
+		#	factor = 0
+		#	OR = {
+		#		has_origin = origin_primitive_player_pre_industrial_age 
+		#		has_origin = origin_primitive_player_industrial_age 
+		#		has_origin = origin_primitive_player_machine_age 
+		#		has_origin = origin_primitive_player_atomic_age
+		#	}
+		#}
 	}
 }
 
@@ -773,15 +883,15 @@ tech_shields_1 = {
 	start_tech = yes
 	
 	weight_modifier = {
-		modifier = {
-			factor = 0
-			OR = {
-				has_origin = origin_primitive_player_pre_industrial_age 
-				has_origin = origin_primitive_player_industrial_age 
-				has_origin = origin_primitive_player_machine_age 
-				has_origin = origin_primitive_player_atomic_age
-			}
-		}
+		#modifier = {
+		#	factor = 0
+		#	OR = {
+		#		has_origin = origin_primitive_player_pre_industrial_age 
+		#		has_origin = origin_primitive_player_industrial_age 
+		#		has_origin = origin_primitive_player_machine_age 
+		#		has_origin = origin_primitive_player_atomic_age
+		#	}
+		#}
 	}
 
 	starting_potential = {
@@ -821,14 +931,14 @@ tech_power_plant_1 = {
 	}
 	
 	weight_modifier = {
-		modifier = {
-			factor = 0
-			NOT = {
-				has_origin = origin_primitive_player_machine_age
-				has_origin = origin_primitive_player_atomic_age
-				has_origin = origin_primitive_player_early_space_age
-			}
-		}
+		#modifier = {
+		#	factor = 0
+		#	NOT = {
+		#		has_origin = origin_primitive_player_machine_age
+		#		has_origin = origin_primitive_player_atomic_age
+		#		has_origin = origin_primitive_player_early_space_age
+		#	}
+		#}
 		modifier = {
 			factor = 1.25
 			has_tradition = tr_prosperity_adopt
@@ -865,15 +975,15 @@ tech_hyper_drive_1 = {
 
 	weight_modifier = {
 		factor = 1000
-		modifier = {
-			factor = 0
-			OR = {
-				has_origin = origin_primitive_player_pre_industrial_age 
-				has_origin = origin_primitive_player_industrial_age 
-				has_origin = origin_primitive_player_machine_age 
-				has_origin = origin_primitive_player_atomic_age
-			}
-		}
+		#modifier = {
+		#	factor = 0
+		#	OR = {
+		#		has_origin = origin_primitive_player_pre_industrial_age 
+		#		has_origin = origin_primitive_player_industrial_age 
+		#		has_origin = origin_primitive_player_machine_age 
+		#		has_origin = origin_primitive_player_atomic_age
+		#	}
+		#}
 	}
 
 	ai_weight = {

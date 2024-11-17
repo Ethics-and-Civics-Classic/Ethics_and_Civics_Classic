@@ -1,0 +1,500 @@
+# operation_type_name = {			# Key of the site, used for name lookup etc.
+#	picture = <sprite key>			# GFX_* sprite key for the operation image
+#	desc = <triggered event desc>	# Description generator for the operation, with scope this=spy network
+#	stages = <int>					# Should match number of defined stages below.
+#	potential = <trigger>			# Trigger checking if a scope with this=spy network is potential to use (this will add/remove this operation without giving the player a reason).
+#	allow = <trigger>				# Trigger checking if a scope with this=spy network is allowed to use (this will toggle enable/disabled mode on buttons etc).
+#	stage = {						# Stage definition, order dependent.
+#		difficulty = <value>			# base difficulty for this stage
+#		icon = <string>			# icon gfx type.
+#		event = <string>			# event to fire when finished the state.
+#	}
+#	stage = {...}					# Second stage, the total number of 'stage' entries should match value of 'stages'
+#	on_roll_failed = <effect>		# Effect to fire when a roll fails, with scope this=spy operation.
+#	on_create = <effect>			# Effect to fire upon operation creation, with scope this=spy operation.
+#}
+
+@diff_t0 = 4
+@diff_t1 = 5
+@diff_t2 = 6
+@diff_t3 = 7
+@diff_t4 = 8
+@diff_t5 = 9
+@diff_t6 = 10
+@diff_t7 = 11
+@diff_t8 = 12
+@diff_t9 = 13
+
+@operationTargetedByTimer = 10800 #30 years during which the effects of an operation may be felt by select Spy Network events
+
+# this = operation
+# from = operation target
+
+PrimPlayer_operation_locate_strategic_targets = {
+	target = none
+	categories = { op_cat_subterfuge }
+	picture = GFX_evt_spymaster
+	desc = {
+		trigger = { has_nemesis = yes }
+		text = operation_gather_information_desc
+	}
+	desc = {
+		trigger = { has_nemesis = no }
+		text = operation_gather_information_no_dlc_desc
+	}
+	stages = 1
+
+	resources = {
+		category = operations
+		cost = {
+			influence = 20
+		}
+		upkeep = {
+			energy = 4
+			influence = 1
+		}
+	}
+
+	spy_power_cost = 50
+	potential = {
+		target = { is_country_type = PrimPlayer_ethic_fanatic_nation }
+	}
+	allow = {
+		custom_tooltip = {
+			is_running_espionage_operation = no
+			fail_text = operation_one_at_a_time
+		}
+	}
+	stage = {
+		difficulty = @diff_t6
+		icon = GFX_espionage_chapter_icon_document
+		event = EaC_operation.7000
+	}
+
+	on_roll_failed = {
+		standard_espionage_operation_on_roll_failed = {
+			RANDOM_EVENTS = operation_random_events_low_stakes
+		}
+	}
+	on_create = {
+		target = {
+			set_timed_country_flag = {
+				flag = espionage_operation_targeted_by@root.owner #Used in random Spy Network events
+				days = @operationTargetedByTimer
+			}
+		}
+	}
+}
+
+
+####################################
+		#VANILLA DUPLICATES				#Cog Note - For some reason the vanilla file is always taken as priority over any modded file. MUST overwrite vanilla, not sure why. Thus, we overwritten Pre-FTL operations and made duplicates of normal operations.
+####################################
+
+PrimPlayer_operation_gather_information = {
+	target = none
+	categories = { op_cat_subterfuge }
+	picture = GFX_evt_spymaster
+	desc = {
+		trigger = { has_nemesis = yes }
+		text = operation_gather_information_desc
+	}
+	desc = {
+		trigger = { has_nemesis = no }
+		text = operation_gather_information_no_dlc_desc
+	}
+	stages = 1
+
+	resources = {
+		category = operations
+		cost = {
+			influence = 20
+		}
+		upkeep = {
+			energy = 4
+		}
+	}
+
+	spy_power_cost = 10
+	potential = {
+		target = { is_country_type = PrimPlayer_ethic_fanatic_nation }
+	}
+	allow = {
+		custom_tooltip = {
+			is_running_espionage_operation = no
+			fail_text = operation_one_at_a_time
+		}
+	}
+	stage = {
+		difficulty = @diff_t0
+		icon = GFX_espionage_chapter_icon_document
+		event = operation.7000
+	}
+
+	on_roll_failed = {
+		standard_espionage_operation_on_roll_failed = {
+			RANDOM_EVENTS = operation_random_events_low_stakes
+		}
+	}
+	on_create = {
+		target = {
+			set_timed_country_flag = {
+				flag = espionage_operation_targeted_by@root.owner #Used in random Spy Network events
+				days = @operationTargetedByTimer
+			}
+		}
+	}
+}
+
+PrimPlayer_operation_diplomatic_incident = {
+	target = none
+	categories = { op_cat_manipulation op_cat_diplomacy }
+	picture = GFX_evt_tradedeal
+	desc = operation_diplomatic_incident_desc
+	stages = 3
+
+	resources = {
+		category = operations
+		cost = {
+			influence = 30
+		}
+		upkeep = {
+			energy = 5
+		}
+	}
+
+	spy_power_cost = 25
+	potential = {
+		has_nemesis = yes
+		owner = { num_communications > 3 }
+		target = {
+			is_country_type = PrimPlayer_ethic_fanatic_nation
+			is_homicidal = no
+		}
+	}
+	allow = {
+		custom_tooltip = {
+			fail_text = saturated_with_scandals
+			NOT = { has_spynetwork_flag = operation_diplomatic_incident_timer }
+		}
+		target = {
+			num_communications > 3
+			custom_tooltip = {
+				fail_text = gestalts_are_boring
+				is_gestalt = no
+			}
+		}
+		custom_tooltip = {
+			is_running_espionage_operation = no
+			fail_text = operation_one_at_a_time
+		}
+	}
+	stage = {
+		difficulty = @diff_t1
+		icon = GFX_espionage_chapter_icon_surveillance
+		event = operation.8200
+	}
+	stage = {
+		difficulty = @diff_t1
+		icon = GFX_espionage_chapter_icon_motion
+		event = operation.8205
+	}
+	stage = {
+		difficulty = @diff_t1
+		icon = GFX_espionage_chapter_icon_target
+		event = operation.8210
+	}
+	on_roll_failed = {
+		standard_espionage_operation_on_roll_failed = { RANDOM_EVENTS = operation_random_events_generic }
+	}
+	on_create = {
+	}
+}
+
+PrimPlayer_operation_sleeper_cells = {
+	target = none
+	categories = { op_cat_subterfuge op_cat_government }
+	picture = GFX_evt_spy_network
+	desc = operation_sleeper_cells_desc
+	stages = 2
+
+	spy_power_cost = 30
+
+	resources = {
+		category = operations
+		cost = {
+			influence = 45
+		}
+		upkeep = {
+			energy = 6
+		}
+	}
+	potential = {
+		has_nemesis = yes
+		target = { is_country_type = PrimPlayer_ethic_fanatic_nation }
+	}
+	allow = {
+		custom_tooltip = {
+			fail_text = operation_sleeper_cells_dont_stack_this
+			NOT = { has_modifier = sleeper_cell_operation_success } #I.e. don't try to stack this
+		}
+		custom_tooltip = {
+			is_running_espionage_operation = no
+			fail_text = operation_one_at_a_time
+		}
+	}
+	stage = {
+		difficulty = @diff_t2
+		icon = GFX_espionage_chapter_icon_surveillance
+		event = operation.8000
+	}
+	stage = {
+		difficulty = @diff_t2
+		icon = GFX_espionage_chapter_icon_motion
+		event = operation.8001
+	}
+	on_roll_failed = {
+		standard_espionage_operation_on_roll_failed = { RANDOM_EVENTS = operation_random_events_generic }
+	}
+	on_create = {
+	}
+}
+
+PrimPlayer_operation_acquire_asset = {
+	target = none
+	categories = { op_cat_subterfuge op_cat_government }
+	picture = GFX_evt_acquire_asset
+	desc = operation_acquire_asset_desc
+	stages = 3
+
+	resources = {
+		category = operations
+		cost = {
+			influence = 45
+		}
+		upkeep = {
+			energy = 6
+		}
+	}
+
+	spy_power_cost = 30
+	potential = {
+		has_nemesis = yes
+		target = { is_country_type = PrimPlayer_ethic_fanatic_nation }
+	}
+	allow = {
+		custom_tooltip = {
+			is_running_espionage_operation = no
+			fail_text = operation_one_at_a_time
+		}
+	}
+	stage = { #Install operatives
+		difficulty = @diff_t1
+		icon = GFX_espionage_chapter_icon_surveillance
+		event = operation.1000
+	}
+	stage = { #Target identified
+		difficulty = @diff_t1
+		icon = GFX_espionage_chapter_icon_target
+		event = operation.1001
+	}
+	stage = { #Result
+		difficulty = @diff_t1
+		icon = GFX_espionage_chapter_icon_motion
+		event = operation.1002
+	}
+	on_roll_failed = {
+		standard_espionage_operation_on_roll_failed = { RANDOM_EVENTS = operation_random_events_generic }
+	}
+	on_create = {
+		target = {
+			set_timed_country_flag = {
+				flag = espionage_operation_targeted_by@root.owner #Used in random Spy Network events
+				days = @operationTargetedByTimer
+			}
+		}
+	}
+}
+
+PrimPlayer_operation_extort_favors = {
+	target = none
+	categories = { op_cat_manipulation op_cat_diplomacy }
+	picture = GFX_evt_galactic_senate
+	desc = operation_extort_favors_desc
+	stages = 3
+	spy_power_cost = 35
+	resources = {
+		category = operations
+		cost = {
+			influence = 60
+		}
+		upkeep = {
+			energy = 7
+		}
+	}
+
+	potential = {
+		has_nemesis = yes
+		owner = { is_homicidal = no }
+		target = {
+			is_homicidal = no
+			is_country_type = PrimPlayer_ethic_fanatic_nation
+		}
+	}
+	allow = {
+		custom_tooltip = {
+			is_running_espionage_operation = no
+			fail_text = operation_one_at_a_time
+		}
+	}
+	stage = {
+		difficulty = @diff_t2
+		icon = GFX_espionage_chapter_icon_surveillance
+		event = operation.6250
+	}
+	stage = {
+		difficulty = @diff_t2
+		icon = GFX_espionage_chapter_icon_target
+		event = operation.6251
+	}
+	stage = {
+		difficulty = @diff_t2
+		icon = GFX_espionage_chapter_icon_document
+		event = operation.6252
+	}
+	on_roll_failed = {
+		standard_espionage_operation_on_roll_failed = { RANDOM_EVENTS = operation_random_events_generic }
+	}
+	on_create = {}
+}
+
+PrimPlayer_operation_smear_campaign = {
+	target = none
+	categories = { op_cat_manipulation op_cat_diplomacy }
+	picture = GFX_evt_smear_campaign
+	desc = operation_smear_campaign_desc
+	stages = 3
+
+	resources = {
+		category = operations
+		cost = {
+			influence = 60
+		}
+		upkeep = {
+			energy = 7
+		}
+	}
+
+	spy_power_cost = 35
+	potential = {
+		has_nemesis = yes
+		owner = {
+			num_communications > 3
+		}
+		target = { is_country_type = PrimPlayer_ethic_fanatic_nation }
+	}
+	allow = {
+		target = {
+			num_communications > 3
+			is_fallen_empire = no
+		}
+		custom_tooltip = {
+			is_running_espionage_operation = no
+			fail_text = operation_one_at_a_time
+		}
+	}
+	stage = {
+		difficulty = @diff_t3
+		icon = GFX_espionage_chapter_icon_target
+		event = operation.3000
+	}
+	stage = {
+		difficulty = @diff_t3
+		icon = GFX_espionage_chapter_icon_document
+		event = operation.3001
+	}
+	stage = {
+		difficulty = @diff_t3
+		icon = GFX_espionage_chapter_icon_motion
+		event = operation.3002
+	}
+	on_roll_failed = {
+		standard_espionage_operation_on_roll_failed = { RANDOM_EVENTS = operation_random_events_generic }
+	}
+	on_create = {
+		target = {
+			set_timed_country_flag = {
+				flag = espionage_operation_targeted_by@root.owner #Used in random Spy Network events
+				days = @operationTargetedByTimer
+			}
+		}
+	}
+}
+
+PrimPlayer_operation_steal_technology = {
+	target = none
+	categories = { op_cat_subterfuge op_cat_technology }
+	picture = GFX_evt_physics_research
+	desc = operation_steal_technology_desc
+	stages = 3
+
+	resources = {
+		category = operations
+		cost = {
+			influence = 80
+		}
+		upkeep = {
+			energy = 8
+		}
+	}
+
+	spy_power_cost = 40
+	potential = {
+		has_nemesis = yes
+		target = { is_country_type = PrimPlayer_ethic_fanatic_nation }
+	}
+	allow = {
+		custom_tooltip = {
+			fail_text = operation_steal_technology_enigmatic_engineering
+			owner = {
+				NOT = { has_country_flag = cannot_steal_enigmatic_tech@root.target } #set after failing this operation before, due to Enigmatic Engineering
+			}
+		}
+		custom_tooltip = {
+			fail_text = operation_steal_technology_too_recent
+			NOT = { has_spynetwork_flag = recently_stole_technology }
+		}
+		custom_tooltip = {
+			is_running_espionage_operation = no
+			fail_text = operation_one_at_a_time
+		}
+	}
+	stage = {
+		difficulty = @diff_t4
+		icon = GFX_espionage_chapter_icon_surveillance
+		event = operation.1020
+	}
+	stage = {
+		difficulty = @diff_t4
+		icon = GFX_espionage_chapter_icon_target
+		event = operation.1021
+	}
+	stage = {
+		difficulty = @diff_t4
+		icon = GFX_espionage_chapter_icon_security
+		event = operation.1022
+	}
+	on_roll_failed = {
+		standard_espionage_operation_on_roll_failed = {
+			RANDOM_EVENTS = operation_random_events_generic
+		}
+	}
+	on_create = {
+		target = {
+			set_timed_country_flag = {
+				flag = espionage_operation_targeted_by@root.owner #Used in random Spy Network events
+				days = @operationTargetedByTimer
+			}
+		}
+	}
+}

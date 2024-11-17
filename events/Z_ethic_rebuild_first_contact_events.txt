@@ -1,0 +1,145 @@
+################################
+#
+# First Contact Events
+#
+# Written by Pierre du Plessis
+#
+################################
+
+namespace = first_contact
+
+# First Contact Stage 1
+first_contact_event = {
+	id = first_contact.1
+	title = first_contact_start_title
+	desc = {
+		trigger = {
+			owner = {
+				NOR = {
+					is_gestalt = yes
+					AND = {
+						OR = {
+							is_xenophobe = yes
+							is_militarist = yes
+						}
+						is_xenophile = no
+					}
+				}
+			}
+		}
+		text = first_contact.1.desc.default
+	}
+	desc = {
+		trigger = {
+			owner = {
+				OR = {
+					is_xenophobe = yes
+					is_militarist = yes
+				}
+				is_xenophile = no
+				NOT = { has_valid_civic = civic_fanatic_purifiers }
+			}
+		}
+		text = first_contact.1.desc.xenophobe
+	}
+	desc = {
+		trigger = {
+			owner = { has_valid_civic = civic_machine_terminator }
+		}
+		text = first_contact.1.desc.terminator
+	}
+	desc = {
+		trigger = {
+			owner = { has_valid_civic = civic_hive_devouring_swarm }
+		}
+		text = first_contact.1.desc.devourer
+	}
+	desc = {
+		trigger = {
+			owner = { has_valid_civic = civic_fanatic_purifiers }
+		}
+		text = first_contact.1.desc.purifier
+	}
+	desc = {
+		trigger = {
+			owner = {
+				is_hive_empire = yes
+				NOT = { has_valid_civic = civic_hive_devouring_swarm }
+			}
+		}
+		text = first_contact.1.desc.hive
+	}
+	desc = {
+		trigger = {
+			owner = {
+				is_machine_empire = yes
+				NOT = { has_valid_civic = civic_machine_terminator }
+			}
+		}
+		text = first_contact.1.desc.machine
+	}
+	picture = GFX_evt_star_chart
+	is_triggered_only = yes
+	first_contact = yes
+	location = solar_system
+
+	show_sound = event_mysterious_signal
+	
+	trigger = {
+		owner = {
+			if = {
+				limit = { 
+					OR = {
+						has_origin = origin_primitive_player_pre_industrial_age
+						has_origin = origin_primitive_player_industrial_age
+						has_origin = origin_primitive_player_machine_age
+						has_origin = origin_primitive_player_atomic_age
+						has_origin = origin_primitive_player_early_space_age
+					}
+				}
+				num_buildings = {  type = building_pre_ftl_radio_telescope  value > 0  disabled = no }
+			}
+		}
+	}
+
+	abort_trigger = {
+		OR = {
+			NOT = { exists = owner }
+			NOT = { exists = contact_country }
+			contact_country = { is_country_type = primitive }
+			owner = { has_communications = root.contact_country }
+		}
+		owner = {
+			if = {
+				limit = { 
+					OR = {
+						has_origin = origin_primitive_player_pre_industrial_age
+						has_origin = origin_primitive_player_industrial_age
+						has_origin = origin_primitive_player_machine_age
+						has_origin = origin_primitive_player_atomic_age
+						has_origin = origin_primitive_player_early_space_age
+					}
+				}
+				num_buildings = {  type = building_pre_ftl_radio_telescope  value > 0  disabled = no }
+			}
+		}
+	}
+
+	immediate = {
+	}
+
+	after = {
+		# set_site_progress_locked = no
+		hidden_effect = {
+			fire_on_action = {
+				on_action = on_first_contact_started
+			}
+		}
+	}
+
+	#something here?
+	option = {
+		name = INTERESTING
+		set_first_contact_starting_stage = yes
+	}
+}

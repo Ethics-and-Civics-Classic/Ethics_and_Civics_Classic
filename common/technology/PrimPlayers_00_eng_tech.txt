@@ -31,9 +31,9 @@
 ### TECH WEIGHTS ###
 ####################
 
-#@tier0weight1 = 400
-#@tier0weight2 = 300
-#@tier0weight3 = 200
+@tier0weight1 = 400
+@tier0weight2 = 300
+@tier0weight3 = 200
 
 #@tier1weight1 = 100
 #@tier1weight2 = 95
@@ -76,7 +76,7 @@ tech_primitive_industrial_age_weapons = {
 	category = { propulsion }
 	ai_update_type = military
 	start_tech = yes
-	prerequisites = { "tech_primitive_bow_and_arrow" "tech_flak_batteries_1" }
+	prerequisites = { "tech_primitive_bow_and_arrow" "tech_flak_batteries_1" "tech_primitive_aeroplanes" }
 	
 	starting_potential = {
 		# So primitive players don't start with it unlocked
@@ -130,60 +130,8 @@ tech_primitive_space_age_weapons = {
 }
 
 # ##################
-# Pre-Industrial Tech
-# ##################
-
-tech_pre_industrial_stone_construction = {
-	cost = 0
-	area = engineering	
-	start_tech = yes
-	category = { materials }
-	weight = @tier0weight1
-	tier = 0
-}
-
-tech_pre_industrial_iron_construction = {
-	tier = 0
-	cost = @tier0cost1
-	area = engineering	
-	start_tech = yes
-	category = { materials }
-	prerequisites = { "tech_pre_industrial_stone_construction" }
-	weight = @tier0weight1
-	
-	starting_potential = {
-		NOT = {
-			has_country_flag = bronze_age
-			has_country_flag = iron_age
-			has_country_flag = late_medieval_age
-			has_country_flag = renaissance_age
-		}
-	}
-}
-
-# ##################
 # Industrial Tech
 # ##################
-tech_pre_industrial_steel_construction = {
-	tier = 0
-	cost = @tier0cost1
-	area = engineering	
-	start_tech = yes
-	category = { materials }
-	prerequisites = { "tech_pre_industrial_iron_construction" "tech_mechanized_mining" }
-	weight = @tier0weight1
-	
-	starting_potential = {
-		NOT = {
-			has_country_flag = bronze_age
-			has_country_flag = iron_age
-			has_country_flag = late_medieval_age
-			has_country_flag = renaissance_age
-			has_country_flag = steam_age
-			has_origin = origin_primitive_player_pre_industrial_age
-		}
-	}
-}
 
 tech_mechanized_mining = {
 	cost = @tier0cost1
@@ -241,7 +189,7 @@ tech_missiles_1 = {
 	category = { propulsion }
 	ai_update_type = military
 	start_tech = yes
-	prerequisites = { "tech_thrusters_1" "tech_pre_industrial_steel_construction" "tech_fission_power" }
+	prerequisites = { "tech_thrusters_1" "tech_pre_industrial_steel_construction" "tech_primitive_nuclear_physics" }
 	weight = @tier0weight1
 	
 	starting_potential = {
@@ -251,6 +199,7 @@ tech_missiles_1 = {
 			has_origin = origin_primitive_player_industrial_age 
 			has_origin = origin_primitive_player_machine_age 
 			has_origin = origin_primitive_player_atomic_age 
+			is_country_type = PrimPlayer_ethic_fanatic_nation
 		}
 	}
 }
@@ -285,9 +234,59 @@ tech_mass_drivers_1 = {
 # ##################
 # Ship Armor Components
 # ##################
+tech_pre_industrial_stone_construction = {
+	cost = 0
+	area = engineering	
+	start_tech = yes
+	category = { materials }
+	weight = @tier0weight1
+	tier = 0
+}
 
-#Nanocomposite Materials
-tech_ship_armor_1 = {
+#Nanocomposite Materials - Has at beginning of Pre-Industrial Age
+tech_pre_industrial_iron_construction = {
+	tier = 0
+	cost = @tier0cost1
+	area = engineering	
+	start_tech = yes
+	category = { materials }
+	prerequisites = { "tech_pre_industrial_stone_construction" }
+	weight = @tier0weight1
+	
+	starting_potential = {
+		#NOT = {
+		#	has_country_flag = bronze_age
+		#	has_country_flag = iron_age
+		#	has_country_flag = late_medieval_age
+		#	has_country_flag = renaissance_age
+		#}
+	}
+}
+
+#Nanocomposite Materials - Has at beginning of Industrial Age
+tech_pre_industrial_steel_construction = {
+	tier = 0
+	cost = @tier0cost1
+	area = engineering	
+	start_tech = yes
+	category = { materials }
+	prerequisites = { "tech_pre_industrial_iron_construction" "tech_mechanized_mining" }
+	weight = @tier0weight1
+	
+	starting_potential = {
+		NOT = {
+			#has_country_flag = bronze_age
+			#has_country_flag = iron_age
+			#has_country_flag = late_medieval_age
+			#has_country_flag = renaissance_age
+			#has_country_flag = steam_age
+			has_origin = origin_primitive_player_pre_industrial_age
+		}
+	}
+}
+
+#Nanocomposite Materials - Has at beginning of Machine Age
+tech_primitive_aluminium_material = {
 	cost = @tier1cost1
 	area = engineering
 	tier = 0
@@ -299,10 +298,195 @@ tech_ship_armor_1 = {
 		NOT = {
 			has_origin = origin_primitive_player_pre_industrial_age 
 			has_origin = origin_primitive_player_industrial_age 
+		}
+	}
+}
+
+#Nanocomposite Materials - Has at beginning of Atomic Age
+tech_primitive_plastic_material = {
+	cost = @tier1cost1
+	area = engineering
+	tier = 0
+	category = { materials }
+	prerequisites = { "tech_primitive_aluminium_material" }
+	ai_update_type = all
+	start_tech = yes
+	starting_potential = {
+		NOT = {
+			has_origin = origin_primitive_player_pre_industrial_age 
+			has_origin = origin_primitive_player_industrial_age 
+			has_origin = origin_primitive_player_machine_age 
+		}
+	}
+}
+
+#Nanocomposite Materials - Has at beginning of Early Space Age
+tech_primitive_composite_material = {
+	cost = @tier1cost1
+	area = engineering
+	tier = 0
+	category = { materials }
+	prerequisites = { "tech_primitive_plastic_material" }
+	ai_update_type = all
+	start_tech = yes
+	starting_potential = {
+		NOT = {
+			has_origin = origin_primitive_player_pre_industrial_age 
+			has_origin = origin_primitive_player_industrial_age 
+			has_origin = origin_primitive_player_machine_age 
+			has_origin = origin_primitive_player_atomic_age 
+		}
+	}
+}
+
+#Nanocomposite Materials
+tech_ship_armor_1 = {
+	cost = @tier1cost1
+	area = engineering
+	tier = 0
+	category = { materials }
+	prerequisites = { "tech_primitive_composite_material" }
+	ai_update_type = all
+	start_tech = yes
+	starting_potential = {
+		NOT = {
+			has_origin = origin_primitive_player_pre_industrial_age 
+			has_origin = origin_primitive_player_industrial_age 
 			has_origin = origin_primitive_player_machine_age 
 			has_origin = origin_primitive_player_atomic_age 
 			has_origin = origin_primitive_player_early_space_age
 		}
+	}
+}
+
+# #################################
+# Aeroplane - Aerospace Technology#
+# #################################
+
+#Aeroplanes
+tech_primitive_aeroplanes = {
+	area = engineering
+	cost = @tier1cost1
+	start_tech = yes
+	tier = 0
+	category = { propulsion }
+	ai_update_type = all
+	prerequisites = { "tech_primitive_aluminium_material" }
+	
+	starting_potential = {
+		NOT = {
+			has_origin = origin_primitive_player_pre_industrial_age 
+			has_origin = origin_primitive_player_industrial_age 
+			has_origin = origin_primitive_player_machine_age 
+		}
+	}
+}
+
+#Aerospace Rocket
+tech_primitive_early_aerospace_rocket = {
+	area = engineering
+	cost = @tier1cost1
+	start_tech = yes
+	tier = 0
+	category = { propulsion }
+	ai_update_type = all
+	prerequisites = { "tech_primitive_aeroplanes" "tech_thrusters_1" "tech_primitive_plastic_material" }
+	
+	starting_potential = {
+		NOT = {
+			has_origin = origin_primitive_player_pre_industrial_age 
+			has_origin = origin_primitive_player_industrial_age 
+			has_origin = origin_primitive_player_machine_age 
+			has_origin = origin_primitive_player_atomic_age
+		}
+	}
+}
+
+# ##################
+# Starbases
+# ##################
+
+#International Space Station
+tech_space_international_space_station = {
+	cost = @tier0cost1
+	area = engineering
+	tier = 0
+	category = { voidcraft }
+	start_tech = yes
+	weight = @tier0weight1
+	prerequisites = { "tech_primitive_early_aerospace_rocket" "tech_primitive_composite_material" }
+	
+	starting_potential = {
+		NOT = {
+			has_origin = origin_primitive_player_pre_industrial_age 
+			has_origin = origin_primitive_player_industrial_age 
+			has_origin = origin_primitive_player_machine_age 
+			has_origin = origin_primitive_player_atomic_age
+		}
+	}
+	
+	
+	ai_weight = {
+		factor = 1000 #very important tech
+	}
+}
+
+tech_starbase_1 = {
+	cost = @tier0cost2
+	area = engineering
+	start_tech = yes
+	category = { voidcraft }
+	prerequisites = { "tech_space_construction" "tech_fission_power" "tech_shields_1" "tech_lasers_1" }
+	tier = 0
+	weight = @tier0weight2
+	
+	starting_potential = {
+		has_origin_primitive_player = no # So primitive players don't start with it unlocked
+	}
+	
+	prereqfor_desc = {	
+		ship = {
+			title = "TECH_UNLOCK_OUTPOST_CONSTRUCTION_TITLE"
+			desc = "TECH_UNLOCK_OUTPOST_CONSTRUCTION_DESC"
+		}
+	}
+	
+	# unlocks Outposts
+	
+	ai_weight = {
+		factor = 1000 #very important tech
+	}
+}
+
+
+tech_starbase_2 = {
+	cost = @tier1cost1
+	area = engineering
+	start_tech = yes
+	category = { voidcraft }
+	tier = 1
+	weight = @tier1weight1
+	prerequisites = { "tech_starbase_1" }
+	
+	starting_potential = {
+		has_origin_primitive_player = no # So primitive players don't start with it unlocked
+	}
+
+	prereqfor_desc = {	
+		ship = {
+			title = "TECH_UNLOCK_STARPORT_CONSTRUCTION_TITLE"
+			desc = "TECH_UNLOCK_STARPORT_CONSTRUCTION_DESC"
+		}
+		#ship = {
+		#	title = "TECH_UNLOCK_CORVETTE_CONSTRUCTION_TITLE"
+		#	desc = "TECH_UNLOCK_CORVETTE_CONSTRUCTION_DESC"
+		#}
+	}
+	
+	# unlocks Starport and shipyard
+	
+	ai_weight = {
+		factor = 1000 #very important tech
 	}
 }
 
@@ -326,7 +510,6 @@ tech_thrusters_1 = {
 			has_origin = origin_primitive_player_industrial_age 
 			has_origin = origin_primitive_player_machine_age 
 			has_origin = origin_primitive_player_atomic_age 
-			has_origin = origin_primitive_player_early_space_age
 		}
 	}
 
@@ -342,12 +525,12 @@ tech_thrusters_1 = {
 # ##################
 # Ship Sizes
 # ##################
-tech_space_exploration = {
+tech_space_exploration = {	#Allows Science Ship
 	cost = @tier0cost1
 	area = engineering	
 	start_tech = yes
 	category = { voidcraft }
-	prerequisites = { "tech_basic_science_lab_1" }
+	prerequisites = { "tech_basic_science_lab_1" "tech_hyper_drive_1" }
 	weight = @tier0weight1
 	tier = 0
 	
@@ -356,15 +539,15 @@ tech_space_exploration = {
 	}
 	
 	weight_modifier = {
-		modifier = {
-			factor = 0
-			OR = {
-				has_origin = origin_primitive_player_pre_industrial_age 
-				has_origin = origin_primitive_player_industrial_age 
-				has_origin = origin_primitive_player_machine_age 
-				has_origin = origin_primitive_player_atomic_age 
-			}
-		}	
+		#modifier = {
+		#	factor = 0
+		#	OR = {
+		#		has_origin = origin_primitive_player_pre_industrial_age 
+		#		has_origin = origin_primitive_player_industrial_age 
+		#		has_origin = origin_primitive_player_machine_age 
+		#		has_origin = origin_primitive_player_atomic_age 
+		#	}
+		#}	
 	}
 	
 	prereqfor_desc = {
@@ -384,7 +567,7 @@ tech_corvettes = {
 	area = engineering	
 	start_tech = yes
 	category = { voidcraft }
-	prerequisites = { "tech_starbase_1" }
+	prerequisites = { "tech_starbase_2" }
 	tier = 1
 	weight = @tier0weight3
 	
@@ -424,69 +607,6 @@ tech_corvettes = {
 # ##################
 # Titan upgrades
 # ##################
-
-# ##################
-# Starbases
-# ##################
-
-tech_starbase_1 = {
-	cost = @tier0cost2
-	area = engineering
-	start_tech = yes
-	category = { voidcraft }
-	prerequisites = { "tech_space_construction" }
-	tier = 0
-	weight = @tier0weight2
-	
-	starting_potential = {
-		has_origin_primitive_player = no # So primitive players don't start with it unlocked
-	}
-	
-	prereqfor_desc = {	
-		ship = {
-			title = "TECH_UNLOCK_OUTPOST_CONSTRUCTION_TITLE"
-			desc = "TECH_UNLOCK_OUTPOST_CONSTRUCTION_DESC"
-		}
-	}
-	
-	# unlocks Outposts
-	
-	ai_weight = {
-		factor = 1000 #very important tech
-	}
-}
-
-
-tech_starbase_2 = {
-	cost = @tier1cost1
-	area = engineering
-	start_tech = yes
-	category = { voidcraft }
-	tier = 1
-	weight = @tier1weight1
-	prerequisites = { "tech_starbase_1" "tech_corvettes" }
-	
-	starting_potential = {
-		has_origin_primitive_player = no # So primitive players don't start with it unlocked
-	}
-
-	prereqfor_desc = {	
-		ship = {
-			title = "TECH_UNLOCK_STARPORT_CONSTRUCTION_TITLE"
-			desc = "TECH_UNLOCK_STARPORT_CONSTRUCTION_DESC"
-		}
-		ship = {
-			title = "TECH_UNLOCK_CORVETTE_CONSTRUCTION_TITLE"
-			desc = "TECH_UNLOCK_CORVETTE_CONSTRUCTION_DESC"
-		}
-	}
-	
-	# unlocks Starport and shipyard
-	
-	ai_weight = {
-		factor = 1000 #very important tech
-	}
-}
 
 # ##################
 # Starbases upgrades
@@ -602,16 +722,16 @@ tech_mining_network_1 = {
 	}
 	
 	weight_modifier = {
-		modifier = {
-			factor = 0
-			NOT = {
-				has_origin = origin_primitive_player_pre_industrial_age
-				has_origin = origin_primitive_player_industrial_age
-				has_origin = origin_primitive_player_machine_age
-				has_origin = origin_primitive_player_atomic_age
-				has_origin = origin_primitive_player_early_space_age	
-			}
-		}
+		#modifier = {
+		#	factor = 0
+		#	NOT = {
+		#		has_origin = origin_primitive_player_pre_industrial_age
+		#		has_origin = origin_primitive_player_industrial_age
+		#		has_origin = origin_primitive_player_machine_age
+		#		has_origin = origin_primitive_player_atomic_age
+		#		has_origin = origin_primitive_player_early_space_age	
+		#	}
+		#}
 		modifier = {
 			factor = 1.25			
 		}
@@ -692,18 +812,19 @@ tech_basic_industry = {
 			has_origin = origin_primitive_player_industrial_age
 			has_origin = origin_primitive_player_machine_age
 			has_origin = origin_primitive_player_atomic_age	
+			has_origin = origin_primitive_player_early_space_age
 		}
 	}
 	
 	weight_modifier = {
-		modifier = {
-			factor = 0
-			NOT = {
-				has_origin = origin_primitive_player_pre_industrial_age
-				has_origin = origin_primitive_player_industrial_age
-				has_origin = origin_primitive_player_machine_age
-			}
-		}
+		#modifier = {
+		#	factor = 0
+		#	NOT = {
+		#		has_origin = origin_primitive_player_pre_industrial_age
+		#		has_origin = origin_primitive_player_industrial_age
+		#		has_origin = origin_primitive_player_machine_age
+		#	}
+		#}
 		modifier = {
 			factor = 1.25			
 		}
@@ -815,7 +936,7 @@ tech_space_construction = {
 	category = { industry }
 	start_tech = yes
 	weight = @tier0weight1
-	prerequisites = { "tech_ship_armor_1" "tech_thrusters_1" }
+	prerequisites = { "tech_basic_industry" "tech_space_international_space_station" }
 	
 	starting_potential = {
 		has_origin_primitive_player = no # So primitive players don't start with it unlocked

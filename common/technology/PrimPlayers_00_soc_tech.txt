@@ -31,9 +31,9 @@
 ### TECH WEIGHTS ###
 ####################
 
-#@tier0weight1 = 400
-#@tier0weight2 = 300
-#@tier0weight3 = 200
+@tier0weight1 = 400
+@tier0weight2 = 300
+@tier0weight3 = 200
 
 #@tier1weight1 = 100
 #@tier1weight2 = 95
@@ -54,6 +54,346 @@
 #@tier5weight1 = 30
 #@tier5weight2 = 25
 #@tier5weight3 = 20
+
+# ##################
+# Genetics
+# ##################
+
+tech_primitive_theory_of_evolution = {
+	cost = @tier1cost1
+	area = society
+	tier = 0
+	category = { biology }
+	start_tech = yes
+	weight = @tier0weight1
+	prerequisites = { "tech_primitive_scientific_method" }
+	
+	
+	starting_potential = {
+		# So primitive players don't start with it unlocked
+		NOT = {
+			has_origin = origin_primitive_player_pre_industrial_age 
+			has_origin = origin_primitive_player_industrial_age
+		}
+	}
+
+	# unlocks solarpunk sapling building
+}
+
+tech_primitive_adv_genetic_theory = {
+	cost = @tier1cost2
+	area = society
+	tier = 0
+	category = { biology }
+	start_tech = yes
+	weight = @tier0weight1
+	prerequisites = { "tech_primitive_theory_of_evolution" "tech_primimtive_universities" }
+	
+	
+	starting_potential = {
+		# So primitive players don't start with it unlocked
+		NOT = {
+			has_origin = origin_primitive_player_pre_industrial_age 
+			has_origin = origin_primitive_player_industrial_age
+			has_origin = origin_primitive_player_machine_age
+			has_origin = origin_primitive_player_atomic_age
+			has_origin = origin_primitive_player_early_space_age
+		}
+	}
+
+	# unlocks solarpunk sapling building
+}
+
+#Genome Mapping
+tech_genome_mapping = {
+	cost = @tier1cost1
+	area = society
+	tier = 1
+	category = { biology }
+	weight = @tier1weight1
+	prerequisites = { "tech_primitive_adv_genetic_theory" }
+
+	gateway = biological
+
+	modifier = {
+		pop_growth_speed = 0.10
+	}
+
+	potential = {
+		OR = {
+			is_machine_empire = no
+			has_civic = civic_machine_assimilator
+			has_civic = civic_machine_servitor
+			has_civic = civic_machine_guided_sapience
+		}
+	}
+
+	weight_modifier = {
+		factor = 1.5	# genetech needs to be a bit more common
+		modifier = {
+			factor = 1.25
+			is_hive_empire = yes
+		}
+		modifier = {
+			factor = 1.25
+			has_tradition = tr_supremacy_adopt
+		}
+		modifier = {
+			factor = 2
+			has_relic = r_pox_sample
+		}
+		modifier = {
+			factor = 0.5
+			is_individual_machine = yes
+		}
+		modifier = {
+			factor = 0.5
+			has_origin = origin_synthetic_fertility
+		}
+		modifier = {
+			factor = 2
+			AND = {
+				OR = {
+					is_individual_machine = yes
+					has_origin = origin_synthetic_fertility
+				}
+				any_owned_species = {
+					is_organic_species = yes
+				}
+			}
+		}
+	}
+
+	ai_weight = {
+		factor = @pop_growth_tech_ai_factor
+	}
+}
+
+#Vitality Boosters
+tech_vitality_boosters = {
+	cost = @tier2cost2
+	area = society
+	tier = 2
+	category = { biology }
+	prerequisites = { "tech_genome_mapping" }
+	weight = @tier2weight2
+
+	modifier = {
+		leader_lifespan_add = 10
+	}
+
+	potential = {
+		OR = {
+			is_machine_empire = no
+			has_civic = civic_machine_assimilator
+		}
+	}
+
+	weight_modifier = {
+		factor = 1.5	# genetech needs to be a bit more common
+		modifier = {
+			factor = 1.25
+			is_hive_empire = yes
+		}
+		modifier = {
+			factor = 1.25
+			has_tradition = tr_supremacy_adopt
+		}
+		modifier = {
+			factor = 2
+			has_relic = r_pox_sample
+		}
+		modifier = {
+			factor = 0.5
+			is_individual_machine = yes
+		}
+		modifier = {
+			factor = 0.5
+			has_origin = origin_synthetic_fertility
+		}
+		modifier = {
+			factor = 2
+			AND = {
+				is_individual_machine = yes
+				any_owned_species = {
+					is_organic_species = yes
+				}
+			}
+		}
+	}
+
+	ai_weight = {
+	}
+}
+
+#Epigenetic Triggers
+tech_epigenetic_triggers = {
+	cost = @tier2cost2
+	area = society
+	tier = 2
+	category = { biology }
+	prerequisites = { "tech_genome_mapping" }
+	weight = @tier2weight2
+
+	feature_flags = {
+		uplifting
+	}
+
+	potential = {
+		NOR = {
+			has_valid_civic = civic_fanatic_purifiers
+			#has_valid_civic = civic_machine_terminator # covered by not being machine
+			#has_valid_civic = civic_hive_devouring_swarm # can uplift to make delicious
+			is_natural_design_empire = yes
+		}
+		OR = {
+			is_machine_empire = no
+			has_civic = civic_machine_assimilator
+			has_civic = civic_machine_servitor
+			has_civic = civic_machine_guided_sapience
+		}
+	}
+
+	prereqfor_desc = {
+		custom = {
+			title = "TECH_UNLOCK_EPIGENETICS_TITLE"
+			desc = "TECH_UNLOCK_EPIGENETICS_DESC"
+		}
+	}
+
+	weight_modifier = {
+		modifier = {
+			factor = 0.5
+			has_ethic = ethic_fanatic_xenophobe
+		}
+		modifier = {
+			factor = 0.75
+			has_ethic = ethic_xenophobe
+		}
+		modifier = {
+			factor = 1.25
+			has_ethic = ethic_xenophile
+		}
+		modifier = {
+			factor = 1.5
+			has_ethic = ethic_fanatic_xenophile
+		}
+		modifier = {
+			factor = 2
+			has_relic = r_pox_sample
+		}
+		modifier = {
+			factor = 0.5
+			is_individual_machine = yes
+		}
+		modifier = {
+			factor = 0.5
+			has_origin = origin_synthetic_fertility
+		}
+		modifier = {
+			factor = 2
+			AND = {
+				is_individual_machine = yes
+				any_owned_species = {
+					is_organic_species = yes
+				}
+			}
+		}
+		modifier = {
+			factor = 5
+			is_guided_sapience_empire = yes
+		}
+		modifier = {
+			factor = 0
+			NOR = {
+				has_country_flag = found_presapients
+				any_planet_within_border = {
+					any_owned_pop = {
+						is_sapient = no
+					}
+				}
+			}
+		}
+	}
+
+	ai_weight = {
+		modifier = {
+			factor = 0.5
+			has_ethic = ethic_fanatic_xenophobe
+		}
+		modifier = {
+			factor = 0.75
+			has_ethic = ethic_xenophobe
+		}
+		modifier = {
+			factor = 1.25
+			has_ethic = ethic_xenophile
+		}
+		modifier = {
+			factor = 1.5
+			has_ethic = ethic_fanatic_xenophile
+		}
+	}
+}
+
+#Cloning
+tech_cloning = {
+	cost = @tier2cost2
+	area = society
+	tier = 2
+	category = { biology }
+	prerequisites = { "tech_genome_mapping" }
+	weight = @tier2weight2
+
+	modifier = {
+		pop_growth_speed = 0.10
+	}
+
+	potential = {
+		OR = {
+			is_machine_empire = no
+			has_civic = civic_machine_assimilator
+		}
+		is_natural_design_empire = no
+	}
+
+	weight_modifier = {
+		factor = 1.5	# genetech needs to be a bit more common
+		modifier = {
+			factor = 1.25
+			is_hive_empire = yes
+		}
+		modifier = {
+			factor = 1.25
+			has_tradition = tr_supremacy_adopt
+		}
+		modifier = {
+			factor = 2
+			has_relic = r_pox_sample
+		}
+		modifier = {
+			factor = 0.5
+			is_individual_machine = yes
+		}
+		modifier = {
+			factor = 0.5
+			has_origin = origin_synthetic_fertility
+		}
+		modifier = {
+			factor = 2
+			AND = {
+				is_individual_machine = yes
+				any_owned_species = {
+					is_organic_species = yes
+				}
+			}
+		}
+	}
+
+	ai_weight = {
+		factor = @pop_growth_tech_ai_factor
+	}
+}
 
 # ##################
 # Basic army
@@ -170,6 +510,190 @@ tech_industrial_farming = {
 	# unlocks farming districts
 }
 
+#Hydroponics
+tech_hydroponics = {
+	cost = @tier1cost1
+	area = society
+	tier = 1
+	category = { biology }
+	prerequisites = { "tech_industrial_farming" "tech_basic_industry" }
+	weight = @tier1weight1
+
+	# unlock hydroponics buildings
+
+	weight_modifier = {
+		factor = 2
+		modifier = {
+			factor = 0.01
+			OR = {
+				is_machine_empire = yes
+				is_lithoid_empire = yes
+				is_individual_machine = yes
+				has_origin = origin_synthetic_fertility
+			}
+			NOR = {
+				has_country_flag = non_lithoid_subspecies
+				has_valid_civic = civic_machine_servitor
+				has_valid_civic = civic_machine_assimilator
+				any_owned_planet = {
+					OR = {
+						num_districts = { type = district_farming value > 0 }
+						num_districts = { type = district_rw_farming value > 0 }
+					}
+				}
+			}
+		}
+		modifier = {
+			factor = 0.5
+			OR = {
+				is_machine_empire = yes
+				is_lithoid_empire = yes
+				AND = {
+					is_individual_machine = yes
+					NOT = { has_country_flag = non_lithoid_subspecies }
+				}
+			}
+		}
+		modifier = {
+			factor = 2
+			has_relic = r_pox_sample
+		}
+	}
+
+	ai_weight = {
+	}
+}
+
+
+tech_solarpunk_sapling = {
+	cost = @tier1cost1
+	area = society
+	tier = 0
+	category = { biology }
+	start_tech = yes
+	weight = @tier0weight1
+	
+	weight_modifier = {
+		modifier = {
+			factor = 0
+			has_civic = PrimPlayer_civic_environmental_synergy 
+		}
+	}
+	
+	starting_potential = {
+		# So primitive players don't start with it unlocked
+		has_civic = PrimPlayer_civic_environmental_synergy 
+	}
+
+	# unlocks solarpunk sapling building
+}
+
+#Eco Simulation
+tech_eco_simulation = {
+	cost = @tier1cost1
+	area = society
+	tier = 1
+	category = { biology }
+	prerequisites = { "tech_industrial_farming" "tech_primitive_ai_computing_technology" }
+	weight = @tier1weight1
+
+	modifier = {
+		planet_farmers_food_produces_mult = 0.2
+		starbase_constructions_food_produces_mult = 0.10
+	}
+
+	weight_modifier = {
+		modifier = {
+			factor = 0.01
+			OR = {
+				is_machine_empire = yes
+				is_lithoid_empire = yes
+				is_individual_machine = yes
+				has_origin = origin_synthetic_fertility
+			}
+			NOR = {
+				has_country_flag = non_lithoid_subspecies
+				has_valid_civic = civic_machine_servitor
+				has_valid_civic = civic_machine_assimilator
+				any_owned_planet = {
+					OR = {
+						num_districts = { type = district_farming value > 0 }
+						num_districts = { type = district_rw_farming value > 0 }
+					}
+				}
+			}
+		}
+		modifier = {
+			factor = 0.5
+			OR = {
+				is_machine_empire = yes
+				is_lithoid_empire = yes
+				AND = {
+					is_individual_machine = yes
+					NOT = { has_country_flag = non_lithoid_subspecies }
+				}
+			}
+		}
+		modifier = {
+			factor = 1.25
+			has_ethic = ethic_pacifist
+		}
+		modifier = {
+			factor = 1.5
+			has_ethic = ethic_fanatic_pacifist
+		}
+		modifier = {
+			factor = 2
+			has_relic = r_pox_sample
+		}
+	}
+
+	ai_weight = {
+		modifier = {
+			factor = 1.25
+			has_ethic = ethic_pacifist
+		}
+		modifier = {
+			factor = 1.5
+			has_ethic = ethic_fanatic_pacifist
+		}
+	}
+}
+
+# ##################
+# Bio Reactor
+# ##################
+tech_bio_reactor = {
+	cost = @tier1cost1
+	area = society
+	tier = 1
+	category = { biology }
+	prerequisites = { "tech_industrial_farming" "tech_primitive_combustion_technology" }
+	weight = @tier1weight1
+	is_rare = yes
+
+	weight_modifier = {
+		factor = 0.1
+		modifier = {
+			factor = 20
+			OR = {
+				is_catalytic_empire = yes
+				is_machine_empire = yes
+				is_mechanical_empire = yes
+				is_lithoid_empire = yes
+			}
+		}
+		inline_script = {
+			script = technologies/rare_technologies_weight_modifiers
+			TECHNOLOGY = tech_bio_reactor
+		}
+	}
+
+	ai_weight = {
+
+	}
+}
+
 # ##################
 # City
 # ##################
@@ -231,7 +755,7 @@ tech_interplanetary_commerce = {
 	start_tech = yes
 	category = { statecraft }
 	tier = 0
-	prerequisites = { "tech_pre_industrial_steel_construction" }
+	prerequisites = { "tech_primitive_aeroplanes" "tech_primimtive_nation_state_government"}
 	weight = @tier0weight1
 	
 	starting_potential = {
@@ -256,7 +780,7 @@ tech_space_trading = {
 	area = society
 	tier = 1
 	category = { good_trading }
-	prerequisites = { "tech_interplanetary_commerce" "tech_thrusters_1" }
+	prerequisites = { "tech_interplanetary_commerce" "tech_hyper_drive_1" }
 	weight = @tier1weight3
 
 	potential = {
@@ -480,15 +1004,15 @@ tech_colonization_1 = {
 	
 	weight_modifier = {
 		factor = 1000
-		modifier = {
-			factor = 0
-			OR = {
-				has_origin = origin_primitive_player_pre_industrial_age 
-				has_origin = origin_primitive_player_industrial_age 
-				has_origin = origin_primitive_player_machine_age 
-				has_origin = origin_primitive_player_atomic_age	
-			}
-		}
+		#modifier = {
+		#	factor = 0
+		#	OR = {
+		#		has_origin = origin_primitive_player_pre_industrial_age 
+		#		has_origin = origin_primitive_player_industrial_age 
+		#		has_origin = origin_primitive_player_machine_age 
+		#		has_origin = origin_primitive_player_atomic_age	
+		#	}
+		#}
 	}
 	
 	ai_weight = {
@@ -507,6 +1031,7 @@ tech_primimtive_nation_state_government = {
 	category = { statecraft }
 	tier = 0
 	weight = @tier0weight1
+	prerequisites = { "tech_pre_industrial_steel_construction" }
 	
 	starting_potential = {
 		# So primitive players don't start with it unlocked
@@ -526,6 +1051,55 @@ tech_primimtive_nation_state_government = {
 	}
 }
 
+tech_primitive_unified_planet = {
+	cost = @tier0cost1
+	area = society
+	start_tech = yes
+	category = { statecraft }
+	tier = 0
+	weight = @tier0weight1
+	
+	starting_potential = {
+		# So primitive players don't start with it unlocked
+		NOT = {
+			has_origin = origin_primitive_player_pre_industrial_age 
+			has_origin = origin_primitive_player_industrial_age 
+			has_origin = origin_primitive_player_machine_age 
+			has_origin = origin_primitive_player_atomic_age	
+			has_origin = origin_primitive_player_early_space_age
+		}
+	}
+	
+	# unlocks National Capital
+	
+	weight_modifier = {
+		modifier = {
+			factor = 0
+			always = yes
+			#capital_scope = {
+			#	OR = {
+			#		has_deposit = d_ethic_fanatic_authoritarian_nation_blocker
+			#		has_deposit = d_ethic_fanatic_egalitarian_nation_blocker
+			#		has_deposit = d_ethic_fanatic_xenophobe_nation_blocker
+			#		has_deposit = d_ethic_fanatic_xenophile_nation_blocker
+			#		has_deposit = d_ethic_fanatic_militarist_nation_blocker
+			#		has_deposit = d_ethic_fanatic_pacifist_nation_blocker
+			#		has_deposit = d_ethic_fanatic_spiritualist_nation_blocker
+			#		has_deposit = d_ethic_fanatic_materialist_nation_blocker
+			#		has_deposit = d_ethic_fanatic_green_nation_blocker
+			#		has_deposit = d_ethic_fanatic_industrial_nation_blocker
+			#		has_deposit = d_ethic_fanatic_socialism_nation_blocker
+			#		has_deposit = d_ethic_fanatic_capitalism_nation_blocker
+			#	}
+			#}
+		}
+	}
+	
+	ai_weight = {
+		factor = 1000
+	}
+}
+
 tech_planetary_government = {
 	cost = @tier0cost1
 	area = society
@@ -533,12 +1107,12 @@ tech_planetary_government = {
 	weight = @tier0weight1
 	category = { statecraft }
 	start_tech = yes
-	prerequisites = { "tech_primimtive_nation_state_government" }
+	prerequisites = { "tech_primimtive_nation_state_government" "tech_primitive_unified_planet" }
 	
 	# unlocks Planetary Outpost
 	modifier = {
 		pop_government_ethic_attraction = 0.05
-		country_resource_unity_mult = 0.2
+		#country_resource_unity_mult = 0.2
 	}
 	
 	starting_potential = {
@@ -548,19 +1122,20 @@ tech_planetary_government = {
 			has_origin = origin_primitive_player_industrial_age 
 			has_origin = origin_primitive_player_machine_age 
 			has_origin = origin_primitive_player_atomic_age	
+			has_origin = origin_primitive_player_early_space_age
 		}
 	}
 	
 	weight_modifier = {
 		factor = 4
-		modifier = {
-			factor = 0
-			OR = {
-				has_origin = origin_primitive_player_pre_industrial_age 
-				has_origin = origin_primitive_player_industrial_age 
-				has_origin = origin_primitive_player_machine_age 
-			}
-		}
+		#modifier = {
+		#	factor = 0
+		#	OR = {
+		#		has_origin = origin_primitive_player_pre_industrial_age 
+		#		has_origin = origin_primitive_player_industrial_age 
+		#		has_origin = origin_primitive_player_machine_age 
+		#	}
+		#}
 		modifier = {
 			factor = 0.75
 			NOT = {
@@ -652,7 +1227,7 @@ tech_primimtive_universities = {
 	}
 	
 	weight_modifier = {
-		
+		add = 10000
 	}
 	
 	ai_weight = {
@@ -667,7 +1242,7 @@ tech_cultural_heritage = {
 	category = { statecraft }
 	tier = 0
 	weight = @tier0weight1
-	prerequisites = { "tech_primimtive_universities" }
+	prerequisites = { "tech_primimtive_universities" "tech_basic_industry" }
 	
 	modifier = {
 		pop_government_ethic_attraction = 0.04

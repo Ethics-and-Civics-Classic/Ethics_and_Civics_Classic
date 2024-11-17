@@ -1,0 +1,225 @@
+###############################
+# Narrative Progression Events
+# by Maximilian Olbers
+###############################
+
+namespace = story
+
+### 7 - Unknown Empire
+country_event = {
+	id = story.7
+	title = story.7.name
+	# PrimPlayer First
+	desc = {
+		trigger = { 
+			NOT = { has_country_flag = StoryFirst } 
+			OR = {
+				has_origin = origin_primitive_player_pre_industrial_age
+				has_origin = origin_primitive_player_industrial_age
+				has_origin = origin_primitive_player_machine_age
+				has_origin = origin_primitive_player_atomic_age
+				has_origin = origin_primitive_player_early_space_age
+			}
+		}
+		text = story.7.desc.PrimPlayer
+	}
+	# PrimPlayer Gestalt Consciousness
+	desc = {
+		trigger = {
+			has_ethic = ethic_gestalt_consciousness 
+			OR = {
+				has_origin = origin_primitive_player_pre_industrial_age
+				has_origin = origin_primitive_player_industrial_age
+				has_origin = origin_primitive_player_machine_age
+				has_origin = origin_primitive_player_atomic_age
+				has_origin = origin_primitive_player_early_space_age
+			}
+		}
+		text = story.7.desc.PrimPlayer.gesta
+	}
+	# PrimPlayer Xenophobe
+	desc = {
+		trigger = { 
+			OR = { has_ethic = ethic_fanatic_xenophobe has_ethic = ethic_xenophobe } 
+			OR = {
+				has_origin = origin_primitive_player_pre_industrial_age
+				has_origin = origin_primitive_player_industrial_age
+				has_origin = origin_primitive_player_machine_age
+				has_origin = origin_primitive_player_atomic_age
+				has_origin = origin_primitive_player_early_space_age
+			}
+		}
+		text = story.7.desc.PrimPlayer.phobe
+	}
+	# PrimPlayer Xenophile
+	desc = {
+		trigger = { 
+			OR = { has_ethic = ethic_fanatic_xenophile has_ethic = ethic_xenophile } 
+			OR = {
+				has_origin = origin_primitive_player_pre_industrial_age
+				has_origin = origin_primitive_player_industrial_age
+				has_origin = origin_primitive_player_machine_age
+				has_origin = origin_primitive_player_atomic_age
+				has_origin = origin_primitive_player_early_space_age
+			}
+		}
+		text = story.7.desc.PrimPlayer.phile
+	}
+	######### Vanilla Below ########
+	# First
+	desc = {
+		trigger = { 
+			NOT = { has_country_flag = StoryFirst } 
+			NOT = {
+				has_origin = origin_primitive_player_pre_industrial_age
+				has_origin = origin_primitive_player_industrial_age
+				has_origin = origin_primitive_player_machine_age
+				has_origin = origin_primitive_player_atomic_age
+				has_origin = origin_primitive_player_early_space_age
+			}
+		}
+		text = story.7.desc
+	}
+	# Gestalt Consciousness
+	desc = {
+		trigger = {
+			has_ethic = ethic_gestalt_consciousness 
+			NOT = {
+				has_origin = origin_primitive_player_pre_industrial_age
+				has_origin = origin_primitive_player_industrial_age
+				has_origin = origin_primitive_player_machine_age
+				has_origin = origin_primitive_player_atomic_age
+				has_origin = origin_primitive_player_early_space_age
+			}
+		}
+		text = story.7.desc.gesta
+	}
+	# Xenophobe
+	desc = {
+		trigger = { 
+			OR = { has_ethic = ethic_fanatic_xenophobe has_ethic = ethic_xenophobe } 
+			NOT = {
+				has_origin = origin_primitive_player_pre_industrial_age
+				has_origin = origin_primitive_player_industrial_age
+				has_origin = origin_primitive_player_machine_age
+				has_origin = origin_primitive_player_atomic_age
+				has_origin = origin_primitive_player_early_space_age
+			}
+		}
+		text = story.7.desc.phobe
+	}
+	# Xenophile
+	desc = {
+		trigger = { 
+			OR = { has_ethic = ethic_fanatic_xenophile has_ethic = ethic_xenophile } 
+			NOT = {
+				has_origin = origin_primitive_player_pre_industrial_age
+				has_origin = origin_primitive_player_industrial_age
+				has_origin = origin_primitive_player_machine_age
+				has_origin = origin_primitive_player_atomic_age
+				has_origin = origin_primitive_player_early_space_age
+			}
+		}
+		text = story.7.desc.phile
+	}
+	# Followup 6
+	desc = {
+		trigger = { has_country_flag = Story6 }
+		text = story.7.desc.followup6
+	}
+	# Followup 1-2-3-4-5
+	desc = {
+		trigger = {
+			is_machine_empire = no
+			OR = {
+				has_country_flag = Story1
+				has_country_flag = Story2
+				has_country_flag = Story3
+				has_country_flag = Story4
+				has_country_flag = Story5
+			}
+		}
+		text = story.7.desc.followup12345
+	}
+	# Followup 1-2-3-4-5 Machine Intelligences
+	desc = {
+		trigger = {
+			is_machine_empire = yes
+			OR = {
+				has_country_flag = Story1
+				has_country_flag = Story2
+				has_country_flag = Story3
+				has_country_flag = Story4
+				has_country_flag = Story5
+			}
+		}
+		text = story.7.desc.mach.followup12345
+	}
+	picture = {
+		picture = GFX_evt_news_room
+		trigger = { NOT = { has_ethic = ethic_gestalt_consciousness } }
+	}
+	picture = {
+		picture = GFX_evt_unknown_ships
+		trigger = { has_ethic = ethic_gestalt_consciousness }
+	}
+	show_sound = event_scanner
+
+	is_triggered_only = yes
+
+	trigger = {
+		NOT = { has_country_flag = Story7 }
+		FROM = {
+			NOR = {
+				has_country_flag = radical_cult
+				is_country_type = fallen_empire
+				is_country_type = awakened_fallen_empire
+				is_country_type = primitive
+				is_guardian_country = yes
+				has_relation_flag = { flag = no_coms who = root }
+				has_relation_flag = { flag = AbandonedRefugees who = root }
+				has_relation_flag = { flag = pirate_relation who = root }
+				has_country_flag = day_0
+			}
+		}
+	}
+
+	immediate = {
+		set_country_flag = Story7
+		set_country_flag = has_encountered_other_empire
+		if = {
+			limit = { NOT = { has_country_flag = StoryFirst } }
+			set_country_flag = StoryFirst
+		}
+		if = {
+			limit = { NOT = { has_country_flag = first_alien_life } }
+			set_country_flag = first_alien_life
+		}
+	}
+
+	option = {
+		trigger = { NOR = { has_ethic = ethic_fanatic_xenophobe has_ethic = ethic_xenophobe } }
+		name = INTRIGUING
+	}
+	option = {
+		trigger = { OR = { has_ethic = ethic_fanatic_xenophobe has_ethic = ethic_xenophobe } }
+		name = WORRYING
+	}
+
+	option = {
+		exclusive_trigger = { has_valid_civic = civic_machine_exploration_protocol }
+		name = fircon.machine_exploration_protocol
+	}
+
+	after = {
+		hidden_effect = {
+			country_event = { id = first_contact.1060 days = 10 random = 10 }
+			if = {
+				limit = {
+					has_origin = origin_fear_of_the_dark
+				}
+				country_event = { id = origin.6040 }
+			}
+		}
+	}
+}

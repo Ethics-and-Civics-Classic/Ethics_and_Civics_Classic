@@ -1,0 +1,564 @@
+###########################################
+#
+# Nemesis Espionage Events
+# Written by Gemma Thomson
+#
+###########################################
+
+namespace = EaC_operation
+
+# SUBTERFUGE (.1XXX)
+# SABOTAGE (.2XXX)
+# MANIPULATION (.3XXX)
+# PROVOCATION (.4XXX)
+# RANDOM EVENTS (.5XXX)
+# CUSTODIAN (.6XXX)
+# INTEL (.7XXX)
+
+@operationBribeCost1 = -400
+@operationBribeCost2 = -600
+@operationBribeCost3 = -800
+@operationBribeThreshold1 = 400
+@operationBribeThreshold2 = 600
+@operationBribeThreshold3 = 800
+
+@StealTechnologyAmount = 1000 #Amount of science research in every discipline which will be granted if the EaC_operation cannot steal a Technology
+@StealTechnologyTimer = 2160 #days (6 years) until Steal Technology can be repeated. Referenced in tooltip strings "EaC_operation.1026.tooltip.cooldown" and "EaC_operation_steal_technology_too_recent".
+@SabotageStarbaseTimer = 1440 #days (4 years) until Sabotage Starbase can be repeated against this target.
+@CrisisBeaconTimer = 1440 #days (4 years) until Crisis Beacon can be attempted again. Referenced in tooltip string "EaC_operation_crisis_beacon_too_recent".
+
+# Number of days before a single event should (ideally) stand a chance of coming up again.
+@Random_operationEventTimer = 600
+@Random_operationEventTimerLong = 1000
+
+@PrimPlayer_operation_locate_strategic_targets_infiltration_days = 5400
+
+###########################
+# GATHER INFORMATION
+###########################
+# this = EaC_operation; from = target (country)
+
+# Single Stage EaC_operation - the stakes have never been lower
+espionage_operation_event = {
+	id = EaC_operation.7000
+	title = "PrimPlayer_operation_locate_strategic_targets"
+	desc = "EaC_operation.7000.desc"
+
+	picture = GFX_evt_spymaster
+	show_sound = event_espionage_concluded
+	espionage_operation = yes
+	is_triggered_only = yes
+
+	trigger = {
+		exists = from
+	}
+
+	immediate = {
+		random_list = {
+			1 = {
+				modifier = {
+					factor = 0
+					owner = {
+						NOT = {
+							has_intel_level = {
+								category = government
+								level = 2
+								who = prev.target
+							}
+						}
+					}
+				}
+				modifier = {
+					factor = 5
+					has_espionage_asset_government = yes
+				}
+				set_espionage_operation_flag = intel_report_gov_3
+			}
+			1 = {
+				modifier = {
+					factor = 0
+					owner = {
+						NOT = {
+							has_intel_level = {
+								category = government
+								level = 1
+								who = prev.target
+							}
+						}
+					}
+				}
+				modifier = {
+					factor = 5
+					has_espionage_asset_government = yes
+				}
+				set_espionage_operation_flag = intel_report_gov_2
+			}
+			1 = {
+				modifier = {
+					factor = 0
+					owner = {
+						NOT = {
+							has_intel_level = {
+								category = government
+								level = 0
+								who = prev.target
+							}
+						}
+					}
+				}
+				modifier = {
+					factor = 5
+					has_espionage_asset_government = yes
+				}
+				set_espionage_operation_flag = intel_report_gov_1
+			}
+			1 = {
+				 modifier = {
+					factor = 0
+					owner = {
+						NOT = {
+							has_intel_level = {
+								category = diplomacy
+								level = 2
+								who = prev.target
+							}
+						}
+					}
+				}
+				modifier = {
+					factor = 5
+					has_espionage_asset_diplomacy = yes
+				}
+				set_espionage_operation_flag = intel_report_dip_3
+			}
+			1 = {
+				modifier = {
+					factor = 0
+					owner = {
+						NOT = {
+							has_intel_level = {
+								category = diplomacy
+								level = 1
+								who = prev.target
+							}
+						}
+					}
+				}
+				modifier = {
+					factor = 5
+					has_espionage_asset_diplomacy = yes
+				}
+				set_espionage_operation_flag = intel_report_dip_2
+			}
+			1 = {
+				modifier = {
+					factor = 0
+					owner = {
+						NOT = {
+							has_intel_level = {
+								category = diplomacy
+								level = 0
+								who = prev.target
+							}
+						}
+					}
+				}
+				modifier = {
+					factor = 5
+					has_espionage_asset_diplomacy = yes
+				}
+				set_espionage_operation_flag = intel_report_dip_1
+			}
+			1 = {
+				 modifier = {
+					factor = 0
+					owner = {
+						NOT = {
+							has_intel_level = {
+								category = economy
+								level = 2
+								who = prev.target
+							}
+						}
+					}
+				}
+				modifier = {
+					factor = 5
+					has_espionage_asset_economy = yes
+				}
+				set_espionage_operation_flag = intel_report_eco_3
+			}
+			1 = {
+				modifier = {
+					factor = 0
+					owner = {
+						NOT = {
+							has_intel_level = {
+								category = economy
+								level = 1
+								who = prev.target
+							}
+						}
+					}
+				}
+				modifier = {
+					factor = 5
+					has_espionage_asset_economy = yes
+				}
+				set_espionage_operation_flag = intel_report_eco_2
+			}
+			1 = {
+				modifier = {
+					factor = 0
+					owner = {
+						NOT = {
+							has_intel_level = {
+								category = economy
+								level = 0
+								who = prev.target
+							}
+						}
+					}
+				}
+				modifier = {
+					factor = 5
+					has_espionage_asset_economy = yes
+				}
+				set_espionage_operation_flag = intel_report_eco_1
+			}
+			1 = {
+				 modifier = {
+					factor = 0
+					owner = {
+						NOT = {
+							has_intel_level = {
+								category = technology
+								level = 2
+								who = prev.target
+							}
+						}
+					}
+				}
+				modifier = {
+					factor = 5
+					has_espionage_asset_technology = yes
+				}
+				set_espionage_operation_flag = intel_report_tec_3
+			}
+			1 = {
+				modifier = {
+					factor = 0
+					owner = {
+						NOT = {
+							has_intel_level = {
+								who = prev.target
+								category = technology
+								level = 1
+							}
+						}
+					}
+				}
+				modifier = {
+					factor = 5
+					has_espionage_asset_technology = yes
+				}
+				set_espionage_operation_flag = intel_report_tec_2
+			}
+			1 = {
+				modifier = {
+					factor = 0
+					owner = {
+						NOT = {
+							has_intel_level = {
+								who = prev.target
+								category = technology
+								level = 0
+							}
+						}
+					}
+				}
+				modifier = {
+					factor = 5
+					has_espionage_asset_technology = yes
+				}
+				set_espionage_operation_flag = intel_report_tec_1
+			}
+			1 = {
+				 modifier = {
+					factor = 0
+					owner = {
+						NOT = {
+							has_intel_level = {
+								category = military
+								level = 2
+								who = prev.target
+							}
+						}
+					}
+				}
+				modifier = {
+					factor = 5
+					has_espionage_asset_military = yes
+				}
+				set_espionage_operation_flag = intel_report_mil_3
+			}
+			1 = {
+				modifier = {
+					factor = 0
+					owner = {
+						NOT = {
+							has_intel_level = {
+								who = prev.target
+								category = military
+								level = 1
+							}
+						}
+					}
+				}
+				modifier = {
+					factor = 5
+					has_espionage_asset_military = yes
+				}
+				set_espionage_operation_flag = intel_report_mil_2
+			}
+			1 = {
+				modifier = {
+					factor = 0
+					owner = {
+						NOT = {
+							has_intel_level = {
+								who = prev.target
+								category = military
+								level = 0
+							}
+						}
+					}
+				}
+				modifier = {
+					factor = 5
+					has_espionage_asset_military = yes
+				}
+				set_espionage_operation_flag = intel_report_mil_1
+			}
+			10 = {
+				set_espionage_operation_flag = intel_report_intel_5
+			}
+			5 = {
+				modifier = {
+					factor = 0.5
+					owner = {
+						intel = { who = prev.target value >= 40 }
+					}
+				}
+				set_espionage_operation_flag = intel_report_intel_10
+			}
+			2 = {
+				 modifier = {
+					factor = 0.25
+					owner = {
+						intel = { who = prev.target value >= 50 }
+					}
+				 }
+				set_espionage_operation_flag = intel_report_intel_15
+			}
+		}
+	}
+
+	option = {
+		trigger = {
+			has_espionage_operation_flag = intel_report_gov_3
+		}
+		name = EaC_operation.7000.a
+		owner = { add_intel_report = { category = government level = 3 days = 360 who = prev.target } }
+	}
+	option = {
+		trigger = {
+			has_espionage_operation_flag = intel_report_gov_2
+		}
+		name = EaC_operation.7000.a
+		owner = { add_intel_report = { category = government level = 2 days = 360 who = prev.target } }
+	}
+	option = {
+		trigger = {
+			has_espionage_operation_flag = intel_report_gov_1
+		}
+		name = EaC_operation.7000.a
+		owner = { add_intel_report = { category = government level = 1 days = 360 who = prev.target } }
+	}
+	option = {
+		trigger = {
+			has_espionage_operation_flag = intel_report_dip_3
+		}
+		name = EaC_operation.7000.a
+		owner = { add_intel_report = { category = diplomacy level = 3 days = 360 who = prev.target } }
+	}
+	option = {
+		trigger = {
+			has_espionage_operation_flag = intel_report_dip_2
+		}
+		name = EaC_operation.7000.a
+		owner = { add_intel_report = { category = diplomacy level = 2 days = 360 who = prev.target } }
+	}
+	option = {
+		trigger = {
+			has_espionage_operation_flag = intel_report_dip_1
+		}
+		name = EaC_operation.7000.a
+		owner = { add_intel_report = { category = diplomacy level = 1 days = 360 who = prev.target } }
+	}
+	option = {
+		trigger = {
+			has_espionage_operation_flag = intel_report_eco_3
+		}
+		name = EaC_operation.7000.a
+		owner = { add_intel_report = { category = economy level = 3 days = 360 who = prev.target } }
+	}
+	option = {
+		trigger = {
+			has_espionage_operation_flag = intel_report_eco_2
+		}
+		name = EaC_operation.7000.a
+		owner = { add_intel_report = { category = economy level = 2 days = 360 who = prev.target } }
+	}
+	option = {
+		trigger = {
+			has_espionage_operation_flag = intel_report_eco_1
+		}
+		name = EaC_operation.7000.a
+		owner = { add_intel_report = { category = economy level = 1 days = 360 who = prev.target } }
+	}
+	option = {
+		trigger = {
+			has_espionage_operation_flag = intel_report_tec_3
+		}
+		name = EaC_operation.7000.a
+		owner = { add_intel_report = { category = technology level = 3 days = 360 who = prev.target } }
+	}
+	option = {
+		trigger = {
+			has_espionage_operation_flag = intel_report_tec_2
+		}
+		name = EaC_operation.7000.a
+		owner = { add_intel_report = { category = technology level = 2 days = 360 who = prev.target } }
+	}
+	option = {
+		trigger = {
+			has_espionage_operation_flag = intel_report_tec_1
+		}
+		name = EaC_operation.7000.a
+		owner = { add_intel_report = { category = technology level = 1 days = 360 who = prev.target } }
+	}
+	option = {
+		trigger = {
+			has_espionage_operation_flag = intel_report_mil_3
+		}
+		name = EaC_operation.7000.a
+		owner = { add_intel_report = { category = military level = 3 days = 360 who = prev.target } }
+	}
+	option = {
+		trigger = {
+			has_espionage_operation_flag = intel_report_mil_2
+		}
+		name = EaC_operation.7000.a
+		owner = { add_intel_report = { category = military level = 2 days = 360 who = prev.target } }
+	}
+	option = {
+		trigger = {
+			has_espionage_operation_flag = intel_report_mil_1
+		}
+		name = EaC_operation.7000.a
+		owner = { add_intel_report = { category = military level = 1 days = 360 who = prev.target } }
+	}
+	option = {
+		trigger = {
+			has_espionage_operation_flag = intel_report_intel_5
+		}
+		name = EaC_operation.7000.a
+		owner = {
+			add_intel = {
+				amount = 5
+				who = prev.target
+			}
+		}
+	}
+	option = {
+		trigger = {
+			has_espionage_operation_flag = intel_report_intel_10
+		}
+		name = EaC_operation.7000.a
+		owner = {
+			add_intel = {
+				amount = 10
+				who = prev.target
+			}
+		}
+	}
+	option = {
+		trigger = {
+			has_espionage_operation_flag = intel_report_intel_15
+		}
+		name = EaC_operation.7000.a
+		owner = {
+			add_intel = {
+				amount = 15
+				who = prev.target
+			}
+		}
+	}
+
+	after = {
+		spynetwork = {
+			add_spy_network_level_on_success_effect = { VALUE = -5 }
+		}
+		#Scope doubled up for tooltip reasons
+		spynetwork = {
+			if = {
+				limit = {
+					NOR = {
+						has_modifier = PrimPlayer_operation_locate_strategic_targets_10
+						has_modifier = PrimPlayer_operation_locate_strategic_targets_20
+						has_modifier = PrimPlayer_operation_locate_strategic_targets_30
+						has_modifier = PrimPlayer_operation_locate_strategic_targets_40
+					}
+				}
+				add_modifier = { modifier = PrimPlayer_operation_locate_strategic_targets_10 days = @PrimPlayer_operation_locate_strategic_targets_infiltration_days }
+			}
+			else_if = {
+				limit = { has_modifier = PrimPlayer_operation_locate_strategic_targets_10 }
+				hidden_effect = {
+					remove_modifier = PrimPlayer_operation_locate_strategic_targets_10
+				}
+				add_modifier = { modifier = PrimPlayer_operation_locate_strategic_targets_20 days = @PrimPlayer_operation_locate_strategic_targets_infiltration_days }
+			}
+			else_if = {
+				limit = { has_modifier = PrimPlayer_operation_locate_strategic_targets_20 }
+				hidden_effect = {
+					remove_modifier = PrimPlayer_operation_locate_strategic_targets_20
+				}
+				add_modifier = { modifier = PrimPlayer_operation_locate_strategic_targets_30 days = @PrimPlayer_operation_locate_strategic_targets_infiltration_days }
+			}
+			else = {
+				 hidden_effect = {
+					remove_modifier = PrimPlayer_operation_locate_strategic_targets_30
+					remove_modifier = PrimPlayer_operation_locate_strategic_targets_40
+				}
+				add_modifier = { modifier = PrimPlayer_operation_locate_strategic_targets_40 days = @PrimPlayer_operation_locate_strategic_targets_infiltration_days }
+			}
+		}
+		hidden_effect = {
+			if = {
+				limit = {
+					owner = { NOT = { has_country_flag = EaC_operation_complete_gather_information } }
+				}
+				owner = {
+					#change_variable = {
+					#	which = tinker_tailor_soldier_blorg_achievement_count
+					#	value = 1
+					#}
+					set_country_flag = EaC_operation_complete_gather_information
+				}
+			}
+		}
+		destroy_espionage_operation = this
+	}
+}

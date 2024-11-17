@@ -1,0 +1,224 @@
+# Scopes:
+# - Root = first contact site
+# - Root.Owner = your country (i.e. you should be able to scope from first contact scope to the owner via eventtarget.cpp)
+# - From = other country
+
+# Basic Starter Set
+base_contact_set = {
+	icon = GFX_firstcontact_icon_starter
+	picture = GFX_evt_star_chart
+
+	difficulty = 2
+
+	stage_event = {
+		summary = fcsum_base_contact_set_summary
+		event_weight = {
+			weight = 0
+			modifier = {
+				weight = 1000
+				from = { 
+					NOR = {
+						is_country_type = dragon_dummy
+						is_country_type = jaunting_traveler_dummy
+						has_origin = origin_slavers
+						# If you're making an unique first contact chain tied to a country,
+						# add the triggers here
+						is_country_type = cutholoids
+						#Primitive Players should be added here
+						has_origin = origin_primitive_player_pre_industrial_age
+						has_origin = origin_primitive_player_industrial_age
+						has_origin = origin_primitive_player_machine_age
+						has_origin = origin_primitive_player_atomic_age
+						has_origin = origin_primitive_player_early_space_age
+					}
+				}
+			}
+		}
+		event = first_contact.1 #country event for owner of first contact site
+	}
+
+	# Jaunting Traveler
+	stage_event = {
+		summary = fcsum_jaunting_traveler_summary
+		event_weight = {
+			weight = 0
+			modifier = {
+				weight = 1000
+				from = {
+					is_country_type = jaunting_traveler_dummy
+				}
+			}
+		}
+		event = first_contact.3000
+	}
+
+	# Here Be Dragons
+	stage_event = {
+		summary = fcsum_base_contact_set_summary
+		event_weight = {
+			weight = 0
+			modifier = {
+				weight = 1000
+				from = {
+					is_country_type = dragon_dummy
+				}
+			}
+		}
+		event = first_contact.2000
+	}
+
+	# Evil Slavers (Payback Origin)
+	stage_event = {
+		summary = fcsum_MSI_country_summary
+		event_weight = {
+			weight = 0
+			modifier = {
+				weight = 1000
+				from = { has_origin = origin_slavers }
+				root.owner = { has_origin = origin_payback }
+			}
+		}
+		event = first_contact.4000
+	}
+
+	# Evil Slavers (Broken Shackles Origin)
+	stage_event = {
+		summary = fcsum_MSI_country_summary
+		event_weight = {
+			weight = 0
+			modifier = {
+				weight = 1000
+				from = { has_origin = origin_slavers }
+				root.owner = { has_origin = origin_broken_shackles }
+			}
+		}
+		event = origin.5065
+	}
+
+	# Evil Slavers - fallback for normal empires
+	stage_event = {
+		summary = fcsum_MSI_country_summary
+		event_weight = {
+			weight = 0
+			modifier = {
+				weight = 1000
+				from = { has_origin = origin_slavers }
+				root.owner = { has_slave_origin = no }
+			}
+		}
+		event = first_contact.1
+	}
+
+	# Cutholoids
+	stage_event = {
+		summary = fcsum_cutholoids_1
+		event_weight = {
+			weight = 0
+			modifier = {
+				weight = 1000
+				from = { is_country_type = cutholoids }
+			}
+		}
+		event = grand_archive.2800
+	}
+
+	on_roll_failed = {
+		#nah
+		standard_first_contact_on_roll_failed = { RANDOM_EVENTS = no_events }
+	}
+}
+
+# default empires - start off event
+default_stage_1 = {
+	icon = GFX_firstcontact_icon_progress
+	picture = GFX_evt_star_chart
+
+	difficulty = 5
+
+	stage_event = { # no inhabited systems known
+		summary = fcsum_stage_1_summary
+		event_weight = {
+			weight = 10
+			modifier = {
+				factor = 0
+				contact_country = {
+					any_system_within_border = {
+						root.owner = {
+							intel_level = {
+								level > low
+								system = prev
+							}
+						}
+					}
+				}
+			}
+			modifier = {
+				factor = 0
+				contact_country = {
+					any_controlled_fleet = {
+						is_within_borders_of = root.owner
+					}
+				}
+			}
+		}
+		event = first_contact.5
+	}
+
+	stage_event = { # no inhabited systems known, they are scanning us
+		summary = fcsum_stage_1_summary
+		event_weight = {
+			weight = 10
+			modifier = {
+				factor = 0
+				contact_country = {
+					any_system_within_border = {
+						root.owner = {
+							intel_level = {
+								level > low
+								system = prev
+							}
+						}
+					}
+				}
+			}
+			modifier = {
+				factor = 0
+				NOT = {
+					contact_country = {
+						any_controlled_fleet = {
+							is_within_borders_of = root.owner
+						}
+					}
+				}
+			}
+		}
+		event = first_contact.10
+	}
+
+	stage_event = { # inhabited systems known
+		summary = fcsum_stage_1_summary
+		event_weight = {
+			weight = 10
+			modifier = {
+				factor = 0
+				NOT = {
+					contact_country = {
+						any_system_within_border = {
+							root.owner = {
+								intel_level = {
+									level > low
+									system = prev
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		event = first_contact.15
+	}
+
+	on_roll_failed = {
+		standard_first_contact_on_roll_failed = { RANDOM_EVENTS = early_fc_random_events }
+	}
+}
