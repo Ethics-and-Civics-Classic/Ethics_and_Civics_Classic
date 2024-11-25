@@ -20,11 +20,11 @@ country_event = {
 				nations.11215 #MANAGE HIRED FLEET
 				nations.11220 #Nuclear Strike Debriefing
 				nations.11235 #Expand Mercenary Fleet
-				nations.11240 #Tactical Appraisal
-				nations.11245 #Tactical Appraisal Khan
-				nations.11250 #Tactical Appraisal Gray Tempest
-				nations.11255 #Tactical Appraisal Prethoryn
-				nations.11260 #Tactical Appraisal Unbidden
+				nations.11240 #Tactical Appraisal - #Merge Nations Event Chain
+				nations.11245 #Tactical Appraisal - #Merge Nations Event Chain Khan
+				nations.11250 #Tactical Appraisal - #Merge Nations Event Chain Gray Tempest
+				nations.11255 #Tactical Appraisal - #Merge Nations Event Chain Prethoryn
+				nations.11260 #Tactical Appraisal - #Merge Nations Event Chain Unbidden
 				nations.11270 #Hire Armies
 				nations.11275 #Merc Pays Back Patron
 				nations.11280 #Patron Panel
@@ -55,14 +55,14 @@ country_event = {
 	desc = {
 		trigger = {
 			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
+				is_hostile = FROMFROM
 			}
 		}
 		text = "nations.11205.desc"
 	}
 	desc = {
 		trigger = {
-			#is_hostile = event_target:mercenary_enclave_country
+			is_hostile = FROMFROM
 		}
 		text = "nations.11205.desc.hostile"
 	}
@@ -86,12 +86,12 @@ country_event = {
 		
 	}
 
-	# Hostility options
+	# Sue for Peace
 	option = {
 		name = "nations.11205.i"
 		trigger = {
-			#is_hostile = event_target:mercenary_enclave_country
-			#NOT = { is_homicidal = yes }
+			is_hostile = FROMFROM
+			NOT = { is_homicidal = yes }
 		}
 		allow = {
 			resource_stockpile_compare = {
@@ -102,14 +102,14 @@ country_event = {
 		add_resource = {
 			energy = -2500
 		}
-		hidden_effect = {
-			#event_target:mercenary_enclave_country = {
-			#	set_faction_hostility = {
-			#		target = root
-			#		set_neutral = yes
-			#	}
-			#}
-		}
+		#hidden_effect = {
+			FROMFROM = {
+				set_faction_hostility = {
+					target = root
+					set_neutral = yes
+				}
+			}
+		#}
 	}
 
 	#Hire fleet
@@ -147,8 +147,8 @@ country_event = {
 		custom_tooltip = mercenary_tt_managefleet
 		trigger = {
 			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
+				is_hostile = FROMFROM
+				is_homicidal = yes
 			}
 		}
 		hidden_effect = {
@@ -158,51 +158,35 @@ country_event = {
 	#Nuclear Strike Debriefing
 	option = {
 		name = "nations.11205.c"
+		allow = { has_technology = tech_missiles_1 }
 		custom_tooltip = nations.11205.c.tooltip
-		trigger = {
-			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
-			}
-			#event_target:mercenary_enclave_country = {
-			#	trust = {
-			#		who = root
-			#		value >= 30
-			#	}
-			#}
-		}
-		#allow = {
-			#event_target:mercenary_enclave_country = {
-			#	trust = {
-			#		who = root
-			#		value >= 40
-			#	}
-			#}
-		#}
 		hidden_effect = {
 			country_event = { id = nations.11220 }
 		}
 	}
 
-	#Tactical Appraisal
+	#Tactical Appraisal - #Merge Nations Event Chain
 	option = {
 		name = "nations.11205.e"
-		custom_tooltip = mercenary_tt_tactical
-		trigger = {
-			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
+		custom_tooltip = "nations.11205.e.tooltip"
+		allow = {
+			custom_tooltip = {
+				fail_text = "civic_tooltip_authoritarian"
+				OR = {
+					has_ethic = ethic_authoritarian
+					has_ethic = ethic_fanatic_authoritarian
+				}
 			}
-			#event_target:mercenary_enclave_country = {
-			#	trust = {
-			#		who = root
-			#		value >= 50
-			#	}
-			#}
+			FROMFROM = {
+				trust = {
+					who = root
+					value >= 100
+				}
+			}
 		}
-		hidden_effect = {
-			country_event = { id = nations.11240 }
-		}
+		#hidden_effect = {
+		#	country_event = { id = nations.11240 }
+		#}
 	}
 
 	#Recruit Armies
@@ -211,8 +195,8 @@ country_event = {
 		custom_tooltip = mercenary_tt_hirearmies
 		trigger = {
 			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
+				is_hostile = FROMFROM
+				is_homicidal = yes
 			}
 		}
 		allow = {
@@ -228,15 +212,11 @@ country_event = {
 		}
 	}
 
-	#Mercenary Logistic Services
+	#The War Room
 	option = {
 		name = "nations.11205.g"
-		custom_tooltip = mercenary_tt_logistic
+		custom_tooltip = nations.13205.g.tooltip
 		trigger = {
-			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
-			}
 			#event_target:mercenary_enclave_country = {
 			#	trust = {
 			#		who = root
@@ -274,8 +254,8 @@ country_event = {
 			#	has_civic = civic_criminal_heritage
 			#}
 			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
+				is_hostile = FROMFROM
+				is_homicidal = yes
 			}
 			#exists = event_target:mercenary_patron
 			#event_target:mercenary_patron = {
@@ -293,8 +273,8 @@ country_event = {
 		trigger = {
 			#has_civic = civic_military_dictatorship_corporate
 			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
+				is_hostile = FROMFROM
+				is_homicidal = yes
 			}
 			#exists = event_target:mercenary_patron
 			#event_target:mercenary_patron = {
@@ -313,8 +293,8 @@ country_event = {
 		trigger = {
 			#has_civic = civic_criminal_heritage
 			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
+				is_hostile = FROMFROM
+				is_homicidal = yes
 			}
 			#exists = event_target:mercenary_patron
 			#event_target:mercenary_patron = {
@@ -331,7 +311,7 @@ country_event = {
 		name = GOODBYE
 		trigger = {
 			NOT = {
-				#is_hostile = event_target:mercenary_enclave_country
+				is_hostile = FROMFROM
 			}
 		}
 		default_hide_option = yes
@@ -344,7 +324,7 @@ country_event = {
 	}
 }
 
-# Mercenary Enclave: MERCENARY GARRISON starbase building
+# Mercenary Enclave: Nuclear Strike Debriefing
 # This = player country; event_target:mercenary_enclave_country = enclave country
 country_event = {
 	id = nations.11220
@@ -451,62 +431,122 @@ country_event = {
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_authoritarian_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_authoritarian
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_egalitarian_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_egalitarian
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_xenophobe_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_xenophobe
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_xenophile_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_xenophile
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_militarist_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_militarist
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_pacifist_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_pacifist
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_spiritualist_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_spiritualist
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_materialist_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_materialist
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_green_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_green
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_industrial_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_industrial
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_socialism_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_socialism
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_capitalism_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_capitalism
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 			}
 			4 = { 
@@ -514,13 +554,18 @@ country_event = {
 			}
 		}
 	}
-	# Nuclear Winter Situation - FROMFROMFROMFROM Is Destroyed
+	# Nuclear Winter Situation - ethic_fanatic_authoritarian Is Destroyed
 	option = {
 		name = "nations.11225.option.nuclear_winter_situation"
 		trigger = {
 			ROOT = { capital_scope = { is_planet_class = pc_nuked } }
 		}
-		FROMFROMFROMFROM = {
+		random_country = {
+			limit = {
+				has_communications = ROOT
+				has_ethic = ethic_fanatic_authoritarian
+				is_country_type = PrimPlayer_ethic_fanatic_nation
+			}
 			destroy_country = yes
 		}
 		if = {
@@ -616,13 +661,18 @@ country_event = {
 			}
 		}
 	}
-	# Nuclear Winter AVOIDED - FROMFROMFROMFROM Is Destroyed
+	# Nuclear Winter AVOIDED - ethic_fanatic_authoritarian Is Destroyed
 	option = {
 		name = "nations.11225.option.nuclear_winter_avoided"
 		trigger = {
 			NOT = { ROOT = { capital_scope = { is_planet_class = pc_nuked } } }
 		}
-		FROMFROMFROMFROM = {
+		random_country = {
+			limit = {
+				has_communications = ROOT
+				has_ethic = ethic_fanatic_authoritarian
+				is_country_type = PrimPlayer_ethic_fanatic_nation
+			}
 			destroy_country = yes
 		}
 		#Rest of world distrusts player
@@ -661,13 +711,13 @@ country_event = {
 				nations.12210 #HIRE FLEET
 				nations.12211 #THANKS FOR RENTAL
 				nations.12215 #MANAGE HIRED FLEET
-				nations.12220 #MERCENARY GARRISON starbase building
+				nations.12220 #Nuclear Strike Debriefing
 				nations.12235 #Expand Mercenary Fleet
-				nations.12240 #Tactical Appraisal
-				nations.1212245 #Tactical Appraisal Khan
-				nations.12250 #Tactical Appraisal Gray Tempest
-				nations.12255 #Tactical Appraisal Prethoryn
-				nations.12260 #Tactical Appraisal Unbidden
+				nations.12240 #Tactical Appraisal - #Merge Nations Event Chain
+				nations.1212245 #Tactical Appraisal - #Merge Nations Event Chain Khan
+				nations.12250 #Tactical Appraisal - #Merge Nations Event Chain Gray Tempest
+				nations.12255 #Tactical Appraisal - #Merge Nations Event Chain Prethoryn
+				nations.12260 #Tactical Appraisal - #Merge Nations Event Chain Unbidden
 				nations.12270 #Hire Armies
 				nations.12275 #Merc Pays Back Patron
 				nations.12280 #Patron Panel
@@ -698,14 +748,14 @@ country_event = {
 	desc = {
 		trigger = {
 			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
+				is_hostile = FROMFROM
 			}
 		}
 		text = "nations.12205.desc"
 	}
 	desc = {
 		trigger = {
-			#is_hostile = event_target:mercenary_enclave_country
+			is_hostile = FROMFROM
 		}
 		text = "nations.12205.desc.hostile"
 	}
@@ -729,12 +779,12 @@ country_event = {
 		
 	}
 
-	# Hostility options
+	# Sue for Peace
 	option = {
 		name = "nations.12205.i"
 		trigger = {
-			#is_hostile = event_target:mercenary_enclave_country
-			#NOT = { is_homicidal = yes }
+			is_hostile = FROMFROM
+			NOT = { is_homicidal = yes }
 		}
 		allow = {
 			resource_stockpile_compare = {
@@ -745,14 +795,14 @@ country_event = {
 		add_resource = {
 			energy = -2500
 		}
-		hidden_effect = {
-			#event_target:mercenary_enclave_country = {
-			#	set_faction_hostility = {
-			#		target = root
-			#		set_neutral = yes
-			#	}
-			#}
-		}
+		#hidden_effect = {
+			FROMFROM = {
+				set_faction_hostility = {
+					target = root
+					set_neutral = yes
+				}
+			}
+		#}
 	}
 
 	#Hire fleet
@@ -790,62 +840,46 @@ country_event = {
 		custom_tooltip = mercenary_tt_managefleet
 		trigger = {
 			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
+				is_hostile = FROMFROM
+				is_homicidal = yes
 			}
 		}
 		hidden_effect = {
 			country_event = { id = nations.12215 }
 		}
 	}
-	#Mercenary Garrison starbase building
+	#Nuclear Strike Debriefing
 	option = {
 		name = "nations.12205.c"
+		allow = { has_technology = tech_missiles_1 }
 		custom_tooltip = "nations.18205.c.tooltip"
-		trigger = {
-			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
-			}
-			#event_target:mercenary_enclave_country = {
-			#	trust = {
-			#		who = root
-			#		value >= 30
-			#	}
-			#}
-		}
-		allow = {
-			#event_target:mercenary_enclave_country = {
-			#	trust = {
-			#		who = root
-			#		value >= 40
-			#	}
-			#}
-		}
 		hidden_effect = {
 			country_event = { id = nations.12220 }
 		}
 	}
 
-	#Tactical Appraisal
+	#Tactical Appraisal - #Merge Nations Event Chain
 	option = {
 		name = "nations.12205.e"
-		custom_tooltip = mercenary_tt_tactical
-		trigger = {
-			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
+		custom_tooltip = "nations.12205.e.tooltip"
+		allow = {
+			custom_tooltip = {
+				fail_text = "civic_tooltip_egalitarian"
+				OR = {
+					has_ethic = ethic_egalitarian
+					has_ethic = ethic_fanatic_egalitarian
+				}
 			}
-			#event_target:mercenary_enclave_country = {
-			#	trust = {
-			#		who = root
-			#		value >= 50
-			#	}
-			#}
+			FROMFROM = {
+				trust = {
+					who = root
+					value >= 100
+				}
+			}
 		}
-		hidden_effect = {
-			country_event = { id = nations.12240 }
-		}
+		#hidden_effect = {
+		#	country_event = { id = nations.12240 }
+		#}
 	}
 
 	#Recruit Armies
@@ -854,8 +888,8 @@ country_event = {
 		custom_tooltip = mercenary_tt_hirearmies
 		trigger = {
 			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
+				is_hostile = FROMFROM
+				is_homicidal = yes
 			}
 		}
 		allow = {
@@ -871,15 +905,11 @@ country_event = {
 		}
 	}
 
-	#Mercenary Logistic Services
+	#The War Room
 	option = {
 		name = "nations.12205.g"
-		custom_tooltip = mercenary_tt_logistic
+		custom_tooltip = nations.13205.g.tooltip
 		trigger = {
-			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
-			}
 			#event_target:mercenary_enclave_country = {
 			#	trust = {
 			#		who = root
@@ -917,8 +947,8 @@ country_event = {
 			#	has_civic = civic_criminal_heritage
 			#}
 			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
+				is_hostile = FROMFROM
+				is_homicidal = yes
 			}
 			#exists = event_target:mercenary_patron
 			#event_target:mercenary_patron = {
@@ -936,8 +966,8 @@ country_event = {
 		trigger = {
 			#has_civic = civic_military_dictatorship_corporate
 			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
+				is_hostile = FROMFROM
+				is_homicidal = yes
 			}
 			#exists = event_target:mercenary_patron
 			#event_target:mercenary_patron = {
@@ -956,8 +986,8 @@ country_event = {
 		trigger = {
 			#has_civic = civic_criminal_heritage
 			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
+				is_hostile = FROMFROM
+				is_homicidal = yes
 			}
 			#exists = event_target:mercenary_patron
 			#event_target:mercenary_patron = {
@@ -974,7 +1004,7 @@ country_event = {
 		name = GOODBYE
 		trigger = {
 			NOT = {
-				#is_hostile = event_target:mercenary_enclave_country
+				is_hostile = FROMFROM
 			}
 		}
 		default_hide_option = yes
@@ -987,7 +1017,7 @@ country_event = {
 	}
 }
 
-# Mercenary Enclave: MERCENARY GARRISON starbase building
+# Mercenary Enclave: Nuclear Strike Debriefing
 # This = player country; event_target:mercenary_enclave_country = enclave country
 country_event = {
 	id = nations.12220
@@ -1094,62 +1124,122 @@ country_event = {
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_authoritarian_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_authoritarian
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_egalitarian_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_egalitarian
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_xenophobe_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_xenophobe
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_xenophile_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_xenophile
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_militarist_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_militarist
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_pacifist_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_pacifist
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_spiritualist_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_spiritualist
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_materialist_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_materialist
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_green_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_green
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_industrial_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_industrial
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_socialism_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_socialism
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_capitalism_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_capitalism
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 			}
 			4 = { 
@@ -1157,13 +1247,18 @@ country_event = {
 			}
 		}
 	}
-	# Nuclear Winter Situation - FROMFROMFROMFROM Is Destroyed
+	# Nuclear Winter Situation - ethic_fanatic_egalitarian Is Destroyed
 	option = {
 		name = "nations.12225.option.nuclear_winter_situation"
 		trigger = {
 			ROOT = { capital_scope = { is_planet_class = pc_nuked } }
 		}
-		FROMFROMFROMFROM = {
+		random_country = {
+			limit = {
+				has_communications = ROOT
+				has_ethic = ethic_fanatic_egalitarian
+				is_country_type = PrimPlayer_ethic_fanatic_nation
+			}
 			destroy_country = yes
 		}
 		if = {
@@ -1259,13 +1354,18 @@ country_event = {
 			}
 		}
 	}
-	# Nuclear Winter AVOIDED - FROMFROMFROMFROM Is Destroyed
+	# Nuclear Winter AVOIDED - ethic_fanatic_egalitarian Is Destroyed
 	option = {
-		name = "nations.11225.option.nuclear_winter_avoided"
+		name = "nations.12225.option.nuclear_winter_avoided"
 		trigger = {
 			NOT = { ROOT = { capital_scope = { is_planet_class = pc_nuked } } }
 		}
-		FROMFROMFROMFROM = {
+		random_country = {
+			limit = {
+				has_communications = ROOT
+				has_ethic = ethic_fanatic_egalitarian
+				is_country_type = PrimPlayer_ethic_fanatic_nation
+			}
 			destroy_country = yes
 		}
 		#Rest of world distrusts player
@@ -1304,13 +1404,13 @@ country_event = {
 				nations.13210 #HIRE FLEET
 				nations.13211 #THANKS FOR RENTAL
 				nations.13215 #MANAGE HIRED FLEET
-				nations.13220 #MERCENARY GARRISON starbase building
+				nations.13220 #Nuclear Strike Debriefing
 				nations.13235 #Expand Mercenary Fleet
-				nations.13240 #Tactical Appraisal
-				nations.13245 #Tactical Appraisal Khan
-				nations.13250 #Tactical Appraisal Gray Tempest
-				nations.13255 #Tactical Appraisal Prethoryn
-				nations.13260 #Tactical Appraisal Unbidden
+				nations.13240 #Tactical Appraisal - #Merge Nations Event Chain
+				nations.13245 #Tactical Appraisal - #Merge Nations Event Chain Khan
+				nations.13250 #Tactical Appraisal - #Merge Nations Event Chain Gray Tempest
+				nations.13255 #Tactical Appraisal - #Merge Nations Event Chain Prethoryn
+				nations.13260 #Tactical Appraisal - #Merge Nations Event Chain Unbidden
 				nations.13270 #Hire Armies
 				nations.13275 #Merc Pays Back Patron
 				nations.13280 #Patron Panel
@@ -1342,14 +1442,14 @@ country_event = {
 	desc = {
 		trigger = {
 			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
+				is_hostile = FROMFROM
 			}
 		}
 		text = "nations.13205.desc"
 	}
 	desc = {
 		trigger = {
-			#is_hostile = event_target:mercenary_enclave_country
+			is_hostile = FROMFROM
 		}
 		text = "nations.13205.desc.hostile"
 	}
@@ -1373,12 +1473,12 @@ country_event = {
 		
 	}
 
-	# Hostility options
+	# Sue for Peace
 	option = {
 		name = "nations.13205.i"
 		trigger = {
-			#is_hostile = event_target:mercenary_enclave_country
-			#NOT = { is_homicidal = yes }
+			is_hostile = FROMFROM
+			NOT = { is_homicidal = yes }
 		}
 		allow = {
 			resource_stockpile_compare = {
@@ -1389,14 +1489,15 @@ country_event = {
 		add_resource = {
 			energy = -2500
 		}
-		hidden_effect = {
-			#event_target:mercenary_enclave_country = {
-			#	set_faction_hostility = {
-			#		target = root
-			#		set_neutral = yes
-			#	}
-			#}
-		}
+		#hidden_effect = {
+			set_truce = { target = FROMFROM type = war }
+			FROMFROM = {
+				set_faction_hostility = {
+					target = root
+					set_neutral = yes
+				}
+			}
+		#}
 	}
 
 	#Hire fleet
@@ -1434,8 +1535,8 @@ country_event = {
 		custom_tooltip = mercenary_tt_managefleet
 		trigger = {
 			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
+				is_hostile = FROMFROM
+				is_homicidal = yes
 			}
 		}
 		hidden_effect = {
@@ -1445,109 +1546,77 @@ country_event = {
 	#Nuclear Strike Debriefing
 	option = {
 		name = "nations.13205.c"
+		allow = { has_technology = tech_missiles_1 }
 		custom_tooltip = "nations.18205.c.tooltip"
-		trigger = {
-			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
-			}
-			#event_target:mercenary_enclave_country = {
-			#	trust = {
-			#		who = root
-			#		value >= 30
-			#	}
-			#}
-		}
-		allow = {
-			#event_target:mercenary_enclave_country = {
-			#	trust = {
-			#		who = root
-			#		value >= 40
-			#	}
-			#}
-		}
 		hidden_effect = {
 			country_event = { id = nations.13220 }
 		}
 	}
 
-	#Tactical Appraisal
+	#Tactical Appraisal - #Merge Nations Event Chain
 	option = {
 		name = "nations.13205.e"
-		custom_tooltip = mercenary_tt_tactical
-		trigger = {
-			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
+		custom_tooltip = "nations.13205.e.tooltip"
+		allow = {
+			custom_tooltip = {
+				fail_text = "civic_tooltip_xenophobe"
+				OR = {
+					has_ethic = ethic_xenophobe
+					has_ethic = ethic_fanatic_xenophobe
+				}
 			}
-			#event_target:mercenary_enclave_country = {
-			#	trust = {
-			#		who = root
-			#		value >= 50
-			#	}
-			#}
+			FROMFROM = {
+				trust = {
+					who = root
+					value >= 100
+				}
+			}
 		}
-		hidden_effect = {
-			country_event = { id = nations.13240 }
-		}
+		#hidden_effect = {
+		#	country_event = { id = nations.13240 }
+		#}
 	}
 
 	#Recruit Armies
 	option = {
 		name = "nations.13205.f"
-		custom_tooltip = mercenary_tt_hirearmies
+		#custom_tooltip = mercenary_tt_hirearmies
 		trigger = {
 			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
+				is_hostile = FROMFROM
+				is_homicidal = yes
 			}
 		}
-		allow = {
+		#allow = {
 			#event_target:mercenary_enclave_country = {
 			#	trust = {
 			#		who = root
 			#		value >= 20
 			#	}
 			#}
-		}
+		#}
 		hidden_effect = {
 			country_event = { id = nations.13270 }
 		}
 	}
 
-	#Mercenary Logistic Services
+	#The War Room
 	option = {
 		name = "nations.13205.g"
-		custom_tooltip = mercenary_tt_logistic
-		trigger = {
-			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
-			}
-			#event_target:mercenary_enclave_country = {
-			#	trust = {
-			#		who = root
-			#		value >= 20
-			#	}
-			#}
-		}
+		custom_tooltip = "nations.13205.g.tooltip"
 		allow = {
-			custom_tooltip = {
-				fail_text = nations.13205.g.tooltip
-				#NOT = {
-				#	has_modifier = mercenary_enclave_logistic_help
-				#}
+			any_owned_leader = { 
+				leader_class = general 
 			}
-			#event_target:mercenary_enclave_country = {
-			#	trust = {
-			#		who = root
-			#		value >= 30
-			#	}
-			#}
+			FROMFROM = {
+				trust = {
+					who = root
+					value <= 30
+				}
+			}
 		}
-
 		hidden_effect = {
-			country_event = { id = nations.132030 }
+			country_event = { id = nations.13230 }
 		}
 	}
 
@@ -1561,8 +1630,8 @@ country_event = {
 			#	has_civic = civic_criminal_heritage
 			#}
 			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
+				is_hostile = FROMFROM
+				is_homicidal = yes
 			}
 			#exists = event_target:mercenary_patron
 			#event_target:mercenary_patron = {
@@ -1580,8 +1649,8 @@ country_event = {
 		trigger = {
 			#has_civic = civic_military_dictatorship_corporate
 			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
+				is_hostile = FROMFROM
+				is_homicidal = yes
 			}
 			#exists = event_target:mercenary_patron
 			#event_target:mercenary_patron = {
@@ -1600,8 +1669,8 @@ country_event = {
 		trigger = {
 			#has_civic = civic_criminal_heritage
 			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
+				is_hostile = FROMFROM
+				is_homicidal = yes
 			}
 			#exists = event_target:mercenary_patron
 			#event_target:mercenary_patron = {
@@ -1618,7 +1687,7 @@ country_event = {
 		name = GOODBYE
 		trigger = {
 			NOT = {
-				#is_hostile = event_target:mercenary_enclave_country
+				is_hostile = FROMFROM
 			}
 		}
 		default_hide_option = yes
@@ -1631,7 +1700,7 @@ country_event = {
 	}
 }
 
-# Mercenary Enclave: MERCENARY GARRISON starbase building
+# Mercenary Enclave: Nuclear Strike Debriefing
 # This = player country; event_target:mercenary_enclave_country = enclave country
 country_event = {
 	id = nations.13220
@@ -1640,7 +1709,7 @@ country_event = {
 	is_triggered_only = yes
 	diplomatic = yes
 	picture_event_data = {
-		#portrait = ROOT
+		#portrait = Root.capital_scope.army.Leader
 		planet_background = THIS
 		#graphical_culture = THIS
 		#city_level = THIS
@@ -1738,62 +1807,122 @@ country_event = {
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_authoritarian_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_authoritarian
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_egalitarian_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_egalitarian
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_xenophobe_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_xenophobe
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_xenophile_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_xenophile
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_militarist_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_militarist
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_pacifist_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_pacifist
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_spiritualist_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_spiritualist
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_materialist_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_materialist
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_green_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_green
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_industrial_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_industrial
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_socialism_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_socialism
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_capitalism_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_capitalism
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 			}
 			4 = { 
@@ -1801,13 +1930,18 @@ country_event = {
 			}
 		}
 	}
-	# Nuclear Winter Situation - FROMFROMFROMFROM Is Destroyed
+	# Nuclear Winter Situation - ethic_fanatic_xenophobe Is Destroyed
 	option = {
 		name = "nations.13225.option.nuclear_winter_situation"
 		trigger = {
 			ROOT = { capital_scope = { is_planet_class = pc_nuked } }
 		}
-		FROMFROMFROMFROM = {
+		random_country = {
+			limit = {
+				has_communications = ROOT
+				has_ethic = ethic_fanatic_xenophobe
+				is_country_type = PrimPlayer_ethic_fanatic_nation
+			}
 			destroy_country = yes
 		}
 		if = {
@@ -1903,13 +2037,18 @@ country_event = {
 			}
 		}
 	}
-	# Nuclear Winter AVOIDED - FROMFROMFROMFROM Is Destroyed
+	# Nuclear Winter AVOIDED - ethic_fanatic_xenophobe Is Destroyed
 	option = {
-		name = "nations.11225.option.nuclear_winter_avoided"
+		name = "nations.13225.option.nuclear_winter_avoided"
 		trigger = {
 			NOT = { ROOT = { capital_scope = { is_planet_class = pc_nuked } } }
 		}
-		FROMFROMFROMFROM = {
+		random_country = {
+			limit = {
+				has_communications = ROOT
+				has_ethic = ethic_fanatic_xenophobe
+				is_country_type = PrimPlayer_ethic_fanatic_nation
+			}
 			destroy_country = yes
 		}
 		#Rest of world distrusts player
@@ -1921,6 +2060,160 @@ country_event = {
 			add_trust = {
 				who = root
 				amount = -100
+			}
+		}
+	}
+}
+
+#The War Room
+country_event = {
+	id = nations.13230
+	title = "nations.13230.title"
+	desc = "nations.13230.desc"
+	is_triggered_only = yes
+	diplomatic = yes
+	picture_event_data = {
+		#portrait = Root.capital_scope.army.Leader
+		planet_background = THIS
+		#graphical_culture = THIS
+		#city_level = THIS
+		room = observation_post_room
+	}
+
+	option = {		#Invade
+		name = "nations.13230.option.invade"
+		trigger = { 
+			hidden_trigger = {
+				any_country = {
+					is_at_war = no
+					#has_communications = ROOT
+					#has_ethic = ethic_fanatic_xenophobe
+					#is_country_type = PrimPlayer_ethic_fanatic_nation
+					has_country_flag = ethic_fanatic_xenophobe_nation@root
+				}
+			}
+		}
+		allow = { 
+			custom_tooltip = {
+				fail_text = nations.war_room.option.invade.no_truce
+				any_country = {
+					is_at_war = no
+					#has_communications = ROOT
+					#has_ethic = ethic_fanatic_xenophobe
+					#is_country_type = PrimPlayer_ethic_fanatic_nation
+					has_country_flag = ethic_fanatic_xenophobe_nation@root
+					NOT = { has_truce = ROOT }
+				}
+			}
+		}
+		random_country = {
+			limit = {
+				#has_communications = ROOT
+				#has_ethic = ethic_fanatic_xenophobe
+				#is_country_type = PrimPlayer_ethic_fanatic_nation
+				has_country_flag = ethic_fanatic_xenophobe_nation@root
+			}
+			set_faction_hostility = {
+				target = root
+				set_hostile = yes
+			}
+			set_country_flag = 
+		}
+		#hidden_effect = {
+		#	country_event = { id = nations.132035 days = 3600 }
+		#}
+	}
+
+	option = {		#Instruct high command to prepare a debriefing
+		name = "nations.13230.option.debriefing"
+		trigger = { 
+			hidden_trigger = {
+				any_country = {
+					is_at_war = no
+					#has_communications = ROOT
+					#has_ethic = ethic_fanatic_xenophobe
+					#is_country_type = PrimPlayer_ethic_fanatic_nation
+					has_country_flag = ethic_fanatic_xenophobe_nation@root
+				}
+			}
+		}
+		allow = { 
+			custom_tooltip = {
+				fail_text = "nations.war_room.option.debriefing.fail_text"
+				any_spynetwork = { 
+					has_spynetwork_flag = ethic_fanatic_xenophobe_nation@root
+					OR = { 
+						has_modifier = gather_information_infiltration_5
+						has_modifier = gather_information_infiltration_10
+						has_modifier = gather_information_infiltration_15
+						has_modifier = gather_information_infiltration_20
+					}
+				}
+			}
+			resource_stockpile_compare = { resource = energy value >= 500 } 
+		}
+		add_resource = { energy = -500 }
+		#hidden_effect = {
+		#	country_event = { id = nations.132035 days = 3600 }
+		#}
+	}
+
+	option = {		#Share the latest War Report	
+		name = "nations.13230.option.war_report"
+		allow = { 
+			hidden_trigger = {
+				any_country = {
+					is_at_war = yes
+					#has_communications = ROOT
+					#has_ethic = ethic_fanatic_xenophobe
+					#is_country_type = PrimPlayer_ethic_fanatic_nation
+					has_country_flag = ethic_fanatic_xenophobe_nation@root
+				}
+			}
+			custom_tooltip = {
+				fail_text = "nations.war_room.option.war_report.fail_text"
+				any_spynetwork = { 
+					has_spynetwork_flag = ethic_fanatic_xenophobe_nation@root
+					OR = { 
+						has_modifier = gather_information_infiltration_5
+						has_modifier = gather_information_infiltration_10
+						has_modifier = gather_information_infiltration_15
+						has_modifier = gather_information_infiltration_20
+					}
+				}
+			}
+		}
+		#hidden_effect = {
+		#	country_event = { id = nations.132035 days = 3600 }
+		#}
+	}
+
+	option = {		#We will hold for now
+		name = "nations.13230.option.goodbye"
+		trigger = { 
+			hidden_trigger = {
+				any_country = {
+					is_at_war = no
+					#has_communications = ROOT
+					#has_ethic = ethic_fanatic_xenophobe
+					#is_country_type = PrimPlayer_ethic_fanatic_nation
+					has_country_flag = ethic_fanatic_xenophobe_nation@root
+				}
+			}
+		}
+	}
+	
+	option = {		#That is all for now
+		name = "nations.13230.option.goodbye.war"
+		trigger = { 
+			hidden_trigger = {
+				any_country = {
+					is_at_war = yes
+					#has_communications = ROOT
+					#has_ethic = ethic_fanatic_xenophobe
+					#is_country_type = PrimPlayer_ethic_fanatic_nation
+					has_country_flag = ethic_fanatic_xenophobe_nation@root
+				}
 			}
 		}
 	}
@@ -1948,13 +2241,13 @@ country_event = {
 				nations.14210 #HIRE FLEET
 				nations.14211 #THANKS FOR RENTAL
 				nations.14215 #MANAGE HIRED FLEET
-				nations.14220 #MERCENARY GARRISON starbase building
+				nations.14220 #Nuclear Strike Debriefing
 				nations.14235 #Expand Mercenary Fleet
-				nations.14240 #Tactical Appraisal
-				nations.14245 #Tactical Appraisal Khan
-				nations.14250 #Tactical Appraisal Gray Tempest
-				nations.14255 #Tactical Appraisal Prethoryn
-				nations.14260 #Tactical Appraisal Unbidden
+				nations.14240 #Tactical Appraisal - #Merge Nations Event Chain
+				nations.14245 #Tactical Appraisal - #Merge Nations Event Chain Khan
+				nations.14250 #Tactical Appraisal - #Merge Nations Event Chain Gray Tempest
+				nations.14255 #Tactical Appraisal - #Merge Nations Event Chain Prethoryn
+				nations.14260 #Tactical Appraisal - #Merge Nations Event Chain Unbidden
 				nations.14270 #Hire Armies
 				nations.14275 #Merc Pays Back Patron
 				nations.14280 #Patron Panel
@@ -1985,14 +2278,14 @@ country_event = {
 	desc = {
 		trigger = {
 			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
+				is_hostile = FROMFROM
 			}
 		}
 		text = "nations.14205.desc"
 	}
 	desc = {
 		trigger = {
-			#is_hostile = event_target:mercenary_enclave_country
+			is_hostile = FROMFROM
 		}
 		text = "nations.14205.desc.hostile"
 	}
@@ -2016,12 +2309,12 @@ country_event = {
 		
 	}
 
-	# Hostility options
+	# Sue for Peace
 	option = {
 		name = "nations.14205.i"
 		trigger = {
-			#is_hostile = event_target:mercenary_enclave_country
-			#NOT = { is_homicidal = yes }
+			is_hostile = FROMFROM
+			NOT = { is_homicidal = yes }
 		}
 		allow = {
 			resource_stockpile_compare = {
@@ -2032,14 +2325,14 @@ country_event = {
 		add_resource = {
 			energy = -2500
 		}
-		hidden_effect = {
-			#event_target:mercenary_enclave_country = {
-			#	set_faction_hostility = {
-			#		target = root
-			#		set_neutral = yes
-			#	}
-			#}
-		}
+		#hidden_effect = {
+			FROMFROM = {
+				set_faction_hostility = {
+					target = root
+					set_neutral = yes
+				}
+			}
+		#}
 	}
 
 	#Hire fleet
@@ -2077,62 +2370,46 @@ country_event = {
 		custom_tooltip = mercenary_tt_managefleet
 		trigger = {
 			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
+				is_hostile = FROMFROM
+				is_homicidal = yes
 			}
 		}
 		hidden_effect = {
 			country_event = { id = nations.14215 }
 		}
 	}
-	#Mercenary Garrison starbase building
+	#Nuclear Strike Debriefing
 	option = {
 		name = "nations.14205.c"
+		allow = { has_technology = tech_missiles_1 }
 		custom_tooltip = "nations.18205.c.tooltip"
-		trigger = {
-			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
-			}
-			#event_target:mercenary_enclave_country = {
-			#	trust = {
-			#		who = root
-			#		value >= 30
-			#	}
-			#}
-		}
-		allow = {
-			#event_target:mercenary_enclave_country = {
-			#	trust = {
-			#		who = root
-			#		value >= 40
-			#	}
-			#}
-		}
 		hidden_effect = {
 			country_event = { id = nations.14220 }
 		}
 	}
 
-	#Tactical Appraisal
+	#Tactical Appraisal - #Merge Nations Event Chain
 	option = {
 		name = "nations.14205.e"
-		custom_tooltip = mercenary_tt_tactical
-		trigger = {
-			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
+		custom_tooltip = "nations.14205.e.tooltip"
+		allow = {
+			custom_tooltip = {
+				fail_text = "civic_tooltip_xenophile"
+				OR = {
+					has_ethic = ethic_xenophile
+					has_ethic = ethic_fanatic_xenophile
+				}
 			}
-			#event_target:mercenary_enclave_country = {
-			#	trust = {
-			#		who = root
-			#		value >= 50
-			#	}
-			#}
+			FROMFROM = {
+				trust = {
+					who = root
+					value >= 100
+				}
+			}
 		}
-		hidden_effect = {
-			country_event = { id = nations.14240 }
-		}
+		#hidden_effect = {
+		#	country_event = { id = nations.14240 }
+		#}
 	}
 
 	#Recruit Armies
@@ -2141,8 +2418,8 @@ country_event = {
 		custom_tooltip = mercenary_tt_hirearmies
 		trigger = {
 			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
+				is_hostile = FROMFROM
+				is_homicidal = yes
 			}
 		}
 		allow = {
@@ -2158,15 +2435,11 @@ country_event = {
 		}
 	}
 
-	#Mercenary Logistic Services
+	#The War Room
 	option = {
 		name = "nations.14205.g"
-		custom_tooltip = mercenary_tt_logistic
+		custom_tooltip = nations.13205.g.tooltip
 		trigger = {
-			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
-			}
 			#event_target:mercenary_enclave_country = {
 			#	trust = {
 			#		who = root
@@ -2204,8 +2477,8 @@ country_event = {
 			#	has_civic = civic_criminal_heritage
 			#}
 			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
+				is_hostile = FROMFROM
+				is_homicidal = yes
 			}
 			#exists = event_target:mercenary_patron
 			#event_target:mercenary_patron = {
@@ -2223,8 +2496,8 @@ country_event = {
 		trigger = {
 			#has_civic = civic_military_dictatorship_corporate
 			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
+				is_hostile = FROMFROM
+				is_homicidal = yes
 			}
 			#exists = event_target:mercenary_patron
 			#event_target:mercenary_patron = {
@@ -2243,8 +2516,8 @@ country_event = {
 		trigger = {
 			#has_civic = civic_criminal_heritage
 			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
+				is_hostile = FROMFROM
+				is_homicidal = yes
 			}
 			#exists = event_target:mercenary_patron
 			#event_target:mercenary_patron = {
@@ -2261,7 +2534,7 @@ country_event = {
 		name = GOODBYE
 		trigger = {
 			NOT = {
-				#is_hostile = event_target:mercenary_enclave_country
+				is_hostile = FROMFROM
 			}
 		}
 		default_hide_option = yes
@@ -2274,7 +2547,7 @@ country_event = {
 	}
 }
 
-# Mercenary Enclave: MERCENARY GARRISON starbase building
+# Mercenary Enclave: Nuclear Strike Debriefing
 # This = player country; event_target:mercenary_enclave_country = enclave country
 country_event = {
 	id = nations.14220
@@ -2381,62 +2654,122 @@ country_event = {
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_authoritarian_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_authoritarian
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_egalitarian_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_egalitarian
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_xenophobe_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_xenophobe
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_xenophile_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_xenophile
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_militarist_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_militarist
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_pacifist_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_pacifist
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_spiritualist_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_spiritualist
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_materialist_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_materialist
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_green_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_green
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_industrial_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_industrial
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_socialism_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_socialism
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_capitalism_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_capitalism
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 			}
 			4 = { 
@@ -2444,13 +2777,18 @@ country_event = {
 			}
 		}
 	}
-	# Nuclear Winter Situation - FROMFROMFROMFROM Is Destroyed
+	# Nuclear Winter Situation - ethic_fanatic_xenophile Is Destroyed
 	option = {
 		name = "nations.14225.option.nuclear_winter_situation"
 		trigger = {
 			ROOT = { capital_scope = { is_planet_class = pc_nuked } }
 		}
-		FROMFROMFROMFROM = {
+		random_country = {
+			limit = {
+				has_communications = ROOT
+				has_ethic = ethic_fanatic_xenophile
+				is_country_type = PrimPlayer_ethic_fanatic_nation
+			}
 			destroy_country = yes
 		}
 		if = {
@@ -2546,13 +2884,18 @@ country_event = {
 			}
 		}
 	}
-	# Nuclear Winter AVOIDED - FROMFROMFROMFROM Is Destroyed
+	# Nuclear Winter AVOIDED - ethic_fanatic_xenophile Is Destroyed
 	option = {
-		name = "nations.11225.option.nuclear_winter_avoided"
+		name = "nations.14225.option.nuclear_winter_avoided"
 		trigger = {
 			NOT = { ROOT = { capital_scope = { is_planet_class = pc_nuked } } }
 		}
-		FROMFROMFROMFROM = {
+		random_country = {
+			limit = {
+				has_communications = ROOT
+				has_ethic = ethic_fanatic_xenophile
+				is_country_type = PrimPlayer_ethic_fanatic_nation
+			}
 			destroy_country = yes
 		}
 		#Rest of world distrusts player
@@ -2591,13 +2934,13 @@ country_event = {
 				nations.15210 #HIRE FLEET
 				nations.15211 #THANKS FOR RENTAL
 				nations.15215 #MANAGE HIRED FLEET
-				nations.15220 #MERCENARY GARRISON starbase building
+				nations.15220 #Nuclear Strike Debriefing
 				nations.15235 #Expand Mercenary Fleet
-				nations.15240 #Tactical Appraisal
-				nations.15245 #Tactical Appraisal Khan
-				nations.15250 #Tactical Appraisal Gray Tempest
-				nations.15255 #Tactical Appraisal Prethoryn
-				nations.15260 #Tactical Appraisal Unbidden
+				nations.15240 #Tactical Appraisal - #Merge Nations Event Chain
+				nations.15245 #Tactical Appraisal - #Merge Nations Event Chain Khan
+				nations.15250 #Tactical Appraisal - #Merge Nations Event Chain Gray Tempest
+				nations.15255 #Tactical Appraisal - #Merge Nations Event Chain Prethoryn
+				nations.15260 #Tactical Appraisal - #Merge Nations Event Chain Unbidden
 				nations.15270 #Hire Armies
 				nations.15275 #Merc Pays Back Patron
 				nations.15280 #Patron Panel
@@ -2628,14 +2971,14 @@ country_event = {
 	desc = {
 		trigger = {
 			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
+				is_hostile = FROMFROM
 			}
 		}
 		text = "nations.15205.desc"
 	}
 	desc = {
 		trigger = {
-			#is_hostile = event_target:mercenary_enclave_country
+			is_hostile = FROMFROM
 		}
 		text = "nations.15205.desc.hostile"
 	}
@@ -2659,12 +3002,12 @@ country_event = {
 		
 	}
 
-	# Hostility options
+	# Sue for Peace
 	option = {
 		name = "nations.15205.i"
 		trigger = {
-			#is_hostile = event_target:mercenary_enclave_country
-			#NOT = { is_homicidal = yes }
+			is_hostile = FROMFROM
+			NOT = { is_homicidal = yes }
 		}
 		allow = {
 			resource_stockpile_compare = {
@@ -2675,14 +3018,14 @@ country_event = {
 		add_resource = {
 			energy = -2500
 		}
-		hidden_effect = {
-			#event_target:mercenary_enclave_country = {
-			#	set_faction_hostility = {
-			#		target = root
-			#		set_neutral = yes
-			#	}
-			#}
-		}
+		#hidden_effect = {
+			FROMFROM = {
+				set_faction_hostility = {
+					target = root
+					set_neutral = yes
+				}
+			}
+		#}
 	}
 
 	#Hire fleet
@@ -2691,20 +3034,20 @@ country_event = {
 		trigger = {
 
 		}
-		allow = {
-			custom_tooltip = {
-				fail_text = nations.15205.tooltip.a
+		#allow = {
+			#custom_tooltip = {
+				#fail_text = nations.15205.tooltip.a
 				#event_target:mercenary_enclave_country = {
 				#	NOT = {
 				#		
 				#	}
 				#}
-			}
-			custom_tooltip = {
-				fail_text = nations.15205.tooltip.b
+			#}
+			#custom_tooltip = {
+			#	fail_text = nations.15205.tooltip.b
 				
-			}
-		}
+			#}
+		#}
 		ai_trade_facility = {
 			custom_tooltip = mercenary_tt_hirefleet
 			#offer_hire_mercenary_fleet = yes
@@ -2720,62 +3063,46 @@ country_event = {
 		custom_tooltip = mercenary_tt_managefleet
 		trigger = {
 			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
+				is_hostile = FROMFROM
+				is_homicidal = yes
 			}
 		}
 		hidden_effect = {
 			country_event = { id = nations.15215 }
 		}
 	}
-	#Mercenary Garrison starbase building
+	#Nuclear Strike Debriefing
 	option = {
 		name = "nations.15205.c"
+		allow = { has_technology = tech_missiles_1 }
 		custom_tooltip = "nations.18205.c.tooltip"
-		trigger = {
-			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
-			}
-			#event_target:mercenary_enclave_country = {
-			#	trust = {
-			#		who = root
-			#		value >= 30
-			#	}
-			#}
-		}
-		allow = {
-			#event_target:mercenary_enclave_country = {
-			#	trust = {
-			#		who = root
-			#		value >= 40
-			#	}
-			#}
-		}
 		hidden_effect = {
 			country_event = { id = nations.15220 }
 		}
 	}
 
-	#Tactical Appraisal
+	#Tactical Appraisal - #Merge Nations Event Chain
 	option = {
 		name = "nations.15205.e"
-		custom_tooltip = mercenary_tt_tactical
-		trigger = {
-			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
+		custom_tooltip = "nations.15205.e.tooltip"
+		allow = {
+			custom_tooltip = {
+				fail_text = "civic_tooltip_militarist"
+				OR = {
+					has_ethic = ethic_militarist
+					has_ethic = ethic_fanatic_militarist
+				}
 			}
-			#event_target:mercenary_enclave_country = {
-			#	trust = {
-			#		who = root
-			#		value >= 50
-			#	}
-			#}
+			FROMFROM = {
+				trust = {
+					who = root
+					value >= 100
+				}
+			}
 		}
-		hidden_effect = {
-			country_event = { id = nations.15240 }
-		}
+		#hidden_effect = {
+		#	country_event = { id = nations.15240 }
+		#}
 	}
 
 	#Recruit Armies
@@ -2784,8 +3111,8 @@ country_event = {
 		custom_tooltip = mercenary_tt_hirearmies
 		trigger = {
 			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
+				is_hostile = FROMFROM
+				is_homicidal = yes
 			}
 		}
 		allow = {
@@ -2801,15 +3128,11 @@ country_event = {
 		}
 	}
 
-	#Mercenary Logistic Services
+	#The War Room
 	option = {
 		name = "nations.15205.g"
-		custom_tooltip = mercenary_tt_logistic
+		custom_tooltip = nations.13205.g.tooltip
 		trigger = {
-			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
-			}
 			#event_target:mercenary_enclave_country = {
 			#	trust = {
 			#		who = root
@@ -2847,8 +3170,8 @@ country_event = {
 			#	has_civic = civic_criminal_heritage
 			#}
 			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
+				is_hostile = FROMFROM
+				is_homicidal = yes
 			}
 			#exists = event_target:mercenary_patron
 			#event_target:mercenary_patron = {
@@ -2866,8 +3189,8 @@ country_event = {
 		trigger = {
 			#has_civic = civic_military_dictatorship_corporate
 			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
+				is_hostile = FROMFROM
+				is_homicidal = yes
 			}
 			#exists = event_target:mercenary_patron
 			#event_target:mercenary_patron = {
@@ -2886,8 +3209,8 @@ country_event = {
 		trigger = {
 			#has_civic = civic_criminal_heritage
 			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
+				is_hostile = FROMFROM
+				is_homicidal = yes
 			}
 			#exists = event_target:mercenary_patron
 			#event_target:mercenary_patron = {
@@ -2904,7 +3227,7 @@ country_event = {
 		name = GOODBYE
 		trigger = {
 			NOT = {
-				#is_hostile = event_target:mercenary_enclave_country
+				is_hostile = FROMFROM
 			}
 		}
 		default_hide_option = yes
@@ -2917,7 +3240,7 @@ country_event = {
 	}
 }
 
-# Mercenary Enclave: MERCENARY GARRISON starbase building
+# Mercenary Enclave: Nuclear Strike Debriefing
 # This = player country; event_target:mercenary_enclave_country = enclave country
 country_event = {
 	id = nations.15220
@@ -3024,62 +3347,122 @@ country_event = {
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_authoritarian_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_authoritarian
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_egalitarian_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_egalitarian
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_xenophobe_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_xenophobe
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_xenophile_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_xenophile
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_militarist_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_militarist
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_pacifist_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_pacifist
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_spiritualist_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_spiritualist
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_materialist_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_materialist
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_green_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_green
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_industrial_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_industrial
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_socialism_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_socialism
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_capitalism_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_capitalism
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 			}
 			4 = { 
@@ -3087,13 +3470,18 @@ country_event = {
 			}
 		}
 	}
-	# Nuclear Winter Situation - FROMFROMFROMFROM Is Destroyed
+	# Nuclear Winter Situation - ethic_fanatic_militarist Is Destroyed
 	option = {
 		name = "nations.15225.option.nuclear_winter_situation"
 		trigger = {
 			ROOT = { capital_scope = { is_planet_class = pc_nuked } }
 		}
-		FROMFROMFROMFROM = {
+		random_country = {
+			limit = {
+				has_communications = ROOT
+				has_ethic = ethic_fanatic_militarist
+				is_country_type = PrimPlayer_ethic_fanatic_nation
+			}
 			destroy_country = yes
 		}
 		if = {
@@ -3189,13 +3577,18 @@ country_event = {
 			}
 		}
 	}
-	# Nuclear Winter AVOIDED - FROMFROMFROMFROM Is Destroyed
+	# Nuclear Winter AVOIDED - ethic_fanatic_militarist Is Destroyed
 	option = {
-		name = "nations.11225.option.nuclear_winter_avoided"
+		name = "nations.15225.option.nuclear_winter_avoided"
 		trigger = {
 			NOT = { ROOT = { capital_scope = { is_planet_class = pc_nuked } } }
 		}
-		FROMFROMFROMFROM = {
+		random_country = {
+			limit = {
+				has_communications = ROOT
+				has_ethic = ethic_fanatic_militarist
+				is_country_type = PrimPlayer_ethic_fanatic_nation
+			}
 			destroy_country = yes
 		}
 		#Rest of world distrusts player
@@ -3234,13 +3627,13 @@ country_event = {
 				nations.16210 #HIRE FLEET
 				nations.16211 #THANKS FOR RENTAL
 				nations.16215 #MANAGE HIRED FLEET
-				nations.16220 #MERCENARY GARRISON starbase building
+				nations.16220 #Nuclear Strike Debriefing
 				nations.16235 #Expand Mercenary Fleet
-				nations.16240 #Tactical Appraisal
-				nations.16245 #Tactical Appraisal Khan
-				nations.16250 #Tactical Appraisal Gray Tempest
-				nations.16255 #Tactical Appraisal Prethoryn
-				nations.16260 #Tactical Appraisal Unbidden
+				nations.16240 #Tactical Appraisal - #Merge Nations Event Chain
+				nations.16245 #Tactical Appraisal - #Merge Nations Event Chain Khan
+				nations.16250 #Tactical Appraisal - #Merge Nations Event Chain Gray Tempest
+				nations.16255 #Tactical Appraisal - #Merge Nations Event Chain Prethoryn
+				nations.16260 #Tactical Appraisal - #Merge Nations Event Chain Unbidden
 				nations.16270 #Hire Armies
 				nations.16275 #Merc Pays Back Patron
 				nations.16280 #Patron Panel
@@ -3271,14 +3664,14 @@ country_event = {
 	desc = {
 		trigger = {
 			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
+				is_hostile = FROMFROM
 			}
 		}
 		text = "nations.16205.desc"
 	}
 	desc = {
 		trigger = {
-			#is_hostile = event_target:mercenary_enclave_country
+			is_hostile = FROMFROM
 		}
 		text = "nations.16205.desc.hostile"
 	}
@@ -3302,12 +3695,12 @@ country_event = {
 		
 	}
 
-	# Hostility options
+	# Sue for Peace
 	option = {
 		name = "nations.16205.i"
 		trigger = {
-			#is_hostile = event_target:mercenary_enclave_country
-			#NOT = { is_homicidal = yes }
+			is_hostile = FROMFROM
+			NOT = { is_homicidal = yes }
 		}
 		allow = {
 			resource_stockpile_compare = {
@@ -3318,14 +3711,14 @@ country_event = {
 		add_resource = {
 			energy = -2500
 		}
-		hidden_effect = {
-			#event_target:mercenary_enclave_country = {
-			#	set_faction_hostility = {
-			#		target = root
-			#		set_neutral = yes
-			#	}
-			#}
-		}
+		#hidden_effect = {
+			FROMFROM = {
+				set_faction_hostility = {
+					target = root
+					set_neutral = yes
+				}
+			}
+		#}
 	}
 
 	#Hire fleet
@@ -3363,62 +3756,46 @@ country_event = {
 		custom_tooltip = mercenary_tt_managefleet
 		trigger = {
 			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
+				is_hostile = FROMFROM
+				is_homicidal = yes
 			}
 		}
 		hidden_effect = {
 			country_event = { id = nations.16215 }
 		}
 	}
-	#Mercenary Garrison starbase building
+	#Nuclear Strike Debriefing
 	option = {
 		name = "nations.16205.c"
+		allow = { has_technology = tech_missiles_1 }
 		custom_tooltip = "nations.18205.c.tooltip"
-		trigger = {
-			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
-			}
-			#event_target:mercenary_enclave_country = {
-			#	trust = {
-			#		who = root
-			#		value >= 30
-			#	}
-			#}
-		}
-		allow = {
-			#event_target:mercenary_enclave_country = {
-			#	trust = {
-			#		who = root
-			#		value >= 40
-			#	}
-			#}
-		}
 		hidden_effect = {
 			country_event = { id = nations.16220 }
 		}
 	}
 
-	#Tactical Appraisal
+	#Tactical Appraisal - #Merge Nations Event Chain
 	option = {
 		name = "nations.16205.e"
-		custom_tooltip = mercenary_tt_tactical
-		trigger = {
-			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
+		custom_tooltip = "nations.16205.e.tooltip"
+		allow = {
+			custom_tooltip = {
+				fail_text = "civic_tooltip_pacifist"
+				OR = {
+					has_ethic = ethic_pacifist
+					has_ethic = ethic_fanatic_pacifist
+				}
 			}
-			#event_target:mercenary_enclave_country = {
-			#	trust = {
-			#		who = root
-			#		value >= 50
-			#	}
-			#}
+			FROMFROM = {
+				trust = {
+					who = root
+					value >= 100
+				}
+			}
 		}
-		hidden_effect = {
-			country_event = { id = nations.16240 }
-		}
+		#hidden_effect = {
+		#	country_event = { id = nations.16240 }
+		#}
 	}
 
 	#Recruit Armies
@@ -3427,8 +3804,8 @@ country_event = {
 		custom_tooltip = mercenary_tt_hirearmies
 		trigger = {
 			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
+				is_hostile = FROMFROM
+				is_homicidal = yes
 			}
 		}
 		allow = {
@@ -3444,15 +3821,11 @@ country_event = {
 		}
 	}
 
-	#Mercenary Logistic Services
+	#The War Room
 	option = {
 		name = "nations.16205.g"
-		custom_tooltip = mercenary_tt_logistic
+		custom_tooltip = nations.13205.g.tooltip
 		trigger = {
-			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
-			}
 			#event_target:mercenary_enclave_country = {
 			#	trust = {
 			#		who = root
@@ -3490,8 +3863,8 @@ country_event = {
 			#	has_civic = civic_criminal_heritage
 			#}
 			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
+				is_hostile = FROMFROM
+				is_homicidal = yes
 			}
 			#exists = event_target:mercenary_patron
 			#event_target:mercenary_patron = {
@@ -3509,8 +3882,8 @@ country_event = {
 		trigger = {
 			#has_civic = civic_military_dictatorship_corporate
 			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
+				is_hostile = FROMFROM
+				is_homicidal = yes
 			}
 			#exists = event_target:mercenary_patron
 			#event_target:mercenary_patron = {
@@ -3529,8 +3902,8 @@ country_event = {
 		trigger = {
 			#has_civic = civic_criminal_heritage
 			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
+				is_hostile = FROMFROM
+				is_homicidal = yes
 			}
 			#exists = event_target:mercenary_patron
 			#event_target:mercenary_patron = {
@@ -3547,7 +3920,7 @@ country_event = {
 		name = GOODBYE
 		trigger = {
 			NOT = {
-				#is_hostile = event_target:mercenary_enclave_country
+				is_hostile = FROMFROM
 			}
 		}
 		default_hide_option = yes
@@ -3560,7 +3933,7 @@ country_event = {
 	}
 }
 
-# Mercenary Enclave: MERCENARY GARRISON starbase building
+# Mercenary Enclave: Nuclear Strike Debriefing
 # This = player country; event_target:mercenary_enclave_country = enclave country
 country_event = {
 	id = nations.16220
@@ -3667,62 +4040,122 @@ country_event = {
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_authoritarian_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_authoritarian
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_egalitarian_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_egalitarian
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_xenophobe_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_xenophobe
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_xenophile_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_xenophile
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_militarist_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_militarist
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_pacifist_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_pacifist
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_spiritualist_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_spiritualist
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_materialist_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_materialist
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_green_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_green
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_industrial_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_industrial
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_socialism_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_socialism
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_capitalism_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_capitalism
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 			}
 			4 = { 
@@ -3730,13 +4163,18 @@ country_event = {
 			}
 		}
 	}
-	# Nuclear Winter Situation - FROMFROMFROMFROM Is Destroyed
+	# Nuclear Winter Situation - ethic_fanatic_pacifist Is Destroyed
 	option = {
 		name = "nations.16225.option.nuclear_winter_situation"
 		trigger = {
 			ROOT = { capital_scope = { is_planet_class = pc_nuked } }
 		}
-		FROMFROMFROMFROM = {
+		random_country = {
+			limit = {
+				has_communications = ROOT
+				has_ethic = ethic_fanatic_pacifist
+				is_country_type = PrimPlayer_ethic_fanatic_nation
+			}
 			destroy_country = yes
 		}
 		if = {
@@ -3832,13 +4270,18 @@ country_event = {
 			}
 		}
 	}
-	# Nuclear Winter AVOIDED - FROMFROMFROMFROM Is Destroyed
+	# Nuclear Winter AVOIDED - ethic_fanatic_pacifist Is Destroyed
 	option = {
-		name = "nations.11225.option.nuclear_winter_avoided"
+		name = "nations.16225.option.nuclear_winter_avoided"
 		trigger = {
 			NOT = { ROOT = { capital_scope = { is_planet_class = pc_nuked } } }
 		}
-		FROMFROMFROMFROM = {
+		random_country = {
+			limit = {
+				has_communications = ROOT
+				has_ethic = ethic_fanatic_pacifist
+				is_country_type = PrimPlayer_ethic_fanatic_nation
+			}
 			destroy_country = yes
 		}
 		#Rest of world distrusts player
@@ -3877,13 +4320,13 @@ country_event = {
 				nations.17210 #HIRE FLEET
 				nations.17211 #THANKS FOR RENTAL
 				nations.17215 #MANAGE HIRED FLEET
-				nations.17220 #MERCENARY GARRISON starbase building
+				nations.17220 #Nuclear Strike Debriefing
 				nations.17235 #Expand Mercenary Fleet
-				nations.17240 #Tactical Appraisal
-				nations.17245 #Tactical Appraisal Khan
-				nations.17250 #Tactical Appraisal Gray Tempest
-				nations.17255 #Tactical Appraisal Prethoryn
-				nations.17260 #Tactical Appraisal Unbidden
+				nations.17240 #Tactical Appraisal - #Merge Nations Event Chain
+				nations.17245 #Tactical Appraisal - #Merge Nations Event Chain Khan
+				nations.17250 #Tactical Appraisal - #Merge Nations Event Chain Gray Tempest
+				nations.17255 #Tactical Appraisal - #Merge Nations Event Chain Prethoryn
+				nations.17260 #Tactical Appraisal - #Merge Nations Event Chain Unbidden
 				nations.17270 #Hire Armies
 				nations.17275 #Merc Pays Back Patron
 				nations.17280 #Patron Panel
@@ -3914,14 +4357,14 @@ country_event = {
 	desc = {
 		trigger = {
 			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
+				is_hostile = FROMFROM
 			}
 		}
 		text = "nations.17205.desc"
 	}
 	desc = {
 		trigger = {
-			#is_hostile = event_target:mercenary_enclave_country
+			is_hostile = FROMFROM
 		}
 		text = "nations.17205.desc.hostile"
 	}
@@ -3945,12 +4388,12 @@ country_event = {
 		
 	}
 
-	# Hostility options
+	# Sue for Peace
 	option = {
 		name = "nations.17205.i"
 		trigger = {
-			#is_hostile = event_target:mercenary_enclave_country
-			#NOT = { is_homicidal = yes }
+			is_hostile = FROMFROM
+			NOT = { is_homicidal = yes }
 		}
 		allow = {
 			resource_stockpile_compare = {
@@ -3961,14 +4404,14 @@ country_event = {
 		add_resource = {
 			energy = -2500
 		}
-		hidden_effect = {
-			#event_target:mercenary_enclave_country = {
-			#	set_faction_hostility = {
-			#		target = root
-			#		set_neutral = yes
-			#	}
-			#}
-		}
+		#hidden_effect = {
+			FROMFROM = {
+				set_faction_hostility = {
+					target = root
+					set_neutral = yes
+				}
+			}
+		#}
 	}
 
 	#Hire fleet
@@ -4006,62 +4449,46 @@ country_event = {
 		custom_tooltip = mercenary_tt_managefleet
 		trigger = {
 			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
+				is_hostile = FROMFROM
+				is_homicidal = yes
 			}
 		}
 		hidden_effect = {
 			country_event = { id = nations.17215 }
 		}
 	}
-	#Mercenary Garrison starbase building
+	#Nuclear Strike Debriefing
 	option = {
 		name = "nations.17205.c"
+		allow = { has_technology = tech_missiles_1 }
 		custom_tooltip = "nations.18205.c.tooltip"
-		trigger = {
-			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
-			}
-			#event_target:mercenary_enclave_country = {
-			#	trust = {
-			#		who = root
-			#		value >= 30
-			#	}
-			#}
-		}
-		allow = {
-			#event_target:mercenary_enclave_country = {
-			#	trust = {
-			#		who = root
-			#		value >= 40
-			#	}
-			#}
-		}
 		hidden_effect = {
 			country_event = { id = nations.17220 }
 		}
 	}
 
-	#Tactical Appraisal
+	#Tactical Appraisal - #Merge Nations Event Chain
 	option = {
 		name = "nations.17205.e"
-		custom_tooltip = mercenary_tt_tactical
-		trigger = {
-			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
+		custom_tooltip = "nations.17205.e.tooltip"
+		allow = {
+			custom_tooltip = {
+				fail_text = "civic_tooltip_spiritualist"
+				OR = {
+					has_ethic = ethic_spiritualist
+					has_ethic = ethic_fanatic_spiritualist
+				}
 			}
-			#event_target:mercenary_enclave_country = {
-			#	trust = {
-			#		who = root
-			#		value >= 50
-			#	}
-			#}
+			FROMFROM = {
+				trust = {
+					who = root
+					value >= 100
+				}
+			}
 		}
-		hidden_effect = {
-			country_event = { id = nations.17240 }
-		}
+		#hidden_effect = {
+		#	country_event = { id = nations.17240 }
+		#}
 	}
 
 	#Recruit Armies
@@ -4070,8 +4497,8 @@ country_event = {
 		custom_tooltip = mercenary_tt_hirearmies
 		trigger = {
 			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
+				is_hostile = FROMFROM
+				is_homicidal = yes
 			}
 		}
 		allow = {
@@ -4087,15 +4514,11 @@ country_event = {
 		}
 	}
 
-	#Mercenary Logistic Services
+	#The War Room
 	option = {
 		name = "nations.17205.g"
-		custom_tooltip = mercenary_tt_logistic
+		custom_tooltip = nations.13205.g.tooltip
 		trigger = {
-			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
-			}
 			#event_target:mercenary_enclave_country = {
 			#	trust = {
 			#		who = root
@@ -4133,8 +4556,8 @@ country_event = {
 			#	has_civic = civic_criminal_heritage
 			#}
 			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
+				is_hostile = FROMFROM
+				is_homicidal = yes
 			}
 			#exists = event_target:mercenary_patron
 			#event_target:mercenary_patron = {
@@ -4152,8 +4575,8 @@ country_event = {
 		trigger = {
 			#has_civic = civic_military_dictatorship_corporate
 			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
+				is_hostile = FROMFROM
+				is_homicidal = yes
 			}
 			#exists = event_target:mercenary_patron
 			#event_target:mercenary_patron = {
@@ -4172,8 +4595,8 @@ country_event = {
 		trigger = {
 			#has_civic = civic_criminal_heritage
 			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
+				is_hostile = FROMFROM
+				is_homicidal = yes
 			}
 			#exists = event_target:mercenary_patron
 			#event_target:mercenary_patron = {
@@ -4190,7 +4613,7 @@ country_event = {
 		name = GOODBYE
 		trigger = {
 			NOT = {
-				#is_hostile = event_target:mercenary_enclave_country
+				is_hostile = FROMFROM
 			}
 		}
 		default_hide_option = yes
@@ -4203,7 +4626,7 @@ country_event = {
 	}
 }
 
-# Mercenary Enclave: MERCENARY GARRISON starbase building
+# Mercenary Enclave: Nuclear Strike Debriefing
 # This = player country; event_target:mercenary_enclave_country = enclave country
 country_event = {
 	id = nations.17220
@@ -4310,62 +4733,122 @@ country_event = {
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_authoritarian_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_authoritarian
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_egalitarian_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_egalitarian
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_xenophobe_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_xenophobe
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_xenophile_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_xenophile
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_militarist_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_militarist
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_pacifist_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_pacifist
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_spiritualist_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_spiritualist
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_materialist_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_materialist
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_green_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_green
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_industrial_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_industrial
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_socialism_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_socialism
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_capitalism_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_capitalism
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 			}
 			4 = { 
@@ -4373,13 +4856,18 @@ country_event = {
 			}
 		}
 	}
-	# Nuclear Winter Situation - FROMFROMFROMFROM Is Destroyed
+	# Nuclear Winter Situation - ethic_fanatic_spiritualist Is Destroyed
 	option = {
 		name = "nations.17225.option.nuclear_winter_situation"
 		trigger = {
 			ROOT = { capital_scope = { is_planet_class = pc_nuked } }
 		}
-		FROMFROMFROMFROM = {
+		random_country = {
+			limit = {
+				has_communications = ROOT
+				has_ethic = ethic_fanatic_spiritualist
+				is_country_type = PrimPlayer_ethic_fanatic_nation
+			}
 			destroy_country = yes
 		}
 		if = {
@@ -4475,13 +4963,18 @@ country_event = {
 			}
 		}
 	}
-	# Nuclear Winter AVOIDED - FROMFROMFROMFROM Is Destroyed
+	# Nuclear Winter AVOIDED - ethic_fanatic_spiritualist Is Destroyed
 	option = {
-		name = "nations.11225.option.nuclear_winter_avoided"
+		name = "nations.17225.option.nuclear_winter_avoided"
 		trigger = {
 			NOT = { ROOT = { capital_scope = { is_planet_class = pc_nuked } } }
 		}
-		FROMFROMFROMFROM = {
+		random_country = {
+			limit = {
+				has_communications = ROOT
+				has_ethic = ethic_fanatic_spiritualist
+				is_country_type = PrimPlayer_ethic_fanatic_nation
+			}
 			destroy_country = yes
 		}
 		#Rest of world distrusts player
@@ -4520,13 +5013,13 @@ country_event = {
 				nations.18210 #HIRE FLEET
 				nations.18211 #THANKS FOR RENTAL
 				nations.18215 #MANAGE HIRED FLEET
-				nations.18220 #MERCENARY GARRISON starbase building
+				nations.18220 #Nuclear Strike Debriefing
 				nations.18235 #Expand Mercenary Fleet
-				nations.18240 #Tactical Appraisal
-				nations.18245 #Tactical Appraisal Khan
-				nations.18250 #Tactical Appraisal Gray Tempest
-				nations.18255 #Tactical Appraisal Prethoryn
-				nations.18260 #Tactical Appraisal Unbidden
+				nations.18240 #Tactical Appraisal - #Merge Nations Event Chain
+				nations.18245 #Tactical Appraisal - #Merge Nations Event Chain Khan
+				nations.18250 #Tactical Appraisal - #Merge Nations Event Chain Gray Tempest
+				nations.18255 #Tactical Appraisal - #Merge Nations Event Chain Prethoryn
+				nations.18260 #Tactical Appraisal - #Merge Nations Event Chain Unbidden
 				nations.18270 #Hire Armies
 				nations.18275 #Merc Pays Back Patron
 				nations.18280 #Patron Panel
@@ -4557,14 +5050,14 @@ country_event = {
 	desc = {
 		trigger = {
 			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
+				is_hostile = FROMFROM
 			}
 		}
 		text = "nations.18205.desc"
 	}
 	desc = {
 		trigger = {
-			#is_hostile = event_target:mercenary_enclave_country
+			is_hostile = FROMFROM
 		}
 		text = "nations.18205.desc.hostile"
 	}
@@ -4588,12 +5081,12 @@ country_event = {
 		
 	}
 
-	# Hostility options
+	# Sue for Peace
 	option = {
 		name = "nations.18205.i"
 		trigger = {
-			#is_hostile = event_target:mercenary_enclave_country
-			#NOT = { is_homicidal = yes }
+			is_hostile = FROMFROM
+			NOT = { is_homicidal = yes }
 		}
 		allow = {
 			resource_stockpile_compare = {
@@ -4604,14 +5097,14 @@ country_event = {
 		add_resource = {
 			energy = -2500
 		}
-		hidden_effect = {
-			#event_target:mercenary_enclave_country = {
-			#	set_faction_hostility = {
-			#		target = root
-			#		set_neutral = yes
-			#	}
-			#}
-		}
+		#hidden_effect = {
+			FROMFROM = {
+				set_faction_hostility = {
+					target = root
+					set_neutral = yes
+				}
+			}
+		#}
 	}
 
 	#Hire fleet
@@ -4649,62 +5142,46 @@ country_event = {
 		custom_tooltip = mercenary_tt_managefleet
 		trigger = {
 			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
+				is_hostile = FROMFROM
+				is_homicidal = yes
 			}
 		}
 		hidden_effect = {
 			country_event = { id = nations.18215 }
 		}
 	}
-	#Mercenary Garrison starbase building
+	#Nuclear Strike Debriefing
 	option = {
 		name = "nations.18205.c"
+		allow = { has_technology = tech_missiles_1 }
 		custom_tooltip = "nations.18205.c.tooltip"
-		trigger = {
-			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
-			}
-			#event_target:mercenary_enclave_country = {
-			#	trust = {
-			#		who = root
-			#		value >= 30
-			#	}
-			#}
-		}
-		allow = {
-			#event_target:mercenary_enclave_country = {
-			#	trust = {
-			#		who = root
-			#		value >= 40
-			#	}
-			#}
-		}
 		hidden_effect = {
 			country_event = { id = nations.18220 }
 		}
 	}
 
-	#Tactical Appraisal
+	#Tactical Appraisal - #Merge Nations Event Chain
 	option = {
 		name = "nations.18205.e"
-		custom_tooltip = mercenary_tt_tactical
-		trigger = {
-			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
+		custom_tooltip = "nations.18205.e.tooltip"
+		allow = {
+			custom_tooltip = {
+				fail_text = "civic_tooltip_materialist"
+				OR = {
+					has_ethic = ethic_materialist
+					has_ethic = ethic_fanatic_materialist
+				}
 			}
-			#event_target:mercenary_enclave_country = {
-			#	trust = {
-			#		who = root
-			#		value >= 50
-			#	}
-			#}
+			FROMFROM = {
+				trust = {
+					who = root
+					value >= 100
+				}
+			}
 		}
-		hidden_effect = {
-			country_event = { id = nations.18240 }
-		}
+		#hidden_effect = {
+		#	country_event = { id = nations.18240 }
+		#}
 	}
 
 	#Recruit Armies
@@ -4713,8 +5190,8 @@ country_event = {
 		custom_tooltip = mercenary_tt_hirearmies
 		trigger = {
 			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
+				is_hostile = FROMFROM
+				is_homicidal = yes
 			}
 		}
 		allow = {
@@ -4730,15 +5207,11 @@ country_event = {
 		}
 	}
 
-	#Mercenary Logistic Services
+	#The War Room
 	option = {
 		name = "nations.18205.g"
-		custom_tooltip = mercenary_tt_logistic
+		custom_tooltip = nations.13205.g.tooltip
 		trigger = {
-			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
-			}
 			#event_target:mercenary_enclave_country = {
 			#	trust = {
 			#		who = root
@@ -4776,8 +5249,8 @@ country_event = {
 			#	has_civic = civic_criminal_heritage
 			#}
 			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
+				is_hostile = FROMFROM
+				is_homicidal = yes
 			}
 			#exists = event_target:mercenary_patron
 			#event_target:mercenary_patron = {
@@ -4795,8 +5268,8 @@ country_event = {
 		trigger = {
 			#has_civic = civic_military_dictatorship_corporate
 			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
+				is_hostile = FROMFROM
+				is_homicidal = yes
 			}
 			#exists = event_target:mercenary_patron
 			#event_target:mercenary_patron = {
@@ -4815,8 +5288,8 @@ country_event = {
 		trigger = {
 			#has_civic = civic_criminal_heritage
 			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
+				is_hostile = FROMFROM
+				is_homicidal = yes
 			}
 			#exists = event_target:mercenary_patron
 			#event_target:mercenary_patron = {
@@ -4833,7 +5306,7 @@ country_event = {
 		name = GOODBYE
 		trigger = {
 			NOT = {
-				#is_hostile = event_target:mercenary_enclave_country
+				is_hostile = FROMFROM
 			}
 		}
 		default_hide_option = yes
@@ -4846,7 +5319,7 @@ country_event = {
 	}
 }
 
-# Mercenary Enclave: MERCENARY GARRISON starbase building
+# Mercenary Enclave: Nuclear Strike Debriefing
 # This = player country; event_target:mercenary_enclave_country = enclave country
 country_event = {
 	id = nations.18220
@@ -4953,62 +5426,122 @@ country_event = {
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_authoritarian_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_authoritarian
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_egalitarian_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_egalitarian
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_xenophobe_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_xenophobe
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_xenophile_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_xenophile
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_militarist_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_militarist
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_pacifist_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_pacifist
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_spiritualist_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_spiritualist
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_materialist_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_materialist
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_green_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_green
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_industrial_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_industrial
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_socialism_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_socialism
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_capitalism_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_capitalism
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 			}
 			4 = { 
@@ -5016,13 +5549,18 @@ country_event = {
 			}
 		}
 	}
-	# Nuclear Winter Situation - FROMFROMFROMFROM Is Destroyed
+	# Nuclear Winter Situation - ethic_fanatic_materialist Is Destroyed
 	option = {
 		name = "nations.18225.option.nuclear_winter_situation"
 		trigger = {
 			ROOT = { capital_scope = { is_planet_class = pc_nuked } }
 		}
-		FROMFROMFROMFROM = {
+		random_country = {
+			limit = {
+				has_communications = ROOT
+				has_ethic = ethic_fanatic_materialist
+				is_country_type = PrimPlayer_ethic_fanatic_nation
+			}
 			destroy_country = yes
 		}
 		if = {
@@ -5118,13 +5656,18 @@ country_event = {
 			}
 		}
 	}
-	# Nuclear Winter AVOIDED - FROMFROMFROMFROM Is Destroyed
+	# Nuclear Winter AVOIDED - ethic_fanatic_materialist Is Destroyed
 	option = {
-		name = "nations.11225.option.nuclear_winter_avoided"
+		name = "nations.18225.option.nuclear_winter_avoided"
 		trigger = {
 			NOT = { ROOT = { capital_scope = { is_planet_class = pc_nuked } } }
 		}
-		FROMFROMFROMFROM = {
+		random_country = {
+			limit = {
+				has_communications = ROOT
+				has_ethic = ethic_fanatic_materialist
+				is_country_type = PrimPlayer_ethic_fanatic_nation
+			}
 			destroy_country = yes
 		}
 		#Rest of world distrusts player
@@ -5163,13 +5706,13 @@ country_event = {
 				nations.19210 #HIRE FLEET
 				nations.19211 #THANKS FOR RENTAL
 				nations.19215 #MANAGE HIRED FLEET
-				nations.19220 #MERCENARY GARRISON starbase building
+				nations.19220 #Nuclear Strike Debriefing
 				nations.19235 #Expand Mercenary Fleet
-				nations.19240 #Tactical Appraisal
-				nations.19245 #Tactical Appraisal Khan
-				nations.19250 #Tactical Appraisal Gray Tempest
-				nations.19255 #Tactical Appraisal Prethoryn
-				nations.19260 #Tactical Appraisal Unbidden
+				nations.19240 #Tactical Appraisal - #Merge Nations Event Chain
+				nations.19245 #Tactical Appraisal - #Merge Nations Event Chain Khan
+				nations.19250 #Tactical Appraisal - #Merge Nations Event Chain Gray Tempest
+				nations.19255 #Tactical Appraisal - #Merge Nations Event Chain Prethoryn
+				nations.19260 #Tactical Appraisal - #Merge Nations Event Chain Unbidden
 				nations.19270 #Hire Armies
 				nations.19275 #Merc Pays Back Patron
 				nations.19280 #Patron Panel
@@ -5200,14 +5743,14 @@ country_event = {
 	desc = {
 		trigger = {
 			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
+				is_hostile = FROMFROM
 			}
 		}
 		text = "nations.19205.desc"
 	}
 	desc = {
 		trigger = {
-			#is_hostile = event_target:mercenary_enclave_country
+			is_hostile = FROMFROM
 		}
 		text = "nations.19205.desc.hostile"
 	}
@@ -5231,12 +5774,12 @@ country_event = {
 		
 	}
 
-	# Hostility options
+	# Sue for Peace
 	option = {
 		name = "nations.19205.i"
 		trigger = {
-			#is_hostile = event_target:mercenary_enclave_country
-			#NOT = { is_homicidal = yes }
+			is_hostile = FROMFROM
+			NOT = { is_homicidal = yes }
 		}
 		allow = {
 			resource_stockpile_compare = {
@@ -5247,14 +5790,14 @@ country_event = {
 		add_resource = {
 			energy = -2500
 		}
-		hidden_effect = {
-			#event_target:mercenary_enclave_country = {
-			#	set_faction_hostility = {
-			#		target = root
-			#		set_neutral = yes
-			#	}
-			#}
-		}
+		#hidden_effect = {
+			FROMFROM = {
+				set_faction_hostility = {
+					target = root
+					set_neutral = yes
+				}
+			}
+		#}
 	}
 
 	#Hire fleet
@@ -5292,62 +5835,46 @@ country_event = {
 		custom_tooltip = mercenary_tt_managefleet
 		trigger = {
 			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
+				is_hostile = FROMFROM
+				is_homicidal = yes
 			}
 		}
 		hidden_effect = {
 			country_event = { id = nations.19215 }
 		}
 	}
-	#Mercenary Garrison starbase building
+	#Nuclear Strike Debriefing
 	option = {
 		name = "nations.19205.c"
+		allow = { has_technology = tech_missiles_1 }
 		custom_tooltip = "nations.18205.c.tooltip"
-		trigger = {
-			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
-			}
-			#event_target:mercenary_enclave_country = {
-			#	trust = {
-			#		who = root
-			#		value >= 30
-			#	}
-			#}
-		}
-		allow = {
-			#event_target:mercenary_enclave_country = {
-			#	trust = {
-			#		who = root
-			#		value >= 40
-			#	}
-			#}
-		}
 		hidden_effect = {
 			country_event = { id = nations.19220 }
 		}
 	}
 
-	#Tactical Appraisal
+	#Tactical Appraisal - #Merge Nations Event Chain
 	option = {
 		name = "nations.19205.e"
-		custom_tooltip = mercenary_tt_tactical
-		trigger = {
-			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
+		custom_tooltip = "nations.19205.e.tooltip"
+		allow = {
+			custom_tooltip = {
+				fail_text = "civic_tooltip_green"
+				OR = {
+					has_ethic = ethic_green
+					has_ethic = ethic_fanatic_green
+				}
 			}
-			#event_target:mercenary_enclave_country = {
-			#	trust = {
-			#		who = root
-			#		value >= 50
-			#	}
-			#}
+			FROMFROM = {
+				trust = {
+					who = root
+					value >= 100
+				}
+			}
 		}
-		hidden_effect = {
-			country_event = { id = nations.19240 }
-		}
+		#hidden_effect = {
+		#	country_event = { id = nations.19240 }
+		#}
 	}
 
 	#Recruit Armies
@@ -5356,8 +5883,8 @@ country_event = {
 		custom_tooltip = mercenary_tt_hirearmies
 		trigger = {
 			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
+				is_hostile = FROMFROM
+				is_homicidal = yes
 			}
 		}
 		allow = {
@@ -5373,15 +5900,11 @@ country_event = {
 		}
 	}
 
-	#Mercenary Logistic Services
+	#The War Room
 	option = {
 		name = "nations.19205.g"
-		custom_tooltip = mercenary_tt_logistic
+		custom_tooltip = nations.13205.g.tooltip
 		trigger = {
-			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
-			}
 			#event_target:mercenary_enclave_country = {
 			#	trust = {
 			#		who = root
@@ -5419,8 +5942,8 @@ country_event = {
 			#	has_civic = civic_criminal_heritage
 			#}
 			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
+				is_hostile = FROMFROM
+				is_homicidal = yes
 			}
 			#exists = event_target:mercenary_patron
 			#event_target:mercenary_patron = {
@@ -5438,8 +5961,8 @@ country_event = {
 		trigger = {
 			#has_civic = civic_military_dictatorship_corporate
 			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
+				is_hostile = FROMFROM
+				is_homicidal = yes
 			}
 			#exists = event_target:mercenary_patron
 			#event_target:mercenary_patron = {
@@ -5458,8 +5981,8 @@ country_event = {
 		trigger = {
 			#has_civic = civic_criminal_heritage
 			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
+				is_hostile = FROMFROM
+				is_homicidal = yes
 			}
 			#exists = event_target:mercenary_patron
 			#event_target:mercenary_patron = {
@@ -5476,7 +5999,7 @@ country_event = {
 		name = GOODBYE
 		trigger = {
 			NOT = {
-				#is_hostile = event_target:mercenary_enclave_country
+				is_hostile = FROMFROM
 			}
 		}
 		default_hide_option = yes
@@ -5489,7 +6012,7 @@ country_event = {
 	}
 }
 
-# Mercenary Enclave: MERCENARY GARRISON starbase building
+# Mercenary Enclave: Nuclear Strike Debriefing
 # This = player country; event_target:mercenary_enclave_country = enclave country
 country_event = {
 	id = nations.19220
@@ -5596,62 +6119,122 @@ country_event = {
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_authoritarian_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_authoritarian
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_egalitarian_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_egalitarian
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_xenophobe_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_xenophobe
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_xenophile_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_xenophile
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_militarist_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_militarist
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_pacifist_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_pacifist
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_spiritualist_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_spiritualist
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_materialist_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_materialist
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_green_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_green
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_industrial_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_industrial
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_socialism_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_socialism
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_capitalism_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_capitalism
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 			}
 			4 = { 
@@ -5659,13 +6242,18 @@ country_event = {
 			}
 		}
 	}
-	# Nuclear Winter Situation - FROMFROMFROMFROM Is Destroyed
+	# Nuclear Winter Situation - ethic_fanatic_green Is Destroyed
 	option = {
 		name = "nations.19225.option.nuclear_winter_situation"
 		trigger = {
 			ROOT = { capital_scope = { is_planet_class = pc_nuked } }
 		}
-		FROMFROMFROMFROM = {
+		random_country = {
+			limit = {
+				has_communications = ROOT
+				has_ethic = ethic_fanatic_green
+				is_country_type = PrimPlayer_ethic_fanatic_nation
+			}
 			destroy_country = yes
 		}
 		if = {
@@ -5761,13 +6349,18 @@ country_event = {
 			}
 		}
 	}
-	# Nuclear Winter AVOIDED - FROMFROMFROMFROM Is Destroyed
+	# Nuclear Winter AVOIDED - ethic_fanatic_green Is Destroyed
 	option = {
-		name = "nations.11225.option.nuclear_winter_avoided"
+		name = "nations.19225.option.nuclear_winter_avoided"
 		trigger = {
 			NOT = { ROOT = { capital_scope = { is_planet_class = pc_nuked } } }
 		}
-		FROMFROMFROMFROM = {
+		random_country = {
+			limit = {
+				has_communications = ROOT
+				has_ethic = ethic_fanatic_green
+				is_country_type = PrimPlayer_ethic_fanatic_nation
+			}
 			destroy_country = yes
 		}
 		#Rest of world distrusts player
@@ -5806,13 +6399,13 @@ country_event = {
 				nations.20210 #HIRE FLEET
 				nations.20211 #THANKS FOR RENTAL
 				nations.20215 #MANAGE HIRED FLEET
-				nations.20220 #MERCENARY GARRISON starbase building
+				nations.20220 #Nuclear Strike Debriefing
 				nations.20235 #Expand Mercenary Fleet
-				nations.20240 #Tactical Appraisal
-				nations.20245 #Tactical Appraisal Khan
-				nations.20250 #Tactical Appraisal Gray Tempest
-				nations.20255 #Tactical Appraisal Prethoryn
-				nations.20260 #Tactical Appraisal Unbidden
+				nations.20240 #Tactical Appraisal - #Merge Nations Event Chain
+				nations.20245 #Tactical Appraisal - #Merge Nations Event Chain Khan
+				nations.20250 #Tactical Appraisal - #Merge Nations Event Chain Gray Tempest
+				nations.20255 #Tactical Appraisal - #Merge Nations Event Chain Prethoryn
+				nations.20260 #Tactical Appraisal - #Merge Nations Event Chain Unbidden
 				nations.20270 #Hire Armies
 				nations.20275 #Merc Pays Back Patron
 				nations.20280 #Patron Panel
@@ -5843,14 +6436,14 @@ country_event = {
 	desc = {
 		trigger = {
 			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
+				is_hostile = FROMFROM
 			}
 		}
 		text = "nations.20205.desc"
 	}
 	desc = {
 		trigger = {
-			#is_hostile = event_target:mercenary_enclave_country
+			is_hostile = FROMFROM
 		}
 		text = "nations.20205.desc.hostile"
 	}
@@ -5874,12 +6467,12 @@ country_event = {
 		
 	}
 
-	# Hostility options
+	# Sue for Peace
 	option = {
 		name = "nations.20205.i"
 		trigger = {
-			#is_hostile = event_target:mercenary_enclave_country
-			#NOT = { is_homicidal = yes }
+			is_hostile = FROMFROM
+			NOT = { is_homicidal = yes }
 		}
 		allow = {
 			resource_stockpile_compare = {
@@ -5890,14 +6483,14 @@ country_event = {
 		add_resource = {
 			energy = -2500
 		}
-		hidden_effect = {
-			#event_target:mercenary_enclave_country = {
-			#	set_faction_hostility = {
-			#		target = root
-			#		set_neutral = yes
-			#	}
-			#}
-		}
+		#hidden_effect = {
+			FROMFROM = {
+				set_faction_hostility = {
+					target = root
+					set_neutral = yes
+				}
+			}
+		#}
 	}
 
 	#Hire fleet
@@ -5935,62 +6528,46 @@ country_event = {
 		custom_tooltip = mercenary_tt_managefleet
 		trigger = {
 			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
+				is_hostile = FROMFROM
+				is_homicidal = yes
 			}
 		}
 		hidden_effect = {
 			country_event = { id = nations.20215 }
 		}
 	}
-	#Mercenary Garrison starbase building
+	#Nuclear Strike Debriefing
 	option = {
 		name = "nations.20205.c"
+		allow = { has_technology = tech_missiles_1 }
 		custom_tooltip = "nations.18205.c.tooltip"
-		trigger = {
-			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
-			}
-			#event_target:mercenary_enclave_country = {
-			#	trust = {
-			#		who = root
-			#		value >= 30
-			#	}
-			#}
-		}
-		allow = {
-			#event_target:mercenary_enclave_country = {
-			#	trust = {
-			#		who = root
-			#		value >= 40
-			#	}
-			#}
-		}
 		hidden_effect = {
 			country_event = { id = nations.20220 }
 		}
 	}
 
-	#Tactical Appraisal
+	#Tactical Appraisal - #Merge Nations Event Chain
 	option = {
 		name = "nations.20205.e"
-		custom_tooltip = mercenary_tt_tactical
-		trigger = {
-			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
+		custom_tooltip = "nations.20205.e.tooltip"
+		allow = {
+			custom_tooltip = {
+				fail_text = "civic_tooltip_industrial"
+				OR = {
+					has_ethic = ethic_industrial
+					has_ethic = ethic_fanatic_industrial
+				}
 			}
-			#event_target:mercenary_enclave_country = {
-			#	trust = {
-			#		who = root
-			#		value >= 50
-			#	}
-			#}
+			FROMFROM = {
+				trust = {
+					who = root
+					value >= 100
+				}
+			}
 		}
-		hidden_effect = {
-			country_event = { id = nations.20240 }
-		}
+		#hidden_effect = {
+		#	country_event = { id = nations.20240 }
+		#}
 	}
 
 	#Recruit Armies
@@ -5999,8 +6576,8 @@ country_event = {
 		custom_tooltip = mercenary_tt_hirearmies
 		trigger = {
 			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
+				is_hostile = FROMFROM
+				is_homicidal = yes
 			}
 		}
 		allow = {
@@ -6016,15 +6593,11 @@ country_event = {
 		}
 	}
 
-	#Mercenary Logistic Services
+	#The War Room
 	option = {
 		name = "nations.20205.g"
-		custom_tooltip = mercenary_tt_logistic
+		custom_tooltip = nations.13205.g.tooltip
 		trigger = {
-			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
-			}
 			#event_target:mercenary_enclave_country = {
 			#	trust = {
 			#		who = root
@@ -6062,8 +6635,8 @@ country_event = {
 			#	has_civic = civic_criminal_heritage
 			#}
 			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
+				is_hostile = FROMFROM
+				is_homicidal = yes
 			}
 			#exists = event_target:mercenary_patron
 			#event_target:mercenary_patron = {
@@ -6081,8 +6654,8 @@ country_event = {
 		trigger = {
 			#has_civic = civic_military_dictatorship_corporate
 			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
+				is_hostile = FROMFROM
+				is_homicidal = yes
 			}
 			#exists = event_target:mercenary_patron
 			#event_target:mercenary_patron = {
@@ -6101,8 +6674,8 @@ country_event = {
 		trigger = {
 			#has_civic = civic_criminal_heritage
 			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
+				is_hostile = FROMFROM
+				is_homicidal = yes
 			}
 			#exists = event_target:mercenary_patron
 			#event_target:mercenary_patron = {
@@ -6119,7 +6692,7 @@ country_event = {
 		name = GOODBYE
 		trigger = {
 			NOT = {
-				#is_hostile = event_target:mercenary_enclave_country
+				is_hostile = FROMFROM
 			}
 		}
 		default_hide_option = yes
@@ -6132,7 +6705,7 @@ country_event = {
 	}
 }
 
-# Mercenary Enclave: MERCENARY GARRISON starbase building
+# Mercenary Enclave: Nuclear Strike Debriefing
 # This = player country; event_target:mercenary_enclave_country = enclave country
 country_event = {
 	id = nations.20220
@@ -6239,62 +6812,122 @@ country_event = {
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_authoritarian_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_authoritarian
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_egalitarian_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_egalitarian
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_xenophobe_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_xenophobe
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_xenophile_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_xenophile
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_militarist_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_militarist
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_pacifist_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_pacifist
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_spiritualist_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_spiritualist
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_materialist_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_materialist
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_green_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_green
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_industrial_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_industrial
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_socialism_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_socialism
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_capitalism_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_capitalism
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 			}
 			4 = { 
@@ -6302,13 +6935,18 @@ country_event = {
 			}
 		}
 	}
-	# Nuclear Winter Situation - FROMFROMFROMFROM Is Destroyed
+	# Nuclear Winter Situation - ethic_fanatic_industrial Is Destroyed
 	option = {
 		name = "nations.20225.option.nuclear_winter_situation"
 		trigger = {
 			ROOT = { capital_scope = { is_planet_class = pc_nuked } }
 		}
-		FROMFROMFROMFROM = {
+		random_country = {
+			limit = {
+				has_communications = ROOT
+				has_ethic = ethic_fanatic_industrial
+				is_country_type = PrimPlayer_ethic_fanatic_nation
+			}
 			destroy_country = yes
 		}
 		if = {
@@ -6404,13 +7042,18 @@ country_event = {
 			}
 		}
 	}
-	# Nuclear Winter AVOIDED - FROMFROMFROMFROM Is Destroyed
+	# Nuclear Winter AVOIDED - ethic_fanatic_industrial Is Destroyed
 	option = {
-		name = "nations.11225.option.nuclear_winter_avoided"
+		name = "nations.20225.option.nuclear_winter_avoided"
 		trigger = {
 			NOT = { ROOT = { capital_scope = { is_planet_class = pc_nuked } } }
 		}
-		FROMFROMFROMFROM = {
+		random_country = {
+			limit = {
+				has_communications = ROOT
+				has_ethic = ethic_fanatic_industrial
+				is_country_type = PrimPlayer_ethic_fanatic_nation
+			}
 			destroy_country = yes
 		}
 		#Rest of world distrusts player
@@ -6449,13 +7092,13 @@ country_event = {
 				nations.21210 #HIRE FLEET
 				nations.21211 #THANKS FOR RENTAL
 				nations.21215 #MANAGE HIRED FLEET
-				nations.21220 #MERCENARY GARRISON starbase building
+				nations.21220 #Nuclear Strike Debriefing
 				nations.21235 #Expand Mercenary Fleet
-				nations.21240 #Tactical Appraisal
-				nations.21245 #Tactical Appraisal Khan
-				nations.21250 #Tactical Appraisal Gray Tempest
-				nations.21255 #Tactical Appraisal Prethoryn
-				nations.21260 #Tactical Appraisal Unbidden
+				nations.21240 #Tactical Appraisal - #Merge Nations Event Chain
+				nations.21245 #Tactical Appraisal - #Merge Nations Event Chain Khan
+				nations.21250 #Tactical Appraisal - #Merge Nations Event Chain Gray Tempest
+				nations.21255 #Tactical Appraisal - #Merge Nations Event Chain Prethoryn
+				nations.21260 #Tactical Appraisal - #Merge Nations Event Chain Unbidden
 				nations.21270 #Hire Armies
 				nations.21275 #Merc Pays Back Patron
 				nations.21280 #Patron Panel
@@ -6486,14 +7129,14 @@ country_event = {
 	desc = {
 		trigger = {
 			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
+				is_hostile = FROMFROM
 			}
 		}
 		text = "nations.21205.desc"
 	}
 	desc = {
 		trigger = {
-			#is_hostile = event_target:mercenary_enclave_country
+			is_hostile = FROMFROM
 		}
 		text = "nations.21205.desc.hostile"
 	}
@@ -6517,12 +7160,12 @@ country_event = {
 		
 	}
 
-	# Hostility options
+	# Sue for Peace
 	option = {
 		name = "nations.21205.i"
 		trigger = {
-			#is_hostile = event_target:mercenary_enclave_country
-			#NOT = { is_homicidal = yes }
+			is_hostile = FROMFROM
+			NOT = { is_homicidal = yes }
 		}
 		allow = {
 			resource_stockpile_compare = {
@@ -6533,14 +7176,14 @@ country_event = {
 		add_resource = {
 			energy = -2500
 		}
-		hidden_effect = {
-			#event_target:mercenary_enclave_country = {
-			#	set_faction_hostility = {
-			#		target = root
-			#		set_neutral = yes
-			#	}
-			#}
-		}
+		#hidden_effect = {
+			FROMFROM = {
+				set_faction_hostility = {
+					target = root
+					set_neutral = yes
+				}
+			}
+		#}
 	}
 
 	#Hire fleet
@@ -6578,62 +7221,46 @@ country_event = {
 		custom_tooltip = mercenary_tt_managefleet
 		trigger = {
 			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
+				is_hostile = FROMFROM
+				is_homicidal = yes
 			}
 		}
 		hidden_effect = {
 			country_event = { id = nations.21215 }
 		}
 	}
-	#Mercenary Garrison starbase building
+	#Nuclear Strike Debriefing
 	option = {
 		name = "nations.21205.c"
+		allow = { has_technology = tech_missiles_1 }
 		custom_tooltip = "nations.18205.c.tooltip"
-		trigger = {
-			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
-			}
-			#event_target:mercenary_enclave_country = {
-			#	trust = {
-			#		who = root
-			#		value >= 30
-			#	}
-			#}
-		}
-		allow = {
-			#event_target:mercenary_enclave_country = {
-			#	trust = {
-			#		who = root
-			#		value >= 40
-			#	}
-			#}
-		}
 		hidden_effect = {
 			country_event = { id = nations.21220 }
 		}
 	}
 
-	#Tactical Appraisal
+	#Tactical Appraisal - #Merge Nations Event Chain
 	option = {
 		name = "nations.21205.e"
-		custom_tooltip = mercenary_tt_tactical
-		trigger = {
-			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
+		custom_tooltip = "nations.21205.e.tooltip"
+		allow = {
+			custom_tooltip = {
+				fail_text = "civic_tooltip_capitalism"
+				OR = {
+					has_ethic = ethic_capitalism
+					has_ethic = ethic_fanatic_capitalism
+				}
 			}
-			#event_target:mercenary_enclave_country = {
-			#	trust = {
-			#		who = root
-			#		value >= 50
-			#	}
-			#}
+			FROMFROM = {
+				trust = {
+					who = root
+					value >= 100
+				}
+			}
 		}
-		hidden_effect = {
-			country_event = { id = nations.21240 }
-		}
+		#hidden_effect = {
+		#	country_event = { id = nations.21240 }
+		#}
 	}
 
 	#Recruit Armies
@@ -6642,8 +7269,8 @@ country_event = {
 		custom_tooltip = mercenary_tt_hirearmies
 		trigger = {
 			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
+				is_hostile = FROMFROM
+				is_homicidal = yes
 			}
 		}
 		allow = {
@@ -6659,15 +7286,11 @@ country_event = {
 		}
 	}
 
-	#Mercenary Logistic Services
+	#The War Room
 	option = {
 		name = "nations.21205.g"
-		custom_tooltip = mercenary_tt_logistic
+		custom_tooltip = nations.13205.g.tooltip
 		trigger = {
-			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
-			}
 			#event_target:mercenary_enclave_country = {
 			#	trust = {
 			#		who = root
@@ -6705,8 +7328,8 @@ country_event = {
 			#	has_civic = civic_criminal_heritage
 			#}
 			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
+				is_hostile = FROMFROM
+				is_homicidal = yes
 			}
 			#exists = event_target:mercenary_patron
 			#event_target:mercenary_patron = {
@@ -6724,8 +7347,8 @@ country_event = {
 		trigger = {
 			#has_civic = civic_military_dictatorship_corporate
 			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
+				is_hostile = FROMFROM
+				is_homicidal = yes
 			}
 			#exists = event_target:mercenary_patron
 			#event_target:mercenary_patron = {
@@ -6744,8 +7367,8 @@ country_event = {
 		trigger = {
 			#has_civic = civic_criminal_heritage
 			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
+				is_hostile = FROMFROM
+				is_homicidal = yes
 			}
 			#exists = event_target:mercenary_patron
 			#event_target:mercenary_patron = {
@@ -6762,7 +7385,7 @@ country_event = {
 		name = GOODBYE
 		trigger = {
 			NOT = {
-				#is_hostile = event_target:mercenary_enclave_country
+				is_hostile = FROMFROM
 			}
 		}
 		default_hide_option = yes
@@ -6775,7 +7398,7 @@ country_event = {
 	}
 }
 
-# Mercenary Enclave: MERCENARY GARRISON starbase building
+# Mercenary Enclave: Nuclear Strike Debriefing
 # This = player country; event_target:mercenary_enclave_country = enclave country
 country_event = {
 	id = nations.21220
@@ -6882,62 +7505,122 @@ country_event = {
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_authoritarian_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_authoritarian
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_egalitarian_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_egalitarian
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_xenophobe_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_xenophobe
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_xenophile_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_xenophile
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_militarist_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_militarist
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_pacifist_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_pacifist
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_spiritualist_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_spiritualist
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_materialist_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_materialist
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_green_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_green
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_industrial_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_industrial
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_socialism_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_socialism
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_capitalism_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_capitalism
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 			}
 			4 = { 
@@ -6945,13 +7628,18 @@ country_event = {
 			}
 		}
 	}
-	# Nuclear Winter Situation - FROMFROMFROMFROM Is Destroyed
+	# Nuclear Winter Situation - ethic_fanatic_capitalism Is Destroyed
 	option = {
 		name = "nations.21225.option.nuclear_winter_situation"
 		trigger = {
 			ROOT = { capital_scope = { is_planet_class = pc_nuked } }
 		}
-		FROMFROMFROMFROM = {
+		random_country = {
+			limit = {
+				has_communications = ROOT
+				has_ethic = ethic_fanatic_capitalism
+				is_country_type = PrimPlayer_ethic_fanatic_nation
+			}
 			destroy_country = yes
 		}
 		if = {
@@ -7047,13 +7735,18 @@ country_event = {
 			}
 		}
 	}
-	# Nuclear Winter AVOIDED - FROMFROMFROMFROM Is Destroyed
+	# Nuclear Winter AVOIDED - ethic_fanatic_capitalism Is Destroyed
 	option = {
-		name = "nations.11225.option.nuclear_winter_avoided"
+		name = "nations.21225.option.nuclear_winter_avoided"
 		trigger = {
 			NOT = { ROOT = { capital_scope = { is_planet_class = pc_nuked } } }
 		}
-		FROMFROMFROMFROM = {
+		random_country = {
+			limit = {
+				has_communications = ROOT
+				has_ethic = ethic_fanatic_capitalism
+				is_country_type = PrimPlayer_ethic_fanatic_nation
+			}
 			destroy_country = yes
 		}
 		#Rest of world distrusts player
@@ -7092,13 +7785,13 @@ country_event = {
 				nations.22210 #HIRE FLEET
 				nations.22211 #THANKS FOR RENTAL
 				nations.22215 #MANAGE HIRED FLEET
-				nations.22220 #MERCENARY GARRISON starbase building
+				nations.22220 #Nuclear Strike Debriefing
 				nations.22235 #Expand Mercenary Fleet
-				nations.22240 #Tactical Appraisal
-				nations.22245 #Tactical Appraisal Khan
-				nations.22250 #Tactical Appraisal Gray Tempest
-				nations.22255 #Tactical Appraisal Prethoryn
-				nations.22260 #Tactical Appraisal Unbidden
+				nations.22240 #Tactical Appraisal - #Merge Nations Event Chain
+				nations.22245 #Tactical Appraisal - #Merge Nations Event Chain Khan
+				nations.22250 #Tactical Appraisal - #Merge Nations Event Chain Gray Tempest
+				nations.22255 #Tactical Appraisal - #Merge Nations Event Chain Prethoryn
+				nations.22260 #Tactical Appraisal - #Merge Nations Event Chain Unbidden
 				nations.22270 #Hire Armies
 				nations.22275 #Merc Pays Back Patron
 				nations.22280 #Patron Panel
@@ -7129,14 +7822,14 @@ country_event = {
 	desc = {
 		trigger = {
 			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
+				is_hostile = FROMFROM
 			}
 		}
 		text = "nations.22205.desc"
 	}
 	desc = {
 		trigger = {
-			#is_hostile = event_target:mercenary_enclave_country
+			is_hostile = FROMFROM
 		}
 		text = "nations.22205.desc.hostile"
 	}
@@ -7160,12 +7853,12 @@ country_event = {
 		
 	}
 
-	# Hostility options
+	# Sue for Peace
 	option = {
 		name = "nations.22205.i"
 		trigger = {
-			#is_hostile = event_target:mercenary_enclave_country
-			#NOT = { is_homicidal = yes }
+			is_hostile = FROMFROM
+			NOT = { is_homicidal = yes }
 		}
 		allow = {
 			resource_stockpile_compare = {
@@ -7176,14 +7869,14 @@ country_event = {
 		add_resource = {
 			energy = -2500
 		}
-		hidden_effect = {
-			#event_target:mercenary_enclave_country = {
-			#	set_faction_hostility = {
-			#		target = root
-			#		set_neutral = yes
-			#	}
-			#}
-		}
+		#hidden_effect = {
+			FROMFROM = {
+				set_faction_hostility = {
+					target = root
+					set_neutral = yes
+				}
+			}
+		#}
 	}
 
 	#Hire fleet
@@ -7221,62 +7914,46 @@ country_event = {
 		custom_tooltip = mercenary_tt_managefleet
 		trigger = {
 			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
+				is_hostile = FROMFROM
+				is_homicidal = yes
 			}
 		}
 		hidden_effect = {
 			country_event = { id = nations.22215 }
 		}
 	}
-	#Mercenary Garrison starbase building
+	#Nuclear Strike Debriefing
 	option = {
 		name = "nations.22205.c"
+		allow = { has_technology = tech_missiles_1 }
 		custom_tooltip = "nations.18205.c.tooltip"
-		trigger = {
-			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
-			}
-			#event_target:mercenary_enclave_country = {
-			#	trust = {
-			#		who = root
-			#		value >= 30
-			#	}
-			#}
-		}
-		allow = {
-			#event_target:mercenary_enclave_country = {
-			#	trust = {
-			#		who = root
-			#		value >= 40
-			#	}
-			#}
-		}
 		hidden_effect = {
 			country_event = { id = nations.22220 }
 		}
 	}
 
-	#Tactical Appraisal
+	#Tactical Appraisal - #Merge Nations Event Chain
 	option = {
 		name = "nations.22205.e"
-		custom_tooltip = mercenary_tt_tactical
-		trigger = {
-			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
+		custom_tooltip = "nations.22205.e.tooltip"
+		allow = {
+			custom_tooltip = {
+				fail_text = "civic_tooltip_socialism"
+				OR = {
+					has_ethic = ethic_socialism
+					has_ethic = ethic_fanatic_socialism
+				}
 			}
-			#event_target:mercenary_enclave_country = {
-			#	trust = {
-			#		who = root
-			#		value >= 50
-			#	}
-			#}
+			FROMFROM = {
+				trust = {
+					who = root
+					value >= 100
+				}
+			}
 		}
-		hidden_effect = {
-			country_event = { id = nations.22240 }
-		}
+		#hidden_effect = {
+		#	country_event = { id = nations.22240 }
+		#}
 	}
 
 	#Recruit Armies
@@ -7285,8 +7962,8 @@ country_event = {
 		custom_tooltip = mercenary_tt_hirearmies
 		trigger = {
 			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
+				is_hostile = FROMFROM
+				is_homicidal = yes
 			}
 		}
 		allow = {
@@ -7302,15 +7979,11 @@ country_event = {
 		}
 	}
 
-	#Mercenary Logistic Services
+	#The War Room
 	option = {
 		name = "nations.22205.g"
-		custom_tooltip = mercenary_tt_logistic
+		custom_tooltip = nations.13205.g.tooltip
 		trigger = {
-			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
-			}
 			#event_target:mercenary_enclave_country = {
 			#	trust = {
 			#		who = root
@@ -7348,8 +8021,8 @@ country_event = {
 			#	has_civic = civic_criminal_heritage
 			#}
 			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
+				is_hostile = FROMFROM
+				is_homicidal = yes
 			}
 			#exists = event_target:mercenary_patron
 			#event_target:mercenary_patron = {
@@ -7367,8 +8040,8 @@ country_event = {
 		trigger = {
 			#has_civic = civic_military_dictatorship_corporate
 			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
+				is_hostile = FROMFROM
+				is_homicidal = yes
 			}
 			#exists = event_target:mercenary_patron
 			#event_target:mercenary_patron = {
@@ -7387,8 +8060,8 @@ country_event = {
 		trigger = {
 			#has_civic = civic_criminal_heritage
 			NOR = {
-				#is_hostile = event_target:mercenary_enclave_country
-				#is_homicidal = yes
+				is_hostile = FROMFROM
+				is_homicidal = yes
 			}
 			#exists = event_target:mercenary_patron
 			#event_target:mercenary_patron = {
@@ -7405,7 +8078,7 @@ country_event = {
 		name = GOODBYE
 		trigger = {
 			NOT = {
-				#is_hostile = event_target:mercenary_enclave_country
+				is_hostile = FROMFROM
 			}
 		}
 		default_hide_option = yes
@@ -7418,7 +8091,7 @@ country_event = {
 	}
 }
 
-# Mercenary Enclave: MERCENARY GARRISON starbase building
+# Mercenary Enclave: Nuclear Strike Debriefing
 # This = player country; event_target:mercenary_enclave_country = enclave country
 country_event = {
 	id = nations.22220
@@ -7525,62 +8198,122 @@ country_event = {
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_authoritarian_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_authoritarian
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_egalitarian_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_egalitarian
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_xenophobe_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_xenophobe
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_xenophile_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_xenophile
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_militarist_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_militarist
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_pacifist_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_pacifist
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_spiritualist_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_spiritualist
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_materialist_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_materialist
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_green_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_green
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_industrial_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_industrial
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_socialism_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_socialism
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 				modifier = {
 					add = 8
 					ROOT = { capital_scope = { has_deposit = d_ethic_fanatic_capitalism_nation_blocker } }
-					FROMFROMFROMFROM = { has_technology = tech_missiles_1 }
+					any_country = { 
+						has_communications = ROOT
+						has_ethic = ethic_fanatic_capitalism
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						has_technology = tech_missiles_1
+					}
 				}
 			}
 			4 = { 
@@ -7588,13 +8321,18 @@ country_event = {
 			}
 		}
 	}
-	# Nuclear Winter Situation - FROMFROMFROMFROM Is Destroyed
+	# Nuclear Winter Situation - ethic_fanatic_socialism Is Destroyed
 	option = {
 		name = "nations.22225.option.nuclear_winter_situation"
 		trigger = {
 			ROOT = { capital_scope = { is_planet_class = pc_nuked } }
 		}
-		FROMFROMFROMFROM = {
+		random_country = {
+			limit = {
+				has_communications = ROOT
+				has_ethic = ethic_fanatic_socialism
+				is_country_type = PrimPlayer_ethic_fanatic_nation
+			}
 			destroy_country = yes
 		}
 		if = {
@@ -7690,13 +8428,18 @@ country_event = {
 			}
 		}
 	}
-	# Nuclear Winter AVOIDED - FROMFROMFROMFROM Is Destroyed
+	# Nuclear Winter AVOIDED - ethic_fanatic_socialism Is Destroyed
 	option = {
-		name = "nations.11225.option.nuclear_winter_avoided"
+		name = "nations.22225.option.nuclear_winter_avoided"
 		trigger = {
 			NOT = { ROOT = { capital_scope = { is_planet_class = pc_nuked } } }
 		}
-		FROMFROMFROMFROM = {
+		random_country = {
+			limit = {
+				has_communications = ROOT
+				has_ethic = ethic_fanatic_socialism
+				is_country_type = PrimPlayer_ethic_fanatic_nation
+			}
 			destroy_country = yes
 		}
 		#Rest of world distrusts player
