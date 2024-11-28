@@ -1,5 +1,5 @@
 ###################################
-# Shroudwalker Enclave Divinations
+# Through the Ages Situation
 ###################################
 PrimPlayer_situation = {
 	picture = GFX_evt_clocks
@@ -34,7 +34,7 @@ PrimPlayer_situation = {
 			on_first_enter = {
 				if = {
 					limit = { 
-						has_origin = origin_primitive_player_pre_industrial_age
+						OWENR = { has_origin = origin_primitive_player_pre_industrial_age }
 					}
 					OWNER = { set_origin = origin_primitive_player_industrial_age }
 				}
@@ -50,7 +50,7 @@ PrimPlayer_situation = {
 			on_first_enter = {
 				if = {
 					limit = { 
-						has_origin = origin_primitive_player_industrial_age
+						OWENR = { has_origin = origin_primitive_player_industrial_age }
 					}
 					OWNER = { set_origin = origin_primitive_player_machine_age }
 				}
@@ -66,7 +66,7 @@ PrimPlayer_situation = {
 			on_first_enter = {
 				if = {
 					limit = { 
-						has_origin = origin_primitive_player_machine_age
+						OWENR = { has_origin = origin_primitive_player_machine_age }
 					}
 					OWNER = { set_origin = origin_primitive_player_atomic_age }
 				}
@@ -82,7 +82,7 @@ PrimPlayer_situation = {
 			on_first_enter = {
 				if = {
 					limit = { 
-						has_origin = origin_primitive_player_atomic_age
+						OWENR = { has_origin = origin_primitive_player_atomic_age }
 					}
 					OWNER = { set_origin = origin_primitive_player_early_space_age }
 				}
@@ -166,6 +166,97 @@ PrimPlayer_situation = {
 	}
 	on_fail = {
 		custom_tooltip = PrimPlayer_situation_end
+		hidden_effect = { destroy_situation = this }
+	}
+	approach = {
+		name = into_the_unknown
+		icon = GFX_situation_approach_unity
+		icon_background = GFX_situation_approach_bg_green
+		default = yes
+		on_select = {
+			custom_tooltip = deficit_approach_do_nothing_tooltip
+		}
+	}
+}
+
+###################################
+# Through the Ages Situation
+###################################
+PrimPlayer_ethic_egalitarian_union_situation = {
+	picture = GFX_evt_clocks
+	complete_icon_frame = GFX_situation_outcome_frame_blue
+	complete_icon = GFX_situation_outcome_unknown
+	abort_trigger = {
+		always = no
+	}
+	modifier = {
+		#all_technology_research_speed = -0.75
+	}
+	stages = {
+		stage_1 = {
+			icon = GFX_PrimPlay_situation_stage_pre_industrial_age
+			icon_background = GFX_situation_stage_frame_blue
+			end = 100
+			on_first_enter = {
+			}
+		}
+	}
+	on_monthly = {
+		#events = {
+		#	enclave.5556
+		#}
+		#random_events = {
+		#	10 = 0
+		#	1 = enclave.5000 # "All Too Lucid"
+		#	1 = enclave.5050 # "Shrouded"
+		#	1 = enclave.5500 # "Shattered Frontier" (> 50% progress)
+		#	1 = enclave.5125 # "Floating Parts" (> 10% progress)
+		#	1 = enclave.5150 # Lightshow - anomaly.235 (>10% progress)
+		#	1 = enclave.5155 # Grimacing - anomaly.230 (>10% progress)
+		#	1 = enclave.5160 # Improbable Teapot - anomaly.4060
+		#	1 = enclave.5185 # Terminal Orbit - anomaly.2570 (>15% progress)
+		#	1 = enclave.5180 # The Color of Science - anomaly.6740 (>15% progress)
+		#}
+	}
+	monthly_progress = {
+		base = 1 #total: 100
+		#Player actions & policies:
+		modifier = {
+			add = 0.5
+			desc = border_policy_open
+			owner = {
+				has_policy_flag = border_policy_open
+			}
+		}
+		modifier = {
+			add = -0.5
+			desc = border_policy_closed
+			owner = {
+				has_policy_flag = border_policy_closed
+			}
+		}
+		#Situation event outcomes:
+		#modifier = {
+		#	add = 5
+		#	desc = divination_locus_embrace
+		#	OR = {
+		#		has_situation_flag = shattered_frontier_embraced
+		#	}
+		#}
+		#modifier = {
+		#	add = -5
+		#	desc = divination_locus_denied
+		#	OR = {
+		#		has_situation_flag = shattered_frontier_denied
+		#	}
+		#}
+	}
+	on_progress_complete = {
+		custom_tooltip = PrimPlayer_egalitarian_union_situation_complete
+		hidden_effect = { OWNER = { capital_scope = { set_planet_flag = PrimPlayer_egalitarian_union_situation_complete } } }
+	}
+	on_fail = {
+		custom_tooltip = PrimPlayer_ethic_egalitarian_union_situation_end
 		hidden_effect = { destroy_situation = this }
 	}
 	approach = {
