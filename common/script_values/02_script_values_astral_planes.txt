@@ -1,0 +1,189 @@
+###################################
+# Scripted Values - Astral Planes #
+###################################
+
+progressive_rifts_additional_weight = {
+	base = 1
+	modifier = {
+		multiply = 2
+		has_origin = origin_riftworld
+	}
+	modifier = {
+		multiply = 2
+		is_dimensional_worship_empire = yes
+	}
+	modifier = {
+		multiply = 10
+		has_country_flag = situation_a_rift_in_space_locked
+	}
+}
+
+scaled_astral_action_cost = {
+	base = 0
+	modifier = {
+		add = $INCREASE_VARIABLE$
+		is_variable_set = $INCREASE_VARIABLE$
+	}
+	mult = $INCREASE$
+	add = $BASE$
+	max = $MAX$
+}
+
+lateral_artifacting_cost = {
+	base = 1
+	mult = value:scaled_astral_action_cost|BASE|$BASE$|INCREASE|$INCREASE$|INCREASE_VARIABLE|$INCREASE_VARIABLE$|MAX|$MAX$|
+	modifier = {
+		multiply = trigger:triumph_days_left
+		has_modifier = relic_activation_cooldown
+	}
+	modifier = {
+		divide = $BASE_DAYS$
+		has_modifier = relic_activation_cooldown
+	}
+	ceiling = yes
+	min = 0
+}
+
+quantum_catapult_insight_2_quantic_ambush_loc = {
+	base = @quantum_catapult_insight_2_quantic_ambush
+	mult = 100
+}
+
+grave_guardians_fleet_size = {
+	add = $MAX_SIZE$
+	subtract = $MIN_SIZE$
+	mult = value:grave_guardians_multiplier
+	add = $MIN_SIZE$
+	floor = yes 
+}
+
+grave_guardians_multiplier = {
+	add = trigger:mid_game_years_passed
+	divide = value:end_to_mid_years
+	max = 1
+	min = 0
+}
+
+end_to_mid_years = {
+	complex_trigger_modifier = {
+		trigger = check_galaxy_setup_value
+		parameters = {
+			setting = end_game_year
+		}
+		mode = add
+	}
+	complex_trigger_modifier = {
+		trigger = check_galaxy_setup_value
+		parameters = {
+			setting = mid_game_year
+		}
+		mode = subtract
+	}
+	min = 1
+}
+
+convert_months_into_days = {
+	base = $VALUE$
+	mult = 30
+}
+
+rift_in_space_event_probability = {
+	base = 100
+	complex_trigger_modifier = {
+		trigger = situation_progress
+		trigger_scope = from
+		mode = subtract
+	}
+	subtract = 20
+	min = 0
+}
+
+percent_monthly_resource_income = {
+	base = 1
+	complex_trigger_modifier = {
+		trigger = resource_revenue_compare
+		parameters = {
+			resource = $RESOURCE$
+		}
+		mode = mult
+	}
+	divide = 100
+	mult = $PERCENT$
+}
+
+percent_monthly_resource_income_edict_cost = {
+	base = 1
+	mult = value:percent_monthly_resource_income|RESOURCE|$RESOURCE$|PERCENT|$PERCENT$|
+	add = value:edict_size_effect
+}
+
+trait_selectable_weight_per_rift_completed = {
+	base = 1
+	complex_trigger_modifier = {
+		trigger = astral_rifts_completed
+		trigger_scope = from
+		mode = add
+		mult = 0.05
+	}
+}
+
+
+dimensional_fleet_year_cap = {
+	add = $YEARS$
+	max = 200
+}
+dimensional_fleet_power_year_based = {
+	add = $YEARS$
+	mult = 7.32
+	subtract = 184
+	mult = value:dimensional_fleet_year_cap|YEARS|$YEARS$|
+	add = 1494
+}
+dimensional_fleet_power_naval_capacity_based = {
+	add = $NAVAL_CAPACITY$
+	mult = 30
+}
+dimensional_fleet_power_rift_based = {
+	complex_trigger_modifier = {
+		trigger = astral_rifts_completed
+		trigger_scope = root
+		mode = add
+	}
+	subtract = 5
+	mult = 0.15
+	add = 1
+	min = 1
+}
+
+dimensional_fleet_power_scaling = {
+	add = value:dimensional_fleet_power_year_based|YEARS|$YEARS$|
+	divide = 8
+	add = value:dimensional_fleet_power_naval_capacity_based|NAVAL_CAPACITY|$NAVAL_CAPACITY$|
+	mult = value:dimensional_fleet_power_rift_based
+}
+
+num_dimensional_fleet_big_ships = {
+	add = $VALUE$
+	divide = $SHIP_STRENGTH$
+	mult = 3 #Fleet will consist of 3/4 of its power by battleships
+	divide = 4
+	round = yes
+	min = 0
+}
+
+num_dimensional_fleet_small_ships_prev = {
+	add = $VALUE$
+	modulo = $BIG_SHIP_STRENGTH$
+	divide = $SMALL_SHIP_STRENGTH$
+	ceiling = yes
+	min = 0
+}
+num_dimensional_fleet_small_ships = {
+	add = $VALUE$
+	divide = $BIG_SHIP_STRENGTH$
+	mult = 3 #3 Cruisers makes a battleship
+	divide = 4 #Fleet will consist of 1/4 of its power by cruisers
+	add = value:num_dimensional_fleet_small_ships_prev|VALUE|$VALUE$|BIG_SHIP_STRENGTH|$BIG_SHIP_STRENGTH$|SMALL_SHIP_STRENGTH|$SMALL_SHIP_STRENGTH$|
+	round = yes
+	min = 0
+}

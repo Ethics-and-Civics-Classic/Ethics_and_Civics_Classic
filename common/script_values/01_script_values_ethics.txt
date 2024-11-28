@@ -1,0 +1,220 @@
+authoritarian_ethics_from_relations = {
+	base = 1
+	complex_trigger_modifier = {
+		trigger = count_relation
+		parameters = {
+			limit = {
+				OR = {
+					is_in_federation_with = root
+					has_defensive_pact = root
+				}
+				is_authoritarian = yes
+			}
+		}
+		mode = add
+		mult = 0.3
+	}
+}
+
+egalitarian_ethics_from_relations = {
+	base = 1
+	complex_trigger_modifier = {
+		trigger = count_relation
+		parameters = {
+			limit = {
+				OR = {
+					is_in_federation_with = root
+					has_defensive_pact = root
+					has_commercial_pact = root
+				}
+				is_egalitarian = yes
+			}
+		}
+		mode = add
+		mult = 0.3
+	}
+	complex_trigger_modifier = {
+		trigger = count_relation
+		parameters = {
+			limit = {
+				is_subject = no
+				has_migration_access = root
+				is_egalitarian = yes
+			}
+		}
+		mode = add
+		mult = 0.5
+	}
+}
+
+xenophobe_ethics_from_relations = {
+	base = 1
+	complex_trigger_modifier = {
+		trigger = count_neighbor_country
+		parameters = {
+			limit = { is_homicidal = yes }
+		}
+		mult = 0.25
+		mode = add
+	}
+	complex_trigger_modifier = {
+		trigger = count_relation
+		parameters = {
+			limit = {
+				is_subject = no
+				has_migration_access = root
+				NOT = { is_same_species = root }
+			}
+		}
+		mult = -0.2
+		mode = add
+	}
+}
+
+xenophile_ethics_from_relations = {
+	base = 1
+	complex_trigger_modifier = {
+		trigger = count_relation
+		parameters = {
+			limit = {
+				NOT = { is_same_species = root }
+				is_subject = no
+				has_migration_access = root
+			}
+		}
+		mult = 0.3
+		mode = add
+	}
+	max = 2 #so federation with 5 members will not end up at 2.5
+	complex_trigger_modifier = {
+		trigger = count_relation
+		parameters = {
+			limit = {
+				NOT = { is_same_species = root }
+				is_subject = no
+				OR = {
+					is_in_federation_with = root
+					has_defensive_pact = root
+					has_commercial_pact = root
+				}
+			}
+		}
+		mult = 0.2
+		mode = add
+	}
+}
+
+spiritualist_ethics_from_relations = {
+	base = 1
+	complex_trigger_modifier = {
+		trigger = count_relation
+		parameters = {
+			limit = {
+				OR = {
+					is_in_federation_with = root
+					has_defensive_pact = root
+					has_commercial_pact = root
+				}
+				is_spiritualist = yes
+			}
+		}
+		mode = add
+		mult = 0.3
+	}
+	complex_trigger_modifier = {
+		trigger = count_relation
+		parameters = {
+			limit = {
+				is_subject = no
+				has_migration_access = root
+				is_spiritualist = yes
+			}
+		}
+		mode = add
+		mult = 0.5
+	}
+}
+
+materialist_ethics_from_relations = {
+	base = 1
+	complex_trigger_modifier = {
+		trigger = count_relation
+		parameters = {
+			limit = {
+				root = { has_research_agreement = prev }
+				is_materialist = yes
+			}
+		}
+		mode = add
+		mult = 0.25
+	}
+	complex_trigger_modifier = {
+		trigger = count_relation
+		parameters = {
+			limit = {
+				OR = {
+					is_in_federation_with = root
+					has_defensive_pact = root
+					has_commercial_pact = root
+					AND = {
+						is_subject = no
+						has_migration_access = root
+					}
+				}
+				is_materialist = yes
+			}
+		}
+		mode = add
+		mult = 0.3
+	}
+}
+
+pacifist_ethics_from_pacts = {
+	add = trigger:num_non_aggression_pacts
+	mult = 0.2
+	add = 1
+}
+
+ethics_from_overlord = {
+	base = 1
+	modifier = {
+		add = 0.5
+		overlord = {
+			has_ethic = ethic_$ETHIC$
+		}
+	}
+	modifier = {
+		add = 1
+		overlord = {
+			has_ethic = ethic_fanatic_$ETHIC$
+		}
+	}
+}
+
+count_councilors = {
+	base = 0
+	complex_trigger_modifier = {
+		trigger = count_owned_leader
+		parameters = {
+			limit = {
+				is_councilor = yes
+				is_ruler = no
+			}
+		}
+		mode = add
+	}
+}
+
+count_councilors_xenos_2 = {
+	base = -2
+	complex_trigger_modifier = {
+		trigger = count_owned_leader
+		parameters = {
+			limit = {
+				is_councilor = yes
+				is_ruler = no
+			}
+		}
+		mode = add
+	}
+}
