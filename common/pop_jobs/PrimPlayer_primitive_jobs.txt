@@ -19,14 +19,14 @@ hunter_gatherer = {
 		owner = {
 			is_hive_empire = no
 			
-			OR = {
-                has_origin = origin_primitive_player_pre_industrial_age
-                has_origin = origin_primitive_player_industrial_age
-                has_origin = origin_primitive_player_machine_age
-                has_origin = origin_primitive_player_atomic_age
-                has_origin = origin_primitive_player_early_space_age 
+			#OR = {
+                #has_origin = origin_primitive_player_pre_industrial_age
+                #has_origin = origin_primitive_player_industrial_age
+                #has_origin = origin_primitive_player_machine_age
+                #has_origin = origin_primitive_player_atomic_age
+                #has_origin = origin_primitive_player_early_space_age 
 				is_primitive = yes
-            }
+            #}
 		}
 	}
 
@@ -85,6 +85,7 @@ peasant = {
                 has_origin = origin_primitive_player_atomic_age
                 has_origin = origin_primitive_player_early_space_age 
 				is_primitive = yes
+			}
 		}
 	}
 
@@ -132,6 +133,7 @@ primitive_warrior = {
                 has_origin = origin_primitive_player_atomic_age
                 has_origin = origin_primitive_player_early_space_age 
 				is_primitive = yes
+			}
 		}
 	}
 
@@ -239,8 +241,46 @@ primitive_researcher = {
 		}
 	}
 
+	#weight = {
+	#	weight = @specialist_job_weight
+	#	modifier = {
+	#		factor = 6
+	#		is_materialist = yes
+	#	}
+	#	modifier = {
+	#		factor = 0
+	#		is_spiritualist = yes
+	#	}
+	#}
 	weight = {
 		weight = @specialist_job_weight
+		mult = value:job_weights_research_modifier|JOB|researcher|
+		modifier = {
+			factor = 0.2
+			has_citizenship_rights = no
+			NOT = { has_trait = trait_mechanical }
+		}
+		modifier = {
+			factor = 2
+			has_living_standard = { type = living_standard_academic_privilege }
+		}
+		modifier = {
+			factor = 0.1
+			can_take_servant_job = yes
+		}
+		modifier = {
+			factor = 1.5
+			has_job = researcher
+		}
+		modifier = {
+			factor = 0.8
+			is_enslaved = yes
+			has_slavery_type = { type = slavery_indentured }
+		}
+		modifier = {
+			factor = 5
+			has_trait = trait_cyborg_creed_of_research
+		}
 		modifier = {
 			factor = 6
 			is_materialist = yes
@@ -250,6 +290,8 @@ primitive_researcher = {
 			is_spiritualist = yes
 		}
 	}
+
+	inline_script = "jobs/automodding_priority_research"
 }
 
 primitive_priest = {
@@ -349,8 +391,38 @@ primitive_laborer = {
 
 
 
+	#weight = {
+	#	weight = @worker_job_weight
+	#}
 	weight = {
-		weight = @worker_job_weight
+		weight = @specialist_job_weight
+		mult = value:job_weights_modifier|JOB|artisan|RESOURCE|consumer_goods|
+		modifier = {
+			factor = 2
+			is_enslaved = yes
+			can_take_servant_job = no
+		}
+		modifier = {
+			factor = 5
+			has_job = artisan
+		}
+
+		# low income modifier
+		modifier = {
+			factor = 1.2
+			exists = planet
+			planet = {
+				has_available_jobs = "artisan"
+			}
+			exists = owner
+			owner = {
+				is_ai = yes
+				has_monthly_income = {
+					resource = consumer_goods
+					value < 5
+				}
+			}
+		}
 	}
 }
 
@@ -379,7 +451,7 @@ primitive_miner = {
                 has_origin = origin_primitive_player_atomic_age
                 has_origin = origin_primitive_player_early_space_age 
 				is_primitive = yes
-			#}
+			}
 		}
 	}
 
@@ -420,20 +492,83 @@ primitive_technician = {
                 has_origin = origin_primitive_player_atomic_age
                 has_origin = origin_primitive_player_early_space_age 
 				is_primitive = yes
-			#}
+			}
 		}
+	}
+	
+	planet_modifier = {
+		pop_environment_tolerance = -0.03
 	}
 
 	resources = {
 		category = planet_technician
 		produces = {
-			energy = 1
+			energy = 2		#Upped from vanilla's energy = 1
+		}
+		upkeep = {
+			minerals = 1	#added mineral upkeep
 		}
 	}
 
+	#weight = {
+	#	weight = @worker_job_weight
+	#}
 	weight = {
 		weight = @worker_job_weight
+		mult = value:job_weights_modifier|JOB|technician|RESOURCE|energy|
+		modifier = {
+			factor = 100
+			OR = {
+				is_non_sapient_robot = yes
+				is_shackled_robot = yes
+			}
+			can_take_servant_job = no
+			can_fill_specialist_job_trigger = no
+		}
+		modifier = {
+			factor = 8
+			is_enslaved = yes
+			can_take_servant_job = no
+			OR = {
+				has_trait = trait_syncretic_proles
+				has_trait = trait_robot_superconductive
+				has_trait = trait_ingenious
+			}
+		}
+		modifier = {
+			factor = 2
+			OR = {
+				is_non_sapient_robot = yes
+				is_shackled_robot = yes
+			}
+			can_take_servant_job = no
+		}
+		modifier = {
+			factor = 0.25
+			can_take_servant_job = yes
+		}
+		# low income modifier
+		modifier = {
+			factor = 3
+			exists = planet
+			planet = {
+				has_available_jobs = technician
+			}
+			exists = owner
+			owner = {
+				has_monthly_income = {
+					resource = energy
+					value < 10
+				}
+			}
+		}
+		modifier = {
+			factor = 5
+			has_trait = trait_cyborg_creed_of_labor
+		}
 	}
+
+	inline_script = "jobs/automodding_priority_energy"
 }
 
 primitive_farmer = {
@@ -460,7 +595,7 @@ primitive_farmer = {
                 has_origin = origin_primitive_player_atomic_age
                 has_origin = origin_primitive_player_early_space_age 
 				is_primitive = yes
-			#}
+			}
 		}
 	}
 
@@ -1118,11 +1253,18 @@ primitive_hive_technician = {
 			#}
 		}
 	}
+	
+	planet_modifier = {
+		pop_environment_tolerance = -0.02
+	}
 
 	resources = {
 		category = planet_technician
 		produces = {
-			energy = 1
+			energy = 2
+		}
+		upkeep = {
+			minerals = 1
 		}
 	}
 
