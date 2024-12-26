@@ -8,7 +8,7 @@ PrimPlayer_situation = {
 	abort_trigger = {
 		#OR = {
 		#	NOT = { exists = event_target:shroudwalker_enclave_country }
-		#	owner = { is_hostile = event_target:shroudwalker_enclave_country }
+		#	OWNER = { is_hostile = event_target:shroudwalker_enclave_country }
 		#}
 		always = no
 	}
@@ -19,7 +19,7 @@ PrimPlayer_situation = {
 		stage_1 = {
 			icon = GFX_PrimPlay_situation_stage_pre_industrial_age
 			icon_background = GFX_situation_stage_frame_blue
-			end = 10
+			end = 27
 			on_first_enter = {
 				#OWNER = { set_origin = origin_primitive_player_pre_industrial_age }	#If you start here, you are already pre industrial age
 				
@@ -30,15 +30,17 @@ PrimPlayer_situation = {
 		stage_2 = {
 			icon = GFX_PrimPlay_situation_stage_industrial_age
 			icon_background = GFX_situation_stage_frame_blue
-			end = 30
+			end = 69
 			on_first_enter = {
 				if = {
 					limit = { 
-						OWENR = { has_origin = origin_primitive_player_pre_industrial_age }
+						OWNER = { 
+							NOT = { is_low_tech_start = yes } # So Broken Shackles and etc players don't start with it
+							has_origin = origin_primitive_player_pre_industrial_age 
+						}
 					}
 					OWNER = { set_origin = origin_primitive_player_industrial_age }
 				}
-				
 			}
 			custom_tooltip = set_origin_primitive_player_industrial_age
 		}
@@ -46,11 +48,14 @@ PrimPlayer_situation = {
 		stage_3 = {
 			icon = GFX_PrimPlay_situation_stage_machine_age
 			icon_background = GFX_situation_stage_frame_blue
-			end = 50
+			end = 146
 			on_first_enter = {
 				if = {
 					limit = { 
-						OWENR = { has_origin = origin_primitive_player_industrial_age }
+						OWNER = { 
+							NOT = { is_low_tech_start = yes } # So Broken Shackles and etc players don't start with it
+							has_origin = origin_primitive_player_industrial_age 
+						}
 					}
 					OWNER = { set_origin = origin_primitive_player_machine_age }
 				}
@@ -62,11 +67,14 @@ PrimPlayer_situation = {
 		stage_4 = {
 			icon = GFX_PrimPlay_situation_stage_atomic_age
 			icon_background = GFX_situation_stage_frame_blue
-			end = 85
+			end = 246
 			on_first_enter = {
 				if = {
 					limit = { 
-						OWENR = { has_origin = origin_primitive_player_machine_age }
+						OWNER = { 
+							NOT = { is_low_tech_start = yes } # So Broken Shackles and etc players don't start with it
+							has_origin = origin_primitive_player_machine_age 
+						}
 					}
 					OWNER = { set_origin = origin_primitive_player_atomic_age }
 				}
@@ -78,11 +86,14 @@ PrimPlayer_situation = {
 		stage_5 = {
 			icon = GFX_PrimPlay_situation_stage_early_space_age
 			icon_background = GFX_situation_stage_frame_blue
-			end = 135
+			end = 411
 			on_first_enter = {
 				if = {
 					limit = { 
-						OWENR = { has_origin = origin_primitive_player_atomic_age }
+						OWNER = { 
+							NOT = { is_low_tech_start = yes } # So Broken Shackles and etc players don't start with it
+							has_origin = origin_primitive_player_atomic_age 
+						}
 					}
 					OWNER = { set_origin = origin_primitive_player_early_space_age }
 				}
@@ -114,7 +125,7 @@ PrimPlayer_situation = {
 		#modifier = {
 		#	add = 2
 		#	desc = divination_locus_embrace
-		#	owner = {
+		#	OWNER = {
 		#		OR = {
 		#			has_policy_flag = diplo_stance_cooperative
 		#			has_policy_flag = first_contact_proactive
@@ -125,7 +136,7 @@ PrimPlayer_situation = {
 		#modifier = {
 		#	add = -2
 		#	desc = divination_locus_denied
-		#	owner = {
+		#	OWNER = {
 		#		OR = {
 		#			has_policy_flag = diplo_stance_isolationist
 		#			has_policy_flag = first_contact_cautious
@@ -151,18 +162,36 @@ PrimPlayer_situation = {
 	}
 	on_progress_complete = {
 		custom_tooltip = PrimPlayer_reached_space_age
-		OWNER = { set_origin = origin_default }
-		#hidden_effect = {
-		#	if = {
-		#		limit = {
-		#			has_situation_flag = divination_occurring
-		#		}
-		#		situation_event = { id = enclave.416 }
-		#	}
-		#	else = {
-		#		situation_event = { id = enclave.5557 }
-		#	}
-		#}
+		OWNER = { 
+			if = {
+				limit = { 
+					OR = {
+						has_origin = origin_primitive_player_pre_industrial_age 
+						has_origin = origin_primitive_player_industrial_age 
+						has_origin = origin_primitive_player_machine_age 
+						has_origin = origin_primitive_player_atomic_age	
+						has_origin = origin_primitive_player_early_space_age
+					} 
+				}
+				set_origin = origin_default
+			}
+			else_if = {
+				limit = { has_origin = origin_broken_shackles }
+				set_origin = origin_broken_shackles
+			}
+			else_if = {
+				limit = { has_origin = origin_payback }
+				set_origin = origin_payback
+			}
+			else_if = {
+				limit = { is_eager_explorer_empire = yes }
+				
+			}
+			else = {
+				custom_tooltip = ERROR
+			}
+			situation_event = { id = PrimPlay_situation_event.1 }
+		}
 	}
 	on_fail = {
 		custom_tooltip = PrimPlayer_situation_end
@@ -176,6 +205,27 @@ PrimPlayer_situation = {
 		on_select = {
 			custom_tooltip = deficit_approach_do_nothing_tooltip
 		}
+		potential = {
+			OWNER = {
+				OR = {
+					has_origin = origin_primitive_player_pre_industrial_age 
+					has_origin = origin_primitive_player_industrial_age 
+					has_origin = origin_primitive_player_machine_age 
+					has_origin = origin_primitive_player_atomic_age
+					has_origin = origin_primitive_player_early_space_age
+				}
+			}
+		}
+	}
+	approach = {
+		name = PrimPlayer_eager_explorer_approach
+		icon = GFX_situation_approach_research
+		icon_background = GFX_situation_approach_bg_green
+		default = no
+		on_select = {
+			custom_tooltip = PrimPlayer_eager_explorer_approach_tooltip
+		}
+		potential = { OWNER = { is_eager_explorer_empire = yes } }
 	}
 }
 
@@ -224,14 +274,14 @@ PrimPlayer_ethic_egalitarian_union_situation = {
 		modifier = {
 			add = 0.5
 			desc = border_policy_open
-			owner = {
+			OWNER = {
 				has_policy_flag = border_policy_open
 			}
 		}
 		modifier = {
 			add = -0.5
 			desc = border_policy_closed
-			owner = {
+			OWNER = {
 				has_policy_flag = border_policy_closed
 			}
 		}
