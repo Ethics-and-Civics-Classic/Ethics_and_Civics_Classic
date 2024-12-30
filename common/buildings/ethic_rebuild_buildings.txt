@@ -1587,8 +1587,7 @@ building_thermal_borehole = {
 
 	planet_modifier = {
 		job_deep_miner_add = 3
-		pop_environment_tolerance = -0.05
-		planet_stability_add = -5
+		pop_environment_tolerance = -0.075
 	}
 
 	resources = {
@@ -1608,7 +1607,7 @@ building_thermal_borehole = {
 	}
 
 	ai_weight = {
-		weight = 2
+		weight = 500
 		modifier = {
 			factor = 5
 			owner = {
@@ -1641,7 +1640,9 @@ building_thermal_borehole = {
 			}
 		}
 	}
-
+	upgrades = {
+		building_thermal_borehole_2
+	}
 	ai_resource_production = {
 		minerals = 1
 		energy = 1
@@ -1650,7 +1651,93 @@ building_thermal_borehole = {
 		}
 	}
 }
+building_thermal_borehole_2 = {
+	base_buildtime = 600
+	can_build = no
+	category = resource
 
+	potential = {
+		owner = { is_industrial = yes }
+		NOT = { has_modifier = resort_colony }
+
+		NOR = { # Ringworlds don't have mines
+			is_planet_class = pc_ringworld_habitable
+			is_planet_class = pc_cybrex
+		}
+		OR = { # Habitats only have mines if they're built on an appropriate deposit
+			NOT = { is_planet_class = pc_habitat }
+			has_planet_flag = mining_habitat
+		}
+	}
+
+	destroy_trigger = {
+		exists = owner
+			owner = { is_industrial = no }
+	}
+
+	planet_modifier = {
+		job_deep_miner_add = 6
+		pop_environment_tolerance = -0.15
+	}
+
+	resources = {
+		category = planet_buildings
+		cost = {
+			minerals = 300
+			alloys = 200
+		}
+	}
+
+	prerequisites = {
+		"tech_mineral_purification_2"
+	}
+
+	triggered_desc = {
+		text = job_deep_miner_effect_desc
+	}
+
+	ai_weight = {
+		weight = 15
+		modifier = {
+			factor = 5
+			owner = {
+				has_monthly_income = {
+					resource = minerals
+					value < 5
+				}
+			}
+		}
+		modifier = {
+			factor = 5
+			owner = {
+				has_monthly_income = {
+					resource = energy
+					value < 5
+				}
+			}
+		}
+		# No one to work it
+		modifier = {
+			factor = 0
+			count_owned_pop = {
+				limit = {
+					OR = {
+						is_unemployed = yes
+						has_job = servant
+					}
+				}
+				count < 1
+			}
+		}
+	}
+	ai_resource_production = {
+		minerals = 1
+		energy = 1
+		trigger = {
+			always = yes
+		}
+	}
+}
 building_colliseum = {
 	base_buildtime = 480
 	base_cap_amount = 1
@@ -1688,11 +1775,11 @@ building_colliseum = {
 	planet_modifier = {
 		job_gladiator_add = 2
 		planet_housing_add = 2
-		trade_value_add = 5
+		trade_value_add = 15
 	}
 
 	army_modifier = {
-		army_damage_mult = 0.15
+		army_damage_mult = 0.25
 	}
 
 	triggered_planet_modifier = {
