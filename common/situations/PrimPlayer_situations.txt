@@ -48,7 +48,7 @@ PrimPlayer_situation = {
 		stage_3 = {
 			icon = GFX_PrimPlay_situation_stage_machine_age
 			icon_background = GFX_situation_stage_frame_blue
-			end = 146
+			end = 139
 			on_first_enter = {
 				if = {
 					limit = { 
@@ -67,7 +67,7 @@ PrimPlayer_situation = {
 		stage_4 = {
 			icon = GFX_PrimPlay_situation_stage_atomic_age
 			icon_background = GFX_situation_stage_frame_blue
-			end = 246
+			end = 239
 			on_first_enter = {
 				if = {
 					limit = { 
@@ -86,7 +86,7 @@ PrimPlayer_situation = {
 		stage_5 = {
 			icon = GFX_PrimPlay_situation_stage_early_space_age
 			icon_background = GFX_situation_stage_frame_blue
-			end = 411
+			end = 394
 			on_first_enter = {
 				if = {
 					limit = { 
@@ -161,10 +161,14 @@ PrimPlayer_situation = {
 		#}
 	}
 	on_progress_complete = {
-		custom_tooltip = PrimPlayer_reached_space_age
 		OWNER = { 
-			if = {
-				limit = { 
+			add_modifier = {
+				modifier = PrimPlayer_through_the_ages
+			}
+		}
+		if = {
+			limit = { 
+				OWNER = { 
 					OR = {
 						has_origin = origin_primitive_player_pre_industrial_age 
 						has_origin = origin_primitive_player_industrial_age 
@@ -173,23 +177,27 @@ PrimPlayer_situation = {
 						has_origin = origin_primitive_player_early_space_age
 					} 
 				}
+			}
+			OWNER = {
+				custom_tooltip = PrimPlayer_reached_space_age
 				set_origin = origin_default
+				hidden_effect = { PREV = { situation_event = { id = PrimPlay_situation_event.1 } } }
 			}
-			else_if = {
-				limit = { has_origin = origin_broken_shackles }
-				set_origin = origin_broken_shackles
-			}
-			else_if = {
-				limit = { has_origin = origin_payback }
-				set_origin = origin_payback
-			}
-			else_if = {
-				limit = { is_eager_explorer_empire = yes }
-				
-			}
-			else = {
-				custom_tooltip = ERROR
-			}
+		}
+		else_if = {
+			limit = { OWNER = { has_origin = origin_broken_shackles } }
+			situation_event = { id = PrimPlay_situation_event.1 }
+		}
+		else_if = {
+			limit = { OWNER = { has_origin = origin_payback } }
+			situation_event = { id = PrimPlay_situation_event.1 }
+		}
+		else_if = {
+			limit = { OWNER = { is_eager_explorer_empire = yes } }
+			situation_event = { id = PrimPlay_situation_event.1 }
+		}
+		else = {
+			custom_tooltip = ERROR
 			situation_event = { id = PrimPlay_situation_event.1 }
 		}
 	}
