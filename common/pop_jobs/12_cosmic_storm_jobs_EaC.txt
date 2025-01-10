@@ -17,13 +17,22 @@ storm_dancer = {
 
 	possible = {
 		entertainer_job_check_trigger = yes
+		OR = {
+			pop_has_ethic = ethic_green
+			pop_has_ethic = ethic_fanatic_green
+		}
 	}
 
 	resources = {
 		category = planet_storm_dancers
 		produces = {
 			unity = 4
+			society_research = 1
 		}
+	}
+	
+	planet_modifier = {
+		pop_ethic_green_attraction_mult = 0.05
 	}
 
 	triggered_planet_modifier = {
@@ -66,6 +75,7 @@ storm_technician = {
 	condition_string = SPECIALIST_JOB_TRIGGER
 	building_icon = building_storm_summoning_theater
 	clothes_texture_index = 3
+	icon = technician
 
 	possible_pre_triggers = {
 		has_owner = yes
@@ -76,13 +86,22 @@ storm_technician = {
 
 	possible = {
 		entertainer_job_check_trigger = yes
+		OR = {
+			pop_has_ethic = ethic_industrial
+			pop_has_ethic = ethic_fanatic_industrial
+		}
 	}
 
 	resources = {
 		category = planet_storm_dancers
 		produces = {
 			unity = 4
+			engineering_research = 1
 		}
+	}
+	
+	planet_modifier = {
+		pop_ethic_industrial_attraction_mult = 0.05
 	}
 
 	triggered_planet_modifier = {
@@ -95,7 +114,7 @@ storm_technician = {
 
 	weight = {
 		weight = @specialist_job_weight
-		mult = value:job_weights_modifier|JOB|storm_dancer|RESOURCE|unity|
+		mult = value:job_weights_modifier|JOB|storm_technician|RESOURCE|unity|
 		mult = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
 		modifier = {
 			factor = 0.2
@@ -108,7 +127,76 @@ storm_technician = {
 		}
 		modifier = {
 			factor = 1.5
-			has_job = storm_dancer
+			has_job = storm_technician
+		}
+		modifier = {
+			factor = 0.1
+			is_enslaved = yes
+			has_slavery_type = { type = slavery_indentured }
+		}
+	}
+
+	inline_script = "jobs/automodding_priority_unity"
+}
+
+storm_chanter = {
+	category = specialist
+	condition_string = SPECIALIST_JOB_TRIGGER
+	building_icon = building_storm_summoning_theater
+	clothes_texture_index = 3
+	icon = storm_dancer
+
+	possible_pre_triggers = {
+		has_owner = yes
+		is_being_purged = no
+		is_being_assimilated = no
+		is_sapient = yes
+	}
+
+	possible = {
+		entertainer_job_check_trigger = yes
+		OR = {
+			pop_has_ethic = ethic_spiritualist
+			pop_has_ethic = ethic_fanatic_spiritualist
+		}
+	}
+
+	resources = {
+		category = planet_storm_dancers
+		produces = {
+			unity = 4
+			society_research = 1
+		}
+	}
+	
+	planet_modifier = {
+		pop_ethic_spiritualist_attraction_mult = 0.05
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			always = yes
+		}
+		planet_amenities_add = 8
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	}
+
+	weight = {
+		weight = @specialist_job_weight
+		mult = value:job_weights_modifier|JOB|storm_chanter|RESOURCE|unity|
+		mult = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
+		modifier = {
+			factor = 0.2
+			has_citizenship_rights = no
+			NOT = { has_trait = trait_mechanical }
+		}
+		modifier = {
+			factor = 0.1
+			can_take_servant_job = yes
+		}
+		modifier = {
+			factor = 1.5
+			has_job = storm_chanter
 		}
 		modifier = {
 			factor = 0.1
