@@ -54,3 +54,90 @@ situation_event = {
 	}
 	after = { destroy_situation = this }
 }
+
+############################################
+# Developing Hyperspace Travel - START of Situation Event
+############################################
+country_event = {
+	id = PrimPlay_situation_event.2
+	title = PrimPlay_situation_event.2.title
+	desc = {
+		trigger = {
+			OWNER = {
+				NOT = { 
+					has_origin = origin_payback
+					has_origin = origin_broken_shackles
+				}
+			}
+		}
+		text = "PrimPlay_situation_event.2.desc"
+	}
+	desc = {
+		trigger = { OWNER = { has_origin = origin_payback } }
+		text = "PrimPlay_situation_event.2.payback.desc"
+	}
+	desc = {
+		trigger = { OWNER = { has_origin = origin_broken_shackles } }
+		text = "PrimPlay_situation_event.2.broken_shackles.desc"
+	}
+	picture = GFX_evt_city_planet
+	show_sound = event_celebration
+	is_triggered_only = yes
+	
+	trigger = { last_increased_tech = tech_hyper_drive_theory }
+	
+	option = {
+		name = PrimPlay_situation_event.2.into_the_unknown
+		trigger = { 
+			OWNER = { 
+				NOT = { 
+					has_origin = origin_payback 
+					has_origin = origin_broken_shackles
+				}
+				is_eager_explorer_empire = no
+			} 
+		}
+		start_situation = { type = PrimPlayer_developing_hyperdrive_situation target = this }
+		random_situation = { limit = { is_situation_type = PrimPlayer_situation } set_situation_approach = into_the_unknown }
+		add_research_option = tech_hyper_drive_1
+	}
+
+	option = {
+		name = PrimPlay_situation_event.2.eager_explorer
+		trigger = { is_eager_explorer_empire = yes }
+		start_situation = { type = PrimPlayer_developing_hyperdrive_situation target = this }
+		random_situation = { limit = { is_situation_type = PrimPlayer_situation } set_situation_approach = PrimPlayer_eager_explorer_hyperdrive_approach }
+		add_research_option = tech_hyper_drive_1
+	}
+	option = {
+		name = PrimPlay_situation_event.2.payback
+		trigger = { has_origin = origin_payback }
+		start_situation = { type = PrimPlayer_developing_hyperdrive_situation target = this }
+		random_situation = { limit = { is_situation_type = PrimPlayer_situation } set_situation_approach = PrimPlayer_hyperdrive_payback_approach }
+		add_research_option = tech_hyper_drive_1
+	}
+	option = {
+		name = PrimPlay_situation_event.2.broken_shackles
+		trigger = { has_origin = origin_broken_shackles }
+		start_situation = { type = PrimPlayer_developing_hyperdrive_situation target = this }
+		random_situation = { limit = { is_situation_type = PrimPlayer_situation } set_situation_approach = PrimPlayer_broken_shackles_hyperdrive_approach }
+		add_research_option = tech_hyper_drive_1
+	}
+}
+situation_event = {
+	id = PrimPlay_situation_event.3
+	hide_window = yes
+	is_triggered_only = yes
+
+	immediate = {
+		random_list = { 
+			95 = { 
+				OWNER = { add_tech_progress = { tech = tech_hyper_drive_1 progress = 0.005 } } 
+				add_situation_progress = 1
+			} 
+			5 = {
+				#Nothing Happens
+			}
+		}
+	}
+}
