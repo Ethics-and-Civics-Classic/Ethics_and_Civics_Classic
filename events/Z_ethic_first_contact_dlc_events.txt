@@ -1,6 +1,9 @@
 namespace = origin
 namespace = fircon
 
+@PreFTLDiplomacyEventTimer = 1800
+@PreFTLDiplomacyEventTimerLong = 5400
+
 ################################
 #
 # First Contact DLC Events
@@ -19,9 +22,6 @@ country_event = {
 	trigger = {
 		has_origin = origin_broken_shackles
 		last_increased_tech = tech_basic_science_lab_1
-		capital_scope = {
-			has_active_building = building_low_tech_research_lab
-		}
 	}
 
 	option = {
@@ -30,17 +30,63 @@ country_event = {
 		give_technology = { tech = tech_hyper_drive_theory message = yes }
 		hidden_effect = {
 			capital_scope = {
-				remove_building = building_low_tech_research_lab
-				add_building = building_research_lab_1
+				if = { 
+					limit = { has_active_building = building_low_tech_research_lab }
+					remove_building = building_low_tech_research_lab
+					add_building = building_research_lab_1
+				}
 			}
 		}
 	}
 }
 
-namespace = fircon
+# Upgrading Admin Hub
+country_event = {
+	id =  origin.5505
+	title = origin.5505.name
+	desc = origin.5505.desc
+	picture = GFX_evt_partition
+	show_sound = event_celebration
+	is_triggered_only = yes
 
-@PreFTLDiplomacyEventTimer = 1800
-@PreFTLDiplomacyEventTimerLong = 5400
+	trigger = {
+		has_origin = origin_broken_shackles
+		last_increased_tech = tech_planetary_government
+	}
+
+	option = {
+		name = origin.5505.option.regular
+		trigger = { is_spiritualist = no }
+		country_event = { id = PrimPlay_situation_event.3 days = 30 }
+		custom_tooltip = origin.5505.regular.tt
+		hidden_effect = {
+			capital_scope = {
+				if = { 
+					limit = { has_active_building = building_low_tech_admin_hub }
+					remove_building = building_low_tech_admin_hub
+					add_building = building_bureaucratic_1
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = origin.5505.option.spiritualist
+		trigger = { is_spiritualist = yes }
+		country_event = { id = PrimPlay_situation_event.3 days = 30 }
+		custom_tooltip = origin.5505.spiritualist.tt
+		hidden_effect = {
+			capital_scope = {
+				if = { 
+					limit = { has_active_building = building_low_tech_admin_hub }
+					remove_building = building_low_tech_admin_hub
+					add_building = building_temple
+				}
+			}
+		}
+	}
+	
+}
 
 ship_event = {
 	id = fircon.5010
