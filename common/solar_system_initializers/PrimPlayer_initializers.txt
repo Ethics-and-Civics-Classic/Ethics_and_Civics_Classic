@@ -1,0 +1,500 @@
+@distance = 50
+@base_moon_distance = 10
+#################
+## Modding Note##
+#################
+
+#Cog Note
+#System Initializer code must be loaded BEFORE vanilla code for country creation effects to override vanilla.
+#If loaded after, vanilla is created first and gives error "country already created" or something.
+#therefor, you must have this code loaded via 0_ infront so it's loaded before vanilla.
+#spent like 5 hours figuring out why this didn't work. lol
+
+# Sol System (Pre-FTL Humans)
+PrimPlayer_broken_shackle_primitive_system_init = {
+	#name = random
+	class = "rl_standard_stars"
+
+	flags = { primitive_system PrimPlayer_broken_shackle_primitive_system_flag }
+
+	planet = {
+		count = 1
+		class = star
+		orbit_distance = 0
+		orbit_angle = 1
+		size = { min = 20 max = 30 }
+		has_ring = no
+	}
+
+	change_orbit = 20
+
+	planet = {
+		class = "pc_gaia"
+		orbit_distance = 25
+		orbit_angle = 120
+		size = 25
+		has_ring = yes
+		#entity = "continental_planet_earth_entity"
+		deposit_blockers = none
+		modifiers = none
+		#flags = {  }
+
+		init_effect = {
+			#save_global_event_target_as = sol_system_earth
+				# Early Space Age
+					if = { 
+						limit = { host_has_dlc = "Plantoids Species Pack" }
+						random_list = { 
+							50 = { 
+								create_species = {
+									name = random
+									class = "PLANT"
+									portrait = random
+									homeworld = THIS
+									traits = {
+										trait = "trait_plantoid_budding"
+										trait = "trait_plantoid_bloomed"
+									}
+								}
+							} 
+							50 = {
+								create_species = {
+									name = random
+									class = "FUN"
+									portrait = random
+									homeworld = THIS
+									traits = {
+										trait = "trait_plantoid_budding"
+										trait = "trait_plantoid_bloomed"
+									}
+								}
+							}
+						}
+					}
+					else = { 
+						create_species = {
+							name = random
+							class = "FUN"
+							portrait = random
+							homeworld = THIS
+							traits = random
+						}
+					}
+					create_country = {
+						name = random
+						day_zero_contact = no
+						species = last_created_species
+						ethos = {
+							ethic = "ethic_xenophile"
+							ethic = "ethic_fanatic_egalitarian"
+							ethic = "ethic_fanatic_green"
+						}
+						civics = {
+							civic = civic_increasing_urbanization
+							civic = PrimPlayer_civic_environmental_synergy
+							civic = PrimPlayer_civic_the_obelisk
+						}
+						authority = auth_democratic
+						origin = origin_default_pre_ftl
+						#flag = {
+						#	icon = {
+						#		category = "human"
+						#		file = "flag_human_9.dds"
+						#	}
+						#	background= {
+						#		category = "backgrounds"
+						#		file = "circle.dds"
+						#	}
+						#	colors={
+						#		"dark_blue"
+						#		"green"
+						#		"null"
+						#		"null"
+						#	}
+						#}
+						flag = {
+							icon = {
+								category = "pre_ftl"
+								file = "preftl_atomic_age.dds"
+							}
+							background= {
+								category = "backgrounds"
+								file = "new_dawn.dds"
+							}
+							colors={
+								"beige"
+								"brown"
+								"null"
+								"null"
+							}
+						}
+						type = primitive
+					}
+					last_created_country = {
+						set_graphical_culture = industrial_01
+						set_country_flag = atomic_age
+						set_pre_ftl_age = atomic_age
+						#set_country_flag = early_space_age
+						#set_country_flag = humans_early_space_age
+						#set_pre_ftl_age = early_space_age
+					}
+					set_owner = last_created_country
+
+					create_pre_ftl_blockers = yes
+
+					create_army = {
+						name = random
+						owner = last_created_country
+						species = last_created_species
+						type = "postatomic_army"
+					}
+					create_army = {
+						name = random
+						owner = last_created_country
+						species = last_created_species
+						type = "postatomic_army"
+					}
+					create_army = {
+						name = random
+						owner = last_created_country
+						species = last_created_species
+						type = "postatomic_army"
+					}
+					create_army = {
+						name = random
+						owner = last_created_country
+						species = last_created_species
+						type = "postatomic_army"
+					}
+					create_army = {
+						name = random
+						owner = last_created_country
+						species = last_created_species
+						type = "postatomic_army"
+					}
+					#create_fleet = {
+					#	name = "NAME_ISS_II"
+					#	effect = {
+					#		set_owner = last_created_country
+					#		create_ship = {
+					#			name = "NAME_ISS_II"
+					#			design = "NAME_Space_Station"
+					#		}
+					#		set_location = PREV
+					#	}
+					#}
+					while = {
+						count = @early_space_age_pops
+						create_pop = {
+							species = last_created_species
+						}
+					}
+					add_deposit = d_PrimPlayer_the_obelisk_deposit
+					add_modifier = { modifier = PrimPlayer_the_obelisk }
+					add_building = building_primitive_capital
+					add_building = building_solarpunk_sapling
+					add_building = building_primitive_farm
+					add_building = building_primitive_factory
+					add_building = building_primitive_mine
+					add_building = building_primitive_power_plant
+					add_building = building_urban_dwellings
+					#add_building = building_pre_ftl_radio_telescope
+
+					last_created_country = {
+						capital_scope = { set_name = random }
+					}
+		}
+
+		moon = {
+			class = "pc_barren_cold"
+			size = 5
+			orbit_distance = 12
+			orbit_angle = 40
+			has_ring = no
+			entity = "cold_barren_planet_luna_entity"
+		}
+	}
+
+	planet = {
+		orbit_distance = 20
+		count = { min = 0 max = 3 }
+	}
+
+	change_orbit = 20
+
+	planet = {
+		count = 1
+		orbit_distance = 0
+		#class = "rl_habitable_normal"
+		orbit_angle = { min = 90 max = 270 }
+		size = { min = 12 max = 25 }
+		#deposit_blockers = none
+
+		init_effect = {
+			#prevent_anomaly = yes
+			#generate_pre_ftls_on_planet = yes
+		}
+
+		change_orbit = @base_moon_distance
+
+		moon = {
+			count = { min = 0 max = 1 }
+			orbit_angle = { min = 90 max = 270 }
+			orbit_distance = 5
+		}
+	}
+
+	planet = {
+		orbit_distance = 20
+		count = { min = 1 max = 4 }
+
+		change_orbit = @base_moon_distance
+
+		moon = {
+			count = { min = 0 max = 1 }
+			orbit_angle = { min = 90 max = 270 }
+			orbit_distance = 5
+		}
+	}
+
+	planet = {
+		orbit_distance = 20
+		count = { min = 0 max = 2 }
+	}
+}
+
+# Broken Shackles Parent System
+broken_shackles_parent_system = {
+	class = "rl_starting_stars"
+	asteroid_belt = {
+		type = rocky_asteroid_belt
+		radius = 50
+	}
+
+	flags = { primitive_system empire_home_system }
+
+	usage = misc_system_init
+
+	usage_odds = {
+		base = 0
+		modifier = {
+			any_country = {
+				has_origin = origin_broken_shackles
+				NOT = {
+					has_country_flag = parent_system_spawned
+					species_portrait = human
+				}
+			}
+			NOT = { has_star_flag = empire_cluster }
+			add = 99999
+		}
+	}
+
+	planet = {
+		count = 1
+		class = star
+		orbit_distance = 0
+		orbit_angle = 1
+		size = { min = 20 max = 30 }
+		has_ring = no
+	}
+
+	change_orbit = 20
+
+	planet = {
+		orbit_distance = 20
+		count = { min = 0 max = 3 }
+	}
+
+	change_orbit = 20
+
+	planet = {
+		count = 1
+		orbit_distance = 0
+		class = "rl_habitable_normal"
+		orbit_angle = { min = 90 max = 270 }
+		size = { min = 12 max = 25 }
+
+		flags = { }
+
+		init_effect = {
+			prevent_anomaly = yes
+
+			random_country = {
+				limit = {
+					has_origin = origin_broken_shackles
+					NOT = {
+						has_country_flag = parent_system_spawned
+						species_portrait = human
+					}
+				}
+				set_country_flag = parent_system_spawned
+				save_event_target_as = broken_shackles_child
+			}
+
+			set_planet_flag = broken_shackles_homeworld_@event_target:broken_shackles_child
+
+			solar_system = {
+				set_star_flag = broken_shackles_system
+				set_star_flag = broken_shackles_home_system_@event_target:broken_shackles_child
+			}
+
+			create_country = {
+				species = event_target:broken_shackles_child
+				name_list = event_target:broken_shackles_child
+				type = primitive
+				origin = "origin_default"
+				government_restrictions = {
+					authority = { NOT = { value = auth_machine_intelligence value = auth_hive_mind } }
+				}
+				civics = {
+					civic = civic_increasing_urbanization
+					civic = civic_atmospheric_pollution
+					civic = PrimPlayer_civic_the_obelisk
+				}
+				flag = {
+					icon = {
+						category = "spherical"
+						file = "flag_spherical_22.dds"
+					}
+					background= {
+						category = "backgrounds"
+						file = "new_dawn.dds"
+					}
+					colors={
+						"turquoise"
+						"green"
+						"null"
+						"null"
+					}
+				}
+				effect = {
+					save_event_target_as = broken_shackles_parent
+				}
+			}
+			event_target:broken_shackles_parent = {
+				set_graphical_culture = industrial_01
+				random_list = {
+					25 = {
+						set_country_flag = industrial_age
+						set_pre_ftl_age = industrial_age
+						change_country_flag = {
+							icon = {
+								category = "pre_ftl"
+								file = "preftl_industrial_age.dds"
+							}
+							background= {
+								category = "backgrounds"
+								file = "new_dawn.dds"
+							}
+							colors={
+								"beige"
+								"yellow"
+								"null"
+								"null"
+							}
+						}
+					}
+					25 = {
+						set_country_flag = machine_age
+						set_pre_ftl_age = machine_age
+						change_country_flag = {
+							icon = {
+								category = "pre_ftl"
+								file = "preftl_machine_age.dds"
+							}
+							background= {
+								category = "backgrounds"
+								file = "new_dawn.dds"
+							}
+							colors={
+								"yellow"
+								"orange"
+								"null"
+								"null"
+							}
+						}
+					}
+					25 = {
+						set_country_flag = atomic_age
+						set_pre_ftl_age = atomic_age
+						change_country_flag = {
+							icon = {
+								category = "pre_ftl"
+								file = "preftl_atomic_age.dds"
+							}
+							background= {
+								category = "backgrounds"
+								file = "new_dawn.dds"
+							}
+							colors={
+								"beige"
+								"brown"
+								"null"
+								"null"
+							}
+						}
+					}
+					25 = {
+						set_country_flag = early_space_age
+						set_pre_ftl_age = early_space_age
+						change_country_flag = {
+							icon = {
+								category = "pre_ftl"
+								file = "preftl_early_space_age.dds"
+							}
+							background= {
+								category = "backgrounds"
+								file = "new_dawn.dds"
+							}
+							colors={
+								"grey"
+								"dark_grey"
+								"null"
+								"null"
+							}
+						}
+					}
+				}
+
+				set_country_flag = broken_shackles_parent_country
+				set_country_flag = special_intro_for@event_target:broken_shackles_child
+				set_country_flag = broken_shackles_parent_of@event_target:broken_shackles_child
+				owner_species = { set_species_homeworld = prevprev }
+				set_name = random # Fixes some naming issues
+			}
+
+			setup_pre_ftl_broken_shackles_planet = yes
+			add_deposit = d_PrimPlayer_the_obelisk_deposit
+			add_modifier = { modifier = PrimPlayer_the_obelisk }
+		}
+
+		change_orbit = @base_moon_distance
+
+		moon = {
+			count = { min = 0 max = 1 }
+			orbit_angle = { min = 90 max = 270 }
+			orbit_distance = 5
+		}
+	}
+
+	planet = {
+		class = pc_gas_giant
+		orbit_distance = 20
+		count = { min = 1 max = 4 }
+
+		change_orbit = @base_moon_distance
+
+		moon = {
+			count = { min = 0 max = 1 }
+			orbit_angle = { min = 90 max = 270 }
+			orbit_distance = 5
+		}
+	}
+
+	planet = {
+		class = pc_gas_giant
+		orbit_distance = 20
+		count = { min = 0 max = 2 }
+	}
+}
