@@ -1,7 +1,7 @@
-#Tooltips will be generated from these rules when they fail. Use of custom_tooltip is recommended
-#There are still multiple hard-coded rules that apply in addition to these.
-#If rules here evaluate to true, there might still be other rules that make the action unavailable.
-#If a rule here evaluates to false the action will become unavailable
+# Tooltips will be generated from these rules when they fail. Use of custom_tooltip is recommended
+# There are still multiple hard-coded rules that apply in addition to these.
+# If rules here evaluate to true, there might still be other rules that make the action unavailable.
+# If a rule here evaluates to false the action will become unavailable
 
 # This = planet
 # Root = country
@@ -30,8 +30,8 @@ can_build_branch_office_on_planet = {
 		}
 		else_if = {
 			limit = {
-				ROOT = { has_civic = civic_worker_coop }
-				THIS = { any_owned_pop_group = { is_enslaved = yes } }
+				root = { has_civic = civic_worker_coop }
+				this = { any_owned_pop_group = { is_enslaved = yes } }
 				owner = { is_primitive = yes }
 			}
 			has_observation_outpost = yes
@@ -41,8 +41,8 @@ can_build_branch_office_on_planet = {
 		}
 		else_if = {
 			limit = {
-				ROOT = { has_civic = civic_ruthless_competition }
-				THIS = { any_owned_pop_group = { is_enslaved = yes } }
+				root = { has_civic = civic_ruthless_competition }
+				this = { any_owned_pop_group = { is_enslaved = yes } }
 				owner = { is_primitive = yes }
 			}
 			has_observation_outpost = yes
@@ -55,11 +55,11 @@ can_build_branch_office_on_planet = {
 		fail_text = BRANCH_OFFICE_NOT_COMMERCIAL_PACT
 		exists = owner
 		OR = {
-			ROOT = { is_criminal_syndicate = yes }
-			ROOT = { has_civic = civic_ruthless_competition }
+			root = { is_criminal_syndicate = yes }
+			root = { has_civic = civic_ruthless_competition }
 			AND = {
-				ROOT = { has_civic = civic_worker_coop }
-				THIS = { any_owned_pop_group = { is_enslaved = yes } }
+				root = { has_civic = civic_worker_coop }
+				this = { any_owned_pop_group = { is_enslaved = yes } }
 			}
 			owner = { has_commercial_pact = root }
 			owner = { is_in_federation_with = root }
@@ -70,17 +70,17 @@ can_build_branch_office_on_planet = {
 				}
 			}
 
-			# allow branch offices in subsidiaries and vice versa (and fellow subjects)
+			# Allow branch offices in subsidiaries and vice versa (and fellow subjects)
 			root = {
 				is_subject = yes
 				OR = {
-					has_authority = auth_corporate
+					is_megacorp = yes
 					has_civic = civic_galactic_sovereign_megacorp
 				}
 				overlord = {
 					OR = {
-						is_same_value = prevprev.owner
-						is_same_value = prevprev.owner.overlord
+						is_same_empire = prevprev.owner
+						is_same_empire = prevprev.owner.overlord
 					}
 				}
 			}
@@ -92,7 +92,7 @@ can_build_branch_office_on_planet = {
 						is_same_value = root.overlord
 					}
 					OR = {
-						has_authority = auth_corporate
+						is_megacorp = yes
 						has_civic = civic_galactic_sovereign_megacorp
 					}
 				}
@@ -110,7 +110,7 @@ can_build_branch_office_on_planet = {
 	custom_tooltip = {
 		fail_text = BRANCH_OFFICE_MEGACORP_OVERLORD
 		exists = owner
-		# failure message for having a corporate overlord
+		# Failure message for having a corporate overlord
 
 		if = {
 			limit = {
@@ -124,7 +124,7 @@ can_build_branch_office_on_planet = {
 						is_subject = yes
 						overlord = {
 							NOR = {
-								has_authority = auth_corporate
+								is_megacorp = yes
 								has_civic = civic_galactic_sovereign_megacorp
 							}
 						}
@@ -139,7 +139,7 @@ can_build_branch_office_on_planet = {
 					is_subject = yes
 					overlord = {
 						OR = {
-							has_authority = auth_corporate
+							is_megacorp = yes
 							has_civic = civic_galactic_sovereign_megacorp
 						}
 					}
@@ -190,8 +190,8 @@ can_build_branch_office_on_planet = {
 	}
 }
 
-#Root = country
-#This = pop
+# Root = country
+# This = pop
 can_generate_leader_from_pop_group = {
 	can_be_leader = yes
 }
@@ -200,7 +200,7 @@ can_generate_leader_from_pop_group = {
 # Checked by is_criminal_syndicate trigger
 is_criminal_syndicate_rule = {
 	OR = {
-		has_authority = auth_corporate
+		is_megacorp = yes
 		has_valid_civic = civic_galactic_sovereign_megacorp
 	}
 	OR = {
@@ -256,14 +256,13 @@ can_fill_ruler_job = {
 	else = {
 		custom_tooltip = RULER_JOB_TRIGGER
 		hidden_trigger = {
-			NOT = { has_ethic = ethic_gestalt_consciousness }
+			is_gestalt = no
 			exists = owner
 			is_enslaved = no
 			is_being_purged = no
-			is_being_assimilated = no
-			NOT = { has_trait = trait_syncretic_proles }
-            NOT = { has_trait = trait_zombie }
-            NOT = { has_trait = trait_nerve_stapled }
+			NOR = { is_being_assimilated = yes has_trait = trait_syncretic_proles }
+			NOT = { has_trait = trait_zombie }
+			NOT = { has_trait = trait_nerve_stapled }
 			NOT = { has_trait = trait_symbiotic }
 			NOT = { has_trait = trait_slave_gene }
 			can_think = yes

@@ -32,8 +32,8 @@ pirate_mercenary_dividends = {
 	complete_icon_frame = GFX_situation_outcome_frame_blue
 	complete_icon = GFX_situation_outcome_meh
 	on_progress_complete = {
-		#Figure out Patron and give resources
-		custom_tooltip = situation_unknown_outcome_approach #not really necessary except to silence the error log
+		# Figure out Patron and give resources
+		custom_tooltip = situation_unknown_outcome_approach # not really necessary except to silence the error log
 		owner = { country_event = { id = EaC_civic_mechanic_events.275 } }
 	}
 	on_fail = {
@@ -44,12 +44,12 @@ pirate_mercenary_dividends = {
 		random_events = {
 			5 = 0
 			# Cut, potentially revisit later
-			#1 = Mercenaries poaching military
-			#1 = Joint research project
-			#1 = Joint officer drills
-			#1 = Competing Mercenaries
-			#1 = Small scale reward
-			#1 = A once per game rare event chain?
+			# 1 = Mercenaries poaching military
+			# 1 = Joint research project
+			# 1 = Joint officer drills
+			# 1 = Competing Mercenaries
+			# 1 = Small scale reward
+			# 1 = A once per game rare event chain?
 		}
 	}
 	stages = {
@@ -60,14 +60,14 @@ pirate_mercenary_dividends = {
 		}
 	}
 	monthly_progress = {
-		#total: 240 Can use scripted variable above to fine tune progress
+		# total: 240 Can use scripted variable above to fine tune progress
 		base = @dividend_base_rate
 		modifier = {
 			add = @dividend_hire_rate
 			desc = fleet_hired
 			any_playable_country = {
 				any_controlled_fleet = {
-					owner = { is_same_value = root.owner }
+					is_owned_by = root.owner
 				}
 			}
 		}
@@ -77,21 +77,19 @@ pirate_mercenary_dividends = {
 			desc = fleet_hired
 			exists = owner
 			owner = {
-				AND = {
-					any_owned_fleet = {
-						NOT = {
-							controller = { is_same_value = root.owner }
-						}
+				any_owned_fleet = {
+					NOT = {
+						controller = { is_same_empire = root.owner }
 					}
-					any_owned_fleet = {
-						is_ship_size = enclave_mercenary_station
-						solar_system = {
-							exists = owner
-							space_owner = {
-								NOT = {
-									any_controlled_fleet = {
-										owner = { is_same_value = root.owner }
-									}
+				}
+				any_owned_fleet = {
+					is_ship_size = enclave_mercenary_station
+					solar_system = {
+						exists = owner
+						space_owner = {
+							NOT = {
+								any_controlled_fleet = {
+									is_owned_by = root.owner
 								}
 							}
 						}
@@ -105,21 +103,19 @@ pirate_mercenary_dividends = {
 			desc = fleet_hired
 			exists = owner
 			owner = {
-				AND = {
-					any_owned_fleet = {
-						NOT = {
-							controller = { is_same_value = root.owner }
-						}
+				any_owned_fleet = {
+					NOT = {
+						controller = { is_same_empire = root.owner }
 					}
-					any_owned_fleet = {
-						is_ship_size = enclave_pirate_mercenary_station
-						solar_system = {
-							exists = owner
-							space_owner = {
-								NOT = {
-									any_controlled_fleet = {
-										owner = { is_same_value = root.owner }
-									}
+				}
+				any_owned_fleet = {
+					is_ship_size = enclave_pirate_mercenary_station
+					solar_system = {
+						exists = owner
+						space_owner = {
+							NOT = {
+								any_controlled_fleet = {
+									is_owned_by = root.owner
 								}
 							}
 						}
@@ -157,7 +153,7 @@ pirate_mercenary_dividends = {
 			add = @dividend_financial_trouble_rate
 			desc = enclave_rank
 			owner = { has_modifier = merc_financial_troubles }
-			situation_progress > 3 #We don't want total situation progress to ever go below 0
+			situation_progress > 3 # We don't want total situation progress to ever go below 0
 		}
 
 		modifier = {
@@ -218,7 +214,7 @@ pirate_mercenary_dividends = {
 			}
 		}
 	}
-	approach = { #Actually, the player will never see this Situations. Just adding one in in case one is required
+	approach = { # Actually, the player will never see this Situations. Just adding one in in case one is required
 		name = approach_revolt_do_nothing
 		icon = GFX_situation_approach_this_is_fine
 		icon_background = GFX_situation_approach_bg_yellow

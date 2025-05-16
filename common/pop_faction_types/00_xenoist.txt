@@ -140,7 +140,7 @@ xenoist = {
 			exists = owner
 			owner = {
 				any_relation = {
-					is_country_type = primitive
+					is_primitive = yes
 				}
 			}
 		}
@@ -179,7 +179,7 @@ xenoist = {
 		trigger = {
 			owner = {
 				NOT = {
-					#has_policy_flag = slavery_allowed
+					# has_policy_flag = slavery_allowed
 					any_owned_species = {
 						has_citizenship_type = { country = prev type = citizenship_slavery }
 					}
@@ -425,7 +425,7 @@ xenoist = {
 				OR = {
 					any_controlled_ship = { is_ship_size = observation_station }
 					has_country_flag = recent_enlightenment_timed
-					# fixes demand disappearing when fulfilled (station dismantles)
+					# Fixes demand disappearing when fulfilled (station dismantles)
 				}
 			}
 		}
@@ -505,7 +505,7 @@ xenoist = {
 			exists = owner
 			owner = {
 				num_communications > 3
-				NOT = { has_valid_civic = civic_peacekeepers }
+				NOT = { has_civic = civic_peacekeepers }
 			}
 		}
 
@@ -530,9 +530,8 @@ xenoist = {
 				any_country = {
 					NOT = { has_communications = prev}
 					OR = {
-						is_country_type = default
-						is_fallen_empire = yes
-						is_country_type = primitive
+						is_default_or_fallen = yes
+						is_primitive = yes
 					}
 				}
 			}
@@ -683,8 +682,7 @@ xenoist = {
 
 		trigger = {
 			owner = {
-				is_subject = no
-				NOT = { has_policy_flag = oppressive_terms }
+				NOR = { is_subject = yes has_policy_flag = oppressive_terms }
 			}
 		}
 	}
@@ -700,8 +698,7 @@ xenoist = {
 		potential = {
 			exists = owner
 			owner = {
-				is_subject = no
-				NOT = { has_policy_flag = oppressive_terms }
+				NOR = { is_subject = yes has_policy_flag = oppressive_terms }
 			}
 		}
 
@@ -732,17 +729,17 @@ xenoist = {
 			exists = owner
 			owner = {
 				has_technology = tech_alien_life_studies
-				NOT = { has_valid_civic = civic_warrior_culture }
+				NOT = { has_civic = civic_warrior_culture }
 			}
 		}
 
 		trigger = {
 			owner = {
 				count_owned_planet = {
+					count > 0
 					limit = {
 						has_building = building_xeno_zoo
 					}
-					count > 0
 				}
 			}
 		}
@@ -781,7 +778,7 @@ xenoist = {
 				owner = {
 					OR = {
 						is_subject = no
-						NOT = { any_agreement = { agreement_preset = preset_dominion } }
+						count_agreement = { count = 0 limit = { agreement_preset = preset_dominion } }
 					}
 				}
 			}
@@ -800,14 +797,14 @@ xenoist = {
 			}
 
 			effect = {
-				add_modifier = { modifier = embraced_faction days = 3600 }
+				add_modifier = { modifier = embraced_faction years = 10 }
 				parameter:empire = {
 					shift_ethic = ethic_xenophile
 					hidden_effect = {
-						add_modifier = { modifier = embraced_faction_timer days = 3600 }
+						add_modifier = { modifier = embraced_faction_timer years = 10 }
 						every_pop_faction = {
 							limit = { NOT = { is_same_value = root } }
-							add_modifier = { modifier = embraced_another_faction days = 3600 }
+							add_modifier = { modifier = embraced_another_faction years = 10 }
 						}
 					}
 				}
@@ -954,7 +951,7 @@ xenoist = {
 			potential = {
 				exists = owner
 				owner = {
-					has_authority = auth_oligarchic
+					is_oligarchic_authority = yes
 					has_country_flag = cyber_collectivist
 				}
 				is_faction_extorted = no
@@ -977,7 +974,7 @@ xenoist = {
 			potential = {
 				exists = owner
 				owner = {
-					has_authority = auth_oligarchic
+					is_oligarchic_authority = yes
 					has_country_flag = cyber_collectivist
 				}
 				is_faction_extorted = yes

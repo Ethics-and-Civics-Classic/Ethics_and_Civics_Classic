@@ -2,12 +2,12 @@
 
 # wipe_pop_ethos = {}
 
-#reset_planet = { reroll_deposits = yes }
+# reset_planet = { reroll_deposits = yes }
 
-#Given a species, create a mod with trait_cybernetic and apply to all pops, leaders
-# and armies that have the original species and the same owner as the scope object.
+# Given a species, create a mod with trait_cybernetic and apply to all pops, leaders
+# And armies that have the original species and the same owner as the scope object.
 # Scope: Something that has a species and an owner
-#create_cybernetic_species_mod = {
+# create_cybernetic_species_mod = {
 
 ethic_fanatic_nation_setup_effect = {
 	establish_communications_no_message = root
@@ -18,12 +18,9 @@ ethic_fanatic_nation_setup_effect = {
 		event_leader = yes
 		skill = 1
 		set_age = 0
-		traits = {
-			
-		}
 	}
 	set_leader = last_created_leader
-	#save_global_event_target_as = gray_country
+	# save_global_event_target_as = gray_country
 }
 
 primitive_nation_absorption_effect = {
@@ -31,14 +28,12 @@ primitive_nation_absorption_effect = {
 		if = {
 			limit = {
 				any_owned_pop_group = {
-					NOT = { has_trait = trait_hive_mind }
-					is_robot_pop_group = no
+					NOR = { has_trait = trait_hive_mind is_robot_pop_group = yes }
 				}
 			}
 			random_owned_pop_group = {
 				limit = {
-					NOT = { has_trait = trait_hive_mind }
-					is_robot_pop_group = no
+					NOR = { has_trait = trait_hive_mind is_robot_pop_group = yes }
 				}
 				root = {
 					create_pop = {
@@ -60,7 +55,7 @@ primitive_nation_absorption_effect = {
 	custom_tooltip = d_decrepit_dwellings_custom_tooltip
 }
 
-#generate_home_system_resources = {
+# generate_home_system_resources = {
 
 generate_start_buildings_and_blockers = {
 	random_tile = {
@@ -145,7 +140,7 @@ generate_start_buildings_and_blockers = {
 	}	
 }
 
-reset_start_buildings_and_blockers_post_apoc = { #Selectively resets necessary tiles for Post-Apoc Civic users. Relies on "generate_start_buildings_and_blockers" and game_start.32
+reset_start_buildings_and_blockers_post_apoc = { # Selectively resets necessary tiles for Post-Apoc Civic users. Relies on "generate_start_buildings_and_blockers" and game_start.32
 	random_tile = {
 		limit = { has_building = "building_colony_shelter" }
 		set_deposit = d_energy_deposit
@@ -226,7 +221,7 @@ reset_start_buildings_and_blockers_post_apoc = { #Selectively resets necessary t
 			}
 		}
 	}
-	random_tile = { #turns one farm tile into empty tile
+	random_tile = { # turns one farm tile into empty tile
 		limit = {
 			OR = {
 				has_deposit = "d_farmland_deposit"
@@ -320,21 +315,21 @@ reset_start_buildings_and_blockers_post_apoc = { #Selectively resets necessary t
 			}
 		}
 	}
-	IF = { #ensures at least one empty tile, if no farm tile was generated to nuke
+	if = { # ensures at least one empty tile, if no farm tile was generated to nuke
 		limit = { any_tile = { NOT = { has_deposit = no } } }
 		random_tile = {
 			limit = { has_blocker = no has_building = no has_deposit = yes }
 			clear_deposits = yes
 		}
 		else = {
-			#do nothing
+			# do nothing
 		}
 	}
 }
 
-reset_start_buildings_and_blockers_life_seeded = { #Selectively resets necessary tiles for Life-Seeded Civic users. Is triggered after "generate_start_buildings_and_blockers" by game_start.34
+reset_start_buildings_and_blockers_life_seeded = { # Selectively resets necessary tiles for Life-Seeded Civic users. Is triggered after "generate_start_buildings_and_blockers" by game_start.34
 	# Find capitol and buildings, and then remove them
-	# this is needed because planet's deposits were re-rolled after
+	# This is needed because planet's deposits were re-rolled after
 	every_tile = {
 		limit = { has_building = yes }
 		remove_building = yes
@@ -361,13 +356,13 @@ reset_start_buildings_and_blockers_life_seeded = { #Selectively resets necessary
 		}
 		random_neighboring_tile = {
 			limit = { has_blocker = no has_building = no }
-			#set_building = "building_mining_network_1"		#Deprecated Vanilla Code
+			# set_building = "building_mining_network_1"		# Deprecated Vanilla Code
 			set_deposit = d_rich_mineral_deposit
 		}
 	}
 	
 	# Add the lab
-	# has pop = yes to make sure they use the tiles that were first generated for this task
+	# Has pop = yes to make sure they use the tiles that were first generated for this task
 	random_tile = {
 		limit = { has_blocker = no has_building = no has_pop = yes  }
 		set_building = "building_basic_science_lab_1"
@@ -384,8 +379,8 @@ reset_start_buildings_and_blockers_life_seeded = { #Selectively resets necessary
 		}	
 	}
 	# Add mine and power plant
-	# has pop = yes to make sure they use the tiles that were first generated for this task
-	#random_tile = {	#Deprecated Vanilla Code
+	# Has pop = yes to make sure they use the tiles that were first generated for this task
+	# random_tile = {	# Deprecated Vanilla Code
 	#	limit = { has_blocker = no has_building = no has_pop = yes }
 	#	set_building = "building_mining_network_1"
 	#	set_deposit = d_mineral_deposit
@@ -402,7 +397,7 @@ reset_start_buildings_and_blockers_life_seeded = { #Selectively resets necessary
 		
 		save_event_target_as = needs_worker	
 		planet = {
-			random_pop = {
+			weighted_random_owned_pop_group = {
 				limit = { tile = { has_building = no } }
 
 				resettle_pop = {
@@ -415,43 +410,43 @@ reset_start_buildings_and_blockers_life_seeded = { #Selectively resets necessary
 	}
 	# Add blockers
 	random_tile = {
-        limit = { has_blocker = no has_building = no has_pop = no }
-        set_blocker = "tb_failing_infrastructure"
-        set_deposit = d_mineral_deposit
+		limit = { has_blocker = no has_building = no has_pop = no }
+		set_blocker = "tb_failing_infrastructure"
+		set_deposit = d_mineral_deposit
     }
-    random_tile = {
-        limit = { has_blocker = no has_building = no has_pop = no }
-        set_blocker = "tb_failing_infrastructure"
-        set_deposit = d_engineering_deposit
+	random_tile = {
+		limit = { has_blocker = no has_building = no has_pop = no }
+		set_blocker = "tb_failing_infrastructure"
+		set_deposit = d_engineering_deposit
     }
-    random_tile = {
-        limit = { has_blocker = no has_building = no has_pop = no  }
-        set_blocker = "tb_failing_infrastructure"
-        set_deposit = d_society_deposit
+	random_tile = {
+		limit = { has_blocker = no has_building = no has_pop = no  }
+		set_blocker = "tb_failing_infrastructure"
+		set_deposit = d_society_deposit
     }
-    random_tile = {
-        limit = { has_blocker = no has_building = no has_pop = no }
-        set_blocker = "tb_failing_infrastructure"
-        set_deposit = d_physics_deposit
+	random_tile = {
+		limit = { has_blocker = no has_building = no has_pop = no }
+		set_blocker = "tb_failing_infrastructure"
+		set_deposit = d_physics_deposit
     }
-    random_tile = {
-        limit = { has_blocker = no has_building = no has_pop = no }
-        set_blocker = "tb_decrepit_dwellings"
-        set_deposit = d_rich_energy_deposit
+	random_tile = {
+		limit = { has_blocker = no has_building = no has_pop = no }
+		set_blocker = "tb_decrepit_dwellings"
+		set_deposit = d_rich_energy_deposit
     }
-    random_tile = {
-        limit = { has_blocker = no has_building = no has_pop = no }
-        set_blocker = "tb_decrepit_dwellings"
-        set_deposit = d_rich_energy_deposit
+	random_tile = {
+		limit = { has_blocker = no has_building = no has_pop = no }
+		set_blocker = "tb_decrepit_dwellings"
+		set_deposit = d_rich_energy_deposit
     }
-    random_tile = {
-        limit = { has_blocker = no has_building = no has_pop = no }
-        set_blocker = "tb_decrepit_dwellings"
-        set_deposit = d_rich_farmland_deposit        
+	random_tile = {
+		limit = { has_blocker = no has_building = no has_pop = no }
+		set_blocker = "tb_decrepit_dwellings"
+		set_deposit = d_rich_farmland_deposit		
     }
-    random_tile = {
-        limit = { has_blocker = no has_building = no has_pop = no }
-        set_blocker = "tb_decrepit_dwellings"
-        set_deposit = d_rich_mineral_deposit        
+	random_tile = {
+		limit = { has_blocker = no has_building = no has_pop = no }
+		set_blocker = "tb_decrepit_dwellings"
+		set_deposit = d_rich_mineral_deposit		
     }
 }

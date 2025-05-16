@@ -6,9 +6,9 @@ event = {
 	is_triggered_only = yes
 	trigger = {
 		any_playable_country = {
-			has_technology = "tech_starbase_1"		#Modded for PrimPlayer Compatibility
+			has_technology = "tech_starbase_1"		# Modded for PrimPlayer Compatibility
 			any_owned_planet = {
-				is_controlled_by = PREV
+				is_controlled_by = prev
 				solar_system = {
 					NOT = {
 						exists = starbase
@@ -22,21 +22,17 @@ event = {
 			limit = {
 				NOT = { exists = starbase }
 				any_system_colony = {
-					exists = owner
+					has_owner = yes
 					has_ground_combat = no
 					owner = {
-						OR = {
-							is_country_type = default
-							is_country_type = fallen_empire
-							is_country_type = awakened_fallen_empire
-						}
+						is_default_or_fallen = yes
 					}
 					solar_system = {
 						NOR = {
 							any_fleet_in_system = {
 								exists = owner
 								owner = {
-									NOT = { is_same_value = prevprevprev.owner }
+									NOT = { is_same_empire = prevprevprev.owner }
 									OR = {
 										is_hostile = prevprevprev.owner
 										is_at_war_with = prevprevprev.owner
@@ -47,7 +43,7 @@ event = {
 							any_fleet_in_system = {
 								exists = controller
 								controller = {
-									NOT = { is_same_value = prevprevprev.owner }
+									NOT = { is_same_empire = prevprevprev.owner }
 									OR = {
 										is_hostile = prevprevprev.owner
 										is_at_war_with = prevprevprev.owner
@@ -56,39 +52,31 @@ event = {
 								is_cloaked = no
 							}
 							any_system_colony = {
-								exists = owner
+								has_owner = yes
 								NOT = { is_same_value = prevprev }
 								owner = {
-									NOT = { is_same_value = prevprevprev.owner }
-									OR = {
-										is_country_type = default
-										is_country_type = fallen_empire
-										is_country_type = awakened_fallen_empire
-									}
+									NOT = { is_same_empire = prevprevprev.owner }
+									is_default_or_fallen = yes
 								}
 							}
 						}
 					}
 				}
 			}
-			random_system_planet = {
+			random_system_colony = {
 				limit = {
-					is_colony = yes
+					has_owner = yes
 					exists = owner
 					has_ground_combat = no
 					owner = {
-						OR = {
-							is_country_type = default
-							is_country_type = fallen_empire
-							is_country_type = awakened_fallen_empire
-						}
+						is_default_or_fallen = yes
 					}
 					solar_system = {
 						NOR = {
 							any_fleet_in_system = {
 								exists = owner
 								owner = {
-									NOT = { is_same_value = prevprevprev.owner }
+									NOT = { is_same_empire = prevprevprev.owner }
 									OR = {
 										is_hostile = prevprevprev.owner
 										is_at_war_with = prevprevprev.owner
@@ -99,7 +87,7 @@ event = {
 							any_fleet_in_system = {
 								exists = controller
 								controller = {
-									NOT = { is_same_value = prevprevprev.owner }
+									NOT = { is_same_empire = prevprevprev.owner }
 									OR = {
 										is_hostile = prevprevprev.owner
 										is_at_war_with = prevprevprev.owner
@@ -108,14 +96,10 @@ event = {
 								is_cloaked = no
 							}
 							any_system_colony = {
-								exists = owner
+								has_owner = yes
 								owner = {
-									NOT = { is_same_value = prevprevprev.owner }
-									OR = {
-										is_country_type = default
-										is_country_type = fallen_empire
-										is_country_type = awakened_fallen_empire
-									}
+									NOT = { is_same_empire = prevprevprev.owner }
+									is_default_or_fallen = yes
 								}
 							}
 						}
@@ -136,11 +120,11 @@ event = {
 		}
 	}
 }
-#event = {
-#	id = action.90		#Cogger Note - This code was used to make it so when a colony orphans it won't build a station without tech.
-#	hide_window = yes	#Cogger Note - While this makes sense, this allows ownership of the system to be empire B and planet to be empire A.
-#						#Cogger Note - While this makes sense, I feel this would cause unintentional compatbility conflicts as this is very unexpected.
-#						#Cogger Update - Vanilla solves this problem by making player-planets never surveyed. Thus nobody can own the star while another owns the planet.
+# event = {
+#	id = action.90		# Cogger Note - This code was used to make it so when a colony orphans it won't build a station without tech.
+#	hide_window = yes	# Cogger Note - While this makes sense, this allows ownership of the system to be empire B and planet to be empire A.
+#						# Cogger Note - While this makes sense, I feel this would cause unintentional compatbility conflicts as this is very unexpected.
+#						# Cogger Update - Vanilla solves this problem by making player-planets never surveyed. Thus nobody can own the star while another owns the planet.
 #	is_triggered_only = yes
 #
 #	trigger = {
@@ -159,7 +143,7 @@ event = {
 #	immediate = {
 #		every_system = {
 #			limit = {
-#				any_planet = {
+#				any_galaxy_planet = {
 #					is_colony = yes
 #					exists = owner
 #					owner = {
@@ -174,7 +158,7 @@ event = {
 #						NOT = {
 #							any_ship_in_system = {
 #								exists = owner
-#								owner = { NOT = { is_same_value = prevprevprev.owner } }
+#								owner = { NOT = { is_same_empire = prevprevprev.owner } }
 #							}
 #						}
 #					}
