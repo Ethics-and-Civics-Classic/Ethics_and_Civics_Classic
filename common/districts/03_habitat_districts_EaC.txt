@@ -1,8 +1,17 @@
-@hab_cost = 500
+@hab_cost = 150					#Stellaris 4.0 Values
 @hab_maintenance = 2
-@low_hab_maintenance = 0.2
-@hab_time = 240
-@hab_jobs = 2
+@low_hab_maintenance = 0.25
+@hab_time = 360
+
+#@hab_cost = 500
+#@hab_maintenance = 2
+#@low_hab_maintenance = 0.2
+#@hab_time = 240
+#@hab_jobs = 2
+
+# NOTE: district_hab_energy_max, district_hab_mining_max and district_hab_science_max
+# are provided by habitat_modifiers on orbital deposits
+# These modifiers are equal to 1 + FLOOR(n/2), where n is the deposit size.
 
 district_hab_housing = {
 	base_buildtime = @hab_time
@@ -17,26 +26,20 @@ district_hab_housing = {
 
 	show_on_uncolonized = {
 		uses_district_set = habitat
-		NOR = {
-			has_planet_flag = toxic_knights_habitat
-			has_building = building_order_castle
-		}
 	}
 
 	potential = {
 		uses_district_set = habitat
 		NAND = {
-			exists = owner
-			owner = { has_origin = origin_toxic_knights }
-			OR = {
-				has_planet_flag = toxic_knights_habitat
-				has_building = building_order_castle
+			is_capital = yes
+			owner = {
+				has_menace_perk = menp_behemoth_mind_meld
 			}
 		}
 	}
 
 	convert_to = {
-		district_orders_demesne
+		district_mindlink
 	}
 
 	resources = {
@@ -51,8 +54,8 @@ district_hab_housing = {
 	}
 
 	planet_modifier = {
-		planet_max_buildings_add = 0.50
-		planet_housing_add = 600
+		# planet_max_buildings_add = 0.50	#No Longer Used in Stellaris 4.0
+		planet_housing_add = 1000
 	}
 
 	triggered_planet_modifier = {
@@ -66,7 +69,7 @@ district_hab_housing = {
 	}
 
 	inline_script = {
-		script = districts/habitat_housing_job_swaps
+		script = districts/ai_urban_district_extra_weighting
 	}
 
 	triggered_planet_modifier = {
@@ -117,58 +120,71 @@ district_hab_energy = {
 		planet_housing_add = 300
 	}
 
-	inline_script = {
-		script = districts/habitat_districts_triggered_mods
-	}
+	#inline_script = {
+	#	script = districts/habitat_districts_triggered_mods		#No Longer Used in Stellaris 4.0
+	#}
 
 	resources = {
-		category = planet_districts_hab_energy
+		category = planet_districts_hab
 		cost = {
-			minerals = @hab_cost
+			alloys = @hab_cost
 		}
 		upkeep = {
 			energy = @hab_maintenance
 			alloys = @low_hab_maintenance
 		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = {
-				is_gestalt = no
-				is_fallen_empire_spiritualist = no
+		upkeep = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_edict = industrial_maintenance
+				}
 			}
+			energy = 2
 		}
-		job_technician_add = 100
-		mult = owner.value:hab_void_dweller_jobs
+	}
+	
+	planet_modifier = {
+		planet_housing_add = 300	#Vanilla added this code block twice??
 	}
 
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = { is_fallen_empire_spiritualist = yes }
-		}
-		job_fe_acolyte_generator_add = 100
-		mult = owner.value:hab_void_dweller_jobs
-	}
+	#triggered_planet_modifier = {	#No Longer Used in Stellaris 4.0
+	#	potential = {
+	#		exists = owner
+	#		owner = {
+	#			is_gestalt = no
+	#			is_fallen_empire_spiritualist = no
+	#		}
+	#	}
+	#	job_technician_add = 100
+	#	mult = owner.value:hab_void_dweller_jobs
+	#}
 
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = { is_gestalt = yes }
-		}
-		job_technician_drone_add = 100
-		mult = owner.value:hab_void_dweller_jobs
-	}
+	#triggered_planet_modifier = {	#No Longer Used in Stellaris 4.0
+	#	potential = {
+	#		exists = owner
+	#		owner = { is_fallen_empire_spiritualist = yes }
+	#	}
+	#	job_fe_acolyte_generator_add = 100
+	#	mult = owner.value:hab_void_dweller_jobs
+	#}
 
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = { is_hive_empire = yes }
-		}
-		job_technician_drone_add = 100
-	}
+	#triggered_planet_modifier = {	#No Longer Used in Stellaris 4.0
+	#	potential = {
+	#		exists = owner
+	#		owner = { is_gestalt = yes }
+	#	}
+	#	job_technician_drone_add = 100
+	#	mult = owner.value:hab_void_dweller_jobs
+	#}
+
+	#triggered_planet_modifier = {	#No Longer Used in Stellaris 4.0
+	#	potential = {
+	#		exists = owner
+	#		owner = { is_hive_empire = yes }
+	#	}
+	#	job_technician_drone_add = 100
+	#}
 
 	triggered_planet_modifier = {
 		potential = {
@@ -185,38 +201,49 @@ district_hab_energy = {
 		}
 	}
 
-	triggered_desc = {
-		trigger = {
-			exists = owner
-			owner = { is_gestalt = yes }
-		}
-		text = job_technician_drone_effect_desc
+	#triggered_desc = {	#No Longer Used in Stellaris 4.0
+	#	trigger = {
+	#		exists = owner
+	#		owner = { is_gestalt = yes }
+	#	}
+	#	text = job_technician_drone_effect_desc
+	#}
+
+	#triggered_desc = {	#No Longer Used in Stellaris 4.0
+	#	trigger = {
+	#		exists = owner
+	#		owner = {
+	#			is_gestalt = no
+	#			is_fallen_empire_spiritualist = no
+	#		}
+	#	}
+	#	text = job_technician_effect_desc
+	#}
+
+	#triggered_desc = {	#No Longer Used in Stellaris 4.0
+	#	trigger = {
+	#		exists = owner
+	#		owner = { is_fallen_empire_spiritualist = yes }
+	#	}
+	#	text = job_fe_acolyte_generator_effect_desc
+	#}
+
+	#triggered_desc = {	#No Longer Used in Stellaris 4.0
+	#	trigger = {
+	#		always = yes
+	#	}
+	#	text = num_energy_orbitals
+	#}
+	
+	inline_script = {
+		script = jobs/habitat_technicians_add
+		AMOUNT = @habitat_rural_district_jobs
 	}
 
-	triggered_desc = {
-		trigger = {
-			exists = owner
-			owner = {
-				is_gestalt = no
-				is_fallen_empire_spiritualist = no
-			}
+	on_built = {
+		planet_event = {
+			id = megastructures.200		# Spawn an energy orbital
 		}
-		text = job_technician_effect_desc
-	}
-
-	triggered_desc = {
-		trigger = {
-			exists = owner
-			owner = { is_fallen_empire_spiritualist = yes }
-		}
-		text = job_fe_acolyte_generator_effect_desc
-	}
-
-	triggered_desc = {
-		trigger = {
-			always = yes
-		}
-		text = num_energy_orbitals
 	}
 }
 
@@ -240,14 +267,14 @@ district_hab_mining = {
 		planet_housing_add = 300
 	}
 
-	inline_script = {
-		script = districts/habitat_districts_triggered_mods
-	}
+	#inline_script = {
+	#	script = districts/habitat_districts_triggered_mods		#No Longer Used in Stellaris 4.0
+	#}
 
 	resources = {
-		category = planet_districts_hab_mining
+		category = planet_districts_hab
 		cost = {
-			minerals = @hab_cost
+			alloys = @hab_cost
 		}
 		upkeep = {
 			energy = @hab_maintenance
@@ -262,44 +289,48 @@ district_hab_mining = {
 			energy = 0.2									# Modded
 		}
 	}
-
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = { is_gestalt = yes }
-		}
-		job_mining_drone_add = 100
-		mult = owner.value:hab_void_dweller_jobs
+	
+	planet_modifier = {
+		planet_housing_add = 300
 	}
 
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = { is_hive_empire = yes }
-		}
-		job_mining_drone_add = 100
-	}
+	#triggered_planet_modifier = {	#No Longer Used in Stellaris 4.0
+	#	potential = {
+	#		exists = owner
+	#		owner = { is_gestalt = yes }
+	#	}
+	#	job_mining_drone_add = 100
+	#	mult = owner.value:hab_void_dweller_jobs
+	#}
 
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = {
-				is_gestalt = no
-				is_fallen_empire_spiritualist = no
-			}
-		}
-		job_miner_add = 100
-		mult = owner.value:hab_void_dweller_jobs
-	}
+	#triggered_planet_modifier = {	#No Longer Used in Stellaris 4.0
+	#	potential = {
+	#		exists = owner
+	#		owner = { is_hive_empire = yes }
+	#	}
+	#	job_mining_drone_add = 100
+	#}
 
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = { is_fallen_empire_spiritualist = yes }
-		}
-		job_fe_acolyte_mine_add = 100
-		mult = owner.value:hab_void_dweller_jobs
-	}
+	#triggered_planet_modifier = {	#No Longer Used in Stellaris 4.0
+	#	potential = {
+	#		exists = owner
+	#		owner = {
+	#			is_gestalt = no
+	#			is_fallen_empire_spiritualist = no
+	#		}
+	#	}
+	#	job_miner_add = 100
+	#	mult = owner.value:hab_void_dweller_jobs
+	#}
+
+	#triggered_planet_modifier = {	#No Longer Used in Stellaris 4.0
+	#	potential = {
+	#		exists = owner
+	#		owner = { is_fallen_empire_spiritualist = yes }
+	#	}
+	#	job_fe_acolyte_mine_add = 100
+	#	mult = owner.value:hab_void_dweller_jobs
+	#}
 
 	triggered_planet_modifier = {
 		potential = {
@@ -329,38 +360,49 @@ district_hab_mining = {
 		}
 	}
 	
-	triggered_desc = {
-		trigger = {
-			exists = owner
-			owner = { is_gestalt = yes }
-		}
-		text = job_mining_drone_effect_desc
+	#triggered_desc = {	#No Longer Used in Stellaris 4.0
+	#	trigger = {
+	#		exists = owner
+	#		owner = { is_gestalt = yes }
+	#	}
+	#	text = job_mining_drone_effect_desc
+	#}
+
+	#triggered_desc = {	#No Longer Used in Stellaris 4.0
+	#	trigger = {
+	#		exists = owner
+	#		owner = {
+	#			is_gestalt = no
+	#			is_fallen_empire_spiritualist = no
+	#		}
+	#	}
+	#	text = job_miner_effect_desc
+	#}
+
+	#triggered_desc = {	#No Longer Used in Stellaris 4.0
+	#	trigger = {
+	#		exists = owner
+	#		owner = { is_fallen_empire_spiritualist = yes }
+	#	}
+	#	text = job_fe_acolyte_mine_effect_desc
+	#}
+
+	#triggered_desc = {	#No Longer Used in Stellaris 4.0
+	#	trigger = {
+	#		always = yes
+	#	}
+	#	text = num_mining_orbitals
+	#}
+	
+	inline_script = {
+		script = jobs/habitat_miners_add
+		AMOUNT = @habitat_rural_district_jobs
 	}
 
-	triggered_desc = {
-		trigger = {
-			exists = owner
-			owner = {
-				is_gestalt = no
-				is_fallen_empire_spiritualist = no
-			}
+	on_built = {
+		planet_event = {
+			id = megastructures.210		# Spawn a mining orbital
 		}
-		text = job_miner_effect_desc
-	}
-
-	triggered_desc = {
-		trigger = {
-			exists = owner
-			owner = { is_fallen_empire_spiritualist = yes }
-		}
-		text = job_fe_acolyte_mine_effect_desc
-	}
-
-	triggered_desc = {
-		trigger = {
-			always = yes
-		}
-		text = num_mining_orbitals
 	}
 }
 
