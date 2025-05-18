@@ -393,6 +393,7 @@ diplomatic_stance = {
 
 		modifier = {
 			diplo_weight_economy_mult = 0.25
+			country_trade_produces_mult = 0.1		#Added Stellaris 4.0
 			# planet_jobs_trade_produces_mult = 0.1	# No Longer Used in Stellaris 4.0
 			# local_trade_protection_add = 5		# No Longer Used in Stellaris 4.0
 			external_leader_pool_add = 1
@@ -1310,6 +1311,36 @@ economic_policy = {
 	potential = {
 		is_gestalt = no
 	}
+	
+	option = {
+		name = "economic_policy_criminal"
+
+		policy_flags = {
+			economic_policy_criminal
+		}
+		
+		valid = {
+			OR = {
+				has_valid_civic = civic_criminal_heritage
+				has_valid_civic = civic_military_dictatorship_corporate
+			}
+		}
+
+		modifier = {
+			empire_size_branch_office_mult = -0.50
+		}
+
+		AI_weight = {
+			factor = 1
+			modifier = {
+				factor = 10
+				has_valid_ai_personality = yes
+				is_ai = yes
+				# is_galactic_community_member = yes
+				is_active_resolution = "resolution_rulesofwar_demobilization_initiative"
+			}
+		}
+	}
 
 	option = {
 		name = "economic_policy_civilian"
@@ -1341,6 +1372,13 @@ economic_policy = {
 		policy_flags = {
 			economic_policy_balanced
 		}
+		
+		valid = {
+			NOR = {
+				has_valid_civic = civic_criminal_heritage
+				has_valid_civic = civic_military_dictatorship_corporate
+			}
+		}
 
 		modifier = {}
 
@@ -1355,6 +1393,7 @@ economic_policy = {
 			}
 		}
 	}
+	
 
 	option = {
 		name = "economic_policy_military"
@@ -1398,9 +1437,28 @@ trade_policy = {
 
 	option = {
 		name = "trade_policy_default"
+		
+		potential = {
+			is_worker_coop_empire = no	#Stellaris 4.0 Vanilla
+		}
 
 		policy_flags = {
 			trade_policy_default
+		}
+		
+		on_enabled = {						#Stellaris 4.0 Vanilla
+			hidden_effect = {
+				set_trade_conversions = {
+					trade = 0.5
+					energy = 0.5
+				}
+			}
+		}
+		
+		on_disabled = {
+			hidden_effect = {
+				set_trade_conversions = { }
+			}
 		}
 
 
@@ -1420,6 +1478,14 @@ trade_policy = {
 				}
 			}
 			has_tradition = tr_mercantile_adaptive_economic_policies
+			is_worker_coop_empire = no
+		}
+		
+		on_enabled = {
+			set_trade_conversions = {
+				trade = 0.75
+				consumer_goods = 0.25
+			}
 		}
 
 		policy_flags = {
@@ -1456,6 +1522,14 @@ trade_policy = {
 				}
 			}
 			has_tradition = tr_mercantile_adaptive_economic_policies
+			is_worker_coop_empire = no
+		}
+		
+		on_enabled = {
+			set_trade_conversions = {
+				trade = 0.75
+				unity = 0.25
+			}
 		}
 
 		policy_flags = {
@@ -1465,6 +1539,7 @@ trade_policy = {
 		valid = {
 			is_country_type = default
 			NOR = {
+				has_policy_flag = "economic_stance_criminal_market"
 				has_policy_flag = "economic_stance_market"
 			}
 		}
@@ -1482,6 +1557,14 @@ trade_policy = {
 		potential = {
 			has_federation = yes
 			federation = { has_federation_perk = trade_federation_passive }
+		}
+		on_enabled = {
+			set_trade_conversions = {
+				trade = 0.50
+				energy = 0.10
+				consumer_goods = 0.20
+				unity = 0.20
+			}
 		}
 
 		policy_flags = {
@@ -1502,6 +1585,13 @@ trade_policy = {
 			has_federation = yes
 			federation = { has_federation_perk = unity_trade_1 }
 		}
+		
+		on_enabled = {
+			set_trade_conversions = {
+				trade = 0.60
+				unity = 0.40
+			}
+		}
 
 		policy_flags = {
 			trade_conversion_holy_covenant
@@ -1519,6 +1609,16 @@ trade_policy = {
 		name = "trade_policy_mutual_aid"
 		potential = {
 			is_worker_coop_empire = yes
+		}
+		
+		on_enabled = {
+			set_trade_conversions = {
+				trade = 0.30
+				energy = 0.20
+				minerals = 0.20
+				food = 0.20
+				unity = 0.10
+			}
 		}
 
 		policy_flags = {
@@ -1540,6 +1640,16 @@ trade_policy = {
 		policy_flags = {
 			trade_conversion_growth_dev
 		}
+		
+		on_enabled = {
+			set_trade_conversions = {
+				trade = 0.60
+				energy = 0.10
+				minerals = 0.10
+				food = 0.10
+				unity = 0.10
+			}
+		}
 
 		valid = {
 			is_country_type = default
@@ -1557,6 +1667,15 @@ trade_policy = {
 
 		policy_flags = {
 			trade_conversion_development
+		}
+		
+		on_enabled = {
+			set_trade_conversions = {
+				trade = 0.50
+				energy = 0.10
+				minerals = 0.30
+				food = 0.10
+			}
 		}
 
 		valid = {
@@ -1582,18 +1701,32 @@ trade_policy = {
 		policy_flags = {
 			trade_conversion_innovation
 		}
+		
+		on_enabled = {
+			set_trade_conversions = {
+				trade = 0.30
+				physics_research = 0.1
+				society_research = 0.1
+				engineering_research = 0.1
+			}
+		}
 
 		valid = {
 			is_country_type = default
 			OR = {
-			has_technology = tech_innovations
+				has_technology = tech_innovations
+				has_valid_civic = civic_beacon_of_liberty
 			}
-			NOR = {
+			NOT = {
 				has_valid_civic = civic_ultimate_collective
 			}
-			NOR = {
-				has_policy_flag = "economic_stance_market"
-				has_policy_flag = "economic_stance_planned"
+			OR = {
+				NOR = {
+					has_policy_flag = "economic_stance_criminal_market"
+					has_policy_flag = "economic_stance_market"
+					has_policy_flag = "economic_stance_planned"
+				}
+				has_valid_civic = civic_beacon_of_liberty
 			}
 		}
 
@@ -1612,6 +1745,14 @@ trade_policy = {
 		policy_flags = {
 			trade_conversion_growth
 		}
+		
+		on_enabled = {
+			set_trade_conversions = {
+				trade = 0.60
+				food = 0.30
+				unity = 0.10
+			}
+		}
 
 		modifier = {
 			planet_districts_farming_cost_mult = -0.33
@@ -1623,6 +1764,7 @@ trade_policy = {
 			is_country_type = default
 			has_technology = tech_agri_consortium
 			NOR = {
+				has_policy_flag = "economic_stance_criminal_market"
 				has_policy_flag = "economic_stance_market"
 				has_policy_flag = "economic_stance_planned"
 			}
@@ -1639,6 +1781,14 @@ trade_policy = {
 		policy_flags = {
 			trade_conversion_mining
 		}
+		
+		on_enabled = {
+			set_trade_conversions = {
+				trade = 0.60
+				minerals = 0.30
+				unity = 0.10
+			}
+		}
 
 		modifier = {
 			planet_districts_mining_cost_mult = -0.33
@@ -1653,6 +1803,7 @@ trade_policy = {
 				has_valid_civic = civic_mining_guilds
 			}
 			NOR = {
+				has_policy_flag = "economic_stance_criminal_market"
 				has_policy_flag = "economic_stance_market"
 				has_policy_flag = "economic_stance_planned"
 			}
@@ -2034,7 +2185,10 @@ slavery = {
 				fail_text = is_broken_shackles_origin
 				NOT = { has_origin = origin_broken_shackles }
 			}
-			NOT = { has_civic = civic_shared_burden }
+			NOR = { 
+				has_civic = civic_shared_burden 
+				has_valid_civic = civic_beacon_of_liberty
+			}
 			OR = {
 				is_authoritarian = yes
 				is_xenophobe = yes
@@ -2093,6 +2247,38 @@ economic_stance = {
 	potential = {
 		is_country_type = default
 		is_gestalt = no
+	}
+	
+	# Criminal Market
+	option = {
+		name = "economic_stance_criminal_market"
+
+		policy_flags = {
+			economic_stance_criminal_market
+		}
+
+		modifier = {
+			country_trade_fee = -0.05
+			slave_market_cost_mult = -0.1
+			planet_branch_offices_cost_mult = -0.20
+			# planet_jobs_trade_produces_mult = 0.2	# No Longer Used in Stellaris 4.0
+			# local_trade_protection_add = -5	# No Longer Used in Stellaris 4.0
+			country_base_influence_produces_add = -0.15
+			pop_ethic_capitalism_attraction_mult = 0.15
+			pop_ethic_authoritarian_attraction_mult = 0.05
+		}
+
+		valid = {
+			is_country_type = default
+			OR = {
+				has_valid_civic = civic_criminal_heritage
+				has_valid_civic = civic_military_dictatorship_corporate
+			}
+		}
+
+		AI_weight = {
+			weight = 1000
+		}
 	}
 
 	# Free Market
@@ -2160,6 +2346,7 @@ economic_stance = {
 
 		valid = {
 			is_country_type = default
+			NOT = { has_valid_civic = civic_beacon_of_liberty }
 		}
 
 		AI_weight = {
@@ -2182,7 +2369,7 @@ economic_stance = {
 
 		valid = {
 			is_country_type = default
-			NOR = {
+			NOT = {
 				has_valid_civic = civic_beacon_of_liberty
 			}
 		}

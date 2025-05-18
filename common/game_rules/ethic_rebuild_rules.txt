@@ -188,6 +188,12 @@ can_build_branch_office_on_planet = {
 		fail_text = NO_BRANCH_OFFICE_ON_SYNAPTIC_LATHE
 		NOT = { is_planet_class = pc_cosmogenesis_world }
 	}
+	custom_tooltip = {
+		fail_text = NO_BRANCH_OFFICE_ON_SELF
+		owner = {
+			NOT = { is_same_value = root }
+		}
+	}
 }
 
 # Root = country
@@ -260,12 +266,14 @@ can_fill_ruler_job = {
 			exists = owner
 			is_enslaved = no
 			is_being_purged = no
-			NOR = { is_being_assimilated = yes has_trait = trait_syncretic_proles }
-			NOT = { has_trait = trait_zombie }
-			NOT = { has_trait = trait_nerve_stapled }
-			NOT = { has_trait = trait_symbiotic }
-			NOT = { has_trait = trait_slave_gene }
+			is_being_assimilated = no
+			# Rule out Traits for servitude & lack of free will
 			can_think = yes
+			NOT = { has_trait = trait_symbiotic }		#Cog Note - Does it need to be? 	#Modded
+			NOT = { has_trait = trait_slave_gene }		#Cog Note - Does it need to be? 	#Modded
+			# Rule out Disconnected Drones
+			has_disconnected_drone_citizenship_type = no
+			# Rule out Machine Pops, unless they're rendered sapient
 			OR = {
 				NOT = { has_trait = trait_mechanical }
 				AND = {
@@ -273,7 +281,14 @@ can_fill_ruler_job = {
 					owner = { has_policy_flag = ai_full_rights }
 				}
 			}
-			NOT = { has_citizenship_type = { type = citizenship_organic_trophy country = owner } }
+			# Rule out Organic Trophies
+			NOT = {
+				has_citizenship_type = {
+					type = citizenship_organic_trophy
+					country = owner
+				}
+			}
+			# Rule out violations of the 'Right to Work' Resolution (prioritises organic workers)
 			if = {
 				limit = {
 					divinity_right_to_work_job_check_trigger_exempt = no

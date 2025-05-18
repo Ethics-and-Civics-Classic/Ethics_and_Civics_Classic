@@ -29,11 +29,24 @@ trading_hub = {
 		upkeep = {
 			energy = 1
 		}
+		produces = {
+			trigger = {
+				hidden_trigger = { exists = this }
+				owner = {
+					has_councilor = { COUNCILOR = "councilor_trading_posts" }
+				}
+			}
+			trade = 0.5
+			mult = value:councilor_level|TYPE|councilor_trading_posts|
+		}
+		produces = {
+			trade = 8
+		}
 	}
 
-	station_modifier = {
-		starbase_trade_collection_range_add = 1
-	}
+	#station_modifier = {
+	#	starbase_trade_collection_range_add = 1
+	#}
 
 	triggered_station_modifier = {
 		potential = {
@@ -46,25 +59,36 @@ trading_hub = {
 		mult = value:councilor_level|TYPE|councilor_trading_posts|
 	}
 
-	triggered_station_modifier = {
-		potential = {
-			exists = owner
-			owner = { has_valid_civic = civic_beacon_of_liberty }
-		}
+	#triggered_station_modifier = {
+	#	potential = {
+	#		exists = owner
+	#		owner = { has_valid_civic = civic_beacon_of_liberty }
+	#	}
+	#
+	#	starbase_trade_collection_range_add = 1
+	#}
 
-		starbase_trade_collection_range_add = 1
-	}
-
-	triggered_station_modifier = {
-		potential = {
-			exists = owner
-			owner = { has_valid_civic = civic_corporate_dominion }
-		}
-
-		starbase_trade_protection_range_add = 1
-	}
+	#triggered_station_modifier = {
+	#	potential = {
+	#		exists = owner
+	#		owner = { has_valid_civic = civic_corporate_dominion }
+	#	}
+	#
+	#	starbase_trade_protection_range_add = 1
+	#}
 
 	ai_weight = {
-		weight = 15
+		weight = 100 #use same weight here - ai weighting is done in starbase_types.txt
+		modifier = {
+			factor = 5
+			NOT = { has_starbase_module = trading_hub }
+			planet = {
+				planet_resource_compare = {
+					resource = trade
+					value > 50
+					type = produces
+				}
+			}
+		}
 	}
 }
