@@ -9,6 +9,7 @@ building_food_processing_facility = {
 
 	potential = {
 		exists = owner
+		owner = { is_wilderness_empire = no } # see 'building_massive_growth_3'
 		NOR = {
 			is_planet_class = pc_machine
 			has_modifier = resort_colony
@@ -40,14 +41,15 @@ building_food_processing_facility = {
 		}
 	}
 
-	inline_script = {
-		script = jobs/farmers_add
-		FARMER_AMOUNT = 1
-		ANGLER_AMOUNT = 1
-	}
+	#inline_script = {					#No Longer Used in Stellaris 4.0
+	#	script = jobs/farmers_add
+	#	FARMER_AMOUNT = 1
+	#	ANGLER_AMOUNT = 1
+	#}
 
 	planet_modifier = {
-		planet_farmers_food_produces_add = 1
+		# planet_farmers_food_produces_add = 1	#Old Code?
+		planet_farmers_produces_mult = 0.20		#Vanilla 4.0
 	}
 
 	resources = {
@@ -73,6 +75,18 @@ building_food_processing_facility = {
 	prerequisites = {
 		"tech_food_processing_1"
 	}
+	
+	ai_resource_production = {
+   		food = 10
+
+		trigger = {
+			has_any_agriculture_zone = yes
+		}
+	}
+	
+	show_tech_unlock_if = {
+		is_wilderness_empire = no
+	}
 }
 
 building_food_processing_center = {
@@ -83,7 +97,10 @@ building_food_processing_center = {
 	building_sets = {
 		farming
 	}
-
+	
+	potential = {
+		owner = { is_wilderness_empire = no } # see 'building_massive_growth_4'
+	}
 	allow = {
 		exists = owner
 		has_upgraded_capital = yes
@@ -112,6 +129,7 @@ building_food_processing_center = {
 	}
 
 	planet_modifier = {
+		planet_farmers_produces_mult = 0.20		#Vanilla 4.0 Code
 		planet_farmers_food_produces_add = 2
 	}
 
@@ -124,11 +142,11 @@ building_food_processing_center = {
 		}
 	}
 
-	inline_script = {
-		script = jobs/farmers_add
-		FARMER_AMOUNT = 2
-		ANGLER_AMOUNT = 2
-	}
+	#inline_script = {				#No Longer Used in Stellaris 4.0
+	#	script = jobs/farmers_add
+	#	FARMER_AMOUNT = 2
+	#	ANGLER_AMOUNT = 2
+	#}
 
 	resources = {
 		category = planet_buildings
@@ -171,6 +189,18 @@ building_food_processing_center = {
 	prerequisites = {
 		"tech_food_processing_2"
 	}
+	
+	ai_resource_production = {
+   		food = 15
+
+		trigger = {
+			has_any_agriculture_zone = yes
+		}
+	}
+
+	show_tech_unlock_if = {
+		is_wilderness_empire = no
+	}
 }
 
 building_mineral_purification_plant = {
@@ -207,11 +237,9 @@ building_mineral_purification_plant = {
 	}
 
 	potential = {
+		owner = { is_wilderness_empire = no } # see 'building_churning_tunnels_3'
 		NOR = {
 			has_modifier = resort_colony
-		}
-
-		NOR = { # Ringworlds don't have mines
 			is_planet_class = pc_ringworld_habitable
 			is_planet_class = pc_cybrex
 		}
@@ -226,21 +254,38 @@ building_mineral_purification_plant = {
 			}
 		}
 		OR = {
+			has_planet_flag = ignore_ai_building_limitations
 			owner = {
 				is_ai = no
 			}
 			has_any_mining_district_or_building = yes
 		}
 	}
+	
+	destroy_trigger = {
+		OR = {
+			has_modifier = resort_colony
+			AND = {
+				exists = owner
+				owner = { is_ai = yes }
+				has_any_mining_district_or_building = no
+			}
+			AND = {
+				exists = owner
+				owner = { is_wilderness_empire = yes }
+			}
+		}
+	}
 
 	planet_modifier = {
-		planet_miners_minerals_produces_add = 1
+		#planet_miners_minerals_produces_add = 1	#Removed in Vanilla 4.0
+		planet_miners_produces_mult = 0.20
 	}
 
-	inline_script = {
-		script = jobs/miners_add
-		AMOUNT = 1
-	}
+	#inline_script = {				#Removed in Vanilla 4.0
+	#	script = jobs/miners_add
+	#	AMOUNT = 1
+	#}
 
 	triggered_planet_modifier = {
 		potential = {
@@ -277,15 +322,15 @@ building_mineral_purification_plant = {
 		cost = {
 			minerals = 200
 		}
-		cost = {
-			trigger = {
-				owner = {
-					is_robot_empire = yes
-				}
-			}
-			minerals = 100
-			alloys = 100
-		}
+		#cost = {		#Removed in Vanilla 4.0
+		#	trigger = {
+		#		owner = {
+		#			is_robot_empire = yes
+		#		}
+		#	}
+		#	minerals = 100
+		#	alloys = 100
+		#}
 		upkeep = {
 			energy = 2
 		}
@@ -297,6 +342,29 @@ building_mineral_purification_plant = {
 
 	upgrades = {
 		building_mineral_purification_hub
+	}
+	
+	ai_resource_production = {
+   		minerals = 10
+
+		trigger = {
+			has_any_mining_zone = yes
+		}
+	}
+
+	ai_resource_production = {
+   		minerals = 5
+		energy = 10
+
+		trigger = {
+			has_zone = {
+				zone = zone_betharian
+			}
+		}
+	}
+
+	show_tech_unlock_if = {
+		is_wilderness_empire = no
 	}
 }
 
@@ -318,6 +386,15 @@ building_mineral_purification_hub = {
 	
 	building_sets = {
 		mining
+	}
+	
+	potential = {
+		exists = owner
+		owner = { is_wilderness_empire = no } # see 'building_churning_tunnels_4'
+		OR = {
+			owner = { is_ai = no }
+			has_any_mining_district_or_building = yes
+		}
 	}
 
 	allow = {
@@ -369,10 +446,10 @@ building_mineral_purification_hub = {
 		}
 	}
 
-	inline_script = {
-		script = jobs/miners_add
-		AMOUNT = 2
-	}
+	#inline_script = {
+	#	script = jobs/miners_add
+	#	AMOUNT = 2
+	#}
 
 	triggered_planet_modifier = {
 		potential = {
@@ -413,15 +490,15 @@ building_mineral_purification_hub = {
 			minerals = @b2_minerals
 			volatile_motes = @b2_rare_cost
 		}
-		cost = {
-			trigger = {
-				owner = {
-					is_robot_empire = yes
-				}
-			}
-			minerals = 300
-			alloys = 150
-		}
+		#cost = {
+		#	trigger = {
+		#		owner = {
+		#			is_robot_empire = yes
+		#		}
+		#	}
+		#	minerals = 300
+		#	alloys = 150
+		#}
 		cost = {
 			trigger = {
 				has_ringworld_output_boost = yes
@@ -444,9 +521,36 @@ building_mineral_purification_hub = {
 			volatile_motes = 3
 		}
 	}
+	
+	planet_modifier = {
+		planet_miners_produces_mult = 0.20		#Added Vanilla 4.0
+	}
 
 	prerequisites = {
 		tech_mineral_purification_2
+	}
+	
+	ai_resource_production = {
+   		minerals = 15
+
+		trigger = {
+			has_any_mining_zone = yes
+		}
+	}
+
+	ai_resource_production = {
+   		minerals = 7.5
+		energy = 15
+
+		trigger = {
+			has_zone = {
+				zone = zone_betharian
+			}
+		}
+	}
+
+	show_tech_unlock_if = {
+		is_wilderness_empire = no
 	}
 }
 
@@ -461,15 +565,15 @@ building_energy_grid = {
 
 	destroy_trigger = {
 		OR = {
-			OR = {
-				has_modifier = resort_colony
+			has_modifier = resort_colony
+			AND = {
+				exists = owner
+				owner = { is_ai = yes }
+				has_any_generator_district_or_building = no
 			}
 			AND = {
 				exists = owner
-				owner = {
-					is_ai = yes
-				}
-				has_any_generator_district_or_building = no
+				owner = { is_wilderness_empire = yes }
 			}
 		}
 	}
@@ -477,6 +581,10 @@ building_energy_grid = {
 	potential = {
 		NOR = {
 			has_modifier = resort_colony
+		}
+		exists = owner
+		owner = {
+			is_wilderness_empire = no # see 'building_bioelectric_stimulator_3'
 		}
 		OR = {
 			NOT = { is_planet_class = pc_habitat }
@@ -497,31 +605,32 @@ building_energy_grid = {
 	}
 
 	planet_modifier = {
-		planet_technician_energy_produces_add = 1
+		#planet_technician_energy_produces_add = 1	#Removed in Vanilla 4.0
+		planet_technician_produces_mult = 0.20
 	}
 
-	inline_script = {
-		script = jobs/technicians_add
-		AMOUNT = 1
-	}
+	#inline_script = {
+	#	script = jobs/technicians_add	#Removed in Vanilla 4.0
+	#	AMOUNT = 1
+	#}
 
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = {
-				is_robot_empire = yes
-			}
-			NOR = {
-				is_planet_class = pc_habitat
-				is_planet_class = pc_machine
-				is_planet_class = pc_hive
-				is_planet_class = pc_city
-			}
-		}
-		modifier = {
-			district_generator_max = 2
-		}
-	}
+	#triggered_planet_modifier = {		#Removed in Vanilla 4.0
+	#	potential = {
+	#		exists = owner
+	#		owner = {
+	#			is_robot_empire = yes
+	#		}
+	#		NOR = {
+	#			is_planet_class = pc_habitat
+	#			is_planet_class = pc_machine
+	#			is_planet_class = pc_hive
+	#			is_planet_class = pc_city
+	#		}
+	#	}
+	#	modifier = {
+	#		district_generator_max = 2
+	#	}
+	#}
 
 	triggered_planet_modifier = {
 		potential = {
@@ -539,15 +648,6 @@ building_energy_grid = {
 		cost = {
 			minerals = @b1_minerals
 		}
-		cost = {
-			trigger = {
-				owner = {
-					is_robot_empire = yes
-				}
-			}
-			minerals = 100
-			alloys = 100
-		}
 		upkeep = {
 			energy = 2
 		}
@@ -561,12 +661,24 @@ building_energy_grid = {
 		building_energy_nexus
 	}
 
-	triggered_desc = {
+	#triggered_desc = {			#Removed in Vanilla 4.0
+	#	trigger = {
+	#		exists = owner
+	#		owner = { is_gestalt = yes }
+	#	}
+	#	text = job_technician_drone_effect_desc
+	#}
+	
+	ai_resource_production = {
+   		energy = 10
+
 		trigger = {
-			exists = owner
-			owner = { is_gestalt = yes }
+			has_any_generator_zone = yes
 		}
-		text = job_technician_drone_effect_desc
+	}
+
+	show_tech_unlock_if = {
+		is_wilderness_empire = no
 	}
 }
 
@@ -578,25 +690,37 @@ building_energy_nexus = {
 	building_sets = {
 		generator
 	}
-
-	allow = {
-		has_upgraded_capital = yes
+	
+	potential = {
+		NOT = { has_modifier = resort_colony }
+		exists = owner
+		owner = { is_wilderness_empire = no }
+		OR = {
+			owner = { is_ai = no }
+			has_any_generator_district_or_building = yes
+		}
 	}
-
 	destroy_trigger = {
 		OR = {
 			has_modifier = resort_colony
 			AND = {
 				exists = owner
-				owner = {
-					is_ai = yes
-				}
+				owner = { is_ai = yes }
 				has_any_generator_district_or_building = no
+			}
+			AND = {
+				exists = owner
+				owner = { is_wilderness_empire = yes } # see 'building_bioelectric_stimulator_4'
 			}
 		}
 	}
 
+	allow = {
+		has_upgraded_capital = yes
+	}
+
 	planet_modifier = {
+		planet_technician_produces_mult = 0.20
 		planet_technician_energy_produces_add = 2
 	}
 
@@ -609,28 +733,28 @@ building_energy_nexus = {
 		}
 	}
 
-	inline_script = {
-		script = jobs/technicians_add
-		AMOUNT = 2
-	}
+	#inline_script = {
+	#	script = jobs/technicians_add
+	#	AMOUNT = 2
+	#}
 
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = {
-				is_robot_empire = yes
-			}
-			NOR = {
-				is_planet_class = pc_habitat
-				is_planet_class = pc_machine
-				is_planet_class = pc_hive
-				is_planet_class = pc_city
-			}
-		}
-		modifier = {
-			district_generator_max = 4
-		}
-	}
+	#triggered_planet_modifier = {
+	#	potential = {
+	#		exists = owner
+	#		owner = {
+	#			is_robot_empire = yes
+	#		}
+	#		NOR = {
+	#			is_planet_class = pc_habitat
+	#			is_planet_class = pc_machine
+	#			is_planet_class = pc_hive
+	#			is_planet_class = pc_city
+	#		}
+	#	}
+	#	modifier = {
+	#		district_generator_max = 4
+	#	}
+	#}
 
 	triggered_planet_modifier = {
 		potential = {
@@ -677,5 +801,17 @@ building_energy_nexus = {
 
 	prerequisites = {
 		tech_power_hub_2
+	}
+	
+	ai_resource_production = {
+   		energy = 15
+
+		trigger = {
+			has_any_generator_zone = yes
+		}
+	}
+
+	show_tech_unlock_if = {
+		is_wilderness_empire = no
 	}
 }
