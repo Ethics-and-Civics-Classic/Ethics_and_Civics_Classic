@@ -1434,6 +1434,44 @@ trade_policy = {
 	potential = {
 		is_gestalt = no
 	}
+	
+	option = {
+		name = "trade_policy_leader"
+		
+		potential = {
+			OR = {
+				has_valid_civic = civic_criminal_heritage
+				has_valid_civic = civic_military_dictatorship_corporate
+				value = auth_dictatorial
+				value = auth_imperial	
+			}
+		}
+
+		policy_flags = {
+			trade_policy_leader
+		}
+		
+		on_enabled = {						#Stellaris 4.0 Vanilla
+			hidden_effect = {
+				set_trade_conversions = {
+					trade = 0.50
+					energy = 0.49
+					influence = 0.01
+				}
+			}
+		}
+		
+		on_disabled = {
+			hidden_effect = {
+				set_trade_conversions = { }
+			}
+		}
+
+
+		AI_weight = {
+			factor = 0
+		}
+	}
 
 	option = {
 		name = "trade_policy_default"
@@ -1715,7 +1753,14 @@ trade_policy = {
 			is_country_type = default
 			OR = {
 				has_technology = tech_innovations
-				has_valid_civic = civic_beacon_of_liberty
+				custom_tooltip = {
+					text = has_valid_civic_for_tooltip_tooltip
+					OR = {	
+						has_valid_civic = civic_beacon_of_liberty
+						has_valid_civic = civic_industrial_automatation
+						has_valid_civic = civic_industrial_automatation_corporate
+					}
+				}
 			}
 			NOT = {
 				has_valid_civic = civic_ultimate_collective
@@ -1727,6 +1772,13 @@ trade_policy = {
 					has_policy_flag = "economic_stance_planned"
 				}
 				has_valid_civic = civic_beacon_of_liberty
+				custom_tooltip = {
+					text = has_valid_civic_civic_industrial_automatation
+					OR = {
+						has_valid_civic = civic_industrial_automatation
+						has_valid_civic = civic_industrial_automatation_corporate
+					}
+				}
 			}
 		}
 
@@ -2628,9 +2680,20 @@ healthcare = {
 		name = "public_healthcare"
 
 		valid = {
+			OR = {
+				custom_tooltip = {
+					text = civic_tooltip_not_capitalism
+					NOR = {	
+						has_ethic = "ethic_fanatic_capitalism"
+						has_ethic = "ethic_capitalism"
+					}
+				}
+				custom_tooltip = {
+					text = has_valid_civic_for_tooltip_tooltip
+					has_valid_civic = civic_welfare_state
+				}
+			}
 			NOR = {
-				has_ethic = "ethic_fanatic_capitalism"
-				has_ethic = "ethic_capitalism"
 				has_valid_civic = civic_beacon_of_liberty
 				has_valid_civic = civic_private_healthcare_corporate
 			}

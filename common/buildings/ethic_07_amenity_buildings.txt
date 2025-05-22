@@ -284,131 +284,52 @@ building_communal_housing = {
 	}
 }
 
-building_clinic = {					# No Longer Used in Stellaris 4.0
+building_medical_1 = {
 	base_buildtime = @b1_time
 	planet_limit = 1
-
 	category = amenity
+	icon = building_medical_1
 
 	building_sets = {
+		government
 		urban
 	}
 
-	potential = {
-		exists = owner
-		# Rule out Thrall-Worlds
-		NOT = { has_modifier = slave_colony }
-		# Check the empire is valid
+	allow = {
+		NOR = {
+			has_modifier = slave_colony
+			has_modifier = penal_colony
+		}
 		owner = {
-			# Rule out gestalts and pre-FTL societies
+			is_regular_empire = yes
 			is_individual_machine = no
-			OR = {
-				is_regular_empire = yes
-				AND = {
-					has_origin = origin_fear_of_the_dark
-					is_primitive = yes
-				}
-			}
-			# Rule out AI empires with entirely no access to "Pharma State" or "Social State" Civic, unless the planet is unstable
-			OR = {
-				is_ai = no
-				OR = {
-					has_valid_civic = civic_private_healthcare_corporate
-					has_valid_civic = civic_welfare_state
-				}
-				prev = {
-					has_branch_office = yes
-					branch_office_owner = {
-						has_valid_civic = civic_private_healthcare_corporate
-					}
-				}
-				prev = {
-					NOT = { has_available_jobs = entertainer }
-					NOT = { has_forbidden_jobs = entertainer }
-					planet_stability < 50
-					free_amenities < 0
-				}
+			NOT = {
+				has_valid_civic = civic_dystopian_society
 			}
 		}
+		OR = {
+			owner = {
+				NOT = { is_ai = yes }
+			}
+			AND = {
+				NOT = { has_available_jobs = entertainer }
+				NOT = { has_forbidden_jobs = entertainer }
+			}
+		}
+		NOT = { has_building = building_low_tech_capital }
 	}
 
 	destroy_trigger = {
+		exists = owner
 		OR = {
-			# If this is now a Thrall-World
-			has_modifier = slave_colony
-			# If the planet is owned by a gestalt or pre-FTL society
+			owner = { is_regular_empire = no }
 			AND = {
-				exists = owner
-				owner = {
-					OR = {
-						is_regular_empire = no
-						AND = {
-							is_primitive = yes
-							NOT = { has_origin = origin_fear_of_the_dark }
-						}
-					}
-				}
-			}
-			# If this is an AI-controlled empire with entirely no access to "Pharma State" Civic, assuming the planet is now stable
-			AND = {
-				exists = owner
-				owner = {
-					is_ai = yes
-					NOT = {
-						OR = {
-							OR = {
-								has_valid_civic = civic_private_healthcare_corporate
-								has_valid_civic = civic_welfare_state
-							}
-							prev = {
-								has_branch_office = yes
-								branch_office_owner = {
-									has_valid_civic = civic_private_healthcare_corporate
-								}
-							}
-						}
-					}
-				}
-				planet_stability > 70
-				free_amenities > 2000
+				buildings_stop_pop = yes
+				owner = { is_ai = yes }
 			}
 		}
 	}
-
-	planet_modifier = {
-		job_healthcare_add = 200
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = {
-				has_technology = tech_gene_tailoring
-			}
-			any_owned_pop_group = {
-				has_auto_modding_trait = yes
-			}
-		}
-		modifier = {
-			auto_mod_monthly_add = 1
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = {
-				has_origin = origin_overtuned
-			}
-			any_owned_pop_group = {
-				has_auto_modding_trait = yes
-			}
-		}
-		modifier = {
-			auto_mod_monthly_add = 1
-		}
-	}
-
+	
 	triggered_planet_modifier = {
 		potential = {
 			exists = owner
@@ -431,20 +352,242 @@ building_clinic = {					# No Longer Used in Stellaris 4.0
 			trigger = {
 				owner = { has_policy_flag = public_healthcare }
 			}
-			energy = 0.5
+			energy = 1
+		}
+	}
+
+	inline_script = {
+		script = jobs/healthcare_add
+		AMOUNT = @building_static_jobs
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_country_flag = clone_army_full_potential
+				has_active_tradition = tr_cloning_artificial_population_clone_army
+			}
+		}
+		clone_soldiers_sustained = @clones_sustained_low
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				OR = {
+					has_purity_heightened_attributes_tradition = yes
+					has_cloning_artificial_population_tradition = yes
+					has_mutation_somatic_subversiveness_tradition = yes
+				}
+			}
+		}
+		pop_bonus_workforce_mult = @medical_workforce_mult
+	}
+
+	prerequisites = {
+		"tech_basic_health"
+	}
+
+	upgrades = {
+		building_medical_2
+	}
+}
+
+building_medical_2 = {
+	base_buildtime = @b2_time
+	can_build = no
+
+	category = amenity
+
+	building_sets = {
+		government
+		urban
+	}
+
+	potential = {
+		exists = owner
+		# check the empire is valid
+		owner = {
+			# rule out gestalts and pre-FTL societies
+			is_individual_machine = no
+			OR = {
+				is_regular_empire = yes
+				AND = {
+					has_origin = origin_fear_of_the_dark
+					is_country_type = primitive
+				}
+			}
+			# rule out AI empires with entirely no access to "Pharma State" Civic, unless the planet is unstable
+			OR = {
+				is_ai = no
+				has_valid_civic = civic_private_healthcare_corporate
+				has_valid_civic = civic_welfare_state 
+				root = {
+					if = {
+						limit = {
+							has_branch_office = yes
+						}
+						branch_office_owner = {
+							has_valid_civic = civic_private_healthcare_corporate
+						}
+					}
+				}
+				root = {
+					NOT = { has_available_jobs = entertainer }
+					NOT = { has_forbidden_jobs = entertainer }
+					planet_stability < 50
+					free_amenities < 0
+				}
+			}
+		}
+	}
+
+	destroy_trigger = {
+		OR = {
+			# if the planet is owned by a gestalt or pre-FTL society
+			AND = {
+				exists = owner
+				owner = {
+					OR = {
+						is_regular_empire = no
+						AND = {
+							is_country_type = primitive
+							NOT = { has_origin = origin_fear_of_the_dark }
+						}
+					}
+				}
+			}
+			# if this is an AI-controlled empire with entirely no access to "Pharma State" Civic, assuming the planet is now stable
+			AND = {
+				exists = owner
+				owner = {
+					is_ai = yes
+					NOT = {
+						OR = {
+							has_valid_civic = civic_private_healthcare_corporate
+							has_valid_civic = civic_welfare_state 
+							prev = {
+								has_branch_office = yes
+								branch_office_owner = {
+									has_valid_civic = civic_private_healthcare_corporate
+								}
+							}
+						}
+					}
+				}
+				planet_stability > 70
+				free_amenities > 20
+			}
+		}
+	}
+
+	inline_script = {
+		script = jobs/healthcare_add
+		AMOUNT = @building_static_jobs
+	}
+
+	planet_modifier = {
+		planet_doctors_upkeep_mult = -0.20
+		pop_amenities_usage_organic_mult = -0.10
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_technology = tech_gene_tailoring
+			}
+			any_owned_pop_group = {
+				has_auto_modding_trait = yes
+			}
+		}
+		modifier = {
+			auto_mod_monthly_add = 100
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				game_start_auto_mod_empire = yes
+			}
+			any_owned_pop_group = {
+				has_auto_modding_trait = yes
+			}
+		}
+		modifier = {
+			auto_mod_monthly_add = 100
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_country_flag = clone_army_full_potential
+				has_active_tradition = tr_cloning_artificial_population_clone_army
+			}
+		}
+		clone_soldiers_sustained = @clones_sustained_low
+		mult = 2
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				OR = {
+					has_purity_heightened_attributes_tradition = yes
+					has_cloning_artificial_population_tradition = yes
+					has_mutation_somatic_subversiveness_tradition = yes
+				}
+			}
+		}
+		pop_bonus_workforce_mult = @medical_workforce_mult
+		mult = 2
+	}
+	
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_policy_flag = public_healthcare }
+		}
+		modifier = {
+			job_healthcare_add = 200
+		}
+	}
+
+	resources = {
+		category = planet_buildings
+		cost = {
+			minerals = @b2_minerals
+			exotic_gases = @b2_rare_cost
+		}
+		upkeep = {
+			energy = @b2_upkeep
+		}
+		upkeep = {
+			trigger = {
+				num_zones = {
+					type = zone_payback_enlightenment
+					value = 0
+				}
+			}
+			exotic_gases = @b2_rare_upkeep
+		}
+		upkeep = {
+			trigger = {
+				owner = { has_policy_flag = public_healthcare }
+			}
+			energy = 2
 		}
 	}
 
 	prerequisites = {
 		"tech_frontier_health"
-	}
-
-	upgrades = {
-		"building_hospital"
-	}
-
-	triggered_desc = {
-		text = job_healthcare_effect_desc
 	}
 
 	on_destroy = {
@@ -466,7 +609,7 @@ building_clinic = {					# No Longer Used in Stellaris 4.0
 				}
 			}
 			random_list = {
-				50 = { # Still broken
+				50 = { # still broken
 					planet.owner = {
 						country_event = { id = origin.4302 }
 					}
@@ -492,7 +635,7 @@ building_clinic = {					# No Longer Used in Stellaris 4.0
 						planet.owner = { num_research_agreements >= 3 }
 					}
 				}
-				10 = { # Broken beyond repair
+				10 = { # broken beyond repair
 					planet = {
 						planet_event = { id = origin.4303 }
 					}
@@ -500,29 +643,30 @@ building_clinic = {					# No Longer Used in Stellaris 4.0
 			}
 		}
 	}
+
+	upgrades = {
+		building_medical_3
+	}
 }
 
-building_hospital = {			# No Longer Used in Stellaris 4.0
-	base_buildtime = @b2_time
+building_medical_3 = {
+	base_buildtime = @b3_time
 	can_build = no
 
 	category = amenity
 
 	building_sets = {
+		government
 		urban
 	}
-
+		
 	potential = {
-		has_building = building_clinic
-	}
-
-	allow = {
 		has_upgraded_capital = yes
 		OR = {
 			owner = {
 				OR = {
 					has_valid_civic = civic_private_healthcare_corporate
-					has_valid_civic = civic_welfare_state
+					has_valid_civic = civic_welfare_state 
 					is_ai = no
 				}
 			}
@@ -530,7 +674,7 @@ building_hospital = {			# No Longer Used in Stellaris 4.0
 				NOT = { has_available_jobs = entertainer }
 				NOT = { has_forbidden_jobs = entertainer }
 				planet_stability < 55
-				free_amenities < 500
+				free_amenities < 5
 			}
 			AND = {
 				has_branch_office = yes
@@ -545,7 +689,6 @@ building_hospital = {			# No Longer Used in Stellaris 4.0
 		exists = owner
 		OR = {
 			owner = { is_regular_empire = no }
-			has_modifier = slave_colony
 			AND = {
 				buildings_stop_pop = yes
 				owner = { is_ai = yes }
@@ -553,11 +696,20 @@ building_hospital = {			# No Longer Used in Stellaris 4.0
 		}
 	}
 
-	planet_modifier = {
-		job_healthcare_add = @b2_jobs
+	inline_script = {
+		script = jobs/healthcare_add
+		AMOUNT = @building_static_jobs
 	}
 
-		triggered_planet_modifier = {
+	planet_modifier = {
+		planet_doctors_upkeep_mult = -0.20
+		pop_amenities_usage_organic_mult = -0.10
+		# Modifier implmented in /inline_scripts/output/healthcare_triggered_modifiers.txt
+		pop_environment_tolerance = @building_medical_3_environment_tolerance
+		job_healthcare_organics_upkeep_mult = @building_medical_3_organics_upkeep
+	}
+
+	triggered_planet_modifier = {
 		potential = {
 			exists = owner
 			owner = {
@@ -568,7 +720,7 @@ building_hospital = {			# No Longer Used in Stellaris 4.0
 			}
 		}
 		modifier = {
-			auto_mod_monthly_add = 2
+			auto_mod_monthly_add = 200
 		}
 	}
 
@@ -576,24 +728,51 @@ building_hospital = {			# No Longer Used in Stellaris 4.0
 		potential = {
 			exists = owner
 			owner = {
-				has_origin = origin_overtuned
+				game_start_auto_mod_empire = yes
 			}
 			any_owned_pop_group = {
 				has_auto_modding_trait = yes
 			}
 		}
 		modifier = {
-			auto_mod_monthly_add = 2
+			auto_mod_monthly_add = 200
 		}
 	}
 
 	triggered_planet_modifier = {
 		potential = {
 			exists = owner
+			owner = {
+				has_country_flag = clone_army_full_potential
+				has_active_tradition = tr_cloning_artificial_population_clone_army
+			}
+		}
+		clone_soldiers_sustained = @clones_sustained_low
+		mult = 3
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				OR = {
+					has_purity_heightened_attributes_tradition = yes
+					has_cloning_artificial_population_tradition = yes
+					has_mutation_somatic_subversiveness_tradition = yes
+				}
+			}
+		}
+		pop_bonus_workforce_mult = @medical_workforce_mult
+		mult = 3
+	}
+	
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
 			owner = { has_policy_flag = public_healthcare }
 		}
 		modifier = {
-			job_healthcare_add = 200
+			job_healthcare_add = 300
 		}
 	}
 
@@ -611,7 +790,7 @@ building_hospital = {			# No Longer Used in Stellaris 4.0
 			trigger = {
 				owner = { has_policy_flag = public_healthcare }
 			}
-			energy = 1
+			energy = 3
 		}
 	}
 
@@ -622,8 +801,348 @@ building_hospital = {			# No Longer Used in Stellaris 4.0
 	show_tech_unlock_if = {
 		is_regular_empire = yes
 	}
-
-	triggered_desc = {
-		text = job_healthcare_effect_desc
-	}
 }
+
+#building_hospital = {			# No Longer Used in Stellaris 4.0
+#	base_buildtime = @b2_time
+#	can_build = no
+#
+#	category = amenity
+#	
+#	building_sets = {
+#		urban
+#	}
+#
+#	potential = {
+#		has_building = building_clinic
+#	}
+#
+#	allow = {
+#		has_upgraded_capital = yes
+#		OR = {
+#			owner = {
+#				OR = {
+#					has_valid_civic = civic_private_healthcare_corporate 
+#					has_valid_civic = civic_welfare_state 
+#					is_ai = no
+#				}
+#			}
+#			AND = {
+#				NOT = { has_available_jobs = entertainer }
+#				NOT = { has_forbidden_jobs = entertainer }
+#				planet_stability < 55
+#				free_amenities < 500
+#			}
+#			AND = {
+#				has_branch_office = yes
+#				branch_office_owner = {
+#					has_valid_civic = civic_private_healthcare_corporate 
+#				}
+#			}
+#		}
+#	}
+#
+#	destroy_trigger = {
+#		exists = owner
+#		OR = {
+#			owner = { is_regular_empire = no }
+#			has_modifier = slave_colony
+#			AND = {
+#				buildings_stop_pop = yes
+#				owner = { is_ai = yes }
+#			}
+#		}
+#	}
+#
+#	planet_modifier = {
+#		job_healthcare_add = @b2_jobs
+#	}
+#
+#		triggered_planet_modifier = {
+#		potential = {
+#			exists = owner
+#			owner = {
+#				has_technology = tech_gene_tailoring
+#			}
+#			any_owned_pop_group = {
+#				has_auto_modding_trait = yes
+#			}
+#		}
+#		modifier = {
+#			auto_mod_monthly_add = 2
+#		}
+#	}
+#
+#	triggered_planet_modifier = {
+#		potential = {
+#			exists = owner
+#			owner = {
+#				has_origin = origin_overtuned
+#			}
+#			any_owned_pop_group = {
+#				has_auto_modding_trait = yes
+#			}
+#		}
+#		modifier = {
+#			auto_mod_monthly_add = 2
+#		}
+#	}
+#
+#	triggered_planet_modifier = {
+#		potential = {
+#			exists = owner
+#			owner = { has_policy_flag = public_healthcare }
+#		}
+#		modifier = {
+#			job_healthcare_add = 200
+#		}
+#	}
+#
+#	resources = {
+#		category = planet_buildings
+#		cost = {
+#			minerals = @b2_minerals
+#			exotic_gases = @b2_rare_cost
+#		}
+#		upkeep = {
+#			energy = @b2_upkeep
+#			exotic_gases = @b2_rare_upkeep
+#		}
+#		upkeep = {
+#			trigger = {
+#				owner = { has_policy_flag = public_healthcare }
+#			}
+#			energy = 1
+#		}
+#	}
+#
+#	prerequisites = {
+#		"tech_frontier_hospital"
+#	}
+#
+#	show_tech_unlock_if = {
+#		is_regular_empire = yes
+#	}
+#
+#	triggered_desc = {
+#		text = job_healthcare_effect_desc
+#	}
+#}
+#
+#building_clinic = {					# No Longer Used in Stellaris 4.0
+#	base_buildtime = @b1_time
+#	base_cap_amount = 1
+#
+#	category = amenity
+#	
+#	building_sets = {
+#		urban
+#	}
+#
+#	potential = {
+#		exists = owner
+#		# Rule out Thrall-Worlds
+#		NOT = { has_modifier = slave_colony }
+#		# Check the empire is valid
+#		owner = {
+#			# Rule out gestalts and pre-FTL societies
+#			is_individual_machine = no
+#			OR = {
+#				is_regular_empire = yes
+#				AND = {
+#					has_origin = origin_fear_of_the_dark
+#					is_primitive = yes
+#				}
+#			}
+#			# Rule out AI empires with entirely no access to "Pharma State" or "Social State" Civic, unless the planet is unstable
+#			OR = {
+#				is_ai = no
+#				OR = {
+#					has_valid_civic = civic_private_healthcare_corporate 
+#					has_valid_civic = civic_welfare_state 
+#				}
+#				prev = {
+#					has_branch_office = yes
+#					branch_office_owner = {
+#						has_valid_civic = civic_private_healthcare_corporate 
+#					}
+#				}
+#				prev = {
+#					NOT = { has_available_jobs = entertainer }
+#					NOT = { has_forbidden_jobs = entertainer }
+#					planet_stability < 50
+#					free_amenities < 0
+#				}
+#			}
+#		}
+#	}
+#
+#	destroy_trigger = {
+#		OR = {
+#			# If this is now a Thrall-World
+#			has_modifier = slave_colony
+#			# If the planet is owned by a gestalt or pre-FTL society
+#			AND = {
+#				exists = owner
+#				owner = {
+#					OR = {
+#						is_regular_empire = no
+#						AND = {
+#							is_primitive = yes
+#							NOT = { has_origin = origin_fear_of_the_dark }
+#						}
+#					}
+#				}
+#			}
+#			# If this is an AI-controlled empire with entirely no access to "Pharma State" Civic, assuming the planet is now stable
+#			AND = {
+#				exists = owner
+#				owner = {
+#					is_ai = yes
+#					NOT = {
+#						OR = {
+#							OR = {
+#								has_valid_civic = civic_private_healthcare_corporate 
+#								has_valid_civic = civic_welfare_state 
+#							}
+#							prev = {
+#								has_branch_office = yes
+#								branch_office_owner = {
+#									has_valid_civic = civic_private_healthcare_corporate 
+#								}
+#							}
+#						}
+#					}
+#				}
+#				planet_stability > 70
+#				free_amenities > 2000
+#			}
+#		}
+#	}
+#
+#	planet_modifier = {
+#		job_healthcare_add = 200
+#	}
+#
+#	triggered_planet_modifier = {
+#		potential = {
+#			exists = owner
+#			owner = {
+#				has_technology = tech_gene_tailoring
+#			}
+#			any_owned_pop_group = {
+#				has_auto_modding_trait = yes
+#			}
+#		}
+#		modifier = {
+#			auto_mod_monthly_add = 1
+#		}
+#	}
+#
+#	triggered_planet_modifier = {
+#		potential = {
+#			exists = owner
+#			owner = {
+#				has_origin = origin_overtuned
+#			}
+#			any_owned_pop_group = {
+#				has_auto_modding_trait = yes
+#			}
+#		}
+#		modifier = {
+#			auto_mod_monthly_add = 1
+#		}
+#	}
+#
+#	triggered_planet_modifier = {
+#		potential = {
+#			exists = owner
+#			owner = { has_policy_flag = public_healthcare }
+#		}
+#		modifier = {
+#			job_healthcare_add = 100
+#		}
+#	}
+#
+#	resources = {
+#		category = planet_buildings
+#		cost = {
+#			minerals = @b1_minerals
+#		}
+#		upkeep = {
+#			energy = @b1_upkeep
+#		}
+#		upkeep = {
+#			trigger = {
+#				owner = { has_policy_flag = public_healthcare }
+#			}
+#			energy = 0.5
+#		}
+#	}
+#
+#	prerequisites = {
+#		"tech_frontier_health"
+#	}
+#
+#	upgrades = {
+#		"building_hospital"
+#	}
+#
+#	triggered_desc = {
+#		text = job_healthcare_effect_desc
+#	}
+#
+#	on_destroy = {
+#		owner = {
+#			if = {
+#				limit = {
+#					has_event_chain = payback_out_of_warranty_chain
+#				}
+#				end_event_chain = payback_out_of_warranty_chain
+#			}
+#		}
+#	}
+#
+#	on_repaired = {
+#		if = {
+#			limit = {
+#				planet.owner = {
+#					has_event_chain = payback_out_of_warranty_chain
+#				}
+#			}
+#			random_list = {
+#				50 = { # Still broken
+#					planet.owner = {
+#						country_event = { id = origin.4302 }
+#					}
+#					modifier = {
+#						factor = 0
+#						planet.owner = { has_technology = tech_frontier_health }
+#					}
+#				}
+#				20 = { # repaired
+#					planet.owner = {
+#						country_event = { id = origin.4301 }
+#					}
+#					modifier = {
+#						factor = 2
+#						planet.owner = { num_research_agreements = 1 }
+#					}
+#					modifier = {
+#						factor = 3
+#						planet.owner = { num_research_agreements = 2 }
+#					}
+#					modifier = {
+#						factor = 4
+#						planet.owner = { num_research_agreements >= 3 }
+#					}
+#				}
+#				10 = { # Broken beyond repair
+#					planet = {
+#						planet_event = { id = origin.4303 }
+#					}
+#				}
+#			}
+#		}
+#	}
+#}
