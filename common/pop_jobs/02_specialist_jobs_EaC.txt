@@ -1900,7 +1900,33 @@ healthcare = {
 			building_icon = building_clinic
 			# clothes_texture_index = 3
 		}
+		# Mutagenic Spa Attendant
+		swap_type = {
+			trigger = {
+				healthcare_is_mutagenic_trigger = yes
+			}
+			name = bath_attendant
+			desc = bath_attendant
+			icon = bath_attendant
+			building_icon = building_toxic_bath
+			condition_string = SPECIALIST_JOB_TRIGGER
+			weight = 5
+		}
+		# Genomic Researchers
+		swap_type = {
+			trigger = {
+				healthcare_is_genomic_researcher_trigger = yes
+			}
+			name = genomic_researcher
+			desc = genomic_researcher
+			icon = genomic_researcher
+			building_icon = building_genomic_facility
+			condition_string = SPECIALIST_JOB_TRIGGER
+			weight = 10
+		}
 	}
+	
+	tags = { pop_growth pop_assembly amenities }
 
 	possible_pre_triggers = {
 		has_owner = yes
@@ -1924,6 +1950,47 @@ healthcare = {
 		}
 		upkeep = {
 			trigger = {
+				exists = planet
+				planet = {
+					healthcare_is_mutagenic_trigger = yes
+				}
+			}
+			consumer_goods = 1
+		}
+		# Job Swap - Genomic Researcher
+		produces = {
+			trigger = {
+				exists = planet
+				planet = {
+					healthcare_is_genomic_researcher_trigger = yes
+				}
+			}
+			society_research = 6
+		}
+		produces = {
+			trigger = {
+				exists = planet
+				planet = {
+					healthcare_is_genomic_researcher_trigger = yes
+				}
+				exists = owner
+				owner = {
+					has_completed_genetic_situation = yes
+				}
+			}
+			society_research = 3
+		}
+		upkeep = {
+			trigger = {
+				exists = planet
+				planet = {
+					healthcare_is_genomic_researcher_trigger = yes
+				}
+			}
+			consumer_goods = 2
+		}
+		upkeep = {
+			trigger = {
 				exists = owner									# Modded
 				owner = { has_policy_flag = public_healthcare }	# Modded
 			}
@@ -1937,17 +2004,11 @@ healthcare = {
 			unity = 1											# Modded
 		}
 	}
+	
+	inline_script = "output/healthcare_triggered_modifiers"
 
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = {
-				NOT = { has_valid_civic = civic_dystopian_society }
-			}
-		}
-		planet_amenities_add = 500
-		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
-	}
+	inline_script = "output/genomic_triggered_modifiers"
+
 	triggered_planet_modifier = {
 		potential = {
 			exists = owner
@@ -2073,14 +2134,13 @@ healthcare = {
 			is_enslaved = yes
 			has_slavery_type = { type = slavery_indentured }
 		}
-		# modifier = {
-		#	factor = 10
-		#	NOT = { has_job_type = healthcare }	# No Longer Used in Stellaris 4.0
-		#	planet = {
-		#		free_amenities < 0
-		#		has_available_jobs = healthcare
-		#	}
-		#}
+		modifier = {
+			factor = 10
+			planet = {
+				free_amenities < 0
+				has_available_jobs = healthcare
+			}
+		}
 		modifier = {
 			factor = 3											# Modded
 			exists = owner										# Modded
