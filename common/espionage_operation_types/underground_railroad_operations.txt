@@ -1,0 +1,94 @@
+# operation_type_name = {			# Key of the site, used for name lookup etc.
+#	picture = <sprite key>			# GFX_* sprite key for the operation image
+#	desc = <triggered event desc>	# Description generator for the operation, with scope this=spy network
+#	stages = <int>					# Should match number of defined stages below.
+#	potential = <trigger>			# Trigger checking if a scope with this=spy network is potential to use (this will add/remove this operation without giving the player a reason).
+#	allow = <trigger>				# Trigger checking if a scope with this=spy network is allowed to use (this will toggle enable/disabled mode on buttons etc).
+#	stage = {						# Stage definition, order dependent.
+#		difficulty = <value>			# Base difficulty for this stage
+#		icon = <string>			# Icon gfx type.
+#		event = <string>			# Event to fire when finished the state.
+#	}
+#	stage = {...}					# Second stage, the total number of 'stage' entries should match value of 'stages'
+#	on_roll_failed = <effect>		# Effect to fire when a roll fails, with scope this=spy operation.
+#	on_create = <effect>			# Effect to fire upon operation creation, with scope this=spy operation.
+#}
+
+@diff_t0 = 4
+@diff_t1 = 5
+@diff_t2 = 6
+@diff_t3 = 7
+@diff_t4 = 8
+@diff_t5 = 9
+@diff_t6 = 10
+@diff_t7 = 11
+@diff_t8 = 12
+@diff_t9 = 13
+
+@operationTargetedByTimer = 10800 # 30 years during which the effects of an operation may be felt by select Spy Network events
+
+# this = operation
+# from = operation target
+
+EaC_operation_establish_underground_railroad = {
+	target = none
+	categories = { op_cat_infiltration }
+	picture = GFX_evt_spymaster
+	desc = {
+		trigger = { has_nemesis = yes }
+		text = EaC_operation_establish_underground_railroad_desc
+	}
+	desc = {
+		trigger = { has_nemesis = no }
+		text = EaC_operation_establish_underground_railroad_no_dlc_desc
+	}
+	stages = 1
+
+	resources = {
+		category = operations
+		cost = {
+			influence = 20
+		}
+		upkeep = {
+			energy = 4
+			influence = 1
+		}
+	}
+
+	spy_power_cost = 50
+	potential = {
+		owner = { is_worker_coop_empire = yes }
+		target = { 
+			is_country_type = default
+			OR = {
+				has_policy_flag = slavery_allowed 
+				any_owned_pop_group = {
+					has_living_standard = { type = living_standard_stratified }
+				}
+			}
+		}
+	}
+	allow = {
+		custom_tooltip = {
+			is_running_espionage_operation = no
+			fail_text = operation_one_at_a_time
+		}
+	}
+	stage = {
+		difficulty = @diff_t6
+		icon = GFX_espionage_chapter_icon_document
+		event = EaC_operation.1000
+	}
+
+	on_roll_failed = {
+		standard_espionage_operation_on_roll_failed = { RANDOM_EVENTS = operation_random_events_deepcover }
+	}
+	on_create = {
+		target = {
+			set_timed_country_flag = {
+				flag = espionage_operation_targeted_by@root.owner # Used in random Spy Network events
+				days = @operationTargetedByTimer
+			}
+		}
+	}
+}

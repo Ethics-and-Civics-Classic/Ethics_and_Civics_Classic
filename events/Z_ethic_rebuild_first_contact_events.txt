@@ -7,6 +7,270 @@
 ################################
 
 namespace = first_contact
+namespace = preftl
+
+country_event = {
+	id = preftl.1105
+	title = "observation.2000.name"
+	desc = "observation.2000.desc"
+	picture = GFX_evt_early_space_age
+	show_sound = event_ship_thrusters
+	location = FROM.capital_scope
+
+	is_triggered_only = yes
+
+	trigger = {
+
+	}
+
+	immediate = {
+		# Xenoist Faction Enlightenment Demand
+		set_timed_country_flag = {
+			flag = recent_enlightenment_timed
+			days = 7200 # 20 years
+		}
+		# for Enlightened times achievement
+		if = {
+			limit = {
+				FROM = {
+					has_country_flag = started_enlightening_from_ancient_era
+				}
+			}
+			FROM = { remove_country_flag = started_enlightening_from_ancient_era }
+			set_country_flag = uplifted_ancient_age_preftl
+		}
+
+		if = { # if we are broken shackles and they are a former homeworld
+			limit = {
+				has_origin = origin_broken_shackles
+				OR = {
+					has_country_flag = uplifting_decision
+					has_country_flag = uplifting_decision_main
+				}
+				FROM = {
+					capital_scope = {
+						OR = {
+							has_planet_flag = broken_shackles_homeworld@root
+							has_planet_flag = broken_shackles_abductees_world@root
+						}
+					}
+				}
+			}
+			country_event = {
+				id =  origin.5525
+			}
+		}
+
+		FROM = {
+			save_event_target_as = new_ftl_country
+			establish_communications_no_message = root
+			remove_pre_ftl_flags = yes
+			set_country_flag = was_enlightened
+			add_opinion_modifier = { who = root modifier = opinion_enlightened_us }
+			if = {
+				limit = {
+					root = { is_country_type = awakened_fallen_empire }
+				}
+				if = {
+					limit = {
+						root = {
+							has_ethic = ethic_fanatic_xenophobe
+						}
+					}
+					set_subject_of = {
+						who = root
+						preset = preset_thrall
+					}
+				}
+				if = {
+					limit = {
+						root = {
+							has_ethic = ethic_fanatic_xenophile
+						}
+					}
+					set_subject_of = {
+						who = root
+						preset = preset_signatory
+					}
+				}
+				if = {
+					limit = {
+						root = {
+							has_ethic = ethic_fanatic_spiritualist
+						}
+					}
+					set_subject_of = {
+						who = root
+						preset = preset_dominion
+					}
+					shift_ethic = ethic_fanatic_spiritualist
+				}
+				if = {
+					limit = {
+						root = {
+							has_ethic = ethic_fanatic_materialist
+						}
+					}
+					set_subject_of = {
+						who = root
+						preset = preset_satellite
+					}
+				}
+			}
+			random_agreement = {
+				limit = {
+					owner = { is_same_value = root }
+					target = { is_same_value = event_target:new_ftl_country }
+				}
+				add_loyalty = 100
+			}
+			capital_scope = {
+				observation_outpost = {
+					dismantle = yes
+				}
+				solar_system = {
+					if = {
+						limit = {
+							starbase = { owner = { is_same_value = root } }
+						}
+						starbase = {
+							owner = {
+								save_event_target_as = previous_system_owner
+							}
+							set_owner = event_target:new_ftl_country
+							if = {
+								limit = { has_starbase_size = starbase_outpost }
+								set_starbase_size = starbase_starport
+							}
+						}
+					}
+					every_system_planet = {
+						limit = {
+							exists = owner
+							owner = { is_same_value = root }
+						}
+						set_owner = event_target:new_ftl_country
+					}
+				}
+			}
+			achieve_ftl_effect = {
+				PRE_FTL = event_target:new_ftl_country
+				OWNER = root
+			}
+		}
+		establish_communications_no_message = from
+		establish_contact = {
+			who = from
+			location = FROM.capital_scope.solar_system
+		}
+	}
+
+	option = {
+		name = "observation.2000.a"
+		custom_tooltip = observation.2000.a.tt
+		set_country_flag = vassalized_the_pre_ftl
+		if = {
+			limit = {
+				root = { is_country_type = awakened_fallen_empire }
+			}
+			if = {
+				limit = {
+					root = {
+						has_ethic = ethic_fanatic_xenophobe
+					}
+				}
+				set_subject_of = {
+					who = root
+					preset = preset_thrall
+				}
+			}
+			if = {
+				limit = {
+					root = {
+						has_ethic = ethic_fanatic_xenophile
+					}
+				}
+				set_subject_of = {
+					who = root
+					preset = preset_signatory
+				}
+			}
+			if = {
+				limit = {
+					root = {
+						has_ethic = ethic_fanatic_spiritualist
+					}
+				}
+				set_subject_of = {
+					who = root
+					preset = preset_dominion
+				}
+				shift_ethic = ethic_fanatic_spiritualist
+			}
+			if = {
+				limit = {
+					root = {
+						has_ethic = ethic_fanatic_materialist
+					}
+				}
+				set_subject_of = {
+					who = root
+					preset = preset_satellite
+				}
+			}
+		}
+	}
+
+	option = {
+		name = observation.2000.b
+		trigger = {
+			ROOT = { NOT = { has_origin = "origin_slavers" } }
+		}
+		add_monthly_resource_mult = {
+			resource = unity
+			value = @tier3unityreward
+			min = @tier3unitymin
+			max = @tier3unitymax
+		}
+	}
+
+	after = {
+		if =  {
+			limit = {
+				has_country_flag = vassalized_the_pre_ftl
+			}
+			FROM = {
+				if = {
+					limit = {
+						root = { is_country_type = default }
+					}
+					if = {
+						limit = {
+							root = { has_valid_civic = "civic_inwards_perfection" }
+						}
+						set_subject_of = {
+							who = root
+							preset = preset_tributary
+							allow_instant_negotiation = yes
+						}
+					}
+					else = {
+						set_subject_of = {
+							who = root
+							preset = preset_protectorate
+							allow_instant_negotiation = yes
+						}
+					}
+				}
+			}
+		}
+		establish_communications_no_message = from
+		establish_contact = {
+			who = from
+			location = FROM.capital_scope.solar_system
+		}
+	}
+}
 
 # First Contact Stage 1
 first_contact_event = {

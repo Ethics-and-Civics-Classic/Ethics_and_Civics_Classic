@@ -32,7 +32,10 @@ diplomatic_stance = {
 		icon = "GFX_diplomatic_stance_belligerent"
 
 		potential = {
-			is_country_type_with_subjects = yes
+			OR = {
+				is_country_type = default
+				is_country_type = awakened_fallen_empire
+			}
 		}
 
 		valid = {
@@ -251,7 +254,11 @@ diplomatic_stance = {
 		icon = "GFX_diplomatic_stance_isolationist"
 
 		potential = {
-			is_country_type_with_subjects = yes
+			OR = {
+				is_country_type = default
+				is_country_type = awakened_fallen_empire
+				#is_country_type = mirrored_country		
+			}
 		}
 
 		valid = {
@@ -320,7 +327,11 @@ diplomatic_stance = {
 		icon = "GFX_diplomatic_stance_expansionist"
 
 		potential = {
-			is_country_type_with_subjects = yes
+			is_wilderness_empire = no
+			OR = {
+				is_country_type = default
+				is_country_type = awakened_fallen_empire
+			}
 		}
 
 		valid = {
@@ -334,6 +345,47 @@ diplomatic_stance = {
 		modifier = {
 			starbase_outpost_cost_mult = -0.10
 			planet_colony_development_speed_mult = 0.15
+			country_border_friction_mult = 1.0
+		}
+
+		ai_weight = {
+			weight = 10
+
+			modifier = {
+				factor = 2
+				NOT = { has_country_flag = has_encountered_other_empire }
+			}
+
+			modifier = {
+				factor = 0.01
+				has_ascension_perk = ap_become_the_crisis
+			}
+		}
+	}
+	
+	option = {
+		name = "diplo_stance_expansionist_wilderness"
+		icon = "GFX_diplomatic_stance_expansionist"
+
+		potential = {
+			is_wilderness_empire = yes
+			OR = {
+				is_country_type = default
+				is_country_type = awakened_fallen_empire
+			}
+		}
+
+		valid = {
+			is_homicidal = no
+		}
+
+		policy_flags = {
+			diplo_stance_expansionist
+		}
+
+		modifier = {
+			starbase_outpost_cost_mult = -0.10
+			terraform_speed_mult = 0.15
 			country_border_friction_mult = 1.0
 		}
 
@@ -671,11 +723,17 @@ diplomatic_stance = {
 		icon = "GFX_diplomatic_stance_rest"
 
 		potential = {
-			is_hive_empire = yes
+			OR = {
+				is_hive_empire = yes
+				has_menace_perk = menp_behemoth_ever_hungry
+			}
 		}
 
 		valid = {
-			has_valid_civic = civic_hive_devouring_swarm
+			OR = {
+				has_valid_civic = civic_hive_devouring_swarm
+				has_menace_perk = menp_behemoth_ever_hungry
+			}
 		}
 
 		policy_flags = {
@@ -1020,6 +1078,332 @@ orbital_bombardment = {
 	}
 }
 
+interference = {
+
+	potential = {
+		has_met_primitives = yes
+	}
+
+	option = {
+		name = "interference_not_allowed"
+
+		policy_flags = {
+			interference_not_allowed
+		}
+
+		on_enabled = {
+			hidden_effect = {
+				set_country_flag = encountered_first_primitive
+			}
+		}
+
+		in_breach_of = {
+			{
+				key = resolution_galacticstudies_advanced_xenostudies
+			}
+			{
+				key = resolution_galacticstudies_ethical_guideline_refactoring
+			}
+			{
+				key = resolution_galacticstudies_extradimensional_experimentation
+			}
+			{
+				key = resolution_pre_ftl_stances_equal_standing
+			}
+			{
+				key = resolution_pre_ftl_stances_exploitation
+			}
+		}
+
+		valid = {
+			OR = {
+				custom_tooltip = {
+					text = is_a_signatory_vassal
+					any_agreement = { agreement_preset = preset_signatory }
+				}
+				is_active_resolution = resolution_pre_ftl_stances_non_interference
+				NOR = {
+					has_ethic = "ethic_fanatic_xenophobe"
+					has_valid_civic = "civic_fanatic_purifiers"
+					has_valid_civic = "civic_hive_devouring_swarm"
+					has_valid_civic = "civic_machine_terminator"
+					hidden_trigger = { has_origin = "origin_slavers" }
+				}
+			}
+		}
+
+		AI_weight = {
+			modifier = {
+				factor = 0.1
+				is_galactic_community_member = yes
+				OR = {
+					is_active_resolution = "resolution_galacticstudies_advanced_xenostudies"
+					is_active_resolution = "resolution_galacticstudies_ethical_guideline_refactoring"
+					is_active_resolution = "resolution_galacticstudies_extradimensional_experimentation"
+					is_active_resolution = "resolution_pre_ftl_stances_equal_standing"
+					is_active_resolution = "resolution_pre_ftl_stances_exploitation"
+				}
+			}
+		}
+	}
+
+	option = {
+		name = "interference_subtle"
+
+		policy_flags = {
+			interference_subtle
+		}
+
+		on_enabled = {
+			hidden_effect = { set_country_flag = encountered_first_primitive }
+		}
+
+		valid = {
+			OR = {
+				custom_tooltip = {
+					text = is_a_signatory_vassal
+					any_agreement = { agreement_preset = preset_signatory }
+				}
+				NOR = {
+					has_ethic = "ethic_fanatic_xenophobe"
+					has_valid_civic = "civic_fanatic_purifiers"
+					has_valid_civic = "civic_hive_devouring_swarm"
+					has_valid_civic = "civic_machine_terminator"
+					hidden_trigger = { has_origin = "origin_slavers" }
+				}
+			}
+		}
+
+		AI_weight = {
+			modifier = {
+				factor = 2
+				has_valid_ai_personality = yes
+				has_ai_personality_behaviour = infiltrator
+			}
+			modifier = {
+				factor = 0
+				has_valid_ai_personality = yes
+				NOT = {
+					has_ai_personality_behaviour = infiltrator
+				}
+			}
+		}
+	}
+
+	option = {
+		name = "interference_active"
+
+		policy_flags = {
+			interference_active
+		}
+
+		in_breach_of = {
+			{
+				key = resolution_pre_ftl_stances_non_interference
+			}
+		}
+
+		on_enabled = {
+			hidden_effect = { set_country_flag = encountered_first_primitive }
+		}
+
+		valid = {
+			NOR = {
+				custom_tooltip = {
+					text = is_a_signatory_vassal
+					any_agreement = { agreement_preset = preset_signatory }
+				}
+				has_valid_civic = "civic_fanatic_purifiers"
+				has_valid_civic = "civic_hive_devouring_swarm"
+				hidden_trigger = { has_origin = "origin_slavers" }
+			}
+		}
+
+		AI_weight = {
+			modifier = {
+				factor = 2
+				has_valid_ai_personality = yes
+				OR = {
+					has_ai_personality_behaviour = infiltrator
+					has_ai_personality_behaviour = dominator
+				}
+			}
+			modifier = {
+				factor = 0
+				has_valid_ai_personality = yes
+				NOR = {
+					has_ai_personality_behaviour = infiltrator
+					has_ai_personality_behaviour = dominator
+				}
+			}
+			modifier = {
+				factor = 0.1
+				is_galactic_community_member = yes
+				OR = {
+					is_active_resolution = "resolution_galacticstudies_advanced_xenostudies"
+					is_active_resolution = "resolution_galacticstudies_ethical_guideline_refactoring"
+					is_active_resolution = "resolution_galacticstudies_extradimensional_experimentation"
+					is_active_resolution = "resolution_pre_ftl_stances_non_interference"
+				}
+			}
+		}
+	}
+	option = {
+		name = "interference_aggressive"
+
+		in_breach_of = {
+			{
+				key = resolution_pre_ftl_stances_non_interference
+			}
+			{
+				key = resolution_pre_ftl_stances_equal_standing
+			}
+		}
+
+		valid = {
+			custom_tooltip = {
+				success_text = is_not_a_signatory_vassal_success
+				fail_text = is_not_a_signatory_vassal_fail
+				NOT = { any_agreement = { agreement_preset = preset_signatory } }
+			}
+			OR = {
+				NOR = {
+					has_ethic = "ethic_pacifist"
+					has_ethic = "ethic_fanatic_pacifist"
+					has_ethic = "ethic_xenophile"
+					has_ethic = "ethic_fanatic_xenophile"
+					has_valid_civic = civic_machine_exploration_protocol
+				}
+				hidden_trigger = { has_origin = "origin_slavers" }
+			}
+		}
+		on_enabled = {
+			hidden_effect = { set_country_flag = encountered_first_primitive }
+		}
+		policy_flags = {
+			interference_aggressive
+		}
+		modifier = {}
+		AI_weight = {
+			modifier = {
+				factor = 3
+				has_valid_ai_personality = yes
+				has_ai_personality_behaviour = dominator
+			}
+			modifier = {
+				factor = 0
+				has_valid_ai_personality = yes
+				NOT = {
+					has_ai_personality_behaviour = dominator
+				}
+			}
+			modifier = {
+				factor = 0
+				OR = {
+					has_ethic = "ethic_pacifist"
+					has_ethic = "ethic_fanatic_pacifist"
+				}
+			}
+			modifier = {
+				factor = 0.1
+				is_galactic_community_member = yes
+				OR = {
+					is_active_resolution = "resolution_pre_ftl_stances_non_interference"
+					is_active_resolution = "resolution_pre_ftl_stances_equal_standing"
+				}
+			}
+		}
+	}
+}
+
+enlightenment = {
+
+	potential = {
+		has_met_primitives = yes
+	}
+
+	option = {
+		name = "enlightenment_not_allowed"
+
+		policy_flags = {
+			enlightenment_not_allowed
+		}
+		
+		valid = {
+			hidden_trigger = { NOT = { has_origin = "origin_slavers" } }
+		}
+
+		AI_weight = {
+			weight = 1
+		}
+	}
+
+	option = {
+		name = "enlightenment_covert_only"
+
+		policy_flags = {
+			enlightenment_covert_only
+		}
+
+		valid = {
+			NOT = { has_policy_flag = interference_not_allowed }
+			NOR = {
+				has_ethic = "ethic_fanatic_xenophobe"
+				has_valid_civic = "civic_fanatic_purifiers"
+				has_valid_civic = "civic_hive_devouring_swarm"
+				has_valid_civic = "civic_machine_terminator"
+				hidden_trigger = { has_origin = "origin_slavers" }
+			}
+		}
+
+		AI_weight = {
+			weight = 1
+		}
+	}
+
+	option = {
+		name = "enlightenment_allowed"
+
+		policy_flags = {
+			enlightenment_allowed
+		}
+		modifier = {}
+
+		valid = {
+			NOT = { has_policy_flag = interference_not_allowed }
+			OR = {
+				NOR = {
+					has_ethic = "ethic_fanatic_xenophobe"
+					has_valid_civic = "civic_fanatic_purifiers"
+					has_valid_civic = "civic_hive_devouring_swarm"
+					has_valid_civic = "civic_machine_terminator"
+				}
+				has_origin = "origin_slavers"
+			}
+		}
+
+		AI_weight = {
+			modifier = {
+				factor = 2
+				has_valid_ai_personality = yes
+				has_ai_personality_behaviour = uplifter
+			}
+			modifier = {
+				factor = 0
+				has_valid_ai_personality = yes
+				NOT = { has_ai_personality_behaviour = uplifter }
+			}
+			modifier = {
+				factor = 0
+				OR = {
+					has_ethic = "ethic_xenophobe"
+					has_ethic = "ethic_fanatic_xenophobe"
+				}
+			}
+		}
+	}
+}
+
 resettlement = {
 	potential = {
 		NOT = { has_ethic = "ethic_gestalt_consciousness" }
@@ -1051,6 +1435,7 @@ resettlement = {
 			NOR = {
 				has_valid_civic = civic_beacon_of_liberty
 				has_valid_civic = civic_anarchy_ideals
+				has_origin = origin_broken_shackles
 			}
 		}
 
@@ -1183,6 +1568,118 @@ leader_enhancement = {
 	}
 }
 
+first_contact_protocol = {
+
+	potential = {
+		always = yes
+	}
+
+	option = {
+		name = "first_contact_proactive"
+
+		policy_flags = {
+			first_contact_proactive
+		}
+
+		modifier = {
+			first_contact_speed_mult = 0.1
+		}
+
+		on_enabled = {
+		}
+
+		valid = {
+			is_homicidal = no
+			is_xenophobe = no
+			NOT = { has_origin = origin_payback }
+		}
+
+		AI_weight = {
+			modifier = {
+				factor = 2
+				is_pacifist = yes
+			}
+			modifier = {
+				factor = 2
+				is_xenophile = yes
+			}
+			modifier = {
+				factor = 2
+				has_valid_civic = civic_machine_servitor
+			}
+		}
+	}
+
+	option = {
+		name = "first_contact_cautious"
+
+		policy_flags = {
+			first_contact_cautious
+		}
+
+		modifier = {
+			first_contact_defense_add = 2
+		}
+
+		on_enabled = {
+		}
+
+		valid = {
+			is_homicidal = no
+			hidden_trigger = { NOT = { has_origin = "origin_slavers" } }
+		}
+
+		AI_weight = {
+			modifier = {
+				factor = 1.5
+				always = yes #Liu Cixin is right
+			}
+			modifier = {
+				factor = 2
+				has_origin = origin_payback
+			}
+			modifier = {
+				factor = 3
+				has_origin = origin_wilderness
+			}
+		}
+	}
+
+	option = {
+		name = "first_contact_attack_allowed"
+
+		policy_flags = {
+			first_contact_attack_allowed
+		}
+		modifier = {}
+
+		valid = {
+			is_pacifist = no
+			OR = {
+				is_xenophile = no
+				is_homicidal = yes
+			}
+			hidden_trigger = { NOT = { has_origin = "origin_slavers" } }
+		}
+
+
+		AI_weight = {
+			modifier = {
+				factor = 2
+				is_militarist = yes
+			}
+			modifier = {
+				factor = 2
+				is_xenophobe = yes
+			}
+			modifier = {
+				factor = 2
+				is_gestalt = yes
+			}
+		}
+	}
+}
+
 border_policy = {
 
 	potential = {
@@ -1205,11 +1702,14 @@ border_policy = {
 		}
 
 		valid = {
-			NOR = {
-				has_valid_civic = civic_machine_terminator
-				has_valid_civic = civic_hive_devouring_swarm
-				has_valid_civic = civic_fanatic_purifiers
-				has_valid_civic = civic_inwards_perfection
+			OR = {
+				NOR = {
+					has_valid_civic = civic_machine_terminator
+					has_valid_civic = civic_hive_devouring_swarm
+					has_valid_civic = civic_fanatic_purifiers
+					has_valid_civic = civic_inwards_perfection
+				}
+				is_primitive = yes
 			}
 		}
 	}
@@ -1224,6 +1724,7 @@ border_policy = {
 
 		valid = {
 			is_primitive = no
+			hidden_trigger = { NOT = { has_origin = "origin_slavers" } }
 		}
 
 		AI_weight = {
@@ -1245,9 +1746,13 @@ border_policy = {
 				has_valid_ai_personality = no
 				is_xenophobe = no
 			}
+			#modifier = {
+			#	factor = 10
+			#	has_been_declared_crisis = yes
+			#}
 			modifier = {
 				factor = 10
-				has_been_declared_crisis = yes
+				has_crisis_level = crisis_level_5
 			}
 		}
 	}
@@ -1864,6 +2369,7 @@ artificial_intelligence_policy = {
 	potential = {
 		is_gestalt = no
 		OR = {
+			has_origin = origin_synthetic_fertility
 			can_set_ai_policy = yes
 			has_country_flag = synthetic_empire
 			is_individual_machine = yes
@@ -1879,11 +2385,14 @@ artificial_intelligence_policy = {
 		valid = {
 			NOR = {
 				is_materialist = yes
+				has_origin = origin_synthetic_fertility
 				custom_tooltip = {
 					success_text = is_a_synthetic_empire
 					has_country_flag = synthetic_empire
 				}
 				has_valid_civic = civic_machine_cult
+				is_individual_machine = yes
+				hidden_trigger = { has_origin = "origin_slavers" }
 			}
 		}
 
@@ -2008,7 +2517,10 @@ artificial_intelligence_policy = {
 				has_valid_civic = civic_machine_cult
 				is_individual_machine = yes
 			}
-			NOT = { has_policy_flag = robots_outlawed }
+			NOR = { 
+				has_policy_flag = robots_outlawed 
+				hidden_trigger = { has_origin = "origin_slavers" }
+			}
 		}
 
 		policy_flags = {
@@ -2067,6 +2579,7 @@ robot_pop_policy = {
 				has_valid_civic = civic_machine_cult
 				has_origin = origin_synthetic_fertility
 				has_policy_flag = ai_full_rights
+				hidden_trigger = { has_origin = "origin_slavers" }
 			}
 			is_individual_machine = no
 		}
@@ -2137,6 +2650,155 @@ robot_pop_policy = {
 	}
 }
 
+pre_sapients = {
+	potential = {
+		OR = {
+			has_country_flag = found_presapients
+			any_planet_within_border = {
+				any_owned_pop_group = {
+					is_sapient = no
+				}
+			}
+			is_guided_sapience_empire = yes
+		}
+	}
+	option = {
+		name = "pre_sapients_protect"
+
+		potential = {
+			NOR = {
+				has_valid_civic = civic_machine_terminator
+				has_valid_civic = civic_hive_devouring_swarm
+				has_valid_civic = civic_fanatic_purifiers
+			}
+		}
+
+		on_enabled = {
+			hidden_effect = {
+				set_country_flag = found_presapients
+			}
+		}
+
+		policy_flags = {
+			pre_sapients_protect
+		}
+
+		AI_weight = {
+			factor = 10
+			modifier = {
+				factor = 0
+				values_others = no
+			}
+		}
+	}
+
+	option = {
+		name = "pre_sapients_allow"
+
+		potential = {
+			NOR = {
+				has_valid_civic = civic_machine_terminator
+				has_valid_civic = civic_hive_devouring_swarm
+				has_valid_civic = civic_fanatic_purifiers
+				is_guided_sapience_empire = yes
+				hidden_trigger = { has_origin = "origin_slavers" }
+			}
+		}
+
+		on_enabled = {
+			hidden_effect = {
+				set_country_flag = found_presapients
+			}
+		}
+
+		policy_flags = {
+			pre_sapients_allow
+		}
+
+		AI_weight = {
+			factor = 10
+		}
+	}
+
+	option = {
+		name = "pre_sapients_eat"
+
+		potential = {
+			host_has_dlc = "Utopia"
+			is_synthetic_empire = no
+			NOR = {
+				has_valid_civic = civic_fanatic_purifiers
+				is_guided_sapience_empire = yes
+			}
+		}
+
+		on_enabled = {
+			hidden_effect = {
+				set_country_flag = found_presapients
+			}
+		}
+
+		valid = {
+			NOR = {
+				has_ethic = "ethic_xenophile"
+				has_ethic = "ethic_fanatic_xenophile"
+				hidden_trigger = { has_origin = "origin_slavers" }
+			}
+		}
+
+		policy_flags = {
+			pre_sapients_eat
+		}
+
+		modifier = {}
+
+		AI_weight = {
+			factor = 10
+			modifier = {
+				factor = 0
+				NOT = { has_valid_civic = civic_hive_devouring_swarm }
+			}
+		}
+	}
+
+	option = {
+		name = "pre_sapients_purge"
+
+		valid = {
+			NOR = {
+				has_ethic = "ethic_xenophile"
+				has_ethic = "ethic_fanatic_xenophile"
+				has_valid_civic = civic_guided_sapience
+				hidden_trigger = { has_origin = "origin_slavers" }
+			}
+		}
+
+		on_enabled = {
+			hidden_effect = {
+				set_country_flag = found_presapients
+			}
+		}
+
+		policy_flags = {
+			pre_sapients_purge
+		}
+
+		modifier = {}
+
+		AI_weight = {
+			factor = 10
+			modifier = {
+				factor = 0
+				is_country_type = default
+				NOR = {
+					has_valid_civic = civic_machine_terminator
+					has_valid_civic = civic_fanatic_purifiers
+				}
+			}
+		}
+	}
+}
+
 population_controls = {
 	potential = {
 		NOT = { has_ethic = "ethic_gestalt_consciousness" }
@@ -2201,6 +2863,7 @@ slavery = {
 				has_valid_civic = civic_state_monopoly
 				has_valid_civic = civic_divine_order
 				has_valid_civic = civic_indentured_assets
+				has_origin = origin_slavers
 			}
 		}
 
@@ -2240,6 +2903,7 @@ slavery = {
 				has_ethic = ethic_fanatic_capitalism
 				has_valid_civic = civic_slaver_guilds
 				has_valid_civic = civic_indentured_assets
+				has_origin = origin_slavers
 			}
 		}
 
@@ -2627,7 +3291,10 @@ healthcare = {
 		name = "mixed_healthcare"
 
 		valid = {
-			NOT = { has_valid_civic = civic_private_healthcare_corporate }
+			NOR = { 
+				has_valid_civic = civic_private_healthcare_corporate 
+				hidden_trigger = { has_origin = "origin_slavers" }
+			}
 		}
 
 		policy_flags = {
@@ -2724,6 +3391,7 @@ education = {
 		name = "mixed_education"
 
 		valid = {
+			hidden_trigger = { NOT = { has_origin = "origin_slavers" } }
 		}
 
 		policy_flags = {
@@ -2811,6 +3479,10 @@ transportation_logistics = {
 		policy_flags = {
 			none_transport
 		}
+		
+		valid = {
+			hidden_trigger = { NOT = { has_origin = "origin_slavers" } }
+		}
 
 		modifier = {
 		}
@@ -2858,6 +3530,7 @@ transportation_logistics = {
 			NOR = {
 				has_ethic = ethic_fanatic_pacifist
 				has_valid_civic = civic_corporate_dominion
+				hidden_trigger = { has_origin = "origin_slavers" }
 			}
 			is_country_type = default
 		}

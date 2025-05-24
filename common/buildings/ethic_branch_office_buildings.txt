@@ -17,52 +17,114 @@ building_underground_railroad_office = {
 	owner_type = corporate
 
 	category = government
+	
+	allow = {
+		branch_office_owner = { 
+			#has_spynetwork = yes 
+			#any_spynetwork = {
+			#	owner = { is_same_value = prevprev }
+			#	is_spynetwork_level > 0
+			#	target = { is_same_value = root.owner }
+			#}
+		}
+	}
 
 	potential = {
 		has_branch_office = yes
 		branch_office_owner = { is_worker_coop_empire = yes }
-		count_enslaved_species = { count = 1 }
+		OWNER = { 
+			OR = {
+				has_policy_flag = slavery_allowed 
+				any_owned_pop_group = {
+					has_living_standard = { type = living_standard_stratified }
+				}
+			}
+		}
 	}
 
 	destroy_trigger = {
 		exists = owner
-		count_enslaved_species = { count = 0 }
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
+		OWNER = { 
+			has_policy_flag = slavery_not_allowed 
 			count_owned_pop_amount = {
-				count > 500
 				limit = {
-					happiness < 0.70
-					OR = {
-						has_ethic = ethic_socialism
-						has_ethic = ethic_fanatic_socialism
-						is_egalitarian = yes
-					}
+					has_living_standard = { type = living_standard_stratified }
 				}
+				count < 1
 			}
 		}
-		job_miner_add = 500
+		branch_office_owner = { 
+			#count_spynetwork = {
+			#	count = 0
+			#	limit = { 
+			#		owner = { is_same_value = ROOT.OWNER }
+			#		is_spynetwork_level > 0
+			#	}
+			#}
+		}
+	}
+
+	#triggered_planet_modifier = {
+	#	potential = {
+	#		exists = owner
+	#		count_owned_pop_amount = {
+	#			count > 500
+	#			limit = {
+	#				happiness < 0.70
+	#				OR = {
+	#					has_ethic = ethic_socialism
+	#					has_ethic = ethic_fanatic_socialism
+	#					is_egalitarian = yes
+	#				}
+	#			}
+	#		}
+	#	}
+	#	job_miner_add = 500
+	#}
+	
+	triggered_planet_modifier = {
+		potential = {
+			owner = { has_policy_flag = slavery_allowed }
+		}
+		job_underground_railroad_conductor_add = 100
+	}
+	
+	triggered_planet_modifier = {
+		potential = {
+			any_owned_pop_group = {
+				has_living_standard = { type = living_standard_stratified }
+			}
+		}
+		job_general_striker_add = 100
 	}
 
 	planet_modifier = {
-		planet_stability_add = -20
+		job_miner_add = 500
+		planet_crime_add = 25
 		pop_ethic_egalitarian_attraction_mult = 0.125
 		pop_ethic_socialism_attraction_mult = 0.125
+		branch_office_value_mult = -0.50
 	}
 
 	resources = {
 		category = planet_branch_office_buildings
 		cost = {
-			minerals = @b3_minerals
+			influence = 10
+			minerals = 500
+		}
+		cost = {
+			trigger = {
+				owner = {
+					has_authority = auth_corporate
+				}
+			}
+			influence = 10
 		}
 		produces = {
 			unity = 6
 		}
 		upkeep = {
-			energy = -20
+			energy = 5
 		}
 	}
 
@@ -88,10 +150,13 @@ building_private_mining_consortium = {
 					is_in_federation_with = prev.OWNER
 				}
 			}
-			AND = {
-				has_observation_outpost = yes
-				observation_outpost = {
-					has_modifier = preftl_action_trade_pact
+			custom_tooltip = {
+				fail_text = preftl_action_trade_pact
+				AND = {
+					has_observation_outpost = yes
+					observation_outpost = {
+						has_modifier = preftl_action_trade_pact
+					}
 				}
 			}
 		}
@@ -228,10 +293,13 @@ building_food_conglomerate = {
 					is_in_federation_with = prev.OWNER
 				}
 			}
-			AND = {
-				has_observation_outpost = yes
-				observation_outpost = {
-					has_modifier = preftl_action_trade_pact
+			custom_tooltip = {
+				fail_text = preftl_action_trade_pact
+				AND = {
+					has_observation_outpost = yes
+					observation_outpost = {
+						has_modifier = preftl_action_trade_pact
+					}
 				}
 			}
 		}
@@ -417,10 +485,13 @@ building_virtual_entertainment_studios = {
 					is_in_federation_with = prev.OWNER
 				}
 			}
-			AND = {
-				has_observation_outpost = yes
-				observation_outpost = {
-					has_modifier = preftl_action_trade_pact
+			custom_tooltip = {
+				fail_text = preftl_action_trade_pact
+				AND = {
+					has_observation_outpost = yes
+					observation_outpost = {
+						has_modifier = preftl_action_trade_pact
+					}
 				}
 			}
 		}
@@ -568,10 +639,13 @@ building_private_shipyards = {
 					is_in_federation_with = prev.OWNER
 				}
 			}
-			AND = {
-				has_observation_outpost = yes
-				observation_outpost = {
-					has_modifier = preftl_action_trade_pact
+			custom_tooltip = {
+				fail_text = preftl_action_trade_pact
+				AND = {
+					has_observation_outpost = yes
+					observation_outpost = {
+						has_modifier = preftl_action_trade_pact
+					}
 				}
 			}
 		}
@@ -701,10 +775,13 @@ building_military_contractors = {
 					is_in_federation_with = prev.OWNER
 				}
 			}
-			AND = {
-				has_observation_outpost = yes
-				observation_outpost = {
-					has_modifier = preftl_action_trade_pact
+			custom_tooltip = {
+				fail_text = preftl_action_trade_pact
+				AND = {
+					has_observation_outpost = yes
+					observation_outpost = {
+						has_modifier = preftl_action_trade_pact
+					}
 				}
 			}
 		}
@@ -840,10 +917,13 @@ building_public_relations_office = {
 					is_in_federation_with = prev.OWNER
 				}
 			}
-			AND = {
-				has_observation_outpost = yes
-				observation_outpost = {
-					has_modifier = preftl_action_trade_pact
+			custom_tooltip = {
+				fail_text = preftl_action_trade_pact
+				AND = {
+					has_observation_outpost = yes
+					observation_outpost = {
+						has_modifier = preftl_action_trade_pact
+					}
 				}
 			}
 		}
@@ -1030,10 +1110,13 @@ building_private_research_initiative = {
 					is_in_federation_with = prev.OWNER
 				}
 			}
-			AND = {
-				has_observation_outpost = yes
-				observation_outpost = {
-					has_modifier = preftl_action_trade_pact
+			custom_tooltip = {
+				fail_text = preftl_action_trade_pact
+				AND = {
+					has_observation_outpost = yes
+					observation_outpost = {
+						has_modifier = preftl_action_trade_pact
+					}
 				}
 			}
 		}
@@ -1185,10 +1268,13 @@ building_amusement_megaplex = {
 					is_in_federation_with = prev.OWNER
 				}
 			}
-			AND = {
-				has_observation_outpost = yes
-				observation_outpost = {
-					has_modifier = preftl_action_trade_pact
+			custom_tooltip = {
+				fail_text = preftl_action_trade_pact
+				AND = {
+					has_observation_outpost = yes
+					observation_outpost = {
+						has_modifier = preftl_action_trade_pact
+					}
 				}
 			}
 		}
@@ -1345,10 +1431,13 @@ building_commercial_forum = {
 					is_in_federation_with = prev.OWNER
 				}
 			}
-			AND = {
-				has_observation_outpost = yes
-				observation_outpost = {
-					has_modifier = preftl_action_trade_pact
+			custom_tooltip = {
+				fail_text = preftl_action_trade_pact
+				AND = {
+					has_observation_outpost = yes
+					observation_outpost = {
+						has_modifier = preftl_action_trade_pact
+					}
 				}
 			}
 		}
@@ -1494,10 +1583,13 @@ building_corporate_embassy = {
 					is_in_federation_with = prev.OWNER
 				}
 			}
-			AND = {
-				has_observation_outpost = yes
-				observation_outpost = {
-					has_modifier = preftl_action_trade_pact
+			custom_tooltip = {
+				fail_text = preftl_action_trade_pact
+				AND = {
+					has_observation_outpost = yes
+					observation_outpost = {
+						has_modifier = preftl_action_trade_pact
+					}
 				}
 			}
 		}
@@ -1634,6 +1726,175 @@ building_corporate_embassy = {
 		}
 	}
 }
+
+building_private_security = {
+	base_buildtime = @b1_time
+	planet_limit = 1
+
+	owner_type = corporate
+
+	category = government
+
+	allow = {
+		OR = {
+			owner = { has_overlord = prev.branch_office_owner }
+			branch_office_owner = {
+				OR = {
+					has_commercial_pact = prev.OWNER
+					is_in_federation_with = prev.OWNER
+					is_criminal_syndicate = yes
+					has_valid_civic = civic_ruthless_competition
+				}
+			}
+			custom_tooltip = {
+				fail_text = preftl_action_trade_pact
+				AND = {
+					has_observation_outpost = yes
+					observation_outpost = {
+						has_modifier = preftl_action_trade_pact
+					}
+				}
+			}
+		}
+	}
+	
+	potential = {
+		has_branch_office = yes
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			branch_office_owner = {
+				is_legit_or_legal_criminal = yes
+			}
+		}
+		job_enforcer_add = 200
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			branch_office_owner = { is_illegal_criminal = yes }
+		}
+		job_criminal_add = 100
+		job_enforcer_add = 100
+		planet_crime_add = 25 #offsets the enforcer job. >:)
+		#mult = branch_office_owner.value:scripted_modifier_mult|MODIFIER|branch_office_holding_crime_mult| let's not mult criminal jobs.
+	}
+	
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			branch_office_owner = {
+				has_civic = civic_military_dictatorship_corporate
+			}
+		}
+		modifier = {
+			job_commandante_pirate_add = 50
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			always = yes
+		}
+		planet_jobs_trade_produces_mult = @trade_value_from_jobs
+		mult = value:num_jobs_with_tag|TAG|crime| #benefits from enforcers, criminals, slaves, livestock and purged pops
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			branch_office_owner = {
+				OR = {
+					value = civic_ruthless_competition			# Due to Slavery
+					value = civic_slaver_guilds					# Due to Slavery
+					value = civic_indentured_assets				# Due to Slavery
+					value = civic_barbaric_despoilers_corporate	# Due to Slavery
+					value = civic_private_militaries			# Private Military Civic
+					value = civic_private_military_companies	# Private Military Civic
+				}
+			}
+		}
+		planet_jobs_trade_produces_mult = @trade_value_from_jobs
+		mult = value:num_jobs_with_tag|TAG|crime| #benefits from enforcers, criminals, slaves, livestock and purged pops
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			branch_office_owner = {
+				has_valid_civic = civic_corporate_genetic_identification
+			}
+		}
+		planet_jobs_trade_produces_mult = @trade_value_from_jobs
+		mult = value:num_jobs_with_tag|TAG|crime| #benefits from enforcers, criminals, slaves, livestock and purged pops
+	}
+
+	#Crims cause crime even with deal
+	triggered_planet_modifier = {
+		potential = {
+			branch_office_owner = {
+				OR = {
+					is_criminal_syndicate = yes
+					civic_military_dictatorship_corporate = yes
+				}
+				is_legit_or_legal_criminal = yes
+			}
+		}
+		planet_crime_floor_add = @crime_floor_from_legal_crime
+	}
+
+	#Trader Jobs from civics
+	triggered_country_modifier = {
+		potential = {
+			branch_office_owner = {
+				OR = {
+					value = civic_ruthless_competition			# Due to Slavery
+					value = civic_slaver_guilds					# Due to Slavery
+					value = civic_indentured_assets				# Due to Slavery
+					value = civic_barbaric_despoilers_corporate	# Due to Slavery
+					value = civic_private_militaries			# Private Military Civic
+					value = civic_private_military_companies	# Private Military Civic
+				}
+			}
+		}
+		job_capital_trader_add = @traders_from_civic
+	}
+
+	triggered_country_modifier = {
+		potential = {
+			branch_office_owner = {
+				has_valid_civic = civic_corporate_genetic_identification
+			}
+		}
+		job_capital_trader_add = @traders_from_civic
+	}
+
+	custom_tooltip = trade_value_from_enforcers_and_criminals
+
+	resources = {
+		category = planet_branch_office_buildings
+		cost = {
+			influence = 10
+			minerals = 500
+		}
+		cost = {
+			trigger = {
+				owner = {
+					has_authority = auth_corporate
+				}
+			}
+			influence = 10
+		}
+		produces = {
+			energy = 10
+			mult = value:branch_office_value_for_buildings
+		}
+	}
+
+	ai_weight = {
+		factor = 10
+	}
+}
+
 
 ## CRIME MEGACORP ##
 building_wildcat_miners = {
@@ -2213,10 +2474,13 @@ building_pirate_haven = {
 					has_valid_civic = civic_ruthless_competition
 				}
 			}
-			AND = {
-				has_observation_outpost = yes
-				observation_outpost = {
-					has_modifier = preftl_action_trade_pact
+			custom_tooltip = {
+				fail_text = preftl_action_trade_pact
+				AND = {
+					has_observation_outpost = yes
+					observation_outpost = {
+						has_modifier = preftl_action_trade_pact
+					}
 				}
 			}
 		}
@@ -2264,7 +2528,7 @@ building_pirate_haven = {
 			}
 		}
 		modifier = {
-			job_commandante_pirate_add = 100
+			job_commandante_pirate_add = 50
 		}
 	}
 
@@ -2801,7 +3065,7 @@ building_smuggling_rings = {
 			}
 		}
 		modifier = {
-			job_commandante_pirate_add = 100
+			job_commandante_pirate_add = 50
 		}
 	}
 
@@ -3209,10 +3473,13 @@ building_executive_retreat = {
 					is_in_federation_with = prev.OWNER
 				}
 			}
-			AND = {
-				has_observation_outpost = yes
-				observation_outpost = {
-					has_modifier = preftl_action_trade_pact
+			custom_tooltip = {
+				fail_text = preftl_action_trade_pact
+				AND = {
+					has_observation_outpost = yes
+					observation_outpost = {
+						has_modifier = preftl_action_trade_pact
+					}
 				}
 			}
 		}
@@ -3357,10 +3624,13 @@ building_xeno_tourism_agency = {
 					is_in_federation_with = prev.OWNER
 				}
 			}
-			AND = {
-				has_observation_outpost = yes
-				observation_outpost = {
-					has_modifier = preftl_action_trade_pact
+			custom_tooltip = {
+				fail_text = preftl_action_trade_pact
+				AND = {
+					has_observation_outpost = yes
+					observation_outpost = {
+						has_modifier = preftl_action_trade_pact
+					}
 				}
 			}
 		}
@@ -3581,10 +3851,13 @@ building_knightly_theme_park = {
 					is_in_federation_with = prev.OWNER
 				}
 			}
-			AND = {
-				has_observation_outpost = yes
-				observation_outpost = {
-					has_modifier = preftl_action_trade_pact
+			custom_tooltip = {
+				fail_text = preftl_action_trade_pact
+				AND = {
+					has_observation_outpost = yes
+					observation_outpost = {
+						has_modifier = preftl_action_trade_pact
+					}
 				}
 			}
 		}
@@ -3887,10 +4160,13 @@ building_augmentation_bazaars_branch = {
 					is_in_federation_with = prev.OWNER
 				}
 			}
-			AND = {
-				has_observation_outpost = yes
-				observation_outpost = {
-					has_modifier = preftl_action_trade_pact
+			custom_tooltip = {
+				fail_text = preftl_action_trade_pact
+				AND = {
+					has_observation_outpost = yes
+					observation_outpost = {
+						has_modifier = preftl_action_trade_pact
+					}
 				}
 			}
 		}
