@@ -5,12 +5,13 @@
 building_paragon_memory_vaults = {
 	base_buildtime = @b2_time
 	planet_limit = 1
-	empire_limit = 1
 	category = unity
 	can_demolish = no
 	can_be_ruined = yes
 	can_be_disabled = no
 	is_essential = yes
+	
+	empire_limit = 1
 	
 	building_sets = {
 		government
@@ -51,18 +52,6 @@ building_paragon_memory_vaults = {
 		text = building_paragon_memory_vaults_hive_desc
 	}
 
-	allow = {
-		has_upgraded_capital = yes
-		hidden_trigger = {
-			owner = {
-				OR = {
-					is_ai = no
-					has_country_resource = { type = minerals amount >= 800 }
-				}
-			}
-		}
-	}
-
 	potential = {
 		custom_tooltip = {
 			text = EMPIRE_UNIQUE_BUILDING
@@ -76,6 +65,17 @@ building_paragon_memory_vaults = {
 		cost = {
 			minerals = @b2_minerals
 		}
+
+		cost = {
+			trigger = {
+				exists = owner
+				owner = {
+					is_wilderness_empire = yes
+				}
+			}
+			biomass = 200
+		}
+
 		produces = {
 			trigger = {
 				exists = owner
@@ -90,90 +90,59 @@ building_paragon_memory_vaults = {
 			unity = 5
 			multiplier = planet.paragon_memory_vault
 		}
+		produces = {
+			trigger = {
+				exists = owner
+				owner = { has_civic = civic_memory_vault_corporate }
+				planet = { is_variable_set = paragon_memory_vault }
+			}
+			trade = 10
+		}
+		produces = {
+			trigger = {
+				exists = owner
+				owner = { has_civic = civic_memory_vault_corporate }
+				planet = { is_variable_set = paragon_memory_vault }
+			}
+			trade = 10
+			multiplier = planet.paragon_memory_vault
+		}
 		upkeep = {
 			energy = @b2_upkeep
 		}
 	}
 
-	triggered_planet_modifier = {
+	triggered_country_modifier = {
 		potential = {
 			exists = owner
-			owner = { has_civic = civic_memory_vault_corporate }
+			owner = {
+				OR = {
+					has_civic = civic_memory_vault
+					has_civic = civic_memory_vault_machine
+					has_civic = civic_memory_vault_hive
+				}
+			}
 		}
-		planet_jobs_trade_produces_add = 10
+		species_leader_exp_gain = 0.01
 	}
-	triggered_planet_modifier = {
+	triggered_country_modifier = {
 		potential = {
 			exists = owner
-			owner = { has_civic = civic_memory_vault_corporate }
+			owner = {
+				OR = {
+					has_civic = civic_memory_vault
+					has_civic = civic_memory_vault_machine
+					has_civic = civic_memory_vault_hive
+				}
+			}
 			planet = { is_variable_set = paragon_memory_vault }
 		}
-		planet_jobs_trade_produces_add = 10
+		species_leader_exp_gain = 0.01
 		mult = planet.paragon_memory_vault
-	}
-	
-	#Jobs
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = { is_gestalt = no }
-			owner = { is_memorialist_empire = yes }
-		}
-		job_death_chronicler_add = @b1_jobs
-		pop_government_ethic_attraction = 0.20
-	}
-	triggered_desc = {
-		trigger = {
-			exists = owner
-			owner = { is_gestalt = no }
-			owner = { is_memorialist_empire = yes }
-		}
-		text = "job_death_chronicler_effect_desc"
-	}
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = { is_gestalt = yes }
-			owner = { is_memorialist_empire = yes }
-		}
-		job_chronicle_drone_add = @b1_jobs
-	}
-	triggered_desc = {
-		trigger = {
-			exists = owner
-			owner = { is_gestalt = yes }
-			owner = { is_memorialist_empire = yes }
-		}
-		text = "job_chronicle_drone_effect_desc"
 	}
 
-	triggered_country_modifier = {
-		potential = {
-			exists = owner
-			owner = {
-				OR = {
-					has_civic = civic_memory_vault
-					has_civic = civic_memory_vault_machine
-					has_civic = civic_memory_vault_hive
-				}
-			}
-		}
-		species_leader_exp_gain = 0.01
-	}
-	triggered_country_modifier = {
-		potential = {
-			exists = owner
-			owner = {
-				OR = {
-					has_civic = civic_memory_vault
-					has_civic = civic_memory_vault_machine
-					has_civic = civic_memory_vault_hive
-				}
-			}
-			planet = { is_variable_set = paragon_memory_vault }
-		}
-		species_leader_exp_gain = 0.01
-		mult = planet.paragon_memory_vault
+	inline_script = {
+		script = buildings/on_all_wilderness_buildings_districts
 	}
 	triggered_desc = {
 		text = EaC_civic_mechanic_events.103.building.modifier_tooltip_warning

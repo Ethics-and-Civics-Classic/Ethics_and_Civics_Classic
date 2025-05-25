@@ -15,12 +15,12 @@ building_noble_estates = {
 
 	potential = {
 		exists = owner
-		planet = {
-			OR = {
-				has_building = building_noble_estates
-				owner = { is_ai = no }
-			}
-		}
+		#planet = {
+		#	OR = {
+		#		has_building = building_noble_estates
+		#		owner = { is_ai = no }
+		#	}
+		#}
 		owner = {
 			OR = {
 				has_valid_civic = civic_aristocratic_elite
@@ -33,7 +33,7 @@ building_noble_estates = {
 	}
 
 	allow = {
-		# has_upgraded_capital = yes	Maybe we let this be on any planet?
+		# has_upgraded_capital = yes	# Lets allow this be on any planet
 		if = {
 			limit = {
 				exists = orbital_defence
@@ -65,6 +65,11 @@ building_noble_estates = {
 	planet_modifier = {
 		job_noble_add = 100
 		planet_housing_add = 100
+	}
+	
+	inline_script = {
+		script = "jobs/politician_add"
+		AMOUNT = @building_static_jobs_low
 	}
 
 	resources = {
@@ -148,7 +153,10 @@ building_precinct_house = {
 	}
 
 	potential = {
-		owner = { is_regular_empire = yes }
+		owner = {
+			is_regular_empire = yes
+			NOT = { has_valid_civic = civic_civil_education }
+		}
 		NOT = { has_modifier = slave_colony }
 	}
 
@@ -165,14 +173,26 @@ building_precinct_house = {
 	}
 
 	destroy_trigger = {
-		exists = owner
 		OR = {
-			owner = { is_regular_empire = no }
 			AND = {
-				owner = { is_ai = yes }# Players dont like random buildings blowing up
+				exists = owner
+				owner = { is_regular_empire = no }
+			}
+			AND = {
+				exists = owner
+				owner = { has_valid_civic = civic_civil_education }
+			}
+			has_modifier = slave_colony
+			AND = {
+				exists = owner
+				owner = { is_ai = yes } #Players dont like random buildings blowing up
 				planet = { has_building = building_hall_judgment }
-			}# This way the AI gets to reclaim its building slots that it sunk into this expense
+			}#This way the AI gets to reclaim its building slots that it sunk into this expense
 		}
+	}
+	
+	convert_to = {
+		building_state_academy
 	}
 
 	planet_modifier = {
@@ -205,6 +225,7 @@ building_precinct_house = {
 
 	show_tech_unlock_if = {
 		is_regular_empire = yes
+		NOT = { has_valid_civic = civic_civil_education }
 	}
 
 	upgrades = {
@@ -224,7 +245,10 @@ building_hall_judgment = {
 	}
 
 	potential = {
-		owner = { is_regular_empire = yes }
+		owner = {
+			is_regular_empire = yes
+			NOT = { has_valid_civic = civic_civil_education }
+		}
 		NOT = { has_modifier = slave_colony }
 		if = {
 			limit = {
@@ -237,7 +261,16 @@ building_hall_judgment = {
 
 	destroy_trigger = {
 		exists = owner
-		owner = { is_regular_empire = no }
+		owner = {
+			OR = {
+				is_regular_empire = no
+				has_valid_civic = civic_civil_education
+			}
+		}
+	}
+	
+	convert_to = {
+		building_center_of_guidance
 	}
 
 	planet_modifier = {
@@ -272,5 +305,6 @@ building_hall_judgment = {
 
 	show_tech_unlock_if = {
 		is_regular_empire = yes
+		NOT = { has_valid_civic = civic_civil_education }
 	}
 }

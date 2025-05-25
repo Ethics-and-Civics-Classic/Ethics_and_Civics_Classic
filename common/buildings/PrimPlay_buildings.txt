@@ -622,7 +622,6 @@ building_stone_palace = {
 		planet_housing_add = 300
 		planet_amenities_add = 2500
 		planet_crime_add = -10
-		planet_max_buildings_add = 5
 	}
 	
 	prerequisites = {
@@ -692,8 +691,24 @@ building_primitive_factory = {
 		}
 	}
 
-	planet_modifier = {
-		job_primitive_laborer_add = 200
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_gestalt = no
+			}
+		}
+		job_primitive_laborer_add = @building_static_jobs
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_gestalt = yes
+			}
+		}
+		job_fabricator_add = @building_static_jobs
 	}
 	
 	prerequisites = {
@@ -707,6 +722,198 @@ building_primitive_factory = {
 	# upgrades = {
 	#	"building_factory_1"
 	#}
+	
+	triggered_desc = {
+		trigger = {
+			exists = owner
+			owner = {
+				is_gestalt = no
+			}
+		}
+		text =  job_primitive_laborer_effect_desc
+	}
+
+	triggered_desc = {
+		trigger = {
+			exists = owner
+			owner = {
+				is_hive_empire = yes
+			}
+		}
+		text =  job_alloy_drone_effect_desc
+	}
+}
+
+building_primitive_offices = {
+	can_build = no
+	planet_limit = 1
+	can_demolish = yes
+	can_be_ruined = no
+
+	category = unity
+
+	building_sets = {
+		pre_ftl
+	}
+
+	potential = {
+		exists = owner
+		owner = {
+			is_hive_empire = no
+			OR = {
+				# has_origin = origin_primitive_player_pre_industrial_age
+				# has_origin = origin_primitive_player_industrial_age
+				# has_origin = origin_primitive_player_machine_age
+				# has_origin = origin_primitive_player_atomic_age
+				# has_origin = origin_primitive_player_early_space_age
+				NOT = { has_technology = tech_basic_industry }
+				AND = {
+					OR = {
+						has_country_flag = steam_age
+						has_country_flag = machine_age
+						has_country_flag = industrial_age
+						has_country_flag = atomic_age
+						has_country_flag = early_space_age
+					}
+					is_primitive = yes
+				}
+			}
+		}
+	}
+
+	destroy_trigger = {
+		exists = owner
+		owner = {
+			OR = {
+				NOT = {
+					# has_origin = origin_primitive_player_pre_industrial_age
+					# has_origin = origin_primitive_player_industrial_age
+					# has_origin = origin_primitive_player_machine_age
+					# has_origin = origin_primitive_player_atomic_age
+					# has_origin = origin_primitive_player_early_space_age
+					any_situation = { is_situation_type = PrimPlayer_situation } # Much more efficient trigger
+					is_primitive = yes
+				}
+				is_hive_empire = yes
+			}
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_gestalt = no
+			}
+		}
+		job_primitive_administrator_add = @building_static_jobs
+	}
+	
+	prerequisites = {
+		"tech_primitive_nation_state_government"
+	}
+	
+	show_tech_unlock_if = {
+		is_gestalt = no
+	}
+
+#	upgrades = {
+#		building_bureaucratic_1
+#		building_temple
+#	}
+
+	triggered_desc = {
+		text =  job_primitive_administrator_effect_desc
+	}
+}
+
+building_primitive_research = {
+	can_build = no
+	can_demolish = yes
+	can_be_ruined = no
+	planet_limit = 1
+	category = research
+
+	building_sets = {
+		pre_ftl
+	}
+
+	potential = {
+		exists = owner
+		owner = {
+			OR = {
+				# has_origin = origin_primitive_player_pre_industrial_age
+				# has_origin = origin_primitive_player_industrial_age
+				# has_origin = origin_primitive_player_machine_age
+				# has_origin = origin_primitive_player_atomic_age
+				# has_origin = origin_primitive_player_early_space_age
+				NOT = { has_technology = tech_basic_science_lab_1 }
+				AND = {
+					OR = {
+						has_country_flag = steam_age
+						has_country_flag = machine_age
+						has_country_flag = industrial_age
+						has_country_flag = atomic_age
+						has_country_flag = early_space_age
+					}
+					is_primitive = yes
+				}
+			}
+		}
+	}
+
+	destroy_trigger = {
+		exists = owner
+		owner = {
+			NOT = {
+				# has_origin = origin_primitive_player_pre_industrial_age
+				# has_origin = origin_primitive_player_industrial_age
+				# has_origin = origin_primitive_player_machine_age
+				# has_origin = origin_primitive_player_atomic_age
+				# has_origin = origin_primitive_player_early_space_age
+				any_situation = { is_situation_type = PrimPlayer_situation } # Much more efficient trigger
+				is_primitive = yes
+			}
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_gestalt = no
+			}
+		}
+		job_primitive_researcher_2_add = @building_static_jobs
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_gestalt = yes
+			}
+		}
+		job_calculator_physicist_add = 60
+		job_calculator_biologist_add = 60
+		job_calculator_engineer_add = 60
+	}
+
+#	upgrades = {
+#		building_research_lab_1
+#	}
+
+	prerequisites = {
+		"tech_primitive_universities"
+	}
+	
+	show_tech_unlock_if = {
+		is_gestalt = no
+	}
+
+	triggered_desc = {
+		text =  job_primitive_researcher_2_effect_desc
+	}
 }
 
 building_primitive_mine = {
@@ -997,6 +1204,7 @@ building_primitive_capital = {
 		building_hive_capital
 		building_hab_capital
 		building_hab_fe_capital
+		building_capital_wilderness
 	}
 
 	triggered_planet_modifier = {
@@ -1023,7 +1231,6 @@ building_primitive_capital = {
 		planet_housing_add = 500
 		planet_amenities_add = 2500
 		planet_crime_add = -20
-		planet_max_buildings_add = 5
 	}
 
 	triggered_planet_modifier = {
@@ -1053,7 +1260,6 @@ building_primitive_capital = {
 		planet_amenities_add = 2500
 		planet_crime_add = -20
 		planet_max_branch_office_buildings_add = 1
-		planet_max_buildings_add = 5
 	}
 	
 	triggered_planet_modifier = {
@@ -1855,6 +2061,7 @@ building_hive_primitive_capital = {
 		building_hive_capital
 		building_hab_capital
 		building_hab_fe_capital
+		building_capital_wilderness
 	}
 
 	triggered_planet_modifier = {
@@ -1910,7 +2117,6 @@ building_hive_primitive_capital = {
 		planet_amenities_no_happiness_add = 2500
 		planet_crime_no_happiness_add = -20
 		planet_max_branch_office_buildings_add = 1
-		planet_max_buildings_add = 5
 	}
 	
 	triggered_planet_modifier = {
@@ -2040,6 +2246,84 @@ building_hive_urban_dwellings = {
 	}
 
 	upgrades = {
+	}
+}
+
+building_hive_primitive_node = {
+	icon = building_hive_node
+	can_build = no
+	planet_limit = 1
+	can_demolish = yes
+	can_be_ruined = no
+
+	category = unity
+
+	building_sets = {
+		pre_ftl
+	}
+
+	potential = {
+		exists = owner
+		owner = {
+			is_hive_empire = yes
+			OR = {
+				# has_origin = origin_primitive_player_pre_industrial_age
+				# has_origin = origin_primitive_player_industrial_age
+				# has_origin = origin_primitive_player_machine_age
+				# has_origin = origin_primitive_player_atomic_age
+				# has_origin = origin_primitive_player_early_space_age
+				NOT = { has_technology = tech_hive_node }
+				AND = {
+					OR = {
+						has_country_flag = machine_age
+						has_country_flag = industrial_age
+						has_country_flag = atomic_age
+						has_country_flag = early_space_age
+					}
+					is_primitive = yes
+				}
+			}
+		}
+	}
+
+	destroy_trigger = {
+		exists = owner
+		owner = {
+			OR = {
+				NOT = {
+					# has_origin = origin_primitive_player_pre_industrial_age
+					# has_origin = origin_primitive_player_industrial_age
+					# has_origin = origin_primitive_player_machine_age
+					# has_origin = origin_primitive_player_atomic_age
+					# has_origin = origin_primitive_player_early_space_age
+					any_situation = { is_situation_type = PrimPlayer_situation } # Much more efficient trigger
+					is_primitive = yes
+				}
+				is_hive_empire = no
+			}
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_hive_empire = yes
+			}
+		}
+		job_coordinator_add = @building_static_jobs
+	}
+
+	triggered_desc = {
+		text =  job_synapse_drone_effect_desc
+	}
+	
+	prerequisites = {
+		"tech_primitive_node"
+	}
+	
+	show_tech_unlock_if = {
+		is_hive_empire = yes
 	}
 }
 
@@ -2349,6 +2633,84 @@ building_machine_primitive_assembly_plant = {
 			}
 		}
 		text = job_roboticist_individual_machine_effect_desc
+	}
+}
+
+building_machine_primitive_node = {
+	icon = building_autochthon_monument
+	can_build = no
+	planet_limit = 1
+	can_demolish = yes
+	can_be_ruined = no
+
+	category = unity
+
+	building_sets = {
+		pre_ftl
+	}
+
+	potential = {
+		exists = owner
+		owner = {
+			is_machine_empire = yes
+			OR = {
+				# has_origin = origin_primitive_player_pre_industrial_age
+				# has_origin = origin_primitive_player_industrial_age
+				# has_origin = origin_primitive_player_machine_age
+				# has_origin = origin_primitive_player_atomic_age
+				# has_origin = origin_primitive_player_early_space_age
+				NOT = { has_technology = tech_cultural_heritage }
+				AND = {
+					OR = {
+						has_country_flag = machine_age
+						has_country_flag = industrial_age
+						has_country_flag = atomic_age
+						has_country_flag = early_space_age
+					}
+					is_primitive = yes
+				}
+			}
+		}
+	}
+
+	destroy_trigger = {
+		exists = owner
+		owner = {
+			OR = {
+				NOT = {
+					# has_origin = origin_primitive_player_pre_industrial_age
+					# has_origin = origin_primitive_player_industrial_age
+					# has_origin = origin_primitive_player_machine_age
+					# has_origin = origin_primitive_player_atomic_age
+					# has_origin = origin_primitive_player_early_space_age
+					any_situation = { is_situation_type = PrimPlayer_situation } # Much more efficient trigger
+					is_primitive = yes
+				}
+				is_machine_empire = no
+			}
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_machine_empire = yes
+			}
+		}
+		job_coordinator_add = @building_static_jobs
+	}
+
+	triggered_desc = {
+		text =  job_coordinator_effect_desc
+	}
+	
+	prerequisites = {
+		"tech_primitive_historical_archives"
+	}
+	
+	show_tech_unlock_if = {
+		is_hive_empire = yes
 	}
 }
 
@@ -2723,7 +3085,6 @@ building_solarpunk_organic_paradise = {
 	planet_modifier = {
 		job_solarpunk_anarchist_add = 500
 		planet_housing_add = 2000
-		planet_max_buildings_add = 5
 	}
 
 	resources = {

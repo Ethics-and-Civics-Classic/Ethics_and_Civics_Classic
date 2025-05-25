@@ -15,11 +15,8 @@ building_temple = {
 			OR = {
 				is_spiritualist = yes
 				AND = {
-					AND = {
-						is_gestalt = no
-						has_make_spiritualist_perk = yes
-					}
-					is_death_cult_empire = no
+					is_gestalt = no
+					has_make_spiritualist_perk = yes
 				}
 			}
 		}
@@ -32,15 +29,8 @@ building_temple = {
 			owner = {
 				OR = {
 					AND = {
-						AND = {
-							is_spiritualist = no
-							has_make_spiritualist_perk = no
-						}
-						OR = {
-							is_spiritualist = no
-							has_valid_civic = civic_death_cult
-							has_valid_civic = civic_death_cult_corporate
-						}
+						is_spiritualist = no
+						has_make_spiritualist_perk = no
 					}
 					is_gestalt = yes
 				}
@@ -48,6 +38,8 @@ building_temple = {
 			has_modifier = slave_colony
 		}
 	}
+	
+	ai_weight_coefficient = 0
 
 	convert_to = {
 		building_bureaucratic_1
@@ -71,7 +63,7 @@ building_temple = {
 
 	inline_script = {
 		script = jobs/priests_add
-		AMOUNT = @b1_jobs
+		AMOUNT = @building_static_jobs
 	}
 
 	triggered_planet_modifier = {
@@ -126,9 +118,9 @@ building_temple = {
 		text = job_templar_effect_desc
 	}
 
-	upgrades = {
-		building_holotemple
-	}
+	#upgrades = {
+	#	building_holotemple	#Now you build each building
+	#}
 
 	prerequisites = {
 		"tech_cultural_heritage"
@@ -142,7 +134,6 @@ building_temple = {
 				has_make_spiritualist_perk = yes
 			}
 		}
-		is_death_cult_empire = no
 	}
 }
 
@@ -162,19 +153,16 @@ building_holotemple = {
 			OR = {
 				is_spiritualist = yes
 				AND = {
-					AND = {
-						is_gestalt = no
-						has_make_spiritualist_perk = yes
-					}
-					is_death_cult_empire = no
+					is_gestalt = no
+					has_make_spiritualist_perk = yes
 				}
 			}
 		}
 		NOT = { has_modifier = slave_colony }
 	}
-
+	
 	allow = {
-		has_upgraded_capital = yes
+		#has_upgraded_capital = yes
 	}
 
 	destroy_trigger = {
@@ -183,15 +171,8 @@ building_holotemple = {
 			owner = {
 				OR = {
 					AND = {
-						AND = {
-							is_spiritualist = no
-							has_make_spiritualist_perk = no
-						}
-						OR = {
-							is_spiritualist = no
-							has_valid_civic = civic_death_cult
-							has_valid_civic = civic_death_cult_corporate
-						}
+						is_spiritualist = no
+						has_make_spiritualist_perk = no
 					}
 					is_gestalt = yes
 				}
@@ -219,13 +200,14 @@ building_holotemple = {
 	}
 
 	planet_modifier = {
-		# pop_ethic_spiritualist_attraction_mult = 0.10	# Added to priest job
+		pop_ethic_spiritualist_attraction_mult = 0.10	# Added to priest job
+		planet_bureaucrats_upkeep_mult = -0.20
 	}
 
-	inline_script = {
-		script = jobs/priests_add
-		AMOUNT = @b2_jobs
-	}
+	#inline_script = {
+	#	script = jobs/priests_add	#Now temple is standalone and this is complimentary
+	#	AMOUNT = @b2_jobs
+	#}
 
 	triggered_planet_modifier = {
 		potential = {
@@ -248,9 +230,9 @@ building_holotemple = {
 		text = job_templar_effect_desc
 	}
 
-	upgrades = {
-		building_sacred_nexus
-	}
+	#upgrades = {
+	#	building_sacred_nexus	#Now you build each building
+	#}
 
 	prerequisites = {
 		"tech_holographic_rituals"
@@ -264,7 +246,6 @@ building_holotemple = {
 				has_make_spiritualist_perk = yes
 			}
 		}
-		is_death_cult_empire = no
 	}
 }
 
@@ -281,14 +262,19 @@ building_sacred_nexus = {
 	potential = {
 		exists = owner
 		owner = {
-			is_spiritualist = yes
-			is_death_cult_empire = no
+			OR = {
+				is_spiritualist = yes
+				AND = {
+					is_gestalt = no
+					has_make_spiritualist_perk = yes
+				}
+			}
 		}
 		NOT = { has_modifier = slave_colony }
 	}
 
 	allow = {
-		has_major_upgraded_capital = yes
+		#has_major_upgraded_capital = yes
 	}
 
 	destroy_trigger = {
@@ -296,9 +282,11 @@ building_sacred_nexus = {
 		OR = {
 			owner = {
 				OR = {
-					is_spiritualist = no
-					has_valid_civic = civic_death_cult
-					has_valid_civic = civic_death_cult_corporate
+					AND = {
+						is_spiritualist = no
+						has_make_spiritualist_perk = no
+					}
+					is_gestalt = yes
 				}
 			}
 			has_modifier = slave_colony
@@ -325,12 +313,13 @@ building_sacred_nexus = {
 
 	planet_modifier = {
 		# pop_ethic_spiritualist_attraction_mult = 0.15	# Added to priest job
+		pop_bureaucrat_bonus_workforce_mult = 0.15
 	}
 
-	inline_script = {
-		script = jobs/priests_add
-		AMOUNT = @b3_jobs
-	}
+	#inline_script = {
+	#	script = jobs/priests_add	#Now temple is standalone and this is complimentary
+	#	AMOUNT = @b3_jobs
+	#}
 
 	inline_script = buildings/job_high_priest_variants_add_saintly_hierarchy
 
@@ -403,15 +392,15 @@ building_sacred_nexus = {
 				has_make_spiritualist_perk = yes
 			}
 		}
-		is_death_cult_empire = no
 	}
 }
 
 building_citadel_of_faith = {
 	base_buildtime = @b2_time
-	empire_limit = {
-		base = 1
-	}
+	#empire_limit = {
+		#base = 1
+	#}
+	planet_limit = 1
 
 	category = unity
 
@@ -430,7 +419,10 @@ building_citadel_of_faith = {
 				}
 			}
 		}
-		NOT = { has_modifier = slave_colony }
+		NOR = {
+			has_modifier = slave_colony
+			has_modifier = penal_colony
+		}
 	}
 
 	allow = {
@@ -457,6 +449,7 @@ building_citadel_of_faith = {
 		building_autocurating_vault
 		building_alpha_hub
 		building_corporate_vault
+		building_trophy_vault
 	}
 
 	resources = {
@@ -489,6 +482,58 @@ building_citadel_of_faith = {
 			energy = 8
 			rare_crystals = 3
 		}
+	}
+	
+	planet_modifier = {
+		planet_bureaucrats_unity_produces_add = 3
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			has_ringworld_output_boost = yes
+		}
+		planet_bureaucrats_unity_produces_add = 1
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_gestalt = no
+			}
+		}
+		planet_bureaucrats_consumer_goods_upkeep_add = 3
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_machine_empire = yes
+			}
+		}
+		planet_bureaucrats_energy_upkeep_add = 6
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_hive_empire = yes
+				is_lithoid_empire = no
+			}
+		}
+		planet_bureaucrats_food_upkeep_add = 3
+		planet_bureaucrats_energy_upkeep_add = 3
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_hive_empire = yes
+				is_lithoid_empire = yes
+			}
+		}
+		planet_bureaucrats_minerals_upkeep_add = 3
+		planet_bureaucrats_energy_upkeep_add = 3
 	}
 
 	# Add bonus High Priest OR Tech Hierophant Jobs
@@ -527,13 +572,6 @@ building_citadel_of_faith = {
 			}
 		}
 		text = job_technophant_effect_desc
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			has_ringworld_output_boost = yes
-		}
-		planet_bureaucrats_unity_produces_add = 1
 	}
 
 	triggered_planet_modifier = {
@@ -577,7 +615,6 @@ building_citadel_of_faith = {
 
 	country_modifier = {
 		country_official_cap_add = 1
-		country_unity_produces_mult = 0.05
 	}
 
 	triggered_desc = {

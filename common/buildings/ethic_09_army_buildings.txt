@@ -3,9 +3,10 @@
 #############
 building_military_academy = {
 	base_buildtime = @b2_time
-	empire_limit = {
-		base = 1
-	}
+	#empire_limit = {
+	#	base = 1
+	#}
+	planet_limit = 1
 	can_be_ruined = no
 	category = army
 
@@ -15,8 +16,14 @@ building_military_academy = {
 
 	potential = {
 		exists = owner
-		owner = { NOT = { has_valid_civic = civic_reanimated_armies } }
-		NOT = { has_modifier = resort_colony }
+		owner = {
+			is_wilderness_empire = no
+			NOT = { has_valid_civic = civic_reanimated_armies }
+		}
+		NOR = {
+			has_modifier = resort_colony
+			has_modifier = penal_colony
+		}
 	}
 
 	allow = {
@@ -39,7 +46,10 @@ building_military_academy = {
 	triggered_planet_modifier = {
 		potential = {
 			exists = owner
-			owner = { is_gestalt = no }
+			owner = { 
+				is_gestalt = no
+				NOT = { has_valid_civic = civic_military_dictatorship_corporate }
+			}
 		}
 		modifier = {
 			job_commandante_add = 100
@@ -48,12 +58,25 @@ building_military_academy = {
 	triggered_planet_modifier = {
 		potential = {
 			exists = owner
-			owner = { is_gestalt = yes }
+			owner = { 
+				is_gestalt = no
+				has_valid_civic = civic_military_dictatorship_corporate
+			}
 		}
 		modifier = {
-			job_evaluator_add = 200
+			job_commandante_pirate_add = 100
 		}
 	}
+	
+	#triggered_planet_modifier = {
+	#	potential = {
+	#		exists = owner
+	#		owner = { is_gestalt = yes }	
+	#	}
+	#	modifier = {
+	#		job_evaluator_add = 200		#Not in vanilla 4.0
+	#	}
+	#}
 
 	triggered_planet_modifier = {
 		potential = {
@@ -85,6 +108,21 @@ building_military_academy = {
 		}
 		ship_shield_hardening_add = 0.1
 		mult = owner.value:tactical_algorithms_enclave_scaling_mult
+	}
+	
+	planet_modifier = {
+		pop_soldier_bonus_workforce_mult = 0.15
+	}
+	
+	triggered_planet_modifier = {
+		potential = {
+			OR = {
+				has_active_building = building_order_keep
+				has_active_building = building_order_castle
+			}
+		}
+		pop_knight_bonus_workforce_mult = 0.05
+		pop_knight_commander_bonus_workforce_mult = 0.025
 	}
 
 	resources = {
@@ -133,12 +171,17 @@ building_military_academy = {
 		text = job_politician_effect_desc
 	}
 
-	triggered_desc = {
-		trigger = {
-			exists = owner
-			owner = { is_gestalt = yes }
-		}
-		text = job_evaluator_effect_desc
+	#triggered_desc = {
+	#	trigger = {
+	#		exists = owner
+	#		owner = { is_gestalt = yes }
+	#	}
+	#	text = job_evaluator_effect_desc	#No longer in vanilla 4.0
+	#}
+	
+	inline_script = {
+		script = jobs/soldiers_add
+		AMOUNT = @building_static_jobs
 	}
 }
 
@@ -155,32 +198,24 @@ building_stronghold = {
 	}
 
 	potential = {
+		exists = owner
 		NOT = { has_modifier = resort_colony }
+		owner = { is_wilderness_empire = no } # see 'building_planetary_carapace'
 	}
 
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = {
-				is_gestalt = no
-				NOT = {
-					has_civic = civic_private_militaries
-					has_civic = civic_private_military_companies
-				}
-			}
-		}
-		modifier = {
-			job_soldier_add = @b1_jobs
-		}
-	}
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = { is_gestalt = yes }
-		}
-		modifier = {
-			job_warrior_drone_add = @b1_jobs
-		}
+	#triggered_planet_modifier = {
+	#	potential = {
+	#		exists = owner
+	#		owner = { is_gestalt = yes }
+	#	}
+	#	modifier = {
+	#		job_warrior_drone_add = @b1_jobs		#No longer in Sellaris 4.0
+	#	}
+	#}
+	
+	inline_script = {
+		script = jobs/soldiers_add
+		AMOUNT = @building_static_jobs
 	}
 
 	triggered_planet_modifier = {
@@ -195,7 +230,7 @@ building_stronghold = {
 			}
 		}
 		modifier = {
-			job_soldier_add = 100
+			job_soldier_add = -100
 			job_mercenary_add = 100
 		}
 	}
@@ -221,6 +256,9 @@ building_stronghold = {
 
 	prerequisites = {
 		"tech_planetary_defenses"
+	}
+	show_tech_unlock_if = {
+		is_wilderness_empire = no
 	}
 
 	upgrades = {
@@ -255,25 +293,17 @@ building_fortress = {
 		government
 		fortress
 	}
-
+	
+	potential = {
+		owner = { is_wilderness_empire = no } # see 'building_planetary_carapace_2'
+	}
 	allow = {
 		has_upgraded_capital = yes
 	}
-
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = {
-				is_gestalt = no
-				NOT = {
-					has_civic = civic_private_militaries
-					has_civic = civic_private_military_companies
-				}
-			}
-		}
-		modifier = {
-			job_soldier_add = @b2_jobs
-		}
+	
+	inline_script = {
+		script = jobs/soldiers_add
+		AMOUNT = @building_static_jobs_high
 	}
 
 	triggered_planet_modifier = {
@@ -287,19 +317,19 @@ building_fortress = {
 			}
 		}
 		modifier = {
-			job_soldier_add = @b2_jobs
-			job_mercenary_add = @b2_jobs
+			job_soldier_add = -200
+			job_mercenary_add = 200
 		}
 	}
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = { is_gestalt = yes }
-		}
-		modifier = {
-			job_warrior_drone_add = @b2_jobs
-		}
-	}
+	#triggered_planet_modifier = {
+	#	potential = {
+	#		exists = owner
+	#		owner = { is_gestalt = yes }
+	#	}
+	#	modifier = {
+	#		job_warrior_drone_add = @b2_jobs
+	#	}
+	#}
 
 	resources = {
 		category = planet_buildings_strongholds
@@ -325,14 +355,17 @@ building_fortress = {
 	prerequisites = {
 		"tech_global_defense_grid"
 	}
-
-	triggered_desc = {
-		trigger = {
-			exists = owner
-			owner = { is_gestalt = yes }
-		}
-		text = job_warrior_drone_effect_desc
+	show_tech_unlock_if = {
+		is_wilderness_empire = no
 	}
+
+	#triggered_desc = {
+	#	trigger = {
+	#		exists = owner
+	#		owner = { is_gestalt = yes }
+	#	}
+	#	text = job_warrior_drone_effect_desc
+	#}
 	triggered_desc = {
 		trigger = {
 			exists = owner
@@ -367,6 +400,9 @@ building_planetary_shield_generator = {
 		fortress
 	}
 
+	potential = {
+		owner = { is_wilderness_empire = no } # see 'building_ozone_thickener'
+	}
 	allow = {
 		has_upgraded_capital = yes
 		hidden_trigger = { owner = { is_ai = no } }
@@ -386,11 +422,6 @@ building_planetary_shield_generator = {
 		}
 	}
 
-	destroy_trigger = {
-		exists = owner
-		owner = { is_ai = yes }
-	}
-
 	planet_modifier = {
 		planet_orbital_bombardment_damage = -0.5
 	}
@@ -398,6 +429,14 @@ building_planetary_shield_generator = {
 	triggered_planet_modifier = {
 		potential = { has_cosmic_storms_dlc = yes }
 		planet_storm_devastation_mult = -0.5
+	}
+	
+	inline_script = {
+		script = cosmic_storms/StormBuildingModifiers
+	}
+
+	inline_script = { # on_built & on_destroy behaviors
+		script = cosmic_storms/PlanetaryShieldOnBuiltDestroy
 	}
 
 	resources = {
@@ -419,8 +458,21 @@ building_planetary_shield_generator = {
 	prerequisites = {
 		"tech_planetary_shield_generator"
 	}
+	show_tech_unlock_if = {
+		is_wilderness_empire = no
+	}
 
-	ai_weight = {
-		weight = 0
+	custom_storm_ai_weight = {
+		weight = 5
+		modifier = {
+			factor = 5
+			AND = {
+				exists = owner
+				solar_system = {
+					exists = owner
+					owner = { num_cosmic_storms_encountered >=2 }
+				}
+			}
+		}
 	}
 }

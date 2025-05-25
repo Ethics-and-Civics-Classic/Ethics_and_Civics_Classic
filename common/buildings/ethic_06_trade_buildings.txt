@@ -11,8 +11,13 @@ building_commercial_zone = {
 
 	potential = {
 		exists = owner
-		owner = { is_regular_empire = yes }
-		NOT = { has_modifier = slave_colony }
+		owner = {
+			is_regular_empire = yes
+		}
+		NOR = {
+			has_modifier = slave_colony
+			has_modifier = penal_colony
+		}
 		NOT = { has_building = building_low_tech_capital }
 	}
 
@@ -21,7 +26,12 @@ building_commercial_zone = {
 		OR = {
 			owner = { is_regular_empire = no }
 			has_modifier = slave_colony
+			has_modifier = penal_colony
 		}
+	}
+	
+	convert_to = {
+		building_maintenance_depot
 	}
 
 	resources = {
@@ -33,10 +43,14 @@ building_commercial_zone = {
 			energy = @b1_upkeep
 		}
 	}
+	
+	inline_script = {
+		script = jobs/trader_add
+		AMOUNT = @building_static_jobs
+	}
 
 	planet_modifier = {
 		job_clerk_add = 200
-		job_trader_add = 100
 	}
 
 	triggered_planet_modifier = {
@@ -100,9 +114,14 @@ building_commercial_megaplex = {
 
 	potential = {
 		exists = owner
-		owner = { is_regular_empire = yes }
-		NOT = { has_modifier = slave_colony }
-		has_building = building_commercial_zone
+		owner = {
+			is_regular_empire = yes
+		}
+		NOR = {
+			has_modifier = slave_colony
+			has_modifier = penal_colony
+		}
+		#has_building = building_commercial_zone
 	}
 
 	destroy_trigger = {
@@ -110,7 +129,13 @@ building_commercial_megaplex = {
 		OR = {
 			owner = { is_regular_empire = no }
 			has_modifier = slave_colony
+			has_modifier = penal_colony
 		}
+	}
+	
+	inline_script = {
+		script = jobs/trader_add
+		AMOUNT = @building_static_jobs
 	}
 
 	resources = {
@@ -138,7 +163,8 @@ building_commercial_megaplex = {
 
 	planet_modifier = {
 		job_clerk_add = 400
-		job_trader_add = 200
+		planet_traders_upkeep_mult = -0.20
+		#job_trader_add = 200
 	}
 
 	triggered_planet_modifier = {
@@ -226,26 +252,29 @@ building_galactic_stock_exchange = {
 	}
 
 	potential = {
-		NOT = { has_modifier = resort_colony }
-		NOT = { has_modifier = slave_colony }
+		NOR = {
+			has_modifier = resort_colony
+			has_modifier = slave_colony
+			has_modifier = penal_colony
+		}
 	}
 
 	allow = {
 		has_major_upgraded_capital = yes
-		if = {
-			limit = {
-				exists = orbital_defence
-			}
-			orbital_defence = {
-				exists = starbase
-				starbase = {
-					NOR = {
-						has_starbase_building = ring_galactic_stock_exchange
-						is_starbase_building_building = ring_galactic_stock_exchange
-					}
-				}
-			}
-		}
+		#if = {
+		#	limit = {
+		#		exists = orbital_defence
+		#	}
+		#	orbital_defence = {
+		#		exists = starbase
+		#		starbase = {
+		#			NOR = {
+		#				has_starbase_building = ring_galactic_stock_exchange
+		#				is_starbase_building_building = ring_galactic_stock_exchange
+		#			}
+		#		}
+		#	}
+		#}
 	}
 
 	destroy_trigger = {
@@ -254,13 +283,14 @@ building_galactic_stock_exchange = {
 			owner = { is_regular_empire = no }
 			has_modifier = slave_colony
 			has_modifier = resort_colony
+			has_modifier = penal_colony
 		}
 	}
 
 
 	planet_modifier = {
 		job_mogul_add = 100
-		planet_jobs_trade_produces_mult = 0.20
+		pop_trader_bonus_workforce_mult = 0.15
 	}
 
 	triggered_planet_modifier = {
@@ -275,8 +305,17 @@ building_galactic_stock_exchange = {
 		}
 		modifier = {
 			job_mogul_add = 100
-			planet_jobs_trade_produces_mult = 0.05
+			planet_jobs_trade_produces_mult = 0.10
 		}
+	}
+	
+	country_modifier = {
+		country_trade_fee = -0.05
+	}
+	
+	inline_script = {
+		script = jobs/trader_add
+		AMOUNT = @building_static_jobs
 	}
 
 	resources = {
@@ -297,6 +336,9 @@ building_galactic_stock_exchange = {
 
 	triggered_desc = {
 		text = job_mogul_effect_desc
+	}
+	triggered_desc = {
+		text = job_merchant_effect_desc
 	}
 
 	ai_resource_production = {
