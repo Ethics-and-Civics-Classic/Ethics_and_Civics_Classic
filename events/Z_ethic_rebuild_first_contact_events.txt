@@ -9,6 +9,291 @@
 namespace = first_contact
 namespace = preftl
 
+# Pre-FTL ask system owner for starbase ownership
+country_event = {
+	id = preftl.180
+	title = preftl.180.name
+	location = from.capital_scope.solar_system
+	desc = {
+		trigger = {
+			from = {
+				NOT = { has_country_flag = knew_of_aliens }
+			}
+		}
+		text = preftl.180.desc.noawarness
+	}
+	desc = {
+		trigger = {
+			from = {
+				has_country_flag = knew_of_aliens
+			}
+		}
+		text = preftl.180.desc.awarness
+	}
+	desc = {
+		exclusive_trigger = {
+			from = {
+				NOT = { has_country_flag = knew_of_aliens }
+				capital_scope = {
+					OR = {
+						has_planet_flag = broken_shackles_homeworld@root
+						has_planet_flag = broken_shackles_abductees_world@root
+					}
+				}
+			}
+		}
+		text = preftl.180.desc.bshomeworld.noawarness
+	}
+	desc = {
+		exclusive_trigger = {
+			from = {
+				has_country_flag = knew_of_aliens
+				capital_scope = {
+					OR = {
+						has_planet_flag = broken_shackles_homeworld@root
+						has_planet_flag = broken_shackles_abductees_world@root
+					}
+				}
+			}
+		}
+		text = preftl.180.desc.bshomeworld.awarness
+	}
+	diplomatic = yes
+
+	is_triggered_only = yes
+
+	picture_event_data = {
+		portrait = from
+		planet_background = from
+		graphical_culture = from
+		city_level = from
+		room = from.ruler
+	}
+
+	immediate = {
+		establish_communications_no_message = from
+		establish_contact = {
+			who = from
+			location = FROM.capital_scope.solar_system
+		}
+	}
+
+	option = {
+		name = preftl.180.a # Cede
+		trigger = {
+			is_homicidal = no
+			not = { has_origin = "origin_slavers" }
+		}
+
+		if = {
+			limit = {
+				OR = {
+					has_ethic = ethic_fanatic_xenophobe
+					has_ethic = ethic_xenophobe
+				}
+			}
+			add_resource = { influence = -200 }
+		}
+
+		custom_tooltip = preftl.180.a.tooltip
+		root = {
+			set_truce = {
+				target = from
+				type = guarantee
+			}
+		}
+		hidden_effect = {
+			from = {
+				set_truce = {
+					target = root
+					type = guarantee
+				}
+				achieve_ftl_effect = {
+					PRE_FTL = root.from
+					OWNER = root
+				}
+				capital_scope.solar_system.starbase = {
+					set_owner = root.from
+				}
+
+				add_opinion_modifier = {
+					modifier = opinion_ceded_starbase
+					who = root
+				}
+			}
+		}
+	}
+
+	option = {
+		name = preftl.180.b # Don't cede
+		trigger = {
+			is_homicidal = no
+		}
+
+		allow = {
+			OR = {
+				values_others = no
+				AND = {
+					values_others = yes
+					resource_stockpile_compare = {
+						resource = influence
+						value >= 100
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				is_xenophile = yes
+			}
+			add_resource = { influence = -100 }
+		}
+
+		custom_tooltip = preftl.180.b.tooltip
+
+		if = {
+			limit = {
+				From = {
+					is_hive_empire = yes
+				}
+				is_hive_empire = no
+			}
+			custom_tooltip = preftl.180.b.tt.nothive
+		}
+		if = {
+			limit = {
+				from = {
+					is_hive_empire = no
+				}
+				AND = {
+					is_gestalt = yes
+					NOR = {
+						has_valid_civic = civic_machine_servitor
+						has_valid_civic = civic_machine_assimilator
+					}
+				}
+			}
+			custom_tooltip = preftl.180.b.tt.notregular
+		}
+		hidden_effect = {
+			from = {
+				achieve_ftl_effect = {
+					PRE_FTL = root.from
+					OWNER = root
+				}
+				add_opinion_modifier = {
+					modifier = opinion_not_ceded_starbase
+					who = root
+				}
+			}
+			from.capital_scope = {
+				remove_modifier = prosp_uni_mod
+				remove_modifier = prosp_uni_mod_gestalt
+			}
+		}
+		FROM = {
+			hidden_effect = {
+				capital_scope = {
+					solar_system = { 
+						add_claims = {
+							who = PREVPREV
+							show_notification = no
+						}
+					}
+				}
+			}
+			declare_war = {
+				target = ROOT
+				name = "preftl.180.wargoal"
+				attacker_war_goal = wg_humiliation
+			}
+		}
+	}
+
+	option = {
+		name = preftl.180.c
+		trigger = {
+			is_homicidal = no
+			from.capital_scope.solar_system = {
+				any_system_planet = {
+					exists = owner
+					owner = { is_same_value = root }
+				}
+			}
+		}
+		allow = {
+			OR = {
+				is_xenophile = no
+				AND = {
+					is_xenophile = yes
+					resource_stockpile_compare = {
+						resource = influence
+						value >= 200
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				is_xenophile = yes
+			}
+			add_resource = { influence = -200 }
+		}
+		from.capital_scope = {
+			set_owner = root
+			add_modifier = {
+				modifier = culture_shock_early_space_age
+				days = 3600
+			}
+		}
+	}
+
+	option = {
+		name = EXTERMINATE
+		trigger = {
+			has_valid_civic = civic_machine_terminator
+		}
+		from.capital_scope = {
+			set_owner = root
+			add_modifier = {
+				modifier = culture_shock_early_space_age
+				days = 3600
+			}
+		}
+	}
+
+	option = {
+		name = TASTY
+		trigger = {
+			OR = {
+				has_valid_civic = civic_hive_devouring_swarm
+				has_menace_perk = menp_behemoth_ever_hungry
+			}
+		}
+		from.capital_scope = {
+			set_owner = root
+			add_modifier = {
+				modifier = culture_shock_early_space_age
+				days = 3600
+			}
+		}
+	}
+
+	option = {
+		name = SCUM # Xeno Scum
+		trigger = {
+			has_valid_civic = civic_fanatic_purifiers
+		}
+		from.capital_scope = {
+			set_owner = root
+			add_modifier = {
+				modifier = culture_shock_early_space_age
+				days = 3600
+			}
+		}
+	}
+}
+
 country_event = {
 	id = preftl.1105
 	title = "observation.2000.name"
