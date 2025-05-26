@@ -1,0 +1,404 @@
+###########################
+# Fallen Empire buildings #
+###########################
+
+building_fe_security_1 = {
+	base_buildtime = @b2_time
+	can_build = yes
+	can_demolish = yes
+
+	category = government
+
+	building_sets = {
+		fallen_empire
+		urban
+	}
+
+	potential = {
+		exists = owner
+		owner = {
+			OR = {
+				is_fallen_empire = yes
+				has_technology = tech_fe_security_1
+				has_country_flag = fe_security_1_can_build
+			}
+		}
+		NOR = {
+			has_modifier = resort_colony
+			has_modifier = slave_colony
+			has_modifier = penal_colony
+		}
+	}
+
+	allow = {
+		custom_tooltip = {
+			fail_text = ancrel.10004.failtext
+			exists = owner
+			owner = {
+				OR = {
+					check_variable = { which = fe_security_1_build_count value >= 1 }
+					is_fallen_empire = yes
+					has_technology = tech_fe_security_1
+				}
+			}
+		}
+	}
+
+	destroy_trigger = {
+		always = no
+	}
+
+	resources = {
+		category = planet_buildings
+		cost = {
+			alloys = @b3_minerals
+			rare_crystals = @fe_sr_cost
+		}
+		upkeep = {
+			rare_crystals = 2
+			alloys = @b2_alloy_upkeep
+			energy = 15
+		}
+		cost = {
+			trigger = {
+				owner = { is_wilderness_empire = yes }
+			}
+			biomass = @b3_biomass
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_wilderness_empire = yes
+				has_tradition = tr_purity_finish
+			}
+		}
+		planet_building_build_speed_mult = 0.03
+		planet_decision_enact_speed_mult = 0.03
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_regular_empire = yes
+			}
+		}
+		modifier = {
+			job_enforcer_add = @fe_jobs
+		}
+	}
+
+	triggered_desc = {
+		trigger = {
+			exists = owner
+			owner = {
+				is_regular_empire = yes
+				NOR = { 
+					has_valid_civic = civic_civil_education 
+					has_valid_civic = civic_anarchy_ideals 
+				}
+			}
+		}
+		text = job_enforcer_desc
+	}
+
+	triggered_desc = {
+		trigger = {
+			exists = owner
+			owner = {
+				OR = { 
+					has_valid_civic = civic_civil_education 
+					has_valid_civic = civic_anarchy_ideals 
+				}
+			}
+		}
+		text = job_educator_effect_desc
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_gestalt = yes
+			}
+		}
+		modifier = {
+			job_patrol_drone_add = @fe_jobs
+		}
+	}
+
+	triggered_desc = {
+		trigger = {
+			exists = owner
+			owner = {
+				is_gestalt = yes
+			}
+		}
+		text = job_patrol_drone_desc
+	}
+
+	upgrades = {
+		building_fe_security_2
+	}
+
+	on_queued = {
+		if = { # kill on the same planet
+			limit = {
+				is_variable_set = local_spent_biomass
+				any_owned_pop_group = {
+					has_trait = trait_wilderness
+					pop_group_size > local_spent_biomass
+				}
+			}
+			random_owned_pop_group = {
+				limit = {
+					has_trait = trait_wilderness
+					pop_group_size > local_spent_biomass
+				}
+				kill_pop_group = {
+					pop_group = this
+					amount = local_spent_biomass
+				}
+			}
+		}
+		else_if = {
+			limit = { is_variable_set = local_spent_biomass }
+			owner = {
+				global_biomass_spender = yes
+			}
+		}
+		owner = {
+			subtract_variable = { which = fe_security_1_build_count value = 1 }
+		}
+	}
+
+	on_unqueued = {
+		unqueue_biomass_effect = yes
+		owner = {
+			change_variable = { which = fe_security_1_build_count value = 1 }
+		}
+	}
+
+	show_in_tech = tech_fe_security_1
+}
+
+building_fe_security_2 = {
+	base_buildtime = @b2_time
+	can_build = no
+
+	category = government
+
+	building_sets = {
+		fallen_empire
+		urban
+	}
+
+	potential = {
+		exists = owner
+		owner = {
+			OR = {
+				is_fallen_empire = yes
+				has_technology = tech_fe_security_2
+				has_country_flag = fe_security_1_can_build
+			}
+		}
+		NOR = {
+			has_modifier = resort_colony
+			has_modifier = slave_colony
+			has_modifier = penal_colony
+		}
+	}
+
+	allow = {
+		custom_tooltip = {
+			fail_text = ancrel.10004.failtext
+			exists = owner
+			owner = {
+				OR = {
+					check_variable = { which = fe_security_1_upgrade_count value >= 1 }
+					is_fallen_empire = yes
+					has_technology = tech_fe_security_2
+				}
+			}
+		}
+	}
+
+	destroy_trigger = {
+		always = no
+	}
+
+	resources = {
+		category = planet_buildings
+		cost = {
+			alloys = @b3_minerals
+		}
+		upkeep = {
+			rare_crystals = 2
+			alloys = @b2_alloy_upkeep
+			energy = 15
+		}
+		cost = {
+			trigger = {
+				owner = { is_wilderness_empire = yes }
+			}
+			biomass = @b3_biomass
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_wilderness_empire = yes
+				has_tradition = tr_purity_finish
+			}
+		}
+		planet_building_build_speed_mult = 0.03
+		planet_decision_enact_speed_mult = 0.03
+	}
+
+	country_modifier = {
+		country_edict_fund_add = 10
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_regular_empire = yes
+			}
+		}
+		modifier = {
+			planet_crime_add = -40
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_gestalt = yes
+			}
+		}
+		modifier = {
+			planet_crime_no_happiness_add = -40
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_gestalt = no
+				is_fallen_empire = yes
+			}
+		}
+		modifier = {
+			job_fe_protector_add = @fe_jobs
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_regular_empire = yes
+			}
+		}
+		modifier = {
+			job_enforcer_add = @fe_jobs
+		}
+	}
+
+	triggered_desc = {
+		trigger = {
+			exists = owner
+			owner = {
+				is_regular_empire = yes
+				NOR = { 
+					has_valid_civic = civic_civil_education 
+					has_valid_civic = civic_anarchy_ideals 
+				}
+			}
+		}
+		text = job_enforcer_desc
+	}
+
+	triggered_desc = {
+		trigger = {
+			exists = owner
+			owner = {
+				OR = { 
+					has_valid_civic = civic_civil_education 
+					has_valid_civic = civic_anarchy_ideals 
+				}
+			}
+		}
+		text = job_educator_effect_desc
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_gestalt = yes
+			}
+		}
+		modifier = {
+			job_patrol_drone_add = @fe_jobs
+		}
+	}
+
+	triggered_desc = {
+		trigger = {
+			exists = owner
+			owner = {
+				is_gestalt = yes
+			}
+		}
+		text = job_patrol_drone_desc
+	}
+
+	on_queued = {
+		if = { # kill on the same planet
+			limit = {
+				is_variable_set = local_spent_biomass
+				any_owned_pop_group = {
+					has_trait = trait_wilderness
+					pop_group_size > local_spent_biomass
+				}
+			}
+			random_owned_pop_group = {
+				limit = {
+					has_trait = trait_wilderness
+					pop_group_size > local_spent_biomass
+				}
+				kill_pop_group = {
+					pop_group = this
+					amount = local_spent_biomass
+				}
+			}
+		}
+		else_if = {
+			limit = { is_variable_set = local_spent_biomass }
+			owner = {
+				global_biomass_spender = yes
+			}
+		}
+		owner = {
+			subtract_variable = { which = fe_security_1_upgrade_count value = 1 }
+		}
+	}
+
+	on_unqueued = {
+		unqueue_biomass_effect = yes
+		owner = {
+			change_variable = { which = fe_security_1_upgrade_count value = 1 }
+		}
+	}
+
+	show_in_tech = tech_fe_security_2
+}

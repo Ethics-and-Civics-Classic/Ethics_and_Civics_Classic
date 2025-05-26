@@ -454,7 +454,7 @@ building_heritage_museum = {
 	potential = {
 		exists = owner
 		owner = {
-			is_hive_empire = no
+			is_gestalt = no
 			OR = {
 				# has_origin = origin_primitive_player_pre_industrial_age
 				# has_origin = origin_primitive_player_industrial_age
@@ -472,11 +472,6 @@ building_heritage_museum = {
 					}
 					is_primitive = yes
 				}
-			}
-			NOR = {
-				is_gestalt = yes
-				is_megacorp = yes
-				is_memorialist_empire = yes
 			}
 		}
 		owner = {
@@ -496,8 +491,6 @@ building_heritage_museum = {
 				any_situation = { is_situation_type = PrimPlayer_situation } # Much more efficient trigger
 				is_primitive = yes
 				is_gestalt = yes
-				is_megacorp = yes
-				is_memorialist_empire = yes
 			}
 		}
 	}
@@ -532,20 +525,116 @@ building_heritage_museum = {
 	}
 
 	upgrades = {
-		building_heritage_monument
+		building_autochthon_monument
 	}
 
 	convert_to = {
 		building_corporate_monument
-		building_simulation_1
-		building_galactic_memorial_1
-		building_sensorium_1
+		building_hive_primitive_node
+		building_machine_primitive_node
 	}
 
 	show_tech_unlock_if = {
-		is_gestalt = no
 		is_megacorp = no
-		is_memorialist_empire = no
+		is_gestalt = no
+	}
+}
+
+building_corporate_heritage_museum = {
+	base_buildtime = @b1_time
+	planet_limit = 1
+	category = unity
+	
+	building_sets = {
+		pre_ftl
+	}
+
+	potential = {
+		exists = owner
+		owner = {
+			is_megacorp = yes
+			OR = {
+				# has_origin = origin_primitive_player_pre_industrial_age
+				# has_origin = origin_primitive_player_industrial_age
+				# has_origin = origin_primitive_player_machine_age
+				# has_origin = origin_primitive_player_atomic_age
+				# has_origin = origin_primitive_player_early_space_age
+				any_situation = { is_situation_type = PrimPlayer_situation } # Much more efficient trigger
+				AND = {
+					OR = {
+						has_country_flag = bronze_age
+						has_country_flag = iron_age
+						has_country_flag = late_medieval_age
+						has_country_flag = renaissance_age
+						has_country_flag = steam_age
+					}
+					is_primitive = yes
+				}
+			}
+		}
+		owner = {
+			is_ai = no
+		}
+	}
+
+	destroy_trigger = {
+		exists = owner
+		owner = {
+			NOT = {
+				# has_origin = origin_primitive_player_pre_industrial_age
+				# has_origin = origin_primitive_player_industrial_age
+				# has_origin = origin_primitive_player_machine_age
+				# has_origin = origin_primitive_player_atomic_age
+				# has_origin = origin_primitive_player_early_space_age
+				any_situation = { is_situation_type = PrimPlayer_situation } # Much more efficient trigger
+				is_primitive = yes
+				is_megacorp = yes
+			}
+		}
+	}
+
+	resources = {
+		category = planet_buildings
+		produces = {
+			trigger = { exists = owner }
+			unity = 1
+			multiplier = owner.trigger:num_ascension_perks
+		}
+		cost = {
+			minerals = @b1_minerals
+		}
+	}
+
+	planet_modifier = {
+		planet_jobs_unity_produces_mult = 0.025
+		job_culture_worker_add = @b1_jobs
+	}
+
+	triggered_desc = {
+		text = building_autochthon_monument_effect
+	}
+
+	triggered_desc = {
+		text = job_culture_worker_effect_desc
+	}
+
+	prerequisites = {
+		"tech_primitive_historical_archives"
+	}
+
+	upgrades = {
+		building_corporate_monument
+	}
+
+	convert_to = {
+		building_heritage_museum
+		building_hive_primitive_node
+		building_machine_primitive_node
+	}
+
+	show_tech_unlock_if = {
+		is_megacorp = yes
+		is_gestalt = no
 	}
 }
 
@@ -817,10 +906,10 @@ building_primitive_offices = {
 		is_gestalt = no
 	}
 
-#	upgrades = {
-#		building_bureaucratic_1
-#		building_temple
-#	}
+	#upgrades = {
+	#	building_bureaucratic_1
+	#	building_temple
+	#}
 
 	triggered_desc = {
 		text =  job_primitive_administrator_effect_desc
@@ -899,9 +988,9 @@ building_primitive_research = {
 		job_calculator_engineer_add = 60
 	}
 
-#	upgrades = {
-#		building_research_lab_1
-#	}
+	upgrades = {
+		building_research_lab_1
+	}
 
 	prerequisites = {
 		"tech_primitive_universities"
@@ -1304,7 +1393,7 @@ building_primitive_capital = {
 	}
 	
 	prerequisites = {
-		"tech_pre_industrial_steel_construction" "tech_primitive_nation_state_government"
+		"tech_primitive_nation_state_government"
 	}
 	
 	show_tech_unlock_if = {

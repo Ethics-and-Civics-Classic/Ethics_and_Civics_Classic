@@ -90,6 +90,125 @@ create_MSI_effect = {
 	}
 }
 
+uplift_pre_ftl_with_origin_effect = {
+	random_country = {
+		limit = {
+			is_hive_empire = no
+			species = {
+				ideal_planet_is_special = no
+				NOt = { is_same_value = root.species }
+			}
+			is_preftl_but_not_special = yes
+		}
+		if = {
+			limit = {
+				is_xenophobe = yes
+			}
+			if = {
+				limit = { has_ethic = ethic_fanatic_xenophobe }
+				country_remove_ethic = ethic_fanatic_xenophobe
+				country_add_ethic = ethic_fanatic_xenophile
+			}
+			else = {
+				country_remove_ethic = ethic_xenophobe
+				country_add_ethic = ethic_xenophile
+			}
+		}
+		if = {
+			limit = {
+				is_authoritarian = yes
+			}
+			if = {
+				limit = { prev = { has_ethic = ethic_fanatic_authoritarian } }
+				country_remove_ethic = ethic_fanatic_authoritarian
+				country_add_ethic = ethic_fanatic_egalitarian
+			}
+			else = {
+				country_remove_ethic = ethic_authoritarian
+				country_add_ethic = ethic_egalitarian
+			}
+		}
+		if = {
+			limit = {
+				is_capitalism = yes
+			}
+			if = {
+				limit = { prev = { has_ethic = ethic_fanatic_capitalism } }
+				country_remove_ethic = ethic_fanatic_capitalism
+				country_add_ethic = ethic_fanatic_socialism
+			}
+			else = {
+				country_remove_ethic = ethic_capitalism
+				country_add_ethic = ethic_socialism
+			}
+		}
+		save_event_target_as = uplifted_country
+		remove_pre_ftl_flags = yes
+		set_country_type = default
+		change_country_flag = random
+		set_species_graphical_culture = yes
+		change_government = {
+			authority = random
+			civics = random
+		}
+		set_name = random
+		capital_scope = {
+			every_deposit = {
+				remove_deposit = yes
+			}
+			remove_all_districts = yes
+			remove_all_buildings = yes
+		}
+		set_origin = $ORIGIN$
+		capital_scope = {
+			solar_system = {
+				generate_home_system_resources = yes
+				create_starbase = {
+					size = starbase_starport
+					module = shipyard
+					building = crew_quarters
+					owner = event_target:uplifted_country
+					effect = {
+						set_starbase_module = {
+							slot = 1
+							module = trading_hub
+						}
+					}
+				}
+			}
+			generate_start_deposits_and_blockers = yes
+			generate_start_buildings_and_districts = yes
+			generate_start_pops = yes
+			generate_home_planet_final_pass = yes
+		}
+		switch = {
+			trigger = has_origin
+			origin_broken_shackles = {
+				country_event = { id = origin.110 }
+				capital_scope = {
+					while = {
+						limit = { pop_amount > 2800 }
+						random_owned_pop_group = {
+							kill_single_pop = yes
+						}
+					}
+				}
+			}
+			origin_payback = {
+				country_event = { id = origin.4000 }
+				capital_scope = {
+					while = {
+						limit = { pop_amount > 1800 }
+						random_owned_pop_group = {
+							kill_single_pop = yes
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
 ### Fear of the Dark ###
 
 create_fear_of_the_dark_country = {

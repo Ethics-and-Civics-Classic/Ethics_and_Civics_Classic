@@ -1,6 +1,262 @@
 ###################
 # Fancy Jobs
 ###################
+
+politician = {
+	category = ruler
+	swappable_data = {
+		default = {
+			condition_string = RULER_JOB_TRIGGER
+			building_icon = building_capital
+			# clothes_texture_index = 1
+			icon = administrator
+		}
+		swap_type = {
+			trigger = {
+				politician_is_executive = yes
+			}
+			name = executive
+			icon = executive
+			desc = job_executive_desc
+			weight = 5
+		}
+		swap_type = {
+			trigger = {
+				politician_is_science_director = yes
+			}
+			name = head_researcher
+			icon = researcher
+			desc = job_head_researcher_desc
+			weight = 5
+		}
+		swap_type = {
+			trigger = {
+				politician_is_noble = yes
+			}
+			name = noble
+			icon = noble
+			desc = job_noble_desc
+			weight = 10
+		}
+		swap_type = {
+			trigger = {
+				politician_is_merchant = yes
+			}
+			name = merchant
+			icon = merchant
+			desc = job_merchant_desc
+			weight = 10
+		}
+		#swap_type = {	# Cog Note - Priest jobs are seperate job due to ethic requirement
+		#	trigger = {
+		#		politician_is_high_priest = yes
+		#	}
+		#	name = high_priest
+		#	icon = high_priest
+		#	desc = job_high_priest_desc
+		#	weight = 10
+		#}
+		swap_type = {
+			trigger = {
+				politician_is_technophant = yes
+			}
+			name = technophant
+			icon = technophant
+			desc = job_technophant_desc
+			weight = 30
+		}
+		swap_type = {
+			trigger = {
+				politician_is_planetary_warden = yes
+			}
+			name = warden
+			icon = enforcer
+			desc = job_warden_desc
+			weight = 15
+		}
+		swap_type = {
+			trigger = {
+				politician_is_noble = yes
+				politician_is_science_director = yes
+			}
+			name = noble_researcher
+			icon = noble
+			desc = job_noble_researcher_desc
+			weight = 20
+		}
+		#swap_type = {	# Cog Note - Priest jobs are seperate job due to ethic requirement
+		#	trigger = {
+		#		politician_is_noble = yes
+		#		politician_is_high_priest = yes
+		#	}
+		#	name = sacred_noble	# Cog Note - Interesting idea
+		#	icon = noble
+		#	desc = job_sacred_noble_desc
+		#	weight = 20
+		#}
+		swap_type = {
+			trigger = {
+				politician_is_augmentation_merchant = yes
+			}
+			name = augmentation_merchant
+			icon = augmentor
+			desc = job_augmentation_merchant_desc
+			weight = 20
+		}
+	}
+	
+	tags = { unity amenities }
+
+	possible_pre_triggers = {
+		has_owner = yes
+		is_enslaved = no
+		is_being_purged = no
+		is_being_assimilated = no
+		is_sapient = yes
+	}
+
+	possible_precalc = can_fill_ruler_job
+
+	resources = {
+		category = planet_politicians
+		produces = {
+			unity = 6
+		}
+		upkeep = {
+			consumer_goods = 2
+		}
+		##Executive
+		produces = {
+			trigger = {
+				politician_is_executive = yes
+			}
+			trade = 4
+		}
+		##Merchant
+		produces = {
+			trigger = {
+				exists = planet
+				planet = {
+					OR = {
+						politician_is_merchant = yes
+						politician_is_augmentation_merchant = yes
+					}
+				}
+			}
+			unity = -2
+			trade = 6
+		}
+		##Science Director
+		produces = {
+			trigger = {
+				exists = planet
+				planet = {
+					politician_is_science_director = yes
+				}
+			}
+			unity = -2
+			physics_research = 2
+			society_research = 2
+			engineering_research = 2
+		}
+		##High Priest	# Cog Note -  we need a seperate job because it requires ethic
+		#produces = {
+		#	trigger = {
+		#		exists = planet
+		#		planet = {
+		#			politician_is_high_priest = yes
+		#		}
+		#	}
+		#	unity = 2
+		#}
+		##Technophant
+		produces = {
+			trigger = {
+				exists = planet
+				planet = {
+					politician_is_technophant = yes
+				}
+			}
+			engineering_research = 4
+		}
+		produces = {
+			trigger = {
+				owner = { has_valid_civic = civic_byzantine_bureaucracy }		# Modded
+			}
+			unity = 1															# Modded
+		}
+		upkeep = {
+			trigger = {
+				owner = { has_valid_civic = civic_byzantine_bureaucracy }		# Modded
+			}
+			consumer_goods = -1													# Modded
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			always = yes
+		}
+		planet_amenities_add = 300
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner														# Modded
+			owner = { OR = { has_valid_civic = civic_shadow_council } }			# Modded
+		}
+		planet_stability_add = 2												# Modded
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner														# Modded
+			owner = { OR = { has_valid_civic = civic_welfare_state } }			# Modded
+		}
+		planet_amenities_add = 200												# Modded
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|	# Modded
+	}
+	
+	inline_script = "output/politician_output_modifier"
+
+	weight = {
+		weight = @ruler_job_weight
+		mult = value:job_weights_modifier|JOB|politician|RESOURCE|unity|
+		mult = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
+		modifier = {
+			factor = 0.1
+			has_citizenship_rights = no
+			NOT = { has_trait = trait_mechanical }
+		}
+		# crisis purge
+		modifier = {
+			factor = 0.01
+			exists = planet
+			exists = planet.controller
+			planet.controller = {
+				OR = {
+					is_country_type = swarm
+					is_country_type = ai_empire
+				}
+			}
+		}
+	}
+
+	inline_script = "jobs/automodding_priority_unity"
+	
+	promotion = {
+		time = @standard_promotion_time
+		effect = {
+			pop_amount_change_category = {
+				CATEGORY = ruler
+				AMOUNT = local_pop_amount
+			}
+		}
+	}
+}
+
+
 head_researcher = {
 	category = ruler
 
@@ -288,103 +544,6 @@ high_priest = {
 		modifier = {
 			factor = 25
 			owner = { is_individual_machine = no }
-		}
-	}
-
-	inline_script = "jobs/automodding_priority_unity"
-}
-
-politician = {
-	category = ruler
-	swappable_data = {
-		default = {
-			condition_string = RULER_JOB_TRIGGER
-			building_icon = building_capital
-			# clothes_texture_index = 1
-			icon = administrator
-		}
-	}
-
-	possible_pre_triggers = {
-		has_owner = yes
-		is_enslaved = no
-		is_being_purged = no
-		is_being_assimilated = no
-		is_sapient = yes
-	}
-
-	possible_precalc = can_fill_ruler_job
-
-	resources = {
-		category = planet_politicians
-		produces = {
-			unity = 6
-		}
-		upkeep = {
-			consumer_goods = 2
-		}
-		produces = {
-			trigger = {
-				owner = { has_valid_civic = civic_byzantine_bureaucracy }		# Modded
-			}
-			unity = 1															# Modded
-		}
-		upkeep = {
-			trigger = {
-				owner = { has_valid_civic = civic_byzantine_bureaucracy }		# Modded
-			}
-			consumer_goods = -1													# Modded
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			always = yes
-		}
-		planet_amenities_add = 300
-		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner														# Modded
-			owner = { OR = { has_valid_civic = civic_shadow_council } }			# Modded
-		}
-		planet_stability_add = 2												# Modded
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner														# Modded
-			owner = { OR = { has_valid_civic = civic_welfare_state } }			# Modded
-		}
-		planet_amenities_add = 200												# Modded
-		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|	# Modded
-	}
-
-	weight = {
-		weight = @ruler_job_weight
-		mult = value:job_weights_modifier|JOB|politician|RESOURCE|unity|
-		mult = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
-		modifier = {
-			factor = 0.1
-			NOR = { has_citizenship_rights = yes has_trait = trait_mechanical }
-		}
-		# modifier = {
-		#	factor = 5
-		#	has_job_type = politician	# No Longer Used in Stellaris 4.0
-		#}
-		# Crisis purge
-		modifier = {
-			factor = 0.01
-			exists = planet
-			exists = planet.controller
-			planet.controller = {
-				OR = {
-					is_country_type = swarm
-					is_country_type = ai_empire
-				}
-			}
 		}
 	}
 

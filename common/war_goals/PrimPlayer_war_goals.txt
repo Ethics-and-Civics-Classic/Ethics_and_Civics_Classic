@@ -28,3 +28,68 @@
 #	}
 #}
 #
+
+#Primitive Uprising
+
+wg_primitive_uprising = {
+	casus_belli = cb_primitive_uprising
+	hide_if_no_cb = yes
+	set_defender_wargoal = wg_conquest
+
+	galactic_empire_joins_defender = {
+		always = no
+	}
+	
+	#war_exhaustion = 0.01 # Default 1.0
+
+	surrender_acceptance = -1000
+
+	potential = {
+		always = yes
+	}
+	possible = {
+		always = yes
+	}
+	on_accept = {
+		custom_tooltip = wg_primitive_uprising_accept
+		hidden_effect = {
+			add_resource = { influence = 100 }
+			ROOT = { remove_country_flag = wg_primitive_uprising_flag }
+			from = {
+				add_modifier = { modifier = humiliated days = 3600 }
+				if = {
+					limit = { has_policy_flag = diplo_stance_supremacist }
+					set_policy = {
+						policy = diplomatic_stance
+						option = diplo_stance_belligerent
+						cooldown = yes
+					}
+					prev = {
+						set_country_flag = humble_pie_achievement
+					}
+				}
+			}
+			if = {
+				limit = {
+					root = { has_tradition = tr_enmity_eclipse }
+				}
+				root = {
+					remove_modifier = reaffirmed_superiority
+					add_modifier = {
+						modifier = reaffirmed_superiority
+						days = 3600
+						multiplier = value:reaffirmed_superiority_value
+					}
+				}
+			}
+		}
+	}
+	
+	forbidden_peace_offers = { # list of forbidden peace offer types for this war goal <status_quo/surrender/demand_surrender>
+		status_quo = ""
+	}
+
+	ai_weight = {
+		weight = 1
+	}
+}
