@@ -3576,11 +3576,15 @@ conscription_stance = {
 		}
 
 		valid = {
-			OR = {
-				is_country_type = default
-				is_country_type = primitive
+			if = {
+				limit = { is_country_type = default }
+				NOT = { has_valid_civic = civic_citizen_service }
 			}
-			NOT = { has_valid_civic = civic_citizen_service }
+			else_if = {
+				limit = { is_country_type = primitive }
+				current_awareness_level >= high
+			}
+			else = { always = no }
 		}
 
 		AI_weight = {
@@ -3601,14 +3605,19 @@ conscription_stance = {
 		}
 
 		valid = {
-			OR = {
-				is_country_type = default
-				is_country_type = primitive
+			if = {
+				limit = { is_country_type = default }
+				NOT = {
+					has_ethic = ethic_fanatic_pacifist
+					has_valid_civic = civic_citizen_service
+				}
 			}
-			NOT = {
-				has_ethic = ethic_fanatic_pacifist
-				has_valid_civic = civic_citizen_service
+			else_if = {
+				limit = { is_country_type = primitive }
+				NOT = { has_ethic = ethic_fanatic_pacifist }
+				current_awareness_level = full
 			}
+			else = { always = no }
 		}
 
 		AI_weight = {
@@ -3629,11 +3638,16 @@ conscription_stance = {
 		}
 
 		valid = {
-			OR = {
-				is_country_type = default
-				is_country_type = primitive
+			if = {
+				limit = { is_country_type = default }
+				is_pacifist = no
 			}
-			is_pacifist = no
+			else_if = {
+				limit = { is_country_type = primitive }
+				is_pacifist = no
+				current_awareness_level = full
+			}
+			else = { always = no }
 		}
 
 		AI_weight = {
