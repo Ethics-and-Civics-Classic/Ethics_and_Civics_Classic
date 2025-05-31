@@ -719,24 +719,9 @@ enforcer = {
 			condition_string = BATTLE_THRALL_JOB_TRIGGER
 			weight = 10
 		}
-		swap_type = {
-			trigger = {
-				enforcer_is_telepath_trigger = yes
-			}
-			name = telepath
-			desc = telepath
-			icon = telepath
-			building_icon = building_psi_corps
-			condition_string = SPECIALIST_JOB_TRIGGER
-			weight = 25
-		}
 	}
 
 	tags = { crime enforcer }
-	triggered_tags = {
-		trigger = { enforcer_is_telepath_trigger = yes }
-		tags = { telepath }
-	}
 	
 	possible_pre_triggers = {
 		has_owner = yes
@@ -746,81 +731,12 @@ enforcer = {
 	}
 
 	possible = {
-		if = {
-			limit = {
-				planet = {
-					enforcer_is_telepath_trigger = no
-				}
-			}
-			battle_thrall_job_check_trigger = yes
-		}
-		else = {
-			OR = {
-				has_trait = trait_latent_psionic
-				has_trait = trait_psionic
-			}
-		}
+		battle_thrall_job_check_trigger = yes
 	}
 
 	resources = {
 		category = planet_enforcers
 		inline_script = "jobs/job_enforcer_triggered_resources"
-		produces = {
-			trigger = {
-				enforcer_is_educator_trigger = yes
-			}
-			unity = 5
-		}
-		produces = {
-			trigger = {
-				exists = planet
-				planet = {
-					enforcer_is_telepath_trigger = yes
-				}
-			}
-			unity = 9
-		}
-		produces = {
-			trigger = {
-				exists = planet
-				planet = {
-					enforcer_is_telepath_trigger = yes
-				}
-				exists = owner
-				owner = { has_country_flag = whisperers_covenant_confirmed }
-			}
-			physics_research = 3
-			engineering_research = 3
-			society_research = 3
-		}
-		produces = {
-			trigger = {
-				exists = planet
-				planet = {
-					enforcer_is_telepath_trigger = yes
-				}
-				exists = owner
-				owner = { has_country_flag = whisperers_covenant_rank_1 }
-			}
-			physics_research = 3
-			engineering_research = 3
-			society_research = 3
-		}
-		upkeep = {
-			trigger = {
-				enforcer_is_educator_trigger = yes
-			}
-			consumer_goods = 1
-		}
-		upkeep = {
-			trigger = {
-				exists = planet
-				planet = {
-					enforcer_is_telepath_trigger = yes
-				}
-			}
-			energy = 1
-		}
 		produces = {
 			trigger = {
 				exists = owner										# Modded
@@ -860,9 +776,8 @@ enforcer = {
 	}
 	
 	inline_script = "jobs/job_enforcer_additional_modifiers"
-	inline_script = "jobs/job_telepath_additional_modifiers"
 
-	triggered_planet_modifier = {
+	triggered_planet_modifier = {	#Modded
 		potential = {
 			exists = owner
 			owner = { has_valid_civic = civic_police_state }
@@ -872,7 +787,7 @@ enforcer = {
 		}
 	}
 
-	triggered_planet_modifier = {
+	triggered_planet_modifier = {	#Modded
 		potential = {
 			this = { has_trait = trait_cyborg_integrated_weaponry }	# Cog Note - Note sure why this was set to PREV = {
 		}
@@ -881,7 +796,7 @@ enforcer = {
 		}
 	}
 
-	triggered_planet_modifier = {
+	triggered_planet_modifier = {	#Modded
 		potential = {
 			this = { has_trait = trait_robot_integrated_weaponry }	# Cog Note - Note sure why this was set to PREV = {
 		}
@@ -890,30 +805,12 @@ enforcer = {
 		}
 	}
 
-	# Cyber Dictatorial Individualist
-	# triggered_planet_modifier = {	# No Longer Used in Stellaris 4.0
-	#	potential = {
-	#		exists = owner
-	#		owner = {
-	#			is_cyber_dictatorial = yes
-	#			has_country_flag = cyber_individualist
-	#		}
-	#	}
-	#   planet_cyborg_jobs_produces_mult = 0.025
-    #}
-
 	weight = {
 		weight = @specialist_job_weight
 
 		modifier = {
 			mult = value:job_weights_modifier|JOB|enforcer|RESOURCE|unity|FACTOR|0.25|
 			owner = { has_active_tradition = tr_domination_judgment_corps }
-		}
-		modifier = {
-			mult = value:job_weights_modifier|JOB|enforcer|RESOURCE|unity|
-			planet = {
-				enforcer_is_telepath_trigger = yes
-			}
 		}
 		modifier = {
 			factor = 50
@@ -990,8 +887,19 @@ telepath = {
 			building_icon = building_psi_corps
 			# clothes_texture_index = 5
 		}
+		swap_type = {
+			trigger = {
+				enforcer_is_educator_trigger = yes
+			}
+			name = educator_telepath
+			desc = educator_telepath
+			icon = telepath
+			building_icon = building_psi_corps
+			condition_string = SPECIALIST_JOB_TRIGGER
+			weight = 10
+		}
 	}
-	tags = { crime enforcer unity }
+	tags = { crime enforcer unity telepath }
 
 	possible_pre_triggers = {
 		has_owner = yes
@@ -1007,6 +915,7 @@ telepath = {
 
 	resources = {
 		category = planet_telepaths
+		inline_script = "jobs/job_enforcer_triggered_resources"
 		produces = {
 			unity = 9
 		}
@@ -1054,24 +963,14 @@ telepath = {
 			energy = 2
 		}
 	}
+	
+	inline_script = "jobs/job_enforcer_additional_modifiers"
+	inline_script = "jobs/job_telepath_additional_modifiers"
 
-	planet_modifier = {
-		planet_crime_add = -10
-		# planet_psionic_jobs_produces_mult = 0.05	# No Longer Used in Stellaris 4.0
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = {
-				exists = ruler
-				ruler = {
-					has_trait = leader_trait_legendary_harsh_ruler
-				}
-			}
-		}
-		pop_happiness = -0.025
-	}
+	#planet_modifier = {
+	#	planet_crime_add = -10
+	#	# planet_psionic_jobs_produces_mult = 0.05	# No Longer Used in Stellaris 4.0
+	#}
 
 	triggered_planet_modifier = {
 		potential = {
@@ -1089,25 +988,15 @@ telepath = {
 		planet_amenities_add = 800
 	}
 
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner  = { has_tradition = tr_psionics_breach_shroud }
-		}
-		modifier = {
-			# planet_psionic_jobs_produces_mult = 0.05	# No Longer Used in Stellaris 4.0
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			exists = planet
-			planet = { has_modifier = anticrime_campaign }
-		}
-		modifier = {
-			planet_crime_add = -10
-		}
-	}
+	#triggered_planet_modifier = {
+	#	potential = {
+	#		exists = owner
+	#		owner  = { has_tradition = tr_psionics_breach_shroud }
+	#	}
+	#	modifier = {
+	#		# planet_psionic_jobs_produces_mult = 0.05	# No Longer Used in Stellaris 4.0
+	#	}
+	#}
 
 	triggered_planet_modifier = {
 		potential = {
@@ -1175,10 +1064,10 @@ telepath = {
 			factor = 2
 			has_trait = trait_resilient
 		}
-		modifier = {
-			factor = 0.1
-			can_take_servant_job = yes
-		}
+		#modifier = {
+		#	factor = 0.1
+		#	can_take_servant_job = yes
+		#}
 		# modifier = {
 		#	factor = 1.5
 		#	has_job_type = telepath	# No Longer Used in Stellaris 4.0

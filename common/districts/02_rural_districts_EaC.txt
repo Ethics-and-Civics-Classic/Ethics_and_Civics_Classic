@@ -15,37 +15,30 @@ district_generator = {
 
 	show_on_uncolonized = {
 		uses_district_set = standard
+		exists = from
+		from = { is_wilderness_empire = no }
+		NOT = { has_modifier = resort_colony }
 	}
 
 	potential = {
 		uses_district_set = standard
-	}
-
-	allow = {
 		OR = {
 			NOT = { exists = owner }
-			owner = {
-				NAND = {
-					is_ai = yes
-					should_ai_focus_on_trade = yes
-				}
+			AND = {
+				exists = owner
+				owner = { is_wilderness_empire = no }
 			}
 		}
-
 		NOT = { has_modifier = resort_colony }
-	}
-
-	destroy_trigger = {
-		exists = owner
-		owner = {
-			is_ai = yes
-			should_ai_focus_on_trade = yes
-		}
 	}
 
 	conversion_ratio = 1
 	convert_to = {
 		district_generator_uncapped
+		district_photosynthesis_fields
+		district_photosynthesis_fields_uncapped
+		district_nexus_1
+		district_hive_1
 	}
 
 	resources = {
@@ -66,6 +59,11 @@ district_generator = {
 			energy = 0.25									# Modded
 		}
 	}
+	
+	#inline_script = {	#Let's not use this for now... but using this helps mod compatibility
+	#	script = jobs/technicians_add
+	#	AMOUNT = @base_rural_district_jobs
+	#}
 
 	planet_modifier = {
 		planet_housing_add = 200
@@ -223,8 +221,14 @@ district_mining = {
 		uses_district_set = standard
 		NAND = {
 			exists = from
-			from = { is_subterranean_empire = yes }
+			from = {
+				OR = {
+					is_subterranean_empire = yes
+					is_wilderness_empire = yes
+				}
+			}
 		}
+		NOT = { has_modifier = resort_colony }
 	}
 
 	potential = {
@@ -233,6 +237,14 @@ district_mining = {
 			exists = owner
 			owner = { is_subterranean_empire = yes }
 		}
+		OR = {
+			NOT = { exists = owner }
+			AND = {
+				exists = owner
+				owner = { is_wilderness_empire = no }
+			}
+		}
+		NOT = { has_modifier = resort_colony }
 	}
 
 	allow = {
@@ -242,7 +254,12 @@ district_mining = {
 	conversion_ratio = 1
 	convert_to = {
 		district_mining_uncapped
+		district_hollow_mountains
+		district_hollow_mountains_uncapped
+		district_nexus_2
+		district_hive_2
 	}
+
 
 	resources = {
 		category = planet_districts_mining
@@ -266,6 +283,11 @@ district_mining = {
 	planet_modifier = {
 		planet_housing_add = 200
 	}
+	
+	#inline_script = {		#Do later
+	#	script = jobs/miners_add
+	#	AMOUNT = @base_rural_district_jobs
+	#}
 
 	triggered_planet_modifier = {
 		potential = {
@@ -282,6 +304,26 @@ district_mining = {
 			planet_housing_add = 100
 		}
 	}
+	
+	triggered_planet_modifier = {
+		potential = {
+			has_modifier = metal_planet
+		}
+		modifier = {
+			planet_housing_add = 500
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { is_gestalt = yes }
+		}
+		modifier = {
+			planet_housing_add = 100
+		}
+	}
+	
 	# Normal Hive Mining Job
 	triggered_planet_modifier = {
 		potential = {
@@ -428,14 +470,17 @@ district_farming = {
 	}
 
 	show_on_uncolonized = {
+		exists = from
+		from = { is_wilderness_empire = no }
 		uses_district_set = standard
+		NOT = { has_modifier = resort_colony }
 	}
 
 	potential = {
 		uses_district_set = standard
 		OR = {
 			NOT = { exists = owner }
-			owner = { is_anglers_empire = no }
+			NOT = { owner = { is_anglers_empire = yes } }
 			AND = {
 				owner = { is_anglers_empire = yes }
 				NOT = { is_planet_class = pc_ocean }
@@ -450,6 +495,14 @@ district_farming = {
 				}
 			}
 		}
+		OR = {
+			NOT = { exists = owner }
+			AND = {
+				exists = owner
+				owner = { is_wilderness_empire = no }
+			}
+		}
+		NOT = { has_modifier = resort_colony }
 	}
 
 	allow = {
@@ -459,12 +512,25 @@ district_farming = {
 	conversion_ratio = 1
 	convert_to = {
 		district_farming_uncapped
+		district_orchard_forests
+		district_orchard_forests_uncapped
+		district_nexus_3
+		district_hive_3
 	}
 
 	resources = {
 		category = planet_districts_farming
 		cost = {
 			minerals = @base_cost
+			trigger = {
+				NOT = { has_modifier = wooden_planet }
+			}
+		}
+		cost = {
+			food = @base_cost
+			trigger = {
+				has_modifier = wooden_planet
+			}
 		}
 		# Anglers Civic cost effect
 		cost = {
@@ -488,10 +554,15 @@ district_farming = {
 			energy = 0.25									# Modded
 		}
 	}
-
-	planet_modifier = {
-		planet_housing_add = 200				# Modded
-		# planet_max_buildings_add = 0.25	# Removed Vanilla Code
+	
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { is_wilderness_empire = no }
+		}
+		modifier = {
+			planet_housing_add = 200
+		}
 	}
 
 	triggered_planet_modifier = {
@@ -502,7 +573,7 @@ district_farming = {
 			}
 		}
 		modifier = {
-			planet_housing_add = 100			
+			planet_housing_add = 400			
 			planet_max_buildings_add = 0.25	
 			job_farmer_add = 100				# Modded
 		}
@@ -517,9 +588,20 @@ district_farming = {
 			}
 		}
 		modifier = {
+			planet_housing_add = 200
+		}
+	}
+	
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { is_gestalt = yes }
+		}
+		modifier = {
 			planet_housing_add = 100
 		}
 	}
+	
 	# Normal Hive Farm
 	triggered_planet_modifier = {
 		potential = {
@@ -716,40 +798,24 @@ district_generator_uncapped = {
 	}
 
 	show_on_uncolonized = {
-		OR = {
-			uses_district_set = hive_world
-			uses_district_set = machine_world
-			AND = {
-				exists = from
-				from = {
-					OR = {
-						is_gestalt = yes
-						is_fallen_empire = yes
-					}
-				}
-				uses_district_set = shattered_ring_world
-			}
+		exists = from
+		from = {
+			is_wilderness_empire = no
 		}
+		uses_district_set = shattered_ring_world
+		NOT = { has_modifier = resort_colony }
 	}
+
 
 	potential = {
+		uses_district_set = shattered_ring_world
 		OR = {
-			uses_district_set = hive_world
-			uses_district_set = machine_world
+			NOT = { exists = owner }
 			AND = {
 				exists = owner
-				owner = {
-					OR = {
-						is_gestalt = yes
-						is_fallen_empire = yes
-					}
-				}
-				uses_district_set = shattered_ring_world
+				owner = { is_wilderness_empire = no }
 			}
 		}
-	}
-
-	allow = {
 		NOT = { has_modifier = resort_colony }
 	}
 
@@ -758,6 +824,11 @@ district_generator_uncapped = {
 		district_generator
 		district_rw_generator
 		district_srw_commercial
+		district_rw_urban_1
+		district_photosynthesis_fields
+		district_photosynthesis_fields_uncapped
+		district_nexus_1
+		district_hive_1
 	}
 
 	resources = {
@@ -788,16 +859,27 @@ district_generator_uncapped = {
 			exists = owner
 			owner = {
 				OR = {
-					# has_valid_civic = civic_agrarian_idyll # Removed Vanilla Code - E&CC
+					has_valid_civic = civic_agrarian_idyll # Removed Vanilla Code - E&CC Pre 4.0 (Cog Note: Not sure why this was disabled?)
 					has_valid_civic = civic_labour_unions	# Modded
 					has_valid_civic = civic_shared_burden	# Modded
 				}
 			} 
 		}
 		modifier = {
+			planet_housing_add = 300
+		}
+	}
+	
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { is_gestalt = yes }
+		}
+		modifier = {
 			planet_housing_add = 100
 		}
 	}
+	
 	# Normal Hive Technician
 	triggered_planet_modifier = {
 		potential = {
