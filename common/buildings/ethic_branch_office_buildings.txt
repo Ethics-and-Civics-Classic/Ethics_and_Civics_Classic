@@ -2736,7 +2736,7 @@ building_pirate_haven = {
 		job_capital_trader_add = @traders_from_civic
 	}
 	
-	custom_tooltip = trade_value_from_soldiers
+	custom_tooltip = trade_value_from_soldiers_and_enforcers_and_criminal
 
 	resources = {
 		category = planet_branch_office_buildings
@@ -2755,6 +2755,37 @@ building_pirate_haven = {
 		upkeep = {
 			energy = 2
 		}
+	}
+	
+	triggered_planet_modifier = {
+		potential = {
+			branch_office_owner = {
+				OR = {
+					value = civic_ruthless_competition			# Due to Slavery
+					value = civic_slaver_guilds					# Due to Slavery
+					value = civic_indentured_assets				# Due to Slavery
+					value = civic_barbaric_despoilers_corporate	# Due to Slavery
+					value = civic_private_militaries			# Private Military Civic
+					value = civic_private_military_companies	# Private Military Civic
+				}
+			}
+		}
+		planet_jobs_trade_produces_mult = @trade_value_from_jobs
+		mult = value:num_jobs_with_tag|TAG|crime| #benefits from enforcers, criminals, slaves, livestock and purged pops
+	}
+
+	#Crims cause crime even with deal
+	triggered_planet_modifier = {
+		potential = {
+			branch_office_owner = {
+				OR = {
+					is_criminal_syndicate = yes
+					civic_military_dictatorship_corporate = yes
+				}
+				is_legit_or_legal_criminal = yes
+			}
+		}
+		planet_crime_floor_add = @crime_floor_from_legal_crime
 	}
 	
 	destroy_trigger = {

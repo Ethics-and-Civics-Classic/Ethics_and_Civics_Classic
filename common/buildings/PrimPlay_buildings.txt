@@ -701,6 +701,7 @@ building_stone_palace = {
 		building_colony_shelter
 		building_hab_capital
 		building_hab_fe_capital
+		building_colony_shelter_wilderness
 	}
 
 	planet_modifier = {
@@ -855,7 +856,7 @@ building_primitive_offices = {
 				# has_origin = origin_primitive_player_machine_age
 				# has_origin = origin_primitive_player_atomic_age
 				# has_origin = origin_primitive_player_early_space_age
-				NOT = { has_technology = tech_basic_industry }
+				NOT = { has_technology = tech_planetary_government }
 				AND = {
 					OR = {
 						has_country_flag = steam_age
@@ -1315,7 +1316,6 @@ building_primitive_capital = {
 		}
 		job_primitive_bureaucrat_add = 200
 		job_primitive_warrior_2_add = 200
-		job_primitive_researcher_2_add = 200
 		job_primitive_priest_2_add = 200
 		planet_housing_add = 500
 		planet_amenities_add = 2500
@@ -1342,7 +1342,6 @@ building_primitive_capital = {
 		}
 		job_primitive_bureaucrat_add = 200
 		job_primitive_warrior_2_add = 200
-		job_primitive_researcher_2_add = 200
 		job_primitive_priest_2_add = 200
 		job_primitive_entertainer_add = 200
 		planet_housing_add = 500
@@ -1361,16 +1360,77 @@ building_primitive_capital = {
 			job_soldier_add = 200
 		}
 	}
+	###########################################
 	triggered_planet_modifier = {
 		potential = {
 			exists = owner
-			owner = { has_technology = tech_basic_science_lab_1 }
+			owner = { 
+				NOT = { has_technology = tech_basic_science_lab_1 }
+			}
+		}
+
+		job_primitive_researcher_2_add = 200
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_technology = tech_basic_science_lab_1
+				is_regular_empire = yes
+				NOT = {
+					has_country_flag = fallen_empire_1
+				}
+			}
 		}
 		modifier = {
-			job_primitive_researcher_2_add = -200
-			job_researcher_add = 200
+			job_physicist_add = 30
+			job_biologist_add = 30
+			job_engineer_add = 30
 		}
 	}
+
+	triggered_desc = {
+		trigger = {
+			exists = owner
+			owner = {
+				has_technology = tech_basic_science_lab_1
+				is_regular_empire = yes
+				NOT = {
+					has_country_flag = fallen_empire_1
+				}
+			}
+		}
+		text = job_physicist_effect_desc
+	}
+
+	triggered_desc = {
+		trigger = {
+			exists = owner
+			owner = {
+				has_technology = tech_basic_science_lab_1
+				is_regular_empire = yes
+				NOT = {
+					has_country_flag = fallen_empire_1
+				}
+			}
+		}
+		text = job_biologist_effect_desc
+	}
+
+	triggered_desc = {
+		trigger = {
+			exists = owner
+			owner = {
+				has_technology = tech_basic_science_lab_1
+				is_regular_empire = yes
+				NOT = {
+					has_country_flag = fallen_empire_1
+				}
+			}
+		}
+		text = job_engineer_effect_desc
+	}
+	###########################################
 	triggered_planet_modifier = {
 		potential = {
 			exists = owner
@@ -1520,40 +1580,134 @@ building_pre_ftl_radio_telescope = {
 			}
 		}
 	}
-
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = { is_gestalt = no }
-		}
-
-		job_primitive_researcher_2_add = 200
-	}
 	
 	country_modifier = { 
 		# intel_decryption_add = 0.25
 		first_contact_speed_mult = 0.05
 	}
-
+	###########################################
+	
+				#REGULAR
+	
+	###########################################
 	triggered_planet_modifier = {
 		potential = {
 			exists = owner
-			owner = { is_hive_empire = yes }
+			owner = { 
+				NOT = { has_technology = tech_basic_science_lab_1 }
+				is_gestalt = no 
+			}
+		}
+
+		job_primitive_researcher_2_add = 200
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_technology = tech_basic_science_lab_1
+				is_regular_empire = yes
+				NOT = {
+					has_country_flag = fallen_empire_1
+				}
+			}
+		}
+		modifier = {
+			job_physicist_add = 30
+		}
+	}
+
+	triggered_desc = {
+		trigger = {
+			exists = owner
+			owner = {
+				has_technology = tech_basic_science_lab_1
+				is_regular_empire = yes
+				NOT = {
+					has_country_flag = fallen_empire_1
+				}
+			}
+		}
+		text = job_physicist_effect_desc
+	}
+	###########################################
+	
+				#HIVE
+	
+	########################################
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { 
+				NOT = { has_technology = tech_basic_science_lab_1 }
+				is_hive_empire = yes 			
+			}
 		}
 
 		job_primitive_hive_brain_drone_add = 200
 
 	}
-	
 	triggered_planet_modifier = {
 		potential = {
 			exists = owner
-			owner = { is_machine_empire = yes }
+			owner = {
+				has_technology = tech_basic_science_lab_1
+				is_hive_empire = yes
+			}
+		}
+		job_calculator_physicist_add = 60
+	}
+
+	triggered_desc = {
+		trigger = {
+			exists = owner
+			owner = {
+				has_technology = tech_basic_science_lab_1
+				is_hive_empire = yes
+				is_wilderness_empire = no
+			}
+		}
+		text = job_brain_drone_physicist_effect_desc
+	}
+	########################################
+	
+				#MACHINE
+	
+	############################################
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				NOT = { has_technology = tech_basic_science_lab_1 }
+				is_machine_empire = yes 
+			}
 		}
 
 		# job_primitive_machine_calculator_add = 200	# Cog Note - This should be fixed, broke after 4.0
 
 	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_technology = tech_basic_science_lab_1
+				is_machine_empire = yes 
+			}
+		}
+		job_calculator_physicist_add = 60
+	}
+
+	triggered_desc = {
+		trigger = {
+			exists = owner
+			owner = {
+				has_technology = tech_basic_science_lab_1
+				is_machine_empire = yes 
+			}
+		}
+		text = job_calculator_physicist_effect_desc
+	}
+	############################################
 	
 	prerequisites = {
 		"tech_primitive_radiowave_telescope"
@@ -2173,7 +2327,6 @@ building_hive_primitive_capital = {
 		}
 		job_primitive_hive_synapse_drone_2_add = 200
 		job_primitive_hive_warrior_2_add = 200
-		job_primitive_hive_brain_drone_add = 200
 		job_primitive_hive_spawning_drone_add = 200
 		planet_housing_add = 500
 		planet_amenities_no_happiness_add = 2500
@@ -2200,7 +2353,6 @@ building_hive_primitive_capital = {
 		}
 		job_primitive_hive_synapse_drone_2_add = 200
 		job_primitive_hive_warrior_2_add = 200
-		job_primitive_hive_brain_drone_add = 200
 		job_primitive_hive_spawning_drone_add = 100
 		planet_housing_add = 500
 		planet_amenities_no_happiness_add = 2500
@@ -2218,18 +2370,103 @@ building_hive_primitive_capital = {
 			job_warrior_drone_add = 200
 		}
 	}
+	########################################
 	triggered_planet_modifier = {
 		potential = {
 			exists = owner
-			owner = { has_technology = tech_basic_science_lab_1 }
+			owner = {
+				NOT = { has_technology = tech_basic_science_lab_1 }
+				is_hive_empire = yes
+			}
 		}
-		modifier = {
-			job_primitive_hive_brain_drone_add = -200
-			job_calculator_physicist_add = 100
-			job_calculator_biologist_add = 40
-			job_calculator_engineer_add = 60
-		}
+		job_primitive_hive_brain_drone_add = 200
 	}
+	
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_technology = tech_basic_science_lab_1
+				is_hive_empire = yes
+			}
+		}
+		job_calculator_physicist_add = 60
+		job_calculator_biologist_add = 60
+		job_calculator_engineer_add = 60
+	}
+
+	triggered_desc = {
+		trigger = {
+			exists = owner
+			owner = {
+				has_technology = tech_basic_science_lab_1
+				is_hive_empire = yes
+				is_wilderness_empire = no
+			}
+		}
+		text = job_brain_drone_physicist_effect_desc
+	}
+
+	triggered_desc = {
+		trigger = {
+			exists = owner
+			owner = {
+				has_technology = tech_basic_science_lab_1
+				is_hive_empire = yes
+				is_wilderness_empire = no
+			}
+		}
+		text = job_brain_drone_biologist_effect_desc
+	}
+
+	triggered_desc = {
+		trigger = {
+			exists = owner
+			owner = {
+				has_technology = tech_basic_science_lab_1
+				is_hive_empire = yes
+				is_wilderness_empire = no
+			}
+		}
+		text = job_brain_drone_engineer_effect_desc
+	}
+
+	triggered_desc = {
+		trigger = {
+			exists = owner
+			owner = {
+				has_technology = tech_basic_science_lab_1
+				is_hive_empire = yes
+				is_wilderness_empire = yes
+			}
+		}
+		text = job_evosymbiont_physicist_effect_desc
+	}
+
+	triggered_desc = {
+		trigger = {
+			exists = owner
+			owner = {
+				has_technology = tech_basic_science_lab_1
+				is_hive_empire = yes
+				is_wilderness_empire = yes
+			}
+		}
+		text = job_evosymbiont_biologist_effect_desc
+	}
+
+	triggered_desc = {
+		trigger = {
+			exists = owner
+			owner = {
+				has_technology = tech_basic_science_lab_1
+				is_hive_empire = yes
+				is_wilderness_empire = yes
+			}
+		}
+		text = job_evosymbiont_engineer_effect_desc
+	}
+	########################################
 	triggered_planet_modifier = {
 		potential = {
 			exists = owner
@@ -2249,14 +2486,6 @@ building_hive_primitive_capital = {
 			# job_primitive_replicator_add = -100		# Cog Note - This should be fixed, broke after 4.0
 			job_gestation_drone_add = 200
 		}
-	}
-	
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = { is_low_tech_start = yes }
-		}
-		planet_max_buildings_add = -3
 	}
 	
 	prerequisites = {
@@ -2523,18 +2752,65 @@ building_machine_primitive_capital = {
 			job_patrol_drone_add = 100
 		}
 	}
+	############################################
 	triggered_planet_modifier = {
 		potential = {
 			exists = owner
-			owner = { has_technology = tech_basic_science_lab_1 }
+			owner = {
+				NOT = { has_technology = tech_basic_science_lab_1 }
+				is_machine_empire = yes 
+			}
 		}
-		modifier = {
-			# job_primitive_machine_calculator_add = -100	# Cog Note - This should be fixed, broke after 4.0
-			job_calculator_physicist_add = 50
-			job_calculator_biologist_add = 20
-			job_calculator_engineer_add = 30
-		}
+		# job_primitive_machine_calculator_add = 200	# Cog Note - This should be fixed, broke after 4.0
 	}
+	
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_technology = tech_basic_science_lab_1
+				is_machine_empire = yes 
+			}
+		}
+		job_calculator_physicist_add = 60
+		job_calculator_biologist_add = 60
+		job_calculator_engineer_add = 60
+	}
+
+	triggered_desc = {
+		trigger = {
+			exists = owner
+			owner = {
+				has_technology = tech_basic_science_lab_1
+				is_machine_empire = yes 
+			}
+		}
+		text = job_calculator_physicist_effect_desc
+	}
+
+	triggered_desc = {
+		trigger = {
+			exists = owner
+			owner = {
+				has_technology = tech_basic_science_lab_1
+				is_machine_empire = yes 
+			}
+		}
+		text = job_calculator_biologist_effect_desc
+	}
+
+
+	triggered_desc = {
+		trigger = {
+			exists = owner
+			owner = {
+				has_technology = tech_basic_science_lab_1
+				is_machine_empire = yes 
+			}
+		}
+		text = job_calculator_engineer_effect_desc
+	}
+	############################################
 	triggered_planet_modifier = {
 		potential = {
 			exists = owner

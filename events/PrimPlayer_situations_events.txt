@@ -181,16 +181,44 @@ situation_event = {
 
 	immediate = {
 		random_list = {
-			94 = {
+			84 = {
 				owner = { add_tech_progress = { tech = tech_hyper_drive_1 progress = 0.005 } }
 				add_situation_progress = 1
 			}
-			5 = {
+			10 = {
 				# Nothing Happens
 			}
 			1 = {
 				# Discover Subspace Drives
 				owner = { random_situation = { limit = { is_situation_type = PrimPlayer_developing_hyperdrive_situation } situation_event = { id = PrimPlay_situation_event.2002 } } }
+				modifier = {
+					factor = 0
+					OWNER = { has_technology = tech_subspace_drive }
+				}
+			}
+			1 = {
+				# Discover Temple of Transport and Hyper Relays
+				owner = { random_situation = { limit = { is_situation_type = PrimPlayer_developing_hyperdrive_situation } situation_event = { id = PrimPlay_situation_event.2003 } } }
+				modifier = {
+					factor = 0
+					OWNER = { has_technology = tech_temple_of_transportation }
+				}
+			}
+			3 = {
+				# Discover Experimental Subspace Navigation
+				owner = { random_situation = { limit = { is_situation_type = PrimPlayer_developing_hyperdrive_situation } situation_event = { id = PrimPlay_situation_event.2004 } } }
+				modifier = {
+					factor = 0
+					OWNER = { has_technology = tech_experimental_subspace_navigation }
+				}
+			}
+			1 = {
+				# Discover Wormhole Stabalization
+				owner = { random_situation = { limit = { is_situation_type = PrimPlayer_developing_hyperdrive_situation } situation_event = { id = PrimPlay_situation_event.2005 } } }
+				modifier = {
+					factor = 0
+					OWNER = { has_technology = tech_wormhole_stabilization }
+				}
 			}
 		}
 	}
@@ -203,7 +231,12 @@ situation_event = {
 	show_sound = event_celebration
 	is_triggered_only = yes
 
-	trigger = { owner = { NOT = { has_technology = tech_subspace_drive } } }
+	trigger = { 
+		has_first_contact_dlc = yes
+		owner = { 
+			NOT = { has_technology = tech_subspace_drive } 
+		} 
+	}
 
 	option = {
 		name = PrimPlay_situation_event.2002.a
@@ -213,6 +246,75 @@ situation_event = {
 			hidden_effect = { random_situation = { limit = { is_situation_type = PrimPlayer_developing_hyperdrive_situation } add_situation_progress = 50 } }
 		}
 		custom_tooltip = PrimPlay_situation_event.2002.tooltip
+	}
+}
+
+situation_event = {
+	id = PrimPlay_situation_event.2003
+	title = PrimPlay_situation_event.2003.title
+	desc = PrimPlay_situation_event.2003.desc
+	picture = GFX_evt_hyper_relay
+	show_sound = event_celebration
+	is_triggered_only = yes
+
+	trigger = { owner = { NOT = { has_technology = tech_temple_of_transportation } } }
+
+	option = {
+		name = PrimPlay_situation_event.2003.a
+		owner = {
+			give_technology = { tech = tech_temple_of_transportation message = yes }
+			add_tech_progress = { tech = tech_hyper_drive_1 progress = 0.05 }
+			if = {
+				limit = { has_overlord_dlc = yes }
+				add_research_option = tech_hyper_relays
+			}
+			hidden_effect = { random_situation = { limit = { is_situation_type = PrimPlayer_developing_hyperdrive_situation } add_situation_progress = 10 } }
+		}
+	}
+}
+
+situation_event = {
+	id = PrimPlay_situation_event.2004
+	title = PrimPlay_situation_event.2004.title
+	desc = PrimPlay_situation_event.2004.desc
+	picture = GFX_evt_physics_research
+	show_sound = event_scanner
+	is_triggered_only = yes
+
+	trigger = { 
+		owner = { NOT = { has_technology = tech_experimental_subspace_navigation  } } 
+	}
+
+	option = {
+		name = PrimPlay_situation_event.2004.a
+		owner = {
+			give_technology = { tech = tech_experimental_subspace_navigation message = yes }
+			add_tech_progress = { tech = tech_hyper_drive_1 progress = 0.10 }
+			hidden_effect = { random_situation = { limit = { is_situation_type = PrimPlayer_developing_hyperdrive_situation } add_situation_progress = 20 } }
+		}
+		custom_tooltip = PrimPlay_situation_event.2004.tooltip
+	}
+}
+
+situation_event = {
+	id = PrimPlay_situation_event.2005
+	title = PrimPlay_situation_event.2005.title
+	desc = PrimPlay_situation_event.2005.desc
+	picture = GFX_evt_wormhole
+	show_sound = event_space_cloud
+	is_triggered_only = yes
+
+	trigger = { 
+		owner = { NOT = { has_technology = tech_wormhole_stabilization  } } 
+	}
+
+	option = {
+		name = PrimPlay_situation_event.2005.a
+		owner = {
+			give_technology = { tech = tech_wormhole_stabilization message = yes }
+			add_tech_progress = { tech = tech_hyper_drive_1 progress = 0.05 }
+			hidden_effect = { random_situation = { limit = { is_situation_type = PrimPlayer_developing_hyperdrive_situation } add_situation_progress = 10 } }
+		}
 	}
 }
 
@@ -330,5 +432,253 @@ country_event = {
 		trigger = { has_origin = origin_broken_shackles }
 		start_situation = { type = PrimPlayer_unified_planet_situation target = this }
 		random_situation = { limit = { is_situation_type = PrimPlayer_unified_planet_situation } set_situation_approach = PrimPlayer_broken_shackles_approach }
+	}
+}
+
+situation_event = {
+	id = PrimPlay_situation_event.3001
+	hide_window = yes
+	is_triggered_only = yes
+
+	immediate = {
+		random_list = {
+			98 = {
+				# Nothing Happens
+				owner = { capital_scope = { planet_event = { id = PrimPlay_situation_event.3006 } } }
+				modifier = {
+					add = -25
+					OWNER = { 
+						capital_scope = { 
+							planet_crime > 0
+						}
+					}
+				}
+			}
+			1 = {
+				# Discover Subspace Drives
+				owner = { random_situation = { limit = { is_situation_type = PrimPlayer_developing_hyperdrive_situation } situation_event = { id = PrimPlay_situation_event.3002 } } }
+			}
+			1 = {
+				# Discover Temple of Transport and Hyper Relays
+				owner = { random_situation = { limit = { is_situation_type = PrimPlayer_developing_hyperdrive_situation } situation_event = { id = PrimPlay_situation_event.3003 } } }
+			}
+			0 = {
+				# Separatist Movement if Crime is High
+				owner = { capital_scope = { planet_event = { id = PrimPlay_situation_event.3005 } } }
+				random_list = {
+					80 = {
+						# Nothing Happens
+					}
+					20 = {
+						# Governor is Assassinated
+						owner = { capital_scope = { planet_event = { id = PrimPlay_situation_event.3003 days = 20 } } }
+					}
+				}
+				modifier = {
+					add = 25
+					OWNER = { capital_scope = { planet_crime > 0 } }
+				}
+			}
+		}
+	}
+}
+
+situation_event = {
+	id = PrimPlay_situation_event.3002
+	title = PrimPlay_situation_event.3002.title
+	desc = PrimPlay_situation_event.3002.desc
+	picture = GFX_evt_city_planet
+	show_sound = event_celebration
+	is_triggered_only = yes
+
+	trigger = { 
+		has_first_contact_dlc = yes
+		owner = { NOT = { has_technology = tech_compact_living } } 
+	}
+
+	option = {
+		name = PrimPlay_situation_event.3002.a
+		owner = {
+			give_technology = { tech = tech_compact_living message = yes }
+			random_situation = { limit = { is_situation_type = PrimPlayer_unified_planet_situation } add_situation_progress = 25 }
+		}
+		#custom_tooltip = PrimPlay_situation_event.3002.tooltip
+	}
+}
+
+situation_event = {
+	id = PrimPlay_situation_event.3003
+	title = PrimPlay_situation_event.3003.title
+	desc = PrimPlay_situation_event.3003.desc
+	picture = GFX_evt_friendly_infiltration
+	show_sound = event_celebration
+	is_triggered_only = yes
+
+	trigger = { 
+		has_first_contact_dlc = yes
+		owner = { NOT = { has_technology = tech_xeno_aesthetics } } 
+	}
+
+	option = {
+		name = PrimPlay_situation_event.3003.a
+		trigger = { 
+			OR = {
+				is_socialism = yes
+				is_xenophile = yes
+			}
+		}
+		owner = {
+			give_technology = { tech = tech_xeno_aesthetics message = yes }
+			random_situation = { limit = { is_situation_type = PrimPlayer_unified_planet_situation } add_situation_progress = 25 }
+		}
+		#custom_tooltip = PrimPlay_situation_event.3003.tooltip
+	}
+	option = {
+		name = PrimPlay_situation_event.3003.b
+		trigger = { 
+			NOR = {
+				is_megacorp = yes
+				is_militarist = yes
+				is_authoritarian = yes
+				is_socialism = yes
+				is_xenophile = yes
+				is_xenophobe = yes
+			}
+		}
+		owner = {
+			give_technology = { tech = tech_xeno_aesthetics message = yes }
+			random_situation = { limit = { is_situation_type = PrimPlayer_unified_planet_situation } add_situation_progress = 25 }
+		}
+		#custom_tooltip = PrimPlay_situation_event.3003.tooltip
+	}
+	option = {
+		name = PrimPlay_situation_event.3003.c
+		trigger = { 
+			OR = {
+				is_militarist = yes
+				is_xenophobe = yes
+			}
+		}
+		owner = {
+			give_technology = { tech = tech_xeno_aesthetics message = yes }
+			random_situation = { limit = { is_situation_type = PrimPlayer_unified_planet_situation } add_situation_progress = 25 }
+		}
+		#custom_tooltip = PrimPlay_situation_event.3003.tooltip
+	}
+	option = {
+		name = PrimPlay_situation_event.3003.d
+		trigger = { 
+			is_authoritarian = yes
+		}
+		owner = {
+			give_technology = { tech = tech_xeno_aesthetics message = yes }
+			random_situation = { limit = { is_situation_type = PrimPlayer_unified_planet_situation } add_situation_progress = 25 }
+		}
+		#custom_tooltip = PrimPlay_situation_event.3003.tooltip
+	}
+	option = {
+		name = PrimPlay_situation_event.3003.e
+		trigger = { 
+			OR = {
+				is_megacorp = yes
+				is_capitalism = yes
+			}
+		}
+		owner = {
+			give_technology = { tech = tech_xeno_aesthetics message = yes }
+			random_situation = { limit = { is_situation_type = PrimPlayer_unified_planet_situation } add_situation_progress = 25 }
+		}
+		#custom_tooltip = PrimPlay_situation_event.3003.tooltip
+	}
+}
+
+# Separatists Assassinate Governor
+planet_event = {
+	id = PrimPlay_situation_event.3004
+	title = PrimPlay_situation_event.3004.title
+	desc = PrimPlay_situation_event.3004.desc
+	picture = GFX_evt_dark_alley
+	show_sound = event_criminal_activity
+	location = root
+	is_triggered_only = yes
+
+	pre_triggers = {
+		has_owner = yes
+	}
+
+	trigger = {
+		planet_crime > 0
+		exists = leader
+		NOT = { has_planet_flag = PrimPlayer_unified_planet_situation_assasinated_governor }
+	}
+	
+	immediate = { hidden_effect = { set_planet_flag = PrimPlayer_unified_planet_situation_assasinated_governor } }
+
+	option = {
+		name = PrimPlay_situation_event.3004.a
+		leader = { kill_leader = { show_notification = yes } }
+		random_situation = { limit = { is_situation_type = PrimPlayer_unified_planet_situation } add_situation_progress = -15 }
+		if = {
+			limit = { NOT = { has_planet_modifier = PrimPlayer_separatist_movement } }
+			add_modifier = {
+				modifier = PrimPlayer_separatist_movement
+				clear_on_owner_change = yes
+			}
+		}
+	}
+}
+
+# Separatist Movement Gains Momentum
+planet_event = {
+	id = PrimPlay_situation_event.3005
+	title = PrimPlay_situation_event.3005.title
+	desc = PrimPlay_situation_event.3005.desc
+	picture = GFX_evt_civil_action
+	show_sound = event_criminal_activity
+	location = root
+	is_triggered_only = yes
+
+	pre_triggers = {
+		has_owner = yes
+	}
+
+	trigger = {
+		planet_crime > 0
+		NOT = { has_planet_modifier = PrimPlayer_separatist_movement }
+	}
+
+	option = {
+		name = PrimPlay_situation_event.3005.a
+		random_situation = { limit = { is_situation_type = PrimPlayer_unified_planet_situation } add_situation_progress = -25 }
+		add_modifier = {
+			modifier = PrimPlayer_separatist_movement
+			clear_on_owner_change = yes
+		}
+	}
+}
+
+# Separatist Movement Loses Momentum
+planet_event = {
+	id = PrimPlay_situation_event.3006
+	title = PrimPlay_situation_event.3006.title
+	desc = PrimPlay_situation_event.3006.desc
+	picture = GFX_evt_legendary_leader
+	show_sound = event_celebration
+	location = root
+	is_triggered_only = yes
+
+	pre_triggers = {
+		has_owner = yes
+	}
+
+	trigger = {
+		planet_crime = 0
+		has_planet_modifier = PrimPlayer_separatist_movement
+	}
+
+	option = {
+		name = PrimPlay_situation_event.3005.a
+		remove_modifier = PrimPlayer_separatist_movement
+		hidden_effect = { remove_planet_flag = PrimPlayer_unified_planet_situation_assasinated_governor }
 	}
 }
