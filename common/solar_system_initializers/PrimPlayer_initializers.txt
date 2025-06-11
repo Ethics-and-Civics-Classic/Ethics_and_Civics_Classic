@@ -10,7 +10,247 @@
 # therefor, you must have this code loaded via 0_ infront so it's loaded before vanilla.
 # Spent like 5 hours figuring out why this didn't work. lol
 
-# Sol System (Pre-FTL Humans)
+# Broken Shackles Parent System
+
+
+# Broken Shackles Parent System
+broken_shackles_parent_system = {
+	class = "rl_starting_stars"
+	asteroid_belt = {
+		type = rocky_asteroid_belt
+		radius = 50
+	}
+
+	flags = { primitive_system empire_home_system }
+
+	usage = misc_system_init
+
+	usage_odds = {
+		base = 0
+		modifier = {
+			any_country = {
+				has_origin = origin_broken_shackles
+				NOT = {
+					has_country_flag = parent_system_spawned
+					is_human_species = yes
+				}
+			}
+			NOT = { has_star_flag = empire_cluster }
+			add = 99999
+		}
+	}
+
+	planet = {
+		count = 1
+		class = star
+		orbit_distance = 0
+		orbit_angle = 1
+		size = { min = 20 max = 30 }
+		has_ring = no
+	}
+
+	change_orbit = 20
+
+	planet = {
+		orbit_distance = 20
+		count = { min = 0 max = 3 }
+	}
+
+	change_orbit = 20
+
+	planet = {
+		count = 1
+		orbit_distance = 0
+		class = "rl_habitable_normal"
+		orbit_angle = { min = 90 max = 270 }
+		size = { min = 12 max = 25 }
+
+		flags = { }
+
+		init_effect = {
+			prevent_anomaly = yes
+
+			random_country = {
+				limit = {
+					has_origin = origin_broken_shackles
+					NOT = {
+						has_country_flag = parent_system_spawned
+						is_human_species = yes
+					}
+				}
+				set_country_flag = parent_system_spawned
+				save_event_target_as = broken_shackles_child
+			}
+
+			set_planet_flag = broken_shackles_homeworld_@event_target:broken_shackles_child
+
+			solar_system = {
+				set_star_flag = empire_cluster		#Added so wormholes and other random stuff wouldn't spawn 
+				set_star_flag = broken_shackles_system
+				set_star_flag = broken_shackles_home_system_@event_target:broken_shackles_child
+			}
+
+			create_country = {
+				species = event_target:broken_shackles_child
+				name_list = event_target:broken_shackles_child
+				type = primitive
+				origin = "origin_default"
+				government_restrictions = {
+					authority = { NOT = { value = auth_machine_intelligence value = auth_hive_mind } }
+				}
+				civics = {
+					civic = civic_increasing_urbanization
+					civic = civic_atmospheric_pollution
+					civic = PrimPlayer_civic_the_obelisk
+				}
+				flag = {
+					icon = {
+						category = "spherical"
+						file = "flag_spherical_22.dds"
+					}
+					background= {
+						category = "backgrounds"
+						file = "new_dawn.dds"
+					}
+					colors={
+						"turquoise"
+						"green"
+						"null"
+						"null"
+					}
+				}
+				effect = {
+					save_event_target_as = broken_shackles_parent
+				}
+			}
+			event_target:broken_shackles_parent = {
+				set_graphical_culture = industrial_01
+				random_list = {
+					25 = {
+						set_country_flag = industrial_age
+						set_pre_ftl_age = industrial_age
+						change_country_flag = {
+							icon = {
+								category = "pre_ftl"
+								file = "preftl_industrial_age.dds"
+							}
+							background= {
+								category = "backgrounds"
+								file = "new_dawn.dds"
+							}
+							colors={
+								"beige"
+								"yellow"
+								"null"
+								"null"
+							}
+						}
+					}
+					25 = {
+						set_country_flag = machine_age
+						set_pre_ftl_age = machine_age
+						change_country_flag = {
+							icon = {
+								category = "pre_ftl"
+								file = "preftl_machine_age.dds"
+							}
+							background= {
+								category = "backgrounds"
+								file = "new_dawn.dds"
+							}
+							colors={
+								"yellow"
+								"orange"
+								"null"
+								"null"
+							}
+						}
+					}
+					25 = {
+						set_country_flag = atomic_age
+						set_pre_ftl_age = atomic_age
+						change_country_flag = {
+							icon = {
+								category = "pre_ftl"
+								file = "preftl_atomic_age.dds"
+							}
+							background= {
+								category = "backgrounds"
+								file = "new_dawn.dds"
+							}
+							colors={
+								"beige"
+								"brown"
+								"null"
+								"null"
+							}
+						}
+					}
+					25 = {
+						set_country_flag = early_space_age
+						set_pre_ftl_age = early_space_age
+						change_country_flag = {
+							icon = {
+								category = "pre_ftl"
+								file = "preftl_early_space_age.dds"
+							}
+							background= {
+								category = "backgrounds"
+								file = "new_dawn.dds"
+							}
+							colors={
+								"grey"
+								"dark_grey"
+								"null"
+								"null"
+							}
+						}
+					}
+				}
+
+				set_country_flag = broken_shackles_parent_country
+				set_country_flag = special_intro_for@event_target:broken_shackles_child
+				set_country_flag = broken_shackles_parent_of@event_target:broken_shackles_child
+				owner_species = { set_species_homeworld = prevprev }
+				set_name = random # Fixes some naming issues
+			}
+
+			setup_pre_ftl_broken_shackles_planet = yes
+			add_deposit = d_PrimPlayer_the_obelisk_deposit
+			add_modifier = { modifier = PrimPlayer_the_obelisk }
+		}
+
+		change_orbit = @base_moon_distance
+
+		moon = {
+			count = { min = 0 max = 1 }
+			orbit_angle = { min = 90 max = 270 }
+			orbit_distance = 5
+		}
+	}
+
+	planet = {
+		class = pc_gas_giant
+		orbit_distance = 20
+		count = { min = 1 max = 4 }
+
+		change_orbit = @base_moon_distance
+
+		moon = {
+			count = { min = 0 max = 1 }
+			orbit_angle = { min = 90 max = 270 }
+			orbit_distance = 5
+		}
+	}
+
+	planet = {
+		class = pc_gas_giant
+		orbit_distance = 20
+		count = { min = 0 max = 2 }
+	}
+}
+
+# Broken Shackle Primitive System
 PrimPlayer_broken_shackle_primitive_system_init = {
 	# name = random
 	class = "rl_standard_stars"
@@ -183,11 +423,9 @@ PrimPlayer_broken_shackle_primitive_system_init = {
 					#		set_location = prev
 					#	}
 					#}
-					while = {
-						count = @early_space_age_pops
-						create_pop = {
-							species = last_created_species
-						}
+					create_pop_group = {
+						species = last_created_species
+						size = @early_space_age_pops
 					}
 					add_deposit = d_PrimPlayer_the_obelisk_deposit
 					add_modifier = { modifier = PrimPlayer_the_obelisk }
@@ -258,242 +496,6 @@ PrimPlayer_broken_shackle_primitive_system_init = {
 	}
 
 	planet = {
-		orbit_distance = 20
-		count = { min = 0 max = 2 }
-	}
-}
-
-# Broken Shackles Parent System
-broken_shackles_parent_system = {
-	class = "rl_starting_stars"
-	asteroid_belt = {
-		type = rocky_asteroid_belt
-		radius = 50
-	}
-
-	flags = { primitive_system empire_home_system }
-
-	usage = misc_system_init
-
-	usage_odds = {
-		base = 0
-		modifier = {
-			any_country = {
-				has_origin = origin_broken_shackles
-				NOT = {
-					has_country_flag = parent_system_spawned
-					is_human_species = yes
-				}
-			}
-			NOT = { has_star_flag = empire_cluster }
-			add = 99999
-		}
-	}
-
-	planet = {
-		count = 1
-		class = star
-		orbit_distance = 0
-		orbit_angle = 1
-		size = { min = 20 max = 30 }
-		has_ring = no
-	}
-
-	change_orbit = 20
-
-	planet = {
-		orbit_distance = 20
-		count = { min = 0 max = 3 }
-	}
-
-	change_orbit = 20
-
-	planet = {
-		count = 1
-		orbit_distance = 0
-		class = "rl_habitable_normal"
-		orbit_angle = { min = 90 max = 270 }
-		size = { min = 12 max = 25 }
-
-		flags = { }
-
-		init_effect = {
-			prevent_anomaly = yes
-
-			random_country = {
-				limit = {
-					has_origin = origin_broken_shackles
-					NOT = {
-						has_country_flag = parent_system_spawned
-						is_human_species = yes
-					}
-				}
-				set_country_flag = parent_system_spawned
-				save_event_target_as = broken_shackles_child
-			}
-
-			set_planet_flag = broken_shackles_homeworld_@event_target:broken_shackles_child
-
-			solar_system = {
-				set_star_flag = broken_shackles_system
-				set_star_flag = broken_shackles_home_system_@event_target:broken_shackles_child
-			}
-
-			create_country = {
-				species = event_target:broken_shackles_child
-				name_list = event_target:broken_shackles_child
-				type = primitive
-				origin = "origin_default"
-				government_restrictions = {
-					authority = { NOT = { value = auth_machine_intelligence value = auth_hive_mind } }
-				}
-				civics = {
-					civic = civic_increasing_urbanization
-					civic = civic_atmospheric_pollution
-					civic = PrimPlayer_civic_the_obelisk
-				}
-				flag = {
-					icon = {
-						category = "spherical"
-						file = "flag_spherical_22.dds"
-					}
-					background= {
-						category = "backgrounds"
-						file = "new_dawn.dds"
-					}
-					colors={
-						"turquoise"
-						"green"
-						"null"
-						"null"
-					}
-				}
-				effect = {
-					save_event_target_as = broken_shackles_parent
-				}
-			}
-			event_target:broken_shackles_parent = {
-				set_graphical_culture = industrial_01
-				random_list = {
-					25 = {
-						set_country_flag = industrial_age
-						set_pre_ftl_age = industrial_age
-						change_country_flag = {
-							icon = {
-								category = "pre_ftl"
-								file = "preftl_industrial_age.dds"
-							}
-							background= {
-								category = "backgrounds"
-								file = "new_dawn.dds"
-							}
-							colors={
-								"beige"
-								"yellow"
-								"null"
-								"null"
-							}
-						}
-					}
-					25 = {
-						set_country_flag = machine_age
-						set_pre_ftl_age = machine_age
-						change_country_flag = {
-							icon = {
-								category = "pre_ftl"
-								file = "preftl_machine_age.dds"
-							}
-							background= {
-								category = "backgrounds"
-								file = "new_dawn.dds"
-							}
-							colors={
-								"yellow"
-								"orange"
-								"null"
-								"null"
-							}
-						}
-					}
-					25 = {
-						set_country_flag = atomic_age
-						set_pre_ftl_age = atomic_age
-						change_country_flag = {
-							icon = {
-								category = "pre_ftl"
-								file = "preftl_atomic_age.dds"
-							}
-							background= {
-								category = "backgrounds"
-								file = "new_dawn.dds"
-							}
-							colors={
-								"beige"
-								"brown"
-								"null"
-								"null"
-							}
-						}
-					}
-					25 = {
-						set_country_flag = early_space_age
-						set_pre_ftl_age = early_space_age
-						change_country_flag = {
-							icon = {
-								category = "pre_ftl"
-								file = "preftl_early_space_age.dds"
-							}
-							background= {
-								category = "backgrounds"
-								file = "new_dawn.dds"
-							}
-							colors={
-								"grey"
-								"dark_grey"
-								"null"
-								"null"
-							}
-						}
-					}
-				}
-
-				set_country_flag = broken_shackles_parent_country
-				set_country_flag = special_intro_for@event_target:broken_shackles_child
-				set_country_flag = broken_shackles_parent_of@event_target:broken_shackles_child
-				owner_species = { set_species_homeworld = prevprev }
-				set_name = random # Fixes some naming issues
-			}
-
-			setup_pre_ftl_broken_shackles_planet = yes
-			add_deposit = d_PrimPlayer_the_obelisk_deposit
-			add_modifier = { modifier = PrimPlayer_the_obelisk }
-		}
-
-		change_orbit = @base_moon_distance
-
-		moon = {
-			count = { min = 0 max = 1 }
-			orbit_angle = { min = 90 max = 270 }
-			orbit_distance = 5
-		}
-	}
-
-	planet = {
-		class = pc_gas_giant
-		orbit_distance = 20
-		count = { min = 1 max = 4 }
-
-		change_orbit = @base_moon_distance
-
-		moon = {
-			count = { min = 0 max = 1 }
-			orbit_angle = { min = 90 max = 270 }
-			orbit_distance = 5
-		}
-	}
-
-	planet = {
-		class = pc_gas_giant
 		orbit_distance = 20
 		count = { min = 0 max = 2 }
 	}

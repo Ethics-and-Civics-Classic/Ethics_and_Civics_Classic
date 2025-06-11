@@ -1049,8 +1049,8 @@ country_event = {
 		# Tech Scale:
 		# Pre-Industrial = 3
 		# Industrial 	= 6
-		# Mechanized		= 7
-		# Post-Atomic	= 20
+		# Mechanized	= 7
+		# Post-Atomic	= 15
 		# Early Space Age= 5
 		#
 		#
@@ -1844,10 +1844,30 @@ country_event = {
 			limit = { has_origin = origin_broken_shackles }
 			random_situation = { limit = { is_situation_type = PrimPlayer_situation } set_situation_approach = PrimPlayer_broken_shackles_approach }
 			# Primitive Space Era Neighbor Setup
+			country_event = { id = nations.5 days = 15 }
 			capital_star = {
+				solar_system = {
+					spawn_natural_wormhole = {
+						bypass_type = wormhole
+						random_pos = no
+						orbit_angle = 270
+					}
+					random_system = {
+						limit = { 
+							has_star_flag = broken_shackles_system 
+							NOT = { is_same_value = PREV }
+						}
+						spawn_natural_wormhole = {
+							bypass_type = wormhole
+							random_pos = no
+							orbit_angle = 360
+						}
+						link_wormholes = prev
+					}
+				}
 				spawn_system = {
-					min_jumps = 1
-					max_jumps = 1
+					min_jumps = 0
+					max_jumps = 0
 					initializer = PrimPlayer_broken_shackle_primitive_system_init
 					hyperlane = yes
 					is_discovered = no
@@ -2612,6 +2632,49 @@ country_event = {
 		#	limit = { last_increased_tech = tech_xeno_linguistics }
 		#	random_situation = { limit = { is_situation_type = PrimPlayer_situation } add_situation_progress = 5 }
 		#}
+	}
+}
+
+# Encountered Natural Wormhole
+# Via on_entering_system_first_time | this = Ship; from = System; fromfrom = Country
+country_event = {
+	id = nations.5
+	title = nations.5.name
+	desc = "nations.5.desc"
+	picture = GFX_evt_wormhole
+	show_sound = event_radio_chatter
+
+	is_triggered_only = yes
+
+	trigger = {
+		root = {
+			NOT = {
+				has_country_flag = encountered_first_wormhole
+			}
+		}
+		capital_scope = {
+			solar_system = {
+				has_natural_wormhole = yes
+				NOR = {
+					has_star_flag = shroud_tunnel_nexus
+					has_star_flag = shroud_tunnel_node
+					has_star_flag = formless_system
+					has_star_flag = crystal_sphere_system
+				}
+			}
+		}
+	}
+
+	immediate = {
+		capital_scope = { solar_system = { save_event_target_as = wormhole_system } }
+		root = {
+			set_country_flag = encountered_first_wormhole
+			add_seen_bypass_type = wormhole
+		}
+	}
+
+	option = {
+		name = nations.5.a
 	}
 }
 
