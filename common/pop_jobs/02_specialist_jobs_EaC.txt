@@ -328,7 +328,7 @@ priest = {
 	}
 
 	resources = {
-		category = planet_administrators
+		category = planet_bureaucrats
 		produces = {
 			unity = 4
 		}
@@ -468,7 +468,7 @@ preacher = {
 	}
 
 	resources = {
-		category = planet_administrators
+		category = planet_bureaucrats
 		produces = {
 			unity = 3
 		}
@@ -597,7 +597,7 @@ death_priest = {
 	possible = { complex_specialist_job_check_trigger = yes }
 
 	resources = {
-		category = planet_administrators
+		category = planet_bureaucrats
 		produces = {
 			unity = 3
 			society_research = 1
@@ -1090,6 +1090,31 @@ entertainer = {
 			building_icon = building_holo_theatres
 			# clothes_texture_index = 3
 		}
+		# Duelists
+		swap_type = {
+			trigger = {
+				entertainer_is_duelist_trigger = yes
+				entertainer_is_storm_dancer_trigger = no
+			}
+			name = duelist
+			desc = duelist
+			icon = duelist
+			condition_string = BATTLE_THRALL_JOB_TRIGGER
+			weight = 5
+		}
+		# Storm Duelists
+		swap_type = {
+			trigger = {
+				entertainer_is_duelist_trigger = yes
+				entertainer_is_storm_dancer_trigger = yes
+			}
+			name = storm_duelist
+			desc = storm_duelist
+			icon = duelist
+			building_icon = building_storm_summoning_theater
+			condition_string = BATTLE_THRALL_JOB_TRIGGER
+			weight = 20
+		}
 	}
 	
 	tags = { amenities unity }
@@ -1102,7 +1127,19 @@ entertainer = {
 	}
 
 	possible = {
-		entertainer_job_check_trigger = yes
+		if = {
+			limit = {
+				entertainer_is_duelist_trigger = yes
+			}
+			battle_thrall_job_check_trigger = yes
+			OR = {
+				has_ethic = ethic_militarist
+				owner = { is_individual_machine = yes }
+			}
+		}
+		else = {
+			entertainer_job_check_trigger = yes
+		}
 	}
 
 	resources = {
@@ -1111,15 +1148,85 @@ entertainer = {
 			unity = 1
 		}
 		upkeep = {
+			trigger = {
+				entertainer_is_duelist_trigger = no
+			}
 			consumer_goods = 1
 		}
+		# Job Swap - Duelist
+		produces = {
+			trigger = {
+				entertainer_is_duelist_trigger = yes
+				entertainer_is_storm_dancer_trigger = no
+			}
+			unity = 1
+		}
+		upkeep = {
+			trigger = {
+				entertainer_is_duelist_trigger = yes
+				entertainer_is_storm_dancer_trigger = no
+			}
+			alloys = 0.5
+		}
+		# Job Swap - Storm Duelists
+		produces = {
+			trigger = {
+				entertainer_is_storm_dancer_trigger = yes
+				entertainer_is_duelist_trigger = yes
+			}
+			unity = 4
+		}
+		upkeep = {
+			trigger = {
+				entertainer_is_storm_dancer_trigger = yes
+				entertainer_is_duelist_trigger = yes
+			}
+			alloys = 1
+		}
 	}
+
 	triggered_planet_modifier = {
 		potential = {
 			always = yes
 		}
-		planet_amenities_add = 1000
+		planet_amenities_add = 1250
 		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	}
+	
+	## Duelist
+	triggered_planet_modifier = {
+		potential = {
+			entertainer_is_duelist_trigger = yes
+			exists = owner
+			owner = {
+				has_councilor = { COUNCILOR = "councilor_warrior_culture" }
+			}
+		}
+		planet_amenities_add = 100
+		mult = value:scripted_modifier_councilor_level_mult|MODIFIER|pop_job_amenities_mult|TYPE|councilor_warrior_culture|
+	}
+	triggered_planet_modifier = {
+		potential = {
+			entertainer_is_duelist_trigger = yes
+		}
+		pop_ethic_militarist_attraction_mult = 0.05
+	}
+
+	triggered_country_modifier = {
+		potential = {
+			entertainer_is_duelist_trigger = yes
+		}
+		country_naval_cap_add = 2
+	}
+
+	triggered_country_modifier = {
+		potential = {
+			entertainer_is_duelist_trigger = yes
+			has_councilor = { COUNCILOR = "councilor_warrior_culture" }
+		}
+
+		country_naval_cap_add = 0.2
+		mult = value:councilor_level|TYPE|councilor_warrior_culture|
 	}
 
 	# triggered_planet_modifier = {	# No Longer Used in Stellaris 4.0
@@ -1187,7 +1294,8 @@ entertainer = {
 		mult = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
 		modifier = {
 			factor = 0.2
-			NOR = { has_citizenship_rights = yes has_trait = trait_mechanical }
+			has_citizenship_rights = no
+			NOT = { has_trait = trait_mechanical }
 		}
 		modifier = {
 			factor = 3
@@ -1197,37 +1305,27 @@ entertainer = {
 				is_shackled_robot = yes
 			}
 		}
-		# modifier = {
-		#	factor = 1.5
-		#	has_job_type = entertainer	# No Longer Used in Stellaris 4.0
-		#}
 		modifier = {
 			factor = 0.1
 			is_domestic_servant = yes
 		}
-		# modifier = {
-		#	factor = 0.1
-		#	NOT = { has_job_type = entertainer }		# No Longer Used in Stellaris 4.0
-		#	exists = planet
-		#	planet = {
-		#		free_amenities > 500
-		#	}
-		#}
-		# modifier = {
-		#	factor = 2
-		#	NOT = { has_job_type = entertainer }		# No Longer Used in Stellaris 4.0
-		#	exists = planet
-		#	planet = {
-		#		free_amenities < 200
-		#		has_available_jobs = entertainer
-		#	}
-		#}
+
+		modifier = {
+			factor = 50
+		}
+
 		modifier = {
 			add = 500
 			exists = planet
 			planet = {
 				has_modifier = artistic_boom
 			}
+		}
+		
+		modifier = {	#Due to this being an ethic-based job
+			add = 500
+			entertainer_is_duelist_trigger = yes
+			owner = { is_individual_machine = no }
 		}
 	}
 
