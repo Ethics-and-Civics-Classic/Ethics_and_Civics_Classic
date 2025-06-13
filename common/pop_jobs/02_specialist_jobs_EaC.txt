@@ -2395,7 +2395,7 @@ healthcare = {
 	swappable_data = {
 		default = {
 			condition_string = SPECIALIST_JOB_TRIGGER
-			building_icon = building_clinic
+			building_icon = building_medical_1
 			# clothes_texture_index = 3
 		}
 		# Mutagenic Spa Attendant
@@ -2774,6 +2774,15 @@ foundry = {
 			building_icon = building_foundry_1
 			# clothes_texture_index = 3
 		}
+		# Catalytic Swap
+		swap_type = {
+			trigger = {
+				industrial_jobs_are_catalytic_trigger = yes
+			}
+			name = catalytic_technician
+			desc = job_catalytic_technician_desc
+			weight = 5
+		}
 	}
 	
 	tags = { alloys }
@@ -2797,8 +2806,23 @@ foundry = {
 		produces = {
 			alloys = 3
 		}
+		produces = {
+			trigger = {
+				industrial_jobs_are_catalytic_trigger = yes
+			}
+			alloys = 0.75
+		}
 		upkeep = {
+			trigger = {
+				industrial_jobs_are_catalytic_trigger = no
+			}
 			minerals = 6
+		}
+		upkeep = {
+			trigger = {
+				industrial_jobs_are_catalytic_trigger = yes
+			}
+			food = 9
 		}
 		produces = {
 			trigger = {
@@ -2810,11 +2834,22 @@ foundry = {
 		}
 		upkeep = {
 			trigger = {
+				industrial_jobs_are_catalytic_trigger = no
 				planet = {
 					has_planet_flag = has_material_requisitorium
 				}
 			}
 			minerals = 2
+		}
+		upkeep = {
+			trigger = {
+				industrial_jobs_are_catalytic_trigger = yes
+				planet = {
+					has_planet_flag = has_material_requisitorium
+					has_building = building_ministry_production
+				}
+			}
+			food = 3
 		}
 		upkeep = {
 			trigger = {
@@ -2840,6 +2875,7 @@ foundry = {
 			minerals = -1													# Modded
 			food = 1														# Modded
 		}
+		inline_script = "output/foundry_output"
 	}
 
 	overlord_resources = {
@@ -2871,10 +2907,6 @@ foundry = {
 			is_enslaved = yes
 			can_take_servant_job = no
 		}
-		# modifier = {
-		#	factor = 5
-		#	has_job_type = foundry	# No Longer Used in Stellaris 4.0
-		#}
 		modifier = {
 			factor = 5
 			has_trait = trait_cyborg_creed_of_construction
@@ -3170,12 +3202,8 @@ artisan = {
 			is_enslaved = yes
 			can_take_servant_job = no
 		}
-		# modifier = {
-		#	factor = 5
-		#	has_job_type = artisan	# No Longer Used in Stellaris 4.0
-		#}
 
-		# Low income modifier
+		# low income modifier
 		modifier = {
 			factor = 1.2
 			exists = planet
@@ -3192,18 +3220,17 @@ artisan = {
 			}
 		}
 	}
-}
+	inline_script = "jobs/automodding_priority_consumer_goods"
 
-artificer = {
-	category = specialist
-	
-	swappable_data = {
-		default = {
-			condition_string = SPECIALIST_JOB_TRIGGER
-			building_icon = building_factory_1
+	promotion = {
+		time = @standard_promotion_time
+		effect = {
+			pop_amount_change_category = {
+				CATEGORY = specialist
+				AMOUNT = local_pop_amount
+			}
 		}
 	}
-	possible = { always = no }
 }
 
 # Trader - Entirely Modded
