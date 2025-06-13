@@ -1046,7 +1046,7 @@ civic_warrior_culture = {
 			}
 		}
 	}
-	# description = "civic_tooltip_warrior_culture_effects"
+	description = "civic_tooltip_warrior_culture_effects"
 	modifier = {
 		army_damage_mult = 0.20
 		country_war_exhaustion_mult = -0.1
@@ -1054,13 +1054,28 @@ civic_warrior_culture = {
 		army_experience_gain_mult = 0.20	# Modded
 	}
 	swap_type = {
-		description = "civic_tooltip_warrior_culture_effects"
 		trigger = {
 			has_overlord_dlc = yes
+			has_paragon_dlc = no
 		}
+		description = "civic_tooltip_warrior_culture_effects"
 		modifier = {
 			country_enclave_capacity_add = 1
 		}
+	}
+	swap_type = {
+		trigger = {
+			has_overlord_dlc = no
+			has_paragon_dlc = yes
+		}
+		description = "civic_tooltip_warrior_culture_effects_paragon"
+	}
+	swap_type = {
+		trigger = {
+			has_overlord_dlc = yes
+			has_paragon_dlc = yes
+		}
+		description = "civic_tooltip_warrior_culture_effects_paragon"
 	}
 }
 
@@ -2379,6 +2394,7 @@ civic_anglers = {
 	playable = { has_aquatics = yes }
 	ai_playable = { has_aquatics = yes }
 	description = "civic_tooltip_anglers_effects"
+	negative_description = "civic_tooltip_anglers_negative_effects"
 	potential = {
 		ethics = { NOT = { value = ethic_gestalt_consciousness } }
 		authority = { NOT = { value = auth_corporate } }
@@ -6307,6 +6323,7 @@ civic_corporate_anglers = {
 	playable = { has_aquatics = yes }
 	ai_playable = { has_aquatics = yes }
 	description = "civic_tooltip_anglers_effects"
+	negative_description = "civic_tooltip_anglers_negative_effects"
 
 	potential = {
 		OR = {
@@ -6344,6 +6361,7 @@ civic_corporate_machine_anglers = {
 	playable = { has_aquatics = yes }
 	ai_playable = { has_aquatics = yes }
 	description = "civic_tooltip_machine_anglers_effects"
+	negative_description = "civic_tooltip_machine_anglers_negative_effects"
 
 	potential = {
 		OR = {
@@ -6780,6 +6798,13 @@ civic_eager_explorers = {
 	}
 
 	possible = {
+		graphical_culture = {
+			NOR = {
+				text = graphical_culture_tooltip_not_biological
+				value = biogenesis_01
+				value = biogenesis_02
+			}
+		}
 		origin = {
 			NOR = {
 				# No FC origins.
@@ -6787,6 +6812,7 @@ civic_eager_explorers = {
 				value = origin_broken_shackles
 				value = origin_fear_of_the_dark
 				value = origin_synthetic_fertility
+				value = origin_unplugged
 			}
 			NOR = {
 				text = origin_tooltip_atleast_ftl_age
@@ -6875,6 +6901,13 @@ civic_privatized_exploration = {
 	}
 	alternate_civic_version = civic_eager_explorers
 	possible = {
+		graphical_culture = {
+			NOR = {
+				text = graphical_culture_tooltip_not_biological
+				value = biogenesis_01
+				value = biogenesis_02
+			}
+		}
 		origin = {
 			NOR = {
 				# No FC origins.
@@ -6956,7 +6989,15 @@ civic_hive_stargazers = {
 		authority = { value = auth_hive_mind }
 	}
 	possible = {
+		graphical_culture = {
+			NOR = {
+				text = graphical_culture_tooltip_not_biological
+				value = biogenesis_01
+				value = biogenesis_02
+			}
+		}
 		origin = {
+			NOT = { value = origin_wilderness }
 			NOR = {
 				text = origin_tooltip_atleast_ftl_age
 				value = origin_primitive_player_pre_industrial_age
@@ -7012,6 +7053,13 @@ civic_machine_exploration_protocol = {
 	}
 
 	possible = {
+		graphical_culture = {
+			NOR = {
+				text = graphical_culture_tooltip_not_biological
+				value = biogenesis_01
+				value = biogenesis_02
+			}
+		}
 		origin = {
 			NOR = {
 				text = origin_tooltip_atleast_ftl_age
@@ -7279,6 +7327,60 @@ civic_barbaric_despoilers_corporate = {
 	}
 }
 
+civic_crusader_spirit = {
+	playable = { host_has_dlc = "Galactic Paragons" }
+	ai_playable = { host_has_dlc = "Galactic Paragons" }
+	random_weight = {
+		base = @civic_default_random_weight
+	}
+	description = "civic_tooltip_crusader_spirit_effects"
+	potential = {
+		ethics = { NOT = { value = ethic_gestalt_consciousness } }
+		authority = { NOT = { value = auth_corporate } }
+	}
+	possible = {
+		ethics = {
+			OR = {
+				text = civic_tooltip_authoritarian_or_militarist_or_spiritualist
+				value = ethic_militarist
+				value = ethic_fanatic_militarist
+				value = ethic_authoritarian
+				value = ethic_fanatic_authoritarian
+				value = ethic_spiritualist
+				value = ethic_fanatic_spiritualist
+			}
+			NOR = {
+				text = civic_tooltip_not_pacifist
+				value = ethic_pacifist
+				value = ethic_fanatic_pacifist
+			}
+		}
+		civics = {
+			NOR = {
+				value = civic_fanatic_purifiers
+				value = civic_beacon_of_liberty
+				value = civic_crusader_spirit_corporate
+			}
+		}
+	}
+	modifier = {
+		ship_weapon_damage = 0.05
+		starbase_shipyard_build_speed_mult = 0.05
+	}
+
+	ai_weight = {
+		base = @ai_civic_default_base_weight
+		modifier = {
+			factor = @ai_civic_personality_match_factor
+			OR = {
+				has_ai_personality = democratic_crusaders
+				has_ai_personality = evangelising_zealots
+				has_ai_personality = fanatic_befrienders
+			}
+		}
+	}
+}
+
 civic_crusader_spirit_corporate = {
 	playable = { has_paragon_dlc = yes }
 	ai_playable = { has_paragon_dlc = yes }
@@ -7313,6 +7415,11 @@ civic_crusader_spirit_corporate = {
 				text = civic_tooltip_not_pacifist
 				value = ethic_pacifist
 				value = ethic_fanatic_pacifist
+			}
+		}
+		civics = {
+			NOR = {
+				value = civic_crusader_spirit
 			}
 		}
 	}
