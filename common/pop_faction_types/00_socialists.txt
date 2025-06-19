@@ -28,28 +28,50 @@ socialists = {
 		produces = {
 			trigger = {
 				owner = {
-					NOR = {
-						has_civic = civic_anarchy_ideals
-						has_civic = civic_crowdsourcing
-						has_civic = civic_corporate_crowdsourcing
-					}
+					NOT = { has_edict = civic_crowdsourcing_edict }
+					#NOR = {
+					#	has_civic = civic_anarchy_ideals
+					#	has_civic = civic_crowdsourcing
+					#	has_civic = civic_corporate_crowdsourcing
+					#}
 				}
 			}
 			unity = @faction_base_output
 		}
+		#Anarchy Ideals
 		produces = {
 			trigger = {
 				owner = {
-					OR = {
-						has_civic = civic_anarchy_ideals
-						has_civic = civic_crowdsourcing
-						has_civic = civic_corporate_crowdsourcing
-					}
+					has_edict = civic_crowdsourcing_edict
+					has_civic = civic_anarchy_ideals
+				}
+			}
+			unity = @faction_base_output
+			mult = @faction_anarchy_unity_ratio
+		}
+		#Crowdsourcing
+		produces = {
+			trigger = {
+				owner = {
+					has_edict = civic_crowdsourcing_edict
+					NOT = { has_civic = civic_anarchy_ideals }
 				}
 			}
 			society_research = @faction_major_output
 			physics_research = @faction_minor_output
 			mult = @crowdsourcing_multiplier
+		}
+		#Anarchy Ideals
+		produces = {
+			trigger = {
+				owner = {
+					has_edict = civic_crowdsourcing_edict
+					has_civic = civic_anarchy_ideals
+				}
+			}
+			society_research = @faction_major_output
+			physics_research = @faction_minor_output
+			mult = @crowdsourcing_anarchy_multiplier
 		}
 	}
 
@@ -58,11 +80,12 @@ socialists = {
 		produces = {
 			trigger = {
 				owner = {
-					NOR = {
-						has_civic = civic_anarchy_ideals
-						has_civic = civic_crowdsourcing
-						has_civic = civic_corporate_crowdsourcing
-					}
+					NOT = { has_edict = civic_crowdsourcing_edict }
+					#NOR = {
+					#	has_civic = civic_anarchy_ideals
+					#	has_civic = civic_crowdsourcing
+					#	has_civic = civic_corporate_crowdsourcing
+					#}
 				}
 			}
 			society_research = @faction_base_output
@@ -71,16 +94,12 @@ socialists = {
 		produces = {
 			trigger = {
 				owner = {
-					OR = {
-						has_civic = civic_anarchy_ideals
-						has_civic = civic_crowdsourcing
-						has_civic = civic_corporate_crowdsourcing
-					}
+					has_edict = civic_crowdsourcing_edict
 				}
 			}
 			society_research = @faction_major_output
 			physics_research = @faction_minor_output
-			mult = @faction_extortion_crowdsourcing_ratio
+			mult = @faction_extortion_crowdsourcing_ratio	#Cog Note - # Because they have no unity income split, they get 100% of what crowdsourcing gets, instead of splitting 50%/50%
 		}
 	}
 
@@ -193,6 +212,7 @@ socialists = {
 				OR = {
 					has_policy_flag = trade_conversion_growth_dev
 					has_policy_flag = trade_conversion_development
+					has_policy_flag = trade_conversion_mutual_aid
 				}
 			}
 		}
@@ -217,6 +237,12 @@ socialists = {
 					}
 					any_owned_pop_group = {
 						has_living_standard = { type = living_standard_utopian }
+					}
+					any_owned_pop_group = {
+						has_living_standard = { type = living_standard_shared_burden }
+					}
+					any_owned_pop_group = {
+						has_living_standard = { type = living_standard_worker_ownership }
 					}
 				}
 			}
@@ -390,6 +416,7 @@ socialists = {
 			owner = {
 				NOR = {
 					has_policy_flag = economic_stance_planned
+					has_policy_flag = trade_conversion_mutual_aid
 				}
 			}
 		}
@@ -398,6 +425,7 @@ socialists = {
 			owner = {
 				OR = {
 					has_policy_flag = economic_stance_planned
+					has_policy_flag = trade_conversion_mutual_aid
 				}
 			}
 		}

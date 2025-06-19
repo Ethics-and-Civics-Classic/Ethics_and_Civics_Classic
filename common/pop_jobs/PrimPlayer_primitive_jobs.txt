@@ -130,11 +130,13 @@ unifier = {
 hunter_gatherer = {
 	category = worker
 	is_capped_by_modifier = no
-	swappable_data = {
-		default = {
+	#swappable_data = {
+		#default = {
 			# clothes_texture_index = 2
-		}
-	}
+		#}
+	#}
+	
+	tags = { }
 
 	possible_pre_triggers = {
 		has_owner = yes
@@ -148,9 +150,11 @@ hunter_gatherer = {
 	possible = {
 		owner = {
 			is_hive_empire = no
-
 			OR = {
-				is_primitive = yes
+				AND = {
+					is_primitive = yes
+					has_country_flag = stone_age
+				}
 				has_origin = origin_primitive_player_pre_industrial_age
 				# has_origin = origin_primitive_player_industrial_age
 				# has_origin = origin_primitive_player_machine_age
@@ -159,6 +163,7 @@ hunter_gatherer = {
 				# any_situation = { is_situation_type = PrimPlayer_situation } # Much more efficient trigger
 			}
 		}
+		is_lithoid = no
 	}
 
 	triggered_planet_modifier = {
@@ -172,15 +177,70 @@ hunter_gatherer = {
 	resources = {
 		category = planet_farmers
 		produces = {
-			trigger = {
-				is_lithoid = no
-			}
 			food = 1
 		}
-		produces = {
-			trigger = {
-				is_lithoid = yes
+	}
+
+
+	weight = {
+		weight = 0.01
+		# mult = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
+	}
+	
+	promotion = {
+		time = @standard_promotion_time
+		effect = {
+			pop_amount_change_category = {
+				CATEGORY = worker
+				AMOUNT = local_pop_amount
 			}
+		}
+	}
+}
+
+hunter_gatherer_lithoid = {
+	category = worker
+	is_capped_by_modifier = no
+
+	possible_pre_triggers = {
+		has_owner = yes
+		is_being_purged = no
+		is_being_assimilated = no
+		is_sapient = yes
+	}
+
+	possible_precalc = can_fill_worker_job
+
+	possible = {
+		owner = {
+			is_hive_empire = no
+			OR = {
+				AND = {
+					is_primitive = yes
+					has_country_flag = stone_age
+				}
+				has_origin = origin_primitive_player_pre_industrial_age
+				# has_origin = origin_primitive_player_industrial_age
+				# has_origin = origin_primitive_player_machine_age
+				# has_origin = origin_primitive_player_atomic_age
+				# has_origin = origin_primitive_player_early_space_age
+				# any_situation = { is_situation_type = PrimPlayer_situation } # Much more efficient trigger
+			}
+		}
+		is_lithoid = yes
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			always = yes
+		}
+		planet_amenities_add = 100
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	}
+
+	resources = {
+		category = planet_farmers
+		produces = {
 			minerals = 1
 		}
 	}
@@ -189,17 +249,27 @@ hunter_gatherer = {
 		weight = 0.01
 		# mult = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
 	}
+
+	promotion = {
+		time = @standard_promotion_time
+		effect = {
+			pop_amount_change_category = {
+				CATEGORY = worker
+				AMOUNT = local_pop_amount
+			}
+		}
+	}
 }
 
 peasant = {	# Cog Note: for player-primitives maybe this doesn't make sense for everyone. This is a starvation prevention job for ai primitives.
 	category = worker
 	is_capped_by_modifier = no
-	swappable_data = {
-		default = {
+	#swappable_data = {
+		#default = {
 			building_icon = building_primitive_farm
 			# clothes_texture_index = 2
-		}
-	}
+		#}
+	#}
 
 	tags = { }
 
