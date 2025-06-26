@@ -155,6 +155,68 @@ soldier = {
 			building_icon = building_dread_encampment
 			weight = 50
 		}
+		swap_type = {
+			trigger = {
+				soldier_is_mercenary = yes
+			}
+			name = mercenary
+			desc = mercenary
+			icon = mercenary
+			weight = 50
+		}
+		swap_type = {
+			trigger = {
+				soldier_is_templar = yes
+			}
+			name = templar
+			desc = templar
+			icon = templar
+			weight = 50
+		}
+		swap_type = {
+			trigger = {
+				soldier_is_mercenary = yes
+				soldier_is_necromancer = yes
+			}
+			name = death_trader
+			desc = death_trader
+			icon = necromancer
+			building_icon = building_dread_encampment
+			weight = 100
+		}
+		swap_type = {
+			trigger = {
+				soldier_is_necromancer = yes
+				soldier_is_templar = yes
+			}
+			name = death_knight
+			desc = death_knight
+			icon = templar
+			building_icon = building_dread_encampment
+			weight = 100
+		}
+		swap_type = {
+			trigger = {
+				soldier_is_mercenary = yes
+				soldier_is_templar = yes
+			}
+			name = saint_mercenary
+			desc = saint_mercenary
+			icon = templar
+			weight = 100
+		}
+		swap_type = {
+			trigger = {
+				soldier_is_necromancer = yes
+				soldier_is_mercenary = yes
+				soldier_is_templar = yes
+			}
+			name = grey_paladin
+			desc = grey_paladin
+			icon = templar
+			building_icon = building_dread_encampment
+			weight = 150
+		}
 	}
 	
 	tags = { soldier }
@@ -181,6 +243,26 @@ soldier = {
 			physics_research = 2
 			society_research = 2
 		}
+		produces = {
+			trigger = {
+				soldier_is_mercenary = yes
+			}
+			trade = 2
+		}
+		produces = {
+			trigger = {
+				soldier_is_templar = yes
+			}
+			unity = 2
+		}
+		produces = {
+			trigger = {
+				soldier_is_templar = yes
+				exists = planet
+				planet = { has_modifier = witch_hunt }
+			}
+			unity = 2
+		}
 		upkeep = {
 			energy = 0.5
 			minerals = 0.5
@@ -190,6 +272,12 @@ soldier = {
 				soldier_is_necromancer = yes
 			}
 			consumer_goods = 1
+		}
+		upkeep = {
+			trigger = {
+				soldier_is_mercenary = yes
+			}
+			consumer_goods = 0.5
 		}
 	}
 
@@ -203,6 +291,15 @@ soldier = {
 		}
 		modifier = {
 			country_naval_cap_add = 2
+		}
+	}
+
+	triggered_country_modifier = {
+		potential = {
+			soldier_is_mercenary = yes
+		}
+		modifier = {
+			country_naval_cap_add = 1
 		}
 	}
 
@@ -265,6 +362,17 @@ soldier = {
 		}
 		modifier = {
 			planet_stability_add = 0.25
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			soldier_is_templar = yes
+			exists = planet
+			planet = { has_modifier = witch_hunt }
+		}
+		modifier = {
+			planet_stability_add = 2
 		}
 	}
 
@@ -3725,149 +3833,151 @@ mercenary = {
 		}
 	}
 
-	possible_pre_triggers = {
-		has_owner = yes
-		is_enslaved = no
-		is_being_purged = no
-		is_being_assimilated = no
-		is_sapient = yes
-	}
+	possible = { always = no }
 
-	possible = {
-		soldier_job_check_trigger = yes
-		owner = { is_gestalt = no }
-	}
+# 	possible_pre_triggers = {
+# 		has_owner = yes
+# 		is_enslaved = no
+# 		is_being_purged = no
+# 		is_being_assimilated = no
+# 		is_sapient = yes
+# 	}
 
-	country_modifier = {
-		country_naval_cap_add = 5
-	}
+# 	possible = {
+# 		soldier_job_check_trigger = yes
+# 		owner = { is_gestalt = no }
+# 	}
 
-	triggered_country_modifier = {
-		potential = {
-			exists = planet
-			planet = {
-				exists = owner
-				owner = { has_technology = "tech_ground_defense_planning" }
-			}
-		}
-		modifier = {
-			country_naval_cap_add = 2
-		}
-	}
+# 	country_modifier = {
+# 		country_naval_cap_add = 5
+# 	}
 
-	# pop_group_modifier = {	# No Longer Used in Stellaris 4.0
-	#	pop_defense_armies_add = 3
-	#}
+# 	triggered_country_modifier = {
+# 		potential = {
+# 			exists = planet
+# 			planet = {
+# 				exists = owner
+# 				owner = { has_technology = "tech_ground_defense_planning" }
+# 			}
+# 		}
+# 		modifier = {
+# 			country_naval_cap_add = 2
+# 		}
+# 	}
 
-	planet_modifier = {
-		planet_defense_armies_add = 3
-	}
+# 	# pop_group_modifier = {	# No Longer Used in Stellaris 4.0
+# 	#	pop_defense_armies_add = 3
+# 	#}
 
-	# triggered_planet_modifier = {	# No Longer Used in Stellaris 4.0
-	#	potential = {
-	#		always = yes
-	#	}
-	#	planet_jobs_trade_produces_add = 2
-	#	mult = value:scripted_modifier_mult|MODIFIER|trader_jobs_bonus_workforce_mult|
-	#}
+# 	planet_modifier = {
+# 		planet_defense_armies_add = 3
+# 	}
 
-	resources = {
-		category = planet_soldiers
-	}
+# 	# triggered_planet_modifier = {	# No Longer Used in Stellaris 4.0
+# 	#	potential = {
+# 	#		always = yes
+# 	#	}
+# 	#	planet_jobs_trade_produces_add = 2
+# 	#	mult = value:scripted_modifier_mult|MODIFIER|trader_jobs_bonus_workforce_mult|
+# 	#}
 
-	weight = {
-		weight = @soldier_job_weight
-		# mult = value:scripted_modifier_job_weight_mult|MODIFIER|trader_jobs_bonus_workforce_mult|	# No Longer Used in Stellaris 4.0
-		modifier = {
-			factor = 10
-			exists = planet
-			planet = { has_modifier = martial_law }
-		}
-		# modifier = {
-		#	factor = 2
-		#	has_job_type = mercenary		# No Longer Used in Stellaris 4.0
-		#}
-		# modifier = {
-		#	factor = 1.2
-		#	has_job_type = soldier		# No Longer Used in Stellaris 4.0
-		#}
-		modifier = {
-			factor = 2
-			has_trait = trait_resilient
-		}
-		modifier = {
-			factor = 2
-			has_trait = trait_very_strong
-		}
-		modifier = {
-			factor = 1.5
-			has_trait = trait_strong
-		}
-		modifier = {
-			factor = 0.5
-			has_trait = trait_weak
-		}
-		modifier = {
-			factor = 0.1
-			can_take_servant_job = yes
-		}
-		modifier = {
-			factor = 1.1
-			has_trait = trait_cybernetic
-		}
-		modifier = {
-			factor = 2
-			has_trait = trait_presapient_earthbound
-		}
-		modifier = {
-			factor = 1.1
-			has_trait = trait_limited_regeneration
-		}
-		modifier = {
-			factor = 1.1
-			has_trait = trait_presapient_proles
-		}
-		modifier = {
-			factor = 1.1
-			has_trait = trait_brainslug
-		}
-		modifier = {
-			factor = 1.05
-			has_trait = trait_presapient_natural_intellectuals
-		}
-		modifier = {
-			factor = 1.05
-			OR = {
-				has_trait = trait_robust
-				has_trait = trait_robot_efficient_processors
-			}
-		}
-		modifier = {
-			factor = 1.05
-			has_trait = trait_nerve_stapled
-		}
-		modifier = {
-			factor = 1.1
-			OR = {
-				has_trait = trait_robot_propaganda_machines
-				has_trait = trait_traditional
-			}
-		}
-		modifier = {
-			factor = 0.9
-			has_trait = trait_quarrelsome
-		}
-		modifier = {
-			factor = 0
-			can_be_soldier = no
-		}
-		modifier = {
-			factor = 2
-			has_trait = trait_lithoid
-		}
-	}
+# 	resources = {
+# 		category = planet_soldiers
+# 	}
 
-	inline_script = "jobs/automodding_priority_trade"
+# 	weight = {
+# 		weight = @soldier_job_weight
+# 		# mult = value:scripted_modifier_job_weight_mult|MODIFIER|trader_jobs_bonus_workforce_mult|	# No Longer Used in Stellaris 4.0
+# 		modifier = {
+# 			factor = 10
+# 			exists = planet
+# 			planet = { has_modifier = martial_law }
+# 		}
+# 		# modifier = {
+# 		#	factor = 2
+# 		#	has_job_type = mercenary		# No Longer Used in Stellaris 4.0
+# 		#}
+# 		# modifier = {
+# 		#	factor = 1.2
+# 		#	has_job_type = soldier		# No Longer Used in Stellaris 4.0
+# 		#}
+# 		modifier = {
+# 			factor = 2
+# 			has_trait = trait_resilient
+# 		}
+# 		modifier = {
+# 			factor = 2
+# 			has_trait = trait_very_strong
+# 		}
+# 		modifier = {
+# 			factor = 1.5
+# 			has_trait = trait_strong
+# 		}
+# 		modifier = {
+# 			factor = 0.5
+# 			has_trait = trait_weak
+# 		}
+# 		modifier = {
+# 			factor = 0.1
+# 			can_take_servant_job = yes
+# 		}
+# 		modifier = {
+# 			factor = 1.1
+# 			has_trait = trait_cybernetic
+# 		}
+# 		modifier = {
+# 			factor = 2
+# 			has_trait = trait_presapient_earthbound
+# 		}
+# 		modifier = {
+# 			factor = 1.1
+# 			has_trait = trait_limited_regeneration
+# 		}
+# 		modifier = {
+# 			factor = 1.1
+# 			has_trait = trait_presapient_proles
+# 		}
+# 		modifier = {
+# 			factor = 1.1
+# 			has_trait = trait_brainslug
+# 		}
+# 		modifier = {
+# 			factor = 1.05
+# 			has_trait = trait_presapient_natural_intellectuals
+# 		}
+# 		modifier = {
+# 			factor = 1.05
+# 			OR = {
+# 				has_trait = trait_robust
+# 				has_trait = trait_robot_efficient_processors
+# 			}
+# 		}
+# 		modifier = {
+# 			factor = 1.05
+# 			has_trait = trait_nerve_stapled
+# 		}
+# 		modifier = {
+# 			factor = 1.1
+# 			OR = {
+# 				has_trait = trait_robot_propaganda_machines
+# 				has_trait = trait_traditional
+# 			}
+# 		}
+# 		modifier = {
+# 			factor = 0.9
+# 			has_trait = trait_quarrelsome
+# 		}
+# 		modifier = {
+# 			factor = 0
+# 			can_be_soldier = no
+# 		}
+# 		modifier = {
+# 			factor = 2
+# 			has_trait = trait_lithoid
+# 		}
+# 	}
+
+# 	inline_script = "jobs/automodding_priority_trade"
 }
 
 transcend = {
