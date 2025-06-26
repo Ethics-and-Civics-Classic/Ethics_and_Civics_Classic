@@ -337,7 +337,19 @@ building_sacred_nexus = {
 	#	AMOUNT = @b3_jobs
 	#}
 
-	inline_script = buildings/job_high_priest_variants_add_saintly_hierarchy
+	# inline_script = buildings/job_high_priest_variants_add_saintly_hierarchy		# Enriad - original messed up code, fixed in next line
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner.federation
+			owner = {
+				NOT = { has_origin = origin_cybernetic_creed }
+				federation = {
+					has_federation_perk = all_the_priests_2
+				}
+			}
+		}
+		job_politician_add = 100
+	}
 
 	# triggered_planet_modifier = {
 	# 	potential = {
@@ -565,42 +577,58 @@ building_citadel_of_faith = {
 	# 			NOT = { has_origin = origin_cybernetic_creed }
 	# 		}
 	# 	}
-	# 	job_politician_add = 200		# Enriad - high_priest are politician in 4.0, moved to next inline_script
+	# 	job_politician_add = 200			# Enriad - high_priest are politician in 4.0, moved to next inline_script
 	# }
 	inline_script = {
 		script = "jobs/politician_add_EaC"
 		AMOUNT = @building_static_jobs
 		ADDITIONAL_TRIGGER = "exists = owner	owner = { NOT = { has_origin = origin_cybernetic_creed } }"
 	}
-	triggered_desc = {
-		trigger = {
-			exists = owner
-			owner = {
-				NOT = { has_origin = origin_cybernetic_creed }
-			}
-		}
-		text = job_high_priest_effect_desc
-	}
-	triggered_planet_modifier = {
+	triggered_planet_modifier = {			# Enriad - EaC addition for spiritualist civics 
 		potential = {
 			exists = owner
 			owner = {
-				has_origin = origin_cybernetic_creed
+				OR = {
+					has_civic = civic_imperial_cult
+					has_civic = civic_divine_council
+					has_civic = civic_spiritual_democracy
+					has_civic = civic_exalted_priesthood
+				}
 			}
 		}
-		job_technophant_add = 200
-	}
-	triggered_desc = {
-		trigger = {
-			exists = owner
-			owner = {
-				has_origin = origin_cybernetic_creed
-			}
+		modifier = {
+			job_politician_add = 100		# Enriad - in one building should be only one inline_script
 		}
-		text = job_technophant_effect_desc
 	}
+	# triggered_desc = {					# Enriad - Marked for deletion, moved to inline_scripts "jobs/politician_add" and "jobs/politician_add_EaC"
+	# 	trigger = {
+	# 		exists = owner
+	# 		owner = {
+	# 			NOT = { has_origin = origin_cybernetic_creed }
+	# 		}
+	# 	}
+	# 	text = job_high_priest_effect_desc
+	# }
+	# triggered_planet_modifier = {			# Enriad - high_priest are politician in 4.0, moved to inline_script
+	# 	potential = {
+	# 		exists = owner
+	# 		owner = {
+	# 			has_origin = origin_cybernetic_creed
+	# 		}
+	# 	}
+	# 	job_technophant_add = 200
+	# }
+	# triggered_desc = {					# Enriad - Marked for deletion, moved to inline_scripts "jobs/politician_add" and "jobs/politician_add_EaC"
+	# 	trigger = {
+	# 		exists = owner
+	# 		owner = {
+	# 			has_origin = origin_cybernetic_creed
+	# 		}
+	# 	}
+	# 	text = job_technophant_effect_desc
+	# }
 
-	# triggered_planet_modifier = {					# Enriad - Templars moved to be a reskin of Soldiers, marked for deletion
+	# triggered_planet_modifier = {			# Enriad - Templars moved to be a reskin of Soldiers, marked for deletion
 	# 	potential = {
 	# 		exists = owner
 	# 		owner = { has_civic = civic_defenders_faith }
@@ -622,8 +650,12 @@ building_citadel_of_faith = {
 		}
 	}
 
-	# triggered_planet_modifier = {
-	# 	potential = {
+	country_modifier = {
+		country_official_cap_add = 1
+	}
+
+	# triggered_desc = {		# Enriad - Marked for deletion, moved to inline_scripts "jobs/politician_add" and "jobs/politician_add_EaC"
+	# 	trigger = {
 	# 		exists = owner
 	# 		owner = {
 	# 			OR = {
@@ -634,34 +666,8 @@ building_citadel_of_faith = {
 	# 			}
 	# 		}
 	# 	}
-	# 	modifier = {
-	# 		job_politician_add = 100		# Enriad - high_priest are politician in 4.0, moved to next inline_script
-	# 	}
+	# 	text = job_high_priest_effect_desc
 	# }
-	inline_script = {
-		script = "jobs/politician_add_EaC"
-		AMOUNT = @building_static_jobs_low
-		ADDITIONAL_TRIGGER = "exists = owner owner = { OR = { has_valid_civic = civic_imperial_cult		has_valid_civic = civic_divine_council		has_valid_civic = civic_spiritual_democracy		has_valid_civic = civic_exalted_priesthood	}	}"
-	}
-
-	country_modifier = {
-		country_official_cap_add = 1
-	}
-
-	triggered_desc = {
-		trigger = {
-			exists = owner
-			owner = {
-				OR = {
-					has_civic = civic_imperial_cult
-					has_civic = civic_divine_council
-					has_civic = civic_spiritual_democracy
-					has_civic = civic_exalted_priesthood
-				}
-			}
-		}
-		text = job_high_priest_effect_desc
-	}
 
 	triggered_desc = {
 		trigger = {
