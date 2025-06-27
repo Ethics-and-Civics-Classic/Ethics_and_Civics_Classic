@@ -1953,6 +1953,7 @@ building_private_security = {
 					value = civic_ruthless_competition			# Due to Slavery
 					value = civic_slaver_guilds					# Due to Slavery
 					value = civic_indentured_assets				# Due to Slavery
+					value = civic_barbaric_despoilers			# Due to Slavery
 					value = civic_barbaric_despoilers_corporate	# Due to Slavery
 					value = civic_private_militaries			# Private Military Civic
 					value = civic_private_military_companies	# Private Military Civic
@@ -1995,6 +1996,7 @@ building_private_security = {
 					value = civic_ruthless_competition			# Due to Slavery
 					value = civic_slaver_guilds					# Due to Slavery
 					value = civic_indentured_assets				# Due to Slavery
+					value = civic_barbaric_despoilers			# Due to Slavery
 					value = civic_barbaric_despoilers_corporate	# Due to Slavery
 					value = civic_private_militaries			# Private Military Civic
 					value = civic_private_military_companies	# Private Military Civic
@@ -2601,6 +2603,158 @@ building_wrecking_yards = {
 	}
 }
 
+building_colliseum_branch = {
+	base_buildtime = 480
+
+	category = amenity
+
+	owner_type = corporate
+
+	potential = {
+		has_branch_office = yes
+		branch_office_owner = {
+			# is_ai = no
+			OR = {
+				has_civic = civic_slaver_guilds
+				has_civic = civic_barbaric_despoilers			# Cog Note - This civic is an upgrade of Slaver Guilds
+				has_civic = civic_barbaric_despoilers_corporate	# Cog Note - This civic is an upgrade of Slaver Guilds
+				has_civic = civic_divine_order
+			}
+		}
+	}
+
+	allow = {
+		OR = {
+			owner = { has_overlord = prev.branch_office_owner }
+			#has_building = building_slave_processing
+			branch_office_owner = {
+				OR = {
+					has_commercial_pact = prev.OWNER
+					is_in_federation_with = prev.OWNER
+					is_criminal_syndicate = yes
+				}
+			}
+			custom_tooltip = {
+				fail_text = preftl_action_trade_pact
+				AND = {
+					has_observation_outpost = yes
+					observation_outpost = {
+						has_modifier = preftl_action_trade_pact
+					}
+				}
+			}
+		}
+	}
+	
+	destroy_trigger = {
+		exists = owner
+		branch_office_owner = {
+			is_legit_or_legal_criminal = yes
+		}
+	}
+
+	planet_modifier = {
+		job_gladiator_add = 200
+		planet_housing_add = 200
+		planet_jobs_trade_produces_add = 15
+	}
+
+	army_modifier = {
+		army_damage_mult = 0.25
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_civic = civic_warrior_culture	# Cog Note - This makes sense
+			}
+		}
+		modifier = {
+			job_gladiator_add = 100
+		}
+	}
+	
+	triggered_planet_modifier = {
+		potential = {
+			always = yes
+		}
+		planet_jobs_trade_produces_mult = @trade_value_from_jobs
+		mult = value:num_jobs_with_tag|TAG|crime| #benefits from enforcers, criminals, slaves, livestock and purged pops
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			branch_office_owner = {
+				OR = {
+					value = civic_ruthless_competition			# Due to Slavery
+					value = civic_slaver_guilds					# Due to Slavery
+					value = civic_indentured_assets				# Due to Slavery
+					value = civic_barbaric_despoilers			# Due to Slavery
+					value = civic_barbaric_despoilers_corporate	# Due to Slavery
+					value = civic_private_militaries			# Private Military Civic
+					value = civic_private_military_companies	# Private Military Civic
+				}
+			}
+		}
+		planet_jobs_trade_produces_mult = @trade_value_from_jobs
+		mult = value:num_jobs_with_tag|TAG|crime| #benefits from enforcers, criminals, slaves, livestock and purged pops
+	}
+	
+	#Trader Jobs from civics
+	triggered_country_modifier = {
+		potential = {
+			branch_office_owner = {
+				OR = {
+					value = civic_ruthless_competition			# Due to Slavery
+					value = civic_slaver_guilds					# Due to Slavery
+					value = civic_indentured_assets				# Due to Slavery
+					value = civic_barbaric_despoilers			# Due to Slavery
+					value = civic_barbaric_despoilers_corporate	# Due to Slavery
+					value = civic_private_militaries			# Private Military Civic
+					value = civic_private_military_companies	# Private Military Civic
+				}
+			}
+		}
+		job_capital_trader_add = @traders_from_civic
+	}
+	
+	custom_tooltip = trade_value_from_enforcers_and_criminals
+
+	resources = {
+		category = planet_branch_office_buildings
+		cost = {
+			alloys = 20
+			minerals = 500
+		}
+		cost = {
+			trigger = {
+				owner = {
+					has_authority = auth_corporate
+				}
+			}
+			influence = 20
+		}
+		upkeep = {
+			energy = 10
+		}
+	}
+
+	triggered_desc = {
+		text = job_gladiator_effect_desc
+	}
+
+	ai_weight = {
+		weight = 1
+	}
+
+	on_built = {
+		planet = {
+			owner = { set_timed_country_flag = { flag = buildings_new_alloys_building months = 16 } }
+		}
+	}
+}
+
 building_pirate_haven = {
 	base_buildtime = @b1_time
 
@@ -2649,8 +2803,11 @@ building_pirate_haven = {
 
 	planet_modifier = {
 		planet_crime_add = 10
-		job_soldier_add = 100
+		#job_soldier_add = 100						#Cog Note - I think we should replace the soldiers with Pirate Captains
+		job_commandante_pirate_offworld_add = 100	#Cog Note - I think we can allow Pirate Captains for everyone
 		army_starting_experience_add = 100
+		planet_civilians_unity_produces_add = 0.25	#Cog Note - They share stories, don't they? That's unity :P
+		planet_civilians_consumer_goods_upkeep_add = 0.125
 	}
 
 	triggered_planet_modifier = {
@@ -2668,12 +2825,13 @@ building_pirate_haven = {
 	triggered_planet_modifier = {		# Enriad - commandante_pirate but for holdings
 		potential = {
 			exists = owner
-			branch_office_owner = {
-				has_civic = civic_military_dictatorship_corporate
+			owner = {
+				has_civic = civic_military_dictatorship_corporate	#Cog Note - This is to check and see if politicians should be added instead
 			}
 		}
 		modifier = {
-			job_commandante_pirate_offworld_add = 50
+			job_commandante_pirate_offworld_add = -100
+			job_politician_add = 100	#Cog Note - This is on your own planet, so it wouldn't be offworld
 		}
 	}
 
@@ -2681,7 +2839,12 @@ building_pirate_haven = {
 		potential = {
 			exists = owner
 			owner = { # Owner of Planet
-				has_civic = civic_warrior_culture
+				#has_civic = civic_warrior_culture	# Cog Note - I'm not sure if this makes sense...
+				OR = {
+					has_civic = civic_slaver_guilds					# Because gladiators could be pirate thralls
+					has_civic = civic_barbaric_despoilers			# Because gladiators could be pirate thralls
+					has_civic = civic_barbaric_despoilers_corporate	# Because gladiators could be pirate thralls
+				}
 			}
 		}
 		modifier = {
@@ -2753,7 +2916,7 @@ building_pirate_haven = {
 			influence = 20
 		}
 		upkeep = {
-			energy = 2
+			energy = 10
 		}
 	}
 	
@@ -2764,6 +2927,7 @@ building_pirate_haven = {
 					value = civic_ruthless_competition			# Due to Slavery
 					value = civic_slaver_guilds					# Due to Slavery
 					value = civic_indentured_assets				# Due to Slavery
+					value = civic_barbaric_despoilers			# Due to Slavery
 					value = civic_barbaric_despoilers_corporate	# Due to Slavery
 					value = civic_private_militaries			# Private Military Civic
 					value = civic_private_military_companies	# Private Military Civic
