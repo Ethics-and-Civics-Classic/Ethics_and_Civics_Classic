@@ -49,22 +49,22 @@ building_pirate_haven_2 = {
 		}
 	}
 
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = { # Owner of Planet
-				#has_civic = civic_warrior_culture	# Cog Note - Not sure this makes sense
-				OR = {
-					has_civic = civic_slaver_guilds					# Because gladiators could be pirate thralls
-					has_civic = civic_barbaric_despoilers			# Because gladiators could be pirate thralls
-					has_civic = civic_barbaric_despoilers_corporate	# Because gladiators could be pirate thralls
-				}
-			}
-		}
-		modifier = {
-			job_gladiator_add = 100
-		}
-	}
+	#triggered_planet_modifier = {
+	#	potential = {
+	#		exists = owner
+	#		owner = { # Owner of Planet
+	#			#has_civic = civic_warrior_culture	# Cog Note - Not sure this makes sense
+	#			OR = {
+	#				has_civic = civic_slaver_guilds					# Because gladiators could be pirate thralls
+	#				has_civic = civic_barbaric_despoilers			# Because gladiators could be pirate thralls
+	#				has_civic = civic_barbaric_despoilers_corporate	# Because gladiators could be pirate thralls
+	#			}
+	#		}
+	#	}
+	#	modifier = {
+	#		job_gladiator_add = 100	#maybe this is not the building for this job...
+	#	}
+	#}
 	
 	triggered_planet_modifier = {
 		potential = {
@@ -2039,23 +2039,29 @@ building_colliseum = {
 
 	destroy_trigger = {
 		exists = owner
-		OR = {
-			NOT = { has_building = building_slave_processing }
-			owner = {
-				NOR = {
+		if = {
+			limit = {
+				OR = {
 					has_civic = civic_slaver_guilds
 					has_civic = civic_barbaric_despoilers			# Cog Note - This civic is an upgrade of Slaver Guilds
 					has_civic = civic_barbaric_despoilers_corporate	# Cog Note - This civic is an upgrade of Slaver Guilds
 					has_civic = civic_divine_order
 				}
 			}
+			has_policy_flag = slavery_not_allowed
+		}
+		else = {  
+			NOT = { has_building = building_slave_processing }
 		}
 	}
 
 	planet_modifier = {
-		job_gladiator_add = 200
+		pop_cat_ruler_happiness = 0.15
+		pop_cat_specialist_happiness = 0.05
+		pop_cat_worker_happiness = 0.10
 		planet_housing_add = 200
 		planet_jobs_trade_produces_add = 15
+		job_gladiator_add = 200
 	}
 
 	army_modifier = {
