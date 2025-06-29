@@ -1,0 +1,1175 @@
+############################
+#
+# Clone Army Origin Events
+#
+############################
+
+namespace = clones
+
+event = {
+	id = clones.1
+	hide_window = yes
+	is_triggered_only = yes
+
+	immediate = {
+		every_playable_country = {
+			limit = {
+				has_origin = origin_clone_army
+			}
+			# Create a backup leader, to remember what Portrait this Species had before we overwrite it.
+			create_saved_leader = {
+				creator = this
+				name = "Backup Portrait"
+				key = "clone_army_main_species_generic_portrait"
+				species = owner_main_species
+			}
+
+			owner_main_species = {
+				change_species_characteristics = {
+					portrait = prev.ruler
+					gender = prev.ruler
+					can_change_leader = yes
+				}
+			}
+		}
+	}
+}
+
+# Give techs
+country_event = {
+	id = clones.2
+	hide_window = yes
+	is_triggered_only = yes
+
+	trigger = {
+		has_origin = origin_clone_army
+	}
+
+	immediate = {
+		give_technology = { tech = tech_cloning message = no }
+		give_technology = { tech = tech_gene_banks message = no}
+	}
+}
+
+# Pop creation event for Clone Army's Ancient Cloning Vats
+country_event = {
+	id = clones.3
+	hide_window = yes
+	is_triggered_only = yes
+
+	trigger = {
+		has_origin = origin_clone_army
+		NOT = {
+			has_country_flag = clone_army_fertility_unlocked
+		}
+	}
+
+	immediate = {
+		every_owned_planet = {
+			limit = {
+				is_colony = yes
+				is_under_colonization = no
+			}
+
+			# Figure out how many (not disabled) VATS the planet has.
+			export_trigger_value_to_variable = {
+				trigger = num_buildings
+				parameters = {
+					type = building_clone_army_clone_vat
+					disabled = no
+				}
+				variable = num_ancient_clone_vats
+			}
+			# If there are no ancient clone vats, set the variable to 1 to prevent a divide by 0 later on
+			if = {
+				limit = {
+					check_variable = { which = num_ancient_clone_vats value = 0 }
+				}
+				set_variable = { which = num_ancient_clone_vats value = 1 }
+			}
+
+			# Figure out Clone Army Population
+			set_variable = { which = num_clone_pops value = 0 }
+			set_variable = {
+				which = num_clone_pops
+				value = value:clone_pops_value
+			}
+
+			### Variable 'clone_pops_missing' read by 'should_force_decline_species' and must be updated.
+			### clone_pops_missing = clone_soldiers_sustained - num_clone_pops
+			export_modifier_to_variable = {
+				modifier = clone_soldiers_sustained
+				variable = clone_pops_missing
+			}
+			subtract_variable = { which = clone_pops_missing value = num_clone_pops }
+
+			### Override it to -1 if there are no pops on the planet, but the planet could not sustain them
+			### Only applies after colonization. Prevents pops from auto-migrating and immediately being purged
+			if = {
+				limit = {
+					check_variable = { which = num_clone_pops value = 0 }
+					check_modifier_value = { modifier = clone_soldiers_sustained value = 0 }
+				}
+				set_variable = { which = clone_pops_missing value = -1 }
+			}
+
+			### Variable 'clone_pops_missing_per_vat' is read by 'building_clone_army_clone_vat' and must be updated.
+			set_variable = { which = clone_pops_missing_per_vat value = 0 }
+
+			# Always remove modifier. Reapply further down if still needed.
+			remove_modifier = modifier_clone_pops_decline
+
+			if = {
+				limit = {
+					check_variable = { which = clone_pops_missing value > 0 }
+				}
+
+				### Growing.
+				### clone_pops_missing_per_vat = clone_pops_missing / num_ancient_clone_vats, don't divide by 0.
+				set_variable = { which = clone_pops_missing_per_vat value = clone_pops_missing }
+				divide_variable = { which = clone_pops_missing_per_vat value = num_ancient_clone_vats }
+			}
+			else_if = {
+				limit = {
+					check_variable = { which = clone_pops_missing value = 0 }
+				}
+				### Pop stable.
+			}
+			else_if = {
+				limit = { ### No need to set modifier if no declining pops present
+					check_variable = { which = num_clone_pops value > 0 }
+					OR = {
+						NOT = { exists = declining_species }
+						declining_species = {
+							OR = {
+								has_trait = trait_clone_soldier_infertile
+								has_trait = trait_clone_soldier_infertile_full_potential
+							}
+						}
+					}
+				}
+				### Pop above max, should decline. Variable 'clone_pops_missing' is negative:
+				# Divide clone_pops_missing by 100 to renormalise
+				divide_variable = { which = clone_pops_missing value = 100 }
+				### clone_pops_decline_factor = ( 4 % per month - clone_pops_missing ) / BASE_POP_DECLINE
+				set_variable = { which = clone_pops_decline_factor value = 4 }
+				subtract_variable = { which = clone_pops_decline_factor value = clone_pops_missing }
+				divide_variable = { which = clone_pops_decline_factor value = 5 }	# 5 should match BASE_POP_DECLINE.
+				subtract_variable = { which = clone_pops_decline_factor value = 1 }	# Subtract base decline.
+
+				add_modifier = {
+					modifier = modifier_clone_pops_decline
+					multiplier = clone_pops_decline_factor
+					clear_on_owner_change = yes
+				}
+			}
+
+			# Debug growth/decline.
+			#log = "Clones on '[This.GetName]'. clone_pops_missing is: [This.clone_pops_missing], clone_pops_missing_per_vat: [This.clone_pops_missing_per_vat], clone_pops_decline_factor: [This.clone_pops_decline_factor]"
+		}
+	}
+}
+
+#Make sure that, if you colonise with another species, your clone army pops don't migrate there and immediately start dying
+planet_event = {
+	id = clones.5
+	is_triggered_only = yes
+	hide_window = yes
+
+	trigger = {
+		exists = owner
+		owner = {
+			has_origin = origin_clone_army
+			NOT = { has_country_flag = clone_army_fertility_unlocked }
+		}
+		check_modifier_value = { modifier = clone_soldiers_sustained value = 0 } #just in case
+	}
+
+	immediate = {
+		set_variable = {
+			which = clone_pops_missing
+			value = -1
+		}
+	}
+}
+
+############################
+#
+# Archaeology Site Chain
+#
+############################
+
+# Debated Origin & Homeworld Excavation
+planet_event = {
+	id = clones.10
+	title = clones.10.name
+	desc = {
+		trigger = {
+			OWNER = {
+				OR = {
+					has_civic = civic_barbaric_despoilers
+					has_civic = civic_barbaric_despoilers_corporate
+				}
+			}
+		}
+		text = "clones_barbaric_despoiler.10.desc"
+	}
+	desc = {
+		trigger = {
+			OWNER = {
+				NOR = {
+					has_civic = civic_barbaric_despoilers
+					has_civic = civic_barbaric_despoilers_corporate
+				}
+			}
+		}
+		text = "clones.10.desc"
+	}
+	picture = GFX_evt_city_ruins
+	show_sound = event_planetary_riot
+
+	is_triggered_only = yes
+
+	option = {
+		name = clones.10.a
+		trigger = {
+			owner = {
+				NOR = {
+					has_civic = civic_barbaric_despoilers
+					has_civic = civic_barbaric_despoilers_corporate
+				}
+			}
+		}
+		owner = { add_modifier = { modifier = debated_origin days = -1 } }
+		hidden_effect = {
+			owner = {
+				set_country_flag = clone_army_origin_arcsite_owner_@prev
+			}
+		}
+		create_archaeological_site = clone_army_digsite
+	}
+	
+	option = {
+		name = clones_barbaric_despoiler.10.a
+		trigger = {
+			owner = {
+				OR = {
+					has_civic = civic_barbaric_despoilers
+					has_civic = civic_barbaric_despoilers_corporate
+				}
+			}
+		}
+		owner = { add_modifier = { modifier = debated_origin_barbaric_despoiler days = -1 } }
+		hidden_effect = {
+			owner = {
+				set_country_flag = clone_army_origin_arcsite_owner_@prev
+			}
+		}
+		create_archaeological_site = clone_army_digsite
+	}
+}
+
+# Stage 1
+fleet_event = {
+	id = clones.11
+	title = clones.11.name
+	desc = {
+		trigger = {
+			OWNER = {
+				OR = {
+					has_civic = civic_barbaric_despoilers
+					has_civic = civic_barbaric_despoilers_corporate
+				}
+			}
+		}
+		text = "clones_barbaric_despoiler.11.desc"
+	}
+	desc = {
+		trigger = {
+			OWNER = {
+				NOR = {
+					has_civic = civic_barbaric_despoilers
+					has_civic = civic_barbaric_despoilers_corporate
+				}
+			}
+		}
+		text = "clones.11.desc"
+	}
+	picture = GFX_evt_clones
+	show_sound = event_default
+	location = from
+
+	archaeology = yes
+
+	is_triggered_only = yes
+
+	immediate = {
+		from = { set_site_progress_locked = yes }
+	}
+
+	after = {
+		from = { set_site_progress_locked = no }
+	}
+
+	option = {
+		name = OK
+	}
+}
+
+# Stage 2 # Also triggers Clone Fertility chain
+fleet_event = {
+	id = clones.12
+	title = clones.12.name
+	desc = {
+		trigger = {
+			OWNER = {
+				OR = {
+					has_civic = civic_barbaric_despoilers
+					has_civic = civic_barbaric_despoilers_corporate
+				}
+			}
+		}
+		text = "clones_barbaric_despoiler.12.desc"
+	}
+	desc = {
+		trigger = {
+			OWNER = {
+				NOR = {
+					has_civic = civic_barbaric_despoilers
+					has_civic = civic_barbaric_despoilers_corporate
+				}
+			}
+		}
+		text = "clones.12.desc"
+	}
+	picture = GFX_evt_archaeology_camp
+	show_sound = event_default
+
+	archaeology = yes
+
+	is_triggered_only = yes
+
+	option = {
+		name = INTERESTING
+		trigger = {
+			OWNER = {
+				NOR = {
+					has_civic = civic_barbaric_despoilers
+					has_civic = civic_barbaric_despoilers_corporate
+				}
+			}
+		}
+		custom_tooltip = clones.12.tooltip
+		owner = {
+			add_resource = {
+				influence = 200
+			}
+		}
+		hidden_effect = {
+			owner = {
+				country_event = { id = clones.13 days = 30 random = 30 }
+				country_event = { id = clones.4 days = 360 random = 360 }
+			}
+		}
+	}
+	
+	option = {
+		name = INTERESTING
+		trigger = {
+			OWNER = {
+				OR = {
+					has_civic = civic_barbaric_despoilers
+					has_civic = civic_barbaric_despoilers_corporate
+				}
+			}
+		}
+		custom_tooltip = clones_barbaric_despoiler.12.tooltip
+		owner = {
+			add_resource = {
+				influence = 200
+			}
+		}
+		hidden_effect = {
+			owner = {
+				country_event = { id = clones.13 days = 30 random = 30 }
+				country_event = { id = clones.4 days = 360 random = 360 }
+			}
+		}
+	}
+}
+
+# Post-excavation
+country_event = {
+	id = clones.13
+	title = clones.13.name
+	desc = {
+		trigger = {
+			OR = {
+				has_civic = civic_barbaric_despoilers
+				has_civic = civic_barbaric_despoilers_corporate
+			}
+		}
+		text = "clones_barbaric_despoiler.13.desc"
+	}
+	desc = {
+		trigger = {
+			NOR = {
+				has_civic = civic_barbaric_despoilers
+				has_civic = civic_barbaric_despoilers_corporate
+			}
+		}
+		text = "clones.13.desc"
+	}
+	picture = GFX_evt_city_ruins
+	show_sound = event_default
+
+	is_triggered_only = yes
+
+	option = {
+		name = clones.13.a
+		trigger = {
+			NOR = {
+				has_civic = civic_barbaric_despoilers
+				has_civic = civic_barbaric_despoilers_corporate
+			}
+		}
+		remove_modifier = debated_origin
+		add_modifier = { modifier = meaningful_origin }
+		hidden_effect = {
+			owner = {
+				country_event = { id = clones.14 days = 720 random = 3600 }
+			}
+		}
+	}
+
+	option = {
+		name = clones.13.b
+		trigger = {
+			NOR = {
+				has_civic = civic_barbaric_despoilers
+				has_civic = civic_barbaric_despoilers_corporate
+			}
+		}
+		remove_modifier = debated_origin
+		hidden_effect = {
+			owner = {
+				country_event = { id = clones.16 days = 30 random = 60 }
+			}
+		}
+	}
+	
+	option = {
+		name = clones_barbaric_despoiler.13.a
+		trigger = {
+			OR = {
+				has_civic = civic_barbaric_despoilers
+				has_civic = civic_barbaric_despoilers_corporate
+			}
+		}
+		remove_modifier = debated_origin_barbaric_despoiler
+		hidden_effect = {
+			owner = {
+				country_event = { id = clones.16 days = 30 random = 60 }
+			}
+		}
+	}
+}
+
+# Post-excavation: Unearthed Records
+country_event = {
+	id = clones.14
+	title = clones.14.name
+	desc = clones.14.desc
+	picture = GFX_evt_news_room
+	show_sound = event_planetary_riot
+
+	is_triggered_only = yes
+
+	after = {
+		remove_modifier = meaningful_origin
+		add_modifier = { modifier = dishonorable_leadership days = 1400 }
+	}
+
+	option = {
+		name = clones.14.a
+	}
+
+	option = {
+		name = clones.14.b
+		custom_tooltip = clones.14.b.custom_tooltip
+		add_resource = {
+			influence = -100
+		}
+		hidden_effect = {
+			owner = {
+				country_event = { id = clones.15 days = 30 random = 60 }
+			}
+		}
+	}
+}
+
+# Post-excavation: Public Apology
+country_event = {
+	id = clones.15
+	title = clones.15.name
+	desc = clones.15.desc
+	picture = GFX_evt_announcement
+	show_sound = event_radio_chatter
+
+	is_triggered_only = yes
+
+	option = {
+		name = OK
+		remove_modifier = dishonorable_leadership
+	}
+}
+
+# Post-excavation: Honor Before Greatness
+country_event = {
+	id = clones.16
+	title = clones.16.name
+	desc = {
+		trigger = {
+			OR = {
+				has_civic = civic_barbaric_despoilers
+				has_civic = civic_barbaric_despoilers_corporate
+			}
+		}
+		text = "clones_barbaric_despoiler.16.desc"
+	}
+	desc = {
+		trigger = {
+			NOR = {
+				has_civic = civic_barbaric_despoilers
+				has_civic = civic_barbaric_despoilers_corporate
+			}
+		}
+		text = "clones.16.desc"
+	}
+	picture = GFX_evt_voting
+	show_sound = event_default
+
+	is_triggered_only = yes
+
+	option = {
+		name = ASTOUNDING
+		trigger = {
+			NOR = {
+				has_civic = civic_barbaric_despoilers
+				has_civic = civic_barbaric_despoilers_corporate
+			}
+		}
+		add_modifier = { modifier = honorable_leadership days = 3600 }
+	}
+	
+	option = {
+		name = ASTOUNDING
+		trigger = {
+			OR = {
+				has_civic = civic_barbaric_despoilers
+				has_civic = civic_barbaric_despoilers_corporate
+			}
+		}
+		add_modifier = { modifier = honorable_leadership_barbaric_despoiler days = 3600 }
+	}
+}
+
+# Clone Fertility research project
+country_event = {
+	id = clones.4
+	title = clones.4.name
+	desc = clones.4.desc
+	picture = GFX_evt_genetic_modification
+	is_triggered_only = yes
+
+	after = {
+		enable_special_project = {
+			name = "CLONE_SOLDIER_FERTILITY"
+			owner = this
+		}
+	}
+
+	option = {
+		name = INTERESTING
+	}
+}
+
+# "The Ancient Clone Vats" Special Project complete
+country_event = {
+	id = clones.20
+	title = clones.20.name
+	desc = {
+		trigger = {
+			OR = {
+				has_civic = civic_barbaric_despoilers
+				has_civic = civic_barbaric_despoilers_corporate
+			}
+		}
+		text = "clones_barbaric_despoiler.20.desc"
+	}
+	desc = {
+		trigger = {
+			NOR = {
+				has_civic = civic_barbaric_despoilers
+				has_civic = civic_barbaric_despoilers_corporate
+			}
+		}
+		text = "clones.20.desc"
+	}
+	is_triggered_only = yes
+	diplomatic = yes
+	diplomatic_title = BLANK_STRING
+	show_sound = event_default
+
+	picture_event_data = {
+		portrait = baol_room
+	}
+
+	trigger = {
+		has_origin = origin_clone_army
+	}
+
+	option = {
+		name = PROCEED
+		hidden_effect = { country_event = { id = clones.21 } }
+	}
+}
+
+country_event = {
+	id = clones.21
+	title = clones.21.name
+	desc = {
+		trigger = {
+			OR = {
+				has_civic = civic_barbaric_despoilers
+				has_civic = civic_barbaric_despoilers_corporate
+			}
+		}
+		text = "clones_barbaric_despoiler.21.desc"
+	}
+	desc = {
+		trigger = {
+			NOR = {
+				has_civic = civic_barbaric_despoilers
+				has_civic = civic_barbaric_despoilers_corporate
+			}
+		}
+		text = "clones.21.desc"
+	}
+	is_triggered_only = yes
+	diplomatic = yes
+	diplomatic_title = BLANK_STRING
+
+	picture_event_data = {
+		portrait = baol_room
+	}
+
+	option = {
+		name = INTERESTING
+		trigger = {
+			NOR = {
+				has_civic = civic_barbaric_despoilers
+				has_civic = civic_barbaric_despoilers_corporate
+			}
+		}
+		begin_event_chain = {
+			event_chain = "clone_fertility_chain"
+			target = ROOT
+		}
+		enable_special_project = {
+			name = "CLONE_SOLDIER_UNLOCK_FERTILITY"
+			owner = root
+		}
+		if = { #limit the AI from going full clone - because limiting pops to max 100 is something the AI can't handle, colonizing new planets mindlessly that will just die because of dying clone pops
+			limit = {
+				is_ai = no
+			}
+			enable_special_project = {
+				name = "CLONE_SOLDIER_UNLOCK_POTENTIAL"
+				owner = root
+			}
+		}
+	}
+	
+	option = {
+		name = clones_barbaric_despoiler.21.a
+		trigger = {
+			OR = {
+				has_civic = civic_barbaric_despoilers
+				has_civic = civic_barbaric_despoilers_corporate
+			}
+		}
+		begin_event_chain = {
+			event_chain = "clone_fertility_chain"
+			target = ROOT
+		}
+		enable_special_project = {
+			name = "CLONE_PRECURSOR_KHAN_UNLOCK_FERTILITY"
+			owner = root
+		}
+		if = { #limit the AI from going full clone - because limiting pops to max 100 is something the AI can't handle, colonizing new planets mindlessly that will just die because of dying clone pops
+			limit = {
+				is_ai = no
+			}
+			enable_special_project = {
+				name = "CLONE_PRECURSOR_KHAN_UNLOCK_POTENTIAL"
+				owner = root
+			}
+		}
+	}
+}
+
+# Clone Fertility reclaimed
+country_event = {
+	id = clones.22
+	title = clones.22.name
+	desc = {
+		trigger = {
+			OR = {
+				has_civic = civic_barbaric_despoilers
+				has_civic = civic_barbaric_despoilers_corporate
+			}
+		}
+		text = "clones_barbaric_despoiler.22.desc"
+	}
+	desc = {
+		trigger = {
+			NOR = {
+				has_civic = civic_barbaric_despoilers
+				has_civic = civic_barbaric_despoilers_corporate
+			}
+		}
+		text = "clones.22.desc"
+	}
+	picture = GFX_evt_news_room
+	is_triggered_only = yes
+
+	specimen = key_to_fertility
+
+	option = {
+		name = ASTOUNDING
+		add_resource = {
+			alloys = 2000
+			nanites = 100
+			rare_crystals = 100
+		}
+		hidden_effect = {
+			modify_species = {
+				remove_trait = trait_clone_soldier_infertile
+				add_trait = trait_clone_soldier_fertile
+				add_traits_at_start_of_list = yes
+				effect = {
+					root = {
+						# Use the Saved leader to restore Portraits (then kill them off).
+						activate_saved_leader = {
+							key = "clone_army_main_species_generic_portrait"
+							add_to_owned = yes
+							effect = {
+								save_event_target_as = clone_army_main_species_generic_portrait
+							}
+						}
+
+						change_dominant_species = {
+							species = prev
+						}
+					}
+
+					change_species_characteristics = {
+						portrait = event_target:clone_army_main_species_generic_portrait
+						gender = any
+						can_be_modified = yes
+					}
+				}
+			}
+			owner_main_species = {
+				every_galaxy_species = {
+					limit = {
+						is_same_species = prev
+						NOT = { is_same_value = prev }
+						has_trait = trait_clone_soldier_infertile
+						NOR = {
+							any_country = {
+								NOT = { is_same_value = root }
+								owner_main_species = {
+									is_same_value = prevprev
+								}
+							}
+							any_species_pop_group = {
+								NOT = { is_owned_by = root }
+							}
+						}
+					}
+					change_species_characteristics = {
+						remove_trait = trait_clone_soldier_infertile
+						add_trait = trait_clone_soldier_fertile
+						add_traits_at_start_of_list = yes
+					}
+				}
+			}
+
+			event_target:clone_army_main_species_generic_portrait = {
+				kill_leader = {
+					show_notification = no
+				}
+			}
+
+			set_country_flag = clone_army_fertility_unlocked
+
+			every_owned_planet = {
+				limit = { has_modifier = modifier_clone_pops_decline }
+				remove_modifier = modifier_clone_pops_decline
+			}
+
+			every_owned_leader = {
+				limit = {
+					has_trait = leader_trait_clone_army_commander
+				}
+				remove_trait = leader_trait_clone_army_commander
+				add_trait = {
+					trait = leader_trait_clone_army_fertile_commander
+				}
+			}
+			every_pool_leader = {
+				limit = {
+					has_trait = leader_trait_clone_army_commander
+				}
+				remove_trait = leader_trait_clone_army_commander
+				add_trait = {
+					trait = leader_trait_clone_army_fertile_commander
+				}
+			}
+			# Dismantle all Ancient Clone Vats
+			every_owned_planet = {
+				limit = {
+					is_colony = yes
+				}
+
+				if = {
+					limit = { has_building = building_clone_army_clone_vat }
+					while = {
+						limit = { has_building = building_clone_army_clone_vat }
+						remove_building = building_clone_army_clone_vat
+					}
+				}
+			}
+		}
+	}
+}
+
+# Clone Potential
+country_event = {
+	id = clones.23
+	title = clones.23.name
+	desc = {
+		trigger = {
+			OR = {
+				has_civic = civic_barbaric_despoilers
+				has_civic = civic_barbaric_despoilers_corporate
+			}
+		}
+		text = "clones_barbaric_despoiler.23.desc"
+	}
+	desc = {
+		trigger = {
+			NOR = {
+				has_civic = civic_barbaric_despoilers
+				has_civic = civic_barbaric_despoilers_corporate
+			}
+		}
+		text = "clones.23.desc"
+	}
+	picture = GFX_evt_clones
+	is_triggered_only = yes
+
+	specimen = genetic_code
+
+	immediate = {
+		set_country_flag = clone_army_full_potential
+	}
+
+	option = {
+		name = EXCELLENT
+		trigger = {
+			NOR = {
+				has_civic = civic_barbaric_despoilers
+				has_civic = civic_barbaric_despoilers_corporate
+			}
+		}
+		if = {
+			limit = {
+				has_biogenesis_dlc = yes
+			}
+			custom_tooltip = clones.23.bio.tt
+		}
+		hidden_effect = {
+			every_owned_pop_group = {
+				limit = { has_trait = trait_clone_soldier_infertile }
+				species = {
+					change_species_characteristics = {
+						remove_trait = trait_clone_soldier_infertile
+						add_trait = trait_clone_soldier_infertile_full_potential
+						add_traits_at_start_of_list = yes
+					}
+				}
+			}
+			every_owned_leader = {
+				limit = {
+					has_trait = leader_trait_clone_army_commander
+				}
+				remove_trait = leader_trait_clone_army_commander
+				add_trait = {
+					trait = leader_trait_clone_army_full_commander
+				}
+			}
+			every_pool_leader = {
+				limit = {
+					has_trait = leader_trait_clone_army_commander
+				}
+				remove_trait = leader_trait_clone_army_commander
+				add_trait = {
+					trait = leader_trait_clone_army_full_commander
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = clones_barbaric_despoiler.23.a
+		trigger = {
+			OR = {
+				has_civic = civic_barbaric_despoilers
+				has_civic = civic_barbaric_despoilers_corporate
+			}
+		}
+		if = {
+			limit = {
+				has_biogenesis_dlc = yes
+			}
+			custom_tooltip = clones.23.bio.tt
+		}
+		hidden_effect = {
+			every_owned_pop_group = {
+				limit = { has_trait = trait_clone_soldier_infertile }
+				species = {
+					change_species_characteristics = {
+						remove_trait = trait_clone_soldier_infertile
+						add_trait = trait_clone_soldier_infertile_full_potential
+						add_traits_at_start_of_list = yes
+					}
+				}
+			}
+			every_owned_leader = {
+				limit = {
+					has_trait = leader_trait_clone_army_commander
+				}
+				remove_trait = leader_trait_clone_army_commander
+				add_trait = {
+					trait = leader_trait_clone_army_full_commander
+				}
+				add_trait = {
+					trait = leader_trait_ruler_precursor_great_khan
+				}
+			}
+			every_pool_leader = {
+				limit = {
+					has_trait = leader_trait_clone_army_commander
+				}
+				remove_trait = leader_trait_clone_army_commander
+				add_trait = {
+					trait = leader_trait_clone_army_full_commander
+				}
+				add_trait = {
+					trait = leader_trait_ruler_precursor_great_khan
+				}
+			}
+			every_owned_leader = {
+				limit = {
+					species = { has_trait = trait_clone_soldier_infertile_full_potential }
+				}
+				add_trait = {
+					trait = leader_trait_ruler_precursor_great_khan
+				}
+			}
+			every_pool_leader = {
+				limit = {
+					species = { has_trait = trait_clone_soldier_infertile_full_potential }
+				}
+				add_trait = {
+					trait = leader_trait_ruler_precursor_great_khan
+				}
+			}
+		}
+	}
+}
+
+#Admiral trait added
+country_event = {
+	id = clones.24
+	hide_window = yes
+
+	is_triggered_only = yes
+
+	trigger = {
+		from = { NOT = { leader_class = envoy } }
+		from.species = {
+			OR = {
+				has_trait = trait_clone_soldier_fertile
+				has_trait = trait_clone_soldier_infertile_full_potential
+				has_trait = trait_clone_soldier_infertile
+			}
+		}
+	}
+
+	immediate = {
+		if = {
+			limit = {
+				OR = {
+					has_civic = civic_barbaric_despoilers
+					has_civic = civic_barbaric_despoilers_corporate
+				}
+			}
+			if = {
+				limit = {
+					from.species = { has_trait = trait_clone_soldier_fertile }
+				}
+				from = {
+					if = {
+						limit = {
+							leader_class = commander
+						}
+						add_trait = {
+							trait = leader_trait_clone_army_fertile_commander
+						}
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					from.species = { has_trait = trait_clone_soldier_infertile_full_potential }
+				}
+				from = {
+					if = {
+						limit = {
+							leader_class = commander
+						}
+						add_trait = {
+							trait = leader_trait_clone_army_full_commander
+						}
+						add_trait = {
+							trait = leader_trait_ruler_precursor_great_khan
+						}
+					}
+					else = { 
+						add_trait = {
+							trait = leader_trait_ruler_precursor_great_khan
+						}
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					from.species = { has_trait = trait_clone_soldier_infertile }
+				}
+				from = {
+					if = {
+						limit = {
+							leader_class = commander
+						}
+						add_trait = {
+							trait = leader_trait_clone_army_commander
+						}
+					}
+				}
+			}
+		}
+		else = {
+			if = {
+				limit = {
+					from.species = { has_trait = trait_clone_soldier_fertile }
+				}
+				from = {
+					if = {
+						limit = {
+							leader_class = commander
+						}
+						add_trait = {
+							trait = leader_trait_clone_army_fertile_commander
+						}
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					from.species = { has_trait = trait_clone_soldier_infertile_full_potential }
+				}
+				from = {
+					if = {
+						limit = {
+							leader_class = commander
+						}
+						add_trait = {
+							trait = leader_trait_clone_army_full_commander
+						}
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					from.species = { has_trait = trait_clone_soldier_infertile }
+				}
+				from = {
+					if = {
+						limit = {
+							leader_class = commander
+						}
+						add_trait = {
+							trait = leader_trait_clone_army_commander
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+#Cleanup on losing a planet
+planet_event = {
+	id = clones.30
+	hide_window = yes
+	is_triggered_only = yes
+	trigger = {
+		is_variable_set = clone_pops_missing
+		OR = {
+			count_owned_pop_amount = {
+				count = 0
+			}
+			AND = {
+				exists = from
+				NOT = { is_owned_by = from }
+			}
+		}
+	}
+	immediate = {
+		clear_variable = clone_pops_missing
+		if = {
+			limit = { has_modifier = modifier_clone_pops_decline }
+			remove_modifier = modifier_clone_pops_decline
+		}
+		if = {
+			limit = { is_variable_set = num_clone_pops }
+			clear_variable = num_clone_pops
+		}
+		if = {
+			limit = { is_variable_set = num_ancient_clone_vats }
+			clear_variable = num_ancient_clone_vats
+		}
+		if = {
+			limit = { is_variable_set = clone_pops_decline_factor }
+			clear_variable = clone_pops_decline_factor
+		}
+		if = {
+			limit = { is_variable_set = clone_pops_missing_per_vat }
+			clear_variable = clone_pops_missing_per_vat
+		}
+	}
+}
