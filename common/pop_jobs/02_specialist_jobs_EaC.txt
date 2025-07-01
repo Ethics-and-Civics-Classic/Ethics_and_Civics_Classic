@@ -300,6 +300,591 @@ researcher = {
 	inline_script = "jobs/automodding_priority_research"
 }
 
+physicist = {
+	category = specialist
+	swappable_data = {
+		default = {
+			condition_string = SPECIALIST_JOB_TRIGGER
+			building_icon = building_research_lab_1
+		}
+		# Astrometeorologists
+		swap_type = {
+			trigger = {
+				physicist_is_astrometeorologist_trigger = yes
+			}
+			name = astrometeorologist
+			desc = astrometeorologist
+			icon = astrometeorologist
+			building_icon = building_astrometeorology_observation_center
+			condition_string = SPECIALIST_JOB_TRIGGER
+			weight = 5
+		}
+		# Astral Researcher
+		swap_type = {
+			trigger = {
+				physicist_is_astral_researcher_trigger = yes
+			}
+			name = astral_researcher
+			desc = astral_researcher
+			icon = astral_researcher
+			building_icon = building_astral_siphon_1
+			weight = 5
+		}
+		# Space-Time Anomaly Researcher
+		swap_type = {
+			trigger = {
+				physicist_is_space_time_researcher_trigger = yes
+			}
+			name = space_time_anomaly_researcher
+			desc = space_time_anomaly_researcher
+			weight = 10
+		}
+		# Dimension Portal Researcher
+		swap_type = {
+			trigger = {
+				physicist_is_dimensional_portal_researcher_trigger = yes
+			}
+			name = dimensional_portal_researcher
+			desc = dimensional_portal_researcher
+			weight = 15
+		}
+		# Astral-Metrorologists
+		swap_type = {
+			trigger = {
+				physicist_is_astral_researcher_trigger = yes
+				physicist_is_astrometeorologist_trigger = yes
+			}
+			name = astral_meteorologist
+			desc = astral_meteorologist
+			icon = astrometeorologist
+			building_icon = building_astral_siphon_1
+			weight = 20
+		}
+	}
+
+	tags = { research }
+
+	possible_pre_triggers = {
+		has_owner = yes
+		is_being_purged = no
+		is_being_assimilated = no
+		is_sapient = yes
+	}
+
+	possible_precalc = can_fill_specialist_job
+	possible = {
+		complex_specialist_job_check_trigger = yes
+	}
+
+	triggered_country_modifier = {
+		potential = {
+			local_or_sector_governor_has_trait = {
+				TRAIT = leader_trait_academia_recruiter
+			}
+		}
+		country_naval_cap_add = 1
+		mult = planet.modifier:job_researcher_naval_cap_add
+	}
+
+	resources = {
+		category = planet_physicists
+		produces = {
+			physics_research = 6
+		}
+		# Astrometrorologists
+		produces = {
+			trigger = {
+				exists = planet
+				planet = {
+					physicist_is_astrometeorologist_trigger = yes
+					solar_system = {
+						OR = {
+							has_environmental_effects = yes
+							has_star_flag = storm_system
+						}
+					}
+				}
+			}
+			physics_research = 4
+		}
+		upkeep = {
+			consumer_goods = 1.5
+		}
+		produces = {
+			trigger = {
+				exists = owner										# Modded
+				owner = {
+					OR = {
+						has_valid_civic = civic_technocracy			# Modded
+						has_valid_civic = civic_cyber_dictatorship	# Modded
+						has_valid_civic = civic_science_directorate	# Modded
+						has_valid_civic = civic_cyber_demos_cratos	# Modded
+					}
+				}
+			}
+			unity = 1												# Modded
+		}
+		# Space-Time Researcher
+		produces = {
+			trigger = {
+				physicist_is_space_time_researcher_trigger = yes
+			}
+			physics_research = 2
+			sr_dark_matter = 0.2
+		}
+		upkeep = {
+			trigger = {
+				physicist_is_space_time_researcher_trigger = yes
+			}
+			consumer_goods = 1.5
+		}
+		inline_script = "output/researcher_output"
+	}
+
+	overlord_resources = {
+		category = planet_requisitioned_research
+		produces = {
+			trigger = {
+				planet = {
+					has_planet_flag = has_science_ministry
+				}
+			}
+			physics_research = 1.5
+		}
+		produces = {
+			trigger = {
+				planet = {
+					has_planet_flag = has_science_ministry
+					physicist_is_astrometeorologist_trigger = yes
+					solar_system = {
+						OR = {
+							has_environmental_effects = yes
+							has_star_flag = storm_system
+						}
+					}
+				}
+			}
+			physics_research = 1
+		}
+	}
+
+	# Dimensional Portal Amenities
+	triggered_planet_modifier = {
+		potential = {
+			planet = {
+				has_modifier = dportal_trade_normal
+			}
+		}
+		planet_amenities_add = 600
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	}
+	triggered_planet_modifier = {
+		potential = {
+			planet = {
+				has_modifier = dportal_trade_high
+			}
+		}
+		planet_amenities_add = 1200
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	}
+	triggered_planet_modifier = {
+		potential = {
+			planet = {
+				has_modifier = dportal_trade_low
+			}
+		}
+		planet_amenities_add = 300
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	}
+	triggered_planet_modifier = {
+		potential = {
+			planet = {
+				has_modifier = dportal_trade_crisis
+			}
+		}
+		planet_amenities_add = 200
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	}
+
+	weight = {
+		weight = @specialist_job_weight
+		mult = value:job_weights_modifier|JOB|physicist|RESOURCE|physics_research|
+		modifier = {
+			factor = 0.2
+			has_citizenship_rights = no
+			NOT = { has_trait = trait_mechanical }
+		}
+		modifier = {
+			factor = 2
+			has_living_standard = { type = living_standard_academic_privilege }
+		}
+		modifier = {
+			factor = 0.1
+			can_take_servant_job = yes
+		}
+		modifier = {
+			factor = 0.8
+			is_enslaved = yes
+			has_slavery_type = { type = slavery_indentured }
+		}
+		modifier = {
+			factor = 5
+			has_trait = trait_cyborg_creed_of_research
+		}
+	}
+
+	inline_script = "jobs/automodding_priority_research"
+
+	promotion = {
+		time = @standard_promotion_time
+		effect = {
+			pop_amount_change_category = {
+				CATEGORY = specialist
+				AMOUNT = local_pop_amount
+			}
+		}
+	}
+}
+
+biologist = {
+	category = specialist
+
+	swappable_data = {
+		default = {
+			condition_string = SPECIALIST_JOB_TRIGGER
+			building_icon = building_research_lab_1
+		}
+		# Rangers
+		swap_type = {
+			trigger = {
+				biologist_is_ranger_trigger = yes
+			}
+			name = ranger
+			desc = ranger
+			icon = ranger
+			building_icon = holding_park_ranger_lodge
+			weight = 5
+		}
+		# Vent Reseachers
+		swap_type = {
+			trigger = {
+				biologist_is_vent_researcher_trigger = yes
+			}
+			name = stratovent_researcher
+			desc = stratovent_researcher
+			icon = xeno_zoo_keeper
+			building_icon = building_nanolab_1
+			weight = 10
+		}
+		# Zookeepers
+		swap_type = {
+			trigger = {
+				biologist_is_zookeeper_trigger = yes
+			}
+			name = xeno_zoo_keeper
+			desc = xeno_zoo_keeper
+			icon = xeno_zoo_keeper
+			building_icon = building_xeno_zoo
+			weight = 15
+		}
+		# Archaeo-Engineers
+		swap_type = {
+			trigger = {
+				biologist_is_archaeo_engineer_trigger = yes
+			}
+			name = archaeoengineers
+			desc = archaeoengineers
+			icon = archaeoengineers
+			building_icon = building_archaeostudies_faculty
+			weight = 20
+		}
+	}
+
+	possible_pre_triggers = {
+		has_owner = yes
+		is_being_purged = no
+		is_being_assimilated = no
+		is_sapient = yes
+	}
+
+	possible_precalc = can_fill_specialist_job
+	possible = {
+		complex_specialist_job_check_trigger = yes
+	}
+
+	triggered_country_modifier = {
+		potential = {
+			local_or_sector_governor_has_trait = {
+				TRAIT = leader_trait_academia_recruiter
+			}
+		}
+		country_naval_cap_add = 1
+		mult = planet.modifier:job_researcher_naval_cap_add
+	}
+
+	resources = {
+		category = planet_biologists
+		produces = {
+			society_research = 6
+		}
+		produces = {
+			trigger = {
+				biologist_is_zookeeper_trigger = yes
+			}
+			society_research = 1
+		}
+		upkeep = {
+			trigger = {
+				biologist_is_zookeeper_trigger = yes
+			}
+			consumer_goods = 0.5
+		}
+		upkeep = {
+			consumer_goods = 1.5
+		}
+		inline_script = "output/researcher_output"
+		produces = {
+			trigger = {
+				exists = owner										# Modded
+				owner = {
+					OR = {
+						has_valid_civic = civic_technocracy			# Modded
+						has_valid_civic = civic_cyber_dictatorship	# Modded
+						has_valid_civic = civic_science_directorate	# Modded
+						has_valid_civic = civic_cyber_demos_cratos	# Modded
+					}
+				}
+			}
+			unity = 1												# Modded
+		}
+	}
+
+	overlord_resources = {
+		category = planet_requisitioned_research
+		produces = {
+			trigger = {
+				planet = {
+					has_planet_flag = has_science_ministry
+				}
+			}
+			society_research = 1.5
+		}
+	}
+
+	# Job Swap - Rangers
+	triggered_planet_modifier = {
+		potential = {
+			biologist_is_ranger_trigger = yes
+		}
+		planet_amenities_add = 300
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	}
+
+	# Job Swap - Vent Researchers
+	triggered_planet_modifier = {
+		potential = {
+			biologist_is_vent_researcher_trigger = yes
+		}
+		planet_amenities_add = 300
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	}
+
+	# Job Swap - Zookeepers
+	triggered_planet_modifier = {
+		potential = {
+			biologist_is_zookeeper_trigger = yes
+		}
+		planet_amenities_add = 100
+		mult = value:zoo_keeper_amenity_output
+	}
+
+	weight = {
+		weight = @specialist_job_weight
+		mult = value:job_weights_modifier|JOB|biologist|RESOURCE|society_research|
+		modifier = {
+			factor = 0.2
+			has_citizenship_rights = no
+			NOT = { has_trait = trait_mechanical }
+		}
+		modifier = {
+			factor = 2
+			has_living_standard = { type = living_standard_academic_privilege }
+		}
+		modifier = {
+			factor = 0.1
+			can_take_servant_job = yes
+		}
+		modifier = {
+			factor = 0.8
+			is_enslaved = yes
+			has_slavery_type = { type = slavery_indentured }
+		}
+		modifier = {
+			factor = 5
+			has_trait = trait_cyborg_creed_of_research
+		}
+	}
+
+	inline_script = "jobs/automodding_priority_research"
+
+	promotion = {
+		time = @standard_promotion_time
+		effect = {
+			pop_amount_change_category = {
+				CATEGORY = specialist
+				AMOUNT = local_pop_amount
+			}
+		}
+	}
+}
+
+engineer = {
+	category = specialist
+
+	swappable_data = {
+		default = {
+			condition_string = SPECIALIST_JOB_TRIGGER
+			building_icon = building_research_lab_1
+		}
+		# Dismantler
+		swap_type = {
+			trigger = {
+				engineer_is_manufactorium_scraper_trigger = yes
+			}
+			name = manufactorium_scraper
+			desc = manufactorium_scraper
+			icon = broken_shackles_scavenger
+			building_icon = building_research_lab_1
+			weight = 5
+		}
+		# Munitions Decommissioner
+		swap_type = {
+			trigger = {
+				engineer_is_munitions_decommissioner_trigger = yes
+			}
+			name = munitions_decommissioner
+			desc = munitions_decommissioner
+			icon = munitions_decommissioner
+			building_icon = building_research_lab_1
+			weight = 10
+		}
+		# Nanotech Researcher
+		swap_type = {
+			trigger = {
+				engineer_is_nanotech_researcher_trigger = yes
+			}
+			name = nanotech_researcher
+			desc = nanotech_researcher
+			building_icon = building_nanolab_1
+			weight = 15
+		}
+	}
+
+	possible_pre_triggers = {
+		has_owner = yes
+		is_being_purged = no
+		is_being_assimilated = no
+		is_sapient = yes
+	}
+
+	possible_precalc = can_fill_specialist_job
+	possible = {
+		complex_specialist_job_check_trigger = yes
+	}
+
+	triggered_country_modifier = {
+		potential = {
+			local_or_sector_governor_has_trait = {
+				TRAIT = leader_trait_academia_recruiter
+			}
+		}
+		country_naval_cap_add = 1
+		mult = planet.modifier:job_researcher_naval_cap_add
+	}
+
+	resources = {
+		category = planet_engineers
+		produces = {
+			engineering_research = 6
+		}
+		produces = {
+			trigger = {
+				engineer_is_nanotech_researcher_trigger = yes
+			}
+			engineering_research = 2
+		}
+		upkeep = {
+			consumer_goods = 1.5
+		}
+		inline_script = "output/researcher_output"
+		produces = {
+			trigger = {
+				exists = owner										# Modded
+				owner = {
+					OR = {
+						has_valid_civic = civic_technocracy			# Modded
+						has_valid_civic = civic_cyber_dictatorship	# Modded
+						has_valid_civic = civic_science_directorate	# Modded
+						has_valid_civic = civic_cyber_demos_cratos	# Modded
+					}
+				}
+			}
+			unity = 1												# Modded
+		}
+	}
+
+	overlord_resources = {
+		category = planet_requisitioned_research
+		produces = {
+			trigger = {
+				planet = {
+					has_planet_flag = has_science_ministry
+				}
+			}
+			engineering_research = 1
+		}
+	}
+
+	weight = {
+		weight = @specialist_job_weight
+		mult = value:job_weights_modifier|JOB|engineer|RESOURCE|engineering_research|
+		modifier = {
+			factor = 0.2
+			has_citizenship_rights = no
+			NOT = { has_trait = trait_mechanical }
+		}
+		modifier = {
+			factor = 2
+			has_living_standard = { type = living_standard_academic_privilege }
+		}
+		modifier = {
+			factor = 0.1
+			can_take_servant_job = yes
+		}
+		modifier = {
+			factor = 0.8
+			is_enslaved = yes
+			has_slavery_type = { type = slavery_indentured }
+		}
+		modifier = {
+			factor = 5
+			has_trait = trait_cyborg_creed_of_research
+		}
+	}
+
+	inline_script = "jobs/automodding_priority_research"
+
+	promotion = {
+		time = @standard_promotion_time
+		effect = {
+			pop_amount_change_category = {
+				CATEGORY = specialist
+				AMOUNT = local_pop_amount
+			}
+		}
+	}
+}
+
 # priest = {					# Enriad - Marked for delition for priests fix
 # 	category = specialist
 
@@ -1913,7 +2498,7 @@ bureaucrat = {
 			}
 			unity = 1															# Modded
 		}
-		#inline_script = "jobs/ethic_job_resources_memorialist"			# Enriad - forgotten line from original	# Cog Note - File does not exist
+		inline_script = "jobs/ethic_job_resources_memorialist"			# Enriad - forgotten line from vanilla code, files exist and NOT MODDED
 	}
 	
 	# Amenities
