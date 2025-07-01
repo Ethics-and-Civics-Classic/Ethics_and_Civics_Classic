@@ -1,3 +1,246 @@
 ###################
 # Basic Jobs
 ###################
+
+farmer = {
+	category = worker
+	swappable_data = {
+		default = {
+			condition_string = WORKER_JOB_TRIGGER
+			building_icon = building_food_processing_facility
+		}
+		swap_type = {
+			trigger = {
+				farmer_is_titan_hunter_trigger = yes
+			}
+			name = titan_hunter
+			desc = titan_hunter
+			icon = hunter_gatherer
+			weight = 10
+		}
+		swap_type = {
+			trigger = {
+				farmer_is_puddle_technician_trigger = yes
+			}
+			name = puddle_technician
+			desc = puddle_technician
+			icon = puddle_technician
+			weight = 15
+		}
+		swap_type = {
+			trigger = {
+				farmer_is_angler_trigger = yes
+			}
+			name = angler
+			desc = angler
+			icon = angler
+			weight = 50
+		}
+	}
+
+	tags = { food }
+
+	possible_pre_triggers = {
+		has_owner = yes
+		is_being_purged = no
+		is_being_assimilated = no
+		is_sapient = yes
+	}
+
+	possible_precalc = can_fill_worker_job
+	possible = {
+		hidden_trigger = { exists = owner }
+		owner = {
+			is_gestalt = no
+		}
+	}
+
+	resources = {
+		category = planet_farmers
+		produces = {
+			food = 6
+		}
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					is_robot_empire = yes
+				}
+			}
+			food = -1
+		}
+		# Job Swap - Anglers
+		produces = {
+			trigger = {
+				exists = planet
+				planet = {
+					farmer_is_angler_trigger = yes
+				}
+			}
+			food = 2
+			trade = 2
+		}
+		produces = {
+			trigger = {
+				exists = planet
+				planet = {
+					farmer_is_angler_trigger = yes
+				}
+				has_councilor = { COUNCILOR = "councilor_anglers" }
+			}
+			food = @councilor_anglers_angler_food_bonus
+			mult = value:councilor_level|TYPE|councilor_anglers|
+		}
+		produces = {
+			trigger = {
+				exists = planet
+				planet = {
+					farmer_is_angler_trigger = yes
+				}
+				has_councilor = { COUNCILOR = "councilor_machine_anglers" }
+			}
+			food = @councilor_machine_anglers_angler_food_bonus
+			mult = value:councilor_level|TYPE|councilor_machine_anglers|
+		}
+		# Job Swap - Titan Hunters
+		produces = {
+			trigger = {
+				farmer_is_titan_hunter_trigger = yes
+			}
+			food = 2
+			trade = 8
+		}
+		# Job Swap - Puddle Technician
+		produces = {
+			trigger = {
+				farmer_is_puddle_technician_trigger = yes
+			}
+			alloys = 1
+		}
+		produces = {
+			trigger = {
+				planet = {
+					has_planet_flag = has_produce_requisitorium
+				}
+			}
+			food = @requisitorium_food_reduction
+		}
+        # Agrarian Idyll
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_valid_civic = civic_agrarian_idyll
+				}
+			}
+            unity = 1
+		}
+	}
+
+	overlord_resources = {
+		category = planet_requisitioned_food
+		produces = {
+			trigger = {
+				planet = {
+					has_planet_flag = has_produce_requisitorium
+				}
+			}
+			food = @requisitorium_food_overlord
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_valid_civic = civic_agrarian_idyll }
+		}
+		planet_amenities_add = 200
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	}
+
+	weight = {
+		weight = @worker_job_weight
+		mult = value:job_weights_modifier|JOB|farmer|RESOURCE|food|
+		modifier = {
+			factor = 1.1
+			owner = { has_valid_civic = civic_agrarian_idyll }
+		}
+		modifier = {
+			factor = 10
+			is_enslaved = yes
+			can_take_servant_job = no
+			NOT = { has_slavery_type = { type = slavery_indentured } }
+		}
+		modifier = {
+			factor = 3
+			OR = {
+				is_non_sapient_robot = yes
+				is_shackled_robot = yes
+			}
+			can_take_servant_job = no
+			owner = { has_technology = tech_droid_workers }
+		}
+		modifier = {
+			factor = 200
+			OR = {
+				is_non_sapient_robot = yes
+				is_shackled_robot = yes
+			}
+			can_take_servant_job = no
+			owner = { NOT = { has_technology = tech_droid_workers } }
+		}
+		modifier = {
+			factor = 0.25
+			can_take_servant_job = yes
+		}
+		modifier = {
+			factor = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
+			owner = { has_valid_civic = civic_agrarian_idyll }
+		}
+		# low income modifier
+		modifier = {
+			factor = 3
+			exists = planet
+			planet = {
+				has_available_jobs = farmer
+			}
+			exists = owner
+			owner = {
+				has_monthly_income = {
+					resource = food
+					value < 10
+				}
+			}
+		}
+
+		modifier = {
+			factor = 0.5
+			has_trait = trait_lithoid
+
+			owner = {
+				is_lithoid_empire = yes
+				country_uses_food = no
+				has_monthly_income = {
+					resource = food
+					value >= 0
+				}
+			}
+		}
+		modifier = {
+			factor = 5
+			has_trait = trait_cyborg_creed_of_labor
+		}
+	}
+
+	inline_script = "jobs/automodding_priority_food"
+
+	promotion = {
+		time = @standard_promotion_time
+		effect = {
+			pop_amount_change_category = {
+				CATEGORY = worker
+				AMOUNT = local_pop_amount
+			}
+		}
+	}
+}
