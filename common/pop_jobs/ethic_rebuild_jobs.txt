@@ -2,6 +2,194 @@
 # Fancy Jobs
 ###################
 
+civilian = {
+	category = civilian
+	is_capped_by_modifier = no
+	count_as_available_for_ai = yes
+
+	possible = {
+		hidden_trigger = { exists = owner }
+		owner = {
+			is_gestalt = no
+		}
+		OR = {
+			NOT = {
+				owner = {
+					has_active_tradition = tr_virtuality_finish
+				}
+			}
+			has_virtual_species_trait = no
+		}
+		planet = { NOT = { is_planet_class = pc_cosmogenesis_world }  }
+	}
+
+	swappable_data = {
+		default = {
+			building_icon = building_residence
+		}
+		# Hedonists
+		swap_type = {
+			trigger = {
+				exists = owner
+				owner = {
+					is_pleasure_seeker_empire = yes
+				}
+			}
+			name = fe_hedonist
+			desc = fe_hedonist
+			icon = fe_hedonist
+			building_icon = building_holo_theatres
+			weight = 5
+		}
+		swap_type = {
+			trigger = {
+				exists = owner
+				owner = {
+					is_spiritual_seeker_empire = yes
+				}
+			}
+			name = transcend
+			desc = transcend
+			icon = transcend
+			building_icon = building_psi_corps
+			weight = 5
+		}
+		swap_type = {
+			trigger = {
+				exists = owner
+				owner = {
+					is_spiritual_seeker_empire = yes
+					is_pleasure_seeker_empire = yes
+				}
+			}
+			name = transcend_hedonist
+			desc = transcend_hedonist
+			icon = transcend
+			building_icon = building_holo_theatres
+			weight = 10
+		}
+	}
+
+	resources = {
+		category = planet_civilians
+		produces = {
+			trade = 1
+		}
+		inline_script = "jobs/ethic_job_resources"
+
+		# Spiritual Seekers
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					is_spiritual_seeker_empire = yes
+				}
+			}
+			unity = 0.75
+			society_research = 0.5
+			physics_research = 0.5
+			engineering_research = 0.25
+		}
+		upkeep = {
+			trigger = {
+				exists = owner
+				owner = {
+					is_spiritual_seeker_empire = yes
+				}
+			}
+			energy = 0.5
+		}
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_tradition = tr_mercantile_trickle_up_economics }
+		}
+		planet_amenities_add = 100
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	}
+
+	# Hedonists
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_pleasure_seeker_empire = no
+			}
+		}
+		planet_amenities_add = 50
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	}
+
+	# Spiritual Seekers
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_spiritual_seeker_empire = yes
+			}
+		}
+		planet_crime_add = -1
+    }
+
+	triggered_country_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_spiritual_seeker_empire = yes
+			}
+		}
+		country_edict_fund_add = 1.25
+	}
+
+	triggered_country_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_modifier = paragon_origin_strengthened_government_iii }
+		}
+		country_edict_fund_add = 1
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_policy_flag = computation_core_production
+			}
+		}
+		planet_jobs_alloys_produces_mult = 0.005
+		planet_jobs_consumer_goods_produces_mult = 0.005
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_policy_flag = computation_core_stability
+			}
+		}
+		planet_jobs_unity_produces_mult = 0.005
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_policy_flag = computation_core_research
+			}
+		}
+		planet_jobs_physics_research_produces_mult = 0.005
+		planet_jobs_society_research_produces_mult = 0.005
+		planet_jobs_engineering_research_produces_mult = 0.005
+	}
+
+	inline_script = "jobs/ethic_job_modifiers"
+
+	weight = {
+		weight = 0
+	}
+}
+
 uav_dispatcher = {
 	category = specialist
 
@@ -4089,6 +4277,10 @@ transcend = {
 			building_icon = building_psi_corps
 			# clothes_texture_index = 5
 		}
+	}
+
+	possible = {
+		always = no				# Enriad - bc transcend is civilian now
 	}
 
 	possible_pre_triggers = {
