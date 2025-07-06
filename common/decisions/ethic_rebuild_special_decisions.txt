@@ -4,6 +4,103 @@
 
 # 02_special_decisions.txt#
 
+# Resort Colony
+decision_resort_colony = {
+	owned_planets_only = yes
+
+	prerequisites = {
+		"tech_resort_colonies"
+	}
+
+	resources = {
+		category = decisions
+		cost = {
+			unity = 1000
+		}
+	}
+
+	potential = {
+		OR = {
+			is_capital = no
+			has_modifier = ocean_paradise
+			has_modifier = ocean_paradise_hive
+		}
+		NOR = {
+			has_modifier = penal_colony
+			has_modifier = slave_colony
+			has_modifier = resort_colony
+			is_planet_class = pc_city
+			AND = {
+				is_planet_class = pc_nuked
+				NOR = {
+					owner = {
+						OR = {
+							is_memorialist_empire = yes
+							has_trait = trait_survivor
+							has_trait = trait_pc_nuked_preference
+							has_trait = trait_plantoid_radiotrophic
+						}
+					}
+				}
+			}
+			AND = {
+				is_planet_class = pc_relic
+				NOT = { owner = { is_memorialist_empire = yes } }
+			}
+		}
+		owner = {
+			is_regular_empire = yes
+		}
+		is_artificial = no
+		NOT = { has_designation = col_nanotech_world }
+	}
+
+	allow = {
+		custom_tooltip = {
+			fail_text = decision_resort_colony_no_districts
+			num_districts = { type = district_farming value < 1 }
+			num_districts = { type = district_mining value < 1 }
+			num_districts = { type = district_generator value < 1 }
+			num_districts = { type = district_farming_uncapped value < 1 }
+			num_districts = { type = district_mining_uncapped value < 1 }
+			num_districts = { type = district_generator_uncapped value < 1 }
+		}
+		custom_tooltip = {
+			fail_text = decision_resort_colony_only_one
+			NOT = {
+				owner = {
+					any_owned_planet = { has_modifier = resort_colony }
+				}
+			}
+		}
+		custom_tooltip = {
+			fail_text = decision_cant_be_building_anything
+			has_building_construction = no
+		}
+	}
+
+	effect = {
+		add_modifier = {
+			modifier = resort_colony
+			days = -1
+		}
+		hidden_effect = {
+			remove_building = building_colony_shelter
+			remove_building = building_capital
+			remove_building = building_major_capital
+			remove_building = building_system_capital
+			add_building = building_resort_capital
+		}
+		hidden_effect = {
+			validate_planet_buildings_and_districts = yes
+		}
+	}
+
+	ai_weight = {
+		weight = 0
+	}
+}
+
 # Market Candidate Nomination
 decision_market_nomination = {
 	owned_planets_only = yes

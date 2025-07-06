@@ -611,8 +611,23 @@ zone_anglers = {
 		AMOUNT = @scaling_district_1_job
 	}
 	
+	# Ocean Paradise Resort World
+	triggered_district_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_gestalt = no
+			}
+			has_modifier = resort_colony
+		}
+		job_farmer_add = -25
+		job_resort_worker_add = 25
+		planet_housing_add = -200
+	}
+	
 	zone_sets = {
 		food
+		resort_attraction
 	}
 
 	included_building_sets = {
@@ -635,14 +650,22 @@ zone_anglers = {
 	
 	potential = { # planet scope
 		exists = owner
-		owner = { is_anglers_empire = yes }
+		OR = {
+			owner = { is_anglers_empire = yes }
+			has_modifier = ocean_paradise
+			hidden_trigger = { has_modifier = ocean_paradise_hive } #could be a custom_tooltip
+		}
 		is_wet = yes
 	}
 
 	unlock = { # planet scope
 		exists = owner
+		OR = {
+			owner = { is_anglers_empire = yes }
+			has_modifier = ocean_paradise
+			hidden_trigger = { has_modifier = ocean_paradise_hive } #could be a custom_tooltip
+		}
 		owner = { 
-			is_anglers_empire = yes 
 			has_technology = tech_industrial_farming_2
 		}
 		is_wet = yes
@@ -651,6 +674,53 @@ zone_anglers = {
 	ai_priority = 5
 	
 	#show_in_tech = tech_industrial_farming_2
+}
+
+zone_resort = {
+	icon = GFX_job_resort_worker
+	base_buildtime = @zone_buildtime
+	potential = { # planet scope
+		exists = owner
+		owner = {
+			is_wilderness_empire = no
+		}
+		has_modifier = resort_colony
+	}
+
+	unlock = { # planet scope
+		has_modifier = resort_colony
+	}
+
+	resources = {
+		category = planet_zones
+		cost = {
+			minerals = @zone_cost
+		}
+	}
+
+	zone_sets = {
+		resort
+	}
+
+	included_building_sets = {
+		urban
+		origin
+	}
+
+	inline_script = {
+		script = jobs/zone_resort_worker_add
+		AMOUNT = @scaling_district_1_job
+	}
+
+	planet_modifier = {
+		zone_building_slots_add = 3
+	}
+
+	inline_script = {
+		script = zones/shared_city_non_urban_zone_modifiers
+	}
+
+	ai_priority = 5
 }
 
 #Hive World Zones
