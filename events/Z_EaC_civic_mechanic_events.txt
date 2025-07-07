@@ -11637,3 +11637,113 @@ country_event = {
 		name = EaC_civic_mechanic_events.4123.a
 	}
 }
+
+############################
+#
+# Resort World Civilian Cruise
+#
+############################
+# Resort World Cruise enters orbit
+fleet_event = {
+	id = EaC_civic_mechanic_events.5001
+	hide_window = yes
+
+	is_triggered_only = yes
+	
+	trigger = { 
+		is_ship_size = civilian_resort_colony_cruise
+		FROM = { 
+			is_colony = yes
+			NOT = { has_modifier = resort_colony } 
+			is_owned_by = root.owner
+		}
+	}
+
+	immediate = {
+		FROM = {
+			add_modifier = {
+				modifier = resort_colony_branch
+				days = -1
+				clear_on_owner_change = yes
+			}
+			if = {
+				limit = { NOT = { has_modifier = planet_luxuries_boost } }
+				add_modifier = { modifier = "planet_luxuries_boost" days = 720 }
+			}
+		}
+	}
+}
+
+# Check for Systems without Resort Ships (clean-up)
+country_event = {
+	id = EaC_civic_mechanic_events.5002
+	hide_window = yes
+
+	is_triggered_only = yes
+	
+	trigger = { 
+		any_planet_within_border = { has_modifier = resort_colony_branch } 
+	}
+
+	immediate = {
+		every_system_within_border = {
+			limit = { 
+				any_system_planet = { has_modifier = resort_colony_branch }
+				count_fleet_in_system = {
+					count = 0
+					limit = { is_ship_size = civilian_resort_colony_cruise }
+				}
+			}
+			random_system_planet = {
+				limit = { has_modifier = resort_colony_branch }
+				remove_modifier = resort_colony_branch
+			}
+		}
+		if= {
+			limit = { has_edict = civilian_resort_colony_cruise_roam_edict }
+			random_planet_within_border = {
+				limit = { 
+					count_fleet_in_orbit = {
+						count > 0
+						limit = { is_ship_size = civilian_resort_colony_cruise }
+					}
+				}
+				every_fleet_in_orbit = { 
+					limit = { is_ship_size = civilian_resort_colony_cruise }
+					fleet_event = { id = EaC_civic_mechanic_events.5003 }
+				}
+			}
+		}
+	}
+}
+
+# Resort World Cruise Travels Randomly
+fleet_event = {
+	id = EaC_civic_mechanic_events.5003
+	hide_window = yes
+
+	is_triggered_only = yes
+
+	immediate = {
+		owner = {
+			random_planet_within_border = {
+				limit = { 
+					NOT = { is_same_value = root.orbit }
+					distance = {
+						source = root
+						same_solar_system = yes
+					}
+				}
+				weights = {
+					base = 1
+					modifier = { 
+						add = 100
+						is_colony = yes 
+						NOT = { has_modifier = planet_luxuries_boost }
+					}
+				}
+				root = { auto_move_to_planet = { target = PREV clear_auto_move_on_arrival = yes } }
+			}
+		}
+	}
+}
