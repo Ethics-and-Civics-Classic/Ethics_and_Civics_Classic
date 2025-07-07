@@ -267,3 +267,173 @@ farmer = {
 		}
 	}
 }
+
+squire = {
+	category = worker
+	swappable_data = {
+		default = {
+			condition_string = WORKER_JOB_TRIGGER
+			building_icon = building_order_keep
+		}
+	}
+
+	tags = { soldier amenities }
+
+	is_capped_by_modifier = no
+	count_as_available_for_ai = yes
+
+	possible_pre_triggers = {
+		has_owner = yes
+		is_being_purged = no
+		is_being_assimilated = no
+		is_sapient = yes
+		is_enslaved = no
+	}
+
+	possible_precalc = can_fill_specialist_job #deliberate, they are baby knights
+
+	possible = {
+		hidden_trigger = { exists = owner }
+		owner = {
+			is_gestalt = no
+		}
+		exists = planet
+		planet = {
+			OR = {
+				has_active_building = building_order_keep
+				has_active_building = building_order_castle
+			}
+		}
+	}
+
+	triggered_planet_modifier = {
+		planet_defense_armies_add = 1
+		pop_knight_bonus_workforce_mult = 0.025
+		pop_knight_commander_bonus_workforce_mult = 0.0125
+	}
+	triggered_planet_modifier = {
+		potential = {
+			always = yes
+		}
+		planet_amenities_add = 200
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	}
+
+	triggered_planet_pop_group_modifier_for_all = {
+		potential = {
+			exists = planet
+			planet = {
+				has_modifier = syamelles_curse_habitat
+			}
+		}
+		bonus_pop_growth = 0.1
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = planet
+			planet = {
+				has_modifier = syamelles_curse_habitat
+			}
+		}
+		fake_pop_growth_mod = 0.1
+	}
+
+	resources = {
+		category = planet_squires
+		upkeep = {
+			alloys = 0.5
+		}
+		upkeep = {
+			trigger = {
+				planet = { has_modifier = syamelles_curse_habitat }
+			}
+			alloys = 0.5
+		}
+		# Spiritual Seekers
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_valid_civic = civic_spiritual_seekers
+				}
+			}
+			unity = 0.5
+		}
+	}
+
+	# Spiritual Seekers
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_valid_civic = civic_spiritual_seekers
+			}
+		}
+		pop_knight_bonus_workforce_mult = 0.0125
+		pop_knight_commander_bonus_workforce_mult = 0.0125
+	}
+
+	triggered_country_modifier = {
+		potential = {
+			exists = planet
+			planet = {
+				exists = owner
+				owner = { has_technology = "tech_ground_defense_planning" }
+			}
+		}
+		modifier = {
+			country_naval_cap_add = 2
+		}
+	}
+
+	triggered_country_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				any_owned_leader = {
+					is_councilor = yes
+					has_trait = leader_trait_bellicose
+				}
+			}
+		}
+
+		modifier = {
+			country_naval_cap_add = 2
+		}
+		mult = value:bellicose_naval_cap
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				any_owned_leader = {
+					is_councilor = yes
+					has_trait = leader_trait_bellicose
+				}
+			}
+		}
+		modifier = {
+			planet_defense_armies_add = 1
+		}
+		mult = value:bellicose_naval_cap
+	}
+
+	weight = {
+		weight = @worker_job_weight
+		factor = 1.2
+	}
+
+	inline_script = "jobs/automodding_priority_amenities"
+
+	promotion = {
+		time = @standard_promotion_time
+		effect = {
+			pop_amount_change_category = {
+				CATEGORY = worker
+				AMOUNT = local_pop_amount
+			}
+		}
+	}
+}
