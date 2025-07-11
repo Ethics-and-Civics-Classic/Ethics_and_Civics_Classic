@@ -1,0 +1,128 @@
+####################################
+# Grand Archive - Scripted Effects #
+####################################
+
+
+###################
+# Treasure Troves #
+###################
+
+setup_treasure_trove_reward = {
+	random_list = {
+		250 = {
+			modifier = {
+				add = 50
+				$COUNTRY_SCOPE$ = {
+					should_use_increased_treasure_trove_drops = yes
+				}
+			}
+			set_$TREASURE_TROVE_SCOPE_TYPE$_flag = treasure_trove_energy
+		}
+		100 = {
+			set_$TREASURE_TROVE_SCOPE_TYPE$_flag = treasure_trove_alloys
+		}
+		100 = {
+			set_$TREASURE_TROVE_SCOPE_TYPE$_flag = treasure_trove_minor_artifacts
+		}
+		100 = {
+			set_$TREASURE_TROVE_SCOPE_TYPE$_flag = treasure_trove_astral_threads
+		}
+		60 = {
+			modifier = {
+				add = 40
+				$COUNTRY_SCOPE$ = {
+					should_use_increased_treasure_trove_drops = yes
+				}
+			}
+			set_$TREASURE_TROVE_SCOPE_TYPE$_flag = treasure_trove_exotic_gases
+		}
+		60 = {
+			modifier = {
+				add = 40
+				$COUNTRY_SCOPE$ = {
+					should_use_increased_treasure_trove_drops = yes
+				}
+			}
+			set_$TREASURE_TROVE_SCOPE_TYPE$_flag = treasure_trove_volatile_motes
+		}
+		60 = {
+			modifier = {
+				add = 40
+				$COUNTRY_SCOPE$ = {
+					should_use_increased_treasure_trove_drops = yes
+				}
+			}
+			set_$TREASURE_TROVE_SCOPE_TYPE$_flag = treasure_trove_rare_crystals
+		}
+		250 = {
+			modifier = {
+				factor = 0
+				$COUNTRY_SCOPE$ = {
+					should_use_increased_treasure_trove_drops = yes
+				}
+			}
+			set_$TREASURE_TROVE_SCOPE_TYPE$_flag = treasure_trove_specimen
+		}
+		5 = {
+			modifier = {
+				add = 20
+				$COUNTRY_SCOPE$ = {
+					should_use_increased_treasure_trove_drops = yes
+				}
+			}
+			set_$TREASURE_TROVE_SCOPE_TYPE$_flag = treasure_trove_pirate_ship
+			create_fleet = {
+				name = "NAME_Ancestral_Glory"
+				effect = {
+					set_owner = prev.$COUNTRY_SCOPE$
+					create_ship = {
+						design = NAME_Ancestral_Glory
+						upgradable = no
+						effect = {
+							set_treasure_trove_pirate_ship_reward_name = yes
+							set_disabled = yes
+							save_event_target_as = treasure_trove_pirate_ship
+						}
+					}
+					set_location = prev
+				}
+			}
+		}
+		15 = {
+			modifier = {
+				add = 60
+				$COUNTRY_SCOPE$ = {
+					should_use_increased_treasure_trove_drops = yes
+				}
+			}
+			set_$TREASURE_TROVE_SCOPE_TYPE$_flag = treasure_trove_technology
+		}
+	}
+
+	# For Treasure Hunters origin, specimen is given in addition to another reward
+	if = {
+		limit = {
+			$COUNTRY_SCOPE$ = {
+				OR = {
+					has_origin = origin_treasure_hunters
+					has_civic = civic_military_dictatorship_corporate
+				}
+				has_all_treasure_troves_specimens = no
+			}
+		}
+		set_$TREASURE_TROVE_SCOPE_TYPE$_flag = treasure_trove_specimen_extra
+	}
+
+	if = {
+		limit = {
+			OR = {
+				has_$TREASURE_TROVE_SCOPE_TYPE$_flag = treasure_trove_specimen
+				has_$TREASURE_TROVE_SCOPE_TYPE$_flag = treasure_trove_specimen_extra
+			}
+		}
+		draw_random_treasure_trove_specimen = {
+			TREASURE_TROVE_SCOPE_TYPE = $TREASURE_TROVE_SCOPE_TYPE$
+			COUNTRY_SCOPE = $COUNTRY_SCOPE$
+		}
+	}
+}

@@ -1,0 +1,229 @@
+########################
+# Grand Archive Events #
+########################
+
+namespace = grand_archive
+
+
+country_event = {
+	id = grand_archive.5015
+	title = grand_archive.5015.name
+	desc = grand_archive.5015.desc
+	picture = GFX_evt_treasure_trove
+
+	is_triggered_only = yes
+
+	immediate = {
+		ordered_owned_planet = {
+			limit = {
+				is_planet_eligible_for_treasure_planet = yes
+				NOT = { has_deposit = d_treasure_planet }
+			}
+			position = 0
+			order_by = trigger:distance_to_capital
+			inverse = yes
+			save_event_target_as = treasure_planet_candidate_1
+		}
+		ordered_owned_planet = {
+			limit = {
+				is_planet_eligible_for_treasure_planet = yes
+				NOT = { has_deposit = d_treasure_planet }
+				NOT = { is_same_value = event_target:treasure_planet_candidate_1 }
+			}
+			position = 0
+			order_by = trigger:distance_to_capital
+			inverse = yes
+			save_event_target_as = treasure_planet_candidate_2
+		}
+		ordered_owned_planet = {
+			limit = {
+				is_planet_eligible_for_treasure_planet = yes
+				NOT = { has_deposit = d_treasure_planet }
+				NOR = {
+					is_same_value = event_target:treasure_planet_candidate_1
+					is_same_value = event_target:treasure_planet_candidate_2
+				}
+			}
+			position = 0
+			order_by = trigger:distance_to_capital
+			inverse = yes
+			save_event_target_as = treasure_planet_candidate_3
+		}
+	}
+
+	option = {
+		trigger = { exists = event_target:treasure_planet_candidate_1 }
+		name = grand_archive.5015.a
+		event_target:treasure_planet_candidate_1 = {
+			add_deposit = d_treasure_planet
+			save_event_target_as = selected_treasure_planet
+		}
+	}
+
+	option = {
+		trigger = { exists = event_target:treasure_planet_candidate_2 }
+		name = grand_archive.5015.b
+		event_target:treasure_planet_candidate_2 = {
+			add_deposit = d_treasure_planet
+			save_event_target_as = selected_treasure_planet
+		}
+	}
+
+	option = {
+		trigger = { exists = event_target:treasure_planet_candidate_3 }
+		name = grand_archive.5015.c
+		event_target:treasure_planet_candidate_3 = {
+			add_deposit = d_treasure_planet
+			save_event_target_as = selected_treasure_planet
+		}
+	}
+
+	after = {
+		hidden_effect = {
+			if = {
+				limit = {
+					OR = {
+						has_origin = origin_treasure_hunters
+						has_civic = civic_military_dictatorship_corporate	# Modded
+					}
+					NOT = { has_country_flag = treasure_hunters_council_position_acquired }
+				}
+				set_country_flag = called_8290_from_celestial_chart
+				country_event = {
+					id = grand_archive.8290
+					days = 5
+					scopes = { from = event_target:selected_treasure_planet }
+				}
+			}
+		}
+	}
+}
+
+##########################
+# Treasure Troves Events #
+##########################
+
+country_event = {
+	id = grand_archive.6000
+	hide_window = yes
+
+	is_triggered_only = yes
+
+	trigger = {
+		OR = {
+			has_origin = origin_treasure_hunters
+			has_civic = civic_military_dictatorship_corporate	# Modded
+		}
+		has_relic = r_celestial_chart_4
+	}
+
+	immediate = {
+		country_event = { id = grand_archive.6010 days = 0 random = 360 }
+	}
+}
+
+country_event = {
+	id = grand_archive.6005
+	hide_window = yes
+
+	is_triggered_only = yes
+
+	trigger = {
+		mid_game_years_passed > 0
+		NOR = {
+			has_origin = origin_treasure_hunters
+			has_civic = civic_military_dictatorship_corporate	# Modded
+		}
+	}
+
+	immediate = {
+		set_variable_to_random_value = {
+			which = local_roll
+			min = 0
+			max = 100
+		}
+		if = {
+			limit = {
+				check_variable_arithmetic = {
+					which = trigger:acquired_specimen_count
+					add = 3
+					value > local_roll
+				}
+			}
+			country_event = { id = grand_archive.6010 days = 0 random = 360 }
+		}
+	}
+}
+
+# Treasure Trove acquired
+ship_event = {
+	id = grand_archive.6015
+	title = "grand_archive.6015.name"
+	desc = {
+		trigger = {
+			hidden:fromfrom = {
+				switch = {
+					trigger = has_planet_flag
+					treasure_trove_specimen = { text = grand_archive.6015.desc.specimen }
+					treasure_trove_pirate_ship = { text = grand_archive.6015.desc.pirate_ship }
+					treasure_trove_technology = { text = grand_archive.6015.desc.tech }
+					default = { text = grand_archive.6015.desc }
+				}
+				text = newline
+				success_text = {
+					text = grand_archive.6015.desc.specimen_extra
+					has_planet_flag = treasure_trove_specimen_extra
+				}
+			}
+		}
+	}
+	picture = GFX_evt_treasure_trove
+	show_sound = ga_event_treasure
+	is_triggered_only = yes
+
+	location = fromfrom
+
+	immediate = {
+		fromfrom = {
+			setup_treasure_trove_reward = {
+				TREASURE_TROVE_SCOPE_TYPE = planet
+				COUNTRY_SCOPE = root.controller
+			}
+		}
+	}
+
+	option = {
+		name = grand_archive.6015.a
+	}
+
+	after = {
+		fromfrom = {
+			give_treasure_trove_reward = {
+				TREASURE_TROVE_SCOPE_TYPE = planet
+				COUNTRY_SCOPE = root.controller
+			}
+		}
+		controller = {
+			end_event_chain = "treasure_troves_chain"
+		}
+		hidden_effect = {
+			controller = {
+				if = {
+					limit = {
+						OR = {
+							has_origin = origin_treasure_hunters
+							has_civic = civic_military_dictatorship_corporate	# Modded
+						}
+						NOT = { has_country_flag = treasure_hunters_council_position_acquired }
+					}
+					set_country_flag = called_8290_from_treasure_trove
+					country_event = {
+						id = grand_archive.8290
+						days = 5
+						scopes = { from = root.fromfrom }
+					}
+				}
+			}
+		}
+	}
+}

@@ -8,6 +8,353 @@
 
 namespace = pirate
 
+
+# Birth of Space Piracy
+country_event = {
+	id = pirate.1
+	title = "pirate.1.name"
+	picture = GFX_evt_pirate_armada
+	show_sound = event_space_battle
+	location = event_target:pirate_system
+
+	desc = {
+		trigger = {
+			if = {
+				limit = { has_origin = origin_storm_chasers }
+				text = pirate.1.desc.storm
+			}
+			else_if = { # Spiritual
+				limit = { has_spiritualist_government = yes }
+				text = pirate.1.desc_01
+			}
+			else_if = { # Militarist
+				limit = {
+					OR = {
+						has_militarist_government = yes
+						has_government = gov_bandit_commune
+					}
+				}
+				text = pirate.1.desc_02
+			}
+			else_if = { # Materialist
+				limit = { has_materialist_government = yes }
+				text = pirate.1.desc_03
+			}
+			else_if = { # Pacifist
+				limit = { has_pacifist_government = yes }
+				text = pirate.1.desc_04
+			}
+			else_if = { # Generic Autocracy
+				limit = {
+					OR = {
+						has_government = gov_despotic_empire
+						has_government = gov_feudal_empire
+						has_government = gov_constitutional_dictatorship
+						has_government = gov_enlightened_monarchy
+						has_government = gov_elective_monarchy
+						has_government = gov_bandit_kingdom
+					}
+				}
+				text = pirate.1.desc_05
+			}
+			else_if = { # Generic Oligarchy
+				limit = {
+					OR = {
+						has_government = gov_megacorporation
+						has_government = gov_plutocratic_oligarchy
+					}
+				}
+				text = pirate.1.desc_06
+			}
+			else_if = { # Generic Democracy
+				limit = {
+					OR = {
+						has_government = gov_representative_democracy
+						has_government = gov_communal_parity
+					}
+				}
+				text = pirate.1.desc_07
+			}
+			else = { # default description
+				text = pirate.1.desc_01
+			}
+			# Treasure Hunters additional lore
+			if = {
+				limit = {
+					OR = {
+						has_origin = origin_treasure_hunters
+						has_civic = civic_military_dictatorship_corporate	# Modded
+					}
+					has_country_flag = met_captain_hoo
+				}
+				text = newline
+				text = pirate.1.desc.black_needle
+			}
+		}
+	}
+
+	trigger = {
+		is_country_type = default
+		years_passed > 10
+		NOR = {
+			has_country_flag = birth_of_piracy
+			has_ethic = ethic_gestalt_consciousness
+		}
+		exists = capital_scope
+		has_monthly_income = {
+			resource = trade
+			value > 300
+		}
+		any_system_within_border = {
+			is_on_border = yes
+			any_neighbor_system = {
+				has_owner = no
+				NOT = { has_star_flag = guardian }
+			}
+		}
+	}
+
+	is_triggered_only = yes
+
+	immediate = {
+		set_timed_country_flag = { flag = pirates_spawned days = 3600 }
+		set_country_flag = birth_of_piracy
+		set_country_flag = pirate_encountered
+		capital_scope = {
+			save_event_target_as = capital
+			solar_system = { save_event_target_as = capital_system }
+		}
+		save_event_target_as = pirate_target
+		owner_species = { save_event_target_as = owner_species }
+		random_system_within_border = {
+			limit = {
+				is_on_border = yes
+			}
+			random_neighbor_system = {
+				limit = {
+					has_owner = no
+					NOT = { has_star_flag = guardian }
+				}
+				save_event_target_as = pirate_system
+				create_normal_pirate_country = yes
+				create_pirate_fleet = yes
+			}
+		}
+	}
+
+	option = {
+		name = pirate.2.a
+		trigger = {
+			has_spiritualist_government = yes
+			NOR = {
+				has_origin = origin_storm_chasers
+				AND = {
+					OR = {
+						has_origin = origin_treasure_hunters
+						has_civic = civic_military_dictatorship_corporate	# Modded
+					}
+					has_valid_civic = civic_crusader_spirit_corporate
+				}
+			}
+		}
+
+	}
+	option = {
+		name = pirate.2.b
+		trigger = {
+			OR = {
+				has_militarist_government = yes
+				has_government = gov_bandit_commune
+				has_government = gov_successor_khanate
+				has_government = gov_diadochi
+			}
+			NOR = {
+				has_origin = origin_storm_chasers
+				AND = {
+					OR = {
+						has_origin = origin_treasure_hunters
+						has_civic = civic_military_dictatorship_corporate	# Modded
+					}
+					has_valid_civic = civic_crusader_spirit_corporate
+				}
+			}
+		}
+	}
+	option = {
+		name = pirate.2.c
+		trigger = {
+			has_materialist_government = yes
+			NOR = {
+				has_origin = origin_storm_chasers
+				AND = {
+					OR = {
+						has_origin = origin_treasure_hunters
+						has_civic = civic_military_dictatorship_corporate	# Modded
+					}
+					has_valid_civic = civic_crusader_spirit_corporate
+				}
+			}
+		}
+	}
+	option = {
+		name = pirate.2.d
+		trigger = {
+			has_pacifist_government = yes
+			NOR = {
+				has_origin = origin_storm_chasers
+				AND = {
+					OR = {
+						has_origin = origin_treasure_hunters
+						has_civic = civic_military_dictatorship_corporate	# Modded
+					}
+					has_valid_civic = civic_crusader_spirit_corporate
+				}
+			}
+		}
+	}
+	option = {
+		name = pirate.2.e
+		trigger = {
+			OR = {
+				has_government = gov_despotic_empire
+				has_government = gov_feudal_empire
+				has_government = gov_constitutional_dictatorship
+				has_government = gov_enlightened_monarchy
+				has_government = gov_elective_monarchy
+				has_government = gov_bandit_kingdom
+				has_purifier_government = yes
+			}
+			NOR = {
+				has_origin = origin_storm_chasers
+				AND = {
+					OR = {
+						has_origin = origin_treasure_hunters
+						has_civic = civic_military_dictatorship_corporate	# Modded
+					}
+					has_valid_civic = civic_crusader_spirit_corporate
+				}
+			}
+		}
+	}
+	option = {
+		name = pirate.2.f
+		trigger = {
+			OR = {
+				has_government = gov_megacorporation
+				has_government = gov_plutocratic_oligarchy
+				has_government = gov_trade_league
+				has_government = gov_worker_coop
+			}
+			NOR = {
+				has_origin = origin_storm_chasers
+				AND = {
+					OR = {
+						has_origin = origin_treasure_hunters
+						has_civic = civic_military_dictatorship_corporate	# Modded
+					}
+					has_valid_civic = civic_crusader_spirit_corporate
+				}
+			}
+		}
+	}
+	option = {
+		name = pirate.2.g
+		trigger = {
+			OR = {
+				has_government = gov_representative_democracy
+				has_government = gov_communal_parity
+			}
+			NOR = {
+				has_origin = origin_storm_chasers
+				AND = {
+					OR = {
+						has_origin = origin_treasure_hunters
+						has_civic = civic_military_dictatorship_corporate	# Modded
+					}
+					has_valid_civic = civic_crusader_spirit_corporate
+				}
+			}
+		}
+	}
+	option = {
+		name = pirate.2.h
+		trigger = {
+			OR = {
+				has_government = gov_criminal_syndicate
+				has_government = gov_pirate_haven
+				has_government = gov_subversive_cult
+			}
+			NOR = {
+				has_origin = origin_storm_chasers
+				AND = {
+					OR = {
+						has_origin = origin_treasure_hunters
+						has_civic = civic_military_dictatorship_corporate	# Modded
+					}
+					has_valid_civic = civic_crusader_spirit_corporate
+				}
+			}
+		}
+	}
+	option = {
+		name = pirate.2.i #none of the above
+		trigger = {
+			NOR = {
+				has_spiritualist_government = yes
+				has_militarist_government = yes
+				has_government = gov_bandit_commune
+				has_materialist_government = yes
+				has_pacifist_government = yes
+				has_government = gov_despotic_empire
+				has_government = gov_feudal_empire
+				has_government = gov_constitutional_dictatorship
+				has_government = gov_enlightened_monarchy
+				has_government = gov_elective_monarchy
+				has_government = gov_bandit_kingdom
+				has_purifier_government = yes
+				has_government = gov_megacorporation
+				has_government = gov_worker_coop
+				has_government = gov_plutocratic_oligarchy
+				has_government = gov_trade_league
+				has_government = gov_representative_democracy
+				has_government = gov_communal_parity
+				has_government = gov_criminal_syndicate
+				has_government = gov_pirate_haven
+				has_government = gov_subversive_cult
+				has_government = gov_successor_khanate
+				has_government = gov_diadochi
+				has_origin = origin_storm_chasers
+				AND = {
+					OR = {
+						has_origin = origin_treasure_hunters
+						has_civic = civic_military_dictatorship_corporate	# Modded
+					}
+					has_valid_civic = civic_crusader_spirit_corporate
+				}
+			}
+		}
+		log_error = "[Root.GetGovernmentName] is missing an option in pirate.1, using fallback option instead"
+	}
+
+	option = {
+		name = pirate.2.j.storm
+		trigger = { has_origin = origin_storm_chasers }
+	}
+
+	option = {
+		name = pirate.2.k
+		trigger = {
+			hidden_trigger = { 
+				OR = {
+					has_origin = origin_treasure_hunters
+					has_civic = civic_military_dictatorship_corporate	# Modded
+				}
+			}
+			has_valid_civic = civic_crusader_spirit_corporate
+		}
+	}
+}
+
 event = {
 	id = pirate.4			
 	hide_window = yes
@@ -27,6 +374,322 @@ event = {
 				}
 			}
 			country_event = { id = pirate.5 }
+		}
+	}
+}
+
+#yearly pulse event
+country_event = {
+	id = pirate.5
+	hide_window = yes
+	is_triggered_only = yes
+
+	immediate = {
+		if = {
+			limit = { NOT = { has_ethic = ethic_gestalt_consciousness } }
+			if = {
+				limit = {
+					OR = {
+						has_origin = origin_treasure_hunters
+						has_civic = civic_military_dictatorship_corporate	# Modded
+					}
+					has_country_flag = met_captain_hoo
+				}
+				country_event = { id = pirate.2 days = 1 random = 30 }
+			}
+			else = {
+				country_event = { id = pirate.1 days = 1 random = 30 }
+			}
+			break = yes
+		}
+		if = {
+			limit = {
+				is_hive_empire = yes
+				is_wilderness_empire = no
+			}
+			if = {
+				limit = {
+					OR = {
+						has_origin = origin_treasure_hunters
+						has_civic = civic_military_dictatorship_corporate	# Modded
+					}
+					has_country_flag = met_captain_hoo
+				}
+				country_event = { id = pirate.8 days = 1 random = 30 }
+			}
+			else = {
+				country_event = { id = pirate.6 days = 1 random = 30 }
+			}
+			break = yes
+		}
+		if = {
+			limit = { is_machine_empire = yes }
+			if = {
+				limit = {
+					OR = {
+						has_origin = origin_treasure_hunters
+						has_civic = civic_military_dictatorship_corporate	# Modded
+					}
+					has_country_flag = met_captain_hoo
+				}
+				country_event = { id = pirate.9 days = 1 random = 30 }
+			}
+			else = {
+				country_event = { id = pirate.7 days = 1 random = 30 }
+			}
+		}
+	}
+}
+
+
+# Destroyed Pirate Station
+country_event = {
+	id = pirate.25
+	title = pirate.25.name
+	picture = GFX_evt_large_explosion
+	desc = {
+		trigger = {
+			text = pirate.25.desc
+			if = {
+				limit = {
+					OR = {
+						has_origin = origin_treasure_hunters
+						has_civic = civic_military_dictatorship_corporate	# Modded
+					}
+					has_country_flag = has_defeated_black_needle
+				}
+				text = newline
+				text = pirate.25.desc.black_needle
+			}
+		}
+	}
+	show_sound = event_space_battle
+
+	is_triggered_only = yes
+
+	immediate = {
+		random_list = {
+			5 = {
+				set_country_flag = massive_loot
+				modifier = {
+					factor = 1.5
+					years_passed > 80
+				}
+				modifier = {
+					factor = 1.5
+					years_passed > 100
+				}
+				modifier = {
+					factor = 1.5
+					years_passed > 120
+				}
+				modifier = {
+					factor = 1.5
+					years_passed > 140
+				}
+				modifier = {
+					factor = 1.5
+					years_passed > 160
+				}
+				modifier = {
+					factor = 1.5
+					years_passed > 180
+				}
+				modifier = {
+					factor = 1.5
+					years_passed > 200
+				}
+			}
+			15 = {
+				set_country_flag = big_loot
+				modifier = {
+					factor = 1.2
+					years_passed > 80
+				}
+				modifier = {
+					factor = 1.2
+					years_passed > 100
+				}
+				modifier = {
+					factor = 1.2
+					years_passed > 120
+				}
+				modifier = {
+					factor = 1.2
+					years_passed > 140
+				}
+				modifier = {
+					factor = 1.2
+					years_passed > 160
+				}
+				modifier = {
+					factor = 1.2
+					years_passed > 180
+				}
+				modifier = {
+					factor = 1.2
+					years_passed > 200
+				}
+			}
+			35 = {
+				set_country_flag = medium_loot
+			}
+			50 = {
+				set_country_flag = small_loot
+				modifier = {
+					factor = 0.8
+					years_passed > 80
+				}
+				modifier = {
+					factor = 0.8
+					years_passed > 100
+				}
+				modifier = {
+					factor = 0.8
+					years_passed > 120
+				}
+				modifier = {
+					factor = 0.8
+					years_passed > 140
+				}
+				modifier = {
+					factor = 0.8
+					years_passed > 160
+				}
+				modifier = {
+					factor = 0.8
+					years_passed > 180
+				}
+				modifier = {
+					factor = 0.8
+					years_passed > 200
+				}
+			}
+		}
+	}
+
+	option = {
+		name = EXCELLENT
+		trigger = { has_country_flag = massive_loot }
+		if = {
+			limit = {
+				years_passed > 100
+			}
+			add_resource = {
+				minerals = 1200
+				energy = 600
+			}
+		}
+		else = {
+			add_resource = {
+				minerals = 600
+				energy = 300
+			}
+		}
+		hidden_effect = { remove_country_flag = massive_loot }
+	}
+	option = {
+		name = EXCELLENT
+		trigger = { has_country_flag = big_loot }
+		if = {
+			limit = {
+				years_passed > 100
+			}
+			add_resource = {
+				minerals = 600
+				energy = 300
+			}
+		}
+		else = {
+			add_resource = {
+				minerals = 300
+				energy = 150
+			}
+		}
+		hidden_effect = { remove_country_flag = big_loot }
+	}
+	option = {
+		name = EXCELLENT
+		trigger = { has_country_flag = medium_loot }
+		if = {
+			limit = {
+				years_passed > 100
+			}
+			add_resource = {
+				minerals = 360
+				energy = 200
+			}
+		}
+		else = {
+			add_resource = {
+				minerals = 180
+				energy = 100
+			}
+		}
+		hidden_effect = { remove_country_flag = medium_loot }
+	}
+	option = {
+		name = EXCELLENT
+		trigger = { has_country_flag = small_loot }
+		if = {
+			limit = {
+				years_passed > 100
+			}
+			add_resource = {
+				minerals = 160
+				energy = 100
+			}
+		}
+		else = {
+			add_resource = {
+				minerals = 80
+				energy = 50
+			}
+		}
+		hidden_effect = { remove_country_flag = small_loot }
+	}
+	option = {
+		name = EXCELLENT
+		trigger = {
+			NOR = {
+				has_country_flag = massive_loot
+				has_country_flag = big_loot
+				has_country_flag = medium_loot
+				has_country_flag = small_loot
+			}
+		}
+		if = {
+			limit = {
+				years_passed > 100
+			}
+			add_resource = {
+				minerals = 400
+				energy = 400
+			}
+		}
+		else = {
+			add_resource = {
+				minerals = 200
+				energy = 200
+			}
+		}
+	}
+
+	after = {
+		if = {
+			limit = {
+				OR = {
+					has_origin = origin_treasure_hunters
+					has_civic = civic_military_dictatorship_corporate	# Modded
+				}
+				has_country_flag = has_defeated_black_needle
+			}
+			add_monthly_resource_mult = {
+				resource = energy
+				value = @tier1materialreward
+				min = @tier1materialmin
+				max = @tier1materialmax
+			}
 		}
 	}
 }

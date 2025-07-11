@@ -5,6 +5,48 @@ namespace = action
 namespace = leader
 namespace = paragon_2
 
+# Remove Imperial Heir trait on changing away from Imperial authority.
+country_event = {
+	id = action.502
+	hide_window = yes
+
+	is_triggered_only = yes
+
+	trigger = {
+		any_owned_leader = {
+			has_trait = trait_imperial_heir
+		}
+		NOT = {
+			is_imperial_authority = yes
+		}
+	}
+
+	immediate = {
+		every_owned_leader = {
+			limit = {
+				has_trait = trait_imperial_heir
+			}
+			remove_trait = trait_imperial_heir
+
+			# Treasure Hunters origin - Adds the Adventurous Spirit trait
+			if = {
+				limit = {
+					root = { 
+						OR = {
+							has_origin = origin_treasure_hunters
+							has_civic = civic_military_dictatorship_corporate	# Modded
+						}
+					}
+				}
+				add_trait = {
+					trait = leader_trait_adventurous_spirit_3
+					show_message = no
+				}
+			}
+		}
+	}
+}
+
 
 ############################
 #
@@ -382,6 +424,31 @@ country_event = {
 				}
 			}
 		}
+		# Pirate Leadership - Random Pirate Trait
+		if = {
+			limit = {
+				has_technology = tech_pirate_leaders
+			}
+			from = {
+				random_list = { 
+					34 = { 
+						give_trait_no_notify_ignore_autocracy_restriction = {
+							TRAIT = leader_trait_buccaneer
+						} 
+					} 
+					33 = { 
+						give_trait_no_notify_ignore_autocracy_restriction = {
+							TRAIT = leader_trait_trailblazer
+						}
+					} 
+					33 = { 
+						give_trait_no_notify_ignore_autocracy_restriction = {
+							TRAIT = leader_trait_treasure_hoarder
+						}
+					}
+				}
+			}
+		}
 
 		# Tactical Algorithms
 		# Adds the Tactical Algorithms trait
@@ -433,7 +500,10 @@ country_event = {
 		# Adds the Adventurous Spirit trait
 		if = {
 			limit = {
-				has_origin = origin_treasure_hunters
+				OR = {
+					has_origin = origin_treasure_hunters
+					has_civic = civic_military_dictatorship_corporate	# Modded
+				}
 			}
 			from = {
 				give_trait_no_notify_ignore_autocracy_restriction = {
@@ -685,6 +755,31 @@ country_event = {
 				}
 			}
 		}
+		# Pirate Leadership - Random Pirate Trait
+		if = {
+			limit = {
+				has_technology = tech_pirate_leaders
+			}
+			every_owned_leader = {
+				random_list = { 
+					34 = { 
+						give_trait_no_notify_ignore_autocracy_restriction = {
+							TRAIT = leader_trait_buccaneer
+						} 
+					} 
+					33 = { 
+						give_trait_no_notify_ignore_autocracy_restriction = {
+							TRAIT = leader_trait_trailblazer
+						}
+					} 
+					33 = { 
+						give_trait_no_notify_ignore_autocracy_restriction = {
+							TRAIT = leader_trait_treasure_hoarder
+						}
+					}
+				}
+			}
+		}
 
 		# Tactical Algorithms
 		# Adds the Tactical Algorithms trait
@@ -738,7 +833,10 @@ country_event = {
 		# Adds the Adventurous Spirit trait
 		if = {
 			limit = {
-				has_origin = origin_treasure_hunters
+				OR = {
+					has_origin = origin_treasure_hunters
+					has_civic = civic_military_dictatorship_corporate	# Modded
+				}
 			}
 			every_owned_leader = {
 				give_trait_no_notify_ignore_autocracy_restriction = {
@@ -784,6 +882,7 @@ leader_event = {
 					OR = {
 						# Commander
 						has_valid_civic = civic_crusader_spirit_corporate
+						has_technology = tech_pirate_leaders
 						has_tradition = tr_supremacy_war_games
 						has_valid_civic = civic_distinguished_admiralty
 						has_valid_civic = civic_crusader_spirit
@@ -959,6 +1058,31 @@ leader_event = {
 				TRAIT = leader_trait_corsair
 			}
 		}
+		# Pirate Leadership - Random Pirate Trait
+		if = {
+			limit = {
+				owner = {
+					has_technology = tech_pirate_leaders
+				}
+			}
+			random_list = { 
+				34 = { 
+					give_trait_no_notify_ignore_autocracy_restriction = {
+						TRAIT = leader_trait_buccaneer
+					} 
+				} 
+				33 = { 
+					give_trait_no_notify_ignore_autocracy_restriction = {
+						TRAIT = leader_trait_trailblazer
+					}
+				} 
+				33 = { 
+					give_trait_no_notify_ignore_autocracy_restriction = {
+						TRAIT = leader_trait_treasure_hoarder
+					}
+				}
+			}
+		}
 
 		# Storm Chasers
 		# Adds the Storm Rider trait
@@ -995,7 +1119,10 @@ leader_event = {
 		if = {
 			limit = {
 				owner = {
-					has_origin = origin_treasure_hunters
+					OR = {
+						has_origin = origin_treasure_hunters
+						has_civic = civic_military_dictatorship_corporate	# Modded
+					}
 				}
 			}
 			give_trait_no_notify_ignore_autocracy_restriction = {
