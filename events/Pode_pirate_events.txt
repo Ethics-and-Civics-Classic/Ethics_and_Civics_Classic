@@ -101,15 +101,28 @@ country_event = {
 			has_ethic = ethic_gestalt_consciousness
 		}
 		exists = capital_scope
-		has_monthly_income = {
-			resource = trade
-			value > 300
+		if = {
+			limit = { has_technology = tech_pirate_leaders }
+			has_monthly_income = {
+				resource = trade
+				value > 100			# This is why the tech is dangerous
+			}
+			any_system_within_border = {
+				NOT = { is_same_value = capital_star }
+			}
 		}
-		any_system_within_border = {
-			is_on_border = yes
-			any_neighbor_system = {
-				has_owner = no
-				NOT = { has_star_flag = guardian }
+		else = {
+			has_monthly_income = {
+				resource = trade
+				value > 300
+			}
+			any_system_within_border = {
+				NOT = { is_same_value = capital_star }
+				is_on_border = yes
+				any_neighbor_system = {
+					has_owner = no
+					NOT = { has_star_flag = guardian }
+				}
 			}
 		}
 	}
@@ -126,18 +139,31 @@ country_event = {
 		}
 		save_event_target_as = pirate_target
 		owner_species = { save_event_target_as = owner_species }
-		random_system_within_border = {
-			limit = {
-				is_on_border = yes
-			}
-			random_neighbor_system = {
-				limit = {
-					has_owner = no
-					NOT = { has_star_flag = guardian }
+		if = {
+			limit = { has_technology = tech_pirate_leaders } 	# This is why the tech is dangerous
+			random_system_within_border = {
+				limit = {	
+					NOT = { is_same_value = capital_system }
 				}
 				save_event_target_as = pirate_system
 				create_normal_pirate_country = yes
 				create_pirate_fleet = yes
+			}
+		}
+		else = {
+			random_system_within_border = {
+				limit = {
+					is_on_border = yes 
+				}
+				random_neighbor_system = {
+					limit = {
+						has_owner = no
+						NOT = { has_star_flag = guardian }
+					}
+					save_event_target_as = pirate_system
+					create_normal_pirate_country = yes
+					create_pirate_fleet = yes
+				}
 			}
 		}
 	}
