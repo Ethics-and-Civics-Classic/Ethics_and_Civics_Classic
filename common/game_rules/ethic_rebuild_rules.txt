@@ -3,6 +3,21 @@
 # If rules here evaluate to true, there might still be other rules that make the action unavailable.
 # If a rule here evaluates to false the action will become unavailable
 
+# This = country
+#can_build_branch_offices = {
+#	has_megacorp = yes
+#	OR = {
+#		custom_tooltip = {
+#			fail_text = BRANCH_OFFICE_NOT_MEGACORP
+#			OR = {
+#				is_megacorp = yes
+#				has_civic = civic_galactic_sovereign_megacorp
+#			}
+#		}
+#		has_technology = tech_resort_colonies
+#	}
+#}
+
 # This = planet
 # Root = country
 can_build_branch_office_on_planet = {
@@ -72,64 +87,67 @@ can_build_branch_office_on_planet = {
 	custom_tooltip = {
 		fail_text = BRANCH_OFFICE_NOT_COMMERCIAL_PACT
 		exists = owner
-		OR = {
-			root = { is_criminal_syndicate = yes }
-			root = { has_civic = civic_ruthless_competition }
-			AND = {
-				root = { is_worker_coop_empire = yes }
-				#this = { any_owned_pop_group = { is_enslaved = yes } }
-				OWNER = { 
-					OR = {
-						has_policy_flag = slavery_allowed 
-						any_owned_pop_group = {
-							has_living_standard = { type = living_standard_stratified }
+		if = {
+			limit = { owner = { NOT = { is_same_value = root } } }
+			OR = {
+				root = { is_criminal_syndicate = yes }
+				root = { has_civic = civic_ruthless_competition }
+				AND = {
+					root = { is_worker_coop_empire = yes }
+					#this = { any_owned_pop_group = { is_enslaved = yes } }
+					OWNER = { 
+						OR = {
+							has_policy_flag = slavery_allowed 
+							any_owned_pop_group = {
+								has_living_standard = { type = living_standard_stratified }
+							}
 						}
 					}
 				}
-			}
-			owner = { has_commercial_pact = root }
-			owner = { is_in_federation_with = root }
-			AND = {
-				has_observation_outpost = yes
-				observation_outpost = {
-					has_modifier = preftl_action_trade_pact
+				owner = { has_commercial_pact = root }
+				owner = { is_in_federation_with = root }
+				AND = {
+					has_observation_outpost = yes
+					observation_outpost = {
+						has_modifier = preftl_action_trade_pact
+					}
 				}
-			}
 
-			# Allow branch offices in subsidiaries and vice versa (and fellow subjects)
-			root = {
-				is_subject = yes
-				OR = {
-					is_megacorp = yes
-					has_civic = civic_galactic_sovereign_megacorp
-				}
-				overlord = {
-					OR = {
-						is_same_empire = prevprev.owner
-						is_same_empire = prevprev.owner.overlord
-					}
-				}
-			}
-			owner = {
-				is_subject = yes
-				overlord = {
-					OR = {
-						is_same_value = root
-						is_same_value = root.overlord
-					}
+				# Allow branch offices in subsidiaries and vice versa (and fellow subjects)
+				root = {
+					is_subject = yes
 					OR = {
 						is_megacorp = yes
 						has_civic = civic_galactic_sovereign_megacorp
 					}
+					overlord = {
+						OR = {
+							is_same_empire = prevprev.owner
+							is_same_empire = prevprev.owner.overlord
+						}
+					}
 				}
-			}
-			AND = {
-				root = { has_civic = civic_galactic_sovereign_megacorp }
-				owner = { is_galactic_community_member = yes }
-			}
-			AND = {
-				root = { has_modifier = imperial_charter }
-				owner = { is_galactic_community_member = yes }
+				owner = {
+					is_subject = yes
+					overlord = {
+						OR = {
+							is_same_value = root
+							is_same_value = root.overlord
+						}
+						OR = {
+							is_megacorp = yes
+							has_civic = civic_galactic_sovereign_megacorp
+						}
+					}
+				}
+				AND = {
+					root = { has_civic = civic_galactic_sovereign_megacorp }
+					owner = { is_galactic_community_member = yes }
+				}
+				AND = {
+					root = { has_modifier = imperial_charter }
+					owner = { is_galactic_community_member = yes }
+				}
 			}
 		}
 	}
@@ -214,12 +232,16 @@ can_build_branch_office_on_planet = {
 		fail_text = NO_BRANCH_OFFICE_ON_SYNAPTIC_LATHE
 		NOT = { is_planet_class = pc_cosmogenesis_world }
 	}
-	custom_tooltip = {
-		fail_text = NO_BRANCH_OFFICE_ON_SELF
-		owner = {
-			NOT = { is_same_value = root }
+	#OR = {
+		custom_tooltip = {
+			fail_text = NO_BRANCH_OFFICE_ON_SELF
+			owner = { NOT = { is_same_value = root } }
 		}
-	}
+		#AND = {
+		#	has_modifier = resort_colony_branch
+		#	owner = { is_same_value = root }
+		#}
+	#}
 }
 
 # Root = country
