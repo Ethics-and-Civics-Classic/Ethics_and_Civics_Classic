@@ -30,11 +30,17 @@ bath_attendant = {
 
 	triggered_planet_modifier = {
 		founder_species_growth_mult = 0.015
-		pop_ethic_industrial_attraction_mult = 0.01
 		pop_environment_tolerance = -0.0025
 		pop_happiness = -0.0075
-		pop_ethic_green_attraction_mult = -0.01
 		mult = planet.value:toxic_attendant_growth
+	}
+	triggered_planet_modifier = {
+		potential = { 
+			exists = owner
+			owner = { is_gestalt = no } 
+		}
+		pop_ethic_industrial_attraction_mult = 0.01
+		pop_ethic_green_attraction_mult = -0.01
 	}
 
 
@@ -107,9 +113,9 @@ bath_attendant_individual_machine = {
 
 	triggered_planet_modifier = {
 		planet_pop_assembly_mult = 0.015
-		pop_ethic_industrial_attraction_mult = 0.01
+		#pop_ethic_industrial_attraction_mult = 0.01
 		pop_amenities_usage_mult = 0.01
-		pop_ethic_green_attraction_mult = -0.01
+		#pop_ethic_green_attraction_mult = -0.01
 		mult = planet.value:toxic_attendant_growth
 	}
 
@@ -487,6 +493,7 @@ physicist = {
 		potential = {
 			physicist_is_astrometeorologist_trigger = yes
 			OWNER = { is_green = yes }
+			owner = { is_gestalt = no }
 		}
 		pop_ethic_green_attraction_mult = 0.05
 	}
@@ -500,6 +507,7 @@ physicist = {
 				}
 			}
 			OWNER = { is_green = yes }
+			owner = { is_gestalt = no }
 		}
 		pop_ethic_green_attraction_mult = 0.05
 	}
@@ -508,6 +516,7 @@ physicist = {
 		potential = {
 			physicist_is_astrometeorologist_trigger = yes
 			OWNER = { is_industrial = yes }
+			owner = { is_gestalt = no }
 		}
 		pop_ethic_industrial_attraction_mult = 0.05
 	}
@@ -521,6 +530,7 @@ physicist = {
 				}
 			}
 			OWNER = { is_industrial = yes }
+			owner = { is_gestalt = no }
 		}
 		pop_ethic_industrial_attraction_mult = 0.05
 	}
@@ -1970,6 +1980,7 @@ entertainer = {
 	triggered_planet_modifier = {
 		potential = {
 			entertainer_is_duelist_trigger = yes
+			owner = { is_gestalt = no }
 		}
 		pop_ethic_militarist_attraction_mult = 0.05
 	}
@@ -1977,6 +1988,7 @@ entertainer = {
 		potential = {
 			entertainer_is_storm_dancer_trigger = yes
 			OWNER = { is_green = yes }
+			owner = { is_gestalt = no }
 		}
 		pop_ethic_green_attraction_mult = 0.05
 	}
@@ -1984,6 +1996,7 @@ entertainer = {
 		potential = {
 			entertainer_is_storm_dancer_trigger = yes
 			OWNER = { is_industrial = yes }
+			owner = { is_gestalt = no }
 		}
 		pop_ethic_industrial_attraction_mult = 0.05
 	}
@@ -1991,6 +2004,7 @@ entertainer = {
 		potential = {
 			entertainer_is_storm_dancer_trigger = yes
 			OWNER = { is_spiritualist = yes }
+			owner = { is_gestalt = no }
 		}
 		pop_ethic_spiritualist_attraction_mult = 0.05
 	}
@@ -2543,6 +2557,10 @@ bureaucrat = {
 			unity = 4
 		}
 		upkeep = {
+			trigger = {
+				exists = owner
+				owner = { is_gestalt = no }
+			}
 			consumer_goods = 2
 		}
 		##Government Swaps
@@ -2603,6 +2621,7 @@ bureaucrat = {
 				planet = {
 					bureaucrat_is_low_tech = yes
 				}
+				owner = { is_gestalt = no }
 			}
 			consumer_goods = -1
 		}
@@ -2622,6 +2641,7 @@ bureaucrat = {
 				planet = {
 					bureaucrat_is_low_tech_manager = yes
 				}
+				owner = { is_gestalt = no }
 			}
 			consumer_goods = -1
 		}
@@ -2640,6 +2660,7 @@ bureaucrat = {
 				planet = {
 					bureaucrat_is_low_tech_priest = yes
 				}
+				owner = { is_gestalt = no }
 			}
 			consumer_goods = -1
 		}
@@ -2647,6 +2668,7 @@ bureaucrat = {
 		upkeep = {
 			trigger = {
 				bureaucrat_is_unifier = yes
+				owner = { is_gestalt = no }
 			}
 			consumer_goods = -1
 		}
@@ -2677,6 +2699,7 @@ bureaucrat = {
 				owner = {
 					has_valid_civic = civic_byzantine_bureaucracy
 				}
+				owner = { is_gestalt = no }
 			}
 			consumer_goods = -1
 		}
@@ -2814,18 +2837,22 @@ bureaucrat = {
 
 	triggered_planet_modifier = {			# Enriad - moved from EaC Priest
 		potential = {
+			exists = owner
 			OR = {
 				bureaucrat_is_priest = yes
 				bureaucrat_is_death_priest = yes
 			}
+			owner = { is_gestalt = no }
 		}
 		pop_ethic_spiritualist_attraction_mult = 0.05
 	}
 	triggered_planet_modifier = {
 		potential = {
+			exists = owner
 			OR = {
 				bureaucrat_is_preacher = yes
 			}
+			owner = { is_gestalt = no }
 		}
 		pop_ethic_spiritualist_attraction_mult = 0.10
 		pop_ethic_capitalism_attraction_mult = 0.10
@@ -2989,7 +3016,16 @@ chemist = {
 		upkeep = {
 			trigger = {
 				exists = owner												# Modded
-				owner = { has_valid_civic = civic_circular_economy }		# Modded
+				OR = {
+					owner = { has_valid_civic = civic_circular_economy }		# Modded
+					owner = { 
+						has_valid_civic = civic_machine_zero_waste_protocols 	# Modded
+						OR = {
+							has_ethic = ethic_green	
+							has_ethic = ethic_fanatic_green		
+						}
+					}	
+				}
 			}
 			minerals = -1													# Modded
 		}
@@ -3092,7 +3128,16 @@ translucer = {
 		upkeep = {
 			trigger = {
 				exists = owner												# Modded
-				owner = { has_valid_civic = civic_circular_economy }		# Modded
+				OR = {
+					owner = { has_valid_civic = civic_circular_economy }		# Modded
+					owner = { 
+						has_valid_civic = civic_machine_zero_waste_protocols 	# Modded
+						OR = {
+							has_ethic = ethic_green	
+							has_ethic = ethic_fanatic_green		
+						}
+					}	
+				}
 			}
 			minerals = -1													# Modded
 		}
@@ -3201,7 +3246,16 @@ gas_refiner = {
 		upkeep = {
 			trigger = {
 				exists = owner												# Modded
-				owner = { has_valid_civic = civic_circular_economy }		# Modded
+				OR = {
+					owner = { has_valid_civic = civic_circular_economy }		# Modded
+					owner = { 
+						has_valid_civic = civic_machine_zero_waste_protocols 	# Modded
+						OR = {
+							has_ethic = ethic_green	
+							has_ethic = ethic_fanatic_green		
+						}
+					}	
+				}
 			}
 			minerals = -1													# Modded
 		}

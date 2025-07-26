@@ -3178,12 +3178,11 @@ civic_circular_economy = {
 	modifier = {
 		planet_structures_cost_mult = -0.1
 		planet_structures_upkeep_mult = -0.05
-		starbase_shipyard_build_speed_mult = 0.1
+		starbase_shipyard_build_speed_mult = 0.05
 		ships_upkeep_mult = -0.05
 		planet_building_refund_mult = 0.25
 		planet_jobs_trade_produces_mult = -0.1
 		planet_building_build_speed_mult = -0.5
-		starbase_shipyard_build_speed_mult = -0.5
 		planet_clear_blocker_time_mult = 1
 	}
 }
@@ -7066,7 +7065,7 @@ civic_eager_explorers = {
 	playable = {
 		has_first_contact_dlc = yes
 	}
-
+	flags = { PrimPlayer_start_flag }
 	description = "civic_eager_explorers_effects"
 	modification = {
 		add = {
@@ -7170,7 +7169,7 @@ civic_eager_explorers = {
 
 civic_privatized_exploration = {
 	playable = { has_first_contact_dlc = yes }
-
+	flags = { PrimPlayer_start_flag }
 	description = "civic_privatized_exploration_effects"
 
 	potential = {
@@ -7271,7 +7270,7 @@ civic_hive_stargazers = {
 	playable = {
 		has_first_contact_dlc = yes
 	}
-
+	flags = { PrimPlayer_start_flag }
 	ai_playable = {
 		has_first_contact_dlc = yes
 	}
@@ -7327,7 +7326,7 @@ civic_machine_exploration_protocol = {
 	playable = {
 		has_first_contact_dlc = yes
 	}
-
+	flags = { PrimPlayer_start_flag }
 	ai_playable = {
 		has_first_contact_dlc = yes
 	}
@@ -8298,6 +8297,7 @@ civic_corporate_toxic_baths_individual_machine = {
 # Cosmos Storm DLC #
 ####################
 
+#Now the Ecocentrist Version
 civic_astrometeorology = {
 	playable = {
 		has_cosmic_storms_dlc = yes
@@ -8311,20 +8311,13 @@ civic_astrometeorology = {
 				value = ethic_gestalt_consciousness
 			}
 		}
-		authority = {
-			NOT = {
-				value = auth_corporate
-			}
-		}
 	}
 	possible = {
 		ethics = {
 			OR = {
-				text = civic_tooltip_green_or_industrial				# Modded
-				value = ethic_green										# Modded
-				value = ethic_fanatic_green								# Modded
-				value = ethic_industrial								# Modded
-				value = ethic_fanatic_industrial						# Modded
+				text = civic_tooltip_green		# Modded
+				value = ethic_green				# Modded
+				value = ethic_fanatic_green		# Modded
 			}
 		}
 	}
@@ -8334,10 +8327,27 @@ civic_astrometeorology = {
 	ai_weight = {
 		base = @ai_civic_default_base_weight
 	}
+	modifier = {
+		capital_storm_diplo_weight_mult = 0.10
+	}
 	description = civic_astrometeorology_effect_tooltip
+	swap_type = {
+		description = "civic_astrometeorology_megacorp_effect_tooltip"
+		trigger = {
+			OR = {
+				authority = {
+					value = auth_corporate
+				}
+				civics = {
+					value = civic_galactic_sovereign_megacorp
+				}
+			}
+		}
+	}
 }
 
-civic_astrometeorology_megacorp = {
+#Now the Industrialist Version
+civic_astrometeorology_megacorp = {	
 	playable = {
 		has_cosmic_storms_dlc = yes
 	}
@@ -8345,23 +8355,18 @@ civic_astrometeorology_megacorp = {
 		has_cosmic_storms_dlc = yes
 	}
 	potential = {
-		OR = {
-			authority = {
-				value = auth_corporate
-			}
-			civics = {
-				value = civic_galactic_sovereign_megacorp
+		ethics = {
+			NOT = {
+				value = ethic_gestalt_consciousness
 			}
 		}
 	}
 	possible = {
 		ethics = {
 			OR = {
-				text = civic_tooltip_green_or_industrial				# Modded
-				value = ethic_green										# Modded
-				value = ethic_fanatic_green								# Modded
-				value = ethic_industrial								# Modded
-				value = ethic_fanatic_industrial						# Modded
+				text = civic_tooltip_industrial		# Modded
+				value = ethic_industrial			# Modded
+				value = ethic_fanatic_industrial	# Modded
 			}
 		}
 	}
@@ -8371,7 +8376,23 @@ civic_astrometeorology_megacorp = {
 	ai_weight = {
 		base = @ai_civic_default_base_weight
 	}
-	description = civic_astrometeorology_megacorp_effect_tooltip
+	modifier = {
+		capital_storm_diplo_weight_mult = 0.10
+	}
+	description = civic_astrometeorology_effect_tooltip
+	swap_type = {
+		description = "civic_astrometeorology_megacorp_effect_tooltip"
+		trigger = {
+			OR = {
+				authority = {
+					value = auth_corporate
+				}
+				civics = {
+					value = civic_galactic_sovereign_megacorp
+				}
+			}
+		}
+	}
 }
 
 
@@ -8404,6 +8425,11 @@ civic_storm_callers = {
 				value = ethic_fanatic_spiritualist						# Modded
 			}
 		}
+		origin = {
+			NOT = {
+				value = origin_unplugged
+			}
+		}
 	}
 	traits = {
 		trait = trait_storm_touched
@@ -8416,37 +8442,53 @@ civic_storm_callers = {
 	}
 }
 
-# This civic was unchanged from vanilla
-# This civic was unchanged from vanilla
-# civic_storm_callers_megacorp = {
-#	modification = {
-#		add = {
-#			has_civic = civic_storm_callers
-#		}
-#		remove = {
-#			always = no
-#		}
-#	}
-#	alternate_civic_version = civic_storm_callers
-#	playable = { has_cosmic_storms_dlc = yes }
-#	ai_playable = { has_cosmic_storms_dlc = yes }
-#	description = "civic_storm_callers_megacorp_effect_tooltip"
-#	potential = {
-#		OR = {
-#			authority = { value = auth_corporate }
-#			civics = { value = civic_galactic_sovereign_megacorp }
-#		}
-#	}
-#	traits = {
-#		trait = trait_storm_touched
-#	}
-#	modifier = {
-#		capital_storm_diplo_weight_mult = 0.20
-#	}
-#	random_weight = {
-#		base = @civic_default_random_weight
-#	}
-#}
+civic_storm_callers_megacorp = {
+	modification = {
+		add = {
+			has_civic = civic_storm_callers
+		}
+		remove = {
+			always = no
+		}
+	}
+	alternate_civic_version = civic_storm_callers
+	playable = { has_cosmic_storms_dlc = yes }
+	ai_playable = { has_cosmic_storms_dlc = yes }
+	description = "civic_storm_callers_megacorp_effect_tooltip"
+	potential = {
+		OR = {
+			authority = { value = auth_corporate }
+			civics = { value = civic_galactic_sovereign_megacorp }
+		}
+	}
+	possible = {
+		ethics = {
+			OR = {
+				text = civic_tooltip_green_industrial_or_spiritualist	# Modded
+				value = ethic_green										# Modded
+				value = ethic_fanatic_green								# Modded
+				value = ethic_industrial								# Modded
+				value = ethic_fanatic_industrial						# Modded
+				value = ethic_spiritualist								# Modded
+				value = ethic_fanatic_spiritualist						# Modded
+			}
+		}
+		origin = {
+			NOT = {
+				value = origin_unplugged
+			}
+		}
+	}
+	traits = {
+		trait = trait_storm_touched
+	}
+	modifier = {
+		capital_storm_diplo_weight_mult = 0.20
+	}
+	random_weight = {
+		base = @civic_default_random_weight
+	}
+}
 
 civic_environmental_architects = {
 	playable = {

@@ -1538,10 +1538,32 @@ building_urban_dwellings = {
 }
 
 building_pre_ftl_radio_telescope = {
+	base_buildtime = @b1_time
 	can_build = yes
 	can_demolish = yes
 	can_be_ruined = no
-	planet_limit = 1
+	empire_limit = { 	#optional: default is no limit
+		base = 1		#don't set base to less than 0, it will ignore it (for performance optimisation reasons)
+	}
+	triggered_desc = {
+	 	trigger = {
+			OWNER = {
+				exists = owner
+				OR = {
+					any_situation = { is_situation_type = PrimPlayer_situation } # Much more efficient trigger
+					AND = {
+						has_country_flag = early_space_age
+						is_primitive = yes
+					}
+				}
+			}
+		}
+	 	text = awareness_gain_desc
+	}
+	
+	show_tech_unlock_if = {
+		has_country_flag = PrimPlayer_start_flag
+	}
 
 	category = research
 	
@@ -1558,7 +1580,8 @@ building_pre_ftl_radio_telescope = {
 				# has_origin = origin_primitive_player_machine_age
 				# has_origin = origin_primitive_player_atomic_age
 				# has_origin = origin_primitive_player_early_space_age
-				any_situation = { is_situation_type = PrimPlayer_situation } # Much more efficient trigger
+				#any_situation = { is_situation_type = PrimPlayer_situation } # Much more efficient trigger
+				has_country_flag = PrimPlayer_start_flag # Cog Note - These empires can always keep their telescopes
 				AND = {
 					has_country_flag = early_space_age
 					is_primitive = yes
@@ -1576,14 +1599,26 @@ building_pre_ftl_radio_telescope = {
 				# has_origin = origin_primitive_player_machine_age
 				# has_origin = origin_primitive_player_atomic_age
 				# has_origin = origin_primitive_player_early_space_age
-				any_situation = { is_situation_type = PrimPlayer_situation } # Much more efficient trigger
+				#any_situation = { is_situation_type = PrimPlayer_situation } # Much more efficient trigger
 				is_primitive = yes
+				has_country_flag = PrimPlayer_start_flag # Cog Note - These empires can always keep their telescopes
 			}
 		}
 	}
 	
+	resources = {
+		category = planet_buildings
+		cost = {
+			minerals = @b1_minerals
+		}
+		upkeep = {
+			energy = @b1_upkeep
+		}
+	}
+	
 	country_modifier = { 
-		# intel_decryption_add = 0.25
+		envoys_add = 1
+		intel_decryption_add = 0.25
 		first_contact_speed_mult = 0.05
 	}
 	###########################################
@@ -1712,10 +1747,6 @@ building_pre_ftl_radio_telescope = {
 	
 	prerequisites = {
 		"tech_primitive_radiowave_telescope"
-	}
-
-	triggered_desc = {
-		text = awareness_gain_desc
 	}
 }
 
