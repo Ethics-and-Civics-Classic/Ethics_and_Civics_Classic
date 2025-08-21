@@ -9,45 +9,41 @@ building_factory_angler_1 = {
 	}
 
 	potential = {
-		OR = {
-			has_modifier = ocean_paradise
-			has_modifier = ocean_paradise_hive
-			owner = { has_origin = origin_ocean_paradise }
-			owner = { has_origin = origin_ocean_machines }
-			owner = { has_civic = civic_anglers }
-			owner = { has_civic = civic_corporate_anglers }
-		}
 		exists = owner
-		owner = {
+		AND = {
 			OR = {
-				country_uses_consumer_goods = yes
-				has_origin = origin_fear_of_the_dark
+				has_modifier = ocean_paradise
+				has_modifier = ocean_paradise_hive
+				owner = { has_origin = origin_ocean_paradise }
+				owner = { has_origin = origin_ocean_machines }
+				owner = { is_anglers_empire = yes }
 			}
-		}
-		if = {
-			limit = { 
-				OR = {
-					has_modifier = ocean_paradise
-					has_modifier = ocean_paradise_hive
+			OR = {
+				owner = { country_uses_consumer_goods = yes }
+				owner = { has_origin = origin_fear_of_the_dark }
+			}
+			#Can only be a resort world if it's also an ocean paradise world
+			OR = {
+				AND = {
+					NOT = { has_modifier = slave_colony }
+					OR = {
+						has_modifier = ocean_paradise
+						has_modifier = ocean_paradise_hive
+					}
 				}
-			}
-			NOT = { has_modifier = slave_colony }
-		}
-		else = {
-			NOR = {
-				has_modifier = resort_colony
-				has_modifier = slave_colony
+				NOR = {
+					has_modifier = resort_colony
+					has_modifier = slave_colony
+				}
 			}
 		}
 	}
 
 	destroy_trigger = {
-		NOT = {
-			has_zone = {
-				zone = zone_anglers
-			}
-		}
+		exists = owner
 		OR = {
+			NOT = { has_zone = { zone = zone_anglers } }
+			has_modifier = slave_colony
 			AND = {
 				has_modifier = resort_colony
 				NOR = {
@@ -55,17 +51,10 @@ building_factory_angler_1 = {
 					has_modifier = ocean_paradise_hive
 				}
 			}
-			has_modifier = slave_colony
-
-			AND = {
-				exists = owner
-				OR = {
-					owner = {
-						AND = {
-							country_uses_consumer_goods = no
-							NOT = { has_origin = origin_fear_of_the_dark }
-						}
-					}
+			owner = {
+				AND = {
+					country_uses_consumer_goods = no
+					NOT = { has_origin = origin_fear_of_the_dark }
 				}
 			}
 		}
@@ -94,7 +83,7 @@ building_factory_angler_1 = {
 	}
 
 	inline_script = {
-		script = jobs/factory_angler_add
+		script = jobs/factory_add
 		AMOUNT = @building_static_jobs
 	}
 	
@@ -118,14 +107,13 @@ building_factory_angler_1 = {
 			OR = {
 				has_origin = origin_ocean_paradise
 				has_origin = origin_ocean_machines
-				has_civic = civic_anglers
-				has_civic = civic_corporate_anglers
+				is_anglers_empire = yes
 			}
 		}
 	}
 
 	upgrades = {
-		"building_factory_2"
+		"building_factory_angler_2"
 	}
 }
 
@@ -149,53 +137,53 @@ building_factory_angler_2 = {
 	}
 
 	potential = {
-		OR = {
-			has_modifier = ocean_paradise
-			has_modifier = ocean_paradise_hive
-			owner = { has_origin = origin_ocean_paradise }
-			owner = { has_origin = origin_ocean_machines }
-			owner = { has_civic = civic_anglers }
-			owner = { has_civic = civic_corporate_anglers }
-		}
 		exists = owner
-		owner = {
-			country_uses_consumer_goods = yes
-		}
-		if = {
-			limit = { 
-				OR = {
-					has_modifier = ocean_paradise
-					has_modifier = ocean_paradise_hive
-				}
+		AND = {
+			OR = {
+				has_modifier = ocean_paradise
+				has_modifier = ocean_paradise_hive
+				owner = { has_origin = origin_ocean_paradise }
+				owner = { has_origin = origin_ocean_machines }
+				owner = { is_anglers_empire = yes }
 			}
-			NOT = { has_modifier = slave_colony }
-		}
-		else = {
-			NOR = {
-				has_modifier = resort_colony
-				has_modifier = slave_colony
+			OR = {
+				owner = { country_uses_consumer_goods = yes }
+				owner = { has_origin = origin_fear_of_the_dark }
+			}
+			#Can only be a resort world if it's also an ocean paradise world
+			OR = {
+				AND = {
+					NOT = { has_modifier = slave_colony }
+					OR = {
+						has_modifier = ocean_paradise
+						has_modifier = ocean_paradise_hive
+					}
+				}
+				NOR = {
+					has_modifier = resort_colony
+					has_modifier = slave_colony
+				}
 			}
 		}
 	}
-
 	destroy_trigger = {
-		NOT = {
-			has_zone = {
-				zone = zone_anglers
-			}
-		}
+		exists = owner
 		OR = {
-			AND = {
+			NOT = { has_zone = { zone = zone_anglers } }
+			has_modifier = slave_colony
+			#Can only be a resort world if it's also an ocean paradise world
+			AND = { 
 				has_modifier = resort_colony
 				NOR = {
 					has_modifier = ocean_paradise
 					has_modifier = ocean_paradise_hive
 				}
 			}
-			has_modifier = slave_colony
-			AND = {
-				exists = owner
-				owner = { country_uses_consumer_goods = no }
+			owner = {
+				AND = {
+					country_uses_consumer_goods = no
+					NOT = { has_origin = origin_fear_of_the_dark }
+				}
 			}
 		}
 	}
@@ -213,7 +201,7 @@ building_factory_angler_2 = {
 	}
 
 	inline_script = {
-		script = jobs/factory_angler_add
+		script = jobs/factory_add
 		AMOUNT = @building_static_jobs_high
 	}
 	
@@ -237,14 +225,13 @@ building_factory_angler_2 = {
 			OR = {
 				has_origin = origin_ocean_paradise
 				has_origin = origin_ocean_machines
-				has_civic = civic_anglers
-				has_civic = civic_corporate_anglers
+				is_anglers_empire = yes
 			}
 		}
 	}
 
 	upgrades = {
-		"building_factory_3"
+		"building_factory_angler_3"
 	}
 }
 
@@ -268,42 +255,40 @@ building_factory_angler_3 = {
 	}
 
 	potential = {
-		OR = {
-			has_modifier = ocean_paradise
-			has_modifier = ocean_paradise_hive
-			owner = { has_origin = origin_ocean_paradise }
-			owner = { has_origin = origin_ocean_machines }
-			owner = { has_civic = civic_anglers }
-			owner = { has_civic = civic_corporate_anglers }
-		}
 		exists = owner
-		owner = {
-			country_uses_consumer_goods = yes
-		}
-		if = {
-			limit = { 
-				OR = {
-					has_modifier = ocean_paradise
-					has_modifier = ocean_paradise_hive
-				}
+		AND = {
+			OR = {
+				has_modifier = ocean_paradise
+				has_modifier = ocean_paradise_hive
+				owner = { has_origin = origin_ocean_paradise }
+				owner = { has_origin = origin_ocean_machines }
+				owner = { is_anglers_empire = yes }
 			}
-			NOT = { has_modifier = slave_colony }
-		}
-		else = {
-			NOR = {
-				has_modifier = resort_colony
-				has_modifier = slave_colony
+			OR = {
+				owner = { country_uses_consumer_goods = yes }
+				owner = { has_origin = origin_fear_of_the_dark }
+			}
+			#Can only be a resort world if it's also an ocean paradise world
+			OR = {
+				AND = {
+					NOT = { has_modifier = slave_colony }
+					OR = {
+						has_modifier = ocean_paradise
+						has_modifier = ocean_paradise_hive
+					}
+				}
+				NOR = {
+					has_modifier = resort_colony
+					has_modifier = slave_colony
+				}
 			}
 		}
 	}
 
 	destroy_trigger = {
-		NOT = {
-			has_zone = {
-				zone = zone_anglers
-			}
-		}
 		OR = {
+			NOT = { has_zone = { zone = zone_anglers } }
+			has_modifier = slave_colony
 			AND = {
 				has_modifier = resort_colony
 				NOR = {
@@ -311,11 +296,11 @@ building_factory_angler_3 = {
 					has_modifier = ocean_paradise_hive
 				}
 			}
-			has_modifier = slave_colony
-
-			AND = {
-				exists = owner
-				owner = { country_uses_consumer_goods = no }
+			owner = {
+				AND = {
+					country_uses_consumer_goods = no
+					NOT = { has_origin = origin_fear_of_the_dark }
+				}
 			}
 		}
 	}
@@ -353,7 +338,7 @@ building_factory_angler_3 = {
 	}
 
 	inline_script = {
-		script = jobs/factory_angler_add
+		script = jobs/factory_add
 		AMOUNT = @building_static_jobs_very_high
 	}
 	
@@ -374,11 +359,13 @@ building_factory_angler_3 = {
 	
 	show_tech_unlock_if = {
 		owner = {
-			OR = {
-				has_origin = origin_ocean_paradise
-				has_origin = origin_ocean_machines
-				has_civic = civic_anglers
-				has_civic = civic_corporate_anglers
+			AND = {
+				country_uses_consumer_goods = yes
+				OR = {
+					has_origin = origin_ocean_paradise
+					has_origin = origin_ocean_machines
+					is_anglers_empire = yes
+				}
 			}
 		}
 	}
@@ -554,17 +541,22 @@ building_national_park = {
 	}
 
 	potential = {
-		NOT = { has_modifier = slave_colony }
 		exists = owner
-		owner = {
-			is_regular_empire = yes
-			has_valid_civic = civic_naturalism
+		AND = {
+			NOT = { has_modifier = slave_colony }
+			owner = {
+				AND = {
+					is_regular_empire = yes
+					has_valid_civic = civic_naturalism
+				}
+			}
 		}
 	}
 
 	destroy_trigger = {
 		exists = owner
 		OR = {
+			owner = { NOT = { has_valid_civic = civic_naturalism } }
 			has_modifier = slave_colony
 			NOR = {
 				has_deposit = d_massive_glacier
@@ -583,7 +575,6 @@ building_national_park = {
 				has_deposit = d_alien_pets_deposit
 				has_deposit = d_savage_wildlands
 			}
-			owner = { NOT = { has_valid_civic = civic_naturalism } }
 		}
 	}
 
@@ -755,22 +746,19 @@ building_climate_control = {
 	}
 
 	potential = {
-		NOT = { has_modifier = slave_colony }
-
 		exists = owner
-		owner = {
-			is_regular_empire = yes
-			has_valid_civic = civic_terraforming
+		AND = {
+			NOT = { has_modifier = slave_colony }
+			owner = { is_regular_empire = yes }
+			owner = { has_valid_civic = civic_terraforming }
 		}
 	}
 
 	destroy_trigger = {
+		exists = owner
 		OR = {
 			has_modifier = slave_colony
-		}
-		exists = owner
-		owner = {
-			NOT = { has_valid_civic = civic_terraforming }
+			owner = { NOT = { has_valid_civic = civic_terraforming } }
 		}
 	}
 
@@ -811,19 +799,19 @@ building_tribal_council = {
 	}
 
 	potential = {
-		NOT = { has_modifier = slave_colony }
-
 		exists = owner
-		owner = {
-			is_regular_empire = yes
-			has_valid_civic = civic_in_perfect
+		AND = {
+			NOT = { has_modifier = slave_colony }
+			owner = { is_regular_empire = yes }
+			owner = { has_valid_civic = civic_in_perfect }
 		}
 	}
 
 	destroy_trigger = {
 		exists = owner
-		owner = {
-			NOR = { has_valid_civic = civic_in_perfect }
+		OR = {
+			has_modifier = slave_colony
+			owner = { NOT = { has_valid_civic = civic_in_perfect } }
 		}
 	}
 
@@ -982,12 +970,11 @@ building_tribal_palace = {
 	}
 
 	potential = {
-		NOT = {has_modifier = slave_colony }
-		NOT = { owner = { any_owned_planet = { has_building = building_tribal_palace } } }
-
 		exists = owner
-		owner = {
-			is_xenophobe = yes
+		AND = {
+			NOT = {has_modifier = slave_colony }
+			NOT = { owner = { any_owned_planet = { has_building = building_tribal_palace } } }
+			owner = { is_xenophobe = yes }
 		}
 	}
 
@@ -1002,12 +989,12 @@ building_tribal_palace = {
 	}
 
 	allow = {
-		has_building = building_system_capital
 		exists = owner
-		NOT = { owner = { any_owned_planet = { has_building = building_tribal_palace } } }
-		owner = {
-			is_regular_empire = yes
-			num_owned_planets > 4
+		AND = {
+			has_building = building_system_capital
+			NOT = { owner = { any_owned_planet = { has_building = building_tribal_palace } } }
+			owner = { is_regular_empire = yes }
+			owner = { num_owned_planets > 4 }
 		}
 	}
 
@@ -1051,12 +1038,11 @@ building_nature_sanctuary = {
 	}
 
 	potential = {
-		NOT = { has_modifier = slave_colony }
-
 		exists = owner
-		owner = {
-			is_regular_empire = yes
-			has_valid_civic = civic_keepers_harmony
+		AND = {
+			NOT = { has_modifier = slave_colony }
+			owner = { is_regular_empire = yes }
+			owner = { has_valid_civic = civic_keepers_harmony }
 		}
 	}
 
@@ -1314,45 +1300,43 @@ building_galactic_navy_academy = {
 	}
 
 	potential = {
-		NOT = { has_modifier = slave_colony }
-		NOT = { owner = { any_owned_planet = { has_building = building_galactic_navy_academy } } }
-
 		exists = owner
-		owner = {
-			is_regular_empire = yes
-			has_valid_civic = civic_xeno_militarist
+		AND = {
+			NOT = { has_modifier = slave_colony }
+			NOT = { owner = { any_owned_planet = { has_building = building_galactic_navy_academy } } }
+			owner = { is_regular_empire = yes }
+			owner = { has_valid_civic = civic_xeno_militarist }
 		}
 	}
 
 	destroy_trigger = {
 		exists = owner
-		owner = {
-			OR = {
-			NOT = { has_valid_civic = civic_xeno_militarist }
-			num_species < 4
-			}
+		OR = {
+			has_modifier = slave_colony
+			owner = { NOT = { has_valid_civic = civic_xeno_militarist } }
+			owner = { num_species < 4 }
 		}
 	}
 
 	allow = {
-		has_upgraded_capital = yes
 		exists = owner
-		NOT = {
+		AND = {
+			has_upgraded_capital = yes
 			owner = {
-				any_owned_planet = {
-					OR = {
-						has_building = building_galactic_navy_academy
-						has_building = building_pangalactic_forum
-						has_building = building_galactic_trade_center
-						has_building = building_galactic_temple
+				is_regular_empire = yes
+				num_species > 3
+				NOT = { has_policy_flag = border_policy_closed }
+				NOT = {
+					any_owned_planet = {
+						OR = {
+							has_building = building_galactic_navy_academy
+							has_building = building_pangalactic_forum
+							has_building = building_galactic_trade_center
+							has_building = building_galactic_temple
+						}
 					}
 				}
 			}
-		}
-		owner = {
-			is_regular_empire = yes
-			num_species > 3
-			NOT = { has_policy_flag = border_policy_closed }
 		}
 	}
 
@@ -1393,12 +1377,12 @@ building_galactic_temple = {
 	}
 
 	potential = {
-		NOT = { has_modifier = slave_colony }
-		NOT = { owner = { any_owned_planet = { has_building = building_galactic_temple } } }
 		exists = owner
-		owner = {
-			is_regular_empire = yes
-			has_valid_civic = civic_evangelism
+		AND = {
+			NOT = { has_modifier = slave_colony }
+			NOT = { owner = { any_owned_planet = { has_building = building_galactic_temple } } }
+			owner = { is_regular_empire = yes }
+			owner = { has_valid_civic = civic_evangelism }
 		}
 	}
 
@@ -1406,31 +1390,31 @@ building_galactic_temple = {
 		exists = owner
 		owner = {
 			OR = {
-			NOT = { has_valid_civic = civic_evangelism }
-			num_species < 4
+				NOT = { has_valid_civic = civic_evangelism }
+				num_species < 4
 			}
 		}
 	}
 
 	allow = {
-		has_upgraded_capital = yes
 		exists = owner
-		NOT = {
+		AND = {
+			has_upgraded_capital = yes
 			owner = {
-				any_owned_planet = {
-					OR = {
-						has_building = building_galactic_temple
-						has_building = building_pangalactic_forum
-						has_building = building_galactic_trade_center
-						has_building = building_galactic_navy_academy
+				is_regular_empire = yes
+				num_species > 3
+				NOT = { has_policy_flag = border_policy_closed }
+				NOT = {
+					any_owned_planet = {
+						OR = {
+							has_building = building_galactic_temple
+							has_building = building_pangalactic_forum
+							has_building = building_galactic_trade_center
+							has_building = building_galactic_navy_academy
+						}
 					}
 				}
 			}
-		}
-		owner = {
-			is_regular_empire = yes
-			num_species > 3
-			NOT = { has_policy_flag = border_policy_closed }
 		}
 	}
 
@@ -1476,15 +1460,14 @@ building_galactic_trade_center = {
 	}
 
 	potential = {
-		NOT = { has_modifier = slave_colony }
-		NOT = { owner = { any_owned_planet = { has_building = building_galactic_trade_center } } }
-
 		exists = owner
-		owner = {
-			is_regular_empire = yes
+		AND = {
+			NOT = { has_modifier = slave_colony }
+			NOT = { owner = { any_owned_planet = { has_building = building_galactic_trade_center } } }
+			owner = { is_regular_empire = yes }
 			OR = {
-				has_valid_civic = civic_globalism
-				has_valid_civic = civic_globalism_corporate
+				owner = { has_valid_civic = civic_globalism }
+				owner = { has_valid_civic = civic_globalism_corporate }
 			}
 		}
 	}
@@ -1493,11 +1476,11 @@ building_galactic_trade_center = {
 		exists = owner
 		owner = {
 			OR = {
-				NOT = {
+				num_species < 4
+				NOR = {
 					has_valid_civic = civic_globalism
 					has_valid_civic = civic_globalism_corporate
 				}
-				num_species < 4
 			}
 		}
 	}
@@ -1584,24 +1567,24 @@ building_pangalactic_forum = {
 	}
 
 	allow = {
-		has_upgraded_capital = yes
 		exists = owner
-		NOT = {
+		AND = {
+			has_upgraded_capital = yes
 			owner = {
-				any_owned_planet = {
-					OR = {
-						has_building = building_pangalactic_forum
-						has_building = building_galactic_trade_center
-						has_building = building_galactic_temple
-						has_building = building_galactic_navy_academy
+				is_regular_empire = yes
+				num_species > 3
+				NOT = { has_policy_flag = border_policy_closed }
+				NOT = {
+					any_owned_planet = {
+						OR = {
+							has_building = building_pangalactic_forum
+							has_building = building_galactic_trade_center
+							has_building = building_galactic_temple
+							has_building = building_galactic_navy_academy
+						}
 					}
 				}
 			}
-		}
-		owner = {
-			is_regular_empire = yes
-			num_species > 3
-			NOT = { has_policy_flag = border_policy_closed }
 		}
 	}
 
@@ -1643,14 +1626,13 @@ building_ecotourism_center = {
 	}
 
 	potential = {
-		NOT = { has_modifier = slave_colony }
-
 		exists = owner
-		owner = {
-			is_regular_empire = yes
+		AND = {
+			NOT = { has_modifier = slave_colony }
+			owner = { is_regular_empire = yes }
 			OR = {
-				has_valid_civic = civic_natural_capitalism
-				has_valid_civic = civic_natural_capitalism_corporate
+				owner = { has_valid_civic = civic_natural_capitalism }
+				owner = { has_valid_civic = civic_natural_capitalism_corporate }
 			}
 		}
 	}
@@ -1677,7 +1659,7 @@ building_ecotourism_center = {
 				has_deposit = d_savage_wildlands
 			}
 			owner = {
-				NOT = {
+				NOR = {
 					has_valid_civic = civic_natural_capitalism
 					has_valid_civic = civic_natural_capitalism_corporate
 				}
@@ -1898,22 +1880,19 @@ building_deep_space_scanner = {
 	}
 
 	potential = {
-		NOT = { has_modifier = slave_colony }
-
 		exists = owner
-		owner = {
-			is_regular_empire = yes
-			has_valid_civic = civic_exploration
+		AND = {
+			NOT = { has_modifier = slave_colony }
+			owner = { is_regular_empire = yes }
+			owner = { has_valid_civic = civic_exploration }
 		}
 	}
 
 	destroy_trigger = {
+		exists = owner
 		OR = {
 			has_modifier = slave_colony
-		}
-		exists = owner
-		owner = {
-			NOT = { has_valid_civic = civic_exploration }
+			owner = { NOT = { has_valid_civic = civic_exploration } }
 		}
 	}
 
@@ -1957,7 +1936,23 @@ building_deep_space_scanner = {
 			exists = owner
 			owner = { is_regular_empire = yes }
 		}
-		text = job_researcher_effect_desc
+		text = job_physicist_effect_desc
+	}	
+
+	triggered_desc = {
+		trigger = {
+			exists = owner
+			owner = { is_regular_empire = yes }
+		}
+		text = job_biologist_effect_desc
+	}
+
+	triggered_desc = {
+		trigger = {
+			exists = owner
+			owner = { is_regular_empire = yes }
+		}
+		text = job_engineer_effect_desc
 	}
 }
 
@@ -1975,9 +1970,9 @@ building_symbol_harmony = {
 
 	potential = {
 		exists = owner
-		owner = {
-			is_regular_empire = yes
-			has_valid_civic = civic_asceticism
+		AND = {
+			owner = { is_regular_empire = yes }
+			owner = { has_valid_civic = civic_asceticism }
 		}
 	}
 
@@ -1987,9 +1982,7 @@ building_symbol_harmony = {
 
 	destroy_trigger = {
 		exists = owner
-		owner = {
-			NOT = { has_valid_civic = civic_asceticism }
-		}
+		owner = { NOT = { has_valid_civic = civic_asceticism } }
 	}
 
 	planet_modifier = {
@@ -2024,9 +2017,9 @@ building_symbol_purity = {
 
 	potential = {
 		exists = owner
-		owner = {
-			is_regular_empire = yes
-			has_valid_civic = civic_chosen_people
+		AND = {
+			owner = { is_regular_empire = yes }
+			owner = { has_valid_civic = civic_chosen_people }
 		}
 	}
 
@@ -2036,9 +2029,7 @@ building_symbol_purity = {
 
 	destroy_trigger = {
 		exists = owner
-		owner = {
-			NOT = { has_valid_civic = civic_chosen_people }
-		}
+		owner = { NOT = { has_valid_civic = civic_chosen_people } }
 	}
 
 	planet_modifier = {
@@ -2072,11 +2063,13 @@ building_collosal_monument = {
 
 	potential = {
 		exists = owner
-		owner = {
-			is_regular_empire = yes
-			OR = {
-				has_valid_civic = civic_machine_cult
-				has_valid_civic = civic_machine_cult_machine
+		AND = {
+			owner = { is_regular_empire = yes }
+			owner = {
+				OR = {
+					has_valid_civic = civic_machine_cult
+					has_valid_civic = civic_machine_cult_machine
+				}
 			}
 		}
 	}
@@ -2207,21 +2200,21 @@ building_thermal_borehole = {
 	}
 
 	potential = {
-		owner = { is_industrial = yes }
-		NOT = { has_modifier = resort_colony }
-
-		NOR = { # Ringworlds don't have mines
-			is_artificial = yes
-		}
-		OR = { # Habitats only have mines if they're built on an appropriate deposit
-			NOT = { is_planet_class = pc_habitat }
-			has_planet_flag = mining_habitat
+		owner = exists
+		AND = {
+			owner = { is_industrial = yes }
+			NOT = { has_modifier = resort_colony }
+			NOT = { is_artificial = yes }
+			OR = {
+				NOT = { is_planet_class = pc_habitat }
+				has_planet_flag = mining_habitat
+			}
 		}
 	}
 
 	destroy_trigger = {
 		exists = owner
-			owner = { is_industrial = no }
+		owner = { is_industrial = no }
 	}
 
 	planet_modifier = {
@@ -2280,7 +2273,7 @@ building_thermal_borehole = {
 		}
 	}
 	upgrades = {
-		building_thermal_borehole_2
+		"building_thermal_borehole_2"
 	}
 	ai_resource_production = {
 		minerals = 1
@@ -2302,21 +2295,21 @@ building_thermal_borehole_2 = {
 	}
 
 	potential = {
-		owner = { is_industrial = yes }
-		NOT = { has_modifier = resort_colony }
-
-		NOR = { # Ringworlds don't have mines
-			is_artificial = yes
-		}
-		OR = { # Habitats only have mines if they're built on an appropriate deposit
-			NOT = { is_planet_class = pc_habitat }
-			has_planet_flag = mining_habitat
+		owner = exists
+		AND = {
+			owner = { is_industrial = yes }
+			NOT = { has_modifier = resort_colony }
+			NOT = { is_artificial = yes }
+			OR = {
+				NOT = { is_planet_class = pc_habitat }
+				has_planet_flag = mining_habitat
+			}
 		}
 	}
 
 	destroy_trigger = {
 		exists = owner
-			owner = { is_industrial = no }
+		owner = { is_industrial = no }
 	}
 
 	planet_modifier = {
@@ -2413,7 +2406,7 @@ building_colliseum = {
 			has_building = building_slave_processing
 			custom_tooltip = {
 				text = civic_tooltip_civic_barbaric_despoilers	# Cog Note - This society does not need a processing facility for gladiators
-				OWNER = {
+				owner = {
 					OR = {
 						has_civic = civic_barbaric_despoilers			
 						has_civic = civic_barbaric_despoilers_corporate	
@@ -2425,24 +2418,27 @@ building_colliseum = {
 
 	destroy_trigger = {
 		exists = owner
-		if = {
-			limit = {
-				OWNER = {
-					OR = {
-						has_civic = civic_slaver_guilds
-						has_civic = civic_barbaric_despoilers			# Cog Note - This civic is an upgrade of Slaver Guilds
-						has_civic = civic_barbaric_despoilers_corporate	# Cog Note - This civic is an upgrade of Slaver Guilds
-						has_civic = civic_divine_order
-					}
+		OR = {
+			AND = {		#If you have one of the civics, this gets deleted only if slavery is banned
+				owner = { has_policy_flag = slavery_not_allowed }
+				OR = {
+					owner = { has_valid_civic = civic_slaver_guilds }
+					owner = { has_valid_civic = civic_barbaric_despoilers }				# Cog Note - This civic is an upgrade of Slaver Guilds
+					owner = { has_valid_civic = civic_barbaric_despoilers_corporate }	# Cog Note - This civic is an upgrade of Slaver Guilds
+					owner = { has_valid_civic = civic_divine_order }
 				}
 			}
-			OWNER = { has_policy_flag = slavery_not_allowed }
-		}
-		else = {  
-			NOT = { has_building = building_slave_processing }
+			AND = {		#If you DON'T have one of the civics, this gets deleted if you don't have a slave processing building
+				NOT = { has_building = building_slave_processing }	
+				NOR = {
+					owner = { has_valid_civic = civic_slaver_guilds }
+					owner = { has_valid_civic = civic_barbaric_despoilers }				# Cog Note - This civic is an upgrade of Slaver Guilds
+					owner = { has_valid_civic = civic_barbaric_despoilers_corporate }	# Cog Note - This civic is an upgrade of Slaver Guilds
+					owner = { has_valid_civic = civic_divine_order }
+				}
+			}
 		}
 	}
-
 	planet_modifier = {
 		pop_cat_ruler_happiness = 0.15
 		pop_cat_specialist_happiness = 0.05
@@ -2509,13 +2505,14 @@ building_mecha_monastery = {
 	}
 
 	potential = {
-		owner = { 
+		exists = owner
+		AND = {
+			NOT = { has_modifier = slave_colony }
 			OR = {
-				has_valid_civic = civic_machine_cult
-				has_valid_civic = civic_machine_cult_machine
+				owner = { has_valid_civic = civic_machine_cult }
+				owner = { has_valid_civic = civic_machine_cult_machine}
 			}
 		}
-		NOT = { has_modifier = slave_colony }
 	}
 
 	allow = {
