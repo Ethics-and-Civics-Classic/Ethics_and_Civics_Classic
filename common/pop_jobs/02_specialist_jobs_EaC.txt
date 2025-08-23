@@ -1606,6 +1606,17 @@ bureaucrat = {
 		}
 		swap_type = {
 			trigger = {
+				bureaucrat_is_techno_priest_trigger = yes
+			}
+			name = techno_priest
+			desc = techno_priest
+			icon = priest
+			building_icon = building_mecha_monastery
+			condition_string = SPECIALIST_JOB_TRIGGER
+			weight = 35
+		}
+		swap_type = {
+			trigger = {
 				bureaucrat_is_culture_worker = yes
 			}
 			name = culture_worker
@@ -1613,7 +1624,18 @@ bureaucrat = {
 			icon = culture_worker
 			building_icon = building_artist_patron
 			condition_string = SPECIALIST_JOB_TRIGGER
-			weight = 35
+			weight = 40
+		}
+		swap_type = {
+			trigger = {
+				bureaucrat_is_druid_trigger = yes
+			}
+			name = druid
+			desc = druid
+			icon = priest
+			building_icon = building_nature_sanctuary
+			condition_string = SPECIALIST_JOB_TRIGGER
+			weight = 45
 		}
 		swap_type = {
 			trigger = {
@@ -1624,7 +1646,7 @@ bureaucrat = {
 			icon = death_priest
 			building_icon = building_sacrificial_temple_1
 			condition_string = SPECIALIST_JOB_TRIGGER
-			weight = 40
+			weight = 50
 		}
 		swap_type = {
 			trigger = {
@@ -1635,7 +1657,7 @@ bureaucrat = {
 			icon = low_tech_bureaucrat
 			building_icon = building_low_tech_admin_hub
 			condition_string = SPECIALIST_JOB_TRIGGER
-			weight = 45
+			weight = 55
 		}
 		swap_type = {
 			trigger = {
@@ -1646,7 +1668,7 @@ bureaucrat = {
 			icon = manager
 			building_icon = building_low_tech_admin_hub
 			condition_string = SPECIALIST_JOB_TRIGGER
-			weight = 50
+			weight = 60
 		}
 		swap_type = {
 			trigger = {
@@ -1657,7 +1679,7 @@ bureaucrat = {
 			icon = low_tech_priest
 			building_icon = building_low_tech_admin_hub
 			condition_string = SPECIALIST_JOB_TRIGGER
-			weight = 55
+			weight = 65
 		}
 		swap_type = {
 			trigger = {
@@ -1887,6 +1909,12 @@ bureaucrat = {
 		}
 		produces = {
 			trigger = {
+				bureaucrat_is_wealth_preacher_trigger = yes
+			}
+			trade = 1
+		}
+		produces = {
+			trigger = {
 				exists = owner										# Modded
 				owner = { has_valid_civic = civic_naturalism }		# Modded
 				bureaucrat_is_culture_worker = yes
@@ -1939,12 +1967,40 @@ bureaucrat = {
 			}
 			consumer_goods = -1										# Modded
 		}
+		produces = {
+			trigger = {
+				bureaucrat_is_techno_priest_trigger = yes
+			}
+			engineering_research = 2
+			unity = 1
+		}
+		produces = {
+			trigger = {
+				exists = owner
+				bureaucrat_is_techno_priest_trigger = yes
+				owner = {
+					OR = {
+						has_valid_civic = civic_imperial_cult
+						has_valid_civic = civic_divine_council
+						has_valid_civic = civic_spiritual_democracy
+						has_valid_civic = civic_exalted_priesthood
+					}
+				}
+			}
+			engineering_research = 1
+		}
+		produces = {
+			trigger = {
+				bureaucrat_is_druid_trigger = yes
+			}
+			unity = 1
+		}
 		
-		inline_script = "jobs/ethic_job_resources_memorialist"			# Enriad - forgotten line from vanilla code, files exist and NOT MODDED
+		inline_script = "jobs/ethic_job_resources_memorialist"	
 	}
 	
 	# Amenities
-	triggered_planet_modifier = {		# Enriad - re-enabled to fix spiritualists
+	triggered_planet_modifier = {	
 		potential = {
 			bureaucrat_is_priest = yes
 		}
@@ -1966,14 +2022,14 @@ bureaucrat = {
 		planet_amenities_add = 25
 		mult = value:scripted_modifier_councilor_level_mult|MODIFIER|pop_job_amenities_mult|TYPE|councilor_worker_coop|
 	}
-	triggered_planet_modifier = {		# Enriad - re-enabled to fix spiritualists
+	triggered_planet_modifier = {	
 		potential = {
 			bureaucrat_is_preacher = yes
 		}
 		planet_amenities_add = 200
 		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
 	}
-	triggered_planet_modifier = {		# Enriad - re-enabled to fix spiritualists
+	triggered_planet_modifier = {	
 		potential = {
 			bureaucrat_is_death_priest = yes
 		}
@@ -2013,6 +2069,27 @@ bureaucrat = {
 			bureaucrat_is_culture_worker = yes
 		}
 		planet_amenities_add = 300
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	}
+	triggered_planet_modifier = {
+		potential = {
+			bureaucrat_is_wealth_preacher_trigger = yes
+		}
+		planet_amenities_add = 100
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	}
+	triggered_planet_modifier = {
+		potential = {
+			bureaucrat_is_techno_priest_trigger = yes
+		}
+		planet_amenities_add = 100
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	}
+	triggered_planet_modifier = {
+		potential = {
+			bureaucrat_is_druid_trigger = yes
+		}
+		planet_amenities_add = 100
 		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
 	}
 
@@ -2126,6 +2203,34 @@ bureaucrat = {
 			bureaucrat_is_wealth_preacher_trigger = yes
 		}
 		planet_jobs_trade_produces_mult = 0.025
+	}
+	
+	#Techno-Priest
+	triggered_planet_modifier = {
+		potential = {
+			bureaucrat_is_techno_priest_trigger = yes
+		}
+		planet_pops_robotics_upkeep_mult = -0.05
+	}
+	
+	#Druid
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			bureaucrat_is_druid_trigger = yes
+		}
+		planet_crime_add = -10
+		founder_species_growth_mult = 0.05
+	}
+	
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			bureaucrat_is_druid_trigger = yes
+			owner = { is_gestalt = no }
+		}
+		pop_ethic_green_attraction_mult = 0.05
+		pop_ethic_spiritualist_attraction_mult = 0.05
 	}
 
 	weight = {
