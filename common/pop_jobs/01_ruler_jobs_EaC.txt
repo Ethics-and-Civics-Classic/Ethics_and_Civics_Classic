@@ -1,6 +1,6 @@
-###################
-# Fancy Jobs
-###################
+##################
+### Fancy Jobs ###
+##################
 
 politician = {
 	category = ruler
@@ -59,15 +59,6 @@ politician = {
 		}
 		swap_type = {
 			trigger = {
-				politician_is_high_techno_priest = yes
-			}
-			name = high_techno_priest
-			icon = techno_priest
-			desc = job_high_techno_priest_desc
-			weight = 15
-		}
-		swap_type = {
-			trigger = {
 				politician_is_commandante = yes
 			}
 			name = commandante
@@ -95,12 +86,12 @@ politician = {
 		}
 		swap_type = {
 			trigger = {
-				politician_is_technophant = yes
+				politician_is_high_techno_priest = yes
 			}
-			name = technophant
-			icon = technophant
-			desc = job_technophant_desc
-			weight = 30
+			name = high_techno_priest
+			icon = techno_priest
+			desc = job_high_techno_priest_desc
+			weight = 15
 		}
 		swap_type = {
 			trigger = {
@@ -130,16 +121,6 @@ politician = {
 			icon = noble
 			desc = job_sacred_noble_desc
 			weight = 20
-		}
-		swap_type = {
-			trigger = {
-				politician_is_noble = yes
-				politician_is_high_techno_priest = yes
-			}
-			name = high_noble_techno_priest
-			icon = noble
-			desc = job_noble_techno_priest_desc
-			weight = 25
 		}
 		swap_type = {
 			trigger = {
@@ -189,6 +170,25 @@ politician = {
 			icon = augmentor
 			desc = job_augmentation_merchant_desc
 			weight = 20
+		}
+		swap_type = {
+			trigger = {
+				politician_is_noble = yes
+				politician_is_high_techno_priest = yes
+			}
+			name = high_noble_techno_priest
+			icon = noble
+			desc = job_noble_techno_priest_desc
+			weight = 25
+		}
+		swap_type = {
+			trigger = {
+				politician_is_technophant = yes
+			}
+			name = technophant
+			icon = technophant
+			desc = job_technophant_desc
+			weight = 30
 		}
 	}
 	
@@ -593,6 +593,740 @@ politician = {
 	}
 }
 
+# Offworld Pirate Captains
+commandante_pirate_offworld = { #Steam: Added by branch offices off-world
+	category = ruler
+	swappable_data = {
+		default = {
+			condition_string = RULER_JOB_TRIGGER
+			building_icon = building_pirate_haven
+			icon = enforcer
+		}
+	}
+	
+	# possible = { always = no } #Steam: We do actually need to keep this job avalible for now
+
+	possible_pre_triggers = {
+		has_owner = yes
+		is_enslaved = no
+		is_being_purged = no
+		is_being_assimilated = no
+		is_sapient = yes
+	}
+
+	possible_precalc = can_fill_ruler_job
+
+	country_modifier = {
+		country_naval_cap_add = 2
+	}
+
+	resources = {
+		category = planet_politicians
+		produces = {
+			unity = 2
+		}
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {  has_valid_civic = civic_citizen_service }
+			}
+			unity = 1
+		}
+		produces = {
+			trigger = {
+				exists = owner
+				owner = { has_valid_civic = civic_byzantine_bureaucracy }
+			}
+			unity = 1
+		}
+		upkeep = {
+			consumer_goods = 2
+		}
+	}
+
+	planet_modifier = {
+		planet_orbital_bombardment_damage = -0.10
+		planet_stability_add = 3
+		planet_defense_armies_add = 1
+		pop_government_ethic_attraction = -0.015
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			always = yes
+		}
+		planet_amenities_add = 300
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	}
+	
+	# pop_group_modifier = {	# No Longer Used in Stellaris 4.0
+	#	pop_defense_armies_add = 1
+	#}
+
+	triggered_planet_modifier = {
+		potential = {
+			has_trait = trait_repugnant
+		}
+		planet_amenities_add = -100
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {  has_valid_civic = civic_citizen_service }
+		}
+		planet_amenities_add = 300
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	}
+
+	triggered_country_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_valid_civic = civic_byzantine_bureaucracy }
+		}
+		modifier = {
+			empire_size_pops_mult = -0.005
+		}
+	}
+
+	weight = {
+		weight = @ruler_job_weight
+		mult = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
+		modifier = {
+			factor = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
+			has_trait = trait_repugnant
+		}
+		modifier = {
+			factor = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
+			owner = { has_valid_civic = civic_citizen_service }
+		}
+		modifier = {
+			factor = 2.0
+			OR = {
+				has_trait = trait_very_strong
+			}
+		}
+		modifier = {
+			factor = 1.5
+			OR = {
+				has_trait = trait_strong
+			}
+		}
+		# modifier = {
+		#	factor = 5
+		#	has_job_type = commandante_pirate	# No Longer Used in Stellaris 4.0
+		#}
+	}
+
+	inline_script = "jobs/automodding_priority_unity"
+}
+
+#Steam: Re-organized to clean up top of file, here are fake jobs for leader backgrounds
+#################
+### Fake Jobs ###
+#################
+
+# Enriad - Fake jobs for leader backgrounds as was in original game example
+commandante = {		#Steam: Defunct as of 4.0, kept for archival purposes
+	category = ruler
+	swappable_data = {
+		default = {
+			condition_string = RULER_JOB_TRIGGER
+			building_icon = building_stronghold
+			icon = commandante
+		}
+	}
+	possible = { 
+		always = no 
+	}
+	# possible_pre_triggers = {
+	# 	has_owner = yes
+	# 	is_enslaved = no
+	# 	is_being_purged = no
+	# 	is_being_assimilated = no
+	# 	is_sapient = yes
+	# }
+
+	# possible_precalc = can_fill_ruler_job
+
+	# country_modifier = {
+	# 	country_naval_cap_add = 3
+	# }
+
+	# resources = {
+	# 	category = planet_bureaucrats
+	# 	produces = {
+	# 		trigger = {
+	# 			exists = owner
+	# 			owner = {  has_valid_civic = civic_citizen_service }
+	# 		}
+	# 		unity = 1
+	# 	}
+	# 	produces = {
+	# 		trigger = {
+	# 			exists = owner
+	# 			owner = { has_valid_civic = civic_byzantine_bureaucracy }
+	# 		}
+	# 		unity = 1
+	# 	}
+	# 	upkeep = {
+	# 		consumer_goods = 2
+	# 	}
+	# 	upkeep = {
+	# 		trigger = {
+	# 			exists = owner
+	# 			owner = { has_valid_civic = civic_byzantine_bureaucracy }
+	# 		}
+	# 		consumer_goods = -1
+	# 	}
+	# }
+
+	# planet_modifier = {
+	# 	planet_orbital_bombardment_damage = -0.15
+	# 	planet_stability_add = 3
+	# 	planet_defense_armies_add = 2
+	# }
+
+	# triggered_planet_modifier = {
+	# 	potential = {
+	# 		always = yes
+	# 	}
+	# 	planet_amenities_add = 300
+	# 	mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	# }
+
+	# # pop_group_modifier = {	# No Longer Used in Stellaris 4.0
+	# #	pop_defense_armies_add = 2
+	# #}
+
+	# triggered_planet_modifier = {
+	# 	potential = {
+	# 		has_trait = trait_repugnant
+	# 	}
+	# 	planet_amenities_add = -100
+	# 	mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	# }
+
+	# triggered_planet_modifier = {
+	# 	potential = {
+	# 		exists = owner
+	# 		owner = {  has_valid_civic = civic_citizen_service }
+	# 	}
+	# 	planet_amenities_add = 300
+	# 	mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	# }
+
+	# triggered_country_modifier = {
+	# 	potential = {
+	# 		exists = owner
+	# 		owner = { has_valid_civic = civic_byzantine_bureaucracy }
+	# 	}
+	# 	modifier = {
+	# 		empire_size_pops_mult = -0.005
+	# 	}
+	# }
+
+	# weight = {
+	# 	weight = @ruler_job_weight
+	# 	mult = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
+	# 	modifier = {
+	# 		factor = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
+	# 		has_trait = trait_repugnant
+	# 	}
+	# 	modifier = {
+	# 		factor = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
+	# 		owner = { has_valid_civic = civic_citizen_service }
+	# 	}
+	# 	modifier = {
+	# 		factor = 2.0
+	# 		OR = {
+	# 			has_trait = trait_very_strong
+	# 		}
+	# 	}
+	# 	modifier = {
+	# 		factor = 1.5
+	# 		OR = {
+	# 			has_trait = trait_strong
+	# 		}
+	# 	}
+	# 	# modifier = {
+	# 	#	factor = 5
+	# 	#	has_job_type = commandante	# No Longer Used in Stellaris 4.0
+	# 	#}
+	# }
+
+	# inline_script = "jobs/automodding_priority_unity"
+}
+
+# Pirate Captains
+commandante_pirate = { 		#Steam: Defunct as of 4.0, kept for archival purposes
+	category = ruler
+	swappable_data = {
+		default = {
+			condition_string = RULER_JOB_TRIGGER
+			building_icon = building_pirate_haven
+		}
+	}
+	
+	possible = {	#Steam: Kept on purpose, for leader backgrounds
+		always = no
+	}
+
+#	possible_pre_triggers = {
+#		has_owner = yes
+#		is_enslaved = no
+#		is_being_purged = no
+#		is_being_assimilated = no
+#		is_sapient = yes
+#	}
+#
+#	possible_precalc = can_fill_ruler_job
+#
+#	country_modifier = {
+#		country_naval_cap_add = 2
+#	}
+#
+#	resources = {
+#		category = planet_bureaucrats
+#		produces = {
+#			unity = 2
+#		}
+#		produces = {
+#			trigger = {
+#				exists = owner
+#				owner = {  has_valid_civic = civic_citizen_service }
+#			}
+#			unity = 1
+#		}
+#		produces = {
+#			trigger = {
+#				exists = owner
+#				owner = { has_valid_civic = civic_byzantine_bureaucracy }
+#			}
+#			unity = 1
+#		}
+#		upkeep = {
+#			consumer_goods = 2
+#		}
+#		upkeep = {
+#			trigger = {
+#				exists = owner
+#				owner = { has_valid_civic = civic_byzantine_bureaucracy }
+#			}
+#			consumer_goods = -1
+#		}
+#	}
+#
+#	planet_modifier = {
+#		planet_orbital_bombardment_damage = -0.10
+#		planet_stability_add = 3
+#		planet_defense_armies_add = 1
+#		pop_government_ethic_attraction = -0.015
+#	}
+#
+#	triggered_planet_modifier = {
+#		potential = {
+#			always = yes
+#		}
+#		planet_amenities_add = 300
+#		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+#	}
+#
+#	# pop_group_modifier = {	# No Longer Used in Stellaris 4.0
+#	#	pop_defense_armies_add = 1
+#	#}
+#
+#	triggered_planet_modifier = {
+#		potential = {
+#			has_trait = trait_repugnant
+#		}
+#		planet_amenities_add = -100
+#		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+#	}
+#
+#	triggered_planet_modifier = {
+#		potential = {
+#			exists = owner
+#			owner = {  has_valid_civic = civic_citizen_service }
+#		}
+#		planet_amenities_add = 300
+#		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+#	}
+#
+#	triggered_country_modifier = {
+#		potential = {
+#			exists = owner
+#			owner = { has_valid_civic = civic_byzantine_bureaucracy }
+#		}
+#		modifier = {
+#			empire_size_pops_mult = -0.005
+#		}
+#	}
+#
+#	weight = {
+#		weight = @ruler_job_weight
+#		mult = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
+#		modifier = {
+#			factor = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
+#			has_trait = trait_repugnant
+#		}
+#		modifier = {
+#			factor = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
+#			owner = { has_valid_civic = civic_citizen_service }
+#		}
+#		modifier = {
+#			factor = 2.0
+#			OR = {
+#				has_trait = trait_very_strong
+#			}
+#		}
+#		modifier = {
+#			factor = 1.5
+#			OR = {
+#				has_trait = trait_strong
+#			}
+#		}
+#		# modifier = {
+#		#	factor = 5
+#		#	has_job_type = commandante_pirate	# No Longer Used in Stellaris 4.0
+#		#}
+#	}
+#
+#	inline_script = "jobs/automodding_priority_unity"
+}
+
+#Thinker
+supervisor = { 		#Steam: Defunct as of 4.0, kept for archival purposes
+	category = ruler
+	swappable_data = {
+		default = {
+			condition_string = RULER_JOB_TRIGGER
+			building_icon = building_capital
+		}
+	}
+	possible = { 	#Steam: Kept on purpose, for leader backgrounds
+		always = no
+	}
+	# possible_pre_triggers = {
+	# 	has_owner = yes
+	# 	is_enslaved = no
+	# 	is_being_purged = no
+	# 	is_being_assimilated = no
+	# 	is_sapient = yes
+	# }
+
+	# possible_precalc = can_fill_ruler_job
+
+	# resources = {
+	# 	category = planet_bureaucrats
+	# 	produces = {
+	# 		unity = 7
+	# 		society_research = 5 # 7 # 3.11
+	# 	}
+	# 	produces = {
+	# 		trigger = {
+	# 			exists = owner
+	# 			owner = { has_valid_civic = civic_byzantine_bureaucracy }
+	# 		}
+	# 		unity = 1
+	# 	}
+	# 	upkeep = {
+	# 		consumer_goods = 2
+	# 	}
+	# 	upkeep = {
+	# 		trigger = {
+	# 			exists = owner
+	# 			owner = { has_valid_civic = civic_byzantine_bureaucracy }
+	# 		}
+	# 		consumer_goods = -1
+	# 	}
+	# }
+
+	# triggered_planet_modifier = {
+	# 	potential = {
+	# 		always = yes
+	# 	}
+	# 	planet_amenities_add = 700
+	# 	mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	# }
+
+	# triggered_planet_modifier = {
+	# 	potential = {
+	# 		has_trait = trait_repugnant
+	# 	}
+	# 	planet_amenities_add = -100
+	# 	mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	# }
+
+	# triggered_planet_modifier = {
+	# 	potential = {
+	# 		exists = owner
+	# 		owner = { OR = { has_valid_civic = civic_shadow_council } }
+	# 	}
+	# 	planet_stability_add = 2
+	# }
+
+	# triggered_country_modifier = {
+	# 	potential = {
+	# 		exists = owner
+	# 		owner = { has_valid_civic = civic_byzantine_bureaucracy }
+	# 	}
+	# 	empire_size_pops_mult = -0.005
+	# }
+
+	# triggered_planet_modifier = {
+	# 	potential = {
+	# 		exists = owner
+	# 		owner = { OR = { has_valid_civic = civic_welfare_state } }
+	# 	}
+	# 	planet_amenities_add = 200
+	# 	mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	# }
+
+	# weight = {
+	# 	weight = @ruler_job_weight
+	# 	mult = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
+	# 	modifier = {
+	# 		factor = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
+	# 		has_trait = trait_repugnant
+	# 	}
+	# 	modifier = {
+	# 		factor = 2.0
+	# 		OR = {
+	# 			has_trait = trait_talented
+	# 		}
+	# 	}
+	# 	modifier = {
+	# 		factor = 1.5
+	# 		OR = {
+	# 			has_trait = trait_charismatic
+	# 		}
+	# 	}
+	# 	# modifier = {
+	# 	#	factor = 5
+	# 	#	has_job_type = supervisor	# No Longer Used in Stellaris 4.0
+	# 	#}
+	# }
+
+	# inline_script = "jobs/automodding_priority_unity"
+}
+
+#Mogul
+mogul = {		#Steam: Defunct as of 4.0, kept for archival purposes
+	category = ruler
+	swappable_data = {
+		default = {
+			condition_string = RULER_JOB_TRIGGER
+			building_icon = building_galactic_stock_exchange
+		}
+	}
+	possible = { 	#Steam: Kept on purpose, for leader backgrounds
+		always = no
+	}
+	
+	# possible_pre_triggers = {
+	# 	has_owner = yes
+	# 	is_enslaved = no
+	# 	is_being_purged = no
+	# 	is_being_assimilated = no
+	# 	is_sapient = yes
+	# }
+
+	# possible_precalc = can_fill_ruler_job
+
+	# resources = {
+	# 	category = planet_bureaucrats
+	# 	produces = {
+	# 		trigger = {
+	# 			exists = owner
+	# 			owner = { has_valid_civic = civic_byzantine_bureaucracy }
+	# 		}
+	# 		unity = 1
+	# 	}
+	# 	upkeep = {
+	# 		consumer_goods = 2
+	# 	}
+	# 	upkeep = {
+	# 		trigger = {
+	# 			exists = owner
+	# 			owner = { has_valid_civic = civic_byzantine_bureaucracy }
+	# 		}
+	# 		consumer_goods = -1
+	# 	}
+	# }
+
+	# possible = {
+	# 	exists = owner
+	# 	owner = { NOT = { has_valid_civic = civic_distributism } }
+	# }
+
+	# # triggered_planet_modifier = {	# No Longer Used in Stellaris 4.0
+	# #	potential = {
+	# #		always = yes
+	# #	}
+	# #	planet_jobs_trade_produces_add = 5
+	# #	# mult = value:scripted_modifier_mult|MODIFIER|trader_jobs_bonus_workforce_mult|
+	# #}
+
+	# triggered_planet_modifier = {
+	# 	potential = {
+	# 		always = yes
+	# 	}
+	# 	planet_amenities_add = 500
+	# 	mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	# }
+
+	# triggered_planet_modifier = {
+	# 	potential = {
+	# 		exists = owner
+	# 		owner = { has_valid_civic = civic_merchant_guilds }
+	# 	}
+	# 	modifier = {
+	# 		planet_jobs_energy_produces_mult = 0.07
+	# 	}
+	# }
+
+	# triggered_planet_modifier = {
+	# 	potential = {
+	# 		exists = owner
+	# 		owner = { has_valid_civic = civic_state_monopoly }
+	# 	}
+	# 	modifier = {
+	# 		planet_jobs_energy_produces_mult = 0.07
+	# 		planet_jobs_minerals_produces_mult = 0.07
+	# 	}
+	# }
+
+	# triggered_planet_modifier = {
+	# 	potential = {
+	# 		OR = {
+	# 			has_trait = trait_thrifty
+	# 			has_trait = trait_nuumismatic_administration
+	# 		}
+	# 	}
+	# 	planet_amenities_add = 200
+	# 	mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	# }
+
+	# triggered_planet_modifier = {
+	# 	potential = {
+	# 		has_trait = trait_repugnant
+	# 	}
+	# 	planet_amenities_add = -100
+	# 	mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	# }
+
+	# triggered_planet_modifier = {
+	# 	potential = {
+	# 		exists = owner
+	# 		owner = { OR = { has_valid_civic = civic_shadow_council } }
+	# 	}
+	# 	planet_stability_add = 2
+	# }
+
+	# triggered_country_modifier = {
+	# 	potential = {
+	# 		exists = owner
+	# 		owner = { has_valid_civic = civic_byzantine_bureaucracy }
+	# 	}
+	# 	empire_size_pops_mult = -0.005
+	# }
+
+	# triggered_planet_modifier = {
+	# 	potential = {
+	# 		exists = owner
+	# 		owner = { OR = { has_valid_civic = civic_welfare_state } }
+	# 	}
+	# 	planet_amenities_add = 200
+	# 	mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	# }
+
+	# weight = {
+	# 	weight = @ruler_job_weight
+	# 	mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	# 	mult = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
+	# 	modifier = {
+	# 		factor = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
+	# 		OR = {
+	# 			has_trait = trait_thrifty
+	# 			has_trait = trait_nuumismatic_administration
+	# 		}
+	# 	}
+	# 	modifier = {
+	# 		factor = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
+	# 		has_trait = trait_repugnant
+	# 	}
+	# 	modifier = {
+	# 		factor = 1.5
+	# 		has_ethic = ethic_capitalism
+	# 	}
+	# 	modifier = {
+	# 		factor = 1.5
+	# 		OR = {
+	# 			has_trait = trait_robot_domestic_protocols
+	# 			has_trait = trait_charismatic
+	# 		}
+	# 	}
+	# 	# modifier = {
+	# 	#	factor = 5
+	# 	#	has_job_type = mogul		# No Longer Used in Stellaris 4.0
+	# 	#}
+	# 	modifier = {
+	# 		factor = 1.25
+	# 		owner = { has_civic = civic_merchant_guilds }
+	# 		has_trait = trait_brainslug
+	# 	}
+	# 	modifier = {
+	# 		factor = 1.125
+	# 		owner = { has_civic = civic_merchant_guilds }
+	# 		has_trait = trait_presapient_natural_intellectuals
+	# 	}
+	# 	modifier = {
+	# 		factor = 1.125
+	# 		owner = { has_civic = civic_merchant_guilds }
+	# 		has_trait = trait_robust
+	# 	}
+	# 	modifier = {
+	# 		factor = 1.5
+	# 		has_trait = trait_void_dweller_1
+	# 		exists = planet
+	# 		planet = { is_planet_class = pc_habitat }
+	# 	}
+	# 	modifier = {
+	# 		factor = 0.85
+	# 		has_trait = trait_void_dweller_1
+	# 		exists = planet
+	# 		planet = { is_artificial = no }
+	# 	}
+	# 	# Crisis purge
+	# 	modifier = {
+	# 		factor = 0.01
+	# 		exists = planet
+	# 		exists = planet.controller
+	# 		planet.controller = {
+	# 			OR = {
+	# 				is_country_type = swarm
+	# 				is_country_type = ai_empire
+	# 			}
+	# 		}
+	# 		OR = { # Contingency won't purge itself
+	# 			NOT = { exists = event_target:custodian_bot }
+	# 			AND = {
+	# 				exists = event_target:custodian_bot
+	# 				NOT = { species = { is_same_value = event_target:custodian_bot } }
+	# 			}
+	# 		}
+	# 	}
+	# }
+
+	# inline_script = "jobs/automodding_priority_trade"
+}
+
+#Steam: Re-organized to clean up top of file, here are jobs totally removed
+################
+### Archives ###
+################
 
 # head_researcher = {		# Enriad - Marked for deletion for 4.0 politician rework
 # 	category = ruler
@@ -1051,728 +1785,3 @@ politician = {
 
 # 	inline_script = "jobs/automodding_priority_unity"
 # }
-
-# Enriad - Fake jobs for leader backgrounds as was in original game example
-commandante = {
-	category = ruler
-	swappable_data = {
-		default = {
-			condition_string = RULER_JOB_TRIGGER
-			building_icon = building_stronghold
-			icon = commandante
-		}
-	}
-	possible = { always = no }
-
-	# possible_pre_triggers = {
-	# 	has_owner = yes
-	# 	is_enslaved = no
-	# 	is_being_purged = no
-	# 	is_being_assimilated = no
-	# 	is_sapient = yes
-	# }
-
-	# possible_precalc = can_fill_ruler_job
-
-	# country_modifier = {
-	# 	country_naval_cap_add = 3
-	# }
-
-	# resources = {
-	# 	category = planet_bureaucrats
-	# 	produces = {
-	# 		trigger = {
-	# 			exists = owner
-	# 			owner = {  has_valid_civic = civic_citizen_service }
-	# 		}
-	# 		unity = 1
-	# 	}
-	# 	produces = {
-	# 		trigger = {
-	# 			exists = owner
-	# 			owner = { has_valid_civic = civic_byzantine_bureaucracy }
-	# 		}
-	# 		unity = 1
-	# 	}
-	# 	upkeep = {
-	# 		consumer_goods = 2
-	# 	}
-	# 	upkeep = {
-	# 		trigger = {
-	# 			exists = owner
-	# 			owner = { has_valid_civic = civic_byzantine_bureaucracy }
-	# 		}
-	# 		consumer_goods = -1
-	# 	}
-	# }
-
-	# planet_modifier = {
-	# 	planet_orbital_bombardment_damage = -0.15
-	# 	planet_stability_add = 3
-	# 	planet_defense_armies_add = 2
-	# }
-
-	# triggered_planet_modifier = {
-	# 	potential = {
-	# 		always = yes
-	# 	}
-	# 	planet_amenities_add = 300
-	# 	mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
-	# }
-
-	# # pop_group_modifier = {	# No Longer Used in Stellaris 4.0
-	# #	pop_defense_armies_add = 2
-	# #}
-
-	# triggered_planet_modifier = {
-	# 	potential = {
-	# 		has_trait = trait_repugnant
-	# 	}
-	# 	planet_amenities_add = -100
-	# 	mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
-	# }
-
-	# triggered_planet_modifier = {
-	# 	potential = {
-	# 		exists = owner
-	# 		owner = {  has_valid_civic = civic_citizen_service }
-	# 	}
-	# 	planet_amenities_add = 300
-	# 	mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
-	# }
-
-	# triggered_country_modifier = {
-	# 	potential = {
-	# 		exists = owner
-	# 		owner = { has_valid_civic = civic_byzantine_bureaucracy }
-	# 	}
-	# 	modifier = {
-	# 		empire_size_pops_mult = -0.005
-	# 	}
-	# }
-
-	# weight = {
-	# 	weight = @ruler_job_weight
-	# 	mult = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
-	# 	modifier = {
-	# 		factor = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
-	# 		has_trait = trait_repugnant
-	# 	}
-	# 	modifier = {
-	# 		factor = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
-	# 		owner = { has_valid_civic = civic_citizen_service }
-	# 	}
-	# 	modifier = {
-	# 		factor = 2.0
-	# 		OR = {
-	# 			has_trait = trait_very_strong
-	# 		}
-	# 	}
-	# 	modifier = {
-	# 		factor = 1.5
-	# 		OR = {
-	# 			has_trait = trait_strong
-	# 		}
-	# 	}
-	# 	# modifier = {
-	# 	#	factor = 5
-	# 	#	has_job_type = commandante	# No Longer Used in Stellaris 4.0
-	# 	#}
-	# }
-
-	# inline_script = "jobs/automodding_priority_unity"
-}
-# Offworld Pirate Captains
-commandante_pirate_offworld = {
-	category = ruler
-	swappable_data = {
-		default = {
-			condition_string = RULER_JOB_TRIGGER
-			building_icon = building_pirate_haven
-			icon = enforcer
-		}
-	}
-	# possible = { always = no }
-
-	possible_pre_triggers = {
-		has_owner = yes
-		is_enslaved = no
-		is_being_purged = no
-		is_being_assimilated = no
-		is_sapient = yes
-	}
-
-	possible_precalc = can_fill_ruler_job
-
-	country_modifier = {
-		country_naval_cap_add = 2
-	}
-
-	resources = {
-		category = planet_politicians
-		produces = {
-			unity = 2
-		}
-		produces = {
-			trigger = {
-				exists = owner
-				owner = {  has_valid_civic = civic_citizen_service }
-			}
-			unity = 1
-		}
-		produces = {
-			trigger = {
-				exists = owner
-				owner = { has_valid_civic = civic_byzantine_bureaucracy }
-			}
-			unity = 1
-		}
-		upkeep = {
-			consumer_goods = 2
-		}
-		upkeep = {
-			trigger = {
-				exists = owner
-				owner = { has_valid_civic = civic_byzantine_bureaucracy }
-			}
-			consumer_goods = -1
-		}
-	}
-
-	planet_modifier = {
-		planet_orbital_bombardment_damage = -0.10
-		planet_stability_add = 3
-		planet_defense_armies_add = 1
-		pop_government_ethic_attraction = -0.015
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			always = yes
-		}
-		planet_amenities_add = 300
-		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
-	}
-
-	# pop_group_modifier = {	# No Longer Used in Stellaris 4.0
-	#	pop_defense_armies_add = 1
-	#}
-
-	triggered_planet_modifier = {
-		potential = {
-			has_trait = trait_repugnant
-		}
-		planet_amenities_add = -100
-		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = {  has_valid_civic = civic_citizen_service }
-		}
-		planet_amenities_add = 300
-		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
-	}
-
-	triggered_country_modifier = {
-		potential = {
-			exists = owner
-			owner = { has_valid_civic = civic_byzantine_bureaucracy }
-		}
-		modifier = {
-			empire_size_pops_mult = -0.005
-		}
-	}
-
-	weight = {
-		weight = @ruler_job_weight
-		mult = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
-		modifier = {
-			factor = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
-			has_trait = trait_repugnant
-		}
-		modifier = {
-			factor = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
-			owner = { has_valid_civic = civic_citizen_service }
-		}
-		modifier = {
-			factor = 2.0
-			OR = {
-				has_trait = trait_very_strong
-			}
-		}
-		modifier = {
-			factor = 1.5
-			OR = {
-				has_trait = trait_strong
-			}
-		}
-		# modifier = {
-		#	factor = 5
-		#	has_job_type = commandante_pirate	# No Longer Used in Stellaris 4.0
-		#}
-	}
-
-	inline_script = "jobs/automodding_priority_unity"
-}
-
-# Pirate Captains	#Cog Note - Necessary for Pirate_Haven_2 building
-commandante_pirate = {
-	category = ruler
-	swappable_data = {
-		default = {
-			condition_string = RULER_JOB_TRIGGER
-			building_icon = building_pirate_haven
-			# clothes_texture_index = 1
-		}
-	}
-
-	possible_pre_triggers = {
-		has_owner = yes
-		is_enslaved = no
-		is_being_purged = no
-		is_being_assimilated = no
-		is_sapient = yes
-	}
-
-	possible_precalc = can_fill_ruler_job
-
-	country_modifier = {
-		country_naval_cap_add = 2
-	}
-
-	resources = {
-		category = planet_bureaucrats
-		produces = {
-			unity = 2
-		}
-		produces = {
-			trigger = {
-				exists = owner
-				owner = {  has_valid_civic = civic_citizen_service }
-			}
-			unity = 1
-		}
-		produces = {
-			trigger = {
-				exists = owner
-				owner = { has_valid_civic = civic_byzantine_bureaucracy }
-			}
-			unity = 1
-		}
-		upkeep = {
-			consumer_goods = 2
-		}
-		upkeep = {
-			trigger = {
-				exists = owner
-				owner = { has_valid_civic = civic_byzantine_bureaucracy }
-			}
-			consumer_goods = -1
-		}
-	}
-
-	planet_modifier = {
-		planet_orbital_bombardment_damage = -0.10
-		planet_stability_add = 3
-		planet_defense_armies_add = 1
-		pop_government_ethic_attraction = -0.015
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			always = yes
-		}
-		planet_amenities_add = 300
-		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
-	}
-
-	# pop_group_modifier = {	# No Longer Used in Stellaris 4.0
-	#	pop_defense_armies_add = 1
-	#}
-
-	triggered_planet_modifier = {
-		potential = {
-			has_trait = trait_repugnant
-		}
-		planet_amenities_add = -100
-		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = {  has_valid_civic = civic_citizen_service }
-		}
-		planet_amenities_add = 300
-		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
-	}
-
-	triggered_country_modifier = {
-		potential = {
-			exists = owner
-			owner = { has_valid_civic = civic_byzantine_bureaucracy }
-		}
-		modifier = {
-			empire_size_pops_mult = -0.005
-		}
-	}
-
-	weight = {
-		weight = @ruler_job_weight
-		mult = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
-		modifier = {
-			factor = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
-			has_trait = trait_repugnant
-		}
-		modifier = {
-			factor = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
-			owner = { has_valid_civic = civic_citizen_service }
-		}
-		modifier = {
-			factor = 2.0
-			OR = {
-				has_trait = trait_very_strong
-			}
-		}
-		modifier = {
-			factor = 1.5
-			OR = {
-				has_trait = trait_strong
-			}
-		}
-		# modifier = {
-		#	factor = 5
-		#	has_job_type = commandante_pirate	# No Longer Used in Stellaris 4.0
-		#}
-	}
-
-	inline_script = "jobs/automodding_priority_unity"
-}
-
-#Thinker
-supervisor = {
-	category = ruler
-	swappable_data = {
-		default = {
-			condition_string = RULER_JOB_TRIGGER
-			building_icon = building_capital
-			# clothes_texture_index = 1
-		}
-	}
-	possible = { always = no }
-
-	# possible_pre_triggers = {
-	# 	has_owner = yes
-	# 	is_enslaved = no
-	# 	is_being_purged = no
-	# 	is_being_assimilated = no
-	# 	is_sapient = yes
-	# }
-
-	# possible_precalc = can_fill_ruler_job
-
-	# resources = {
-	# 	category = planet_bureaucrats
-	# 	produces = {
-	# 		unity = 7
-	# 		society_research = 5 # 7 # 3.11
-	# 	}
-	# 	produces = {
-	# 		trigger = {
-	# 			exists = owner
-	# 			owner = { has_valid_civic = civic_byzantine_bureaucracy }
-	# 		}
-	# 		unity = 1
-	# 	}
-	# 	upkeep = {
-	# 		consumer_goods = 2
-	# 	}
-	# 	upkeep = {
-	# 		trigger = {
-	# 			exists = owner
-	# 			owner = { has_valid_civic = civic_byzantine_bureaucracy }
-	# 		}
-	# 		consumer_goods = -1
-	# 	}
-	# }
-
-	# triggered_planet_modifier = {
-	# 	potential = {
-	# 		always = yes
-	# 	}
-	# 	planet_amenities_add = 700
-	# 	mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
-	# }
-
-	# triggered_planet_modifier = {
-	# 	potential = {
-	# 		has_trait = trait_repugnant
-	# 	}
-	# 	planet_amenities_add = -100
-	# 	mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
-	# }
-
-	# triggered_planet_modifier = {
-	# 	potential = {
-	# 		exists = owner
-	# 		owner = { OR = { has_valid_civic = civic_shadow_council } }
-	# 	}
-	# 	planet_stability_add = 2
-	# }
-
-	# triggered_country_modifier = {
-	# 	potential = {
-	# 		exists = owner
-	# 		owner = { has_valid_civic = civic_byzantine_bureaucracy }
-	# 	}
-	# 	empire_size_pops_mult = -0.005
-	# }
-
-	# triggered_planet_modifier = {
-	# 	potential = {
-	# 		exists = owner
-	# 		owner = { OR = { has_valid_civic = civic_welfare_state } }
-	# 	}
-	# 	planet_amenities_add = 200
-	# 	mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
-	# }
-
-	# weight = {
-	# 	weight = @ruler_job_weight
-	# 	mult = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
-	# 	modifier = {
-	# 		factor = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
-	# 		has_trait = trait_repugnant
-	# 	}
-	# 	modifier = {
-	# 		factor = 2.0
-	# 		OR = {
-	# 			has_trait = trait_talented
-	# 		}
-	# 	}
-	# 	modifier = {
-	# 		factor = 1.5
-	# 		OR = {
-	# 			has_trait = trait_charismatic
-	# 		}
-	# 	}
-	# 	# modifier = {
-	# 	#	factor = 5
-	# 	#	has_job_type = supervisor	# No Longer Used in Stellaris 4.0
-	# 	#}
-	# }
-
-	# inline_script = "jobs/automodding_priority_unity"
-}
-
-#Mogul
-mogul = {
-	category = ruler
-	swappable_data = {
-		default = {
-			condition_string = RULER_JOB_TRIGGER
-			building_icon = building_galactic_stock_exchange
-			# clothes_texture_index = 1
-		}
-	}
-	possible = { always = no }
-
-	# possible_pre_triggers = {
-	# 	has_owner = yes
-	# 	is_enslaved = no
-	# 	is_being_purged = no
-	# 	is_being_assimilated = no
-	# 	is_sapient = yes
-	# }
-
-	# possible_precalc = can_fill_ruler_job
-
-	# resources = {
-	# 	category = planet_bureaucrats
-	# 	produces = {
-	# 		trigger = {
-	# 			exists = owner
-	# 			owner = { has_valid_civic = civic_byzantine_bureaucracy }
-	# 		}
-	# 		unity = 1
-	# 	}
-	# 	upkeep = {
-	# 		consumer_goods = 2
-	# 	}
-	# 	upkeep = {
-	# 		trigger = {
-	# 			exists = owner
-	# 			owner = { has_valid_civic = civic_byzantine_bureaucracy }
-	# 		}
-	# 		consumer_goods = -1
-	# 	}
-	# }
-
-	# possible = {
-	# 	exists = owner
-	# 	owner = { NOT = { has_valid_civic = civic_distributism } }
-	# }
-
-	# # triggered_planet_modifier = {	# No Longer Used in Stellaris 4.0
-	# #	potential = {
-	# #		always = yes
-	# #	}
-	# #	planet_jobs_trade_produces_add = 5
-	# #	# mult = value:scripted_modifier_mult|MODIFIER|trader_jobs_bonus_workforce_mult|
-	# #}
-
-	# triggered_planet_modifier = {
-	# 	potential = {
-	# 		always = yes
-	# 	}
-	# 	planet_amenities_add = 500
-	# 	mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
-	# }
-
-	# triggered_planet_modifier = {
-	# 	potential = {
-	# 		exists = owner
-	# 		owner = { has_valid_civic = civic_merchant_guilds }
-	# 	}
-	# 	modifier = {
-	# 		planet_jobs_energy_produces_mult = 0.07
-	# 	}
-	# }
-
-	# triggered_planet_modifier = {
-	# 	potential = {
-	# 		exists = owner
-	# 		owner = { has_valid_civic = civic_state_monopoly }
-	# 	}
-	# 	modifier = {
-	# 		planet_jobs_energy_produces_mult = 0.07
-	# 		planet_jobs_minerals_produces_mult = 0.07
-	# 	}
-	# }
-
-	# triggered_planet_modifier = {
-	# 	potential = {
-	# 		OR = {
-	# 			has_trait = trait_thrifty
-	# 			has_trait = trait_nuumismatic_administration
-	# 		}
-	# 	}
-	# 	planet_amenities_add = 200
-	# 	mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
-	# }
-
-	# triggered_planet_modifier = {
-	# 	potential = {
-	# 		has_trait = trait_repugnant
-	# 	}
-	# 	planet_amenities_add = -100
-	# 	mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
-	# }
-
-	# triggered_planet_modifier = {
-	# 	potential = {
-	# 		exists = owner
-	# 		owner = { OR = { has_valid_civic = civic_shadow_council } }
-	# 	}
-	# 	planet_stability_add = 2
-	# }
-
-	# triggered_country_modifier = {
-	# 	potential = {
-	# 		exists = owner
-	# 		owner = { has_valid_civic = civic_byzantine_bureaucracy }
-	# 	}
-	# 	empire_size_pops_mult = -0.005
-	# }
-
-	# triggered_planet_modifier = {
-	# 	potential = {
-	# 		exists = owner
-	# 		owner = { OR = { has_valid_civic = civic_welfare_state } }
-	# 	}
-	# 	planet_amenities_add = 200
-	# 	mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
-	# }
-
-	# weight = {
-	# 	weight = @ruler_job_weight
-	# 	mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
-	# 	mult = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
-	# 	modifier = {
-	# 		factor = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
-	# 		OR = {
-	# 			has_trait = trait_thrifty
-	# 			has_trait = trait_nuumismatic_administration
-	# 		}
-	# 	}
-	# 	modifier = {
-	# 		factor = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
-	# 		has_trait = trait_repugnant
-	# 	}
-	# 	modifier = {
-	# 		factor = 1.5
-	# 		has_ethic = ethic_capitalism
-	# 	}
-	# 	modifier = {
-	# 		factor = 1.5
-	# 		OR = {
-	# 			has_trait = trait_robot_domestic_protocols
-	# 			has_trait = trait_charismatic
-	# 		}
-	# 	}
-	# 	# modifier = {
-	# 	#	factor = 5
-	# 	#	has_job_type = mogul		# No Longer Used in Stellaris 4.0
-	# 	#}
-	# 	modifier = {
-	# 		factor = 1.25
-	# 		owner = { has_civic = civic_merchant_guilds }
-	# 		has_trait = trait_brainslug
-	# 	}
-	# 	modifier = {
-	# 		factor = 1.125
-	# 		owner = { has_civic = civic_merchant_guilds }
-	# 		has_trait = trait_presapient_natural_intellectuals
-	# 	}
-	# 	modifier = {
-	# 		factor = 1.125
-	# 		owner = { has_civic = civic_merchant_guilds }
-	# 		has_trait = trait_robust
-	# 	}
-	# 	modifier = {
-	# 		factor = 1.5
-	# 		has_trait = trait_void_dweller_1
-	# 		exists = planet
-	# 		planet = { is_planet_class = pc_habitat }
-	# 	}
-	# 	modifier = {
-	# 		factor = 0.85
-	# 		has_trait = trait_void_dweller_1
-	# 		exists = planet
-	# 		planet = { is_artificial = no }
-	# 	}
-	# 	# Crisis purge
-	# 	modifier = {
-	# 		factor = 0.01
-	# 		exists = planet
-	# 		exists = planet.controller
-	# 		planet.controller = {
-	# 			OR = {
-	# 				is_country_type = swarm
-	# 				is_country_type = ai_empire
-	# 			}
-	# 		}
-	# 		OR = { # Contingency won't purge itself
-	# 			NOT = { exists = event_target:custodian_bot }
-	# 			AND = {
-	# 				exists = event_target:custodian_bot
-	# 				NOT = { species = { is_same_value = event_target:custodian_bot } }
-	# 			}
-	# 		}
-	# 	}
-	# }
-
-	# inline_script = "jobs/automodding_priority_trade"
-}
