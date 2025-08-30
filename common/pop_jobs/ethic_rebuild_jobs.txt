@@ -731,11 +731,36 @@ soldier = {
 	}
 
 	possible = {
-		if = {
-			limit = {
-				owner = {
-		soldier_job_check_trigger = yes
-		owner = { is_gestalt = no }
+		AND = {
+			soldier_job_check_trigger = yes
+			owner = { is_gestalt = no }
+			OR = {
+				has_ethic = ethic_militarist
+				if = {
+					limit = {
+						soldier_is_templar = yes
+					}
+					has_ethic = ethic_spiritualist
+				}
+				if = {
+					limit = {
+						OR = {
+							soldier_is_mercenary = yes
+							soldier_is_pirate = yes
+						}
+					}
+					has_ethic = ethic_capitalism
+				}
+				if = {
+					limit = {
+						soldier_is_templar = no
+						soldier_is_pirate = no
+						soldier_is_mercenary = no
+					}
+					NOT = { has_ethic = ethic_pacifist }
+				}
+			}
+		}
 	}
 
 	weight = {
@@ -2504,127 +2529,6 @@ head_ambassador = {		#Added by Pan-Galactic Forum
 	inline_script = "jobs/automodding_priority_unity"
 }
 
-#ranger = {		# Steam: Defunct as of 4.0, included for archival purposes
-#	category = specialist
-#	swappable_data = {
-#		default = {
-#			condition_string = BATTLE_THRALL_JOB_TRIGGER
-#			building_icon = building_jungle_surveying
-#			# clothes_texture_index = 5
-#		}
-#	}
-#
-#	possible_pre_triggers = {
-#		has_owner = yes
-#		is_being_purged = no
-#		is_being_assimilated = no
-#		is_sapient = yes
-#	}
-#
-#	possible = {
-#		battle_thrall_job_check_trigger = yes
-#	}
-#
-#	resources = {
-#		category = planet_enforcers
-#		produces = {
-#			unity = 3 # 2 # 3.11
-#			society_research = 1 # 2 # 3.11
-#		}
-#	}
-#
-#	# pop_group_modifier = {	# No Longer Used in Stellaris 4.0
-#	#	pop_defense_armies_add = 2
-#	#}
-#
-#	planet_modifier = {
-#		planet_crime_add = -10
-#		planet_defense_armies_add = 2
-#	}
-#
-#	country_modifier = {
-#		country_naval_cap_add = 2
-#	}
-#
-#	weight = {
-#		weight = @specialist_job_weight
-#		modifier = {
-#			factor = 0.2
-#			NOR = { has_citizenship_rights = yes has_trait = trait_mechanical }
-#		}
-#		modifier = {
-#			factor = 2
-#			has_trait = trait_resilient
-#		}
-#		modifier = {
-#			factor = 2
-#			has_trait = trait_very_strong
-#		}
-#		modifier = {
-#			factor = 1.5
-#			has_trait = trait_strong
-#		}
-#		modifier = {
-#			factor = 10
-#			is_enslaved = yes
-#			has_slavery_type = { type = slavery_military }
-#		}
-#		modifier = {
-#			factor = 0.50
-#			has_trait = trait_weak
-#		}
-#		modifier = {
-#			factor = 0.1
-#			can_take_servant_job = yes
-#		}
-#		# modifier = {
-#		#	factor = 10
-#		#	has_job_type = enforcer	# No Longer Used in Stellaris 4.0
-#		#}
-#		modifier = {
-#			factor = 1.1
-#			has_trait = trait_cybernetic
-#		}
-#		modifier = {
-#			factor = 2
-#			has_trait = trait_presapient_earthbound
-#		}
-#		modifier = {
-#			factor = 1.1
-#			has_trait = trait_limited_regeneration
-#		}
-#		modifier = {
-#			factor = 1.1
-#			has_trait = trait_presapient_proles
-#		}
-#		# modifier = {
-#		#	factor = 20
-#		#	has_job_type = enforcer	# No Longer Used in Stellaris 4.0
-#		#	prev = {
-#		#		OR = {
-#		#			has_trait = trait_robust
-#		#			has_trait = trait_robot_efficient_processors
-#		#		}
-#		#	}
-#		#}
-#		modifier = {
-#			factor = 0.9
-#			has_trait = trait_quarrelsome
-#		}
-#		modifier = {
-#			factor = 0.8
-#			is_enslaved = yes
-#			has_slavery_type = { type = slavery_indentured }
-#		}
-#		modifier = {
-#			factor = 2
-#			has_trait = trait_lithoid
-#		}
-#	}
-#
-#	inline_script = "jobs/automodding_priority_unity"
-#}
-
 naturalist = {
 	category = worker
 	swappable_data = {
@@ -2855,7 +2759,7 @@ urban_engineer = {
 	inline_script = "jobs/automodding_priority_research"
 }
 
-wealth_preacher = {		#Steam: Defunct as of 4.0, kept for archival purposes
+wealth_preacher = {
 	category = specialist
 	swappable_data = {
 		default = {
@@ -2864,167 +2768,163 @@ wealth_preacher = {		#Steam: Defunct as of 4.0, kept for archival purposes
 			# clothes_texture_index = 3
 		}
 	}
-	
-	possible = {	#Steam: Kept on purpose, for leader backgrounds
-		always = no
+
+	possible_pre_triggers = {
+		has_owner = yes
+		is_being_purged = no
+		is_being_assimilated = no
+		is_sapient = yes
 	}
 
-#	possible_pre_triggers = {
-#		has_owner = yes
-#		is_being_purged = no
-#		is_being_assimilated = no
-#		is_sapient = yes
-#	}
-#
-#	possible_precalc = can_fill_specialist_job
-#
-#	resources = {
-#		category = planet_bureaucrats
-#		produces = {
-#			unity = 4
-#		}
-#		produces = {
-#			trigger = {
-#				exists = owner
-#				owner = {
-#					OR = {
-#						has_valid_civic = civic_exalted_priesthood
-#						has_valid_civic = civic_imperial_cult
-#						has_valid_civic = civic_divine_council
-#						has_valid_civic = civic_spiritual_democracy
-#					}
-#				}
-#			}
-#			unity = 1
-#		}
-#		upkeep = {
-#			trigger = {
-#				exists = owner
-#				owner = { is_gestalt = no }
-#			}
-#			consumer_goods = 2
-#		}
-#	}
-#
-#	planet_modifier = {
-#		planet_jobs_trade_produces_mult = 0.05
-#	}
-#
-#	weight = {
-#		weight = @specialist_job_weight
-#		modifier = {
-#			factor = 0.2
-#			NOR = { has_citizenship_rights = yes has_trait = trait_mechanical }
-#		}
-#		modifier = {
-#			factor = 2
-#			exists = owner
-#			owner = { has_civic = civic_exalted_priesthood }
-#		}
-#		modifier = {
-#			factor = 2
-#			OR = {
-#				has_trait = trait_robot_domestic_protocols
-#				has_trait = trait_charismatic
-#			}
-#		}
-#		modifier = {
-#			factor = 0.5
-#			has_trait = trait_repugnant
-#		}
-#		modifier = {
-#			factor = 1.5
-#			OR = {
-#				has_trait = trait_robot_propaganda_machines
-#				has_trait = trait_traditional
-#			}
-#		}
-#		modifier = {
-#			factor = 1.4
-#			has_ethic = ethic_capitalism
-#		}
-#		modifier = {
-#			factor = 1.2
-#			has_ethic = ethic_spiritualist
-#		}
-#		modifier = {
-#			factor = 0.5
-#			has_trait = trait_quarrelsome
-#		}
-#		modifier = {
-#			factor = 0.1
-#			can_take_servant_job = yes
-#		}
-#		modifier = {
-#			factor = 1.1
-#			has_trait = trait_natural_sociologists
-#		}
-#		# modifier = {
-#		#	factor = 0.1
-#		#	has_ethic = ethic_materialist
-#		#	NOT = { has_job_type = priest }	# No Longer Used in Stellaris 4.0
-#		#}
-#		# modifier = {
-#		#	factor = 1.5
-#		#	has_job_type = priest	# No Longer Used in Stellaris 4.0
-#		#}
-#		modifier = {
-#			factor = 1.5
-#			has_trait = trait_brainslug
-#		}
-#		modifier = {
-#			factor = 1.3
-#			has_trait = trait_presapient_natural_intellectuals
-#		}
-#		modifier = {
-#			factor = 1.3
-#			OR = {
-#				has_trait = trait_robust
-#				has_trait = trait_robot_efficient_processors
-#			}
-#		}
-#		modifier = {
-#			factor = 1.15
-#			has_trait = trait_erudite
-#		}
-#		modifier = {
-#			factor = 1.05
-#			OR = {
-#				has_trait = trait_robot_logic_engines
-#				has_trait = trait_intelligent
-#			}
-#		}
-#		modifier = {
-#			factor = 0.9
-#			has_trait = trait_presapient_proles
-#		}
-#		modifier = {
-#			factor = 1.05
-#			has_trait = trait_psionic
-#		}
-#		modifier = {
-#			factor = 0.7
-#			has_trait = trait_enigmatic_intelligence_failed
-#		}
-#		modifier = {
-#			factor = 1.05
-#			OR = {
-#				has_trait = trait_enigmatic_intelligence
-#				has_trait = trait_enigmatic_intelligence_poor
-#			}
-#		}
-#		modifier = {
-#			factor = 0.1
-#			is_enslaved = yes
-#			has_slavery_type = { type = slavery_indentured }
-#		}
-#		modifier = {
-#			factor = 1.5
-#			has_trait = trait_necrophage
-#		}
-#	}
-#
-#	inline_script = "jobs/automodding_priority_unity"
+	possible_precalc = can_fill_specialist_job
+
+	resources = {
+		category = planet_bureaucrats
+		produces = {
+			unity = 4
+		}
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					OR = {
+						has_valid_civic = civic_exalted_priesthood
+						has_valid_civic = civic_imperial_cult
+						has_valid_civic = civic_divine_council
+						has_valid_civic = civic_spiritual_democracy
+					}
+				}
+			}
+			unity = 1
+		}
+		upkeep = {
+			trigger = {
+				exists = owner
+				owner = { is_gestalt = no }
+			}
+			consumer_goods = 2
+		}
+	}
+
+	planet_modifier = {
+		planet_jobs_trade_produces_mult = 0.05
+	}
+
+	weight = {
+		weight = @specialist_job_weight
+		modifier = {
+			factor = 0.2
+			NOR = { has_citizenship_rights = yes has_trait = trait_mechanical }
+		}
+		modifier = {
+			factor = 2
+			exists = owner
+			owner = { has_civic = civic_exalted_priesthood }
+		}
+		modifier = {
+			factor = 2
+			OR = {
+				has_trait = trait_robot_domestic_protocols
+				has_trait = trait_charismatic
+			}
+		}
+		modifier = {
+			factor = 0.5
+			has_trait = trait_repugnant
+		}
+		modifier = {
+			factor = 1.5
+			OR = {
+				has_trait = trait_robot_propaganda_machines
+				has_trait = trait_traditional
+			}
+		}
+		modifier = {
+			factor = 1.4
+			has_ethic = ethic_capitalism
+		}
+		modifier = {
+			factor = 1.2
+			has_ethic = ethic_spiritualist
+		}
+		modifier = {
+			factor = 0.5
+			has_trait = trait_quarrelsome
+		}
+		modifier = {
+			factor = 0.1
+			can_take_servant_job = yes
+		}
+		modifier = {
+			factor = 1.1
+			has_trait = trait_natural_sociologists
+		}
+		# modifier = {
+		#	factor = 0.1
+		#	has_ethic = ethic_materialist
+		#	NOT = { has_job_type = priest }	# No Longer Used in Stellaris 4.0
+		#}
+		# modifier = {
+		#	factor = 1.5
+		#	has_job_type = priest	# No Longer Used in Stellaris 4.0
+		#}
+		modifier = {
+			factor = 1.5
+			has_trait = trait_brainslug
+		}
+		modifier = {
+			factor = 1.3
+			has_trait = trait_presapient_natural_intellectuals
+		}
+		modifier = {
+			factor = 1.3
+			OR = {
+				has_trait = trait_robust
+				has_trait = trait_robot_efficient_processors
+			}
+		}
+		modifier = {
+			factor = 1.15
+			has_trait = trait_erudite
+		}
+		modifier = {
+			factor = 1.05
+			OR = {
+				has_trait = trait_robot_logic_engines
+				has_trait = trait_intelligent
+			}
+		}
+		modifier = {
+			factor = 0.9
+			has_trait = trait_presapient_proles
+		}
+		modifier = {
+			factor = 1.05
+			has_trait = trait_psionic
+		}
+		modifier = {
+			factor = 0.7
+			has_trait = trait_enigmatic_intelligence_failed
+		}
+		modifier = {
+			factor = 1.05
+			OR = {
+				has_trait = trait_enigmatic_intelligence
+				has_trait = trait_enigmatic_intelligence_poor
+			}
+		}
+		modifier = {
+			factor = 0.1
+			is_enslaved = yes
+			has_slavery_type = { type = slavery_indentured }
+		}
+		modifier = {
+			factor = 1.5
+			has_trait = trait_necrophage
+		}
+	}
+
+	inline_script = "jobs/automodding_priority_unity"
 }
 
 # Not acitve
@@ -3174,8 +3074,8 @@ corporate_researcher = {
 	inline_script = "jobs/automodding_priority_research"
 }
 
-# Entrepreneur
-merchant = {
+#Steam: New entrepreneur job, combination of old entrepreneurs and old E&C Traders
+entrepreneur = {
 	category = specialist
 	swappable_data = {
 		default = {
@@ -3195,26 +3095,11 @@ merchant = {
 
 	possible_precalc = can_fill_specialist_job
 
-	resources = {
-		category = planet_merchants
-		upkeep = {
-			consumer_goods = 2
-		}
-	}
-
 	planet_modifier = {
 		planet_amenities_mult = 0.05
 		planet_jobs_consumer_goods_produces_mult = 0.04
 	}
-
-	# triggered_planet_modifier = {	# No Longer Used in Stellaris 4.0
-	#	potential = {
-	#		always = yes
-	#	}
-	#	planet_jobs_trade_produces_add = 10	# Vanilla is 12
-	#	mult = value:scripted_modifier_mult|MODIFIER|trader_jobs_bonus_workforce_mult|
-	#}
-
+	
 	triggered_planet_modifier = {	# Added from Vanilla - Oct 1, 2024
 		potential = {
 			always = yes
@@ -3222,45 +3107,40 @@ merchant = {
 		planet_amenities_add = 100	# Vanilla is 3
 		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
 	}
-
-	# triggered_planet_modifier = {	# Added from Vanilla - Oct 1, 2024	# No Longer Used in Stellaris 4.0
-	#	potential = {
-	#		exists = owner
-	#		owner = {
-	#			has_valid_civic = civic_augmentation_bazaars
-	#		}
-	#	}
-	#	planet_jobs_trade_produces_mult = 0.0025
-	#	founder_species_growth_mult = 0.001
-	#	# mult = value:num_cyborg_traits_species	# No Longer Used in Stellaris 4.0
-	#}
 	
 	resources = {
 		category = planet_merchants
+		produces = {
+			trade = 8
 		produces = {
 			trigger = {
 				exists = owner
 				owner = {
 					OR = {
 						has_valid_civic = civic_meritocratic_capitalism
-						has_civic = civic_meritocratic_capitalism_corporate
+						has_valid_civic = civic_meritocratic_capitalism_corporate
 					}
 				}
 			}
 			unity = 3
 		}
 		upkeep = {
+			consumer_goods = 3
+		}
+		upkeep = {
 			minerals = 1
 		}
-		# upkeep = {
-		#	trigger = {
-		#		has_food_upkeep = yes
-		#		is_phototrophic = no
-		#	}
-		#	food = 1
-		#}
+		upkeep = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_valid_civic = civic_corporate_dominion
+				}
+			}
+			consumer_goods = 2
+		}
 	}
-
+	
 	triggered_planet_modifier = {
 		potential = {
 			exists = owner
@@ -3277,46 +3157,21 @@ merchant = {
 		}
 	}
 	
-	# triggered_planet_modifier = {	# No Longer Used in Stellaris 4.0
-	#	potential = {
-	#		has_trait = trait_thrifty
-	#	}
-	#	planet_jobs_trade_produces_add = 2
-	#	mult = value:scripted_modifier_mult|MODIFIER|trader_jobs_bonus_workforce_mult|
-	#}
-
-	# triggered_planet_modifier = {	# No Longer Used in Stellaris 4.0
-	#	potential = {
-	#		has_trait = trait_nuumismatic_administration
-	#	}
-	#	planet_jobs_trade_produces_add = 2
-	#	mult = value:scripted_modifier_mult|MODIFIER|trader_jobs_bonus_workforce_mult|
-	#}
-
-	# triggered_planet_modifier = {		# Enriad - not working, not intended to work in 4.0
-	# 	potential = {
-	# 		prev = {	# Enriad - current scope is planet where modifier is applied, prev is pop with merchant job
-	# 			OR = {
-	# 				has_trait = trait_robot_domestic_protocols
-	# 				has_trait = trait_charismatic
-	# 			}
-	# 		}
-	# 	}
-	# 	planet_amenities_add = 100
-	# 	mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
-	# }
-
+	planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_valid_civic = civic_corporate_dominion
+			}
+		}
+		planet_jobs_trade_produces_mult = 0.05
+		planet_jobs_rare_crystals_produces_mult = 0.04
+		planet_jobs_volatile_motes_produces_mult = 0.04
+		planet_jobs_exotic_gases_produces_mult = 0.04
+	}
+	
 	weight = {
 		weight = @specialist_job_weight
-		# mult = value:scripted_modifier_job_weight_mult|MODIFIER|trader_jobs_bonus_workforce_mult|	# No Longer Used in Stellaris 4.0
-		# modifier = {
-		#	mult = value:scripted_modifier_job_weight_mult|MODIFIER|trader_jobs_bonus_workforce_mult|	# No Longer Used in Stellaris 4.0
-		#	has_trait = trait_thrifty
-		#}
-		# modifier = {
-		#	mult = value:scripted_modifier_job_weight_mult|MODIFIER|trader_jobs_bonus_workforce_mult|	# No Longer Used in Stellaris 4.0
-		#	has_trait = trait_nuumismatic_administration
-		#}
 		modifier = {
 			factor = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
 			OR = {
@@ -3324,15 +3179,6 @@ merchant = {
 				has_trait = trait_charismatic
 			}
 		}
-		# modifier = {
-		#	mult = value:scripted_modifier_job_weight_mult|MODIFIER|trader_jobs_bonus_workforce_mult|	# No Longer Used in Stellaris 4.0
-		#	owner = {
-		#		OR = {
-		#			has_valid_civic = civic_consumerism
-		#			has_valid_civic = civic_consumerism_corporate
-		#		}
-		#	}
-		#}
 		modifier = {
 			factor = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
 			owner = {
@@ -3342,10 +3188,6 @@ merchant = {
 				}
 			}
 		}
-		# modifier = {
-		#	factor = 1.5
-		#	has_job_type = merchant	# No Longer Used in Stellaris 4.0
-		#}
 		modifier = {
 			factor = 0.5
 			has_trait = trait_repugnant
@@ -3842,62 +3684,24 @@ gladiator = {
 	possible = {
 		soldier_job_check_trigger = yes
 		owner = { is_gestalt = no }
-		if = {	#First check if BOTH templar and pirate/mercenary swaps are active
-			limit = {
-				AND = {
+		OR = {
+			if = {	
+				limit = {
 					soldier_is_templar = yes
-					OR = {
-						soldier_is_mercenary = yes	#Steam: Pirate v Mercenary is really just a matter of legality, and have similar motivations, so they get clumped for ethics
-						soldier_is_pirate = yes
-					}
 				}
-			}
-			OR = {	#Need to be slaves, capitalist, spiritualist, or militarist
-				is_enslaved = yes				#Steam: Gladiators are usually slaves
-				has_ethic = ethic_capitalism	#Steam: Mercenary / pirate swaps means the oportunistic will do it for a quick buck
 				has_ethic = ethic_spiritualist	#Steam: Might participate for religous reasons / ritualistic purposes
-				has_ethic = ethic_militarist	#Steam: Militarists would probably just want to fight
 			}
-		}
-		else_if = {	#Next check if templar but NOT pirate/mercenary swaps are active
-			limit = {
-				AND = {
-					soldier_is_templar = yes
-					NOR = {
-						soldier_is_mercenary = yes
-						soldier_is_pirate = yes
-					}
-				}
-			}
-			OR = {	#Need to be slaves, spiritualist, or militarist
-				is_enslaved = yes
-				has_ethic = ethic_spiritualist
-				has_ethic = ethic_militarist
-			}
-		}
-		else_if = {	#Now check if mercenary/pirate but NOT templar swaps are active
-			limit = {
-				AND = {
-					NOT = {
-						soldier_is_templar = yes
-					}
+			if = {
+				limit = {
 					OR = {
 						soldier_is_mercenary = yes
 						soldier_is_pirate = yes
 					}
 				}
+				has_ethic = ethic_capitalism	#Steam: Mercenary / pirate swaps means the oportunistic will do it for a quick buck
 			}
-			OR = {	#Need to be slaves, capitalist, or militarist
-				is_enslaved = yes
-				has_ethic = ethic_capitalism
-				has_ethic = ethic_militarist
-			}
-		}
-		else = { #Anything else, so meaning NO templar and NO pirate/mercanary job swaps
-			OR = {
-				is_enslaved = yes				# Cog Note - "Usually an enslaved individual"
-				has_ethic = ethic_militarist	# Cog Note - Why wouldn't a militarist pop try gladiatorial combat?
-			}
+			is_enslaved = yes				# Cog Note - "Usually an enslaved individual"
+			has_ethic = ethic_militarist	# Cog Note - Why wouldn't a militarist pop try gladiatorial combat?
 		}
 	}
 
@@ -4023,6 +3827,557 @@ gladiator = {
 
 	inline_script = "jobs/automodding_priority_amenities"
 }
+
+labour_hero = {
+	category = worker
+	swappable_data = {
+		default = {
+			condition_string = WORKER_JOB_TRIGGER
+			building_icon = building_power_plant
+			# clothes_texture_index = 2
+		}
+	}
+
+	possible_pre_triggers = {
+		has_owner = yes
+		is_being_purged = no
+		is_being_assimilated = no
+		is_sapient = yes
+	}
+
+	possible_precalc = can_fill_worker_job
+
+	resources = {
+		category = planet_miners
+		produces = {
+			energy = 3
+			minerals = 3
+			food = 3
+			unity = 3
+		}
+		produces = {
+			trigger = {
+				exists = owner
+				owner = { is_lithoid = yes }
+			}
+			food = -3
+			minerals = 3
+		}
+		produces = {
+			trigger = {
+				exists = owner
+				owner = { is_country_type = ai_empire }
+			}
+			food = -3
+			energy = 3
+		}
+	}
+
+	weight = {
+		weight = @worker_job_weight
+		modifier = {
+			factor = 2
+			OR = {
+				has_trait = trait_robot_superconductive
+				has_trait = trait_ingenious
+				has_trait = trait_nuumismatic_administration
+			}
+		}
+		# modifier = {
+		#	factor = 2
+		#	has_job_type = labour_hero	# No Longer Used in Stellaris 4.0
+		#}
+		modifier = {
+			factor = 2
+			OR = {
+				has_trait = trait_robot_harvesters
+				has_trait = trait_agrarian
+			}
+		}
+		modifier = {
+			factor = 2
+			OR = {
+				has_trait = trait_industrious
+				has_trait = trait_robot_power_drills
+			}
+		}
+		modifier = {
+			factor = 2
+			OR = {
+				is_non_sapient_robot = yes
+				is_shackled_robot = yes
+			}
+			can_take_servant_job = no
+			owner = { has_technology = tech_droid_workers }
+		}
+		modifier = {
+			factor = 0.25
+			can_take_servant_job = yes
+		}
+		modifier = {
+			factor = 1.5
+			has_trait = trait_syncretic_proles
+		}
+		modifier = {
+			factor = 4
+			species = {
+				exists = event_target:racket_species is_same_species = event_target:racket_species
+			}
+		}
+		modifier = {
+			factor = 1.2
+			has_trait = trait_very_strong
+		}
+		modifier = {
+			factor = 1.1
+			has_trait = trait_strong
+		}
+		modifier = {
+			factor = 0.9
+			has_trait = trait_weak
+		}
+		modifier = {
+			factor = 1.3
+			has_trait = trait_psionic
+		}
+		modifier = {
+			factor = 1.2
+			OR = {
+				has_trait = trait_latent_psionic
+				has_trait = trait_latent_psionic_machine
+			}
+		}
+		modifier = {
+			factor = 1.5
+			has_trait = trait_presapient_earthbound
+		}
+		modifier = {
+			factor = 1.1
+			OR = {
+				has_trait = trait_robust
+				has_trait = trait_robot_efficient_processors
+			}
+		}
+		modifier = {
+			factor = 1.1
+			has_trait = trait_nerve_stapled
+		}
+		modifier = {
+			factor = 1.2
+			owner = {
+				has_monthly_income = {
+					resource = energy
+					value < -1
+				}
+			}
+		}
+		modifier = {
+			factor = 1.1
+			owner = {
+				has_monthly_income = {
+					resource = minerals
+					value < 20
+				}
+			}
+		}
+		modifier = {
+			factor = 1.2
+			owner = {
+				has_monthly_income = {
+					resource = food
+					value < -1
+				}
+			}
+		}
+	}
+
+	inline_script = "jobs/automodding_priority_unity"
+}
+
+techno_priest = { 	#Used in Mecha Monestary
+	category = specialist
+	swappable_data = {
+		default = {
+			condition_string = SPECIALIST_JOB_TRIGGER
+			building_icon = building_robot_assembly_plant
+			# clothes_texture_index = 3
+		}
+	}
+
+	possible_pre_triggers = {
+		has_owner = yes
+		is_enslaved = no
+		is_being_purged = no
+		is_being_assimilated = no
+		is_sapient = yes
+	}
+
+	possible_precalc = can_fill_specialist_job
+	possible = {
+		complex_specialist_job_check_trigger = yes
+	}
+
+	resources = {
+		category = planet_pop_assemblers
+		produces = {
+			unity = 3
+			engineering_research = 2 # 3 # 3.11
+		}
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					OR = {
+						has_valid_civic = civic_imperial_cult
+						has_valid_civic = civic_divine_council
+						has_valid_civic = civic_spiritual_democracy
+						has_valid_civic = civic_exalted_priesthood
+					}
+				}
+			}
+			unity = 1
+			engineering_research = 1
+		}
+		upkeep = {
+			trigger = {
+				exists = owner
+				owner = { is_gestalt = no }
+			}
+			consumer_goods = 1
+		}
+	}
+
+	planet_modifier = {
+		planet_pops_robotics_upkeep_mult = -0.05
+	}
+
+	# triggered_planet_modifier = {		# Enriad - not working, not intended to work in 4.0
+	# 	potential = {
+	# 		prev = {	# Enriad - current scope is planet where modifier is applied, prev is pop with merchant job
+	# 			OR = {
+	# 				has_trait = trait_robot_domestic_protocols
+	# 				has_trait = trait_charismatic
+	# 			}
+	# 		}
+	# 	}
+	# 	planet_amenities_add = 100
+	# 	mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	# }
+
+	# triggered_planet_modifier = {		# Enriad - not working, not intended to work in 4.0
+	# 	potential = {
+	# 		prev = { has_trait = trait_repugnant }		# Enriad - idk how to make this to work, 
+	# 	}
+	# 	planet_amenities_add = -100
+	# 	mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	# }
+
+	weight = {
+		weight = @specialist_job_weight
+		modifier = {
+			factor = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
+			OR = {
+				has_trait = trait_robot_domestic_protocols
+				has_trait = trait_charismatic
+			}
+		}
+		modifier = {
+			factor = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
+			has_trait = trait_repugnant
+		}
+
+		modifier = {
+			factor = 0.2
+			NOR = { has_citizenship_rights = yes has_trait = trait_mechanical }
+		}
+		modifier = {
+			factor = 2
+			owner = { 
+				OR = {
+					has_valid_civic = civic_machine_cult
+					has_valid_civic = civic_machine_cult_machine
+				}
+			}
+		}
+		modifier = {
+			factor = 1.5
+			OR = {
+				has_trait = trait_traditional
+			}
+		}
+		modifier = {
+			factor = 1.2
+			has_ethic = ethic_spiritualist
+		}
+		modifier = {
+			factor = 0.5
+			has_trait = trait_quarrelsome
+		}
+		modifier = {
+			factor = 0.1
+			can_take_servant_job = yes
+		}
+		modifier = {
+			factor = 1.1
+			has_trait = trait_natural_engineers
+		}
+		# modifier = {
+		#	factor = 1.5
+		#	has_job_type = techno_priest		# No Longer Used in Stellaris 4.0
+		#}
+	}
+
+	inline_script = "jobs/automodding_priority_unity"
+}
+
+############
+# Crime Jobs#
+############
+criminal = {
+	category = criminal
+	is_capped_by_modifier = yes
+	can_set_priority = no
+	swappable_data = {
+		default = {
+			# clothes_texture_index = 2
+			building_icon = building_residence
+		}
+	}
+	contributes_to_diplo_weight = no
+	# ignores_favorite = yes # This means that if you favorite e.g. clerks, the +1000 bonus will not matter for jobs working as criminals  - # No Longer Used in Stellaris 4.0
+
+	tags = { crime }
+
+	possible_pre_triggers = {
+		has_owner = yes
+		is_sapient = yes
+	}
+
+	possible = {
+		# Check that this is not a robot in servitude
+		NOT = {
+			has_citizenship_type = {
+				country = owner
+				type = citizenship_robot_servitude
+			}
+		}
+		owner = {
+			is_gestalt = no
+		}
+	}
+
+	resources = {
+		category = planet_artisans
+		produces = {
+			trigger = {
+				planet = {
+					owner = {
+						OR = {
+							has_valid_civic = civic_military_dictatorship_corporate
+							has_valid_civic = civic_criminal_heritage
+						}
+					}
+					solar_system = {
+						has_star_flag = EaC_civic_mechanic_events.pirate_enclave.star_flag
+						has_star_flag = EaC_civic_mechanic_events.pirate_enclave.offworld_trading_company.star_flag
+					}
+				}
+			}
+			consumer_goods = 1
+		}
+	}
+
+	planet_modifier = {
+		planet_jobs_trade_produces_add = -5
+		branch_office_criminal_syndicate_value_add = 7.5
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			planet = {
+				has_branch_office = yes
+				branch_office_owner = {
+					has_councilor = { COUNCILOR = "councilor_criminal_heritage" }
+				}
+			}
+		}
+
+		branch_office_criminal_syndicate_value_add = 0.25
+		mult = value:pop_branch_office_councilor_level|TYPE|councilor_criminal_heritage|
+	}
+
+	triggered_planet_modifier = {	# No Longer Used in Stellaris 4.0
+		potential = {
+			#planet = {
+			#	owner = {
+			#		OR = {
+			#			has_valid_civic = civic_military_dictatorship_corporate
+			#			has_valid_civic = civic_criminal_heritage
+			#		}
+			#	}
+			#	solar_system = {
+			#		# any_ship_in_system = {
+			#		#	is_ship_size = enclave_pirate_mercenary_station
+			#		#	distance = {
+			#		#		source = prevprev
+			#		#		same_solar_system = yes
+			#		#	}
+			#		# }
+			#		has_star_flag = EaC_civic_mechanic_events.pirate_enclave.star_flag # More efficient than commented section
+			#	}
+			#}
+			planet = {
+				if = {
+					limit = { OWNER = { has_edict = negotiate_with_crime_lords_edict } }
+					has_modifier = crime_lord_deal
+				}
+				else = {
+					owner = {
+						OR = {
+							has_valid_civic = civic_military_dictatorship_corporate
+							has_valid_civic = civic_criminal_heritage
+						}
+					}
+					solar_system = {
+						has_star_flag = EaC_civic_mechanic_events.pirate_enclave.star_flag
+						has_star_flag = EaC_civic_mechanic_events.pirate_enclave.offworld_trading_company.star_flag
+					}
+				}
+			}
+		}
+		planet_jobs_trade_produces_add = 7
+	}
+
+	weight = {
+		weight = @criminal_job_weight
+	}
+}
+
+general_striker = {
+	category = criminal
+	is_capped_by_modifier = yes
+	can_set_priority = no
+	swappable_data = {
+		default = {
+			# clothes_texture_index = 2
+			building_icon = building_primitive_dwellings
+		}
+	}
+	contributes_to_diplo_weight = no
+	# ignores_favorite = yes # This means that if you favorite e.g. clerks, the +1000 bonus will not matter for jobs working as criminals  - # No Longer Used in Stellaris 4.0
+
+
+	tags = { crime }
+
+	possible_pre_triggers = {
+		has_owner = yes
+		is_sapient = yes
+		is_enslaved = no
+		is_being_purged = no
+		is_being_assimilated = no
+	}
+
+	possible = {
+		# Check that this is not a robot in servitude
+		OR = {
+			has_living_standard = { country = owner type = living_standard_dystopian_society }
+			has_living_standard = { country = owner type = living_standard_stratified }
+			has_living_standard = { country = owner type = living_standard_subsistence }
+		}
+		OR = {
+			has_ethic = ethic_socialism
+			has_ethic = ethic_egalitarian
+		}
+	}
+
+	resources = {
+		category = planet_jobs
+		upkeep = {
+			consumer_goods = 1
+		}
+	}
+
+	planet_modifier = {
+		planet_jobs_trade_produces_add = -2
+	}
+	
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { is_gestalt = no }
+		}
+		pop_ethic_socialism_attraction_mult = 0.025
+		pop_ethic_egalitarian_attraction_mult = 0.025
+	}
+
+	weight = {
+		# weight = @criminal_job_weight
+		weight = 1000
+	}
+}
+
+underground_railroad_conductor = {
+	category = criminal
+	is_capped_by_modifier = yes
+	can_set_priority = no
+	swappable_data = {
+		default = {
+			# clothes_texture_index = 2
+			building_icon = building_primitive_dwellings
+		}
+	}
+	contributes_to_diplo_weight = no
+	# ignores_favorite = yes # This means that if you favorite e.g. clerks, the +1000 bonus will not matter for jobs working as criminals  - # No Longer Used in Stellaris 4.0
+
+	tags = { crime }
+
+	possible_pre_triggers = {
+		has_owner = yes
+		is_sapient = yes
+		is_enslaved = yes
+	}
+
+	possible = {
+		# Check that this is not a robot in servitude
+		# OR = {
+		#	has_living_standard = { country = owner type = living_standard_dystopian_society }	# Does not need to be oppressed to seek abolition
+		#	has_living_standard = { country = owner type = living_standard_stratified }
+		#	has_living_standard = { country = owner type = living_standard_subsistence }
+		#}
+		has_ethic = ethic_egalitarian
+	}
+
+	resources = {
+		category = planet_jobs
+		upkeep = {
+			consumer_goods = 1
+		}
+	}
+
+	planet_modifier = {
+		planet_jobs_trade_produces_add = -5
+		pop_cat_slave_happiness = -0.10
+	}
+	
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { is_gestalt = no }
+		}
+		# pop_ethic_socialism_attraction_mult = 0.00
+		pop_ethic_egalitarian_attraction_mult = 0.02	# This job type focuses heavily on abolition
+	}
+
+	weight = {
+		# weight = @criminal_job_weight
+		weight = 1000
+	}
+}
+
+#Steam: Re-organized to clean up top of file, here are fake jobs for leader backgrounds
+#################
+### Fake Jobs ###
+#################
 
 templar = {		#Steam: Defunct as of 4.0, kept for archival purposes
 	category = specialist
@@ -4195,172 +4550,6 @@ templar = {		#Steam: Defunct as of 4.0, kept for archival purposes
 #	}
 #
 #	inline_script = "jobs/automodding_priority_unity"
-}
-
-labour_hero = {
-	category = worker
-	swappable_data = {
-		default = {
-			condition_string = WORKER_JOB_TRIGGER
-			building_icon = building_power_plant
-			# clothes_texture_index = 2
-		}
-	}
-
-	possible_pre_triggers = {
-		has_owner = yes
-		is_being_purged = no
-		is_being_assimilated = no
-		is_sapient = yes
-	}
-
-	possible_precalc = can_fill_worker_job
-
-	resources = {
-		category = planet_miners
-		produces = {
-			energy = 3
-			minerals = 3
-			food = 3
-			unity = 3
-		}
-		produces = {
-			trigger = {
-				exists = owner
-				owner = { is_lithoid = yes }
-			}
-			food = -3
-			minerals = 3
-		}
-		produces = {
-			trigger = {
-				exists = owner
-				owner = { is_country_type = ai_empire }
-			}
-			food = -3
-			energy = 3
-		}
-	}
-
-	weight = {
-		weight = @worker_job_weight
-		modifier = {
-			factor = 2
-			OR = {
-				has_trait = trait_robot_superconductive
-				has_trait = trait_ingenious
-				has_trait = trait_nuumismatic_administration
-			}
-		}
-		# modifier = {
-		#	factor = 2
-		#	has_job_type = labour_hero	# No Longer Used in Stellaris 4.0
-		#}
-		modifier = {
-			factor = 2
-			OR = {
-				has_trait = trait_robot_harvesters
-				has_trait = trait_agrarian
-			}
-		}
-		modifier = {
-			factor = 2
-			OR = {
-				has_trait = trait_industrious
-				has_trait = trait_robot_power_drills
-			}
-		}
-		modifier = {
-			factor = 2
-			OR = {
-				is_non_sapient_robot = yes
-				is_shackled_robot = yes
-			}
-			can_take_servant_job = no
-			owner = { has_technology = tech_droid_workers }
-		}
-		modifier = {
-			factor = 0.25
-			can_take_servant_job = yes
-		}
-		modifier = {
-			factor = 1.5
-			has_trait = trait_syncretic_proles
-		}
-		modifier = {
-			factor = 4
-			species = {
-				exists = event_target:racket_species is_same_species = event_target:racket_species
-			}
-		}
-		modifier = {
-			factor = 1.2
-			has_trait = trait_very_strong
-		}
-		modifier = {
-			factor = 1.1
-			has_trait = trait_strong
-		}
-		modifier = {
-			factor = 0.9
-			has_trait = trait_weak
-		}
-		modifier = {
-			factor = 1.3
-			has_trait = trait_psionic
-		}
-		modifier = {
-			factor = 1.2
-			OR = {
-				has_trait = trait_latent_psionic
-				has_trait = trait_latent_psionic_machine
-			}
-		}
-		modifier = {
-			factor = 1.5
-			has_trait = trait_presapient_earthbound
-		}
-		modifier = {
-			factor = 1.1
-			OR = {
-				has_trait = trait_robust
-				has_trait = trait_robot_efficient_processors
-			}
-		}
-		modifier = {
-			factor = 1.1
-			has_trait = trait_nerve_stapled
-		}
-		modifier = {
-			factor = 1.2
-			owner = {
-				has_monthly_income = {
-					resource = energy
-					value < -1
-				}
-			}
-		}
-		modifier = {
-			factor = 1.1
-			owner = {
-				has_monthly_income = {
-					resource = minerals
-					value < 20
-				}
-			}
-		}
-		modifier = {
-			factor = 1.2
-			owner = {
-				has_monthly_income = {
-					resource = food
-					value < -1
-				}
-			}
-		}
-	}
-
-	inline_script = "jobs/automodding_priority_unity"
 }
 
 mercenary = {	#Steam: Defunct as of 4.0, kept for archival purposes
@@ -4938,382 +5127,346 @@ xenobiologist = {	#Steam: Defunct as of 4.0, kept for archival purposes
 #	inline_script = "jobs/automodding_priority_research"
 }
 
-techno_priest = { 	#Used in Mecha Monestary
-	category = specialist
-	swappable_data = {
-		default = {
-			condition_string = SPECIALIST_JOB_TRIGGER
-			building_icon = building_robot_assembly_plant
-			# clothes_texture_index = 3
-		}
-	}
+#Steam: Re-organized to clean up top of file, here are jobs totally removed
+################
+### Archives ###
+################
 
-	possible_pre_triggers = {
-		has_owner = yes
-		is_enslaved = no
-		is_being_purged = no
-		is_being_assimilated = no
-		is_sapient = yes
-	}
+#ranger = {		# Steam: Defunct as of 4.0, included for archival purposes
+#	category = specialist
+#	swappable_data = {
+#		default = {
+#			condition_string = BATTLE_THRALL_JOB_TRIGGER
+#			building_icon = building_jungle_surveying
+#			# clothes_texture_index = 5
+#		}
+#	}
+#
+#	possible_pre_triggers = {
+#		has_owner = yes
+#		is_being_purged = no
+#		is_being_assimilated = no
+#		is_sapient = yes
+#	}
+#
+#	possible = {
+#		battle_thrall_job_check_trigger = yes
+#	}
+#
+#	resources = {
+#		category = planet_enforcers
+#		produces = {
+#			unity = 3 # 2 # 3.11
+#			society_research = 1 # 2 # 3.11
+#		}
+#	}
+#
+#	# pop_group_modifier = {	# No Longer Used in Stellaris 4.0
+#	#	pop_defense_armies_add = 2
+#	#}
+#
+#	planet_modifier = {
+#		planet_crime_add = -10
+#		planet_defense_armies_add = 2
+#	}
+#
+#	country_modifier = {
+#		country_naval_cap_add = 2
+#	}
+#
+#	weight = {
+#		weight = @specialist_job_weight
+#		modifier = {
+#			factor = 0.2
+#			NOR = { has_citizenship_rights = yes has_trait = trait_mechanical }
+#		}
+#		modifier = {
+#			factor = 2
+#			has_trait = trait_resilient
+#		}
+#		modifier = {
+#			factor = 2
+#			has_trait = trait_very_strong
+#		}
+#		modifier = {
+#			factor = 1.5
+#			has_trait = trait_strong
+#		}
+#		modifier = {
+#			factor = 10
+#			is_enslaved = yes
+#			has_slavery_type = { type = slavery_military }
+#		}
+#		modifier = {
+#			factor = 0.50
+#			has_trait = trait_weak
+#		}
+#		modifier = {
+#			factor = 0.1
+#			can_take_servant_job = yes
+#		}
+#		# modifier = {
+#		#	factor = 10
+#		#	has_job_type = enforcer	# No Longer Used in Stellaris 4.0
+#		#}
+#		modifier = {
+#			factor = 1.1
+#			has_trait = trait_cybernetic
+#		}
+#		modifier = {
+#			factor = 2
+#			has_trait = trait_presapient_earthbound
+#		}
+#		modifier = {
+#			factor = 1.1
+#			has_trait = trait_limited_regeneration
+#		}
+#		modifier = {
+#			factor = 1.1
+#			has_trait = trait_presapient_proles
+#		}
+#		# modifier = {
+#		#	factor = 20
+#		#	has_job_type = enforcer	# No Longer Used in Stellaris 4.0
+#		#	prev = {
+#		#		OR = {
+#		#			has_trait = trait_robust
+#		#			has_trait = trait_robot_efficient_processors
+#		#		}
+#		#	}
+#		#}
+#		modifier = {
+#			factor = 0.9
+#			has_trait = trait_quarrelsome
+#		}
+#		modifier = {
+#			factor = 0.8
+#			is_enslaved = yes
+#			has_slavery_type = { type = slavery_indentured }
+#		}
+#		modifier = {
+#			factor = 2
+#			has_trait = trait_lithoid
+#		}
+#	}
+#
+#	inline_script = "jobs/automodding_priority_unity"
+#}
 
-	possible_precalc = can_fill_specialist_job
-	possible = {
-		complex_specialist_job_check_trigger = yes
-	}
+# Entrepreneur #Moved to a new entrepreneur job
+#merchant = {
+#	category = specialist
+#	swappable_data = {
+#		default = {
+#			condition_string = SPECIALIST_JOB_TRIGGER
+#			building_icon = building_commercial_megaplex
+#			# clothes_texture_index = 3
+#		}
+#	}
+#
+#	possible_pre_triggers = {
+#		has_owner = yes
+#		is_enslaved = no
+#		is_being_purged = no
+#		is_being_assimilated = no
+#		is_sapient = yes
+#	}
+#
+#	possible_precalc = can_fill_specialist_job
+#
+#	resources = {
+#		category = planet_merchants
+#		upkeep = {
+#			consumer_goods = 2
+#		}
+#	}
+#
+#	planet_modifier = {
+#		planet_amenities_mult = 0.05
+#		planet_jobs_consumer_goods_produces_mult = 0.04
+#	}
+#
+#	# triggered_planet_modifier = {	# No Longer Used in Stellaris 4.0
+#	#	potential = {
+#	#		always = yes
+#	#	}
+#	#	planet_jobs_trade_produces_add = 10	# Vanilla is 12
+#	#	mult = value:scripted_modifier_mult|MODIFIER|trader_jobs_bonus_workforce_mult|
+#	#}
+#
+#	triggered_planet_modifier = {	# Added from Vanilla - Oct 1, 2024
+#		potential = {
+#			always = yes
+#		}
+#		planet_amenities_add = 100	# Vanilla is 3
+#		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+#	}
+#
+#	# triggered_planet_modifier = {	# Added from Vanilla - Oct 1, 2024	# No Longer Used in Stellaris 4.0
+#	#	potential = {
+#	#		exists = owner
+#	#		owner = {
+#	#			has_valid_civic = civic_augmentation_bazaars
+#	#		}
+#	#	}
+#	#	planet_jobs_trade_produces_mult = 0.0025
+#	#	founder_species_growth_mult = 0.001
+#	#	# mult = value:num_cyborg_traits_species	# No Longer Used in Stellaris 4.0
+#	#}
+#	
+#	resources = {
+#		category = planet_merchants
+#		produces = {
+#			trigger = {
+#				exists = owner
+#				owner = {
+#					OR = {
+#						has_valid_civic = civic_meritocratic_capitalism
+#						has_civic = civic_meritocratic_capitalism_corporate
+#					}
+#				}
+#			}
+#			unity = 3
+#		}
+#		upkeep = {
+#			minerals = 1
+#		}
+#		# upkeep = {
+#		#	trigger = {
+#		#		has_food_upkeep = yes
+#		#		is_phototrophic = no
+#		#	}
+#		#	food = 1
+#		#}
+#	}
+#
+#	triggered_planet_modifier = {
+#		potential = {
+#			exists = owner
+#			owner = {
+#				OR = {
+#					has_valid_civic = civic_consumerism
+#					has_valid_civic = civic_consumerism_corporate
+#				}
+#			}
+#		}
+#		modifier = {
+#			planet_amenities_mult = 0.02
+#			planet_jobs_consumer_goods_produces_mult = 0.02
+#		}
+#	}
+#	
+#	# triggered_planet_modifier = {	# No Longer Used in Stellaris 4.0
+#	#	potential = {
+#	#		has_trait = trait_thrifty
+#	#	}
+#	#	planet_jobs_trade_produces_add = 2
+#	#	mult = value:scripted_modifier_mult|MODIFIER|trader_jobs_bonus_workforce_mult|
+#	#}
+#
+#	# triggered_planet_modifier = {	# No Longer Used in Stellaris 4.0
+#	#	potential = {
+#	#		has_trait = trait_nuumismatic_administration
+#	#	}
+#	#	planet_jobs_trade_produces_add = 2
+#	#	mult = value:scripted_modifier_mult|MODIFIER|trader_jobs_bonus_workforce_mult|
+#	#}
+#
+#	# triggered_planet_modifier = {		# Enriad - not working, not intended to work in 4.0
+#	# 	potential = {
+#	# 		prev = {	# Enriad - current scope is planet where modifier is applied, prev is pop with merchant job
+#	# 			OR = {
+#	# 				has_trait = trait_robot_domestic_protocols
+#	# 				has_trait = trait_charismatic
+#	# 			}
+#	# 		}
+#	# 	}
+#	# 	planet_amenities_add = 100
+#	# 	mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+#	# }
+#
+#	weight = {
+#		weight = @specialist_job_weight
+#		# mult = value:scripted_modifier_job_weight_mult|MODIFIER|trader_jobs_bonus_workforce_mult|	# No Longer Used in Stellaris 4.0
+#		# modifier = {
+#		#	mult = value:scripted_modifier_job_weight_mult|MODIFIER|trader_jobs_bonus_workforce_mult|	# No Longer Used in Stellaris 4.0
+#		#	has_trait = trait_thrifty
+#		#}
+#		# modifier = {
+#		#	mult = value:scripted_modifier_job_weight_mult|MODIFIER|trader_jobs_bonus_workforce_mult|	# No Longer Used in Stellaris 4.0
+#		#	has_trait = trait_nuumismatic_administration
+#		#}
+#		modifier = {
+#			factor = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
+#			OR = {
+#				has_trait = trait_robot_domestic_protocols
+#				has_trait = trait_charismatic
+#			}
+#		}
+#		# modifier = {
+#		#	mult = value:scripted_modifier_job_weight_mult|MODIFIER|trader_jobs_bonus_workforce_mult|	# No Longer Used in Stellaris 4.0
+#		#	owner = {
+#		#		OR = {
+#		#			has_valid_civic = civic_consumerism
+#		#			has_valid_civic = civic_consumerism_corporate
+#		#		}
+#		#	}
+#		#}
+#		modifier = {
+#			factor = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
+#			owner = {
+#				OR = {
+#					has_valid_civic = civic_consumerism
+#					has_valid_civic = civic_consumerism_corporate
+#				}
+#			}
+#		}
+#		# modifier = {
+#		#	factor = 1.5
+#		#	has_job_type = merchant	# No Longer Used in Stellaris 4.0
+#		#}
+#		modifier = {
+#			factor = 0.5
+#			has_trait = trait_repugnant
+#		}
+#		modifier = {
+#			factor = 1.5
+#			has_ethic = ethic_capitalism
+#		}
+#		modifier = {
+#			factor = 1.25
+#			owner = { has_civic = civic_corporate_dominion }
+#			has_trait = trait_brainslug
+#		}
+#		modifier = {
+#			factor = 1.125
+#			owner = { has_civic = civic_corporate_dominion }
+#			has_trait = trait_presapient_natural_intellectuals
+#		}
+#		modifier = {
+#			factor = 1.125
+#			owner = { has_civic = civic_corporate_dominion }
+#			has_trait = trait_robust
+#		}
+#		# Crisis purge
+#		modifier = {
+#			factor = 0.01
+#			planet.controller = {
+#				OR = {
+#					is_country_type = swarm
+#					is_country_type = ai_empire
+#				}
+#			}
+#			OR = { # Contingency won't purge itself
+#				NOT = { exists = event_target:custodian_bot }
+#				AND = {
+#					exists = event_target:custodian_bot
+#					NOT = { species = { is_same_value = event_target:custodian_bot } }
+#				}
+#			}
+#		}
+#	}
+#
+#	inline_script = "jobs/automodding_priority_trade"
+#}
 
-	resources = {
-		category = planet_pop_assemblers
-		produces = {
-			unity = 3
-			engineering_research = 2 # 3 # 3.11
-		}
-		produces = {
-			trigger = {
-				exists = owner
-				owner = {
-					OR = {
-						has_valid_civic = civic_imperial_cult
-						has_valid_civic = civic_divine_council
-						has_valid_civic = civic_spiritual_democracy
-						has_valid_civic = civic_exalted_priesthood
-					}
-				}
-			}
-			unity = 1
-			engineering_research = 1
-		}
-		upkeep = {
-			trigger = {
-				exists = owner
-				owner = { is_gestalt = no }
-			}
-			consumer_goods = 1
-		}
-	}
-
-	planet_modifier = {
-		planet_pops_robotics_upkeep_mult = -0.05
-	}
-
-	# triggered_planet_modifier = {		# Enriad - not working, not intended to work in 4.0
-	# 	potential = {
-	# 		prev = {	# Enriad - current scope is planet where modifier is applied, prev is pop with merchant job
-	# 			OR = {
-	# 				has_trait = trait_robot_domestic_protocols
-	# 				has_trait = trait_charismatic
-	# 			}
-	# 		}
-	# 	}
-	# 	planet_amenities_add = 100
-	# 	mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
-	# }
-
-	# triggered_planet_modifier = {		# Enriad - not working, not intended to work in 4.0
-	# 	potential = {
-	# 		prev = { has_trait = trait_repugnant }		# Enriad - idk how to make this to work, 
-	# 	}
-	# 	planet_amenities_add = -100
-	# 	mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
-	# }
-
-	weight = {
-		weight = @specialist_job_weight
-		modifier = {
-			factor = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
-			OR = {
-				has_trait = trait_robot_domestic_protocols
-				has_trait = trait_charismatic
-			}
-		}
-		modifier = {
-			factor = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
-			has_trait = trait_repugnant
-		}
-
-		modifier = {
-			factor = 0.2
-			NOR = { has_citizenship_rights = yes has_trait = trait_mechanical }
-		}
-		modifier = {
-			factor = 2
-			owner = { 
-				OR = {
-					has_valid_civic = civic_machine_cult
-					has_valid_civic = civic_machine_cult_machine
-				}
-			}
-		}
-		modifier = {
-			factor = 1.5
-			OR = {
-				has_trait = trait_traditional
-			}
-		}
-		modifier = {
-			factor = 1.2
-			has_ethic = ethic_spiritualist
-		}
-		modifier = {
-			factor = 0.5
-			has_trait = trait_quarrelsome
-		}
-		modifier = {
-			factor = 0.1
-			can_take_servant_job = yes
-		}
-		modifier = {
-			factor = 1.1
-			has_trait = trait_natural_engineers
-		}
-		# modifier = {
-		#	factor = 1.5
-		#	has_job_type = techno_priest		# No Longer Used in Stellaris 4.0
-		#}
-	}
-
-	inline_script = "jobs/automodding_priority_unity"
-}
-
-############
-# Crime Jobs#
-############
-criminal = {
-	category = criminal
-	is_capped_by_modifier = yes
-	can_set_priority = no
-	swappable_data = {
-		default = {
-			# clothes_texture_index = 2
-			building_icon = building_residence
-		}
-	}
-	contributes_to_diplo_weight = no
-	# ignores_favorite = yes # This means that if you favorite e.g. clerks, the +1000 bonus will not matter for jobs working as criminals  - # No Longer Used in Stellaris 4.0
-
-	tags = { crime }
-
-	possible_pre_triggers = {
-		has_owner = yes
-		is_sapient = yes
-	}
-
-	possible = {
-		# Check that this is not a robot in servitude
-		NOT = {
-			has_citizenship_type = {
-				country = owner
-				type = citizenship_robot_servitude
-			}
-		}
-		owner = {
-			is_gestalt = no
-		}
-	}
-
-	resources = {
-		category = planet_artisans
-		produces = {
-			trigger = {
-				planet = {
-					owner = {
-						OR = {
-							has_valid_civic = civic_military_dictatorship_corporate
-							has_valid_civic = civic_criminal_heritage
-						}
-					}
-					solar_system = {
-						has_star_flag = EaC_civic_mechanic_events.pirate_enclave.star_flag
-						has_star_flag = EaC_civic_mechanic_events.pirate_enclave.offworld_trading_company.star_flag
-					}
-				}
-			}
-			consumer_goods = 1
-		}
-	}
-
-	planet_modifier = {
-		planet_jobs_trade_produces_add = -5
-		branch_office_criminal_syndicate_value_add = 7.5
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			planet = {
-				has_branch_office = yes
-				branch_office_owner = {
-					has_councilor = { COUNCILOR = "councilor_criminal_heritage" }
-				}
-			}
-		}
-
-		branch_office_criminal_syndicate_value_add = 0.25
-		mult = value:pop_branch_office_councilor_level|TYPE|councilor_criminal_heritage|
-	}
-
-	triggered_planet_modifier = {	# No Longer Used in Stellaris 4.0
-		potential = {
-			#planet = {
-			#	owner = {
-			#		OR = {
-			#			has_valid_civic = civic_military_dictatorship_corporate
-			#			has_valid_civic = civic_criminal_heritage
-			#		}
-			#	}
-			#	solar_system = {
-			#		# any_ship_in_system = {
-			#		#	is_ship_size = enclave_pirate_mercenary_station
-			#		#	distance = {
-			#		#		source = prevprev
-			#		#		same_solar_system = yes
-			#		#	}
-			#		# }
-			#		has_star_flag = EaC_civic_mechanic_events.pirate_enclave.star_flag # More efficient than commented section
-			#	}
-			#}
-			planet = {
-				if = {
-					limit = { OWNER = { has_edict = negotiate_with_crime_lords_edict } }
-					has_modifier = crime_lord_deal
-				}
-				else = {
-					owner = {
-						OR = {
-							has_valid_civic = civic_military_dictatorship_corporate
-							has_valid_civic = civic_criminal_heritage
-						}
-					}
-					solar_system = {
-						has_star_flag = EaC_civic_mechanic_events.pirate_enclave.star_flag
-						has_star_flag = EaC_civic_mechanic_events.pirate_enclave.offworld_trading_company.star_flag
-					}
-				}
-			}
-		}
-		planet_jobs_trade_produces_add = 7
-	}
-
-	weight = {
-		weight = @criminal_job_weight
-	}
-}
-
-general_striker = {
-	category = criminal
-	is_capped_by_modifier = yes
-	can_set_priority = no
-	swappable_data = {
-		default = {
-			# clothes_texture_index = 2
-			building_icon = building_primitive_dwellings
-		}
-	}
-	contributes_to_diplo_weight = no
-	# ignores_favorite = yes # This means that if you favorite e.g. clerks, the +1000 bonus will not matter for jobs working as criminals  - # No Longer Used in Stellaris 4.0
-
-
-	tags = { crime }
-
-	possible_pre_triggers = {
-		has_owner = yes
-		is_sapient = yes
-		is_enslaved = no
-		is_being_purged = no
-		is_being_assimilated = no
-	}
-
-	possible = {
-		# Check that this is not a robot in servitude
-		OR = {
-			has_living_standard = { country = owner type = living_standard_dystopian_society }
-			has_living_standard = { country = owner type = living_standard_stratified }
-			has_living_standard = { country = owner type = living_standard_subsistence }
-		}
-		OR = {
-			has_ethic = ethic_socialism
-			has_ethic = ethic_egalitarian
-		}
-	}
-
-	resources = {
-		category = planet_jobs
-		upkeep = {
-			consumer_goods = 1
-		}
-	}
-
-	planet_modifier = {
-		planet_jobs_trade_produces_add = -2
-	}
-	
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = { is_gestalt = no }
-		}
-		pop_ethic_socialism_attraction_mult = 0.025
-		pop_ethic_egalitarian_attraction_mult = 0.025
-	}
-
-	weight = {
-		# weight = @criminal_job_weight
-		weight = 1000
-	}
-}
-
-underground_railroad_conductor = {
-	category = criminal
-	is_capped_by_modifier = yes
-	can_set_priority = no
-	swappable_data = {
-		default = {
-			# clothes_texture_index = 2
-			building_icon = building_primitive_dwellings
-		}
-	}
-	contributes_to_diplo_weight = no
-	# ignores_favorite = yes # This means that if you favorite e.g. clerks, the +1000 bonus will not matter for jobs working as criminals  - # No Longer Used in Stellaris 4.0
-
-	tags = { crime }
-
-	possible_pre_triggers = {
-		has_owner = yes
-		is_sapient = yes
-		is_enslaved = yes
-	}
-
-	possible = {
-		# Check that this is not a robot in servitude
-		# OR = {
-		#	has_living_standard = { country = owner type = living_standard_dystopian_society }	# Does not need to be oppressed to seek abolition
-		#	has_living_standard = { country = owner type = living_standard_stratified }
-		#	has_living_standard = { country = owner type = living_standard_subsistence }
-		#}
-		has_ethic = ethic_egalitarian
-	}
-
-	resources = {
-		category = planet_jobs
-		upkeep = {
-			consumer_goods = 1
-		}
-	}
-
-	planet_modifier = {
-		planet_jobs_trade_produces_add = -5
-		pop_cat_slave_happiness = -0.10
-	}
-	
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = { is_gestalt = no }
-		}
-		# pop_ethic_socialism_attraction_mult = 0.00
-		pop_ethic_egalitarian_attraction_mult = 0.02	# This job type focuses heavily on abolition
-	}
-
-	weight = {
-		# weight = @criminal_job_weight
-		weight = 1000
-	}
-}
