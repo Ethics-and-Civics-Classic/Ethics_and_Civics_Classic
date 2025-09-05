@@ -18,16 +18,16 @@ building_underground_railroad_office = {
 
 	category = government
 	
-	allow = {
-		branch_office_owner = { 
-			#has_spynetwork = yes 
-			#any_spynetwork = {
-			#	owner = { is_same_value = prevprev }
-			#	is_spynetwork_level > 0
-			#	target = { is_same_value = root.owner }
-			#}
-		}
-	}
+	#allow = {		#Steam: Tagged this whole thing because the indented tags were already present and it just kinda broke things
+	#	branch_office_owner = { 
+	#		#has_spynetwork = yes 
+	#		#any_spynetwork = {
+	#		#	owner = { is_same_value = prevprev }
+	#		#	is_spynetwork_level > 0
+	#		#	target = { is_same_value = root.owner }
+	#		#}
+	#	}
+	#}
 
 	potential = {
 		has_branch_office = yes
@@ -53,17 +53,17 @@ building_underground_railroad_office = {
 				count < 1
 			}
 		}
-		branch_office_owner = { 
-			#count_spynetwork = {
-			#	count = 0
-			#	limit = { 
-			#		owner = { is_same_value = ROOT.OWNER }
-			#		is_spynetwork_level > 0
-			#	}
-			#}
-		}
+		#branch_office_owner = { 	#Steam: Another weird set of tags I decided to tag over to clean up
+		#	#count_spynetwork = {
+		#	#	count = 0
+		#	#	limit = { 
+		#	#		owner = { is_same_value = ROOT.OWNER }
+		#	#		is_spynetwork_level > 0
+		#	#	}
+		#	#}
+		#}
 	}
-
+	
 	#triggered_planet_modifier = {
 	#	potential = {
 	#		exists = owner
@@ -908,6 +908,7 @@ building_military_contractors = {
 		has_branch_office = yes
 		branch_office_owner = {
 			is_legit_or_legal_criminal = yes
+			NOT = { has_valid_civic = civic_crusader_spirit_corporate }
 		}
 	}
 
@@ -1143,13 +1144,23 @@ building_military_contractors = {
 		}
 	}
 
+	#destroy_trigger = {
+	#	exists = owner
+	#	if = { 		#Steam: Honestly a bit too confusing, better off rewritten
+	#		limit = { branch_office_owner = { NOT = { is_same_value = prev.owner } } }
+	#		branch_office_owner = { is_illegal_criminal = yes }
+	#	}
+	#	else = { always = no }
+	#}
+	
 	destroy_trigger = {
 		exists = owner
-		if = { 
-			limit = { branch_office_owner = { NOT = { is_same_value = prev.owner } } }
-			branch_office_owner = { is_illegal_criminal = yes }
+		branch_office_owner = {
+			OR = {
+				is_illegal_criminal = yes
+				has_valid_civic = civic_crusader_spirit_corporate
+			}
 		}
-		else = { always = no }
 	}
 
 	convert_to = {
@@ -2088,7 +2099,8 @@ building_commercial_forum = {
 	}
 
 	planet_modifier = {
-		job_merchant_add = 100
+		#job_merchant_add = 100 #Steam: Not a job anymore
+		job_entrepreneur_add = 100
 		job_trader_add = 100
 	}
 
@@ -2376,7 +2388,8 @@ building_corporate_embassy = {
 	}
 
 	planet_modifier = {
-		job_clerk_add = 200
+		#job_clerk_add = 200 #No more clerks
+		job_trader_add = 200
 	}
 
 	inline_script = {
@@ -2613,11 +2626,11 @@ building_private_security = {
 		job_criminal_add = 100
 		job_enforcer_add = 100
 		planet_crime_add = 25 #offsets the enforcer job. >:)
-		#mult = branch_office_owner.value:scripted_modifier_mult|MODIFIER|branch_office_holding_crime_mult| let's not mult criminal jobs.
+		#mult = branch_office_owner.value:scripted_modifier_mult|MODIFIER|branch_office_holding_crime_mult| #let's not mult criminal jobs.
 	}
 	
 	triggered_planet_modifier = {		# Enriad - commandante_pirate but for holdings
-		potential = {
+		potential = {					#Steam: Commandante_pirate is now polaticians, offworld version will stay seperate
 			exists = owner
 			branch_office_owner = {
 				has_civic = civic_military_dictatorship_corporate
@@ -2800,7 +2813,7 @@ building_wildcat_miners = {
 	}
 
 	planet_modifier = {
-		planet_jobs_trade_produces_add = 5
+		#planet_jobs_trade_produces_add = 5
 		planet_crime_add = 10
 		job_miner_add = 100
 	}
@@ -3003,12 +3016,12 @@ building_bio_reprocessing_facilities = {
 	}
 
 	triggered_planet_modifier = {
-		#potential = {
-			#exists = owner
+		potential = {
+			exists = owner
 			#branch_office_owner = {
 			#	is_criminal_syndicate = yes
 			#}
-		#}
+		}
 		planet_crime_add = 25
 		mult = branch_office_owner.value:scripted_modifier_mult|MODIFIER|branch_office_holding_crime_mult|
 	}
@@ -3424,7 +3437,7 @@ building_wrecking_yards = {
 	}
 }
 
-building_colliseum_branch = {
+building_colosseum_branch = {
 	base_buildtime = 480
 
 	category = amenity
@@ -3478,7 +3491,8 @@ building_colliseum_branch = {
 	planet_modifier = {
 		job_gladiator_add = 200
 		planet_housing_add = 200
-		planet_jobs_trade_produces_add = 15
+		#planet_jobs_trade_produces_add = 15	#Steam: This adds a flat 15 trade, felt like a gladiator buff fit better
+		planet_gladiators_trade_produces_add = 7.5
 	}
 
 	army_modifier = {
@@ -3493,7 +3507,7 @@ building_colliseum_branch = {
 			}
 		}
 		modifier = {
-			job_gladiator_add = 100
+			job_gladiator_add = 100	
 		}
 	}
 	
@@ -3610,8 +3624,10 @@ building_pirate_haven = {
 	potential = {
 		has_branch_office = yes
 		branch_office_owner = {
-			# is_ai = no
-			has_valid_civic = civic_crusader_spirit_corporate
+			OR = {
+				has_valid_civic = civic_crusader_spirit_corporate
+				is_illegal_criminal = yes
+			}
 		}
 	}
 
@@ -3656,7 +3672,7 @@ building_pirate_haven = {
 			job_politician_add = 100	#Cog Note - This is on your own planet, so it wouldn't be offworld
 		}
 	}
-
+	
 	#triggered_planet_modifier = {
 	#	potential = {
 	#		exists = owner
@@ -3894,6 +3910,9 @@ building_pirate_haven = {
 		exists = owner
 		branch_office_owner = {
 			is_legit_or_legal_criminal = yes
+			NOT = { 
+				has_valid_civic = civic_crusader_spirit_corporate
+			}
 		}
 	}
 	
@@ -5294,7 +5313,7 @@ building_executive_retreat = {
 	triggered_country_modifier = { 
 		potential = {
 			branch_office_owner = {
-				has_valid_civic = has_valid_civic = civic_state_monopoly
+				has_valid_civic = civic_state_monopoly
 			}
 		}
 		job_capital_trader_add = @traders_from_civic
