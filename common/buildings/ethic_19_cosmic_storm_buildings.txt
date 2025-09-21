@@ -2,6 +2,214 @@
 # Cosmic storm buildings #
 ##########################
 
+building_storm_resistant_production = { # see also 'building_wilderness_storm_relief'
+	base_buildtime = @b1_time
+	planet_limit = 1
+	category = resource
+
+	building_sets = {
+		urban
+		generator
+		mining
+		farming
+		government
+	}
+
+	potential = {
+		exists = owner
+		owner = { is_wilderness_empire = no }
+		OR = {
+			owner = { is_ai = no }
+			solar_system = {
+				system_has_storm_repelling_tech = no
+			}
+		}
+	}
+
+	resources = {
+		category = planet_buildings_storm_tech
+		cost = {
+			minerals = @b1_minerals
+		}
+		upkeep = {
+			energy = @b1_upkeep
+		}
+		upkeep = {
+			trigger = {
+				has_modifier = storm_hunkered_down_modifier
+			}
+			energy = @b1_upkeep
+		}
+	}
+
+	prerequisites = {
+		"tech_industrial_storm_protection"
+	}
+	show_tech_unlock_if = {
+		is_wilderness_empire = no
+	}
+
+	upgrades = {
+		"building_advanced_storm_resistant_production"
+	}
+
+	inline_script = {
+		script = cosmic_storms/StormBuildingModifiers
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			solar_system = {
+				has_star_flag = storm_system
+			}
+		}
+		modifier = {
+			planet_miners_minerals_produces_add = 1
+			planet_farmers_food_produces_add = 1
+			planet_technician_energy_produces_add = 1
+		}
+	}
+
+	inline_script = {
+		script = jobs/clerks_add
+		AMOUNT = @building_static_jobs
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_galactic_community_member = yes
+			}
+		}
+		modifier = {
+			planet_miners_produces_mult = 1
+			planet_farmers_produces_mult = 1
+			planet_technician_produces_mult = 1
+		}
+		mult = value:storm_building_production_multiplier
+	}
+
+	custom_tooltip = "building_storm_resistant_production_tt"
+
+	custom_storm_ai_weight = {
+		weight = 0
+
+		modifier = {
+			add = 3
+			AND = {
+				exists = owner
+				owner = { num_unique_cosmic_storms_encountered >= 2 }
+			}
+		}
+	}
+	destroy_trigger = {
+		influence_building_destruction_trigger = yes
+	}
+}
+
+# (Cosmic Storms) Storm Relief Center | substitute for 'building_storm_resistant_production'
+# NOTE: no upgrade for this version
+building_wilderness_storm_relief = {
+	base_buildtime = @b1_time
+	planet_limit = 1
+	category = resource
+
+	building_sets = {
+		government
+	}
+
+	potential = {
+		exists = owner
+		owner = { is_wilderness_empire = yes }
+		OR = {
+			owner = { is_ai = no }
+			solar_system = { system_has_storm_repelling_tech = no }
+		}
+	}
+	destroy_trigger = {
+		exists = owner
+		owner = { is_wilderness_empire = no }
+		influence_building_destruction_trigger = yes
+	}
+
+	prerequisites = {
+		"tech_industrial_storm_protection"
+	}
+	show_tech_unlock_if = {
+		is_wilderness_empire = yes
+	}
+
+	resources = {
+		category = planet_buildings_storm_tech
+		# Basic Building costs (inherited from 'building_storm_resistant_production')
+		cost = {
+			minerals = @b2_minerals
+			biomass = @b2_biomass
+		}
+		upkeep = {
+			energy = @b2_upkeep
+		}
+		upkeep = {
+			trigger = {
+				has_modifier = storm_hunkered_down_modifier
+			}
+			energy = @b1_upkeep
+		}
+		# NOTE: 'maintenance_drone' Jobs do not charge Upkeep; nor does their Wilderness substitute
+	}
+
+	# Modifiers inherited from 'building_storm_resistant_production': @b1_jobs x 'maintenance_drone' Job Output
+	# NOTE: Ringworld modifiers are not applicable to Wilderness
+	triggered_planet_modifier = {
+		planet_amenities_no_happiness_add = 800
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = planet.orbital_defence
+			planet.orbital_defence = {
+				exists = starbase
+				starbase = { has_starbase_building = ring_maintenance_hub }
+			}
+		}
+		planet_amenities_no_happiness_add = 100
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	}
+
+	# Modifiers adjusted by GalCom Resolutions
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { is_galactic_community_member = yes }
+		}
+		modifier = {
+			planet_miners_produces_mult = 1
+			planet_farmers_produces_mult = 1
+			planet_technician_produces_mult = 1
+		}
+		mult = value:storm_building_production_multiplier
+	}
+
+	inline_script = {
+		script = buildings/on_all_wilderness_buildings_districts
+	}
+
+	custom_tooltip = "building_wilderness_storm_relief_tt"
+
+	custom_storm_ai_weight = {
+		weight = 0
+		modifier = {
+			add = 30
+			AND = {
+				exists = owner
+				owner = { num_unique_cosmic_storms_encountered >= 2 }
+			}
+		}
+	}
+}
+
 # building_astrometeorology_observation_center = {			# Enriad - Marked for deletion bc not needed
 # 	base_buildtime = @b1_time
 # 	planet_limit = 1
