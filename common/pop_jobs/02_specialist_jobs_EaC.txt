@@ -84,9 +84,9 @@ physicist = {
 			}
 			OR = {
 				has_ethic = ethic_green
-				has_ethic = ethic_fanatic_green
+				#has_ethic = ethic_fanatic_green
 				has_ethic = ethic_industrial
-				has_ethic = ethic_fanatic_industrial
+				#has_ethic = ethic_fanatic_industrial
 				owner = { is_individual_machine = yes }		# Cog Note - This is the fix/bypass for individualist machines
 				owner = { is_gestalt = yes }
 			}
@@ -1230,7 +1230,7 @@ entertainer = {
 		swap_type = {
 			trigger = {
 				entertainer_is_duelist_trigger = yes
-				entertainer_is_storm_dancer_trigger = no
+				entertainer_is_storm_interpreter_trigger = no
 			}
 			name = duelist
 			desc = duelist
@@ -1238,41 +1238,17 @@ entertainer = {
 			condition_string = BATTLE_THRALL_JOB_TRIGGER
 			weight = 5
 		}
-		# Storm Dancers
+		# Storm Interpreter
 		swap_type = {
 			trigger = {
 				entertainer_is_duelist_trigger = no
-				entertainer_is_storm_dancer_trigger = yes
+				entertainer_is_storm_interpreter_trigger = yes
 			}
-			name = storm_dancer
-			desc = storm_dancer
+			name = storm_interpreter
+			desc = storm_interpreter
 			icon = storm_dancer
-			building_icon = building_storm_summoning_theater
+			building_icon = building_astrometeorology_observation_center
 			weight = 5
-		}
-		swap_type = {
-			trigger = {
-				entertainer_is_duelist_trigger = no
-				entertainer_is_storm_technician_trigger = yes
-				entertainer_is_storm_chanter_trigger = no
-			}
-			name = storm_technician
-			desc = storm_technician
-			icon = storm_dancer
-			building_icon = building_storm_summoning_theater
-			weight = 10
-		}
-		swap_type = {
-			trigger = {
-				entertainer_is_duelist_trigger = no
-				entertainer_is_storm_technician_trigger = no
-				entertainer_is_storm_chanter_trigger = yes
-			}
-			name = storm_chanter
-			desc = storm_chanter
-			icon = storm_dancer
-			building_icon = building_storm_summoning_theater
-			weight = 10
 		}
 		# Curator
 		swap_type = {
@@ -1289,7 +1265,7 @@ entertainer = {
 		swap_type = {
 			trigger = {
 				entertainer_is_duelist_trigger = yes
-				entertainer_is_storm_dancer_trigger = yes
+				entertainer_is_storm_interpreter_trigger = yes
 			}
 			name = storm_duelist
 			desc = storm_duelist
@@ -1308,19 +1284,17 @@ entertainer = {
 		is_being_assimilated = no
 		is_sapient = yes
 	}
-
+	
+	#Cog Note - Returned Storm Technicians/Dancers/Chanters to it's own job. Storm Entertainer job is now Storm Enterpreter. Enterpreter are influenced by the storm, opposite of dancers.
 	possible = {
 		if = {
 			limit = {
 				entertainer_is_duelist_trigger = yes
-				entertainer_is_storm_dancer_trigger = yes
+				entertainer_is_storm_interpreter_trigger = yes
 			}
 			battle_thrall_job_check_trigger = yes
 			OR = {
 				has_ethic = ethic_militarist
-				has_ethic = ethic_spiritualist
-				has_ethic = ethic_green
-				has_ethic = ethic_industrial
 				owner = { is_individual_machine = yes }
 				owner = { is_gestalt = yes }
 			}
@@ -1328,7 +1302,7 @@ entertainer = {
 		else_if = {
 			limit = {
 				entertainer_is_duelist_trigger = yes
-				entertainer_is_storm_dancer_trigger = no
+				entertainer_is_storm_interpreter_trigger = no
 			}
 			battle_thrall_job_check_trigger = yes
 			OR = {
@@ -1370,7 +1344,7 @@ entertainer = {
 		upkeep = {
 			trigger = {
 				entertainer_is_duelist_trigger = yes
-				entertainer_is_storm_dancer_trigger = no
+				entertainer_is_storm_interpreter_trigger = no
 			}
 			alloys = 0.5
 		}
@@ -1378,9 +1352,17 @@ entertainer = {
 		upkeep = {
 			trigger = {
 				entertainer_is_duelist_trigger = yes
-				entertainer_is_storm_dancer_trigger = yes
+				entertainer_is_storm_interpreter_trigger = yes
 			}
 			alloys = 1
+		}
+		# Job Swap - Storm Interpreter
+		produces = {
+			trigger = {
+				entertainer_is_storm_interpreter_trigger = yes
+			}
+			consumer_goods = 0.5
+			unity = 1
 		}
 	}
 
@@ -1396,10 +1378,9 @@ entertainer = {
 	triggered_planet_modifier = {
 		potential = {
 			entertainer_is_duelist_trigger = yes
-			entertainer_is_storm_dancer_trigger = no
+			entertainer_is_storm_interpreter_trigger = no
 		}
 		planet_amenities_add = -250
-		mult = value:scripted_modifier_councilor_level_mult|MODIFIER|pop_job_amenities_mult|TYPE|councilor_warrior_culture|
 	}
 	triggered_planet_modifier = {
 		potential = {
@@ -1423,19 +1404,17 @@ entertainer = {
 	triggered_planet_modifier = {
 		potential = {
 			entertainer_is_duelist_trigger = no
-			entertainer_is_storm_dancer_trigger = yes
+			entertainer_is_storm_interpreter_trigger = yes
 		}
 		planet_amenities_add = -450
-		mult = value:scripted_modifier_councilor_level_mult|MODIFIER|pop_job_amenities_mult|TYPE|councilor_warrior_culture|
 	}
 	
 	triggered_planet_modifier = {
 		potential = {
 			entertainer_is_duelist_trigger = yes
-			entertainer_is_storm_dancer_trigger = yes
+			entertainer_is_storm_interpreter_trigger = yes
 		}
 		planet_amenities_add = -350
-		mult = value:scripted_modifier_councilor_level_mult|MODIFIER|pop_job_amenities_mult|TYPE|councilor_warrior_culture|
 	}
 	
 	triggered_country_modifier = {
@@ -1756,7 +1735,7 @@ bureaucrat = {
 	possible = {
 		complex_specialist_job_check_trigger = yes
 		if = {												# Enriad - disable it if you dont want Strong Spiritualist Restriction for Priest jobs
-			limit = { bureaucrat_is_spiritualist = yes }
+			limit = { planet = { bureaucrat_is_spiritualist = yes } }
 			OR = {
 				has_ethic = ethic_spiritualist
 				#has_ethic = ethic_fanatic_spiritualist		#Steam: Pretty sure this isn't an option for pops anymore
@@ -2669,6 +2648,19 @@ healthcare = {
 			condition_string = SPECIALIST_JOB_TRIGGER
 			weight = 10
 		}
+		# Mutagenomics Researchers
+		swap_type = {
+			trigger = {
+				healthcare_is_mutagenic_trigger = yes
+				healthcare_is_genomic_researcher_trigger = yes
+			}
+			name = mutagenomic_researcher
+			desc = mutagenomic_researcher
+			icon = genomic_researcher
+			building_icon = building_genomic_facility
+			condition_string = SPECIALIST_JOB_TRIGGER
+			weight = 15
+		}
 	}
 	
 	tags = { pop_growth pop_assembly amenities }
@@ -2681,6 +2673,18 @@ healthcare = {
 	}
 
 	possible_precalc = can_fill_specialist_job
+	
+	possible = {
+		complex_specialist_job_check_trigger = yes
+		if = {												# Enriad - disable it if you dont want Strong Spiritualist Restriction for Priest jobs
+			limit = { planet = { healthcare_is_mutagenic_trigger = yes } }
+			OR = {
+				has_ethic = ethic_industrial
+				owner = { is_individual_machine = yes }		# Cog Note - This is the fix/bypass for individualist machines
+				owner = { is_gestalt = yes }
+			}
+		}
+	}
 
 	planet_modifier = {
 		founder_species_growth_mult = 0.05
