@@ -4,7 +4,22 @@ namespace = country
 country_event = {
 	id = country.200
 	title = "country.200.name"
-	desc = "country.200.desc"
+	desc = {
+		trigger = {
+			owner = {
+				country_uses_bio_ships = no
+			}
+		}
+		text = "country.200.desc"
+	}
+	desc = {
+		trigger = {
+			owner = {
+				country_uses_bio_ships = yes
+			}
+		}
+		text = "country.200.desc.bio"
+	}
 	picture = GFX_evt_alien_propaganda
 	show_sound = event_ship_thrusters
 	location = event_target:cultist_ship
@@ -14,11 +29,11 @@ country_event = {
 
 	trigger = {
 		NOR = {
-			is_gestalt = yes
+			has_ethic = ethic_gestalt_consciousness
 			has_country_flag = starting_event
 		}
-		has_technology = "tech_starbase_2"	# Cogger note - For PrimPlay compatibility, may break event without it
 		is_ai = no
+		has_technology = "tech_starbase_2"	# Cogger note - For PrimPlay compatibility, may break event without it
 	}
 
 	immediate = {
@@ -28,13 +43,11 @@ country_event = {
 			solar_system = {
 				random_system_planet = {
 					limit = {
-						NOR = {
-							is_capital = yes
-							is_asteroid = yes
-							is_star = yes
-							is_moon = yes
-							is_planet_class = pc_gas_giant
-						}
+						is_capital = no
+						is_asteroid = no
+						is_star = no
+						is_moon = no
+						NOT = { is_planet_class = pc_gas_giant }
 					}
 					save_event_target_as = hijacked_fleet_planet
 				}
@@ -44,37 +57,64 @@ country_event = {
 		create_country = {
 			name = "NAME_Radical_Cult"
 			species = event_target:owner_species
-			type = faction
-			name_list = root
+			type = nice_faction
+			name_list = ROOT
 			auto_delete = no
 			effect = {
+				set_graphical_culture = root
+				save_event_target_as = cultist_faction
 				set_country_flag = radical_cult
 				establish_communications_no_message = root
 				establish_contact = { who = root location = root.capital_scope }
 				create_leader = {
 					class = commander
-					species = owner_species
+					species = owner_main_species
 					name = random
 					skill = 2
+					background_ethic = ethic_spiritualist
+					background_planet = root.capital_scope
+					background_job = commanding_officer
+				}
+				last_created_leader = {
+					add_trait = {
+						trait = leader_trait_crusader_2
+					}
+					save_event_target_as = cultist_admiral
 				}
 				create_fleet = {
 					name = "NAME_Hijacked_Fleet"
 					effect = {
 						set_owner = prev
+						save_event_target_as = cultist_fleet
+						if = {
+							limit = {
+								root.owner = {
+									country_uses_bio_ships = no
+								}
+							}
 						create_ship_design = {
-							design = "NAME_Dagger"
+								design = "NAME_Dagger"
+							}
+						}
+						else = {
+							create_ship_design = {
+								design = "NAME_CHARGER_1"
+							}
 						}
 						create_ship = {
 							name = "NAME_Unyielding_Faith"
 							design = last_created_design
+							growth_stage = 1
 						}
 						create_ship = {
 							name = "NAME_Holy_Avatar"
 							design = last_created_design
+							growth_stage = 1
 						}
 						create_ship = {
 							name = "NAME_Divine_Fury"
 							design = last_created_design
+							growth_stage = 1
 							effect = {
 								set_ship_flag = cultist_ship
 								set_disable_at_health = 0.05
@@ -103,7 +143,7 @@ country_event = {
 		}
 		begin_event_chain = {
 			event_chain = "radical_cult"
-			target = root
+			target = ROOT
 		}
 	}
 
@@ -112,10 +152,18 @@ country_event = {
 		tooltip = {
 			begin_event_chain = {
 				event_chain = "radical_cult"
-				target = root
+				target = ROOT
 			}
 		}
 		hidden_effect = {
+			event_target:cultist_faction = {
+				set_faction_hostility = {
+					target = root
+					set_hostile = yes
+					set_neutral = no
+					set_friendly = no
+				}
+			}
 			create_point_of_interest = {
 				id = radical_cult_poi.1
 				name = "hijacked_cult_fleet_poi"
@@ -124,6 +172,39 @@ country_event = {
 				location = event_target:cultist_ship
 			}
 		}
+	}
+	option = {
+		name = "country.200.b"
+		allow = {
+			resource_stockpile_compare = {
+				resource = unity
+				value >= 125
+			}
+		}
+		add_resource = { unity = -125 }
+		event_target:cultist_fleet = {
+			set_owner = ROOT
+			set_disable_at_health = no
+		}
+		hidden_effect = {
+			event_target:cultist_admiral = {
+				set_owner = ROOT
+			}
+			random_list = {
+				80 = {
+					# Nothing happens
+				}
+				20 = {
+					# You get their flagship!
+					country_event = {
+						id = country.225
+						days = 360
+						random = 30
+					}
+				}
+			}
+		}
+		end_event_chain = "radical_cult"
 	}
 }
 
