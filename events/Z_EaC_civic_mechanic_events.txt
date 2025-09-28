@@ -9128,23 +9128,31 @@ planet_event = {
 	title = EaC_civic_mechanic_events.1.name
 	desc = {
 		trigger = {
-			owner = {
-				is_gestalt = no
+			if = {
+				limit = { owner = { is_gestalt = no } }
+				text = EaC_civic_mechanic_events.1.desc
+
+				if = {
+					limit = { owner = { is_twisted_experimenters_empire = yes } }
+					text = newline
+					text = crime.1.desc.experimenters
+				}
+			}
+			else_if = {
+				limit = { owner = { is_hive_empire = yes } }
+				text = crime.1.b.desc
+
+				if = {
+					limit = { owner = { is_twisted_experimenters_empire = yes } }
+					text = newline
+					text = crime.1.b.desc.experimenters
+				}
+			}
+			else_if = {
+				limit = { owner = { is_machine_empire = yes } }
+				text = crime.1.c.desc
 			}
 		}
-		text = EaC_civic_mechanic_events.1.desc
-	}
-	desc = {
-		trigger = {
-			owner = { is_hive_empire = yes }
-		}
-		text = crime.1.b.desc
-	}
-	desc = {
-		trigger = {
-			owner = { is_machine_empire = yes }
-		}
-		text = crime.1.c.desc
 	}
 	picture = {
 		trigger = {
@@ -9177,9 +9185,11 @@ planet_event = {
 	trigger = {
 		is_under_colonization = no
 		is_colony = yes
-		can_generate_trade_value = yes
-		pop_amount > 300
-		num_unemployed > 300 # Early out before the expensive count_owned_pop_amount to come
+		owner = {
+			is_country_type = default
+		}
+		pop_amount > 500
+		num_unemployed > 500 #early out before the expensive count_owned_pop to come
 		NOR = {
 			has_planet_flag = criminal_underworld_disappeared 	# Cooldown
 			has_planet_flag = criminal_underworld_event_up
@@ -9187,29 +9197,29 @@ planet_event = {
 			has_planet_flag = EaC_labor_movements_event_up						# Modded
 			has_planet_flag = EaC_underground_railroad_disappeared # Cooldown	# Modded
 			has_planet_flag = EaC_underground_railroad_event_up					# Modded
+			has_modifier = EaC_slave_revolts									# Modded
+			has_modifier = EaC_underground_railroad_expanded 					# Modded
+			has_modifier = EaC_worker_commune									# Modded
+			has_modifier = EaC_labor_movements									# Modded
 			has_planet_flag = shattered_frontier_planet
 			has_modifier = unemployment_benefits
 			has_modifier = activity_program
 			has_modifier = standby_mode
-			has_modifier = criminal_underworld
-			has_modifier = EaC_labor_movements					# Modded
-			has_modifier = drone_deviancy
+			has_criminal_underworld_modifier = yes
+			has_drone_deviancy_modifier = yes
 			has_modifier = drone_corruption
-			has_modifier = gang_wars
-			has_modifier = EaC_slave_revolts					# Modded
-			has_modifier = center_of_drug_trade
-			has_modifier = EaC_underground_railroad_expanded 	# Modded
-			has_modifier = mob_rule
-			has_modifier = EaC_worker_commune					# Modded
+			has_gang_wars_modifier = yes
+			has_center_of_drug_trade_modifier = yes
+			has_mob_rule_modifier = yes
 		}
 		OR = {
 			AND = {
 				owner = { is_gestalt = no }
 				count_owned_pop_amount = {
-					count > 300
 					limit = {
 						is_unemployed = yes
 						is_shackled_robot = no
+						is_enslaved = no
 						NOR = {
 							has_living_standard = { type = living_standard_utopian }
 							has_living_standard = { type = living_standard_good }
@@ -9217,16 +9227,17 @@ planet_event = {
 							has_living_standard = { type = living_standard_worker_ownership }
 						}
 					}
+					count > 500
 				}
 			}
 			AND = {
 				owner = { is_gestalt = yes }
 				count_owned_pop_amount = {
-					count > 1000
 					limit = {
 						is_unemployed = yes
 						NOT = { has_living_standard = { type = living_standard_organic_trophy } }
 					}
+					count > 1000
 				}
 			}
 		}
@@ -9242,36 +9253,34 @@ planet_event = {
 		factor = 1
 		modifier = {
 			factor = 2.0
-			num_assigned_jobs = {
-				job = unemployed
-				value > 500
-			}
+			num_unemployed > 750
 		}
 		modifier = {
 			factor = 2.0
-			num_assigned_jobs = {
-				job = unemployed
-				value > 700
-			}
+			num_unemployed > 1000
 		}
 		modifier = {
 			factor = 2.0
-			num_assigned_jobs = {
-				job = unemployed
-				value > 900
-			}
+			num_unemployed > 1500
 		}
 		modifier = {
 			factor = 2.0
-			num_assigned_jobs = {
-				job = unemployed
-				value > 1100
-			}
+			num_unemployed > 2000
 		}
 	}
 
 	option = {
-		name = EaC_civic_mechanic_events.1.a
+		name = {
+			trigger = {
+				if = {
+					limit = { owner = { is_twisted_experimenters_empire = yes } }
+					text = crime.1.a.experimenters
+				}
+				else = {
+					text = EaC_civic_mechanic_events.1.a
+				}
+			}
+		}
 		trigger = {
 			owner = {
 				is_gestalt = no
@@ -9280,25 +9289,65 @@ planet_event = {
 		add_modifier = { modifier = "unemployment_benefits" years = 10 }
 	}
 	option = {
-		name = crime.1.a2
+		name = {
+			trigger = {
+				if = {
+					limit = { owner = { is_twisted_experimenters_empire = yes } }
+					text = crime.1.a2.experimenters
+				}
+				else = {
+					text = crime.1.a2
+				}
+			}
+		}
 		trigger = {
 			owner = { is_hive_empire = yes }
 		}
 		add_modifier = { modifier = "activity_program" years = 10 }
 	}
 	option = {
-		name = crime.1.a3
-		custom_tooltip = crime.1.a3.tooltip
 		trigger = {
 			owner = { is_machine_empire = yes }
 		}
+		name = crime.1.a3
+		custom_tooltip = crime.1.a3.tooltip
 		hidden_effect = { add_modifier = { modifier = "standby_mode" years = 10 } }
 	}
+
+	#Bottom Option
+
+	option = {
+		trigger = {
+			owner = { is_twisted_experimenters_empire = yes }
+		}
+		name = {
+			trigger = {
+				if = {
+					limit = { owner = { is_gestalt = no } }
+					text = crime.1.b.experimenters
+				}
+				else_if = {
+					limit = { owner = { is_hive_empire = yes } }
+					text = crime.1.b2.experimenters
+				}
+			}
+		}
+		if = {
+			limit = { owner = { is_gestalt = no } }
+			add_modifier = { modifier = "criminal_underworld_experimenters" days = -1 }
+		}
+		else_if = {
+			limit = { owner = { is_hive_empire = yes } }
+			add_modifier = { modifier = "drone_deviancy_experimenters" days = -1 }
+		}
+	}
+
 	option = {
 		name = EaC_civic_mechanic_events.1.b
 		trigger = {
 			owner = {
 				is_gestalt = no
+				is_twisted_experimenters_empire = no
 			}
 		}
 		add_modifier = { modifier = criminal_underworld days = -1 }
@@ -9307,7 +9356,10 @@ planet_event = {
 	option = {
 		name = crime.1.b2
 		trigger = {
-			owner = { is_hive_empire = yes }
+			owner = { 
+				is_hive_empire = yes 
+				is_twisted_experimenters_empire = no
+			}
 		}
 		add_modifier = { modifier = drone_deviancy days = -1 }
 	}
@@ -9362,7 +9414,7 @@ planet_event = {
 	}
 
 	trigger = {
-		has_modifier = criminal_underworld
+		has_criminal_underworld_modifier = yes
 	}
 
 	immediate = {
@@ -9381,7 +9433,18 @@ planet_event = {
 	}
 
 	option = {
-		name = EaC_civic_mechanic_events.2.a
+		#name = EaC_civic_mechanic_events.2.a
+		name = {
+			trigger = {
+				if = {
+					limit = { owner = { is_twisted_experimenters_empire = yes } }
+					text = crime.2.a.experimenters
+				}
+				else = {
+					text = EaC_civic_mechanic_events.2.a
+				}
+			}
+		}
 		trigger = { owner = { is_authoritarian = no } }
 		tooltip = {
 			add_modifier = { modifier = bribed_officials years = 10 }
