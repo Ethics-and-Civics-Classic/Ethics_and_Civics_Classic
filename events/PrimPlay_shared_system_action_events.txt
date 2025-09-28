@@ -8,7 +8,7 @@ event = {
 		any_playable_country = {
 			has_technology = "tech_starbase_1"		# Modded for PrimPlayer Compatibility
 			any_owned_planet = {
-				is_controlled_by = prev
+				is_controlled_by = PREV
 				solar_system = {
 					NOT = {
 						exists = starbase
@@ -22,17 +22,30 @@ event = {
 			limit = {
 				NOT = { exists = starbase }
 				any_system_colony = {
-					has_owner = yes
+					exists = owner
 					has_ground_combat = no
+					OR = {
+						has_shroud_dlc = no
+						AND = {
+							has_shroud_dlc = yes
+							NOT = {
+								has_planet_flag = exile_planet
+							}
+						}
+					}
 					owner = {
-						is_default_or_fallen = yes
+						OR = {
+							is_country_type = default
+							is_country_type = fallen_empire
+							is_country_type = awakened_fallen_empire
+						}
 					}
 					solar_system = {
 						NOR = {
 							any_fleet_in_system = {
 								exists = owner
 								owner = {
-									NOT = { is_same_empire = prevprevprev.owner }
+									NOT = { is_same_value = prevprevprev.owner }
 									OR = {
 										is_hostile = prevprevprev.owner
 										is_at_war_with = prevprevprev.owner
@@ -43,7 +56,7 @@ event = {
 							any_fleet_in_system = {
 								exists = controller
 								controller = {
-									NOT = { is_same_empire = prevprevprev.owner }
+									NOT = { is_same_value = prevprevprev.owner }
 									OR = {
 										is_hostile = prevprevprev.owner
 										is_at_war_with = prevprevprev.owner
@@ -52,31 +65,48 @@ event = {
 								is_cloaked = no
 							}
 							any_system_colony = {
-								has_owner = yes
+								exists = owner
 								NOT = { is_same_value = prevprev }
 								owner = {
-									NOT = { is_same_empire = prevprevprev.owner }
-									is_default_or_fallen = yes
+									NOT = { is_same_value = prevprevprev.owner }
+									OR = {
+										is_country_type = default
+										is_country_type = fallen_empire
+										is_country_type = awakened_fallen_empire
+									}
 								}
 							}
 						}
 					}
 				}
 			}
-			random_system_colony = {
+			random_system_planet = {
 				limit = {
-					has_owner = yes
+					is_colony = yes
 					exists = owner
 					has_ground_combat = no
+					OR = {
+						has_shroud_dlc = no
+						AND = {
+							has_shroud_dlc = yes
+							NOT = {
+								has_planet_flag = exile_planet
+							}
+						}
+					}
 					owner = {
-						is_default_or_fallen = yes
+						OR = {
+							is_country_type = default
+							is_country_type = fallen_empire
+							is_country_type = awakened_fallen_empire
+						}
 					}
 					solar_system = {
 						NOR = {
 							any_fleet_in_system = {
 								exists = owner
 								owner = {
-									NOT = { is_same_empire = prevprevprev.owner }
+									NOT = { is_same_value = prevprevprev.owner }
 									OR = {
 										is_hostile = prevprevprev.owner
 										is_at_war_with = prevprevprev.owner
@@ -87,7 +117,7 @@ event = {
 							any_fleet_in_system = {
 								exists = controller
 								controller = {
-									NOT = { is_same_empire = prevprevprev.owner }
+									NOT = { is_same_value = prevprevprev.owner }
 									OR = {
 										is_hostile = prevprevprev.owner
 										is_at_war_with = prevprevprev.owner
@@ -96,10 +126,14 @@ event = {
 								is_cloaked = no
 							}
 							any_system_colony = {
-								has_owner = yes
+								exists = owner
 								owner = {
-									NOT = { is_same_empire = prevprevprev.owner }
-									is_default_or_fallen = yes
+									NOT = { is_same_value = prevprevprev.owner }
+									OR = {
+										is_country_type = default
+										is_country_type = fallen_empire
+										is_country_type = awakened_fallen_empire
+									}
 								}
 							}
 						}
