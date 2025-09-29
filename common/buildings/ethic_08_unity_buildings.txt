@@ -669,3 +669,278 @@ building_citadel_of_faith = {
 		text = job_priest_effect_desc
 	}
 }
+
+# Servitors
+building_organic_sanctuary = {
+	base_buildtime = @b1_time
+
+	category = unity
+
+	building_sets = {
+		bio_trophy
+		urban
+		unity
+	}
+
+	potential = {
+		exists = owner
+		owner = {
+			OR = {
+				has_valid_civic = civic_machine_servitor
+				has_valid_civic = civic_machine_cult_machine
+			}
+		}
+	}
+
+	destroy_trigger = {
+		exists = owner
+		OR = {
+			owner = {
+				NOR = { 
+					owner = { has_valid_civic = civic_machine_servitor }
+					owner = { has_valid_civic = civic_machine_cult_machine }
+				}
+			}
+			AND = {
+				owner = { is_ai = yes }
+				count_owned_pop_amount = {
+					limit = {
+						has_citizenship_type = {
+							type = citizenship_organic_trophy
+							country = owner
+						}
+					}
+					count <= 2000
+				}
+				num_buildings = { type = building_organic_sanctuary value > 3 }
+			}
+			AND = {
+				owner = { is_ai = yes }
+				count_owned_pop_amount = {
+					limit = {
+						has_citizenship_type = {
+							type = citizenship_organic_trophy
+							country = owner
+						}
+					}
+					count <= 4000
+				}
+				num_buildings = { type = building_organic_paradise value > 5 }
+			}
+		}
+	}
+
+	convert_to = {
+		building_luxury_residence
+		building_communal_housing
+	}
+
+	resources = {
+		category = planet_buildings
+		cost = {
+			minerals = @b1_minerals
+		}
+		upkeep = {
+			energy = @b1_upkeep
+		}
+	}
+
+	planet_modifier = {
+		job_bio_trophy_add = 1500
+	}
+
+	upgrades = {
+		"building_organic_paradise"
+	}
+
+	# We need to cheat here and tell AI that this will probably give some complex output since AI can not evaluate what this building does without the pops which it cant get without the building - chicken and egg
+	ai_resource_production = {
+		unity = 10
+		physics_research = 10
+		alloys = 5
+
+		trigger = {
+			NOT = { has_building = building_organic_sanctuary }
+		}
+	}
+
+	ai_weight_coefficient = 1.2
+
+	# Here we try to adress the second issue that the AI cant evaluate the pop job output of the bio trophy given the happiness trigger that was put inplace to guard against players exploiting bio trophies
+
+	#science
+	ai_resource_production = {
+		unity = 10
+		physics_research = 10
+
+		trigger = {
+			any_owned_pop_group = {
+				is_pop_category = bio_trophy_unemployment
+			}
+
+			planet_resource_compare = {
+				resource = physics_research
+				value >= 100
+				type = produces
+			}
+		}
+	}
+
+	#alloys
+	ai_resource_production = {
+		unity = 10
+		alloys = 10
+
+		trigger = {
+			any_owned_pop_group = {
+				is_pop_category = bio_trophy_unemployment
+			}
+
+			planet_resource_compare = {
+				resource = alloys
+				value >= 100
+				type = produces
+			}
+		}
+	}
+
+	#cgs
+	ai_resource_production = {
+		unity = 10
+		consumer_goods = 10
+
+		trigger = {
+			any_owned_pop_group = {
+				is_pop_category = bio_trophy_unemployment
+			}
+
+			planet_resource_compare = {
+				resource = consumer_goods
+				value >= 100
+				type = produces
+			}
+		}
+	}
+}
+
+building_organic_paradise = {
+	base_buildtime = @b2_time
+	can_build = no
+	icon = building_paradise_dome
+
+	category = unity
+
+	building_sets = {
+		bio_trophy
+		urban
+		unity
+	}
+
+	potential = {
+		exists = owner
+		owner = {
+			OR = {
+				has_valid_civic = civic_machine_servitor
+				has_valid_civic = civic_machine_cult_machine
+			}
+		}
+	}
+
+	destroy_trigger = {
+		exists = owner
+		NOR = { 
+			owner = { has_valid_civic = civic_machine_servitor } 
+			owner = { has_valid_civic = civic_machine_cult_machine } 
+		}
+	}
+
+	convert_to = {
+		building_paradise_dome
+		building_communal_housing_large
+	}
+
+	resources = {
+		category = planet_buildings
+		cost = {
+			minerals = @b2_minerals
+			exotic_gases = @b2_rare_cost
+		}
+		upkeep = {
+			energy = @b2_upkeep
+			exotic_gases = @b2_rare_upkeep
+		}
+	}
+
+	planet_modifier = {
+		job_bio_trophy_add = 3000
+	}
+
+	prerequisites = { "tech_paradise_dome" }
+
+	show_tech_unlock_if = {
+		owner = { 
+			OR = {
+				has_valid_civic = civic_machine_servitor 
+				has_valid_civic = civic_machine_cult_machine
+			}
+		}
+	}
+
+	ai_weight_coefficient = 1.2
+
+	# Here we try to adress the second issue that the AI cant evaluate the pop job output of the bio trophy given the happiness trigger that was put inplace to guard against players exploiting bio trophies
+
+	#science
+	ai_resource_production = {
+		unity = 20
+		physics_research = 20
+
+		trigger = {
+			any_owned_pop_group = {
+				is_pop_category = bio_trophy_unemployment
+			}
+
+			planet_resource_compare = {
+				resource = physics_research
+				value >= 100
+				type = produces
+			}
+		}
+	}
+
+	#alloys
+	ai_resource_production = {
+		unity = 20
+		alloys = 20
+
+		trigger = {
+			any_owned_pop_group = {
+				is_pop_category = bio_trophy_unemployment
+			}
+
+			planet_resource_compare = {
+				resource = alloys
+				value >= 100
+				type = produces
+			}
+		}
+	}
+
+	#cgs
+	ai_resource_production = {
+		unity = 20
+		consumer_goods = 20
+
+		trigger = {
+			any_owned_pop_group = {
+				is_pop_category = bio_trophy_unemployment
+			}
+
+			planet_resource_compare = {
+				resource = consumer_goods
+				value >= 100
+				type = produces
+			}
+		}
+	}
+}
