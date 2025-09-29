@@ -78,16 +78,23 @@ country_event = { # Spawn Ratlings # Root = Global Event Country
 			every_system_planet = {
 				limit = {
 					has_planet_flag = ratling_planet
-					NOR = {
-						is_colony = yes
-						is_under_colonization = yes
-						is_planet_class = "pc_broken"
-						is_planet_class = "pc_shattered"
-					}
+					is_colony = no
+					is_under_colonization = no
+					NOT = { is_planet_class = "pc_broken" }
+					NOT = { is_planet_class = "pc_shattered" }
+				}
+				set_timed_planet_flag = {
+					flag = ignore_ai_building_limitations
+					days = 1
 				}
 				set_owner = event_target:ratling_pre_space_country
 				add_building = building_junkheap
-				create_pop = { species = event_target:ratling_species size = 10 }
+				while = {
+					count = 10
+					create_pop_group = {
+						species = event_target:ratling_species
+					}
+				}
 				while = {
 					count = 4
 					create_army = {
@@ -157,9 +164,9 @@ country_event = { # Create Full Ratling Empire # Root = Global Event Country
 					is_constructing = starbase
 				}
 			}
-			any_system_colony = {
+			any_system_planet = {
 				has_planet_flag = ratling_planet
-				has_owner = yes
+				exists = owner
 				owner = {
 					is_same_value = event_target:ratling_pre_space_country
 				}
@@ -292,10 +299,19 @@ country_event = { # Create Full Ratling Empire # Root = Global Event Country
 					}
 				}
 				set_owner = event_target:ratling_country
+				set_timed_planet_flag = {
+					flag = ignore_ai_building_limitations
+					days = 1
+				}
 				remove_building = building_junkheap
 				clear_blockers = yes
 				remove_all_armies = yes
-				create_pop = { species = event_target:ratling_species size = 25 }
+				while = {
+					count = 25
+					create_pop_group = {
+						species = event_target:ratling_species
+					}
+				}
 				while = {
 					count = 4
 					add_district_and_planet_size_if_needed_effect = {
@@ -359,15 +375,12 @@ country_event = { # Create Full Ratling Empire # Root = Global Event Country
 			}
 		}
 
-		## Destroy old country
+		##Destroy old country
 		event_target:ratling_pre_space_country = {
-			every_owned_pop_group = { # In case any pops are left behind
-				kill_single_pop = yes
-			}
 			destroy_country = yes
 		}
 
-		# So we don't get "orphaned" pops with no job categories in case of non-Ketling system owners
+		#So we don't get "orphaned" pops with no job categories in case of non-Ketling system owners
 		every_system = {
 			limit = {
 				has_star_flag = ratling_system
@@ -376,7 +389,7 @@ country_event = { # Create Full Ratling Empire # Root = Global Event Country
 					AND = {
 						exists = owner
 						NOT = {
-							is_owned_by = event_target:ratling_country
+							owner = { is_same_value = event_target:ratling_country }
 						}
 					}
 				}
@@ -390,17 +403,17 @@ country_event = { # Create Full Ratling Empire # Root = Global Event Country
 					}
 				}
 				every_owned_pop_group = {
-					# limit = {
-					#	is_same_species = event_target:ratling_species
-					#	NOT = { exists = owner }
-					#}
-					kill_single_pop = yes
+					limit = {
+						is_same_species = event_target:ratling_species
+						NOT = { exists = owner }
+					}
+					kill_all_pop = yes
 				}
 			}
 		}
 
-		# Create a Capital
-		if = { # If the old capital belongs to Ratlings, use it
+		#Create a Capital
+		IF = { #If the old capital belongs to Ratlings, use it
 			limit = {
 				exists = event_target:ratling_capital
 				event_target:ratling_capital = {
@@ -414,7 +427,7 @@ country_event = { # Create Full Ratling Empire # Root = Global Event Country
 				set_capital = yes
 			}
 		}
-		else = { # Otherwise, make a new Capital
+		ELSE = { #Otherwise, make a new Capital
 			random_system = {
 				limit = { has_star_flag = ratling_system }
 				random_system_planet = {
@@ -435,8 +448,14 @@ country_event = { # Create Full Ratling Empire # Root = Global Event Country
 
 		event_target:ratling_country = {
 
-			## Add resources
-			add_resource = { minerals = 7000 energy = 7000 food = 3000 consumer_goods = 3000 alloys = 2000 influence = 1000 }
+			##Add resources
+			add_resource = { minerals = 7000 }
+			add_resource = { energy = 7000 }
+			add_resource = { food = 3000 }
+			add_resource = { consumer_goods = 3000 }
+			add_resource = { alloys = 2000 }
+			add_resource = { influence = 1000 }
+			add_resource = { unity = 27000 }
 
 			event_target:ratling_country = {
 				## Create Mining Stations
