@@ -8,6 +8,7 @@ generate_start_pops = {
 					has_origin = origin_syncretic_evolution
 					has_origin = origin_necrophage
 					has_valid_civic = civic_machine_servitor
+					has_valid_civic = civic_machine_cult_machine
 					has_valid_civic = civic_machine_assimilator
 					has_valid_civic = civic_symbiotic_race
 					has_valid_civic = civic_slave_race
@@ -74,11 +75,11 @@ generate_start_pops = {
 				}
 				# create_pop = { species = last_created_species size = 6ethos = random } # No Longer Used in Stellaris 4.0
 				create_pop_group = {
-					size = 600
+					size = 1200	#Vanilla is 1200
 					species = last_created_species
 				}
 			}
-			else_if = {
+			else_if = {	#Vanilla, but this is the 'else' in vanilla
 				limit = {
 					owner = {
 						has_origin = origin_necrophage
@@ -87,14 +88,14 @@ generate_start_pops = {
 				}
 				# create_pop = { species = last_created_species size = 9ethos = random } # No Longer Used in Stellaris 4.0
 				create_pop_group = {
-					size = 900
+					size = 2400	#Vanilla is 2400
 					species = last_created_species
 				}
 			}
-			else = {
+			else = {	#Moodded --> Conditioned to be civic_symbiotic_race or civic_slave_race
 				# create_pop = { species = last_created_species size = 12ethos = random } # No Longer Used in Stellaris 4.0
 				create_pop_group = {
-					size = 1200
+					size = 2400	#Modded
 					species = last_created_species
 				}
 			}
@@ -253,10 +254,15 @@ generate_start_pops = {
 	}
 	if = {
 		limit = {
-			owner = { has_valid_civic = civic_machine_servitor }
+			owner = { 
+				OR = {
+					has_valid_civic = civic_machine_servitor
+					has_valid_civic = civic_machine_cult_machine
+				}
+			}
 		}
 		while = {
-			limit = { pop_amount < 3300 }
+			limit = { pop_amount < 4800 }
 			create_pop_group = {
 				species = owner_main_species
 			}
@@ -355,18 +361,18 @@ generate_start_pops = {
 			}
 		}
 	}
-	if = {
-		limit = { # homicidal necrophages lose 1/4 of their necrophytes to fleeing
-			owner = {
-				has_origin = origin_necrophage
-				is_homicidal = yes
-			}
-		}
-		create_pop_group = {
-			size = 200
-			species = owner_main_species
-		}
-	}
+	#if = {	#No longer in Vanilla as of 4.1
+	#	limit = { # homicidal necrophages lose 1/4 of their necrophytes to fleeing
+	#		owner = {
+	#			has_origin = origin_necrophage
+	#			is_homicidal = yes
+	#		}
+	#	}
+	#	create_pop_group = {
+	#		size = 200
+	#		species = owner_main_species
+	#	}
+	#}
 	if = {
 		limit = {
 			owner = { has_origin = origin_default }
@@ -434,6 +440,7 @@ generate_start_pops = {
 					is_wilderness_empire = yes
 					is_tankbound_empire = yes
 					has_valid_civic = civic_machine_servitor
+					has_valid_civic = civic_machine_cult_machine
 				}
 			}
 		}
@@ -577,10 +584,240 @@ generate_start_pops = {
 		last_created_species = {
 			change_species_characteristics = {
 				add_trait = trait_auto_mod_robotic
+				add_trait = trait_latent_psionic_machine
 			}
 		}
 		create_pop_group = {
 			size = 400
+			species = last_created_species
+		}
+	}
+}
+
+generate_civic_secondary_pops = {
+	# Ensuring that this country flag has been set by this point
+	if = {
+		limit = {
+			owner = {
+				OR = {
+					last_created_species = { is_lithoid = yes }
+					last_created_species = { has_trait = trait_machine_unit }
+				}
+			}
+		}
+		owner = {
+			set_country_flag = lithoid_subspecies
+		}
+	}
+	else = {
+		owner = {
+			set_country_flag = non_lithoid_subspecies
+		}
+	}
+	# Rogue Servitor & Driven Assimilator setting up pop special traits to make sure that their secondary species have all the cool traits. Spawning of the pops happens next.
+	if = {
+		limit = {
+			owner = {
+				OR = {
+					has_valid_civic = civic_machine_cult_machine
+					has_valid_civic = civic_machine_assimilator
+					has_valid_civic = civic_machine_servitor
+				}
+				OR = {
+					has_origin = origin_void_machines
+					has_origin = origin_post_apocalyptic_machines
+					has_origin = origin_subterranean_machines
+				}
+			}
+		}
+		owner = {
+			switch = {
+				trigger = has_origin
+				origin_void_machines = {
+					last_created_species = {
+						modify_species = {
+							species = this
+							add_trait = trait_void_dweller_1
+							add_traits_at_start_of_list = yes
+							ideal_planet_class = pc_habitat
+						}
+					}
+				}
+				origin_post_apocalyptic_machines = {
+					last_created_species = {
+						change_species_characteristics = {
+							add_trait = trait_survivor
+							add_traits_at_start_of_list = yes
+						}
+					}
+				}
+				origin_subterranean_machines = {
+					last_created_species = {
+						change_species_characteristics = {
+							add_trait = trait_cave_dweller
+							add_traits_at_start_of_list = yes
+						}
+					}
+				}
+			}
+		}
+	}
+	else_if = {
+		limit = {
+			owner = {
+				has_valid_civic = civic_hive_bodysnatcher
+				OR = {
+					has_origin = origin_void_dwellers
+					has_origin = origin_post_apocalyptic
+					has_origin = origin_subterranean
+					has_origin = origin_wilderness
+				}
+			}
+		}
+		owner = {
+			switch = {
+				trigger = has_origin
+				origin_void_dwellers = {
+					last_created_species = {
+						modify_species = {
+							species = this
+							add_trait = trait_void_dweller_1
+							add_traits_at_start_of_list = yes
+							ideal_planet_class = pc_habitat
+						}
+					}
+				}
+				origin_post_apocalyptic = {
+					last_created_species = {
+						change_species_characteristics = {
+							add_trait = trait_survivor
+							add_traits_at_start_of_list = yes
+						}
+					}
+				}
+				origin_subterranean = {
+					last_created_species = {
+						change_species_characteristics = {
+							add_trait = trait_cave_dweller
+							add_traits_at_start_of_list = yes
+						}
+					}
+				}
+				origin_wilderness = {
+					last_created_species = {
+						change_species_characteristics = {
+							add_trait = trait_wilderness
+							add_traits_at_start_of_list = yes
+						}
+					}
+				}
+			}
+		}
+	}
+	# Rogue Servitor: set citizenship, living standard & preference; spawn Pops
+	if = {
+		limit = {
+			owner = { 
+				OR = {
+					has_valid_civic = civic_machine_servitor 
+					has_valid_civic = civic_machine_cult_machine 
+				}
+			}
+		}
+		last_created_species = {
+			if = {
+				limit = {
+					root = {
+						OR = {
+							is_planet_class = pc_shattered_ring_habitable
+							is_planet_class = pc_gaia
+						}
+					}
+				}
+				modify_species = {
+					species = this
+					ideal_planet_class = home_planet
+				}
+			}
+			if = {
+				limit = { owner = { has_valid_civic = civic_machine_servitor  } }
+				set_citizenship_type = {
+					country = root.owner
+					type = citizenship_limited
+				}
+				set_living_standard = {
+					country = root.owner
+					type = living_standard_organic_trophy
+				}
+			}
+			else = {
+				set_citizenship_type = {
+					country = root.owner
+					type = citizenship_limited
+				}
+				set_living_standard = {
+					country = root.owner
+					type = living_standard_organic_trophy
+				}
+			}
+		}
+		while = {
+			count = @civilians_counter
+			create_pop_group = {
+				size = @civilians_gamestart
+				species = last_created_species
+			}
+		}
+	}
+
+	# Driven Assimilator and Bodysnatcher set citizenship, living standard & preference; spawn Pops
+	if = {
+		limit = {
+			owner = {
+				OR = {
+					has_valid_civic = civic_machine_assimilator
+					has_valid_civic = civic_hive_bodysnatcher
+				}
+			}
+		}
+		last_created_species = {
+			if = {
+				limit = {
+					root = {
+						OR = {
+							is_planet_class = pc_shattered_ring_habitable
+							is_planet_class = pc_gaia
+						}
+					}
+				}
+				modify_species = {
+					species = this
+					ideal_planet_class = home_planet
+				}
+			}
+			if = {
+				limit = {
+					root.owner = { is_machine_empire = yes }
+				}
+				set_citizenship_type = {
+					country = root.owner
+					type = citizenship_full_machine
+				}
+			}
+			else = {
+				set_citizenship_type = {
+					country = root.owner
+					type = citizenship_full
+				}
+			}
+
+			set_living_standard = {
+				country = root.owner
+				type = living_standard_hive_mind
+			}
+		}
+		create_pop_group = {
+			size = 1000
 			species = last_created_species
 		}
 	}
