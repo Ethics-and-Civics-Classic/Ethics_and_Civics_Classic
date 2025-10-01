@@ -1,4 +1,109 @@
 ###################
+# Other Jobs
+###################
+
+bio_trophy_processing = {
+	category = bio_trophy
+	first_come_first_served = yes
+	is_capped_by_modifier = no
+
+	swappable_data = {
+		default = {
+			building_icon = building_organic_sanctuary
+			icon = bio_trophy
+		}
+	}
+
+	promotion = {
+		# Only fires if the pop group has a different stratum/category to that which is required by the job.
+		# Obeys `can_change_category = no` rules of the pop group's current stratum.
+		time = 0
+		effect = {
+			pop_amount_change_category = {
+				CATEGORY = bio_trophy
+				AMOUNT = local_pop_amount
+			}
+		}
+	}
+
+	demotion = {
+		# Should always fire, regardless of pop group's current statum/category.
+		# Ignores `can_change_category = no` rules of the pop group's current stratum.
+		time = 0
+		effect = {
+			pop_amount_change_category = {
+				CATEGORY = bio_trophy
+				AMOUNT = local_pop_amount
+			}
+		}
+	}
+
+	possible_pre_triggers = {
+		has_owner = yes
+		is_being_purged = no
+		is_being_assimilated = no
+	}
+
+	possible = {
+		is_robotic_species = no
+		NOR = {
+			is_pop_category = bio_trophy
+			is_pop_category = bio_trophy_unemployment
+		}
+		owner = {
+			OR = {
+				has_valid_civic = civic_machine_servitor
+				has_valid_civic = civic_machine_cult_machine
+			}
+		}
+		planet = { NOT = { is_planet_class = pc_cosmogenesis_world } }
+	}
+}
+
+bio_trophy_unprocessing = {
+	category = bio_trophy
+	first_come_first_served = yes
+	is_capped_by_modifier = no
+
+	swappable_data = {
+		default = {
+			building_icon = building_organic_sanctuary
+			icon = bio_trophy
+		}
+	}
+
+	demotion = {
+		time = 0
+		effect = {
+			pop_amount_change_category = {
+				CATEGORY = civilian
+				AMOUNT = local_pop_amount
+			}
+		}
+	}
+
+	possible_pre_triggers = {
+		has_owner = yes
+		is_being_purged = no
+		is_being_assimilated = no
+	}
+
+	possible = {
+		OR = {
+			is_pop_category = bio_trophy
+			is_pop_category = bio_trophy_unemployment
+		}
+		owner = {
+			NOR = {
+				has_valid_civic = civic_machine_servitor
+				has_valid_civic = civic_machine_cult_machine
+			}
+		}
+		planet = { NOT = { is_planet_class = pc_cosmogenesis_world } }
+	}
+}
+
+###################
 # Fancy Jobs
 ###################
 
@@ -3202,7 +3307,7 @@ entrepreneur = {
 		}
 	}
 	
-	planet_modifier = {
+	triggered_planet_modifier = {
 		potential = {
 			exists = owner
 			owner = {
@@ -4113,9 +4218,10 @@ techno_priest = { 	#Used in Mecha Monestary
 		is_sapient = yes
 	}
 
-	possible_precalc = can_fill_specialist_job
+	#possible_precalc = can_fill_specialist_job
 	possible = {
 		complex_specialist_job_check_trigger = yes
+		#species = { is_robotic = yes }
 		is_robot_pop = no
 	}
 
@@ -4157,7 +4263,7 @@ techno_priest = { 	#Used in Mecha Monestary
 	}
 
 	planet_modifier = {
-		planet_pops_robotics_upkeep_mult = -0.05
+		planet_pops_robotics_upkeep_mult = -0.025
 	}
 
 	# triggered_planet_modifier = {		# Enriad - not working, not intended to work in 4.0
@@ -4237,6 +4343,16 @@ techno_priest = { 	#Used in Mecha Monestary
 	}
 
 	inline_script = "jobs/automodding_priority_unity"
+	
+	promotion = {
+		time = @standard_promotion_time
+		effect = {
+			pop_amount_change_category = {
+				CATEGORY = specialist
+				AMOUNT = local_pop_amount
+			}
+		}
+	}
 }
 
 ############
