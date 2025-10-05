@@ -11,7 +11,7 @@ corrupt_healthcare = {
 	contributes_to_diplo_weight = no
 	# ignores_favorite = yes # This means that if you favorite e.g. clerks, the +1000 bonus will not matter for jobs working as criminals  - # No Longer Used in Stellaris 4.0
 
-	tags = { crime }
+	tags = { crime pop_growth pop_assembly amenities }
 
 	possible_pre_triggers = {
 		has_owner = yes
@@ -34,10 +34,18 @@ corrupt_healthcare = {
 	planet_modifier = {
 		planet_crime_add = 25
 		planet_jobs_trade_produces_add = 10
-		branch_office_criminal_syndicate_value_add = 25
 		founder_species_growth_mult = 0.05
 		bonus_pop_growth_mult = 0.05
 		pop_environment_tolerance = 0.025
+	}
+	
+	triggered_planet_modifier = {
+		potential = {
+			planet = {
+				has_branch_office = yes
+			}
+		}
+		branch_office_criminal_syndicate_value_add = 25
 	}
 
 	triggered_planet_modifier = {
@@ -190,6 +198,26 @@ corrupt_healthcare = {
 		}
 		planet_amenities_add = 200
 		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|	# Modded
+	}
+	
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner														# Modded
+			has_branch_office = yes
+			owner = { has_policy_flag = public_healthcare }						# Modded
+		}
+		planet_crime_add = -5													# Modded
+		branch_office_criminal_syndicate_value_add = -5							# Modded
+	}
+	
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner														# Modded
+			has_branch_office = yes
+			owner = { has_policy_flag = private_healthcare }					# Modded
+		}
+		planet_crime_add = 5													# Modded
+		branch_office_criminal_syndicate_value_add = 5							# Modded
 	}
 
 	weight = {
@@ -574,13 +602,13 @@ corrupt_entertainer = {
 	swappable_data = {
 		default = {
 			# clothes_texture_index = 2
-			building_icon = building_residence
+			building_icon = building_underground_clubs
 		}
 	}
 	contributes_to_diplo_weight = no
 	# ignores_favorite = yes # This means that if you favorite e.g. clerks, the +1000 bonus will not matter for jobs working as criminals  - # No Longer Used in Stellaris 4.0
 
-	tags = { crime }
+	tags = { crime amenities unity }
 
 	possible_pre_triggers = {
 		has_owner = yes
@@ -614,6 +642,25 @@ corrupt_entertainer = {
 		}
 		pop_ethic_capitalism_attraction_mult = 0.10
 	}
+	
+	resources = {
+		category = planet_entertainers
+		produces = {
+			unity = 1
+		}
+		upkeep = {
+			consumer_goods = 1
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			always = yes
+		}
+		planet_amenities_add = 1250
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	}
+	
 	weight = {
 		weight = @criminal_job_weight
 	}
