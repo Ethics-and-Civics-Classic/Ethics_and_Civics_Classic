@@ -29,6 +29,75 @@ has_subspecies_civic_or_origin = {
 	}
 }
 
+##########
+# Traits #
+##########
+
+#Cog Note - Machine Spirits can ADD cybernetic Traits, but not remove... that would be sacrilegious!
+
+#this = species, from = country
+can_add_cybernetic_traits = {
+	hidden_trigger = { exists = from }
+	OR = {
+		has_trait = trait_cybernetic
+		has_trait = trait_machine_cult_cybernetic
+	}
+	custom_tooltip = {
+		text = requires_tr_cybernetics_integrated_anatomy
+		from = {
+			OR = {
+				has_active_tradition = tr_cybernetics_integrated_anatomy
+				has_active_tradition = tr_cybernetics_assimilator_integrated_anatomy
+				has_valid_civic = civic_machine_cult_machine
+			}
+		}
+	}
+}
+
+#Cog Note - Needed to condition for Priest Jobs for Machine Spirit
+
+can_fill_specialist_job_trigger = {
+	custom_tooltip = SPECIALIST_JOB_TRIGGER
+	hidden_trigger = {
+		OR = {
+			NOT = { has_ethic = ethic_gestalt_consciousness }
+			has_trait = trait_machine_cult_cybernetic
+		}
+		exists = owner
+		OR = {
+			is_enslaved = no
+			has_slavery_type = { type = slavery_indentured }
+		}
+		is_being_purged = no
+		is_being_assimilated = no
+		NOT = { has_trait = trait_syncretic_proles }
+		# Rule out Traits for servitude & lack of free will
+		can_think = yes
+		NOT = {	has_pop_group_flag = cant_work }
+		# Rule out Disconnected Drones
+		has_disconnected_drone_citizenship_type = no
+		OR = {
+			NOT = { has_trait = trait_mechanical }
+			owner = { has_technology = tech_droid_workers }
+		}
+		if = {
+			limit = { owner = { NOT = { has_valid_civic = civic_machine_cult_machine } } }
+			NOT = {
+				has_citizenship_type = {
+					type = citizenship_organic_trophy
+					country = owner
+				}
+			}
+		}
+		if = {
+			limit = {
+				divinity_right_to_work_job_check_trigger_exempt = no
+			}
+			divinity_right_to_work_job_check_trigger_specialist = yes
+		}
+	}
+}
+
 ###################
 # Treasure Troves #
 ###################

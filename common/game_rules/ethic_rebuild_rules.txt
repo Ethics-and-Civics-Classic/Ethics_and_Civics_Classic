@@ -18,6 +18,128 @@
 #	}
 #}
 
+# Root = country
+# This = species
+can_modify_species = {
+	# Can't modify root Species during Ascension Situations
+	if = {
+		limit = {
+			is_same_species = ROOT
+		}
+		custom_tooltip = {
+			fail_text = "ASCENSION_SITUATION_ONGOING"
+
+			ROOT = {
+				NOT = {
+					any_situation = {
+						has_ascension_situation_ongoing = yes
+					}
+				}
+			}
+		}
+	}
+	# Organic Species
+	if = {
+		limit = {
+			OR = {
+				is_archetype = BIOLOGICAL
+				is_archetype = LITHOID
+			}
+			NOR = {
+				has_trait = trait_clone_soldier_infertile
+				has_trait = trait_clone_soldier_infertile_full_potential
+			}
+		}
+		custom_tooltip = {
+			fail_text = "NEEDS_GENE_TAILORING_OR_INTERGRATED_ANATOMY"
+			ROOT = {
+				OR = {
+					has_technology = tech_gene_tailoring
+					has_active_tradition = tr_cybernetics_integrated_anatomy
+					has_active_tradition = tr_cybernetics_assimilator_integrated_anatomy
+					has_valid_civic = civic_machine_cult_machine
+				}
+			}
+		}
+	}
+	# Clone Army
+	if = {
+		limit = {
+			OR = {
+				has_trait = trait_clone_soldier_infertile
+				has_trait = trait_clone_soldier_infertile_full_potential
+			}
+		}
+		custom_tooltip = {
+			fail_text = "NEEDS_GENE_TAILORING_AND_CLONE_SYNTHESIZATION"
+			ROOT = {
+				has_technology = tech_gene_tailoring
+				has_active_tradition = tr_cloning_somatic_synthesization_clone_army
+			}
+		}
+	}
+	# Robots & Machines
+	else_if = {
+		limit = {
+			OR = {
+				is_archetype = ROBOT
+				is_archetype = MACHINE
+			}
+		}
+		if = {
+			limit = {
+				ROOT = {
+					OR = {
+						AND = { ## organic trying to robomod
+							is_individual_machine = no
+							is_machine_empire = no
+						}
+						AND = { ## Machines with origins that delay them
+							OR = {
+								is_individual_machine = yes
+								is_machine_empire = yes
+							}
+							OR  = {
+								has_origin = origin_life_seeded
+								has_origin = origin_ocean_machines
+								has_origin = origin_void_machines
+								has_origin = origin_shattered_ring
+							}
+						}
+					}
+				}
+			}
+			custom_tooltip = {
+				fail_text = "NEEDS_ROBOT_MODDING"
+
+				ROOT = {
+					OR = {
+						has_technology = tech_robomodding
+						has_technology = tech_robomodding_m
+					}
+				}
+			}
+		}
+	}
+	# Self-Modified
+	custom_tooltip = {
+		fail_text = "CANNOT_MODIFY_SELF_MODIFIED_SPECIES"
+		AND = {
+			NOT = {
+				has_trait = trait_self_modified
+			}
+			#is_same_species = root
+		}
+	}
+	# Malleable Genes
+	custom_tooltip = {
+		fail_text = "CANNOT_MODIFY_MALLEABLE_GENES_SPECIES"
+		NOT = {
+			has_trait = trait_malleable_genes
+		}
+	}
+}
+
 # This = planet
 # Root = country
 can_build_branch_office_on_planet = {

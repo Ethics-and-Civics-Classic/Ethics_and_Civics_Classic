@@ -60,6 +60,67 @@ bio_trophy_processing = {
 	}
 }
 
+bio_trophy = {
+	category = bio_trophy
+	can_be_automated = no
+
+	swappable_data = {
+		default = {
+			building_icon = building_organic_sanctuary
+		}
+	}
+	tags = { unity }
+
+	possible_pre_triggers = {
+		is_sapient = yes
+		is_robotic = no
+	}
+
+	possible = {
+		has_citizenship_type = { type = citizenship_organic_trophy country = owner }
+		OR = {
+			is_pop_category = bio_trophy
+			is_pop_category = bio_trophy_unemployment
+		}
+		planet = { NOT = { is_planet_class = pc_cosmogenesis_world } }
+	}
+
+	promotion = {
+		time = 0
+		effect = {
+			pop_amount_change_category = {
+				CATEGORY = bio_trophy
+				AMOUNT = local_pop_amount
+			}
+		}
+	}
+
+	resources = {
+		category = planet_bio_trophies
+		produces = {
+			unity = 2
+		}
+	}
+	
+	triggered_planet_modifier = {
+		potential = {
+			planet = {
+				has_owner = yes
+				owner = {
+					has_valid_civic = civic_machine_servitor
+				}
+			}
+		}
+		pop_cat_complex_drone_bonus_workforce_mult = 0.01
+	}
+
+	weight = {
+		weight = @special_job_weight
+	}
+
+	inline_script = "jobs/automodding_priority_charisma"
+}
+
 bio_trophy_unprocessing = {
 	category = bio_trophy
 	first_come_first_served = yes
@@ -4205,7 +4266,7 @@ techno_priest = { 	#Used in Mecha Monestary
 	swappable_data = {
 		default = {
 			condition_string = SPECIALIST_JOB_TRIGGER
-			building_icon = building_robot_assembly_plant
+			building_icon = building_mecha_monastery
 			# clothes_texture_index = 3
 		}
 	}
@@ -4218,10 +4279,9 @@ techno_priest = { 	#Used in Mecha Monestary
 		is_sapient = yes
 	}
 
-	#possible_precalc = can_fill_specialist_job
+	possible_precalc = can_fill_specialist_job
 	possible = {
 		complex_specialist_job_check_trigger = yes
-		#species = { is_robotic = yes }
 		is_robot_pop = no
 	}
 
