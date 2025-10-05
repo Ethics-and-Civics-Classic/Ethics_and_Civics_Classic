@@ -1,3 +1,230 @@
+corrupt_healthcare = {
+	category = criminal
+	is_capped_by_modifier = yes
+	can_set_priority = no
+	swappable_data = {
+		default = {
+			# clothes_texture_index = 2
+			building_icon = building_underground_chemists
+		}
+	}
+	contributes_to_diplo_weight = no
+	# ignores_favorite = yes # This means that if you favorite e.g. clerks, the +1000 bonus will not matter for jobs working as criminals  - # No Longer Used in Stellaris 4.0
+
+	tags = { crime pop_growth pop_assembly amenities }
+
+	possible_pre_triggers = {
+		has_owner = yes
+		is_sapient = yes
+	}
+
+	possible = {
+		# Check that this is not a robot in servitude
+		NOT = {
+			has_citizenship_type = {
+				country = owner
+				type = citizenship_robot_servitude
+			}
+		}
+		owner = {
+			is_gestalt = no
+		}
+	}
+
+	planet_modifier = {
+		planet_crime_add = 25
+		planet_jobs_trade_produces_add = 10
+		founder_species_growth_mult = 0.05
+		bonus_pop_growth_mult = 0.05
+		pop_environment_tolerance = 0.025
+	}
+	
+	triggered_planet_modifier = {
+		potential = {
+			planet = {
+				has_branch_office = yes
+			}
+		}
+		branch_office_criminal_syndicate_value_add = 25
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			planet = {
+				has_branch_office = yes
+				branch_office_owner = {
+					has_councilor = { COUNCILOR = "councilor_criminal_heritage" }
+				}
+			}
+		}
+
+		branch_office_criminal_syndicate_value_add = 0.25
+		mult = value:pop_branch_office_councilor_level|TYPE|councilor_criminal_heritage|
+	}
+
+	resources = {
+		category = planet_doctors
+		upkeep = {
+			consumer_goods = 1
+		}
+		upkeep = {
+			trigger = {
+				exists = planet
+				planet = {
+					healthcare_is_mutagenic_trigger = yes
+				}
+			}
+			consumer_goods = 1
+		}
+		produces = {	#Steam: This is NOT the bonus from the civic, it's a bonus for having revolutionary medigel AND pharma state.
+			trigger = {
+				exists = owner
+				owner = {
+					has_modifier = revolutionary_medigel_modifier
+					has_valid_civic = civic_private_healthcare_corporate
+				}
+			}
+			trade = 2
+		}
+		# Job Swap - Genomic Researcher
+		produces = {
+			trigger = {
+				exists = planet
+				planet = {
+					healthcare_is_genomic_researcher_trigger = yes
+				}
+			}
+			society_research = 6
+		}
+		produces = {
+			trigger = {
+				exists = planet
+				planet = {
+					healthcare_is_genomic_researcher_trigger = yes
+				}
+				exists = owner
+				owner = {
+					has_completed_genetic_situation = yes
+				}
+			}
+			society_research = 3
+		}
+		upkeep = {
+			trigger = {
+				exists = planet
+				planet = {
+					healthcare_is_genomic_researcher_trigger = yes
+				}
+			}
+			consumer_goods = 2
+		}
+		upkeep = {
+			trigger = {
+				exists = owner									# Modded
+				owner = { has_policy_flag = public_healthcare }	# Modded
+			}
+			consumer_goods = -0.5								# Modded
+		}
+		produces = {
+			trigger = {
+				exists = owner									# Modded
+				owner = { has_policy_flag = public_healthcare }	# Modded
+			}
+			unity = 1											# Modded
+		}
+	}
+	
+	inline_script = "output/healthcare_triggered_modifiers"
+
+	inline_script = "output/genomic_triggered_modifiers"
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				OR = {
+					has_valid_civic = civic_private_healthcare_corporate
+					has_valid_civic = civic_welfare_state
+				}
+			}
+		}
+		planet_amenities_add = 200
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = planet
+			planet = { has_planet_flag = has_private_clinics }
+		}
+		planet_amenities_add = 100
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_modifier = revolutionary_medigel_modifier }
+		}
+		founder_species_growth_mult = 0.025
+		bonus_pop_growth_mult = 0.025
+		pop_environment_tolerance = 0.0125
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_modifier = revolutionary_medigel_modifier
+				has_valid_civic = civic_private_healthcare_corporate
+			}
+		}
+		planet_amenities_add = 100
+		# planet_jobs_trade_produces_add = 2	#Steam: This modifier adds a flat 2 trade to the planet instead of 2 per job, switched to 2 trade in production
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_modifier = revolutionary_medigel_modifier
+				has_valid_civic = civic_welfare_state
+			}
+		}
+		planet_amenities_add = 100
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner														# Modded
+			owner = { has_policy_flag = public_healthcare }						# Modded
+		}
+		planet_amenities_add = 200
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|	# Modded
+	}
+	
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner														# Modded
+			has_branch_office = yes
+			owner = { has_policy_flag = public_healthcare }						# Modded
+		}
+		planet_crime_add = -5													# Modded
+		branch_office_criminal_syndicate_value_add = -5							# Modded
+	}
+	
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner														# Modded
+			has_branch_office = yes
+			owner = { has_policy_flag = private_healthcare }					# Modded
+		}
+		planet_crime_add = 5													# Modded
+		branch_office_criminal_syndicate_value_add = 5							# Modded
+	}
+
+	weight = {
+		weight = @criminal_job_weight
+	}
+}
+
 corrupt_bureaucrat = {
 	category = criminal
 	is_capped_by_modifier = yes
@@ -375,13 +602,13 @@ corrupt_entertainer = {
 	swappable_data = {
 		default = {
 			# clothes_texture_index = 2
-			building_icon = building_residence
+			building_icon = building_underground_clubs
 		}
 	}
 	contributes_to_diplo_weight = no
 	# ignores_favorite = yes # This means that if you favorite e.g. clerks, the +1000 bonus will not matter for jobs working as criminals  - # No Longer Used in Stellaris 4.0
 
-	tags = { crime }
+	tags = { crime amenities unity }
 
 	possible_pre_triggers = {
 		has_owner = yes
@@ -415,6 +642,25 @@ corrupt_entertainer = {
 		}
 		pop_ethic_capitalism_attraction_mult = 0.10
 	}
+	
+	resources = {
+		category = planet_entertainers
+		produces = {
+			unity = 1
+		}
+		upkeep = {
+			consumer_goods = 1
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			always = yes
+		}
+		planet_amenities_add = 1250
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	}
+	
 	weight = {
 		weight = @criminal_job_weight
 	}
