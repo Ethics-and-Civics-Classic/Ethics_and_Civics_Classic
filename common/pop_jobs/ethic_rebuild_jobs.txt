@@ -1,7 +1,6 @@
 ###################
 # Other Jobs
 ###################
-
 bio_trophy_processing = {
 	category = bio_trophy
 	first_come_first_served = yes
@@ -26,17 +25,17 @@ bio_trophy_processing = {
 		}
 	}
 
-	demotion = {
-		# Should always fire, regardless of pop group's current statum/category.
-		# Ignores `can_change_category = no` rules of the pop group's current stratum.
-		time = 0
-		effect = {
-			pop_amount_change_category = {
-				CATEGORY = bio_trophy
-				AMOUNT = local_pop_amount
-			}
-		}
-	}
+	#demotion = {
+	#	# Should always fire, regardless of pop group's current statum/category.
+	#	# Ignores `can_change_category = no` rules of the pop group's current stratum.
+	#	time = 0
+	#	effect = {
+	#		pop_amount_change_category = {
+	#			CATEGORY = bio_trophy
+	#			AMOUNT = local_pop_amount
+	#		}
+	#	}
+	#}
 
 	possible_pre_triggers = {
 		has_owner = yes
@@ -46,16 +45,41 @@ bio_trophy_processing = {
 
 	possible = {
 		is_robotic_species = no
+		if = {
+			limit = { 
+				OWNER = { 
+					OR = { 
+						has_valid_civic = civic_machine_servitor
+						has_valid_civic = civic_machine_cult_machine
+					}
+				}
+				has_trait = trait_machine_cult_cybernetic 
+			}
+			NOT = { is_pop_category = specialist }	#Cog Note - don't force specialists to be upgraded to bio-trophies
+		}
 		NOR = {
 			is_pop_category = bio_trophy
 			is_pop_category = bio_trophy_unemployment
 		}
-		owner = {
-			OR = {
-				has_valid_civic = civic_machine_servitor
-				has_valid_civic = civic_machine_cult_machine
-			}
-		}
+		has_citizenship_type = { type = citizenship_organic_trophy }	#Cog Note - Works!! Jobs switch between Bio-Trophy & Normal Citizenship
+		# Sort for Machine Cult civics
+		#if = {
+		#	limit = { OWNER = { has_valid_civic = civic_machine_cult_machine } }
+		#	planet = { NOT = { has_available_jobs = "techno_priest" } } 
+		#}
+		#else = { 
+		#	#OR = {
+		#		
+		#		#NOT = { has_trait = trait_machine_cult_cybernetic }
+		#	#}
+		#}
+		#Cog Note - Using the above instead of Machine Cult Civic triggers
+		#owner = {
+		#	OR = {
+		#		has_valid_civic = civic_machine_servitor
+		#		has_valid_civic = civic_machine_cult_machine
+		#	}
+		#}
 		planet = { NOT = { is_planet_class = pc_cosmogenesis_world } }
 	}
 }
@@ -77,7 +101,7 @@ bio_trophy = {
 	}
 
 	possible = {
-		has_citizenship_type = { type = citizenship_organic_trophy country = owner }
+		has_citizenship_type = { type = citizenship_organic_trophy }	#Cog Note - Works!! Jobs switch between Bio-Trophy & Normal Citizenship
 		OR = {
 			is_pop_category = bio_trophy
 			is_pop_category = bio_trophy_unemployment
@@ -137,7 +161,7 @@ bio_trophy_unprocessing = {
 		time = 0
 		effect = {
 			pop_amount_change_category = {
-				CATEGORY = civilian
+				CATEGORY = specialist
 				AMOUNT = local_pop_amount
 			}
 		}
@@ -154,12 +178,30 @@ bio_trophy_unprocessing = {
 			is_pop_category = bio_trophy
 			is_pop_category = bio_trophy_unemployment
 		}
-		owner = {
-			NOR = {
-				has_valid_civic = civic_machine_servitor
-				has_valid_civic = civic_machine_cult_machine
+		OR = {
+			NOT = { has_citizenship_type = { type = citizenship_organic_trophy } }	#Cog Note - Works!! Jobs switch between Bio-Trophy & Normal Citizenship
+			AND = {
+				planet = { has_available_jobs = "techno_priest" }	#Cog Note - When job available, downgrade a bio-trophy into a specialist job
+				is_pop_category = bio_trophy_unemployment
 			}
 		}
+		# Sort for Machine Cult civics
+		#if = {
+		#	limit = { OWNER = { has_valid_civic = civic_machine_cult_machine } }
+		#	planet = { has_available_jobs = "techno_priest" } 
+		#}
+		#else = { 
+		#	OR = {
+		#		#has_trait = trait_machine_cult_cybernetic
+		#		planet = { has_available_jobs = "techno_priest" } 
+		#	}
+		#}
+		#owner = {
+		#	NOR = {
+		#		has_valid_civic = civic_machine_servitor
+		#		has_valid_civic = civic_machine_cult_machine
+		#	}
+		#}
 		planet = { NOT = { is_planet_class = pc_cosmogenesis_world } }
 	}
 }
@@ -4273,7 +4315,7 @@ techno_priest = { 	#Used in Mecha Monestary
 
 	possible_pre_triggers = {
 		has_owner = yes
-		is_enslaved = no
+		#is_enslaved = no
 		is_being_purged = no
 		is_being_assimilated = no
 		is_sapient = yes
@@ -4282,7 +4324,11 @@ techno_priest = { 	#Used in Mecha Monestary
 	possible_precalc = can_fill_specialist_job
 	possible = {
 		complex_specialist_job_check_trigger = yes
-		is_robot_pop = no
+		OR = {
+			is_robot_pop = no
+			owner = { is_individual_machine = yes }
+		}
+		
 	}
 
 	resources = {

@@ -253,23 +253,16 @@ generate_start_pops = {
 		}
 	}
 	if = {
-		limit = {
+		limit = { 
 			owner = { 
-				OR = {
+				has_origin = origin_shroud_forged 
+				NOR = {
 					has_valid_civic = civic_machine_servitor
 					has_valid_civic = civic_machine_cult_machine
 				}
-			}
+			} 
+		
 		}
-		while = {
-			limit = { pop_amount < 4800 }
-			create_pop_group = {
-				species = owner_main_species
-			}
-		}
-	}
-	if = {
-		limit = { owner = { has_origin = origin_shroud_forged } }
 		while = {
 			limit = { pop_amount < 1900 }
 			create_pop_group = {
@@ -285,6 +278,59 @@ generate_start_pops = {
 			create_pop_group = {
 				species = event_target:secondary_main_species
 				category = complex_drone
+			}
+		}
+	}
+	if = {
+		limit = {
+			owner = { 
+				owner = {
+					has_origin = origin_shroud_forged 
+					OR = {
+						has_valid_civic = civic_machine_servitor
+						has_valid_civic = civic_machine_cult_machine
+					}
+				}
+			}
+		}
+		while = {
+			limit = { pop_amount < 1900 }
+			create_pop_group = {
+				species = owner_main_species
+				ethos = random
+			}
+		}
+		owner_main_species = {
+			drone_conversion_new_species_effect = yes
+		}
+		while = {
+			limit = { pop_amount < 2900 }
+			create_pop_group = {
+				species = event_target:secondary_main_species
+				category = complex_drone
+			}
+		}
+		while = {
+			limit = { pop_amount < 4800 }		# Includes the 2,000 Bio-Trophies that were already created.
+			create_pop_group = {
+				species = owner_main_species
+			}
+		}
+	}
+	if = {
+		limit = {
+			owner = {
+				NOT = { has_origin = origin_shroud_forged }
+				OR = {
+					has_valid_civic = civic_machine_servitor
+					has_valid_civic = civic_machine_cult_machine
+				}
+			}
+		}
+		while = {
+			limit = { pop_amount < 4800 }		# Includes the 2,000 Bio-Trophies that were already created.
+			create_pop_group = {
+				species = owner_main_species
 			}
 		}
 	}
@@ -576,7 +622,10 @@ generate_start_pops = {
 	# Machine Cult: spawn robot Pops; add Job-specific Traits;
 	if = {
 		limit = {
-			owner = { has_civic = civic_machine_cult }
+			owner = { 
+				has_civic = civic_machine_cult 
+				is_individual_machine = no
+			}
 		}
 		owner = {
 			create_built_robot_species = yes
@@ -590,6 +639,19 @@ generate_start_pops = {
 		create_pop_group = {
 			size = 400
 			species = last_created_species
+		}
+	}
+	else_if = {
+		limit = {
+			owner = { 
+				has_civic = civic_machine_cult 
+				is_individual_machine = yes
+			}
+		}
+		owner_main_species = {
+			change_species_characteristics = {
+				add_trait = trait_latent_psionic_machine
+			}
 		}
 	}
 }
