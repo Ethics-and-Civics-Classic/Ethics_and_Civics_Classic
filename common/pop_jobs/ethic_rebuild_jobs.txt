@@ -61,7 +61,10 @@ bio_trophy_processing = {
 			is_pop_category = bio_trophy
 			is_pop_category = bio_trophy_unemployment
 		}
-		has_citizenship_type = { type = citizenship_organic_trophy }	#Cog Note - Works!! Jobs switch between Bio-Trophy & Normal Citizenship
+		OR = {
+			has_citizenship_type = { type = citizenship_organic_trophy }	#Cog Note - Works!! Jobs switch between Bio-Trophy & Normal Citizenship
+			has_citizenship_type = { type = citizenship_organic_civilian }
+		}
 		# Sort for Machine Cult civics
 		#if = {
 		#	limit = { OWNER = { has_valid_civic = civic_machine_cult_machine } }
@@ -92,6 +95,24 @@ bio_trophy = {
 		default = {
 			building_icon = building_organic_sanctuary
 		}
+		swap_type = {
+			trigger = {
+				has_citizenship_type = { type = citizenship_organic_trophy }
+			}
+			name = bio_trophy
+			desc = bio_trophy
+			icon = bio_trophy
+			weight = 5
+		}
+		swap_type = {				
+			trigger = {
+				has_citizenship_type = { type = citizenship_organic_civilian }
+			}
+			name = bio_civilian
+			desc = bio_civilian
+			icon = civilian
+			weight = 5
+		}
 	}
 	tags = { unity }
 
@@ -101,7 +122,10 @@ bio_trophy = {
 	}
 
 	possible = {
-		has_citizenship_type = { type = citizenship_organic_trophy }	#Cog Note - Works!! Jobs switch between Bio-Trophy & Normal Citizenship
+		OR = {
+			has_citizenship_type = { type = citizenship_organic_trophy }	#Cog Note - Works!! Jobs switch between Bio-Trophy & Normal Citizenship
+			has_citizenship_type = { type = citizenship_organic_civilian }
+		}
 		OR = {
 			is_pop_category = bio_trophy
 			is_pop_category = bio_trophy_unemployment
@@ -122,6 +146,9 @@ bio_trophy = {
 	resources = {
 		category = planet_bio_trophies
 		produces = {
+			trigger = {
+				has_citizenship_type = { type = citizenship_organic_trophy }
+			}
 			unity = 2
 		}
 	}
@@ -140,6 +167,76 @@ bio_trophy = {
 
 	weight = {
 		weight = @special_job_weight
+	}
+
+	inline_script = "jobs/automodding_priority_charisma"
+}
+
+bio_trophy_unemployment = {
+	category = bio_trophy_unemployment
+	count_as_available_for_ai = yes
+
+	swappable_data = {
+		default = {
+			icon = unemployment
+			building_icon = building_organic_sanctuary
+		}
+		swap_type = {
+			trigger = {
+				has_citizenship_type = { type = citizenship_organic_trophy }
+			}
+			name = bio_trophy_unemployment
+			desc = bio_trophy_unemployment
+			icon = unemployment
+			weight = 5
+		}
+		swap_type = {				
+			trigger = {
+				has_citizenship_type = { type = citizenship_organic_civilian }
+			}
+			name = bio_civilian_unemployment
+			desc = bio_civilian_unemployment
+			icon = unemployment
+			weight = 5
+		}
+	}
+	tags = { unity }
+
+	possible_pre_triggers = {
+		has_owner = yes
+		is_enslaved = no
+		is_being_purged = no
+		is_being_assimilated = no
+		is_sapient = yes
+	}
+
+	possible = {
+		OR = {
+			has_citizenship_type = { type = citizenship_organic_trophy country = owner }
+			has_citizenship_type = { type = citizenship_organic_civilian country = owner }
+		}
+		planet = { NOT = { is_planet_class = pc_cosmogenesis_world } }
+	}
+
+	resources = {
+		category = unemployment_resources
+	}
+
+	weight = {
+		weight = 0
+	}
+	is_capped_by_modifier = no
+	can_set_priority = no
+	contributes_to_diplo_weight = no
+
+	promotion = {
+		time = 0
+		effect = {
+			pop_amount_change_category = {
+				CATEGORY = bio_trophy_unemployment
+				AMOUNT = local_pop_amount
+			}
+		}
 	}
 
 	inline_script = "jobs/automodding_priority_charisma"
@@ -179,7 +276,10 @@ bio_trophy_unprocessing = {
 			is_pop_category = bio_trophy_unemployment
 		}
 		OR = {
-			NOT = { has_citizenship_type = { type = citizenship_organic_trophy } }	#Cog Note - Works!! Jobs switch between Bio-Trophy & Normal Citizenship
+			NOR = { 
+				has_citizenship_type = { type = citizenship_organic_trophy } }	#Cog Note - Works!! Jobs switch between Bio-Trophy & Normal Citizenship
+				has_citizenship_type = { type = citizenship_organic_civilian } }
+			}
 			AND = {
 				planet = { has_available_jobs = "techno_priest" }	#Cog Note - When job available, downgrade a bio-trophy into a specialist job
 				is_pop_category = bio_trophy_unemployment
@@ -295,10 +395,10 @@ civilian = {
 					}
 				}
 			}
-			name = fe_hedonist_tourist
-			desc = fe_hedonist_tourist
+			name = tourist				#previously, fe_hedonist_tourist
+			desc = tourist_desc       	#Cog Note - discover vanilla added this after us, previously #fe_hedonist_tourist
 			icon = fe_hedonist_tourist
-			building_icon = building_holo_theatres
+			building_icon = building_amusement_megaplex
 			weight = 20
 		}
 		# Transcendent Tourists
@@ -316,14 +416,21 @@ civilian = {
 			name = transcend_hedonist_tourist
 			desc = transcend_hedonist
 			icon = fe_hedonist_tourist
-			building_icon = building_holo_theatres
-			weight = 20
+			building_icon = building_amusement_megaplex
+			weight = 25
 		}
 	}
 
 	resources = {
 		category = planet_civilians
 		produces = {
+			trade = 1
+		}
+		produces = {
+			trigger = {
+				exists = owner
+				has_modifier = resort_colony
+			}
 			trade = 1
 		}
 		inline_script = "jobs/ethic_job_resources"
