@@ -1639,7 +1639,9 @@ civic_nationalistic_zeal = {
 	possible = {
 		ethics = {
 			OR = {
-				text = civic_tooltip_militarist
+				text = civic_tooltip_socialism_or_militarist
+				value = ethic_socialism
+				value = ethic_fanatic_socialism
 				value = ethic_militarist
 				value = ethic_fanatic_militarist
 			}
@@ -1690,6 +1692,68 @@ civic_nationalistic_zeal = {
 		add_attunement_the_eater_of_worlds = @civic_attunement1
 		# country_war_exhaustion_mult = -0.2						# Removed Vanilla Code
 		# diplo_weight_rivals_mult = 0.05						# Removed Vanilla Code
+	}
+}
+#Feudal Society
+civic_feudal_realm = {
+	potential = {
+		ethics = { NOT = { value = ethic_gestalt_consciousness } }
+		#authority = { NOT = { value = auth_corporate } }
+	}
+	possible = {
+		authority = {
+			OR = {
+				value = auth_imperial
+				value = auth_corporate	#Megacorp version needs a government like Pirate Lord that is monarch flavored - Neo Feudalism
+			}
+		}
+		ethics = { 
+			OR = {
+				text = civic_tooltip_authoritarian
+				value = ethic_authoritarian
+				value = ethic_fanatic_authoritarian
+			}
+			NOR = {
+				text = civic_tooltip_not_egalitarian
+				value = ethic_egalitarian
+				value = ethic_fanatic_egalitarian
+			}
+		}
+		civics = { NOT = { value = civic_shared_burden } }
+	}
+	random_weight = { base = @civic_default_random_weight }
+	ai_weight = {
+		base = @ai_civic_default_base_weight
+		modifier = {
+			factor = @ai_civic_personality_match_factor
+			OR = {
+				has_ai_personality = hegemonic_imperialists
+				has_ai_personality = slaving_despots
+				has_ai_personality = decadent_hierarchy
+			}
+		}
+		modifier = {
+			factor = @ai_civic_personality_mismatch_factor
+			OR = {
+				has_ai_personality = peaceful_traders
+				has_ai_personality = fanatic_befrienders
+				has_ai_personality = harmonious_hierarchy
+			}
+		}
+		modifier = {
+			factor = @ai_civic_personality_forbid_factor
+			OR = {
+				has_ai_personality = erudite_explorers
+				has_ai_personality = democratic_crusaders
+			}
+		}
+	}
+	description = "civic_tooltip_feudal_realm_effects"
+	modifier = {
+		country_naval_capacity_contribution_from_subjects_mult = 0.05
+		divided_patrongage_max_subjects = 1
+		country_subject_acceptance_add = 25
+		add_attunement_the_eater_of_worlds = @civic_attunement1
 	}
 }
 # Patrimonial Aristocracy
@@ -1875,6 +1939,54 @@ civic_aristocratic_elite_corporate = {
 				has_ai_personality = democratic_crusaders
 			}
 		}
+	}
+}
+
+civic_twisted_experimenters_corporate = {
+	playable = {
+		has_shroud_dlc = yes
+	}
+	ai_playable = {
+		has_shroud_dlc = yes
+	}
+	description = "civic_twisted_experimenters_corporate_effects"
+
+	potential = {
+		#OR = {
+		#	authority = { value = auth_corporate }	#Taken Care of by Competitive Ethic
+		#	civics = { value = civic_galactic_sovereign_megacorp }
+		#}
+		civics = { NOT = { value = civic_twisted_experimenters } }
+	}
+	possible = {
+		ethics = {
+			OR = {
+				text = civic_tooltip_authoritarian_or_xenophobe
+				value = ethic_authoritarian
+				value = ethic_fanatic_authoritarian
+				value = ethic_xenophobe
+				value = ethic_fanatic_xenophobe
+			}
+			OR = {
+				text = civic_tooltip_capitalism
+				value = ethic_capitalism
+				value = ethic_fanatic_capitalism
+			}
+		}
+		civics = {
+			NOT = {
+				value = civic_natural_design
+			}
+		}
+		species_archetype = {
+			NOT = {
+				value = MACHINE
+			}
+		}
+	}
+
+	random_weight = {
+		base = @civic_default_random_weight
 	}
 }
 
@@ -5868,14 +5980,21 @@ civic_bureaucracy = {
 
 civic_franchising = {
 	potential = {
-		OR = {
-			authority = { value = auth_corporate }
-			civics = { value = civic_galactic_sovereign_megacorp }
-		}
+		#OR = {
+		#	authority = { value = auth_corporate }
+		#	civics = { value = civic_galactic_sovereign_megacorp }
+		#}
 	}
 	possible = {
 		ethics = {
 			NOT = { value = ethic_fanatic_egalitarian }
+			OR = {
+				text = civic_tooltip_capitalism_or_pacifist
+				value = ethic_capitalism
+				value = ethic_fanatic_capitalism
+				value = ethic_pacifist
+				value = ethic_fanatic_pacifist
+			}
 		}
 	}
 	random_weight = { base = @civic_default_random_weight }
