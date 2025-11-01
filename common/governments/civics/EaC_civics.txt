@@ -1639,15 +1639,27 @@ civic_nationalistic_zeal = {
 	possible = {
 		ethics = {
 			OR = {
-				text = civic_tooltip_socialism_or_militarist
-				value = ethic_socialism
-				value = ethic_fanatic_socialism
+				text = civic_tooltip_militarist	
 				value = ethic_militarist
 				value = ethic_fanatic_militarist
 			}
+			#OR = {
+			#	text = civic_tooltip_socialism_or_militarist	#A possible idea if crafted right
+			#	value = ethic_socialism
+			#	value = ethic_fanatic_socialism
+			#	value = ethic_militarist
+			#	value = ethic_fanatic_militarist
+			#}
 			NOT = { value = ethic_fanatic_xenophile	}			# Modded
 		}
-		civics = { NOT = { value = civic_xeno_militarist } }	# Modded
+		civics = { 
+			NOR = { 
+				value = civic_xeno_militarist
+				value = civic_nationalistic_zeal 
+				value = civic_feudal_realm
+				value = civic_franchising
+			}
+		}
 	}
 	random_weight = { base = @civic_default_random_weight }
 	ai_weight = {
@@ -1690,8 +1702,8 @@ civic_nationalistic_zeal = {
 		subject_tribute_mult = 0.25								# Modded
 		country_border_friction_mult = 0.33						# Modded
 		add_attunement_the_eater_of_worlds = @civic_attunement1
-		# country_war_exhaustion_mult = -0.2						# Removed Vanilla Code
-		# diplo_weight_rivals_mult = 0.05						# Removed Vanilla Code
+		country_war_exhaustion_mult = -0.2						# Reinstated Vanilla Code 	#Cog Note - Is this balanced? Not sure why it was removed or maybe never added
+		diplo_weight_rivals_mult = 0.05						# Reinstated Vanilla Code 	#Cog Note - Is this balanced? Not sure why it was removed or maybe never added
 	}
 }
 #Feudal Society
@@ -1719,7 +1731,15 @@ civic_feudal_realm = {
 				value = ethic_fanatic_egalitarian
 			}
 		}
-		civics = { NOT = { value = civic_shared_burden } }
+		civics = { NOT = {  } }
+		civics = { 
+			NOR = { 
+				value = civic_shared_burden
+				value = civic_nationalistic_zeal 
+				value = civic_feudal_realm
+				value = civic_franchising
+			}
+		}
 	}
 	random_weight = { base = @civic_default_random_weight }
 	ai_weight = {
@@ -5980,20 +6000,43 @@ civic_bureaucracy = {
 
 civic_franchising = {
 	potential = {
+		ethics = { NOT = { value = ethic_gestalt_consciousness } }
 		#OR = {
-		#	authority = { value = auth_corporate }
+		#	authority = { 
+		#		OR = {
+		#			value = auth_corporate 	#Perhaps any non-democracy can do this?
+		#			value = auth_oligarchic
+		#		}
+		#	}
 		#	civics = { value = civic_galactic_sovereign_megacorp }
 		#}
 	}
 	possible = {
+		authority = { 
+			NOR = {
+				value = auth_direct_democratic	
+				value = auth_democratic
+			}
+		}
 		ethics = {
 			NOT = { value = ethic_fanatic_egalitarian }
 			OR = {
-				text = civic_tooltip_capitalism_or_pacifist
+				text = civic_tooltip_capitalism
 				value = ethic_capitalism
 				value = ethic_fanatic_capitalism
-				value = ethic_pacifist
-				value = ethic_fanatic_pacifist
+			}
+			#OR = {
+			#	text = civic_tooltip_capitalism_or_pacifist	#A possible idea if crafted right
+			#	value = ethic_capitalism
+			#	value = ethic_fanatic_capitalism
+			#	value = ethic_pacifist
+			#	value = ethic_fanatic_pacifist
+			#}
+		}
+		civics = { 
+			NOR = { 
+				value = civic_nationalistic_zeal 
+				value = civic_feudal_realm
 			}
 		}
 	}
@@ -6020,6 +6063,10 @@ civic_franchising = {
 	description = "civic_tooltip_franchising_effects"
 	modifier = {
 		divided_patrongage_max_subjects = 1
+		subject_integration_influence_cost_mult = -0.25
+		country_subject_integration_speed_add = 0.25
+		subject_tribute_mult = 0.25
+		country_subject_technology_sharing_mult = 1
 		add_attunement_the_instrument_of_desire = @civic_attunement1
 	}
 	swap_type = {
@@ -8037,6 +8084,8 @@ civic_barbaric_despoilers_corporate = {
 	}
 	description = "civic_tooltip_barbaric_despoilers_corporate_effects"
 	modifier = {
+		#country_subject_trust_cap_add = -50
+		#country_subject_power_penalty_mult = 0.50
 		planet_jobs_slave_produces_mult = 0.10
 		country_pop_enslaved_mult = 0.10
 		add_attunement_the_eater_of_worlds = @civic_attunement1
