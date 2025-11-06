@@ -1,3 +1,80 @@
+holding_parasitic_algorithms = {
+	base_buildtime = @b2_time
+	owner_type = subject_holding
+	icon = holding_parasitic_algorithms
+	empire_limit = 1
+
+	category = research
+
+	potential = {
+		has_overlord_dlc = yes
+	}
+
+	allow = {
+		custom_tooltip = {
+			fail_text = is_capital
+			exists = planet
+			planet = {
+				is_capital = yes
+			}
+		}
+		OR = {
+			custom_tooltip = {
+				fail_text = subject_is_scholarium
+				exists = planet.owner
+				planet.owner = {
+					is_specialist_subject_type = { TYPE = scholarium }
+				}
+			}
+			planet.owner = { any_agreement = { agreement_preset = preset_franchisee } }
+		}
+	}
+
+	resources = {
+		category = planet_holdings
+		cost = {
+			minerals = @b1_minerals
+		}
+		upkeep = {
+			energy = @b1_upkeep
+		}
+	}
+
+	country_modifier = {
+		all_technology_research_speed = 0.03
+		planet_researchers_upkeep_mult = 0.03
+	}
+
+	planet_modifier = {
+		monthly_loyalty = -1
+	}
+
+	on_built = {
+		planet = {
+			set_planet_flag = has_science_ministry
+		}
+	}
+
+	on_destroy = {
+		planet = {
+			remove_planet_flag = has_science_ministry
+		}
+	}
+
+	destroy_trigger = {
+		exists = planet.owner
+		planet.owner = {
+			NOR = {
+				is_specialist_subject_type = { TYPE = scholarium }
+				any_agreement = { agreement_preset = preset_franchisee }
+			}
+		}
+	}
+
+	triggered_desc = {
+		text = holding_parasitic_algorithms_effect_desc
+	}
+}
 
 holding_overlord_vigil_command = {
 	base_buildtime = @b2_time
@@ -29,7 +106,7 @@ holding_overlord_vigil_command = {
 					is_specialist_subject_type = { TYPE = bulwark }
 				}
 			}
-			any_agreement = { agreement_preset = preset_relic_satrapy }
+			planet.owner = { any_agreement = { agreement_preset = preset_relic_satrapy } }
 		}
 	}
 
