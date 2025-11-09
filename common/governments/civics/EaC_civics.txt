@@ -1636,7 +1636,7 @@ civic_efficient_bureaucracy = {
 	}
 }
 
-# Imperialism Imperialist
+# Imperialism Imperialist - Imperialism
 civic_nationalistic_zeal = {
 	potential = {
 		ethics = { NOT = { value = ethic_gestalt_consciousness } }
@@ -1645,13 +1645,26 @@ civic_nationalistic_zeal = {
 	possible = {
 		ethics = {
 			OR = {
-				text = civic_tooltip_militarist
+				text = civic_tooltip_militarist	
 				value = ethic_militarist
 				value = ethic_fanatic_militarist
 			}
+			#OR = {
+			#	text = civic_tooltip_socialism_or_militarist	#A possible idea if crafted right
+			#	value = ethic_socialism
+			#	value = ethic_fanatic_socialism
+			#	value = ethic_militarist
+			#	value = ethic_fanatic_militarist
+			#}
 			NOT = { value = ethic_fanatic_xenophile	}			# Modded
 		}
-		civics = { NOT = { value = civic_xeno_militarist } }	# Modded
+		civics = { 
+			NOR = { 
+				value = civic_xeno_militarist 
+				value = civic_feudal_realm
+				value = civic_franchising
+			}
+		}
 	}
 	random_weight = { base = @civic_default_random_weight }
 	ai_weight = {
@@ -1694,8 +1707,77 @@ civic_nationalistic_zeal = {
 		subject_tribute_mult = 0.25								# Modded
 		country_border_friction_mult = 0.33						# Modded
 		add_attunement_the_eater_of_worlds = @civic_attunement1
-		# country_war_exhaustion_mult = -0.2						# Removed Vanilla Code
-		# diplo_weight_rivals_mult = 0.05						# Removed Vanilla Code
+		country_war_exhaustion_mult = -0.2						# Reinstated Vanilla Code 	#Cog Note - Is this balanced? Not sure why it was removed or maybe never added
+		diplo_weight_rivals_mult = 0.05						# Reinstated Vanilla Code 	#Cog Note - Is this balanced? Not sure why it was removed or maybe never added
+	}
+}
+#Feudal Society
+civic_feudal_realm = {
+	potential = {
+		ethics = { NOT = { value = ethic_gestalt_consciousness } }
+		#authority = { NOT = { value = auth_corporate } }
+	}
+	possible = {
+		authority = {
+			OR = {
+				value = auth_imperial
+				value = auth_corporate	#Megacorp version needs a government like Pirate Lord that is monarch flavored - Neo Feudalism
+			}
+		}
+		ethics = { 
+			OR = {
+				text = civic_tooltip_authoritarian
+				value = ethic_authoritarian
+				value = ethic_fanatic_authoritarian
+			}
+			NOR = {
+				text = civic_tooltip_not_egalitarian
+				value = ethic_egalitarian
+				value = ethic_fanatic_egalitarian
+			}
+		}
+		civics = { NOT = {  } }
+		civics = { 
+			NOR = { 
+				value = civic_shared_burden
+				value = civic_nationalistic_zeal 
+				value = civic_franchising
+			}
+		}
+	}
+	random_weight = { base = @civic_default_random_weight }
+	ai_weight = {
+		base = @ai_civic_default_base_weight
+		modifier = {
+			factor = @ai_civic_personality_match_factor
+			OR = {
+				has_ai_personality = hegemonic_imperialists
+				has_ai_personality = slaving_despots
+				has_ai_personality = decadent_hierarchy
+			}
+		}
+		modifier = {
+			factor = @ai_civic_personality_mismatch_factor
+			OR = {
+				has_ai_personality = peaceful_traders
+				has_ai_personality = fanatic_befrienders
+				has_ai_personality = harmonious_hierarchy
+			}
+		}
+		modifier = {
+			factor = @ai_civic_personality_forbid_factor
+			OR = {
+				has_ai_personality = erudite_explorers
+				has_ai_personality = democratic_crusaders
+			}
+		}
+	}
+	description = "civic_tooltip_feudal_realm_effects"
+	modifier = {
+		country_naval_capacity_contribution_from_subjects_mult = 0.05
+		divided_patrongage_max_subjects = 1
+		country_subject_acceptance_add = 25
+		add_attunement_the_eater_of_worlds = @civic_attunement1
 	}
 }
 # Patrimonial Aristocracy
@@ -1881,6 +1963,54 @@ civic_aristocratic_elite_corporate = {
 				has_ai_personality = democratic_crusaders
 			}
 		}
+	}
+}
+
+civic_twisted_experimenters_corporate = {
+	playable = {
+		has_shroud_dlc = yes
+	}
+	ai_playable = {
+		has_shroud_dlc = yes
+	}
+	description = "civic_twisted_experimenters_corporate_effects"
+
+	potential = {
+		#OR = {
+		#	authority = { value = auth_corporate }	#Taken Care of by Competitive Ethic
+		#	civics = { value = civic_galactic_sovereign_megacorp }
+		#}
+		civics = { NOT = { value = civic_twisted_experimenters } }
+	}
+	possible = {
+		ethics = {
+			OR = {
+				text = civic_tooltip_authoritarian_or_xenophobe
+				value = ethic_authoritarian
+				value = ethic_fanatic_authoritarian
+				value = ethic_xenophobe
+				value = ethic_fanatic_xenophobe
+			}
+			OR = {
+				text = civic_tooltip_capitalism
+				value = ethic_capitalism
+				value = ethic_fanatic_capitalism
+			}
+		}
+		civics = {
+			NOT = {
+				value = civic_natural_design
+			}
+		}
+		species_archetype = {
+			NOT = {
+				value = MACHINE
+			}
+		}
+	}
+
+	random_weight = {
+		base = @civic_default_random_weight
 	}
 }
 
@@ -5845,14 +5975,44 @@ civic_bureaucracy = {
 
 civic_franchising = {
 	potential = {
-		OR = {
-			authority = { value = auth_corporate }
-			civics = { value = civic_galactic_sovereign_megacorp }
-		}
+		ethics = { NOT = { value = ethic_gestalt_consciousness } }
+		#OR = {
+		#	authority = { 
+		#		OR = {
+		#			value = auth_corporate 	#Perhaps any non-democracy can do this?
+		#			value = auth_oligarchic
+		#		}
+		#	}
+		#	civics = { value = civic_galactic_sovereign_megacorp }
+		#}
 	}
 	possible = {
+		authority = { 
+			NOR = {
+				value = auth_direct_democratic	
+				value = auth_democratic
+			}
+		}
 		ethics = {
 			NOT = { value = ethic_fanatic_egalitarian }
+			OR = {
+				text = civic_tooltip_capitalism
+				value = ethic_capitalism
+				value = ethic_fanatic_capitalism
+			}
+			#OR = {
+			#	text = civic_tooltip_capitalism_or_pacifist	#A possible idea if crafted right
+			#	value = ethic_capitalism
+			#	value = ethic_fanatic_capitalism
+			#	value = ethic_pacifist
+			#	value = ethic_fanatic_pacifist
+			#}
+		}
+		civics = { 
+			NOR = { 
+				value = civic_nationalistic_zeal 
+				value = civic_feudal_realm
+			}
 		}
 	}
 	random_weight = { base = @civic_default_random_weight }
@@ -5878,6 +6038,10 @@ civic_franchising = {
 	description = "civic_tooltip_franchising_effects"
 	modifier = {
 		divided_patrongage_max_subjects = 1
+		subject_integration_influence_cost_mult = -0.25
+		country_subject_integration_speed_add = 0.25
+		subject_tribute_mult = 0.25
+		country_subject_technology_sharing_mult = 1
 		add_attunement_the_instrument_of_desire = @civic_attunement1
 	}
 	swap_type = {
@@ -6547,6 +6711,17 @@ civic_brand_loyalty = {
 		intel_encryption_add = 2 # Added by Szatan2000 3.14
 		country_trade_attractiveness = 0.2 # Added by Szatan2000 3.14
 		add_attunement_the_cradle_of_souls = @civic_attunement1
+	}
+	description = "civic_brand_loyalty_effect"
+	swap_type = {	# Modded
+		description = "civic_brand_loyalty_authoritarian_effect"	# Cog Note - Bonus effects from ethics
+		trigger = {
+			exists = this
+			OR = {
+				has_ethic = ethic_authoritarian	
+				has_ethic = ethic_fanatic_authoritarian		
+			}
+		}
 	}
 }
 
@@ -7875,6 +8050,7 @@ civic_barbaric_despoilers_corporate = {
 	description = "civic_tooltip_barbaric_despoilers_corporate_effects"
 	negative_description = "civic_tooltip_barbaric_despoilers_negatives"
 	modifier = {
+		country_subject_power_penalty_mult = -0.05
 		planet_jobs_slave_produces_mult = 0.10
 		country_pop_enslaved_mult = 0.10
 		add_attunement_the_eater_of_worlds = @civic_attunement1
