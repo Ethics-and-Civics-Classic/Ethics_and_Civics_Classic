@@ -262,7 +262,7 @@ hunter_gatherer_lithoid = {
 }
 
 peasant = {	# Cog Note: for player-primitives maybe this doesn't make sense for everyone. This is a starvation prevention job for ai primitives.
-	category = worker
+	category = civilian
 	is_capped_by_modifier = no
 	swappable_data = {
 		default = {
@@ -280,7 +280,7 @@ peasant = {	# Cog Note: for player-primitives maybe this doesn't make sense for 
 		is_sapient = yes
 	}
 
-	possible_precalc = can_fill_worker_job
+	#possible_precalc = can_fill_worker_job
 
 	possible = {
 		owner = {
@@ -305,25 +305,166 @@ peasant = {	# Cog Note: for player-primitives maybe this doesn't make sense for 
 		is_lithoid = no
 	}
 
+	#resources = {
+	#	category = planet_farmers
+	#	produces = {
+	#		food = 2
+	#	}
+	#}
+	
 	resources = {
-		category = planet_farmers
+		category = planet_civilians
 		produces = {
-			food = 2
+			trade = 0.5
+			food = 1
+		}
+		produces = {
+			trigger = {
+				exists = owner
+				has_modifier = resort_colony
+			}
+			trade = 1
+		}
+		inline_script = "jobs/ethic_job_resources"
+
+		# Spiritual Seekers
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					is_spiritual_seeker_empire = yes
+				}
+			}
+			unity = 0.75
+			society_research = 0.5
+			physics_research = 0.5
+			engineering_research = 0.25
+		}
+		upkeep = {
+			trigger = {
+				exists = owner
+				owner = {
+					is_spiritual_seeker_empire = yes
+				}
+			}
+			energy = 0.5
 		}
 	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_tradition = tr_mercantile_trickle_up_economics }
+			planet = { 
+				NOR = {
+					has_modifier = resort_colony 
+					has_modifier = resort_colony_branch
+				}
+			}
+		}
+		planet_amenities_add = 100
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	}
+
+	# NOT Hedonists & Resort World
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { is_pleasure_seeker_empire = no }
+			planet = { 
+				NOR = {
+					has_modifier = resort_colony 
+					has_modifier = resort_colony_branch
+				}
+			}
+		}
+		planet_amenities_add = 50
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	}
+	# Resort World
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			planet = { has_modifier = resort_colony }
+		}
+		planet_amenities_add = -100
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	}
+	# Resort World Branch
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			planet = { has_modifier = resort_colony_branch }
+		}
+		planet_amenities_add = -50
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	}
+
+	# Spiritual Seekers
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_spiritual_seeker_empire = yes
+			}
+		}
+		planet_crime_add = -1
+    }
+
+	triggered_country_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_spiritual_seeker_empire = yes
+			}
+		}
+		country_edict_fund_add = 1.25
+	}
+
+	triggered_country_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_modifier = paragon_origin_strengthened_government_iii }
+		}
+		country_edict_fund_add = 1
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_policy_flag = computation_core_production
+			}
+		}
+		foundry_jobs_bonus_workforce_mult = 0.005
+		artisan_jobs_bonus_workforce_mult = 0.005
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_policy_flag = computation_core_stability
+			}
+		}
+		bureaucrat_jobs_bonus_workforce_mult = 0.005
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_policy_flag = computation_core_research
+			}
+		}
+		physicist_jobs_bonus_workforce_mult = 0.005
+		biologist_jobs_bonus_workforce_mult = 0.005
+		engineer_jobs_bonus_workforce_mult = 0.005
+	}
+
+	inline_script = "jobs/ethic_job_modifiers"
 
 	weight = {
 		weight = 0.02	# Made the weight as 1 because this job is not priority.
-	}
-
-	promotion = {
-		time = @standard_promotion_time
-		effect = {
-			pop_amount_change_category = {
-				CATEGORY = worker
-				AMOUNT = local_pop_amount
-			}
-		}
 	}
 }
 
@@ -368,27 +509,166 @@ peasant_lithoid = {
 		}
 		is_lithoid = yes
 	}
-
+	
 	resources = {
-		category = planet_farmers
+		category = planet_civilians
 		produces = {
-			minerals = 2
+			trade = 0.5
+			minerals = 1
 		}
+		produces = {
+			trigger = {
+				exists = owner
+				has_modifier = resort_colony
+			}
+			trade = 1
+		}
+		inline_script = "jobs/ethic_job_resources"
+
+		# Spiritual Seekers
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					is_spiritual_seeker_empire = yes
+				}
+			}
+			unity = 0.75
+			society_research = 0.5
+			physics_research = 0.5
+			engineering_research = 0.25
+		}
+		upkeep = {
+			trigger = {
+				exists = owner
+				owner = {
+					is_spiritual_seeker_empire = yes
+				}
+			}
+			energy = 0.5
+		}
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_tradition = tr_mercantile_trickle_up_economics }
+			planet = { 
+				NOR = {
+					has_modifier = resort_colony 
+					has_modifier = resort_colony_branch
+				}
+			}
+		}
+		planet_amenities_add = 100
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	}
+
+	# NOT Hedonists & Resort World
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { is_pleasure_seeker_empire = no }
+			planet = { 
+				NOR = {
+					has_modifier = resort_colony 
+					has_modifier = resort_colony_branch
+				}
+			}
+		}
+		planet_amenities_add = 50
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	}
+	# Resort World
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			planet = { has_modifier = resort_colony }
+		}
+		planet_amenities_add = -100
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	}
+	# Resort World Branch
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			planet = { has_modifier = resort_colony_branch }
+		}
+		planet_amenities_add = -50
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	}
+
+	# Spiritual Seekers
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_spiritual_seeker_empire = yes
+			}
+		}
+		planet_crime_add = -1
+    }
+
+	triggered_country_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_spiritual_seeker_empire = yes
+			}
+		}
+		country_edict_fund_add = 1.25
+	}
+
+	triggered_country_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_modifier = paragon_origin_strengthened_government_iii }
+		}
+		country_edict_fund_add = 1
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_policy_flag = computation_core_production
+			}
+		}
+		foundry_jobs_bonus_workforce_mult = 0.005
+		artisan_jobs_bonus_workforce_mult = 0.005
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_policy_flag = computation_core_stability
+			}
+		}
+		bureaucrat_jobs_bonus_workforce_mult = 0.005
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_policy_flag = computation_core_research
+			}
+		}
+		physicist_jobs_bonus_workforce_mult = 0.005
+		biologist_jobs_bonus_workforce_mult = 0.005
+		engineer_jobs_bonus_workforce_mult = 0.005
+	}
+
+	inline_script = "jobs/ethic_job_modifiers"
+
+	weight = {
+		weight = 0.02	# Made the weight as 1 because this job is not priority.
 	}
 
 	weight = {
 		weight = @worker_job_weight
 	}
 
-	promotion = {
-		time = @standard_promotion_time
-		effect = {
-			pop_amount_change_category = {
-				CATEGORY = worker
-				AMOUNT = local_pop_amount
-			}
-		}
-	}
 }
 
 primitive_warrior = {
