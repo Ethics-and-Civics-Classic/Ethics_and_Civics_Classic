@@ -1,3 +1,130 @@
+
+building_colosseum = {
+	base_buildtime = 480
+	planet_limit = 1
+
+	category = amenity
+
+	building_sets = {
+		entertainment
+		urban
+		trade
+		fortress
+	}
+
+	potential = {
+		exists = owner
+		owner = {
+			OR = {
+				has_civic = civic_slaver_guilds
+				has_civic = civic_barbaric_despoilers			# Cog Note - This civic is an upgrade of Slaver Guilds
+				has_civic = civic_barbaric_despoilers_corporate	# Cog Note - This civic is an upgrade of Slaver Guilds
+				has_civic = civic_divine_order
+			}
+		}
+	}
+
+	allow = {
+		OR = {
+			has_upgraded_capital = yes
+			hidden_trigger = {
+				OR = {
+					has_building =building_primitive_capital
+					has_building =building_machine_primitive_capital
+					has_building =building_hive_primitive_capital
+
+				}
+			}
+		}
+		OR = { 
+			has_building = building_slave_processing
+			custom_tooltip = {
+				text = civic_tooltip_civic_barbaric_despoilers	# Cog Note - This society does not need a processing facility for gladiators
+				owner = {
+					OR = {
+						has_civic = civic_barbaric_despoilers			
+						has_civic = civic_barbaric_despoilers_corporate	
+					}
+				}
+			}
+		}
+	}
+
+	destroy_trigger = {
+		exists = owner
+		OR = {
+			AND = {		#If you have one of the civics, this gets deleted only if slavery is banned
+				owner = { has_policy_flag = slavery_not_allowed }
+				OR = {
+					owner = { has_valid_civic = civic_slaver_guilds }
+					owner = { has_valid_civic = civic_barbaric_despoilers }				# Cog Note - This civic is an upgrade of Slaver Guilds
+					owner = { has_valid_civic = civic_barbaric_despoilers_corporate }	# Cog Note - This civic is an upgrade of Slaver Guilds
+					owner = { has_valid_civic = civic_divine_order }
+				}
+			}
+			AND = {		#If you DON'T have one of the civics, this gets deleted if you don't have a slave processing building
+				NOT = { has_building = building_slave_processing }	
+				NOR = {
+					owner = { has_valid_civic = civic_slaver_guilds }
+					owner = { has_valid_civic = civic_barbaric_despoilers }				# Cog Note - This civic is an upgrade of Slaver Guilds
+					owner = { has_valid_civic = civic_barbaric_despoilers_corporate }	# Cog Note - This civic is an upgrade of Slaver Guilds
+					owner = { has_valid_civic = civic_divine_order }
+				}
+			}
+		}
+	}
+	planet_modifier = {
+		pop_cat_ruler_happiness = 0.15
+		pop_cat_specialist_happiness = 0.05
+		pop_cat_worker_happiness = 0.10
+		planet_housing_add = 200
+		# planet_jobs_trade_produces_add = 15 #Steam: This adds a flat 15 trade to planet production, changed to a gladiator buff
+		job_gladiator_add = 200
+		planet_gladiators_trade_produces_add = 7.5
+	}
+
+	army_modifier = {
+		army_damage_mult = 0.25
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_civic = civic_warrior_culture	# Cog Note - This makes sense
+			}
+		}
+		modifier = {
+			job_gladiator_add = 100
+		}
+	}
+
+	resources = {
+		category = planet_buildings
+		cost = {
+			minerals = 500
+			alloys = 50
+		}
+		upkeep = {
+			energy = 2
+		}
+	}
+
+	triggered_desc = {
+		text = job_gladiator_effect_desc
+	}
+
+	ai_weight = {
+		weight = 1000
+	}
+
+	on_built = {
+		planet = {
+			owner = { set_timed_country_flag = { flag = buildings_new_alloys_building months = 16 } }
+		}
+	}
+}
+
 #############
 # Permanent Employment Building
 #############

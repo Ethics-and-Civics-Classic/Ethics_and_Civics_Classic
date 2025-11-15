@@ -155,6 +155,11 @@ PrimPlayer_unified_planet_situation = {
 			desc = PrimPlayer_broken_shackles_approach
 			current_situation_approach = PrimPlayer_broken_shackles_approach
 		}
+		modifier = {
+			add = 5
+			desc = PrimPlayer_post_apocalyptic_approach
+			current_situation_approach = PrimPlayer_post_apocalyptic_approach
+		}
 	}
 	on_progress_complete = {
 		owner = { 
@@ -222,6 +227,20 @@ PrimPlayer_unified_planet_situation = {
 			custom_tooltip = PrimPlayer_broken_shackles_unified_planet_approach_tooltip
 		}
 		potential = { owner = { has_origin = origin_broken_shackles } }
+	}
+	approach = {
+		name = PrimPlayer_post_apocalyptic_approach
+		icon = "gfx/interface/icons/origins/origins_post_apocalyptic.dds"
+		icon_background = GFX_situation_approach_bg_green
+		default = no
+		on_select = {
+			custom_tooltip = PrimPlayer_broken_shackles_unified_planet_approach_tooltip
+		}
+		potential = { 
+			owner = { 
+				capital_scope = { is_planet_class = pc_nuked } 
+			} 
+		}
 	}
 }
 
@@ -413,7 +432,13 @@ PrimPlayer_situation = {
 			}
 			owner = {
 				custom_tooltip = PrimPlayer_reached_space_age
-				set_origin = origin_default
+				if = {
+					limit = { 
+						capital_scope = { is_planet_class = pc_nuked }	#Nuclear Winter is a consequence, so players can't opt-out of getting it
+					}
+					set_origin = origin_post_apocalyptic
+				}
+				else = { set_origin = origin_default }
 				hidden_effect = { prev = { situation_event = { id = PrimPlay_situation_event.1 } } }
 			}
 		}
@@ -491,7 +516,7 @@ PrimPlayer_situation = {
 }
 
 ###################################
-# Through the Ages Situation
+# Awareness Situation
 ###################################
 PrimPlayer_awareness_situation = {
 	picture = GFX_evt_clocks
