@@ -864,6 +864,105 @@ building_energy_grid = {
 	}
 }
 
+#Voltaic Production Yards
+building_generator_generic = {
+	base_buildtime = @b1_time
+	category = resource
+
+	building_sets = {
+		generator
+		urban
+	}
+
+	potential = {
+		exists = owner
+		owner = {
+			is_wilderness_empire = no
+		}
+		NOT = { has_modifier = resort_colony }
+	}
+	destroy_trigger = {
+		exists = owner
+		OR = {
+			owner = {
+				is_wilderness_empire = yes
+			}
+			planet = {
+				NOT = { is_planet_class = pc_habitat }
+				free_building_slots = 0
+				owner = {
+					is_ai = yes
+					has_monthly_income = {
+						resource = energy
+						value > 100
+					}
+				}
+			}
+		}
+	}
+	
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_technology = tech_power_plant_1_space_age }
+		}
+		planet_jobs_energy_produces_mult = 0.025
+		job_technician_add = 200
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { NOT = { has_technology = tech_power_plant_1_space_age } }
+		}
+		planet_jobs_energy_produces_mult = 0.025
+		custom_tooltip = building_generator_generic_primitive_effect
+	}
+	
+	
+	
+	
+	#inline_script = {
+	#	script = jobs/technicians_add
+	#	AMOUNT = @building_static_jobs
+	#}
+
+	resources = {
+		category = planet_buildings
+		cost = {
+			minerals = @b1_minerals
+		}
+		#produces = {
+		#	trigger = {
+		#		exists = owner
+		#		owner = { NOT = { has_technology = tech_power_plant_1_space_age } }
+		#	}
+		#	energy = 8
+		#}
+		upkeep = {
+			trigger = {
+				exists = owner
+				owner = { has_technology = tech_power_plant_1_space_age }
+			}
+			energy = 2
+		}
+	}
+	
+	triggered_desc = {
+		trigger = {
+			exists = owner
+			owner = { NOT = { has_technology = tech_power_plant_1_space_age } }
+		}
+		text =  building_generator_generic_primitive_desc
+	}
+	
+	prerequisites = {
+		"tech_solar_panel_network"
+	}
+
+	# Static jobs building
+	ai_weight_coefficient = 0.0
+}
+
 building_energy_nexus = {
 	base_buildtime = @b2_time
 	can_build = no

@@ -559,6 +559,13 @@ situation_event = {
 					add = 25
 					OWNER = { capital_scope = { planet_crime > 0 } }
 				}
+				modifier = {
+					factor = 0
+					OR = {
+						OWNER = { has_country_flag = PrimPlay_situation_event_3005_flag }
+						OWNER = { capital_scope = { has_modifier = PrimPlayer_separatist_movement } }
+					}
+				}
 			}
 		}
 	}
@@ -689,6 +696,7 @@ planet_event = {
 
 	trigger = {
 		planet_crime > 0
+		OWNER = { any_situation = { is_situation_type = PrimPlayer_unified_planet_situation situation_progress > 20 } }
 		exists = leader
 		NOT = { has_planet_flag = PrimPlayer_unified_planet_situation_assasinated_governor }
 	}
@@ -700,7 +708,7 @@ planet_event = {
 		leader = { kill_leader = { show_notification = yes } }
 		random_situation = { limit = { is_situation_type = PrimPlayer_unified_planet_situation } add_situation_progress = -15 }
 		if = {
-			limit = { NOT = { has_planet_modifier = PrimPlayer_separatist_movement } }
+			limit = { NOT = { has_modifier = PrimPlayer_separatist_movement } }
 			add_modifier = {
 				modifier = PrimPlayer_separatist_movement
 				clear_on_owner_change = yes
@@ -725,10 +733,12 @@ planet_event = {
 
 	trigger = {
 		planet_crime > 0
-		NOT = { has_planet_modifier = PrimPlayer_separatist_movement }
+		OWNER = { NOT = { has_country_flag = PrimPlay_situation_event_3005_flag } }
+		NOT = { has_modifier = PrimPlayer_separatist_movement }
 	}
 	
 	immediate = { 
+		OWNER = { set_country_flag = PrimPlay_situation_event_3005_flag }
 		add_modifier = {
 			modifier = PrimPlayer_separatist_movement
 			clear_on_owner_change = yes
@@ -737,7 +747,7 @@ planet_event = {
 
 	option = {
 		name = PrimPlay_situation_event.3005.a
-		random_situation = { limit = { is_situation_type = PrimPlayer_unified_planet_situation } add_situation_progress = -25 }
+		
 	}
 }
 
@@ -756,13 +766,16 @@ planet_event = {
 	}
 
 	trigger = {
-		planet_crime = 0
-		has_planet_modifier = PrimPlayer_separatist_movement
+		planet_crime < 1
+		has_modifier = PrimPlayer_separatist_movement
 	}
 
-	option = {
-		name = PrimPlay_situation_event.3005.a
+	immediate = {
 		remove_modifier = PrimPlayer_separatist_movement
 		hidden_effect = { remove_planet_flag = PrimPlayer_unified_planet_situation_assasinated_governor }
+	}
+	
+	option = {
+		name = PrimPlay_situation_event.3005.a
 	}
 }
