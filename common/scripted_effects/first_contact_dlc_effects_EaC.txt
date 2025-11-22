@@ -55,6 +55,15 @@ create_MSI_effect = {
 			every_country = {
 				limit = {
 					has_slave_origin = yes
+					#Cog Note - These origins below have not met MSI yet
+					NOR = {
+						has_civic = PrimPlayer_civic_the_obelisk
+						has_origin = origin_primitive_player_pre_industrial_age
+						has_origin = origin_primitive_player_industrial_age
+						has_origin = origin_primitive_player_machine_age
+						has_origin = origin_primitive_player_atomic_age
+						has_origin = origin_primitive_player_early_space_age
+					}
 					NOT = { has_country_flag = slavers_assigned }
 				}
 				set_country_flag = slavers_assigned
@@ -87,6 +96,226 @@ create_MSI_effect = {
 		country_event = { id = game_start.9 }
 		owner_species = { set_species_homeworld = prevprev }
 		log = "MSI CREATED"
+	}
+}
+
+generate_slaver_bonus = {
+	set_timed_planet_flag = {
+		flag = ignore_ai_building_limitations
+		days = 1
+	}
+	while = {
+		count = 2
+		add_district_and_planet_size_if_needed_effect = {
+			district = district_city
+		}
+	}
+	while = {
+		count = 2
+		add_district_and_planet_size_if_needed_effect = {
+			district = district_mining
+		}
+	}
+	add_district_and_planet_size_if_needed_effect = {
+		district = district_generator
+	}
+	add_district_and_planet_size_if_needed_effect = {
+		district = district_farming
+	}
+
+	owner = {
+		set_policy = {
+			policy = slavery
+			option = slavery_allowed
+			cooldown = no
+		}
+	}
+
+	while = {
+		limit = { pop_amount > 3600 }
+		random_owned_pop_group = {
+			kill_single_pop = yes
+		}
+	}
+
+	# Checking if there are any other pre-ftls to abduct
+	while = {
+		limit = { pop_amount < 5200 }
+		if = {
+			limit = {
+				any_country = {
+					species = {
+						ideal_planet_is_special = no
+						NOT = { has_trait = trait_hive_mind }
+					}
+					is_preftl_but_not_special = yes
+				}
+			}
+			random_country = {
+				limit = {
+					species = {
+						ideal_planet_is_special = no
+						NOT = { has_trait = trait_hive_mind }
+					}
+					is_preftl_but_not_special = yes
+				}
+				owner_species = {
+					# first species to get kidnapped becomes the species of the debt collectors
+					save_event_target_as = random_primitive_species
+					if = {
+						limit = {
+							NOT = {
+								exists = event_target:debt_collectors_species
+							}
+						}
+						save_global_event_target_as = debt_collectors_species
+					}
+				}
+
+				prev.owner = {
+					set_visited = prev.capital_scope.solar_system
+				}
+			}
+
+			create_pop_group = {
+				species = event_target:random_primitive_species
+				effect = {
+					save_event_target_as = last_created_pop_group
+				}
+			}
+
+			event_target:last_created_pop_group = {
+				set_citizenship_type = {
+					type = citizenship_slavery
+				}
+			}
+		}
+	}
+
+	while = {
+		limit = { pop_amount < 8100 }
+
+		random_country = {
+			limit = {
+				has_slave_origin = yes
+				#Cog Note - These origins below have not met MSI yet
+				NOR = {
+					has_civic = PrimPlayer_civic_the_obelisk
+					has_origin = origin_primitive_player_pre_industrial_age
+					has_origin = origin_primitive_player_industrial_age
+					has_origin = origin_primitive_player_machine_age
+					has_origin = origin_primitive_player_atomic_age
+					has_origin = origin_primitive_player_early_space_age
+				}
+			}
+
+			owner_species = {
+				save_event_target_as = random_slave_species
+			}
+
+			prev.owner = {
+				set_visited = prev.capital_scope.solar_system
+			}
+		}
+
+		create_pop_group = {
+			species = event_target:random_slave_species
+			effect = {
+				save_event_target_as = last_created_pop_group
+			}
+		}
+		event_target:last_created_pop_group = {
+			set_citizenship_type = {
+				type = citizenship_slavery
+			}
+		}
+	}
+
+	owner = {
+		# Unlocks slave processing facilities
+		give_technology = {
+			message = no
+			tech = tech_neural_implants
+		}
+		# Unlocks gene clinics
+		give_technology = {
+			message = no
+			tech = tech_frontier_health
+		}
+		give_technology = {
+			message = no
+			tech = tech_food_processing_1
+		}
+		give_technology = {
+			message = no
+			tech = tech_mineral_purification_1
+		}
+		give_technology = {
+			message = no
+			tech = tech_power_hub_1
+		}
+	}
+	add_building = building_slave_processing
+	add_building = building_precinct_house
+	add_building = building_medical_2
+
+	owner = {
+		add_resource = {
+			minerals = 2400
+			energy = 2400
+			food = 2400
+			alloys = 800
+			consumer_goods = 1200
+			influence = 600
+		}
+	}
+
+	owner = {
+		create_fleet = {
+			effect = {
+				set_owner = prev
+				create_ship = {
+					name = random
+					random_existing_design = science
+				}
+				set_fleet_stance = evasive
+				set_location = prev.capital_scope.star
+				owner = {
+					create_leader = {
+						class = scientist
+						sub_type = survey
+						name = random
+						species = owner_main_species
+					}
+				}
+				set_leader = last_created_leader
+			}
+		}
+		while = {
+			count = 2
+			create_fleet = {
+				name = "NAME_Payback_Warship_MSI"
+				effect = {
+					set_owner = prev
+					create_ship = {
+						name = "NAME_Payback_Warship_MSI"
+						design = "NAME_Payback_Warship_MSI"
+						graphical_culture = "slaver_01"
+						upgradable = no
+						effect = {
+							set_ship_flag = payback_flagship
+						}
+					}
+					set_location = prev.capital_scope.star
+				}
+				settings = {
+					spawn_debris = no
+					can_upgrade = no
+					can_change_composition = no
+					uses_naval_capacity = no
+				}
+			}
+		}
 	}
 }
 

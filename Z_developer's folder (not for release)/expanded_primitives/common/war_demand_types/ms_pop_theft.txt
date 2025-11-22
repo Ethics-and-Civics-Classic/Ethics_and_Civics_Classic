@@ -1,0 +1,121 @@
+wiggle_that_bootay = {
+	execution_order = 1
+	
+	parameters = {
+		country = {
+			type = country
+		}
+	}
+	
+	warscore_cost = {
+		base = 25
+	}
+
+	potential = {
+		OR = {
+			is_subject = no
+			NOT = {
+				overlord = {
+					is_same_value = from
+				}
+			}
+			
+		}
+		has_ascension_perk = ap_societal_engineering
+		custom_tooltip = {
+			fail_text = "war_demand_vassalize_country_not_opponent"
+			parameter:country = {
+				OR = {
+					AND = {
+						exists = fromfrom
+						from = {
+							from = {
+								is_war_participant = {
+									who = prevprev
+									side = prev
+								}
+							}
+						}
+					}
+					AND = {
+						NOT = { exists = fromfrom }
+						would_join_war = {
+							attacker = root
+							defender = from
+							side = from
+						}
+					}
+					
+				}
+			}
+		}		
+	}
+	
+	possible = {
+		is_country_type = default
+		hidden:parameter:country = {
+			is_country_type = default
+		}
+		has_ascension_perk = ap_societal_engineering
+		
+		root = {
+			custom_tooltip = {
+				fail_text = "war_demand_too_many_bootays_shaken"
+				war_demand_counter = {
+					type = num_bootays_shaken
+					value < 1
+				}
+			}
+		}
+		
+		hidden:parameter:country = {
+			custom_tooltip = {
+				fail_text = "war_demand_open_borders_no_planets"
+				war_demand_counter = {
+					type = num_owned_planets
+					value > 0
+				}
+			}
+		}
+	}
+	
+	proposable = {
+		any_planet_within_border = {
+			is_planet_class = pc_ms_primitive_shield
+			num_pops < 1
+		}
+	}
+	
+	effect = {	
+		fromfromfrom = {
+			set_country_flag = ms_receiving_pops
+			country_event = {
+				id = ms_pop_theft_ev.2
+			}
+		}
+		parameter:country = {
+			country_event = {
+				id = ms_pop_theft_ev.1
+			}
+		}		
+	}
+	
+	counters = {
+		num_bootays_shaken = {
+			context = root
+			value = {
+				base = 1
+			}
+		}
+		num_country_wargoals = {
+			context = parameter:country
+			value = {
+				base = 1
+			}
+		}	
+	}		
+	
+	ai_weight = {
+		base = 0
+	}
+}

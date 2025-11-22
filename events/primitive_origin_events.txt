@@ -1,0 +1,96 @@
+###################################
+# Origin Events
+# Vanilla Written by Henrik Thyrwall et al
+###################################
+
+@scionRewardTimer = 9000 # minimum time between rewards from the Scion, in days (currently 25 years)
+@scionRewardTimerDelay = 9000 # randomized delay added to 'scionRewardTimer', in days (currently 25 years)
+@scionRefusalsCap = 2 # number of times a Scion may refuse their Overlord before they think it rude
+
+namespace = primitive_origin
+
+# 0-54,200–250:	"Scion"
+# 55-59			"Common Ground" & "Hegemon"
+# 60-99:		"Doomsday"
+# 100-109:		"Lost Colony"
+# 110-150:		"Broken Shackles" & "Payback"
+
+########
+# Obelisk 
+########
+
+# Spawn Broken Shackles for Payback
+country_event = {
+	id = primitive_origin.112
+	hide_window = yes
+
+	fire_only_once = yes
+
+	is_triggered_only = yes
+
+	immediate = {
+		if = {
+			limit = {
+				count_country = {
+					limit = {
+						is_primitive = yes
+					}
+					count < 3
+				}
+			}
+			capital_scope = {
+				while = {
+					count = 3
+					spawn_system = {
+						min_distance = 10
+						max_distance = 100
+						initializer = pre_ftl_init_01
+						hyperlane = no
+						is_discovered = no
+					}
+					add_extra_hyperlane_to_spawned_system_effect = yes
+					add_extra_hyperlane_to_spawned_system_effect = yes
+				}
+			}
+		}
+		if = {
+			limit = {
+				any_playable_country = {
+					has_origin = origin_broken_shackles
+				}
+			}
+		}
+		else = {
+			uplift_pre_ftl_with_origin_effect = {
+				ORIGIN = origin_broken_shackles
+			}
+			set_country_flag = victims_of_@event_target:MSI_country
+		}
+	}
+}
+
+# Spawn Payback for Broken Shackles
+country_event = {
+	id = primitive_origin.113
+	hide_window = yes
+
+	fire_only_once = yes
+
+	is_triggered_only = yes
+
+	immediate = {
+		if = {
+			limit = {
+				any_playable_country = {
+					has_origin = origin_payback
+				}
+			}
+		}
+		else = {
+			uplift_pre_ftl_with_origin_effect = {
+				ORIGIN = origin_payback
+			}
+			set_country_flag = victims_of_@event_target:MSI_country
+		}
+	}
+}
