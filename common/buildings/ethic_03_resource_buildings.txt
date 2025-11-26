@@ -470,6 +470,100 @@ building_food_processing_center = {
 	}
 }
 
+building_mine_generic = {
+	base_buildtime = @b1_time
+	category = resource
+
+	building_sets = {
+		mining
+		urban
+	}
+
+	potential = {
+		exists = owner
+		owner = {
+			is_wilderness_empire = no
+		}
+		NOT = { has_modifier = resort_colony }
+		planet = {
+			planet_is_habitat_equivalent = no
+			planet_is_ring_world_equivalent = no
+		}
+	}
+	destroy_trigger = {
+		exists = owner
+		OR = {
+			owner = {
+				is_wilderness_empire = yes
+			}
+			planet = {
+				planet_is_habitat_equivalent = no
+				planet_is_ring_world_equivalent = no
+				free_building_slots = 0
+				owner = {
+					is_ai = yes
+					has_monthly_income = {
+						resource = minerals
+						value > 100
+					}
+				}
+			}
+		}
+	}
+	
+	#Miners
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_technology = tech_mechanized_mining_2 }
+		}
+		job_miner_add = 100
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { NOT = { has_technology = tech_mechanized_mining_2 } }
+		}
+		job_primitive_miner_add = 100
+	}
+	#Foundry
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_technology = tech_ship_armor_1 }
+		}
+		job_foundry_add = 100
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { NOT = { has_technology = tech_ship_armor_1 } }
+		}
+		job_primitive_foundry_add = 100
+	}
+	
+	#inline_script = {
+	#	script = jobs/miners_add
+	#	AMOUNT = @building_static_jobs
+	#}
+
+	resources = {
+		category = planet_buildings
+		cost = {
+			minerals = @b1_minerals
+		}
+		upkeep = {
+			energy = 2
+		}
+	}
+	prerequisites = {
+		"tech_primitive_alloy_quarry_foundry"
+	}
+
+	# Static jobs building
+	ai_weight_coefficient = 0.0
+}
+
 building_mineral_purification_plant = {
 
 	desc = {

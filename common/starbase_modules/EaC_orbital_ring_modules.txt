@@ -1,0 +1,67 @@
+#Remember to update operation_sabotage_starbase if you add any new modules.
+# You will need to update the description, espionage_sabotage_starbase_module, and remove_sabotage_starbase_flag
+
+orbital_ring_habitation = {
+	icon = "GFX_orbitalring_module_habitation"
+	section = "HABITAT_ORBITAL_RING_SECTION"
+	construction_days = 360
+	starbase_type = orbital_ring
+
+	potential = {
+		exists = owner
+		owner = { has_technology = tech_housing_2 }
+		is_orbital_ring = yes
+		NOT = { is_ship_size = orbital_ring_tier_0 }
+	}
+
+	show_in_tech = "tech_housing_2"
+
+	resources = {
+		category = starbase_modules
+		cost = {
+			alloys = 200
+			influence = 25
+		}
+
+		upkeep = {
+			energy = 2
+		}
+	}
+
+	planet_modifier = {
+		planet_max_districts_add = 1
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = planet
+			planet = {
+				exists = owner.overlord
+				has_holding = {
+					holding = holding_orbital_assembly_complex
+					owner = owner.overlord
+				}
+			}
+		}
+		planet_max_districts_add = 0.5
+	}
+
+	replaceable = {
+		custom_tooltip = {
+			fail_text = orbital_ring_habitation_districts_maxed_out
+			OR = { # to keep tooltip from showing up when no module is built yet
+				NOT = { has_starbase_module = orbital_ring_habitation }
+				AND = {
+					has_starbase_module = orbital_ring_habitation
+					planet = {
+						num_free_districts = { type = any value >= 1 }
+					}
+				}
+			}
+		}
+	}
+
+	ai_weight = {
+		weight = 100
+	}
+}

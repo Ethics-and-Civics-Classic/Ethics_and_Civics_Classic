@@ -1093,6 +1093,124 @@ primitive_laborer = {
 		time = @standard_promotion_time
 		effect = {
 			pop_amount_change_category = {
+				CATEGORY = worker
+				AMOUNT = local_pop_amount
+			}
+		}
+	}
+}
+
+primitive_foundry = {
+	category = specialist
+	is_capped_by_modifier = yes
+
+	swappable_data = {
+		default = {
+			building_icon = building_primitive_factory
+			# clothes_texture_index = 2
+		}
+	}
+
+	tags = { }
+
+	possible_pre_triggers = {
+		has_owner = yes
+		is_being_purged = no
+		is_being_assimilated = no
+		is_sapient = yes
+	}
+
+	possible_precalc = can_fill_worker_job
+
+	possible = {
+		#OR = {
+			#planet = {
+			#	has_building = building_primitive_factory
+			#}
+			owner = {
+				OR = {
+					# has_origin = origin_primitive_player_pre_industrial_age
+					# has_origin = origin_primitive_player_industrial_age
+					# has_origin = origin_primitive_player_machine_age
+					# has_origin = origin_primitive_player_atomic_age
+					# has_origin = origin_primitive_player_early_space_age
+					any_situation = { is_situation_type = PrimPlayer_situation } # Much more efficient trigger
+					AND = {
+						is_primitive = yes
+						OR = {
+							has_country_flag = steam_age
+							has_country_flag = machine_age
+							has_country_flag = industrial_age
+							has_country_flag = atomic_age
+							has_country_flag = early_space_age
+						}
+					}
+				}
+			}
+		#}
+	}
+	
+	triggered_planet_modifier = {
+		potential = {
+			planet = {
+				has_owner = yes
+				#NOT = { has_building = building_generator_generic }
+			}
+		}
+		pop_environment_tolerance = -0.06
+	}
+
+	resources = {
+		category = planet_jobs_productive	# Deliberately not planet_artisans or planet_metallurgists	# Vanilla note
+		produces = {
+			alloys = 1	
+		}
+		upkeep = {
+			minerals = 2
+			energy = 3
+		}
+	}
+
+
+
+	# weight = {
+	#	weight = @worker_job_weight
+	#}
+	weight = {
+		weight = @specialist_job_weight
+		mult = value:job_weights_modifier|JOB|artisan|RESOURCE|consumer_goods|
+		modifier = {
+			factor = 2
+			is_enslaved = yes
+			can_take_servant_job = no
+		}
+		# modifier = {
+		#	factor = 5
+		#	# has_job_type = artisan	# No Longer Used in Stellaris 4.0
+		#}
+
+		# Low income modifier
+		modifier = {
+			factor = 1.2
+			exists = planet
+			planet = {
+				has_available_jobs = "artisan"
+			}
+			exists = owner
+			owner = {
+				is_ai = yes
+				has_monthly_income = {
+					resource = consumer_goods
+					value < 5
+				}
+			}
+		}
+	}
+
+	promotion = {
+		time = @standard_promotion_time
+		effect = {
+			pop_amount_change_category = {
 				CATEGORY = specialist
 				AMOUNT = local_pop_amount
 			}

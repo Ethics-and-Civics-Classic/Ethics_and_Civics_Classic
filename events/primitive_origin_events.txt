@@ -22,7 +22,7 @@ namespace = primitive_origin
 # Spawns Cloaked MSI Observation Post
 country_event = {
 	id = primitive_origin.110
-	hide_window = no
+	hide_window = yes
 
 	is_triggered_only = yes
 
@@ -43,35 +43,10 @@ country_event = {
 			}
 		}
 	}
-	
-	option = {
-		name = "primitive_origin.110.first_contact_proactive"	
-		trigger = { 
-			is_homicidal = no
-			is_xenophobe = no
-		}
-		set_policy = { policy = first_contact_protocol option = first_contact_proactive cooldown = yes }
-	}
-	
-	option = {
-		name = "primitive_origin.110.first_contact_cautious"	
-		trigger = { is_homicidal = no }
-		set_policy = { policy = first_contact_protocol option = first_contact_cautious cooldown = yes }
-	}
-	
-	option = {
-		name = "primitive_origin.110.first_contact_attack_allowed"	
-		trigger = { 
-			is_pacifist = no
-			OR = {
-				is_xenophile = no
-				is_homicidal = yes
-			}
-		}
-		set_policy = { policy = first_contact_protocol option = first_contact_attack_allowed cooldown = yes }
-	}
 
 }
+
+
 
 # Spawn Broken Shackles for Payback
 country_event = {
@@ -146,5 +121,265 @@ country_event = {
 			}
 			set_country_flag = victims_of_@event_target:MSI_country
 		}
+	}
+}
+
+## First Contact with MSI
+
+# Comms Study 1
+first_contact_event = {
+	id = primitive_origin.114
+	title = primitive_origin.114.name
+	desc = primitive_origin.114.desc
+	picture = GFX_evt_obelisk_tourists
+	show_sound = evn_fc_slaver_empire
+	is_triggered_only = yes
+	first_contact = yes
+
+	immediate = {
+		set_first_contact_flag = seen_aliens
+		set_name = PrimPlayer_the_obelisk
+		set_site_progress_locked = yes
+		owner = {
+			set_country_flag = met_MSI
+		}
+	}
+
+	after = {
+		set_site_progress_locked = no
+	}
+
+	#option = {
+	#	name = origin.5065.a
+	#	owner = {
+	#		add_modifier = {
+	#			modifier = broken_shackles_MSI_contact_01
+	#			days = 1800
+	#		}
+	#	}
+	#	hidden_effect = {
+	#		set_first_contact_stage = slavers_stage_2
+	#	}
+	#}
+	
+	option = {
+		name = "primitive_origin.114.first_contact_proactive"	
+		trigger = { 
+			owner = {
+				is_homicidal = no
+				is_xenophobe = no
+			}
+		}
+		owner = { set_policy = { policy = first_contact_protocol option = first_contact_proactive cooldown = yes } }
+		hidden_effect = {
+			set_first_contact_stage = slavers_stage_2
+		}
+	}
+	
+	option = {
+		name = "primitive_origin.114.first_contact_cautious"	
+		trigger = { owner = { is_homicidal = no } }
+		owner = { set_policy = { policy = first_contact_protocol option = first_contact_cautious cooldown = yes } }
+		hidden_effect = {
+			set_first_contact_stage = slavers_stage_2
+		}
+	}
+	
+	option = {
+		name = "primitive_origin.114.first_contact_attack_allowed"	
+		trigger = { 
+			owner = { 
+				is_pacifist = no
+				OR = {
+					is_xenophile = no
+					is_homicidal = yes
+				}
+			}
+		}
+		owner = { set_policy = { policy = first_contact_protocol option = first_contact_attack_allowed cooldown = yes } }
+		hidden_effect = {
+			set_first_contact_stage = slavers_stage_2
+		}
+	}
+}
+
+# Comms Study 2	#MSI Guarentees country
+first_contact_event = {
+	id = primitive_origin.115
+	title = primitive_origin.115.name
+	desc = primitive_origin.115.desc
+	picture = GFX_evt_acquire_asset
+	show_sound = evn_fc_slaver_empire
+	is_triggered_only = yes
+	first_contact = yes
+
+	immediate = {
+		set_site_progress_locked = yes
+	}
+
+	after = {
+		set_site_progress_locked = no
+	}
+
+	option = {
+		name = "primitive_origin.115.first_contact_proactive"	
+		trigger = { 
+			owner = {
+				is_homicidal = no
+				is_xenophobe = no
+			}
+		}
+		from.from = { guarantee_country = { target = root.owner } }
+		#from.from = { set_truce = { target = root.owner type = guarantee }
+		owner = { 
+			if = {
+				limit = { NOT = { current_awareness_level = full } }
+				set_awareness = 100
+			}
+			set_policy = { policy = first_contact_protocol option = first_contact_proactive cooldown = yes }  
+		}
+		hidden_effect = {
+			set_first_contact_stage = slavers_finish
+		}
+	}
+	
+	option = {
+		name = "primitive_origin.115.first_contact_cautious"	
+		trigger = { owner = { is_homicidal = no } }
+		from.from = { guarantee_country = { target = root.owner } }
+		#from.from = { set_truce = { target = root.owner type = guarantee }
+		owner = { 
+			if = {
+				limit = { NOT = { current_awareness_level = full } }
+				set_awareness = 100
+			}
+			set_policy = { policy = first_contact_protocol option = first_contact_cautious cooldown = yes } 
+			capital_scope = { 
+				add_modifier = {
+					modifier = culture_shock_diplomacy
+					years = 20
+				}
+			}
+		}
+		hidden_effect = {
+			set_first_contact_stage = slavers_finish
+		}
+	}
+	
+	option = {
+		name = "primitive_origin.115.first_contact_attack_allowed"	
+		trigger = { 
+			owner = { 
+				is_pacifist = no
+				OR = {
+					is_xenophile = no
+					is_homicidal = yes
+				}
+			}
+		}
+		from.from = { guarantee_country = { target = root.owner } }
+		#from.from = { set_truce = { target = root.owner type = guarantee }
+		owner = { 
+			if = {
+				limit = { NOT = { current_awareness_level = full } }
+				set_awareness = 100
+			}
+			set_policy = { policy = first_contact_protocol option = first_contact_attack_allowed cooldown = yes } 
+			capital_scope = { 
+				add_modifier = {
+					modifier = culture_shock_diplomacy
+					years = 20
+				}
+			}
+		}
+		hidden_effect = {
+			set_first_contact_stage = slavers_finish
+		}
+	}
+}
+
+# Comms Study Finale
+first_contact_event = {
+	id = primitive_origin.116
+	title = primitive_origin.116.name
+	desc = primitive_origin.116.desc
+	picture = GFX_evt_announcement
+	show_sound = evn_fc_slaver_empire
+	is_triggered_only = yes
+	first_contact = yes
+
+	immediate = {
+		set_site_progress_locked = yes
+	}
+
+	after = {
+		set_site_progress_locked = no
+	}
+
+	#option = {
+	#	name = origin.5075.a
+	#	owner = {
+	#		if = {
+	#			limit = {
+	#				has_modifier = broken_shackles_MSI_contact_01
+	#			}
+	#			remove_modifier = broken_shackles_MSI_contact_01
+	#		}
+	#		add_modifier = {
+	#			modifier = broken_shackles_MSI_contact_02
+	#			days = 3600
+	#		}
+	#		add_opinion_modifier = {
+	#			who = event_target:MSI_country
+	#			modifier = contact_with_MSI_02
+	#		}
+	#	}
+	#	finish_first_contact_effect = yes
+	#	first_contact_inform_intel = yes
+	#}
+	
+	option = {
+		name = "primitive_origin.116.first_contact_proactive"	
+		trigger = { 
+			owner = { has_policy_flag = first_contact_proactive }
+		}
+		owner = { 
+			if = { 
+				limit = { has_paragon_dlc = yes }
+				add_research_option = tech_xeno_linguistics 
+			}
+		}
+		finish_first_contact_effect = yes
+		first_contact_inform_intel = yes
+	}
+	
+	option = {
+		name = "primitive_origin.116.first_contact_cautious"	
+		trigger = { 
+			owner = { has_policy_flag = first_contact_cautious }
+		}
+		owner = { 
+			if = { 
+				limit = { has_paragon_dlc = yes }
+				add_research_option = tech_xeno_linguistics 
+			}
+		}
+		finish_first_contact_effect = yes
+		first_contact_inform_intel = yes
+	}
+	
+	option = {
+		name = "primitive_origin.116.first_contact_attack_allowed"	
+		trigger = { 
+			owner = { has_policy_flag = first_contact_attack_allowed }
+		}
+		owner = { 
+			if = { 
+				limit = { has_paragon_dlc = yes }
+				add_research_option = tech_xeno_linguistics 
+			}
+		}
+		finish_first_contact_effect = yes
+		first_contact_inform_intel = yes
 	}
 }
