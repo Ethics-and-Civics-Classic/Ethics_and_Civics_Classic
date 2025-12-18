@@ -1,3 +1,573 @@
+#This effect is used to predict if you are going over 10 insights or not when you gain insights because locked random lists.
+set_predictive_observation_insight = {
+	set_variable = {
+		which = observation_predictive_insight_change
+		value = $VALUE$
+	}
+	if = {
+		limit = {
+			OR = {
+				is_fanatic_xenophile = yes
+				has_valid_civic = civic_primitive_enthusiasts
+			}
+		}
+		multiply_variable = {
+			which = observation_predictive_insight_change
+			value = 2
+		}
+	}
+	if = {
+		limit = {
+			OR = {
+				has_ethic = ethic_xenophile
+				has_valid_civic = civic_machine_exploration_protocol
+			}
+		}
+		multiply_variable = {
+			which = observation_predictive_insight_change
+			value = 1.5
+		}
+	}
+	if = {
+		limit = {
+			has_modifier = hands_off_approach
+		}
+		multiply_variable = {
+			which = observation_predictive_insight_change
+			value = 1.25
+		}
+	}
+	if = {
+		limit = {
+			is_galactic_community_formed = yes
+			is_galactic_community_member = yes
+			is_active_resolution = resolution_pre_ftl_stances_non_interference
+		}
+		multiply_variable = {
+			which = observation_insight_change
+			value = 1.25
+		}
+	}
+	if = {
+		limit = {
+			any_situation = {
+				is_situation_type = situation_observation_insight
+			}
+		}
+		random_situation = {
+			limit = {
+				is_situation_type = situation_observation_insight
+			}
+			save_event_target_as = insight_situation
+		}
+		set_variable = {
+			which = observation_predictive_insight_change_comparator
+			value = observation_predictive_insight_change
+		}
+		subtract_variable = {
+			which = observation_predictive_insight_change_comparator
+			value = 100
+		}
+		multiply_variable = {
+			which = observation_predictive_insight_change_comparator
+			value = -1
+		}
+		if = {
+			limit = {
+				event_target:insight_situation = {
+					situation_progress >= prev.observation_predictive_insight_change_comparator
+				}
+			}
+			set_variable = {
+				which = observation_prediction_insight_variable
+				value = 101
+			}
+		}
+		clear_variable = observation_predictive_insight_change_comparator
+		change_variable = {
+			which = observation_prediction_insight_variable
+			value = observation_predictive_insight_change
+		}
+	}
+	clear_variable = observation_predictive_insight_change
+}
+
+add_observation_insight_effect = {
+	# Accepts the following parameters:
+	# VALUE = int, amount of observation insights gained.
+	# OUTPOST is the scope of the outpost around the planet that this insight occured on.
+	# Whenever 10 observation insights are gained, a random Observation Technology is granted.
+	# When calling this effect, you can set a country flag of physics_insight, society_insights or engineering_insights to determine the tech granted.
+	hidden_effect = {
+		set_variable = {
+			which = observation_insight_change
+			value = $VALUE$
+		}
+		if = {
+			limit = {
+				OR = {
+					is_fanatic_xenophile = yes
+					has_valid_civic = civic_primitive_enthusiasts
+				}
+			}
+			multiply_variable = {
+				which = observation_insight_change
+				value = 2
+			}
+		}
+		if = {
+			limit = {
+				OR = {
+					has_ethic = ethic_xenophile
+					has_valid_civic = civic_machine_exploration_protocol
+				}
+			}
+			multiply_variable = {
+				which = observation_insight_change
+				value = 1.5
+			}
+		}
+		if = {
+			limit = {
+				has_modifier = hands_off_approach
+			}
+			multiply_variable = {
+				which = observation_insight_change
+				value = 1.25
+			}
+		}
+		if = {
+			limit = {
+				is_galactic_community_formed = yes
+				is_galactic_community_member = yes
+				is_active_resolution = resolution_pre_ftl_stances_non_interference
+			}
+			multiply_variable = {
+				which = observation_insight_change
+				value = 1.25
+			}
+		}
+		set_variable = {
+			which = observation_insight_change_comparator
+			value = observation_insight_change
+		}
+		if = {
+			limit = {
+				any_situation = {
+					is_situation_type = situation_observation_insight
+				}
+			}
+			random_situation = {
+				limit = {
+					is_situation_type = situation_observation_insight
+				}
+				save_event_target_as = insight_situation
+			}
+			subtract_variable = {
+				which = observation_insight_change_comparator
+				value = 100
+			}
+			multiply_variable = {
+				which = observation_insight_change_comparator
+				value = -1
+			}
+			if = {
+				limit = {
+					event_target:insight_situation = {
+						situation_progress >= prev.observation_insight_change_comparator
+					}
+				}
+				set_variable = {
+					which = observation_insight_variable
+					value = 101
+				}
+			}
+			else = {
+				set_variable = {
+					which = observation_insight_variable
+					value = 9
+				}
+			}
+			set_variable = {
+				which = observation_insight_change_comparator
+				value = 0
+			}
+		}
+		if = {
+			limit = {
+				any_situation = {
+					is_situation_type = situation_observation_insight
+				}
+				check_variable = {
+					which = observation_insight_variable
+					value < 100
+				}
+			}
+			random_situation = {
+				limit = {
+					is_situation_type = situation_observation_insight
+				}
+				add_situation_progress = prev.observation_insight_change
+			}
+		}
+	}
+	if = {
+		# Check that you have discovered 10 insights.
+		limit = {
+			OR = {
+				check_variable = {
+					which = observation_prediction_insight_variable
+					value >= 100
+				}
+				check_variable = {
+					which = observation_insight_variable
+					value >= 100
+				}
+				has_country_flag = pending_insight_tech
+			}
+			has_first_contact_dlc = yes
+		}
+		if = {
+			limit = {
+				has_all_insights = no
+			}
+			if = {
+				limit = {
+					OR = {
+						AND = {
+							has_country_flag = physics_insights
+							has_all_physics_insights = no
+						}
+						AND = {
+							has_country_flag = engineering_insights
+							has_all_engineering_insights = yes
+						}
+						AND = {
+							has_country_flag = society_insights
+							has_all_society_insights = yes
+						}
+					}
+				}
+				custom_tooltip = gained_physics_insight
+				hidden_effect = {
+					random_list = {
+						1 = {
+							modifier = {
+								factor = 0
+								NOT = { has_technology = tech_detection_array }
+							}
+							modifier = {
+								factor = 0
+								OR = {
+									has_technology = tech_unusual_senses
+									has_tech_option = tech_unusual_senses
+								}
+							}
+							add_research_option = tech_unusual_senses
+						}
+						1 = {
+							modifier = {
+								factor = 0
+								OR = {
+									has_technology = tech_new_numbers
+									has_tech_option = tech_new_numbers
+								}
+							}
+							add_research_option = tech_new_numbers
+						}
+						1 = {
+							modifier = {
+								factor = 0
+								OR = {
+									has_technology = tech_trinary_computing
+									has_tech_option = tech_trinary_computing
+								}
+							}
+							add_research_option = tech_trinary_computing
+						}
+						1 = {
+							modifier = {
+								factor = 0
+								OR = {
+									has_technology = tech_atmospheric_orbital_mechanics
+									has_tech_option = tech_atmospheric_orbital_mechanics
+								}
+							}
+							add_research_option = tech_atmospheric_orbital_mechanics
+						}
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					OR = {
+						AND = {
+							has_country_flag = society_insights
+							has_all_society_insights = no
+						}
+						AND = {
+							has_country_flag = engineering_insights
+							has_all_engineering_insights = yes
+						}
+						AND = {
+							has_country_flag = physics_insights
+							has_all_physics_insights = yes
+						}
+					}
+				}
+				custom_tooltip = gained_society_insight
+				hidden_effect = {
+					random_list = {
+						1 = {
+							modifier = {
+								factor = 0
+								OR = {
+									has_technology = tech_predatory_tactics
+									has_tech_option = tech_predatory_tactics
+								}
+							}
+							modifier = {
+								factor = 0
+								NOT = { has_technology = tech_cloaking_1 }
+							}
+							add_research_option = tech_predatory_tactics
+						}
+						1 = {
+							modifier = {
+								factor = 0
+								OR = {
+									has_technology = tech_satisfying_insults
+									has_tech_option = tech_satisfying_insults
+								}
+							}
+							add_research_option = tech_satisfying_insults
+						}
+						1 = {
+							modifier = {
+								factor = 0
+								OR = {
+									has_technology = tech_compact_living
+									has_tech_option = tech_compact_living
+								}
+							}
+							add_research_option = tech_compact_living
+						}
+						1 = {
+							modifier = {
+								factor = 0
+								OR = {
+									has_technology = tech_alien_topography
+									has_tech_option = tech_alien_topography
+								}
+							}
+							add_research_option = tech_alien_topography
+						}
+						1 = {
+							modifier = {
+								factor = 0
+								OR = {
+									has_technology = tech_xeno_aesthetics
+									has_tech_option = tech_xeno_aesthetics
+								}
+							}
+							add_research_option = tech_xeno_aesthetics
+						}
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					OR = {
+						AND = {
+							has_country_flag = engineering_insights
+							has_all_engineering_insights = no
+						}
+						AND = {
+							has_country_flag = society_insights
+							has_all_society_insights = yes
+						}
+						AND = {
+							has_country_flag = physics_insights
+							has_all_physics_insights = yes
+						}
+					}
+				}
+				custom_tooltip = gained_engineering_insight
+				hidden_effect = {
+					random_list = {
+						1 = {
+							modifier = {
+								factor = 0
+								OR = {
+									has_technology = tech_lost_building_methods
+									has_tech_option = tech_lost_building_methods
+								}
+							}
+							add_research_option = tech_lost_building_methods
+						}
+						1 = {
+							modifier = {
+								factor = 0
+								OR = {
+									has_technology = tech_supreme_alloy
+									has_tech_option = tech_supreme_alloy
+								}
+							}
+							add_research_option = tech_supreme_alloy
+						}
+						1 = {
+							modifier = {
+								factor = 0
+								OR = {
+									has_technology = tech_ordered_retreat
+									has_tech_option = tech_ordered_retreat
+								}
+							}
+							add_research_option = tech_ordered_retreat
+						}
+						1 = {
+							modifier = {
+								factor = 0
+								OR = {
+									has_technology = tech_temple_of_transportation
+									has_tech_option = tech_temple_of_transportation
+								}
+							}
+							modifier = {
+								factor = 0
+								NOT = { has_technology = tech_hyper_relays }
+							}
+							add_research_option = tech_temple_of_transportation
+						}
+					}
+				}
+			}
+		}
+		else = {
+			custom_tooltip = gained_insight_modifier
+			locked_random_list = {
+				0 = {
+					modifier = {
+						add = 1
+						OR = {
+							has_country_flag = physics_insights
+							has_country_flag = society_insights
+							has_country_flag = engineering_insights
+						}
+					}
+					modifier = {
+						factor = 0
+						$OUTPOST$ = {
+							has_modifier = insight_unity_5
+						}
+					}
+					$OUTPOST$ = {
+						add_modifier = {
+							modifier = insight_unity_5
+							days = -1
+						}
+					}
+				}
+				0 = {
+					modifier = {
+						add = 1
+						OR = {
+							has_country_flag = physics_insights
+							has_country_flag = society_insights
+							has_country_flag = engineering_insights
+						}
+					}
+					modifier = {
+						factor = 0
+						$OUTPOST$ = {
+							has_modifier = insight_influence_01
+						}
+					}
+					$OUTPOST$ = {
+						add_modifier = {
+							modifier = insight_influence_01
+							days = -1
+						}
+					}
+				}
+				0 = {
+					modifier = {
+						add = 1
+						has_country_flag = physics_insights
+					}
+					modifier = {
+						factor = 0
+						$OUTPOST$ = {
+							has_modifier = insight_physics_5
+						}
+					}
+					$OUTPOST$ = {
+						add_modifier = {
+							modifier = insight_physics_5
+							days = -1
+						}
+					}
+				}
+				0 = {
+					modifier = {
+						add = 1
+						has_country_flag = society_insights
+					}
+					modifier = {
+						factor = 0
+						$OUTPOST$ = {
+							has_modifier = insight_society_5
+						}
+					}
+					$OUTPOST$ = {
+						add_modifier = {
+							modifier = insight_society_5
+							days = -1
+						}
+					}
+				}
+				0 = {
+					modifier = {
+						add = 1
+						OR = {
+							has_country_flag = engineering_insights
+						}
+					}
+					modifier = {
+						factor = 0
+						$OUTPOST$ = {
+							has_modifier = insight_engineering_5
+						}
+					}
+					$OUTPOST$ = {
+						add_modifier = {
+							modifier = insight_engineering_5
+							days = -1
+						}
+					}
+				}
+			}
+		}
+		hidden_effect = {
+			clear_variable = observation_insight_variable
+			clear_variable = observation_prediction_insight_variable
+			remove_country_flag = pending_insight_tech
+			random_situation = {
+				limit = {
+					is_situation_type = situation_observation_insight
+				}
+				destroy_situation = this
+			}
+		}
+	}
+	else = {
+		custom_tooltip = gained_insight_progress
+	}
+	remove_country_flag = physics_insights
+	remove_country_flag = society_insights
+	remove_country_flag = engineering_insights
+}
+
 create_MSI_effect = {
 	create_species = {
 		name = random

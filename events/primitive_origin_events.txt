@@ -383,3 +383,61 @@ first_contact_event = {
 		first_contact_inform_intel = yes
 	}
 }
+###################################
+#	Civic Primitive Enthusiasts	  #
+###################################
+
+##Cog Note - Primitive Player Origins don't have ownership over any system at start
+country_event = {
+	id = primitive_origin.201
+	hide_window = yes
+	#fire_only_once = no
+
+	is_triggered_only = yes
+	
+	trigger = { owner = { has_civic = civic_primitive_enthusiasts } }
+
+	immediate = {
+		capital_scope = { planet_event = { id = primitive_origin.202 } }
+	}
+
+}
+
+#We can target the empire's capital_planet's System and do effect on neighbor worlds
+planet_event = {
+	id = primitive_origin.202
+	hide_window = yes
+	is_triggered_only = yes
+
+	immediate = {
+		solar_system = {   
+			random_neighbor_system = {
+				limit = { 
+					has_owner = no
+					any_system_planet = { is_colonizable = yes } #Check for colonizable world
+				}	
+				random_system_planet = {
+					limit = { 
+						has_owner = no 
+						is_colonizable = yes
+					}
+					planet_event = { id = primitive_origin.203 }
+				}
+			}
+		}
+	}
+}
+
+planet_event = {
+	id = primitive_origin.203
+	hide_window = yes
+
+	is_triggered_only = yes
+
+	immediate = {
+		generate_early_pre_ftls_on_planet = yes
+	}
+
+}
+
+
