@@ -1,0 +1,549 @@
+# Do not remove or rename this
+
+# Possible Variables for Buildings:
+# strategic_resource: strategic resource, deprecated, strategic resource used by the building.
+# allow: trigger to check for allowing construction of building.
+# prerequisites: Tech requirements for building.
+# empire_unique: boolean, can only build one if set to true.
+# cost: resource table, cost of building.
+# is_orbital: boolean, can only be built in orbital station.
+# modifier: modifier, deprecated, applies a modifier to planet; use planet_modifier instead.
+# planet_modifier, country_modifier, army_modifier: applies modifier to planet/country/armies
+# triggered_planet_modifier = { key (optional), potential, modifier }: applies conditional modifier to planet
+# base_buildtime: int, number of days for construction.
+# requires_pop, boolean, building will require a pop for production.
+# required_resources, resource table, required resources for production.
+# produced_resources, resource table, produced resources in production.
+# upgrades, buildings list, buildings this building can upgrade into.
+# is_listed, boolean, toggles if this building is shown in the non-upgrade buildable list.
+# planet_unique, toggles if one can build multiple of this type on a single planet.
+# ai_weight, weight for AI, default is set to one, weight set to 0 means that AI will never build it
+
+#
+# BALANCE
+# can change the time and cost of all common buildings with these variables below
+
+@b0time = 120
+@b0cost = 30
+@b0effect = 1
+@b0upkeep = 0.5
+
+@b1time = 210
+@b1cost = 60
+@b1effect = 2
+@b1upkeep = 1
+
+@b2time = 180
+@b2cost = 90
+@b2effect = 3
+@b2upkeep = 1.5
+
+@b3time = 180
+@b3cost = 120
+@b3effect = 4
+@b3upkeep = 2
+
+@b4time = 180
+@b4cost = 150
+@b4effect = 5
+@b4upkeep = 2.5
+
+@b5time = 180
+@b5cost = 180
+@b5effect = 8
+@b5upkeep = 3
+
+@science1 = 1
+@science2 = 2
+@science3 = 3
+@science4 = 4
+@science5 = 6
+
+@natural_equilibrium_happiness = 0.02
+
+#
+#	ENERGY
+#
+building_primitive_power_plant = {
+	planet_modifier = {
+		pop_happiness = -0.02
+	}
+	
+	base_buildtime = @b0time
+	
+	cost = {
+		minerals = @b0cost
+	}
+	
+	potential = {
+		planet = {
+			NOT = { 
+				is_planet_class = pc_habitat
+				owner = { has_technology = "tech_power_plant_2"}
+			}
+		}
+		
+	}
+	
+	produced_resources = {
+		energy = @b0effect
+	}
+	
+	upgrades = {
+		building_power_plant_1
+	}
+		
+	ai_allow = {
+		gai_has_sr = no
+		OR = {
+			AND = {
+				has_resource = {
+					type = energy
+					amount > 0
+				}
+				gai_has_sr = no
+				gai_has_high_minerals = no
+				gai_has_high_food = no
+			}
+			AND = {
+				has_resource = {
+					type = energy
+					amount > 1
+				}
+			}
+			AND = {
+				gai_build_on_food_okay = yes
+				owner = {
+					has_monthly_income = {
+						resource = energy
+						value < 30
+					}
+				}
+			}
+			AND = {
+				gai_blank_okay = yes
+				owner = {
+					has_monthly_income = {
+						resource = energy
+						value < 40
+					}
+					NOR = {
+						has_ethic = ethic_fanatic_materialist
+						has_ethic = ethic_materialist
+					}
+				}
+			}
+			AND = {
+				tile = { has_resource = no }
+				owner = {
+					has_monthly_income = {
+						resource = energy
+						value < 30
+					}
+				}
+			}
+		}
+	}
+		
+	ai_weight = {
+		weight = 5
+		modifier = {
+			weight = 200
+			owner = {
+				has_monthly_income = {
+					resource = energy
+					value < 22
+				}
+			}
+		}
+		modifier = {
+			weight = 0
+			gai_has_research = yes
+		}
+	}
+	ai_replace = no
+}
+
+#
+#	FOOD
+#
+
+building_primitive_farm = {
+	tags = { hydroponics_farm }
+	icon = "building_primitive_farm"
+
+	base_buildtime = @b0time
+	
+	cost = {
+		minerals = @b0cost
+	}
+
+	planet_modifier = {
+		pop_happiness = -0.01
+	}
+	
+	produced_resources = {
+		food = @b0effect
+	}
+	
+	produced_resource_trigger = {
+		modifier = {
+			has_valid_civic = civic_agrarian_idyll
+			NOT = { has_swapped_tradition = tr_adaptability_finish }
+			resources = {
+				unity = 1
+			}
+		}
+		modifier = {
+			has_swapped_tradition = tr_adaptability_finish
+			NOT = { has_valid_civic = civic_agrarian_idyll }
+			resources = {
+				minerals = 1
+			}
+		}
+		modifier = {
+			has_swapped_tradition = tr_adaptability_finish
+			has_valid_civic = civic_agrarian_idyll
+			resources = {
+				unity = 1
+				minerals = 1
+			}
+		}
+		modifier = {
+			is_ai = yes
+			NOT = { has_authority = auth_machine_intelligence }
+			root = {
+				food < 1
+			}
+			resources = {
+				food = 30
+			}
+		}
+	}
+	
+	required_resources = {
+		energy = @b0upkeep
+	}
+	
+	upgrades = {
+		building_hydroponics_farm_1
+	}	
+	
+	show_tech_unlock_if = { NOT = { has_authority = auth_machine_intelligence } }
+
+	potential = {
+		NOT = {
+			owner = { has_authority = auth_machine_intelligence }
+			owner = { has_technology = "tech_hydroponics" }
+		}
+		planet = {
+			NOT = { is_planet_class = pc_habitat }	
+		}
+	}
+	
+	destroy_if = {
+		exists = owner
+		gai_is_ai = yes
+		OR = {
+			owner = { has_authority = auth_machine_intelligence } #robots don't get farms!
+			AND = {
+				tile = { has_resource = no }
+				OR = {
+					planet = {
+						has_building = building_hydroponics_farm_2
+					}
+					planet = {
+						has_building = building_hydroponics_farm_3
+					}
+					planet = {
+						has_building = building_hydroponics_farm_4
+					}
+					planet = {
+						has_building = building_hydroponics_farm_5
+					}
+				}
+				owner = {
+					has_monthly_income = {
+						resource = food
+						value > 100
+					}
+				}
+			}
+			AND = {
+				owner = { has_technology = tech_neural_implants }
+				any_neighboring_tile = { 
+					OR = {
+						has_building = building_capital_3
+						has_building = building_capital_2
+						has_building = building_capital_1
+					}
+				}
+				NOT = {
+					planet= {
+						gai_has_slave_p = yes
+					}
+				}
+			}
+			AND = {
+				gai_has_high_food = no
+				owner = {
+					has_monthly_income = {
+						resource = food
+						value > 110
+					}
+				}
+				owner = {
+					food > 4999
+				}
+				NOT = { owner = {has_valid_civic = civic_hive_devouring_swarm }}
+				OR = {
+					planet = {
+						has_building = building_hydroponics_farm_2
+					}
+					planet = {
+						has_building = building_hydroponics_farm_3
+					}
+					planet = {
+						has_building = building_hydroponics_farm_4
+					}
+					planet = {
+						has_building = building_hydroponics_farm_5
+					}
+				}
+			} #If you aren't a devouring swarm and have higher tier farms on this planet destroy the lower tier farms.
+		}
+	}
+	
+	ai_allow = {
+		NOT = { gai_has_sr = yes }
+		OR = {
+			AND = {
+				gai_has_food = yes
+				NOT = { has_building = yes }
+			}
+			AND = {
+				tile = { has_resource = no }
+				owner = {
+					has_monthly_income = {
+						resource = food
+						value < 15
+					}
+				}
+			}	
+		}
+	}
+
+	ai_weight = {
+		weight = 50
+		modifier = {
+			weight = 400
+			gai_has_high_food = yes
+		}
+		modifier = {
+			weight = 300
+			gai_has_food = yes
+			owner = {
+				has_monthly_income = {
+					resource = food
+					value < 80
+				}
+			}
+		}
+		modifier = {
+			weight = 0
+			gai_has_research = yes
+		}
+	}
+	
+	ai_replace = no
+
+}
+
+#
+#	MINERALS
+#
+
+
+building_primitive_factory = {
+	tags = { mining_network }
+	icon = "building_primitive_factory"
+	base_buildtime = @b0time
+	
+	potential = {
+		planet = {
+			NOT = { 
+				is_planet_class = pc_habitat 
+				owner = { has_technology = "tech_mineral_processing_1" }
+			}
+		}
+	}
+	
+	planet_modifier = {
+		pop_happiness = -0.02
+	}
+
+	cost = {
+		minerals = @b0cost
+	}
+	
+	produced_resources = {
+		minerals = @b0effect
+	}
+	
+	required_resources = {
+		energy = @b0upkeep
+	}
+	
+	upgrades = {
+		building_mining_network_1
+	}	
+		
+	ai_allow = {
+		NOT = { gai_has_sr = yes }
+		NOT = { has_building = yes }
+		AND = {
+			gai_has_research = no
+			OR = {
+				AND = {
+					gai_blank_okay = yes
+					owner = {
+						NOR = {
+							has_ethic = ethic_fanatic_materialist
+							has_ethic = ethic_materialist
+						}
+						has_monthly_income = {
+							resource = energy
+							value > 39
+						}
+					}
+				}
+				OR = {
+					AND = {
+					gai_has_minerals = yes
+					gai_has_energy = no
+					}
+					AND = {
+						gai_has_energy = yes
+						gai_has_high_energy = no
+						gai_has_minerals = yes
+						owner = {
+							has_monthly_income = {
+								resource = energy
+								value > 30
+							}
+						}
+					}
+				}
+				gai_has_high_minerals = yes
+				AND = {
+					gai_build_on_food_okay = yes
+					owner = {
+						has_monthly_income = {
+							resource = energy
+							value > 29
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	ai_weight = {
+		weight = 100
+		modifier = {
+			weight = 0
+			AND = {
+				owner = {
+					has_technology = tech_mineral_processing_1
+				}
+				planet= {
+					OR = {
+						has_building = building_capital_1
+						has_building = building_capital_2
+						has_building = building_capital_3
+					}
+				}
+				NOT = {
+					planet= {
+						OR = {
+							has_building = building_mineral_processing_plant_1
+							has_building = building_mineral_processing_plant_2
+						}
+					}
+				}
+			}
+		}
+		modifier = {
+			weight = 0
+			AND = {
+				planet= {
+					OR = {
+						has_building = building_capital_1
+						has_building = building_capital_2
+						has_building = building_capital_3
+					}
+				}
+				NOT = {
+					planet= {
+						gai_has_slave_p = yes
+					}
+				}
+			}
+		}
+		modifier = {
+			weight = 0
+			gai_has_research = yes
+		}
+	}
+	ai_replace = no
+}
+#
+# BASIC SCIENCE
+#
+
+
+#
+# UNITY
+#
+
+
+#
+# OTHER
+#
+building_fallout_shelter = {
+	base_buildtime = 120
+	
+	cost = {
+		minerals = 80
+	}
+	
+	required_resources = {
+		energy = 1
+		minerals = 1
+	}
+	produced_resources = {
+#		food = 1
+	}
+	planet_modifier = {
+		pop_environment_tolerance = 0.15
+	}
+	upgrades = {
+#		col_building_hab_2
+	}
+	
+	prerequisites = {
+#		"tech_col_hab"
+	}
+	
+	potential = {
+		planet = { is_planet_class = "pc_nuked" }
+	}
+	
+	destroy_if = {
+		planet = { NOT = { is_planet_class = "pc_nuked" } }
+	}
+	allow = {
+		planet = { is_planet_class = "pc_nuked" }
+	}
+}
+
