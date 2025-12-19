@@ -258,42 +258,103 @@
 ##
 ## OTHER
 ##
-# building_fallout_shelter = {
-#	base_buildtime = 120
-#	
-#	cost = {
-#		minerals = 80
-#	}
-#	
-#	required_resources = {
-#		energy = 1
-#		minerals = 1
-#	}
-#	produced_resources = {
-##		food = 1
-#	}
-#	planet_modifier = {
-#		pop_environment_tolerance = 0.15
-#	}
-#	upgrades = {
-##		col_building_hab_2
-#	}
-#	
-#	prerequisites = {
-##		"tech_col_hab"
-#	}
-#	
-#	potential = {
-#		planet = { is_planet_class = "pc_nuked" }
-#	}
-#	
-#	destroy_if = {
-#		planet = { NOT = { is_planet_class = "pc_nuked" } }
-#	}
-#	allow = {
-#		planet = { is_planet_class = "pc_nuked" }
-#	}
-#}
+building_fallout_shelter = {
+	can_build = yes
+	base_buildtime = @b1_time
+	can_demolish = yes
+	can_be_ruined = no
+	planet_limit = 1
+
+	category = resource
+	
+	building_sets = {
+		pre_ftl
+	}
+
+	potential = {
+		exists = owner
+		owner = {
+			is_hive_empire = no
+			OR = {
+				# has_origin = origin_primitive_player_pre_industrial_age
+				# has_origin = origin_primitive_player_industrial_age
+				# has_origin = origin_primitive_player_machine_age
+				# has_origin = origin_primitive_player_atomic_age
+				# has_origin = origin_primitive_player_early_space_age
+				AND = {
+					any_situation = { is_situation_type = PrimPlayer_situation } # Much more efficient trigger
+					has_technology = tech_primitive_atomic_age_weapons
+				}
+				AND = {
+					OR = {
+						has_country_flag = steam_age
+						has_country_flag = machine_age
+						has_country_flag = industrial_age
+						has_country_flag = atomic_age
+						has_country_flag = early_space_age
+					}
+					is_primitive = yes
+				}
+			}
+		}
+	}
+
+	destroy_trigger = {
+		exists = owner
+		owner = {
+			OR = {
+				NOT = {
+					# has_origin = origin_primitive_player_pre_industrial_age
+					# has_origin = origin_primitive_player_industrial_age
+					# has_origin = origin_primitive_player_machine_age
+					# has_origin = origin_primitive_player_atomic_age
+					# has_origin = origin_primitive_player_early_space_age
+					any_situation = { is_situation_type = PrimPlayer_situation } # Much more efficient trigger
+					is_primitive = yes
+				}
+				is_hive_empire = yes
+			}
+		}
+	}
+	
+	resources = {
+		category = planet_buildings
+		upkeep = {
+			trigger = { exists = owner }
+			energy =@primitive_upkeep
+		}
+		cost = {
+			minerals = @b1_minerals
+		}
+	}
+	
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			OR = {
+				solar_system = {
+					has_star_flag = storm_system
+				}
+				has_modifier = irradiated_wasteland
+			}
+		}
+		modifier = {
+			planet_miners_minerals_produces_add = 1
+			planet_farmers_food_produces_add = 1
+			planet_technician_energy_produces_add = 1
+		}
+	}
+
+	custom_tooltip = "building_fallout_shelter_tt"
+	
+	prerequisites = {
+		"tech_primitive_atomic_age_weapons"
+	}
+	
+	upgrades = {
+		"building_storm_resistant_production"
+	}
+}
 #
 #####################
 # Pre-FTL Buildings #
