@@ -100,6 +100,8 @@ fleet_event = {
 	}
 }
 
+#Cog Note - using event "colony.100" will trigger the ancient terraforming event chain. But the planet must have an owner.
+
 #Early Chemical Ship Surveys Planet
 # A ship has surveyed a planet.
 # Scope = Ship
@@ -191,6 +193,42 @@ ship_event = {
 		owner = { any_situation = { is_situation_type = PrimPlayer_situation } }
 	}
 	
+	immediate = { 
+		if = {
+			limit = { 
+				FROM = { 
+					OR = {
+						is_planet_class = pc_barren 
+						is_planet_class = pc_barren_cold
+					}
+				}
+			}
+			if = {
+				limit = {
+					owner = { NOT = { has_country_flag = terraforming_candidate_found } }
+					from = {
+						solar_system = {
+							count_system_planet = {
+								count = 0
+								limit = { planet_size > 14 }
+							}
+						}
+					}
+				}
+				from = { set_planet_flag = PrimPlayer_terraforming_candidate }
+				hidden_effect = { owner = { set_country_flag = terraforming_candidate_found } }
+			}
+			else_if = {
+				limit = {
+					owner = { NOT = { has_country_flag = terraforming_candidate_found } }
+					from = { planet_size > 14 }
+				}
+				from = { set_planet_flag = PrimPlayer_terraforming_candidate }
+				hidden_effect = { owner = { set_country_flag = terraforming_candidate_found } }
+			}
+		}
+	}
+	
 	option = {
 		name = "random_primitive_events.2.option.not_colonizable"	#Fallback Generic
 		trigger = { 
@@ -275,7 +313,6 @@ ship_event = {
 				}
 			} 
 		}
-		#add_resource = { unity = 250 }
 		owner = {
 			add_monthly_resource_mult = {
 				resource = physics_research
@@ -283,6 +320,14 @@ ship_event = {
 				min = @tier1researchmin
 				max = @tier1researchmax
 			}
+			add_resource = { unity = 500 }
+		}
+		if = {
+			limit = {
+				from = { has_planet_flag = PrimPlayer_terraforming_candidate }
+			}
+			from = { add_modifier = { modifier = "terraforming_candidate" days = -1 } }
+			hidden_effect = { from = { remove_planet_flag = PrimPlayer_terraforming_candidate } }
 		}
 	}
 	
