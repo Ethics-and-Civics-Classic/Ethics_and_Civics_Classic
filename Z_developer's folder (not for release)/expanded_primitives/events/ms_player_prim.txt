@@ -1,0 +1,1204 @@
+namespace = ms_player_prim;
+
+country_event = {
+	id = ms_player_prim.1
+	hide_window = yes
+	
+	trigger = {
+		is_country_type = ms_primitive_1
+		OR = {
+			has_country_flag = abnegation_age
+			has_country_flag = constrained_age
+			has_country_flag = early_space_age
+			has_country_flag = retaliation_age
+		}
+		NOT = {
+			has_country_flag = ms_prim_ev_1
+		}
+	}
+	
+	mean_time_to_happen = {
+		months = 240
+	}
+	
+	immediate = {
+		set_timed_country_flag = {
+			flag = ms_prim_ev_1
+			days = 3600
+		}	
+		capital_scope = {
+			solar_system = {
+				space_owner = {
+					country_event = {
+						id = ms_player_prim.2
+					}
+				}
+			}
+		}
+	}
+}
+
+country_event = {
+	id = ms_player_prim.2
+	title = "ms_player_prim.2.name"
+	desc = "ms_player_prim.2.desc"
+	picture = GFX_evt_society_research
+	location = FROM
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = ms_player_prim.2.a
+		add_monthly_resource_mult = {
+			resource = physics_research
+			value = 6
+			min = 200
+			max = 2000
+		}
+		
+	}
+	
+	option = {
+		name = ms_player_prim.2.b
+		trigger = {
+			OR = {
+				has_policy_flag = interference_active
+				has_policy_flag = interference_full
+			}
+		}
+		add_monthly_resource_mult = {
+			resource = society_research
+			value = 8
+			min = 200
+			max = 2000
+		}
+	}
+	
+	option = {
+		name = ms_player_prim.2.c
+		trigger = {
+			has_policy_flag = interference_full
+		}
+		add_monthly_resource_mult = {
+			resource = physics_research
+			value = 3
+			min = 100
+			max = 1000
+		}
+		add_monthly_resource_mult = {
+			resource = society_research
+			value = 3
+			min = 100
+			max = 1000
+		}
+		
+	}
+	
+	option = {
+		name = ms_player_prim.2.d
+		add_influence = 25
+	}
+}
+
+country_event = {
+	id = ms_player_prim.3
+	hide_window = yes
+	
+	trigger = {
+		is_country_type = ms_primitive_1
+		has_country_flag = abnegation_age
+		has_country_flag = retaliation_age
+		NOT = {
+			has_country_flag = ms_abnegation_comms_1
+		}
+	}
+	
+	mean_time_to_happen = {
+		months = 240
+	}
+	
+	immediate = {	
+		set_country_flag = ms_abnegation_comms_1
+		capital_scope = {
+			space_owner = {
+				country_event = {
+					id = ms_player_prim.4
+				}
+			}
+		}
+	}
+}
+
+country_event = {
+	id = ms_player_prim.4
+	title = "ms_unexpected_comms"
+	
+	is_triggered_only = yes
+	force_open = yes
+	desc = {
+		text = ms_player_prim.4.desca
+		trigger = {
+			from = {
+				OR = {
+					capital_scope = {
+						has_building = ms_obelisk_building
+					}
+					has_country_flag = retaliation_age
+				}
+			}
+		}
+	}
+	
+	desc = {
+		text = ms_player_prim.4.descb
+		trigger = {
+			from = {
+				capital_scope = {
+					NOT = {
+						has_building = ms_obelisk_building
+					}
+				}
+			}
+		}
+	}
+	
+	diplomatic = yes
+	
+	picture_event_data = {
+		portrait = from
+		planet_background = pc_space_sky
+		room = root
+	}
+	
+	option = {
+		name = ms_player_prim.4.z
+		custom_tooltip = ms_player_prim.4.z.tooltip
+		response_text = ms_player_prim.4.z.response
+		hidden_effect = {
+			from = {
+				remove_country_flag = ms_abnegation_comms_1
+			}
+		}
+				
+	}
+	
+	option = {
+		name = ms_player_prim.4.b
+		response_text = ms_player_prim.4.b.response
+		is_dialog_only = yes
+	}
+	
+	option = {
+		name = ms_player_prim.4.c
+		trigger = {
+			root = {
+				OR = {
+					has_ethic = ethic_militarist
+					has_ethic = ethic_fanatic_militarist
+				}
+			}
+		}
+		response_text = ms_player_prim.4.c.response
+		is_dialog_only = yes
+	}
+	
+	option = {
+		name = ms_player_prim.4.g
+		custom_tooltip = ms_player_prim.4.g.tooltip
+		hidden_effect = {
+			from = {
+				country_event = {
+					id = ms_player_prim.6
+				}
+			}
+		}
+		
+	}
+	
+	option = {
+		name = ms_player_prim.4.d
+		custom_tooltip = ms_player_prim.4.d.tooltip
+		response_text = ms_player_prim.4.d.response
+		hidden_effect = {
+			from = {
+				capital_scope = {
+					change_pc = pc_gaia
+					every_megastructure = {
+						limit = {
+							is_megastructure_type = ms_preservation_station_1
+							planet = {
+								is_same_value = prevprev
+							}
+						}
+						remove_megastructure = this
+					}
+				}
+				set_country_type = default
+				change_country_flag = random
+				#give_technology = { tech = tech_spaceport_2 }
+				#give_technology = { tech = tech_spaceport_3 }
+				#give_technology = { tech = tech_spaceport_4 }
+				give_technology = { tech = tech_ship_armor_1 }
+				give_technology = { tech = tech_ship_armor_2 }
+				give_technology = { tech = tech_ship_armor_3 }
+				give_technology = { tech = tech_powered_exoskeletons }
+				give_technology = { tech = tech_mining_network_2 }
+				give_technology = { tech = tech_mineral_processing_1 }
+				give_technology = { tech = tech_cryostasis_1 }
+				if = {
+					limit = { is_species_class = MAM }
+					set_graphical_culture = mammalian_01
+				}
+				if = {
+					limit = { is_species_class = REP }
+					set_graphical_culture = reptilian_01
+				}
+				if = {
+					limit = { is_species_class = AVI }
+					set_graphical_culture = avian_01
+				}
+				if = {
+					limit = { is_species_class = ART }
+					set_graphical_culture = arthropoid_01
+				}
+				if = {
+					limit = { is_species_class = MOL }
+					set_graphical_culture = molluscoid_01
+				}
+				if = {
+					limit = { is_species_class = FUN }
+					set_graphical_culture = fungoid_01
+				}
+				change_government = {
+					authority = random
+					civics = random
+				}
+				set_name = random
+				add_minerals = 3000 
+				add_energy = 2000
+				add_influence = 400
+				capital_scope = {
+					every_tile = {
+						limit = {
+							has_blocker = yes
+							NOR = {
+								has_blocker = tb_decrepit_dwellings
+								has_blocker = tb_failing_infrastructure
+							}
+						}
+						remove_blocker = yes
+					}
+					while = {
+						limit = { num_pops < 8 }
+						random_tile = {
+							limit = {
+								has_grown_pop = no
+							}
+							create_pop = {
+								species = owner
+							}
+						}
+					}
+					random_tile = {
+						limit = {
+							has_grown_pop = yes
+							OR = {
+								has_building = "building_primitive_farm"
+								has_building = "building_primitive_factory"
+								has_building = no
+							}
+						}
+						clear_deposits = yes
+						add_deposit = d_mineral_food_deposit
+						set_building = "building_capital_2"
+					}
+					random_tile = {
+						limit = {
+							has_grown_pop = yes
+							OR = {
+								has_building = "building_primitive_farm"
+								has_building = "building_primitive_factory"
+								has_building = no
+							}
+						}
+						clear_deposits = yes
+						add_deposit = d_mineral_deposit
+						set_building = "building_mining_network_1"
+					}
+					random_tile = {
+						limit = {
+							has_grown_pop = yes
+							OR = {
+								has_building = "building_primitive_farm"
+								has_building = "building_primitive_factory"
+								has_building = no
+							}
+						}
+						clear_deposits = yes
+						add_deposit = d_mineral_deposit
+						set_building = "building_mining_network_1"
+					}
+					random_tile = {
+						limit = {
+							has_grown_pop = yes
+							OR = {
+								has_building = "building_primitive_farm"
+								has_building = "building_primitive_factory"
+								has_building = no
+							}
+						}
+						clear_deposits = yes
+						add_deposit = d_farmland_deposit
+						set_building = "building_hydroponics_farm_1"
+					}
+					random_tile = {
+						limit = {
+							has_grown_pop = yes
+							OR = {
+								has_building = "building_primitive_farm"
+								has_building = "building_primitive_factory"
+								has_building = no
+							}
+						}
+						clear_deposits = yes
+						add_deposit = d_farmland_deposit
+						set_building = "building_hydroponics_farm_1"
+					}
+					random_tile = {
+						limit = {
+							has_grown_pop = yes
+							OR = {
+								has_building = "building_primitive_farm"
+								has_building = "building_primitive_factory"
+								has_building = no
+							}
+						}
+						clear_deposits = yes
+						add_deposit = d_energy_deposit
+						set_building = "building_power_plant_1"
+					}
+					random_tile = {
+						limit = {
+							has_grown_pop = yes
+							OR = {
+								has_building = "building_primitive_farm"
+								has_building = "building_primitive_factory"
+								has_building = no
+							}
+						}
+						clear_deposits = yes
+						add_deposit = d_energy_deposit
+						set_building = "building_power_plant_1"
+					}
+					random_tile = {
+						limit = {
+							has_grown_pop = yes
+							OR = {
+								has_building = "building_primitive_farm"
+								has_building = "building_primitive_factory"
+								has_building = no
+							}
+						}
+						clear_deposits = yes
+						add_deposit = d_energy_deposit
+						set_building = "building_power_plant_1"
+					}
+					create_army = {
+						name = random
+						owner = PREV
+						species = owner_main_species
+						type = "defense_army"
+					}
+					create_army = {
+						name = random
+						owner = PREV
+						species = owner_main_species
+						type = "defense_army"
+					}
+					create_army = {
+						name = random
+						owner = PREV
+						species = owner_main_species
+						type = "defense_army"
+					}
+					create_army = {
+						name = random
+						owner = PREV
+						species = owner_main_species
+						type = "defense_army"
+					}
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = ms_player_prim.4.e
+		custom_tooltip = ms_player_prim.4.e.tooltip
+		response_text = ms_player_prim.4.e.response
+		trigger = {
+			root = {
+				OR = {
+					has_ethic = ethic_fanatic_xenophile
+					has_ethic = ethic_xenophile
+					has_ethic = ethic_pacifist
+					has_ethic = ethic_fanatic_pacifist
+				}
+			}
+		}
+		hidden_effect = {
+			from = {
+				capital_scope = {
+					change_pc = pc_gaia
+					every_megastructure = {
+						limit = {
+							is_megastructure_type = ms_preservation_station_1
+							planet = {
+								is_same_value = prevprev
+							}
+						}
+						remove_megastructure = this
+					}
+				}
+				set_country_type = default
+				change_country_flag = random
+				if = {
+					limit = { is_species_class = MAM }
+					set_graphical_culture = mammalian_01
+				}
+				if = {
+					limit = { is_species_class = REP }
+					set_graphical_culture = reptilian_01
+				}
+				if = {
+					limit = { is_species_class = AVI }
+					set_graphical_culture = avian_01
+				}
+				if = {
+					limit = { is_species_class = ART }
+					set_graphical_culture = arthropoid_01
+				}
+				if = {
+					limit = { is_species_class = MOL }
+					set_graphical_culture = molluscoid_01
+				}
+				if = {
+					limit = { is_species_class = FUN }
+					set_graphical_culture = fungoid_01
+				}
+				change_government = {
+					authority = random
+					civics = random
+				}
+				set_name = random
+				add_minerals = 3000 
+				add_energy = 2000
+				add_influence = 400
+				capital_scope = {
+					every_tile = {
+						limit = {
+							has_blocker = yes
+							NOR = {
+								has_blocker = tb_decrepit_dwellings
+								has_blocker = tb_failing_infrastructure
+							}
+						}
+						remove_blocker = yes
+					}
+					while = {
+						limit = { num_pops < 8 }
+						random_tile = {
+							limit = {
+								has_grown_pop = no
+							}
+							create_pop = {
+								species = owner
+							}
+						}
+					}
+					random_tile = {
+						limit = {
+							has_grown_pop = yes
+							OR = {
+								has_building = "building_primitive_farm"
+								has_building = "building_primitive_factory"
+								has_building = no
+							}
+						}
+						clear_deposits = yes
+						add_deposit = d_mineral_food_deposit
+						set_building = "building_capital_2"
+					}
+					random_tile = {
+						limit = {
+							has_grown_pop = yes
+							OR = {
+								has_building = "building_primitive_farm"
+								has_building = "building_primitive_factory"
+								has_building = no
+							}
+						}
+						clear_deposits = yes
+						add_deposit = d_mineral_deposit
+						set_building = "building_mining_network_1"
+					}
+					random_tile = {
+						limit = {
+							has_grown_pop = yes
+							OR = {
+								has_building = "building_primitive_farm"
+								has_building = "building_primitive_factory"
+								has_building = no
+							}
+						}
+						clear_deposits = yes
+						add_deposit = d_mineral_deposit
+						set_building = "building_mining_network_1"
+					}
+					random_tile = {
+						limit = {
+							has_grown_pop = yes
+							OR = {
+								has_building = "building_primitive_farm"
+								has_building = "building_primitive_factory"
+								has_building = no
+							}
+						}
+						clear_deposits = yes
+						add_deposit = d_farmland_deposit
+						set_building = "building_hydroponics_farm_1"
+					}
+					random_tile = {
+						limit = {
+							has_grown_pop = yes
+							OR = {
+								has_building = "building_primitive_farm"
+								has_building = "building_primitive_factory"
+								has_building = no
+							}
+						}
+						clear_deposits = yes
+						add_deposit = d_farmland_deposit
+						set_building = "building_hydroponics_farm_1"
+					}
+					random_tile = {
+						limit = {
+							has_grown_pop = yes
+							OR = {
+								has_building = "building_primitive_farm"
+								has_building = "building_primitive_factory"
+								has_building = no
+							}
+						}
+						clear_deposits = yes
+						add_deposit = d_energy_deposit
+						set_building = "building_power_plant_1"
+					}
+					random_tile = {
+						limit = {
+							has_grown_pop = yes
+							OR = {
+								has_building = "building_primitive_farm"
+								has_building = "building_primitive_factory"
+								has_building = no
+							}
+						}
+						clear_deposits = yes
+						add_deposit = d_energy_deposit
+						set_building = "building_power_plant_1"
+					}
+					random_tile = {
+						limit = {
+							has_grown_pop = yes
+							OR = {
+								has_building = "building_primitive_farm"
+								has_building = "building_primitive_factory"
+								has_building = no
+							}
+						}
+						clear_deposits = yes
+						add_deposit = d_energy_deposit
+						set_building = "building_power_plant_1"
+					}
+					create_army = {
+						name = random
+						owner = PREV
+						species = owner_main_species
+						type = "defense_army"
+					}
+					create_army = {
+						name = random
+						owner = PREV
+						species = owner_main_species
+						type = "defense_army"
+					}
+					create_army = {
+						name = random
+						owner = PREV
+						species = owner_main_species
+						type = "defense_army"
+					}
+					create_army = {
+						name = random
+						owner = PREV
+						species = owner_main_species
+						type = "defense_army"
+					}
+				}
+				set_subject_of = {
+					who = root
+					subject_type = protectorate
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = ms_player_prim.4.f
+		custom_tooltip = ms_player_prim.4.f.tooltip
+		response_text = ms_player_prim.4.f.response
+		trigger = {
+			root = {
+				OR = {
+					has_ethic = ethic_fanatic_militarist
+					has_ethic = ethic_fanatic_xenophobe
+					has_ethic = ethic_fanatic_materialist
+					has_ethic = ethic_fanatic_authoritarian
+				}
+			}
+		}
+		hidden_effect = {
+			from = {
+				capital_scope = {
+					change_pc = pc_gaia
+					every_megastructure = {
+						limit = {
+							is_megastructure_type = ms_preservation_station_1
+							planet = {
+								is_same_value = prevprev
+							}
+						}
+						remove_megastructure = this
+					}
+				}
+				set_country_type = default
+				change_country_flag = random
+				give_technology = { tech = tech_spaceport_2 }
+				give_technology = { tech = tech_spaceport_3 }
+				give_technology = { tech = tech_spaceport_4 }
+				give_technology = { tech = tech_ship_armor_1 }
+				give_technology = { tech = tech_ship_armor_2 }
+				give_technology = { tech = tech_ship_armor_3 }
+				give_technology = { tech = tech_powered_exoskeletons }
+				give_technology = { tech = tech_mining_network_2 }
+				give_technology = { tech = tech_mineral_processing_1 }
+				give_technology = { tech = tech_cryostasis_1 }
+				if = {
+					limit = { is_species_class = MAM }
+					set_graphical_culture = mammalian_01
+				}
+				if = {
+					limit = { is_species_class = REP }
+					set_graphical_culture = reptilian_01
+				}
+				if = {
+					limit = { is_species_class = AVI }
+					set_graphical_culture = avian_01
+				}
+				if = {
+					limit = { is_species_class = ART }
+					set_graphical_culture = arthropoid_01
+				}
+				if = {
+					limit = { is_species_class = MOL }
+					set_graphical_culture = molluscoid_01
+				}
+				if = {
+					limit = { is_species_class = FUN }
+					set_graphical_culture = fungoid_01
+				}
+				change_government = {
+					authority = random
+					civics = random
+				}
+				set_name = random
+				add_minerals = 3000 
+				add_energy = 2000
+				add_influence = 400
+				capital_scope = {
+					every_tile = {
+						limit = {
+							has_blocker = yes
+							NOR = {
+								has_blocker = tb_decrepit_dwellings
+								has_blocker = tb_failing_infrastructure
+							}
+						}
+						remove_blocker = yes
+					}
+					while = {
+						limit = { num_pops < 8 }
+						random_tile = {
+							limit = {
+								has_grown_pop = no
+							}
+							create_pop = {
+								species = owner
+							}
+						}
+					}
+					random_tile = {
+						limit = {
+							has_grown_pop = yes
+							OR = {
+								has_building = "building_primitive_farm"
+								has_building = "building_primitive_factory"
+								has_building = no
+							}
+						}
+						clear_deposits = yes
+						add_deposit = d_mineral_food_deposit
+						set_building = "building_capital_2"
+					}
+					random_tile = {
+						limit = {
+							has_grown_pop = yes
+							OR = {
+								has_building = "building_primitive_farm"
+								has_building = "building_primitive_factory"
+								has_building = no
+							}
+						}
+						clear_deposits = yes
+						add_deposit = d_mineral_deposit
+						set_building = "building_mining_network_1"
+					}
+					random_tile = {
+						limit = {
+							has_grown_pop = yes
+							OR = {
+								has_building = "building_primitive_farm"
+								has_building = "building_primitive_factory"
+								has_building = no
+							}
+						}
+						clear_deposits = yes
+						add_deposit = d_mineral_deposit
+						set_building = "building_mining_network_1"
+					}
+					random_tile = {
+						limit = {
+							has_grown_pop = yes
+							OR = {
+								has_building = "building_primitive_farm"
+								has_building = "building_primitive_factory"
+								has_building = no
+							}
+						}
+						clear_deposits = yes
+						add_deposit = d_farmland_deposit
+						set_building = "building_hydroponics_farm_1"
+					}
+					random_tile = {
+						limit = {
+							has_grown_pop = yes
+							OR = {
+								has_building = "building_primitive_farm"
+								has_building = "building_primitive_factory"
+								has_building = no
+							}
+						}
+						clear_deposits = yes
+						add_deposit = d_farmland_deposit
+						set_building = "building_hydroponics_farm_1"
+					}
+					random_tile = {
+						limit = {
+							has_grown_pop = yes
+							OR = {
+								has_building = "building_primitive_farm"
+								has_building = "building_primitive_factory"
+								has_building = no
+							}
+						}
+						clear_deposits = yes
+						add_deposit = d_energy_deposit
+						set_building = "building_power_plant_1"
+					}
+					random_tile = {
+						limit = {
+							has_grown_pop = yes
+							OR = {
+								has_building = "building_primitive_farm"
+								has_building = "building_primitive_factory"
+								has_building = no
+							}
+						}
+						clear_deposits = yes
+						add_deposit = d_energy_deposit
+						set_building = "building_power_plant_1"
+					}
+					random_tile = {
+						limit = {
+							has_grown_pop = yes
+							OR = {
+								has_building = "building_primitive_farm"
+								has_building = "building_primitive_factory"
+								has_building = no
+							}
+						}
+						clear_deposits = yes
+						add_deposit = d_energy_deposit
+						set_building = "building_power_plant_1"
+					}
+					create_army = {
+						name = random
+						owner = PREV
+						species = owner_main_species
+						type = "defense_army"
+					}
+					create_army = {
+						name = random
+						owner = PREV
+						species = owner_main_species
+						type = "defense_army"
+					}
+					create_army = {
+						name = random
+						owner = PREV
+						species = owner_main_species
+						type = "defense_army"
+					}
+					create_army = {
+						name = random
+						owner = PREV
+						species = owner_main_species
+						type = "defense_army"
+					}
+				}
+				declare_war = {
+					who = yes
+					name = "Existential Crisis"
+					attacker_war_goal = wg_humiliation
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = ms_player_prim.4.a
+		custom_tooltip = ms_player_prim.4.a.tooltip
+		response_text = ms_player_prim.4.a.response
+		trigger = {
+			root = {
+				OR = {
+					has_ethic = ethic_xenophobe
+					has_ethic = ethic_fanatic_xenophobe
+					has_ethic = ethic_materialist
+					has_ethic = ethic_fanatic_materialist
+				}
+			}
+		}
+		hidden_effect = {
+			from = {
+				capital_scope = {
+					set_planet_flag = ms_reshielded
+				}
+			}
+		}
+	}
+}
+
+country_event = {
+	id = ms_player_prim.5
+	title = "ms_negotiation"
+	
+	is_triggered_only = yes
+	force_open = yes
+	desc = {
+		text = ms_player_prim.5.desca
+		trigger = {
+			from = {
+				OR = {
+					capital_scope = {
+						has_building = ms_obelisk_building
+					}
+					has_country_flag = retaliation_age
+				}
+			}
+		}
+	}
+	
+	desc = {
+		text = ms_player_prim.5.descb
+		trigger = {
+			from = {
+				capital_scope = {
+					NOT = {
+						OR = {
+							has_building = ms_obelisk_building
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	diplomatic = yes
+	
+	picture_event_data = {
+		portrait = from
+		planet_background = pc_space_sky
+		room = root
+	}
+	
+	option = {
+		name = ms_player_prim.5.a
+		custom_tooltip = ms_player_prim.5.a.tooltip
+		response_text = ms_player_prim.5.a.response
+		hidden_effect = {
+			from = {
+				set_country_type = ms_post_primitive
+				change_government = {
+					authority = random
+					civics = random
+				}
+				set_name = random
+				change_country_flag = random
+				remove_country_flag = stone_age
+				remove_country_flag = bronze_age
+				remove_country_flag = iron_age
+				remove_country_flag = late_medieval_age
+				remove_country_flag = renaissance_age
+				remove_country_flag = steam_age
+				remove_country_flag = industrial_age
+				remove_country_flag = machine_age
+				remove_country_flag = atomic_age
+				remove_country_flag = early_space_age
+				remove_country_flag = constrained_age
+				remove_country_flag = abnegation_age
+				remove_country_flag = retaliation_age
+				if = {
+					limit = { is_species_class = MAM }
+					set_graphical_culture = mammalian_01
+				}
+				if = {
+					limit = { is_species_class = REP }
+					set_graphical_culture = reptilian_01
+				}
+				if = {
+					limit = { is_species_class = AVI }
+					set_graphical_culture = avian_01
+				}
+				if = {
+					limit = { is_species_class = ART }
+					set_graphical_culture = arthropoid_01
+				}
+				if = {
+					limit = { is_species_class = MOL }
+					set_graphical_culture = molluscoid_01
+				}
+				if = {
+					limit = { is_species_class = FUN }
+					set_graphical_culture = fungoid_01
+				}
+				add_minerals = 3000 
+				add_energy = 2000
+				add_influence = 400
+				capital_scope = {
+					every_megastructure = {
+						limit = {
+							is_megastructure_type = ms_preservation_station_1
+							planet = {
+								is_same_value = prevprev
+							}
+						}
+						remove_megastructure = this
+					}
+					every_tile = {
+						limit = {
+							has_blocker = yes
+							NOR = {
+								has_blocker = tb_decrepit_dwellings
+								has_blocker = tb_failing_infrastructure
+							}
+						}
+						remove_blocker = yes
+					}
+					while = {
+						limit = { num_pops < 8 }
+						random_tile = {
+							limit = {
+								has_grown_pop = no
+							}
+							create_pop = {
+								species = owner
+							}
+						}
+					}
+					random_tile = {
+						limit = {
+							has_grown_pop = yes
+							OR = {
+								has_building = "building_primitive_farm"
+								has_building = "building_primitive_factory"
+								has_building = no
+							}
+						}
+						clear_deposits = yes
+						add_deposit = d_energy_deposit
+						set_building = "building_capital_2"
+					}
+					random_tile = {
+						limit = {
+							has_grown_pop = yes
+							OR = {
+								has_building = "building_primitive_farm"
+								has_building = "building_primitive_factory"
+								has_building = no
+							}
+						}
+						clear_deposits = yes
+						add_deposit = d_mineral_deposit
+						set_building = "building_mining_network_1"
+					}
+					random_tile = {
+						limit = {
+							has_grown_pop = yes
+							OR = {
+								has_building = "building_primitive_farm"
+								has_building = "building_primitive_factory"
+								has_building = no
+							}
+						}
+						clear_deposits = yes
+						add_deposit = d_mineral_deposit
+						set_building = "building_mining_network_1"
+					}
+					random_tile = {
+						limit = {
+							has_grown_pop = yes
+							OR = {
+								has_building = "building_primitive_farm"
+								has_building = "building_primitive_factory"
+								has_building = no
+							}
+						}
+						clear_deposits = yes
+						add_deposit = d_farmland_deposit
+						set_building = "building_hydroponics_farm_1"
+					}
+					random_tile = {
+						limit = {
+							has_grown_pop = yes
+							OR = {
+								has_building = "building_primitive_farm"
+								has_building = "building_primitive_factory"
+								has_building = no
+							}
+						}
+						clear_deposits = yes
+						add_deposit = d_farmland_deposit
+						set_building = "building_hydroponics_farm_1"
+					}
+					random_tile = {
+						limit = {
+							has_grown_pop = yes
+							OR = {
+								has_building = "building_primitive_farm"
+								has_building = "building_primitive_factory"
+								has_building = no
+							}
+						}
+						clear_deposits = yes
+						add_deposit = d_energy_deposit
+						set_building = "building_power_plant_1"
+					}
+					random_tile = {
+						limit = {
+							has_grown_pop = yes
+							OR = {
+								has_building = "building_primitive_farm"
+								has_building = "building_primitive_factory"
+								has_building = no
+							}
+						}
+						clear_deposits = yes
+						add_deposit = d_energy_deposit
+						set_building = "building_power_plant_1"
+					}
+					random_tile = {
+						limit = {
+							has_grown_pop = yes
+							OR = {
+								has_building = "building_primitive_farm"
+								has_building = "building_primitive_factory"
+								has_building = no
+							}
+						}
+						clear_deposits = yes
+						add_deposit = d_energy_deposit
+						set_building = "building_power_plant_1"
+					}
+				}
+			}
+		}
+	}
+	
+	#option = {
+	#	name = ms_player_prim.5.b
+	#	custom_tooltip = ms_player_prim.5.b.tooltip
+	#	response_text = ms_player_prim.5.b.response
+	#	
+	#}
+	
+	option = {
+		name = ms_player_prim.5.c
+		custom_tooltip = ms_player_prim.5.c.tooltip
+		hidden_effect = {
+			from = {
+				country_event = {
+					id = ms_player_prim.7
+				}
+			}
+		}
+	}
+}
+
+country_event = {
+	id = ms_player_prim.6
+	hide_window = yes
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		capital_scope = {
+			solar_system = {
+				space_owner = {
+					country_event = {
+						id = ms_player_prim.5
+					}
+				}
+			}
+		}
+	}
+}
+
+country_event = {
+	id = ms_player_prim.7
+	hide_window = yes
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		capital_scope = {
+			solar_system = {
+				space_owner = {
+					country_event = {
+						id = ms_player_prim.4
+					}
+				}
+			}
+		}
+	}
+}

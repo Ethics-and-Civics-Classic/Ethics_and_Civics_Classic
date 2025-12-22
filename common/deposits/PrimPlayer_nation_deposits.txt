@@ -27,18 +27,22 @@ d_PrimPlayer_the_obelisk_deposit = {
 			exists = owner
 			owner = {
 				OR = {
-					is_primitive = yes
-					has_origin = origin_primitive_player_pre_industrial_age 
-					has_origin = origin_primitive_player_industrial_age
-					has_origin = origin_primitive_player_machine_age
-					has_origin = origin_primitive_player_atomic_age
-					has_origin = origin_primitive_player_early_space_age
+					any_situation = { is_situation_type = PrimPlayer_situation } # Much more efficient trigger
+					AND = {
+						is_primitive = yes
+						OR = {
+							has_country_flag = machine_age
+							has_country_flag = industrial_age
+							has_country_flag = atomic_age
+							has_country_flag = early_space_age
+						}
+					}
 				}
 				is_gestalt = no
 			}
 		}
 		modifier = {
-			job_primitive_researcher_add = 200
+			job_primitive_researcher_2_add = 200
 			job_primitive_priest_2_add = 200
 		}
 	}
@@ -49,12 +53,16 @@ d_PrimPlayer_the_obelisk_deposit = {
 			exists = owner
 			owner = {
 				OR = {
-					is_primitive = yes
-					has_origin = origin_primitive_player_pre_industrial_age 
-					has_origin = origin_primitive_player_industrial_age
-					has_origin = origin_primitive_player_machine_age
-					has_origin = origin_primitive_player_atomic_age
-					has_origin = origin_primitive_player_early_space_age
+					any_situation = { is_situation_type = PrimPlayer_situation } # Much more efficient trigger
+					AND = {
+						is_primitive = yes
+						OR = {
+							has_country_flag = machine_age
+							has_country_flag = industrial_age
+							has_country_flag = atomic_age
+							has_country_flag = early_space_age
+						}
+					}
 				}
 				is_hive_empire = yes
 			}
@@ -70,12 +78,16 @@ d_PrimPlayer_the_obelisk_deposit = {
 			exists = owner
 			owner = {
 				OR = {
-					is_primitive = yes
-					has_origin = origin_primitive_player_pre_industrial_age 
-					has_origin = origin_primitive_player_industrial_age
-					has_origin = origin_primitive_player_machine_age
-					has_origin = origin_primitive_player_atomic_age
-					has_origin = origin_primitive_player_early_space_age
+					any_situation = { is_situation_type = PrimPlayer_situation } # Much more efficient trigger
+					AND = {
+						is_primitive = yes
+						OR = {
+							has_country_flag = machine_age
+							has_country_flag = industrial_age
+							has_country_flag = atomic_age
+							has_country_flag = early_space_age
+						}
+					}
 				}
 				is_machine_empire = yes
 			}
@@ -111,18 +123,68 @@ d_PrimPlayer_nation_deposit = {
 		potential = {
 			exists = owner
 			owner = {
+				NOT = { has_technology = tech_basic_science_lab_1 }
 				is_gestalt = no
-				is_fallen_empire_spiritualist = no
-				NAND = {
-					is_anglers_empire = yes
-					prev = { planet = { is_wet = yes } }
-				}
 			}
 		}
-		modifier = {
-			job_primitive_laborer_add = 100
-			primitive_researcher = 1
+		job_primitive_researcher_2_add = 100
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				NOT = { has_technology = tech_basic_science_lab_1 }
+				is_gestalt = yes
+			}
 		}
+		job_calculator_physicist_add = 30
+		job_calculator_biologist_add = 30
+		job_calculator_engineer_add = 30
+	}
+	
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				NOT = { has_technology = tech_basic_industry }
+				is_gestalt = no
+			}
+		}
+		job_primitive_laborer_add = 100
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				NOT = { has_technology = tech_basic_industry }
+				is_gestalt = yes
+			}
+		}
+		job_fabricator_add = 100
+	}
+	
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				NOT = { has_technology = tech_basic_industry }
+				is_gestalt = no
+			}
+		}
+		job_primitive_laborer_add = 100
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				NOT = { has_technology = tech_basic_industry }
+				is_gestalt = yes
+			}
+		}
+		job_fabricator_add = 100
 	}
 	
 	drop_weight = {
@@ -146,7 +208,7 @@ d_PrimPlayer_nation_deposit = {
 # Decrepit Dwellings are generated on homeworlds at game-start
 d_ethic_fanatic_authoritarian_nation_blocker = {
 	icon = d_slums
-	time = 360
+	time = 180
 
 	is_for_colonizable = yes
 	category = deposit_cat_nation_blocker
@@ -161,7 +223,7 @@ d_ethic_fanatic_authoritarian_nation_blocker = {
 		primitive_nation_absorption_effect = yes
 		hidden_effect = { 
 			planet = {
-				set_planet_flag = PrimPlayer_authoritarian_union_situation_complete
+				remove_planet_flag = PrimPlayer_authoritarian_union_situation_complete
 			}
 		}
 	}
@@ -171,7 +233,12 @@ d_ethic_fanatic_authoritarian_nation_blocker = {
 	resources = {
 		category = deposit_blockers
 		cost = {
+			trigger = { planet = { NOT = { is_planet_class = pc_nuked } } }
 			unity = 500
+		}
+		cost = {
+			trigger = { planet = { is_planet_class = pc_nuked } }
+			minerals = 200
 		}
 	}
 	
@@ -189,7 +256,7 @@ d_ethic_fanatic_authoritarian_nation_blocker = {
 # Decrepit Dwellings are generated on homeworlds at game-start
 d_ethic_fanatic_egalitarian_nation_blocker = {
 	icon = d_slums
-	time = 360
+	time = 180
 
 	is_for_colonizable = yes
 	category = deposit_cat_nation_blocker
@@ -204,7 +271,7 @@ d_ethic_fanatic_egalitarian_nation_blocker = {
 		primitive_nation_absorption_effect = yes
 		hidden_effect = { 
 			planet = {
-				set_planet_flag = PrimPlayer_egalitarian_union_situation_complete
+				remove_planet_flag = PrimPlayer_egalitarian_union_situation_complete
 			}
 		}
 	}
@@ -214,7 +281,12 @@ d_ethic_fanatic_egalitarian_nation_blocker = {
 	resources = {
 		category = deposit_blockers
 		cost = {
+			trigger = { planet = { NOT = { is_planet_class = pc_nuked } } }
 			unity = 500
+		}
+		cost = {
+			trigger = { planet = { is_planet_class = pc_nuked } }
+			minerals = 200
 		}
 	}
 	
@@ -232,7 +304,7 @@ d_ethic_fanatic_egalitarian_nation_blocker = {
 # Decrepit Dwellings are generated on homeworlds at game-start
 d_ethic_fanatic_xenophobe_nation_blocker = {
 	icon = d_slums
-	time = 360
+	time = 180
 
 	is_for_colonizable = yes
 	category = deposit_cat_nation_blocker
@@ -247,7 +319,7 @@ d_ethic_fanatic_xenophobe_nation_blocker = {
 		primitive_nation_absorption_effect = yes
 		hidden_effect = { 
 			planet = {
-				set_planet_flag = PrimPlayer_xenophobe_union_situation_complete
+				remove_planet_flag = PrimPlayer_xenophobe_union_situation_complete
 			}
 		}
 	}
@@ -257,7 +329,12 @@ d_ethic_fanatic_xenophobe_nation_blocker = {
 	resources = {
 		category = deposit_blockers
 		cost = {
+			trigger = { planet = { NOT = { is_planet_class = pc_nuked } } }
 			unity = 500
+		}
+		cost = {
+			trigger = { planet = { is_planet_class = pc_nuked } }
+			minerals = 200
 		}
 	}
 	
@@ -275,7 +352,7 @@ d_ethic_fanatic_xenophobe_nation_blocker = {
 # Decrepit Dwellings are generated on homeworlds at game-start
 d_ethic_fanatic_xenophile_nation_blocker = {
 	icon = d_slums
-	time = 360
+	time = 180
 
 	is_for_colonizable = yes
 	category = deposit_cat_nation_blocker
@@ -290,7 +367,7 @@ d_ethic_fanatic_xenophile_nation_blocker = {
 		primitive_nation_absorption_effect = yes
 		hidden_effect = { 
 			planet = {
-				set_planet_flag = PrimPlayer_xenophile_union_situation_complete
+				remove_planet_flag = PrimPlayer_xenophile_union_situation_complete
 			}
 		}
 	}
@@ -300,7 +377,12 @@ d_ethic_fanatic_xenophile_nation_blocker = {
 	resources = {
 		category = deposit_blockers
 		cost = {
+			trigger = { planet = { NOT = { is_planet_class = pc_nuked } } }
 			unity = 500
+		}
+		cost = {
+			trigger = { planet = { is_planet_class = pc_nuked } }
+			minerals = 200
 		}
 	}
 	
@@ -318,7 +400,7 @@ d_ethic_fanatic_xenophile_nation_blocker = {
 # Decrepit Dwellings are generated on homeworlds at game-start
 d_ethic_fanatic_militarist_nation_blocker = {
 	icon = d_slums
-	time = 360
+	time = 180
 
 	is_for_colonizable = yes
 	category = deposit_cat_nation_blocker
@@ -333,7 +415,7 @@ d_ethic_fanatic_militarist_nation_blocker = {
 		primitive_nation_absorption_effect = yes
 		hidden_effect = { 
 			planet = {
-				set_planet_flag = PrimPlayer_militarist_union_situation_complete
+				remove_planet_flag = PrimPlayer_militarist_union_situation_complete
 			}
 		}
 	}
@@ -343,7 +425,12 @@ d_ethic_fanatic_militarist_nation_blocker = {
 	resources = {
 		category = deposit_blockers
 		cost = {
+			trigger = { planet = { NOT = { is_planet_class = pc_nuked } } }
 			unity = 500
+		}
+		cost = {
+			trigger = { planet = { is_planet_class = pc_nuked } }
+			minerals = 200
 		}
 	}
 	
@@ -361,7 +448,7 @@ d_ethic_fanatic_militarist_nation_blocker = {
 # Decrepit Dwellings are generated on homeworlds at game-start
 d_ethic_fanatic_pacifist_nation_blocker = {
 	icon = d_slums
-	time = 360
+	time = 180
 
 	is_for_colonizable = yes
 	category = deposit_cat_nation_blocker
@@ -376,7 +463,7 @@ d_ethic_fanatic_pacifist_nation_blocker = {
 		primitive_nation_absorption_effect = yes
 		hidden_effect = { 
 			planet = {
-				set_planet_flag = PrimPlayer_pacifist_union_situation_complete
+				remove_planet_flag = PrimPlayer_pacifist_union_situation_complete
 			}
 		}
 	}
@@ -386,7 +473,12 @@ d_ethic_fanatic_pacifist_nation_blocker = {
 	resources = {
 		category = deposit_blockers
 		cost = {
+			trigger = { planet = { NOT = { is_planet_class = pc_nuked } } }
 			unity = 500
+		}
+		cost = {
+			trigger = { planet = { is_planet_class = pc_nuked } }
+			minerals = 200
 		}
 	}
 	
@@ -404,7 +496,7 @@ d_ethic_fanatic_pacifist_nation_blocker = {
 # Decrepit Dwellings are generated on homeworlds at game-start
 d_ethic_fanatic_spiritualist_nation_blocker = {
 	icon = d_slums
-	time = 360
+	time = 180
 
 	is_for_colonizable = yes
 	category = deposit_cat_nation_blocker
@@ -419,7 +511,7 @@ d_ethic_fanatic_spiritualist_nation_blocker = {
 		primitive_nation_absorption_effect = yes
 		hidden_effect = { 
 			planet = {
-				set_planet_flag = PrimPlayer_spiritualist_union_situation_complete
+				remove_planet_flag = PrimPlayer_spiritualist_union_situation_complete
 			}
 		}
 	}
@@ -429,7 +521,12 @@ d_ethic_fanatic_spiritualist_nation_blocker = {
 	resources = {
 		category = deposit_blockers
 		cost = {
+			trigger = { planet = { NOT = { is_planet_class = pc_nuked } } }
 			unity = 500
+		}
+		cost = {
+			trigger = { planet = { is_planet_class = pc_nuked } }
+			minerals = 200
 		}
 	}
 	
@@ -447,7 +544,7 @@ d_ethic_fanatic_spiritualist_nation_blocker = {
 # Decrepit Dwellings are generated on homeworlds at game-start
 d_ethic_fanatic_materialist_nation_blocker = {
 	icon = d_slums
-	time = 360
+	time = 180
 
 	is_for_colonizable = yes
 	category = deposit_cat_nation_blocker
@@ -462,7 +559,7 @@ d_ethic_fanatic_materialist_nation_blocker = {
 		primitive_nation_absorption_effect = yes
 		hidden_effect = { 
 			planet = {
-				set_planet_flag = PrimPlayer_materialist_union_situation_complete
+				remove_planet_flag = PrimPlayer_materialist_union_situation_complete
 			}
 		}
 	}
@@ -472,7 +569,12 @@ d_ethic_fanatic_materialist_nation_blocker = {
 	resources = {
 		category = deposit_blockers
 		cost = {
+			trigger = { planet = { NOT = { is_planet_class = pc_nuked } } }
 			unity = 500
+		}
+		cost = {
+			trigger = { planet = { is_planet_class = pc_nuked } }
+			minerals = 200
 		}
 	}
 	
@@ -490,7 +592,7 @@ d_ethic_fanatic_materialist_nation_blocker = {
 # Decrepit Dwellings are generated on homeworlds at game-start
 d_ethic_fanatic_green_nation_blocker = {
 	icon = d_slums
-	time = 360
+	time = 180
 
 	is_for_colonizable = yes
 	category = deposit_cat_nation_blocker
@@ -505,7 +607,7 @@ d_ethic_fanatic_green_nation_blocker = {
 		primitive_nation_absorption_effect = yes
 		hidden_effect = { 
 			planet = {
-				set_planet_flag = PrimPlayer_green_union_situation_complete
+				remove_planet_flag = PrimPlayer_green_union_situation_complete
 			}
 		}
 	}
@@ -515,7 +617,12 @@ d_ethic_fanatic_green_nation_blocker = {
 	resources = {
 		category = deposit_blockers
 		cost = {
+			trigger = { planet = { NOT = { is_planet_class = pc_nuked } } }
 			unity = 500
+		}
+		cost = {
+			trigger = { planet = { is_planet_class = pc_nuked } }
+			minerals = 200
 		}
 	}
 	
@@ -533,7 +640,7 @@ d_ethic_fanatic_green_nation_blocker = {
 # Decrepit Dwellings are generated on homeworlds at game-start
 d_ethic_fanatic_industrial_nation_blocker = {
 	icon = d_slums
-	time = 360
+	time = 180
 
 	is_for_colonizable = yes
 	category = deposit_cat_nation_blocker
@@ -548,7 +655,7 @@ d_ethic_fanatic_industrial_nation_blocker = {
 		primitive_nation_absorption_effect = yes
 		hidden_effect = { 
 			planet = {
-				set_planet_flag = PrimPlayer_industrial_union_situation_complete
+				remove_planet_flag = PrimPlayer_industrial_union_situation_complete
 			}
 		}
 	}
@@ -558,7 +665,12 @@ d_ethic_fanatic_industrial_nation_blocker = {
 	resources = {
 		category = deposit_blockers
 		cost = {
+			trigger = { planet = { NOT = { is_planet_class = pc_nuked } } }
 			unity = 500
+		}
+		cost = {
+			trigger = { planet = { is_planet_class = pc_nuked } }
+			minerals = 200
 		}
 	}
 	
@@ -576,7 +688,7 @@ d_ethic_fanatic_industrial_nation_blocker = {
 # Decrepit Dwellings are generated on homeworlds at game-start
 d_ethic_fanatic_socialism_nation_blocker = {
 	icon = d_slums
-	time = 360
+	time = 180
 
 	is_for_colonizable = yes
 	category = deposit_cat_nation_blocker
@@ -591,7 +703,7 @@ d_ethic_fanatic_socialism_nation_blocker = {
 		primitive_nation_absorption_effect = yes
 		hidden_effect = { 
 			planet = {
-				set_planet_flag = PrimPlayer_socialism_union_situation_complete
+				remove_planet_flag = PrimPlayer_socialism_union_situation_complete
 			}
 		}
 	}
@@ -601,7 +713,12 @@ d_ethic_fanatic_socialism_nation_blocker = {
 	resources = {
 		category = deposit_blockers
 		cost = {
+			trigger = { planet = { NOT = { is_planet_class = pc_nuked } } }
 			unity = 500
+		}
+		cost = {
+			trigger = { planet = { is_planet_class = pc_nuked } }
+			minerals = 200
 		}
 	}
 	
@@ -619,7 +736,7 @@ d_ethic_fanatic_socialism_nation_blocker = {
 # Decrepit Dwellings are generated on homeworlds at game-start
 d_ethic_fanatic_capitalism_nation_blocker = {
 	icon = d_slums
-	time = 360
+	time = 90
 
 	is_for_colonizable = yes
 	category = deposit_cat_nation_blocker
@@ -634,7 +751,7 @@ d_ethic_fanatic_capitalism_nation_blocker = {
 		primitive_nation_absorption_effect = yes
 		hidden_effect = { 
 			planet = {
-				set_planet_flag = PrimPlayer_capitalism_union_situation_complete
+				remove_planet_flag = PrimPlayer_capitalism_union_situation_complete
 			}
 		}
 	}
@@ -644,7 +761,12 @@ d_ethic_fanatic_capitalism_nation_blocker = {
 	resources = {
 		category = deposit_blockers
 		cost = {
+			trigger = { planet = { NOT = { is_planet_class = pc_nuked } } }
 			unity = 500
+		}
+		cost = {
+			trigger = { planet = { is_planet_class = pc_nuked } }
+			minerals = 200
 		}
 	}
 	

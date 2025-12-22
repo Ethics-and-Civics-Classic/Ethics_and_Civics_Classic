@@ -1035,9 +1035,7 @@ diplomatic_stance = {
 		potential = {
 			is_primitive = yes
 			current_awareness_level < medium
-			capital_scope = {
-				NOT = { has_modifier = culture_shock_diplomacy }
-			}
+			any_owned_planet = { NOT = { has_modifier = culture_shock_diplomacy } }
 		}
 
 		policy_flags = {
@@ -1059,9 +1057,7 @@ diplomatic_stance = {
 		potential = {
 			is_primitive = yes
 			current_awareness_level = medium
-			capital_scope = {
-				NOT = { has_modifier = culture_shock_diplomacy }
-			}
+			any_owned_planet = { NOT = { has_modifier = culture_shock_diplomacy } }
 		}
 
 		policy_flags = {
@@ -1084,9 +1080,7 @@ diplomatic_stance = {
 			is_primitive = yes
 			current_awareness_level >= high
 			is_xenophile = yes
-			capital_scope = {
-				NOT = { has_modifier = culture_shock_diplomacy }
-			}
+			any_owned_planet = { NOT = { has_modifier = culture_shock_diplomacy } }
 		}
 
 		policy_flags = {
@@ -1109,9 +1103,7 @@ diplomatic_stance = {
 			is_primitive = yes
 			current_awareness_level >= high
 			is_xenophobe = yes
-			capital_scope = {
-				NOT = { has_modifier = culture_shock_diplomacy }
-			}
+			any_owned_planet = { NOT = { has_modifier = culture_shock_diplomacy } }
 		}
 
 		policy_flags = {
@@ -1135,9 +1127,7 @@ diplomatic_stance = {
 			current_awareness_level >= high
 			is_xenophile = no
 			is_xenophobe = no
-			capital_scope = {
-				NOT = { has_modifier = culture_shock_diplomacy }
-			}
+			any_owned_planet = { NOT = { has_modifier = culture_shock_diplomacy } }
 		}
 
 		policy_flags = {
@@ -1158,9 +1148,7 @@ diplomatic_stance = {
 
 		potential = {
 			is_primitive = yes
-			capital_scope = {
-				has_modifier = culture_shock_diplomacy
-			}
+			any_owned_planet = { has_modifier = culture_shock_diplomacy }
 		}
 
 		policy_flags = {
@@ -1169,6 +1157,36 @@ diplomatic_stance = {
 
 		modifier = {
 			diplo_action_acceptance_add = -100
+		}
+
+		ai_weight = {
+			weight = 1000
+		}
+	}
+
+option = {
+		name = "diplo_stance_devastators"
+		icon = "GFX_diplomatic_stance_devastators"
+
+		potential = {
+			OR = {
+				has_valid_civic = civic_scorched_earth
+				has_valid_civic = civic_hive_scorched_earth
+			}
+		}
+
+		valid = {
+			OR = {
+				has_valid_civic = civic_scorched_earth
+				has_valid_civic = civic_hive_scorched_earth
+			}
+		}
+
+		policy_flags = {
+			diplo_stance_purification # TODO: Replace this later with a new one.
+		}
+
+		modifier = {
 		}
 
 		ai_weight = {
@@ -1717,12 +1735,61 @@ orbital_bombardment = {
 			}
 		}
 	}
+	option = {
+		name = "orbital_bombardment_devastation"
+
+		in_breach_of = {
+			{
+				key = resolution_rulesofwar_independent_tribunals
+			}
+			{
+				key = resolution_rulesofwar_last_resort_doctrine
+			}
+			{
+				key = resolution_rulesofwar_demobilization_initiative
+			}
+		}
+
+		potential = {
+			OR = {
+				has_valid_civic = civic_scorched_earth
+				has_valid_civic = civic_hive_scorched_earth
+			}
+		}
+
+		policy_flags = {
+			orbital_bombardment_devastation
+		}
+		modifier = {}
+
+		AI_weight = {
+			modifier = {
+				factor = 10
+				OR = {
+					has_valid_civic = civic_scorched_earth
+					has_valid_civic = civic_hive_scorched_earth
+				}
+			}
+			modifier = {
+				factor = 10
+				has_ascension_perk = ap_become_the_crisis
+				# TODO: Add Infernals crisis path with OR={} or remove THIS line later.
+			}
+		}
+	}
 }
 
 interference = {
 
 	potential = {
-		has_met_primitives = yes
+		OR = {
+			has_met_primitives = yes
+			has_origin = origin_primitive_player_pre_industrial_age
+			has_origin = origin_primitive_player_industrial_age
+			has_origin = origin_primitive_player_machine_age
+			has_origin = origin_primitive_player_atomic_age
+			has_origin = origin_primitive_player_early_space_age
+		}
 	}
 
 	option = {
@@ -1849,18 +1916,35 @@ interference = {
 		}
 
 		valid = {
-			NOR = {
-				custom_tooltip = {
-					text = is_a_signatory_vassal
-					any_agreement = { agreement_preset = preset_signatory }
+			OR = {
+				NOR = {
+					custom_tooltip = {
+						text = is_a_signatory_vassal
+						any_agreement = { agreement_preset = preset_signatory }
+					}
+					has_valid_civic = "civic_fanatic_purifiers"
+					has_valid_civic = "civic_hive_devouring_swarm"
+					hidden_trigger = { has_origin = "origin_slavers" }
 				}
-				has_valid_civic = "civic_fanatic_purifiers"
-				has_valid_civic = "civic_hive_devouring_swarm"
-				hidden_trigger = { has_origin = "origin_slavers" }
+				has_origin = origin_primitive_player_pre_industrial_age
+				has_origin = origin_primitive_player_industrial_age
+				has_origin = origin_primitive_player_machine_age
+				has_origin = origin_primitive_player_atomic_age
+				has_origin = origin_primitive_player_early_space_age
 			}
 		}
 
 		AI_weight = {
+			modifier = {
+				factor = 2000
+				OR = {
+					has_origin = origin_primitive_player_pre_industrial_age
+					has_origin = origin_primitive_player_industrial_age
+					has_origin = origin_primitive_player_machine_age
+					has_origin = origin_primitive_player_atomic_age
+					has_origin = origin_primitive_player_early_space_age
+				}
+			}
 			modifier = {
 				factor = 2
 				has_valid_ai_personality = yes
@@ -1914,6 +1998,7 @@ interference = {
 					has_ethic = "ethic_xenophile"
 					has_ethic = "ethic_fanatic_xenophile"
 					has_valid_civic = civic_machine_exploration_protocol
+					has_valid_civic = civic_primitive_enthusiasts
 				}
 				hidden_trigger = { has_origin = "origin_slavers" }
 			}
@@ -2231,7 +2316,10 @@ first_contact_protocol = {
 		}
 
 		modifier = {
+			envoys_add = 1
 			first_contact_speed_mult = 0.1
+			intel_decryption_add = 1
+			pop_ethic_xenophile_attraction_mult = 0.15
 		}
 
 		on_enabled = {
@@ -2268,6 +2356,7 @@ first_contact_protocol = {
 
 		modifier = {
 			first_contact_defense_add = 2
+			intel_encryption_add = 2
 		}
 
 		on_enabled = {
@@ -2300,7 +2389,11 @@ first_contact_protocol = {
 		policy_flags = {
 			first_contact_attack_allowed
 		}
-		modifier = {}
+		modifier = {
+			max_rivalries = 1
+			intel_decryption_add = 1
+			pop_ethic_militarist_attraction_mult = 0.15
+		}
 
 		valid = {
 			is_pacifist = no
@@ -2592,7 +2685,7 @@ trade_policy = {
 	}
 	
 	option = {
-		name = "trade_policy_leader"
+		name = "trade_policy_leader"	#Modded
 
 		policy_flags = {
 			trade_policy_leader
@@ -2612,8 +2705,8 @@ trade_policy = {
 			OR = {
 				has_valid_civic = civic_criminal_heritage
 				has_valid_civic = civic_military_dictatorship_corporate
-				value = auth_dictatorial
-				value = auth_imperial	
+				has_authority  = auth_dictatorial
+				has_authority = auth_imperial	
 			}
 		}
 
@@ -2795,7 +2888,14 @@ trade_policy = {
 	option = {
 		name = "trade_policy_mutual_aid"
 		potential = {
-			is_worker_coop_empire = yes
+			OR = {
+				is_worker_coop_empire = yes
+				AND = {
+					has_valid_civic = civic_primitive_enthusiasts
+					is_egalitarian = yes
+					is_socialism = yes
+				}
+			}
 		}
 
 		on_enabled = {
@@ -2822,7 +2922,7 @@ trade_policy = {
 
 	# Growth & Development
 	option = {
-		name = "trade_policy_growth_dev"
+		name = "trade_policy_growth_dev"	#Modded
 
 		policy_flags = {
 			trade_conversion_growth_dev
@@ -2841,7 +2941,6 @@ trade_policy = {
 			is_country_type = default
 			has_policy_flag = "economic_stance_planned"
 		}
-
 		AI_weight = {
 			factor = 0
 		}
@@ -2849,7 +2948,7 @@ trade_policy = {
 
 	# Development
 	option = {
-		name = "trade_policy_development"
+		name = "trade_policy_development"	#Modded
 
 		policy_flags = {
 			trade_conversion_development
@@ -2857,9 +2956,9 @@ trade_policy = {
 
 		on_enabled = {
 			set_trade_conversions = {
-				trade = 0.2
-				minerals = 0.2
-				alloys = 0.2
+				trade = 0.50
+				minerals = 0.30
+				alloys = 0.20
 			}
 		}
 
@@ -2881,7 +2980,7 @@ trade_policy = {
 
 	# Innovation
 	option = {
-		name = "trade_policy_innovation"
+		name = "trade_policy_innovation"	#Modded
 
 		policy_flags = {
 			trade_conversion_innovation
@@ -2931,7 +3030,7 @@ trade_policy = {
 
 		modifier = {
 		}
-
+		
 		AI_weight = {
 			factor = 0
 		}
@@ -2967,6 +3066,7 @@ trade_policy = {
 				has_policy_flag = "economic_stance_planned"
 			}
 		}
+		
 
 		AI_weight = {
 			factor = 0
@@ -3005,10 +3105,19 @@ trade_policy = {
 				has_policy_flag = "economic_stance_planned"
 			}
 		}
+		
 
 		AI_weight = {
 			factor = 0
 		}
+	}
+	
+	#For Monopolist Mod Compatibility
+	inline_script = {
+		script = overwrites/Monopolist_Mod_overwrite
+		overwrite = trade_policies
+		mod = jam_mcp
+		x = @has_jam_mcp
 	}
 }
 
@@ -4194,7 +4303,7 @@ conscription_stance = {
 				has_origin = "origin_payback"
 				hidden_trigger = { 
 					has_country_flag = wg_primitive_uprising_flag 
-					capital_scope = { has_modifier = culture_shock_diplomacy }
+					any_owned_planet = { has_modifier = culture_shock_diplomacy }
 				}	
 			}
 		}
@@ -4219,7 +4328,7 @@ conscription_stance = {
 			}
 			modifier = {
 				factor = 200
-				capital_scope = {
+				any_owned_planet = {
 					OR = {
 						has_modifier = culture_shock_diplomacy
 						has_modifier = culture_shock_broken_shackles

@@ -1067,23 +1067,23 @@ enforcer = {
 	}
 	
 	# Description
-	triggered_desc = {
-		trigger = {
-			exists = owner
-			enforcer_is_educator_trigger = no
-			OWNER = { has_civic = civic_military_dictatorship_corporate }
-		}
-		text = job_pirate_lord_enforcer_effect_desc
-	}
+	#triggered_desc = {
+	#	trigger = {
+	#		exists = owner
+	#		enforcer_is_educator_trigger = no
+	#		OWNER = { has_civic = civic_military_dictatorship_corporate }
+	#	}
+	#	text = job_pirate_lord_enforcer_effect_desc
+	#}
 	# Description
-	triggered_desc = {
-		trigger = {
-			exists = owner
-			enforcer_is_educator_trigger = no
-			OWNER = { has_civic = civic_criminal_heritage }
-		}
-		text = job_mob_boss_enforcer_effect_desc
-	}
+	#triggered_desc = {
+	#	trigger = {
+	#		exists = owner
+	#		enforcer_is_educator_trigger = no
+	#		OWNER = { has_civic = civic_criminal_heritage }
+	#	}
+	#	text = job_mob_boss_enforcer_effect_desc
+	#}
 	
 	
 	
@@ -1724,6 +1724,17 @@ bureaucrat = {
 			icon = culture_worker
 			building_icon = building_artist_patron
 			condition_string = SPECIALIST_JOB_TRIGGER
+			weight = 35
+		}
+			swap_type = {
+			trigger = {
+				bureaucrat_is_fire_dancer = yes
+			}
+			name = fire_dancer
+			desc = fire_dancer
+			icon = fire_dancer
+			building_icon = building_temple
+			condition_string = SPECIALIST_JOB_TRIGGER
 			weight = 40
 		}
 		swap_type = {
@@ -1747,6 +1758,39 @@ bureaucrat = {
 			building_icon = building_sacrificial_temple_1
 			condition_string = SPECIALIST_JOB_TRIGGER
 			weight = 50
+		}
+		swap_type = {
+			trigger = {
+				bureaucrat_is_fire_seer = yes
+			}
+			name = fire_seer
+			desc = fire_seer
+			icon = fire_seer
+			building_icon = building_temple
+			condition_string = SPECIALIST_JOB_TRIGGER
+			weight = 501
+		}
+		swap_type = {
+			trigger = {
+				bureaucrat_is_pyromancer = yes
+			}
+			name = pyromancer
+			desc = pyromancer
+			icon = fire_dancer
+			building_icon = building_temple
+			condition_string = SPECIALIST_JOB_TRIGGER
+			weight = 450
+		}
+		swap_type = {
+			trigger = {
+				bureaucrat_is_cremator = yes
+			}
+			name = cremator
+			desc = cremator
+			icon = cremator
+			building_icon = building_sacrificial_temple_1
+			condition_string = SPECIALIST_JOB_TRIGGER
+			weight = 450
 		}
 		swap_type = {
 			trigger = {
@@ -1837,6 +1881,50 @@ bureaucrat = {
 			condition_string = SPECIALIST_JOB_TRIGGER
 			weight = 500
 		}
+		swap_type = {
+			trigger = {
+				bureaucrat_is_corpse_reader = yes
+			}
+			name = corpse_reader
+			desc = corpse_reader
+			icon = death_priest
+			building_icon = building_temple
+			condition_string = SPECIALIST_JOB_TRIGGER
+			weight = 600
+		}
+		swap_type = {
+			trigger = {
+				bureaucrat_is_corpse_broker = yes
+			}
+			name = corpse_broker
+			desc = corpse_broker
+			icon = death_priest
+			building_icon = building_temple
+			condition_string = SPECIALIST_JOB_TRIGGER
+			weight = 600
+		}
+		swap_type = {
+			trigger = {
+				bureaucrat_is_corpse_reader = yes
+			}
+			name = corpse_reader
+			desc = corpse_reader
+			icon = death_priest
+			building_icon = building_temple
+			condition_string = SPECIALIST_JOB_TRIGGER
+			weight = 600
+		}
+		swap_type = {
+			trigger = {
+				bureaucrat_is_corpse_broker = yes
+			}
+			name = corpse_broker
+			desc = corpse_broker
+			icon = death_priest
+			building_icon = building_temple
+			condition_string = SPECIALIST_JOB_TRIGGER
+			weight = 600
+		}
 	}
 	tags = { unity }
 	triggered_tags = {
@@ -1849,7 +1937,13 @@ bureaucrat = {
 				bureaucrat_is_haruspex = yes
 				bureaucrat_is_superstitious_beliefs_priest = yes
 				bureaucrat_is_superstitious_beliefs_priest_corporate = yes
-				bureaucrat_is_druid = yes									#Modded
+				bureaucrat_is_druid = yes									# Modded
+				bureaucrat_is_corpse_broker = yes
+				bureaucrat_is_corpse_reader = yes
+				bureaucrat_is_fire_dancer = yes
+				bureaucrat_is_pyromancer = yes
+				bureaucrat_is_fire_seer = yes
+				bureaucrat_is_cremator = yes									
 			}
 		}
 		tags = { psionic_aura }
@@ -1915,14 +2009,18 @@ bureaucrat = {
 		}
 		produces = {
 			trigger = {
-				bureaucrat_is_death_priest = yes
-			}
+				OR = {
+					bureaucrat_is_death_priest = yes
+					bureaucrat_is_cremator = yes
+				}
+			}	
 			unity = -1
 			society_research = 1
 		}
 		produces = {
 			trigger = {
 				bureaucrat_is_death_priest = yes
+				bureaucrat_is_cremator = yes
 				exists = owner
 				owner = { has_sacrificial_edict = yes }
 			}
@@ -2166,6 +2264,16 @@ bureaucrat = {
 			unity = -1
 			trade = 6
 		}
+		# Job Swap - Superstitions Beliefs and Death Cult
+		produces = {
+			trigger = {
+				OR = {
+					bureaucrat_is_corpse_reader = yes
+					bureaucrat_is_corpse_broker = yes
+				}
+			}
+			society_research = 1
+		}
 		inline_script = "jobs/ethic_job_resources_memorialist"		# Enriad - forgotten line from vanilla code, files exist and NOT MODDED
 	}
 	
@@ -2204,6 +2312,24 @@ bureaucrat = {
 			bureaucrat_is_death_priest = yes
 		}
 		planet_amenities_add = 200
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	}
+	triggered_planet_modifier = {
+		potential = {
+			bureaucrat_is_fire_dancer = yes
+		}
+		planet_amenities_add = 200
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	}
+	triggered_planet_modifier = {
+		potential = {
+			OR = {
+				bureaucrat_is_pyromancer = yes
+				bureaucrat_is_fire_seer = yes
+				bureaucrat_is_cremator = yes
+			}
+		}
+		planet_amenities_add = 400
 		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
 	}
 	triggered_planet_modifier = {
@@ -2268,6 +2394,12 @@ bureaucrat = {
 			planet_stability_add = 1
 		}
 	}
+	triggered_planet_modifier = {
+		potential = {
+			bureaucrat_is_fire_dancer = yes
+		}
+		planet_stability_add = 0.5
+	}
 
 	triggered_planet_modifier = {
 		potential = {
@@ -2312,6 +2444,67 @@ bureaucrat = {
 		}
 		pop_ethic_spiritualist_attraction_mult = 0.10
 		pop_ethic_capitalism_attraction_mult = 0.10
+	}
+	triggered_planet_modifier = {
+		potential = {
+			bureaucrat_is_fire_dancer = yes
+		}
+		planet_stability_add = 0.5
+	}
+	triggered_planet_modifier = {
+		potential = {
+			OR = {
+				# Getting these costs 2 Civic points and deserve better rewards.
+				bureaucrat_is_pyromancer = yes
+				bureaucrat_is_fire_seer = yes
+				bureaucrat_is_cremator = yes
+			}
+		}
+		planet_stability_add = 1.5
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			OR = {
+				bureaucrat_is_corpse_reader = yes
+				bureaucrat_is_corpse_broker = yes
+			}
+		}
+		planet_amenities_add = 200
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			OR = {
+				bureaucrat_is_corpse_reader = yes
+				bureaucrat_is_corpse_broker = yes
+			}
+		}
+		planet_stability_add = 1
+		mult = planet.modifier:planet_bureaucrats_stability_produces_add
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			OR = {
+				bureaucrat_is_corpse_reader = yes
+				bureaucrat_is_corpse_broker = yes
+			}
+		}
+		planet_amenities_add = 200
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			OR = {
+				bureaucrat_is_corpse_reader = yes
+				bureaucrat_is_corpse_broker = yes
+			}
+		}
+		planet_stability_add = 1
+		mult = planet.modifier:planet_bureaucrats_stability_produces_add
 	}
 
 	triggered_planet_modifier = {
@@ -2754,7 +2947,7 @@ gas_refiner = {
 		# modifier = {
 		#	factor = 7
 		#	has_job_type = gas_refiner	# No Longer Used in Stellaris 4.0
-		#}
+		#} 
 		modifier = {
 			factor = 1.2
 			is_enslaved = yes
@@ -3046,7 +3239,7 @@ healthcare = {
 		}
 	}
 
-	inline_script = "jobs/automodding_priority_amenities"
+	#inline_script = "jobs/automodding_priority_amenities"	# old script
 	
 	promotion = {
 		time = @standard_promotion_time
@@ -3150,29 +3343,59 @@ foundry = {
 			}
 			food = 3
 		}
-		upkeep = {
+	upkeep = {				# catalytic empire green foundray prod. mineral
 			trigger = {
-				exists = owner												# Modded
-				owner = { is_green = yes }									# Modded
+				exists = owner											# Modded
+				owner = { is_green = yes }								# Modded
+				industrial_jobs_are_catalytic_trigger = no				# - mineral upkeep # make catalytic empires foundry produce small amount minerals? 
 			}
-			minerals = -1													# Modded
+			minerals = -1												# Modded
+		}
+		produces = {
+			trigger = {													# Modded	
+			exists = owner												# Modded
+			owner = { is_green = yes }									# Modded	
+			industrial_jobs_are_catalytic_trigger = yes					# Modded			
+			}
+			minerals = 0.6
 		}
 		upkeep = {
 			trigger = {
-				exists = owner												# Modded
-				owner = { has_valid_civic = civic_eco_warfare }				# Modded
+				exists = owner											# Modded
+				owner = { has_valid_civic = civic_eco_warfare }			# Modded
+				industrial_jobs_are_catalytic_trigger = no				# - mineral upkeep # make catalytic empires foundry produce small amount minerals use more food?
 			}
-			minerals = -1													# Modded
-			food = 1														# Modded
+			minerals = -1												# Modded
+			food = 1													# Modded
+		}
+		upkeep = {
+			trigger = {													
+				exists = owner											# Modded	
+				owner = {												# Modded	
+					has_valid_civic = civic_eco_warfare					# Modded	
+				}											
+				industrial_jobs_are_catalytic_trigger = yes				# Modded	
+			}
+			food = 1
+		}
+		produces = {
+			trigger = {
+				exists = owner											# Modded
+				owner = {												# Modded	
+					has_valid_civic = civic_eco_warfare					# Modded	
+				}												
+				industrial_jobs_are_catalytic_trigger = yes				# Modded
+			}
+			minerals = 0.6
 		}
 		upkeep = {
 			trigger = {
-				is_lithoid_empire = no										# Modded
-				exists = owner												# Modded
-				owner = { has_technology = tech_bioreactor }				# Modded
+				is_lithoid_empire = no								# Modded
+				exists = owner										# Modded
+				owner = { has_technology = tech_bioreactor}			# Modded
 			}
-			minerals = -1													# Modded
-			food = 1														# Modded
+			minerals = -1			# Modded
+			food = 1				# Modded
 		}
 		inline_script = "output/foundry_output"
 	}

@@ -58,12 +58,12 @@ zone_urban = {
 		zone_building_slots_add = 3
 	}
 
-	triggered_desc = {
-		trigger = {
-			always = yes
-		}
-		text = zone_urban_triggered_desc
-	}
+	#triggered_desc = {
+	#	trigger = {
+	#		always = yes
+	#	}
+	#	text = zone_urban_triggered_desc
+	#}
 	
 	show_in_tech = tech_pre_industrial_steel_construction
 
@@ -211,6 +211,7 @@ zone_research_unity = {
 	
 	zone_sets = {
 		urban
+		polytechnic
 	}
 
 	included_building_sets = {
@@ -239,12 +240,12 @@ zone_research_unity = {
 		script = zones/shared_city_non_urban_zone_modifiers
 	}
 
-	triggered_desc = {
-		trigger = {
-			always = yes
-		}
-		text = zone_research_unity_triggered_desc
-	}
+	#triggered_desc = {
+	#	trigger = {
+	#		always = yes
+	#	}
+	#	text = zone_research_unity_triggered_desc
+	#}
 	
 	#potential = { # planet scope
 	#	hidden_trigger = { exists = owner }
@@ -278,6 +279,7 @@ zone_research = {
 
 	zone_sets = {
 		urban
+		polytechnic
 	}
 
 	inline_script = {
@@ -315,6 +317,7 @@ zone_research_physics = {
 	zone_sets = {
 		urban
 		habitat_research
+		polytechnic
 	}
 
 	inline_script = {
@@ -354,6 +357,7 @@ zone_research_society = {
 	zone_sets = {
 		urban
 		habitat_research
+		polytechnic
 	}
 
 	inline_script = {
@@ -393,6 +397,7 @@ zone_research_engineering = {
 	zone_sets = {
 		urban
 		habitat_research
+		polytechnic
 	}
 
 	inline_script = {
@@ -432,6 +437,7 @@ zone_unity = {
 	zone_sets = {
 		urban
 		habitat_urban
+		polytechnic
 	}
 
 	inline_script = {
@@ -443,38 +449,35 @@ zone_unity = {
 		zone_unity_bio_trophy
 	}
 	
-	#potential = { # planet scope
-	#	hidden_trigger = { exists = owner }
-	#	owner = {
-	#		hidden_trigger = { is_wilderness_empire = no }
-	#		is_spiritualist = no
-	#		NOT = {
-	#			has_valid_civic = civic_machine_servitor
-	#		}
-	#	}
-	#}
-	#
-	#unlock = { # planet scope
-	#	exists = owner
-	#	owner = {
-	#		OR = {
-	#			is_wilderness_empire = no
-	#			NOT = { has_valid_civic = civic_machine_servitor }
-	#		}
-	#		has_technology = tech_primitive_nation_state_government
-	#	}
-	#}
-
 	potential = { # planet scope
-		hidden_trigger = { exists = owner }
-		owner = {
+		exists = owner
+		owner = {				
+			NOR = {
+				is_wilderness_empire = yes
+				is_spiritualist = yes	
+				has_valid_civic = civic_machine_servitor		
+				has_valid_civic = civic_machine_cult_machine
+			}
 			has_technology = tech_primitive_nation_state_government
 		}
-	}
-
+		OR = {
+			owner = {
+				is_ai = no
+			}
+			AND = {
+				has_any_research_zone = no
+				has_any_industrial_zone = no
+			}
+		}
+	}	
 	unlock = { # planet scope
 		exists = owner
 		owner = {
+			NOR = {
+				is_wilderness_empire = yes
+				has_valid_civic = civic_machine_servitor		
+				has_valid_civic = civic_machine_cult_machine
+			}
 			has_technology = tech_primitive_nation_state_government
 		}
 	}
@@ -494,6 +497,7 @@ zone_unity_spiritualist = {
 	zone_sets = {
 		urban
 		habitat_urban
+		polytechnic
 	}
 
 	inline_script = {
@@ -505,12 +509,21 @@ zone_unity_spiritualist = {
 		zone_unity_bio_trophy
 	}
 	
-	#potential = { # planet scope
-	#	hidden_trigger = { exists = owner }
-	#	owner = {
-	#		is_spiritualist = yes
-	#	}
-	#}
+	potential = { # planet scope
+		hidden_trigger = { exists = owner }
+		owner = {
+			is_spiritualist = yes
+		}
+		OR = {
+			owner = {
+				is_ai = no
+			}
+			AND = {
+				has_any_research_zone = no
+				has_any_industrial_zone = no
+			}
+		}
+	}
 
 	unlock = { # planet scope
 		OWNER = { has_technology = tech_primitive_nation_state_government }
@@ -530,6 +543,7 @@ zone_unity_bio_trophy = {
 	zone_sets = {
 		urban
 		habitat_urban
+		polytechnic
 	}
 
 	triggered_district_planet_modifier = {
@@ -541,17 +555,24 @@ zone_unity_bio_trophy = {
 		zone_unity_spiritualist
 	}
 	
-	#potential = { # planet scope
-	#	hidden_trigger = { exists = owner }
-	#	owner = {
-	#		has_valid_civic = civic_machine_servitor
-	#	}
-	#}
+	potential = { # planet scope
+		hidden_trigger = { exists = owner }
+		owner = {
+			OR = {
+				has_valid_civic = civic_machine_servitor
+				has_valid_civic = civic_machine_cult_machine
+			}
+			has_technology = tech_primitive_nation_state_government
+		}
+	}
 
 	unlock = { # planet scope
 		exists = owner
 		owner = {
-			#has_valid_civic = civic_machine_servitor
+			OR = {
+				has_valid_civic = civic_machine_servitor
+				has_valid_civic = civic_machine_cult_machine
+			}
 			has_technology = tech_primitive_nation_state_government
 		}
 	}
@@ -705,12 +726,12 @@ zone_anglers = {
 		zone_building_slots_add = 3
 	}
 
-	triggered_desc = {
-		trigger = {
-			always = yes
-		}
-		text = zone_anglers_triggered_desc
-	}
+	#triggered_desc = {
+	#	trigger = {
+	#		always = yes
+	#	}
+	#	text = zone_anglers_triggered_desc
+	#}
 	
 	#potential = { # planet scope
 	#	exists = owner
@@ -1157,12 +1178,12 @@ zone_agrarian_anglers = {
 		zone_building_slots_add = 3
 	}
 
-	triggered_desc = {
-		trigger = {
-			always = yes
-		}
-		text = zone_anglers_triggered_desc
-	}
+	#triggered_desc = {
+	#	trigger = {
+	#		always = yes
+	#	}
+	#	text = zone_anglers_triggered_desc
+	#}
 
 	ai_priority = 1
 }
@@ -1238,12 +1259,12 @@ zone_urban_energy = {
 		mult = 5
 	}
 
-	triggered_desc = {
-		trigger = {
-			always = yes
-		}
-		text = zone_urban_triggered_desc
-	}
+	#triggered_desc = {
+	#	trigger = {
+	#		always = yes
+	#	}
+	#	text = zone_urban_triggered_desc
+	#}
 	
 	#potential = { # planet scope
 	#	hidden_trigger = { exists = owner }
@@ -1342,12 +1363,12 @@ zone_urban_minerals = {
 		mult = 5
 	}
 
-	triggered_desc = {
-		trigger = {
-			always = yes
-		}
-		text = zone_urban_triggered_desc
-	}
+	#triggered_desc = {
+	#	trigger = {
+	#		always = yes
+	#	}
+	#	text = zone_urban_triggered_desc
+	#}
 	
 	#potential = { # planet scope
 	#	hidden_trigger = { exists = owner }
@@ -1446,12 +1467,12 @@ zone_urban_food = {
 		mult = 5
 	}
 
-	triggered_desc = {
-		trigger = {
-			always = yes
-		}
-		text = zone_urban_triggered_desc
-	}
+	#triggered_desc = {
+	#	trigger = {
+	#		always = yes
+	#	}
+	#	text = zone_urban_triggered_desc
+	#}
 	
 	#potential = { # planet scope
 	#	hidden_trigger = { exists = owner }

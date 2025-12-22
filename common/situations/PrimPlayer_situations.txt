@@ -117,7 +117,10 @@ PrimPlayer_unified_planet_situation = {
 	complete_icon_frame = GFX_situation_outcome_frame_blue
 	complete_icon = GFX_situation_outcome_unknown
 	abort_trigger = {
-		owner = { has_technology = tech_primitive_unified_planet }
+		owner = { 
+			has_technology = tech_primitive_unified_planet 
+			has_country_flag = PrimPlayer_unified_planet_situation_event_flag
+		}
 	}
 	modifier = {
 		custom_tooltip = PrimPlayer_unified_planet_situation_modifier_tooltip
@@ -146,6 +149,27 @@ PrimPlayer_unified_planet_situation = {
 		#	current_situation_approach = PrimPlayer_eager_explorer_approach
 		#}
 		modifier = {
+			add = -1
+			desc = PrimPlayer_separatist_movement
+			OWNER = { capital_scope = { has_modifier = PrimPlayer_separatist_movement } }
+		}
+		modifier = {
+			add = -1
+			desc = PrimPlayer_devastation_unified_planet_situation_modifier
+			current_situation_approach = PrimPlayer_post_apocalyptic_approach	#Technically negative progress can cancel the situation
+			OWNER = { 
+				capital_scope = { 
+					planet_devastation > 10 
+					#planet_devastation < 50
+				} 
+			}
+		}
+		#modifier = {
+		#	add = -2
+		#	desc = PrimPlayer_high_devastation_unified_planet_situation_modifier
+		#	OWNER = { capital_scope = { planet_devastation > 50 } }
+		#}
+		modifier = {
 			add = 2
 			desc = PrimPlayer_payback_approach
 			current_situation_approach = PrimPlayer_payback_approach
@@ -155,23 +179,146 @@ PrimPlayer_unified_planet_situation = {
 			desc = PrimPlayer_broken_shackles_approach
 			current_situation_approach = PrimPlayer_broken_shackles_approach
 		}
+		modifier = {
+			add = 1
+			desc = PrimPlayer_post_apocalyptic_approach
+			current_situation_approach = PrimPlayer_post_apocalyptic_approach
+		}
 	}
 	on_progress_complete = {
 		owner = { 
 			give_technology = { tech = tech_primitive_unified_planet message = yes }
+			hidden_effect = { remove_country_flag = PrimPlayer_unified_planet_situation_event_flag }
 			capital_scope = {
 				add_modifier = {
 					modifier = payback_unified_purpose
 					years = 20
 					clear_on_owner_change = yes
 				}
+				if = {
+					limit = { has_modifier = PrimPlayer_separatist_movement }
+					remove_modifier = PrimPlayer_separatist_movement
+				}
 			}
 		}
-		hidden_effect = { destroy_situation = this }
+		hidden_effect = { 
+			every_owned_planet = {
+				if = {
+					limit = { has_modifier = PrimPlayer_separatist_movement }
+					remove_modifier = PrimPlayer_separatist_movement
+				}
+				if = {	
+					limit = { has_modifier = PrimPlayer_authoritarian_movement }
+					remove_modifier = PrimPlayer_authoritarian_movement
+				}
+				if = {	
+					limit = { has_modifier = PrimPlayer_egalitarian_movement }
+					remove_modifier = PrimPlayer_egalitarian_movement
+				}
+				if = {	
+					limit = { has_modifier = PrimPlayer_xenophobe_movement }
+					remove_modifier = PrimPlayer_xenophobe_movement
+				}
+				if = {	
+					limit = { has_modifier = PrimPlayer_xenophile_movement }
+					remove_modifier = PrimPlayer_xenophile_movement
+				}
+				if = {	
+					limit = { has_modifier = PrimPlayer_militarist_movement }
+					remove_modifier = PrimPlayer_militarist_movement
+				}
+				if = {	
+					limit = { has_modifier = PrimPlayer_pacifist_movement }
+					remove_modifier = PrimPlayer_pacifist_movement
+				}
+				if = {	
+					limit = { has_modifier = PrimPlayer_spiritualist_movement }
+					remove_modifier = PrimPlayer_spiritualist_movement
+				}
+				if = {	
+					limit = { has_modifier = PrimPlayer_materialist_movement }
+					remove_modifier = PrimPlayer_materialist_movement
+				}
+				if = {	
+					limit = { has_modifier = PrimPlayer_green_movement }
+					remove_modifier = PrimPlayer_green_movement
+				}
+				if = {	
+					limit = { has_modifier = PrimPlayer_industrial_movement }
+					remove_modifier = PrimPlayer_industrial_movement
+				}
+				if = {	
+					limit = { has_modifier = PrimPlayer_socialism_movement }
+					remove_modifier = PrimPlayer_socialism_movement
+				}
+				if = {	
+					limit = { has_modifier = PrimPlayer_capitalism_movement }
+					remove_modifier = PrimPlayer_capitalism_movement
+				}
+			}
+			destroy_situation = this 
+		}
 	}
 	on_fail = {
 		custom_tooltip = PrimPlayer_situation_end
-		hidden_effect = { destroy_situation = this }
+		hidden_effect = { 
+			remove_country_flag = PrimPlayer_unified_planet_situation_event_flag
+			every_owned_planet = {
+				if = {
+					limit = { has_modifier = PrimPlayer_separatist_movement }
+					remove_modifier = PrimPlayer_separatist_movement
+				}
+				if = {	
+					limit = { has_modifier = PrimPlayer_authoritarian_movement }
+					remove_modifier = PrimPlayer_authoritarian_movement
+				}
+				if = {	
+					limit = { has_modifier = PrimPlayer_egalitarian_movement }
+					remove_modifier = PrimPlayer_egalitarian_movement
+				}
+				if = {	
+					limit = { has_modifier = PrimPlayer_xenophobe_movement }
+					remove_modifier = PrimPlayer_xenophobe_movement
+				}
+				if = {	
+					limit = { has_modifier = PrimPlayer_xenophile_movement }
+					remove_modifier = PrimPlayer_xenophile_movement
+				}
+				if = {	
+					limit = { has_modifier = PrimPlayer_militarist_movement }
+					remove_modifier = PrimPlayer_militarist_movement
+				}
+				if = {	
+					limit = { has_modifier = PrimPlayer_pacifist_movement }
+					remove_modifier = PrimPlayer_pacifist_movement
+				}
+				if = {	
+					limit = { has_modifier = PrimPlayer_spiritualist_movement }
+					remove_modifier = PrimPlayer_spiritualist_movement
+				}
+				if = {	
+					limit = { has_modifier = PrimPlayer_materialist_movement }
+					remove_modifier = PrimPlayer_materialist_movement
+				}
+				if = {	
+					limit = { has_modifier = PrimPlayer_green_movement }
+					remove_modifier = PrimPlayer_green_movement
+				}
+				if = {	
+					limit = { has_modifier = PrimPlayer_industrial_movement }
+					remove_modifier = PrimPlayer_industrial_movement
+				}
+				if = {	
+					limit = { has_modifier = PrimPlayer_socialism_movement }
+					remove_modifier = PrimPlayer_socialism_movement
+				}
+				if = {	
+					limit = { has_modifier = PrimPlayer_capitalism_movement }
+					remove_modifier = PrimPlayer_capitalism_movement
+				}
+			}
+			destroy_situation = this 
+		}
 	}
 	approach = {
 		name = into_the_unknown
@@ -183,6 +330,7 @@ PrimPlayer_unified_planet_situation = {
 		}
 		potential = {
 			owner = {
+				capital_scope = { NOT = { is_planet_class = pc_nuked } }
 				OR = {
 					has_origin = origin_primitive_player_pre_industrial_age 
 					has_origin = origin_primitive_player_industrial_age 
@@ -222,6 +370,20 @@ PrimPlayer_unified_planet_situation = {
 			custom_tooltip = PrimPlayer_broken_shackles_unified_planet_approach_tooltip
 		}
 		potential = { owner = { has_origin = origin_broken_shackles } }
+	}
+	approach = {
+		name = PrimPlayer_post_apocalyptic_approach
+		icon = GFX_situation_approach_nuclear
+		icon_background = GFX_situation_approach_bg_green
+		default = no
+		on_select = {
+			custom_tooltip = PrimPlayer_post_apocalyptic_unified_planet_approach_tooltip
+		}
+		potential = { 
+			owner = { 
+				capital_scope = { is_planet_class = pc_nuked } 
+			} 
+		}
 	}
 }
 
@@ -275,7 +437,7 @@ PrimPlayer_situation = {
 		stage_3 = {
 			icon = GFX_PrimPlay_situation_stage_machine_age
 			icon_background = GFX_situation_stage_frame_blue
-			end = 139
+			end = 154
 			on_first_enter = {
 				if = {
 					limit = { 
@@ -294,7 +456,7 @@ PrimPlayer_situation = {
 		stage_4 = {
 			icon = GFX_PrimPlay_situation_stage_atomic_age
 			icon_background = GFX_situation_stage_frame_blue
-			end = 229
+			end = 234
 			on_first_enter = {
 				if = {
 					limit = { 
@@ -313,7 +475,7 @@ PrimPlayer_situation = {
 		stage_5 = {
 			icon = GFX_PrimPlay_situation_stage_early_space_age
 			icon_background = GFX_situation_stage_frame_blue
-			end = 384
+			end = 389
 			on_first_enter = {
 				if = {
 					limit = { 
@@ -390,7 +552,7 @@ PrimPlayer_situation = {
 	on_progress_complete = {
 		capital_scope = {
 			if = {
-				limit = { has_planet_modifier = PrimPlayer_separatist_movement }
+				limit = { has_modifier = PrimPlayer_separatist_movement }
 				remove_modifier = PrimPlayer_separatist_movement
 			}
 		}
@@ -413,7 +575,13 @@ PrimPlayer_situation = {
 			}
 			owner = {
 				custom_tooltip = PrimPlayer_reached_space_age
-				set_origin = origin_default
+				if = {
+					limit = { 
+						capital_scope = { is_planet_class = pc_nuked }	#Default origin if Nuclear Winter happens, everything else has priority
+					}
+					set_origin = origin_post_apocalyptic
+				}
+				else = { set_origin = origin_default }	#Default origin, unless Nuclear Winter happens, everything else has priority
 				hidden_effect = { prev = { situation_event = { id = PrimPlay_situation_event.1 } } }
 			}
 		}
@@ -491,7 +659,7 @@ PrimPlayer_situation = {
 }
 
 ###################################
-# Through the Ages Situation
+# Awareness Situation
 ###################################
 PrimPlayer_awareness_situation = {
 	picture = GFX_evt_clocks
