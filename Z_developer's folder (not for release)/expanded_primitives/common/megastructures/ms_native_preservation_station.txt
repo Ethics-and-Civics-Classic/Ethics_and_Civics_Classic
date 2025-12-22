@@ -1,0 +1,278 @@
+
+ms_preservation_station_0 = {
+	entity = "construction_platform_entity"
+	construction_entity = "construction_platform_entity"
+	portrait = "GFX_megastructure_construction_background"
+	place_entity_on_planet_plane = no
+	entity_offset = { x = -9 y = -9 }
+
+	build_time = 720
+	
+	build_cost = {
+		minerals = 4000
+	}
+	construction_blocks_others = no
+	
+	
+	maintenance = {
+		energy = 10
+	}
+	
+	monthly_production = {
+	}
+
+	potential = {
+		has_ascension_perk = ap_societal_engineering
+		has_technology = tech_planetary_shield_generator
+	}
+	
+	possible = {
+		custom_tooltip = {
+			fail_text = "requires_inside_border"
+			is_inside_border = from
+		}
+		custom_tooltip = {
+			fail_text = "requires_surveyed_system"
+			NOT = {
+				any_planet = {
+					is_surveyed = {
+						who = prev.from
+						status = no
+					}
+				}
+			}
+		}
+	}
+	
+	placement_rules = {
+		planet_possible = {
+			custom_tooltip = {
+				fail_text = "requires_no_anomaly"
+				NOT = { has_anomaly = yes }
+			}
+			
+			custom_tooltip = {
+				fail_text = "requires_survey_not_habitable"
+				is_surveyed = {			# prevent leaking habitability information
+					who = prev.from
+					status = yes
+				}
+			}
+			
+			custom_tooltip = {
+				fail_text = "requires_no_existing_megastructure"
+				can_build_megastructure_on_planet = yes
+			}
+			
+			custom_tooltip = {
+				fail_text = "requires_no_orbital_station"
+				has_orbital_station = no
+			}
+			
+			custom_tooltip = {
+				fail_text = "requires_not_port"
+				NOT = {
+					has_planet_flag = has_ring_port
+				}
+			}
+			
+			custom_tooltip = {
+				fail_text = "ms_requires_habitable"
+				OR = {
+					is_colonizable = yes
+					AND = {
+						has_owner = yes
+						owner = {
+							is_primitive = yes
+						}
+					}
+				}
+			}
+					
+			
+			custom_tooltip = {
+				fail_text = "requires_not_habitat_duh"
+				NOT = {
+					OR = {
+						is_planet_class = "pc_habitat"
+						is_planet_class = "pc_asteroid_accretion"
+						is_planet_class = "pc_ringworld_habitable"
+						is_planet_class = "pc_gas_giant"
+						is_planet_class = "pc_shielded"
+						is_asteroid = yes
+					}	
+				}
+			}
+			
+			custom_tooltip = {
+				fail_text = "requires_not_ringworld_duh"
+				is_ringworld = no
+			}
+			
+			#custom_tooltip = {
+			#	fail_text = "requires_primitive_civ"
+			#	has_owner = yes
+			#	owner = {
+			#		is_primitive = yes
+			#	}
+			#}
+			
+			custom_tooltip = {
+				fail_text = "requires_not_star"
+				is_star = no
+			}
+		} # use these for all non-star megastructures
+	}
+	
+	
+	ai_weight = {
+		modifier = {
+			weight = 0			
+			owner = {
+				is_ai = yes
+			}
+		}
+	}
+	
+	on_build_start = {}
+	on_build_cancel = {}
+	on_build_complete = {
+		fromfrom.planet = {
+			set_planet_flag = megastructure
+		}
+	}
+}
+
+ms_preservation_station_1 = {
+	entity = "ms_primitive_station_entity"
+	construction_entity = "ms_primitive_station_construction_entity"
+	portrait = "GFX_megastructure_construction_background"
+	place_entity_on_planet_plane = no
+	entity_offset = { x = -5 y = -5 }
+	
+	construction_blocks_others = no
+	
+	upgrade_from = {
+		ms_preservation_station_0
+	}
+	
+	build_time = 360
+	build_cost = {
+		minerals = 2000
+		energy = 4000
+	}
+
+	monthly_production = {
+		society_research = 12
+	}
+
+	maintenance = {
+	}
+	
+	
+	on_build_complete = {
+		fromfrom.planet = {
+			change_pc = pc_ms_primitive_shield
+			if = {
+				limit = {
+					has_owner = yes
+				}
+				owner = {
+					set_country_type = ms_primitive_1
+					if = {
+						limit = {
+							has_country_flag = stone_age
+						}
+						set_primitive_age = stone_age
+					}
+					if = {
+						limit = {
+							has_country_flag = bronze_age
+						}
+						set_primitive_age = bronze_age
+					}
+					if = {
+						limit = {
+							has_country_flag = iron_age
+						}
+						set_primitive_age = iron_age
+					}
+					if = {
+						limit = {
+							has_country_flag = late_medieval_age
+						}
+						set_primitive_age = late_medieval_age
+					}
+					if = {
+						limit = {
+							has_country_flag = renaissance_age
+						}
+						set_primitive_age = renaissance_age
+					}
+					if = {
+						limit = {
+							has_country_flag = steam_age
+						}
+						set_primitive_age = steam_age
+					}
+					if = {
+						limit = {
+							has_country_flag = industrial_age
+						}
+						set_primitive_age = industrial_age
+					}
+					if = {
+						limit = {
+							has_country_flag = machine_age
+						}
+						set_primitive_age = machine_age
+					}
+					if = {
+						limit = {
+							has_country_flag = atomic_age
+						}
+						set_primitive_age = atomic_age
+					}
+					if = {
+						limit = {
+							has_country_flag = early_space_age
+						}
+						set_primitive_age = early_space_age
+					}
+				}
+				else = {
+					create_country = {
+						name = "Empty Preservation World" 
+						type = ms_placeholder
+						flag = {
+							icon = {
+								category = "spherical"
+								file = "flag_spherical_4.dds"
+							}
+							background = {
+								category = "backgrounds"
+								file = "circle.dds"
+							}
+							colors = {
+								"black"
+								"black"
+								"null"
+								"null"
+							}
+						}
+						effect = {
+							establish_communications_no_message = prev.space_owner
+							establish_contact = { who = prev.space_owner location = prev }
+						}
+					}
+					
+					last_created_country = {
+						save_event_target_as = shield_blocker
+					}
+					set_owner = event_target:shield_blocker
+					set_controller = event_target:shield_blocker	
+				}
+			}
+		}
+	}
+}

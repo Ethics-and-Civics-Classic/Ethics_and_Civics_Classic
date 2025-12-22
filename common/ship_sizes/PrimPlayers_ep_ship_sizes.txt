@@ -1,3 +1,108 @@
+################
+# Orbital ring #
+################
+
+@build_block_orbital_ring = 20
+@orbital_ring_formation_priority = 1
+
+orbital_ring_tier_0 = {
+	max_speed = 0.0
+	acceleration = 0.0
+	rotation_speed = 0.0
+	modifier = {
+		ship_evasion_mult = -1
+		ship_armor_add = @outpost_armor
+		starbase_defense_platform_capacity_add = 2
+		starbase_module_capacity_add = 2
+		starbase_building_capacity_add = 0
+	}
+	ship_modifier = {
+		ship_fire_rate_mult = 1.0
+		ship_weapon_range_mult = 1.0
+	}
+	max_hitpoints = 1500
+	base_buildtime = 720
+	resources = {
+		category = starbases
+		cost = {
+			influence = 50
+		}
+		cost = {
+			trigger = {
+				from = {
+					country_uses_bio_ships = no
+				}
+			}
+			minerals = 1000
+		}
+		cost = {
+			trigger = {
+				from = {
+					country_uses_bio_ships = yes
+				}
+			}
+			minerals = 1000
+			mult = 0.5
+		}
+		cost = {
+			trigger = {
+				from = {
+					country_uses_bio_ships = yes
+				}
+			}
+			food = 1000
+			mult = @halved_alloy_to_food_cost_ratio
+		}
+
+		upkeep = {
+			energy = 2
+		}
+	}
+
+	combat_size_multiplier = 5
+	size_multiplier = 4
+	fleet_slot_size = 2
+	section_slots = {
+		"core" = { locator = "part1" }
+		"1" = { locator = "part2" }
+		"2" = { locator = "part3" }
+	}
+
+	potential_construction = {
+		# This is build through a megastructure
+		always = no
+	}
+
+	possible_construction = {
+		always = no
+	}
+
+	is_designable = no
+	num_target_locators = 0
+	is_space_station = yes
+	can_have_federation_design = no
+	is_civilian = no
+	components_add_to_cost = no
+	can_disable = yes
+	flip_control_on_disable = yes
+
+	enable_default_design = yes	#if yes, countries will have an auto-generated design at start
+	prerequisites = { "tech_space_international_space_station" }
+	class = shipclass_starbase
+
+	required_component_set = "power_core"
+	required_component_set = "sensor_components"
+	#required_component_set = "combat_computers"
+
+	build_block_radius = @build_block_orbital_ring
+	formation_priority = @orbital_ring_formation_priority
+	icon_frame = 7
+	scales_with_planet = no
+	graphical_culture = yes
+
+	available_to_everyone = yes
+}
+
 primitive_space_station = {
 	max_speed = 0.0
 	acceleration = 0.0
@@ -17,4 +122,29 @@ primitive_space_station = {
 
 	class = shipclass_military_station
 	icon = ship_size_military_station		# Cog Note - Included for modern update
+}
+
+msi_obervation_station = {
+	max_speed = 0.0
+	acceleration = 0.0
+	rotation_speed = 0.0
+	max_hitpoints = @station_civilian_hp
+	modifier = {
+		ship_armor_add = 1000
+		ship_evasion_mult = -1
+	}
+	size_multiplier = 8
+	fleet_slot_size = 0
+	section_slots = { "mid" = { locator = "root" } }
+	is_designable = no
+	num_target_locators = 0
+	is_space_station = yes
+	build_block_radius = 20
+	is_civilian = yes
+	auto_upgrade = yes
+	
+	icon = shipclass_observation_station
+	class = shipclass_science_ship
+	valid_target_aggressive_stance = no
+	required_component_set = "science_cloaking_components"
 }

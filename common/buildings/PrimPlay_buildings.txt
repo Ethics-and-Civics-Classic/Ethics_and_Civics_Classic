@@ -19,6 +19,8 @@
 # planet_unique, toggles if one can build multiple of this type on a single planet.
 # ai_weight, weight for AI, default is set to one, weight set to 0 means that AI will never build it
 
+@primitive_upkeep = 1
+
 #
 # BALANCE
 # Can change the time and cost of all common buildings with these variables below
@@ -256,42 +258,103 @@
 ##
 ## OTHER
 ##
-# building_fallout_shelter = {
-#	base_buildtime = 120
-#	
-#	cost = {
-#		minerals = 80
-#	}
-#	
-#	required_resources = {
-#		energy = 1
-#		minerals = 1
-#	}
-#	produced_resources = {
-##		food = 1
-#	}
-#	planet_modifier = {
-#		pop_environment_tolerance = 0.15
-#	}
-#	upgrades = {
-##		col_building_hab_2
-#	}
-#	
-#	prerequisites = {
-##		"tech_col_hab"
-#	}
-#	
-#	potential = {
-#		planet = { is_planet_class = "pc_nuked" }
-#	}
-#	
-#	destroy_if = {
-#		planet = { NOT = { is_planet_class = "pc_nuked" } }
-#	}
-#	allow = {
-#		planet = { is_planet_class = "pc_nuked" }
-#	}
-#}
+building_fallout_shelter = {
+	can_build = yes
+	base_buildtime = @b1_time
+	can_demolish = yes
+	can_be_ruined = no
+	planet_limit = 1
+
+	category = resource
+	
+	building_sets = {
+		pre_ftl
+	}
+
+	potential = {
+		exists = owner
+		owner = {
+			is_hive_empire = no
+			OR = {
+				# has_origin = origin_primitive_player_pre_industrial_age
+				# has_origin = origin_primitive_player_industrial_age
+				# has_origin = origin_primitive_player_machine_age
+				# has_origin = origin_primitive_player_atomic_age
+				# has_origin = origin_primitive_player_early_space_age
+				AND = {
+					any_situation = { is_situation_type = PrimPlayer_situation } # Much more efficient trigger
+					has_technology = tech_primitive_atomic_age_weapons
+				}
+				AND = {
+					OR = {
+						has_country_flag = steam_age
+						has_country_flag = machine_age
+						has_country_flag = industrial_age
+						has_country_flag = atomic_age
+						has_country_flag = early_space_age
+					}
+					is_primitive = yes
+				}
+			}
+		}
+	}
+
+	destroy_trigger = {
+		exists = owner
+		owner = {
+			OR = {
+				NOT = {
+					# has_origin = origin_primitive_player_pre_industrial_age
+					# has_origin = origin_primitive_player_industrial_age
+					# has_origin = origin_primitive_player_machine_age
+					# has_origin = origin_primitive_player_atomic_age
+					# has_origin = origin_primitive_player_early_space_age
+					any_situation = { is_situation_type = PrimPlayer_situation } # Much more efficient trigger
+					is_primitive = yes
+				}
+				is_hive_empire = yes
+			}
+		}
+	}
+	
+	resources = {
+		category = planet_buildings
+		upkeep = {
+			trigger = { exists = owner }
+			energy =@primitive_upkeep
+		}
+		cost = {
+			minerals = @b1_minerals
+		}
+	}
+	
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			OR = {
+				solar_system = {
+					has_star_flag = storm_system
+				}
+				has_modifier = irradiated_wasteland
+			}
+		}
+		modifier = {
+			planet_miners_minerals_produces_add = 1
+			planet_farmers_food_produces_add = 1
+			planet_technician_energy_produces_add = 1
+		}
+	}
+
+	custom_tooltip = "building_fallout_shelter_tt"
+	
+	prerequisites = {
+		"tech_primitive_atomic_age_weapons"
+	}
+	
+	upgrades = {
+		"building_storm_resistant_production"
+	}
+}
 #
 #####################
 # Pre-FTL Buildings #
@@ -306,6 +369,7 @@
 building_crude_huts = {
 	capital = yes
 	can_build = yes
+	base_buildtime = @b1_time
 	can_demolish = yes
 	can_be_ruined = no
 	position_priority = 0
@@ -370,6 +434,7 @@ building_crude_huts = {
 
 building_primitive_dwellings = {
 	can_build = yes
+	base_buildtime = @b1_time
 	can_demolish = yes
 	can_be_ruined = no
 
@@ -724,6 +789,13 @@ building_stone_palace = {
 	show_tech_unlock_if = {
 		is_hive_empire = no
 	}
+	
+	resources = {
+		category = planet_buildings
+		cost = {
+			minerals = @b1_minerals
+		}
+	}
 
 	upgrades = {
 		"building_primitive_capital"
@@ -732,6 +804,7 @@ building_stone_palace = {
 
 building_primitive_factory = {
 	can_build = yes
+	base_buildtime = @b1_time
 	can_demolish = yes
 	can_be_ruined = no
 
@@ -804,6 +877,17 @@ building_primitive_factory = {
 		job_fabricator_add = @building_static_jobs
 	}
 	
+	triggered_planet_modifier = {
+		potential = {
+			planet = {
+				has_owner = yes
+			}
+		}
+		pop_environment_tolerance = -0.03
+	}
+	
+	#Cog Note - No polution if planet has #To Be Determined
+	
 	prerequisites = {
 		"tech_pre_industrial_iron_construction"
 	}
@@ -811,35 +895,46 @@ building_primitive_factory = {
 	show_tech_unlock_if = {
 		is_gestalt = no
 	}
+	
+	resources = {
+		category = planet_buildings
+		cost = {
+			minerals = @b1_minerals
+		}
+		upkeep = {
+			energy = @primitive_upkeep
+		}
+	}
 
 	# upgrades = {
 	#	"building_factory_1"
 	#}
 	
-	triggered_desc = {
-		trigger = {
-			exists = owner
-			owner = {
-				is_gestalt = no
-			}
-		}
-		text =  job_primitive_laborer_effect_desc
-	}
+	#triggered_desc = {
+	#	trigger = {
+	#		exists = owner
+	#		owner = {
+	#			is_gestalt = no
+	#		}
+	#	}
+	#	text =  job_primitive_laborer_effect_desc
+	#}
 
-	triggered_desc = {
-		trigger = {
-			exists = owner
-			owner = {
-				is_hive_empire = yes
-			}
-		}
-		text =  job_alloy_drone_effect_desc
-	}
+	#triggered_desc = {
+	#	trigger = {
+	#		exists = owner
+	#		owner = {
+	#			is_hive_empire = yes
+	#		}
+	#	}
+	#	text =  job_alloy_drone_effect_desc
+	#}
 }
 
 building_primitive_offices = {
-	can_build = no
-	planet_limit = 1
+	can_build = yes
+	base_buildtime = @b1_time
+	#planet_limit = 1
 	can_demolish = yes
 	can_be_ruined = no
 
@@ -902,6 +997,16 @@ building_primitive_offices = {
 		job_primitive_administrator_add = @building_static_jobs
 	}
 	
+	resources = {
+		category = planet_buildings
+		cost = {
+			minerals = @b1_minerals
+		}
+		upkeep = {
+			energy =@primitive_upkeep
+		}
+	}
+	
 	prerequisites = {
 		"tech_primitive_nation_state_government"
 	}
@@ -915,13 +1020,14 @@ building_primitive_offices = {
 	#	building_temple
 	#}
 
-	triggered_desc = {
-		text =  job_primitive_administrator_effect_desc
-	}
+	#triggered_desc = {
+	#	text =  job_primitive_administrator_effect_desc
+	#}
 }
 
 building_primitive_research = {
-	can_build = no
+	can_build = yes
+	base_buildtime = @b1_time
 	can_demolish = yes
 	can_be_ruined = no
 	planet_limit = 1
@@ -991,6 +1097,16 @@ building_primitive_research = {
 		job_calculator_biologist_add = 60
 		job_calculator_engineer_add = 60
 	}
+	
+	resources = {
+		category = planet_buildings
+		cost = {
+			minerals = @b1_minerals
+		}
+		upkeep = {
+			energy =@primitive_upkeep
+		}
+	}
 
 	#upgrades = {
 	#	building_research_lab_1
@@ -1004,13 +1120,14 @@ building_primitive_research = {
 		is_gestalt = no
 	}
 
-	triggered_desc = {
-		text =  job_primitive_researcher_2_effect_desc
-	}
+	#triggered_desc = {
+	#	text =  job_primitive_researcher_2_effect_desc
+	#}
 }
 
 building_primitive_mine = {
 	can_build = yes
+	base_buildtime = @b1_time
 	can_demolish = yes
 	can_be_ruined = no
 
@@ -1076,6 +1193,13 @@ building_primitive_mine = {
 		job_primitive_miner_add = 800
 	}
 	
+	resources = {
+		category = planet_buildings
+		cost = {
+			minerals = @b1_minerals
+		}
+	}
+	
 	prerequisites = {
 		"tech_pre_industrial_iron_construction"
 	}
@@ -1091,6 +1215,7 @@ building_primitive_mine = {
 
 building_primitive_power_plant = {
 	can_build = yes
+	base_buildtime = @b1_time
 	can_demolish = yes
 	can_be_ruined = no
 
@@ -1152,6 +1277,13 @@ building_primitive_power_plant = {
 		# "tech_pre_industrial_iron_construction"
 	}
 	
+	resources = {
+		category = planet_buildings
+		cost = {
+			minerals = @b1_minerals
+		}
+	}
+	
 	show_tech_unlock_if = {
 		is_gestalt = no
 	}
@@ -1162,6 +1294,7 @@ building_primitive_power_plant = {
 
 building_primitive_farm = {
 	can_build = yes
+	base_buildtime = @b1_time
 	can_demolish = yes
 	can_be_ruined = no
 
@@ -1221,6 +1354,13 @@ building_primitive_farm = {
 
 	planet_modifier = {
 		job_primitive_farmer_add = 1000
+	}
+	
+	resources = {
+		category = planet_buildings
+		cost = {
+			minerals = @b1_minerals
+		}
 	}
 	
 	prerequisites = {
@@ -1463,6 +1603,16 @@ building_primitive_capital = {
 		is_gestalt = no
 	}
 	
+	resources = {
+		category = planet_buildings
+		cost = {
+			minerals = @b1_minerals
+		}
+		upkeep = {
+			energy =@primitive_upkeep
+		}
+	}
+	
 	upgrades = {
 		"building_capital"
 	}
@@ -1470,6 +1620,7 @@ building_primitive_capital = {
 
 building_urban_dwellings = {
 	can_build = yes
+	base_buildtime = @b1_time
 	can_demolish = yes
 	can_be_ruined = no
 	icon = building_residence
@@ -1526,6 +1677,16 @@ building_urban_dwellings = {
 		planet_housing_add = 2400
 	}
 	
+	resources = {
+		category = planet_buildings
+		cost = {
+			minerals = @b1_minerals
+		}
+		upkeep = {
+			energy =@primitive_upkeep
+		}
+	}
+	
 	prerequisites = {
 		"tech_pre_industrial_steel_construction"
 	}
@@ -1542,6 +1703,7 @@ building_urban_dwellings = {
 building_pre_ftl_radio_telescope = {
 	base_buildtime = @b1_time
 	can_build = yes
+	base_buildtime = @b1_time
 	can_demolish = yes
 	can_be_ruined = no
 	empire_limit = { 	#optional: default is no limit
@@ -1614,7 +1776,7 @@ building_pre_ftl_radio_telescope = {
 			minerals = @b1_minerals
 		}
 		upkeep = {
-			energy = @b1_upkeep
+			energy =@primitive_upkeep
 		}
 	}
 	
@@ -1760,6 +1922,7 @@ building_hive_crude_huts = {
 	icon = building_crude_huts
 	capital = yes
 	can_build = yes
+	base_buildtime = @b1_time
 	can_demolish = yes
 	can_be_ruined = no
 	position_priority = 0
@@ -1811,6 +1974,16 @@ building_hive_crude_huts = {
 		planet_crime_no_happiness_add = -10
 	}
 	
+	resources = {
+		category = planet_buildings
+		cost = {
+			minerals = @b1_minerals
+		}
+		upkeep = {
+			energy =@primitive_upkeep
+		}
+	}
+	
 	prerequisites = {
 		"tech_pre_industrial_stone_construction"
 	}
@@ -1826,6 +1999,7 @@ building_hive_crude_huts = {
 building_hive_primitive_dwellings = {
 	icon = building_primitive_dwellings
 	can_build = yes
+	base_buildtime = @b1_time
 	can_demolish = yes
 	can_be_ruined = no
 
@@ -1882,6 +2056,16 @@ building_hive_primitive_dwellings = {
 		planet_housing_add = 600
 	}
 	
+	resources = {
+		category = planet_buildings
+		cost = {
+			minerals = @b1_minerals
+		}
+		upkeep = {
+			energy =@primitive_upkeep
+		}
+	}
+	
 	prerequisites = {
 		"tech_pre_industrial_iron_construction"
 	}
@@ -1898,6 +2082,7 @@ building_hive_stone_palace = {
 	icon = building_stone_palace
 	capital = yes
 	can_build = yes
+	base_buildtime = @b1_time
 	can_demolish = yes
 	can_be_ruined = no
 	position_priority = 0
@@ -1973,6 +2158,16 @@ building_hive_stone_palace = {
 		"tech_pre_industrial_stone_construction"
 	}
 	
+	resources = {
+		category = planet_buildings
+		cost = {
+			minerals = @b1_minerals
+		}
+		upkeep = {
+			energy =@primitive_upkeep
+		}
+	}
+	
 	show_tech_unlock_if = {
 		is_hive_empire = yes
 	}
@@ -1984,6 +2179,7 @@ building_hive_stone_palace = {
 building_hive_primitive_factory = {
 	icon = building_primitive_factory
 	can_build = yes
+	base_buildtime = @b1_time
 	can_demolish = yes
 	can_be_ruined = no
 
@@ -2044,6 +2240,16 @@ building_hive_primitive_factory = {
 		"tech_pre_industrial_iron_construction"
 	}
 	
+	resources = {
+		category = planet_buildings
+		cost = {
+			minerals = @b1_minerals
+		}
+		upkeep = {
+			energy =@primitive_upkeep
+		}
+	}
+	
 	show_tech_unlock_if = {
 		is_hive_empire = yes
 	}
@@ -2055,6 +2261,7 @@ building_hive_primitive_factory = {
 building_hive_primitive_mine = {
 	icon = building_primitive_mine
 	can_build = yes
+	base_buildtime = @b1_time
 	can_demolish = yes
 	can_be_ruined = no
 
@@ -2124,6 +2331,16 @@ building_hive_primitive_mine = {
 		job_primitive_hive_miner_add = 800
 	}
 	
+	resources = {
+		category = planet_buildings
+		cost = {
+			minerals = @b1_minerals
+		}
+		upkeep = {
+			energy =@primitive_upkeep
+		}
+	}
+	
 	prerequisites = {
 		"tech_pre_industrial_iron_construction"
 	}
@@ -2135,6 +2352,7 @@ building_hive_primitive_mine = {
 building_hive_primitive_power_plant = {
 	icon = building_primitive_power_plant
 	can_build = yes
+	base_buildtime = @b1_time
 	can_demolish = yes
 	can_be_ruined = no
 
@@ -2196,6 +2414,16 @@ building_hive_primitive_power_plant = {
 		# "tech_pre_industrial_iron_construction"
 	}
 	
+	resources = {
+		category = planet_buildings
+		cost = {
+			minerals = @b1_minerals
+		}
+		upkeep = {
+			energy =@primitive_upkeep
+		}
+	}
+	
 	show_tech_unlock_if = {
 		is_hive_empire = yes
 	}
@@ -2207,6 +2435,7 @@ building_hive_primitive_power_plant = {
 building_hive_primitive_farm = {
 	icon = building_primitive_farm
 	can_build = yes
+	base_buildtime = @b1_time
 	can_demolish = yes
 	can_be_ruined = no
 
@@ -2268,6 +2497,16 @@ building_hive_primitive_farm = {
 		job_primitive_hive_farmer_add = 1000
 	}
 	
+	resources = {
+		category = planet_buildings
+		cost = {
+			minerals = @b1_minerals
+		}
+		upkeep = {
+			energy =@primitive_upkeep
+		}
+	}
+	
 	prerequisites = {
 		# "tech_pre_industrial_steel_construction"	should always be available
 	}
@@ -2280,6 +2519,7 @@ building_hive_primitive_capital = {
 	icon = building_primitive_capital
 	capital = yes
 	can_build = yes
+	base_buildtime = @b1_time
 	can_demolish = yes
 	can_be_ruined = no
 	position_priority = 0
@@ -2522,6 +2762,16 @@ building_hive_primitive_capital = {
 		}
 	}
 	
+	resources = {
+		category = planet_buildings
+		cost = {
+			minerals = @b1_minerals
+		}
+		upkeep = {
+			energy =@primitive_upkeep
+		}
+	}
+	
 	prerequisites = {
 		"tech_pre_industrial_steel_construction"
 	}
@@ -2534,6 +2784,7 @@ building_hive_primitive_capital = {
 building_hive_urban_dwellings = {
 	icon = building_residence
 	can_build = yes
+	base_buildtime = @b1_time
 	can_demolish = yes
 	can_be_ruined = no
 
@@ -2587,6 +2838,16 @@ building_hive_urban_dwellings = {
 
 	planet_modifier = {
 		planet_housing_add = 2400
+	}
+	
+	resources = {
+		category = planet_buildings
+		cost = {
+			minerals = @b1_minerals
+		}
+		upkeep = {
+			energy =@primitive_upkeep
+		}
 	}
 	
 	prerequisites = {
@@ -2676,6 +2937,16 @@ building_hive_primitive_node = {
 		building_machine_primitive_node
 	}
 	
+	resources = {
+		category = planet_buildings
+		cost = {
+			minerals = @b1_minerals
+		}
+		upkeep = {
+			energy =@primitive_upkeep
+		}
+	}
+	
 	prerequisites = {
 		"tech_primitive_node"
 	}
@@ -2693,6 +2964,7 @@ building_machine_primitive_capital = {
 	icon = building_primitive_capital
 	capital = yes
 	can_build = yes
+	base_buildtime = @b1_time
 	can_demolish = yes
 	can_be_ruined = no
 	position_priority = 0
@@ -2895,6 +3167,16 @@ building_machine_primitive_capital = {
 		"tech_pre_industrial_steel_construction"
 	}
 	
+	resources = {
+		category = planet_buildings
+		cost = {
+			minerals = @b1_minerals
+		}
+		upkeep = {
+			energy =@primitive_upkeep
+		}
+	}
+	
 	show_tech_unlock_if = {
 		is_machine_empire = yes
 	}
@@ -3004,7 +3286,7 @@ building_machine_primitive_assembly_plant = {
 			minerals = @b1_minerals
 		}
 		upkeep = {
-			energy = @b1_upkeep
+			energy =@primitive_upkeep
 		}
 	}
 
@@ -3038,6 +3320,16 @@ building_machine_primitive_assembly_plant = {
 			}
 		}
 		text = job_roboticist_individual_machine_effect_desc
+	}
+	
+	resources = {
+		category = planet_buildings
+		cost = {
+			minerals = @b1_minerals
+		}
+		upkeep = {
+			energy =@primitive_upkeep
+		}
 	}
 }
 
@@ -3114,6 +3406,16 @@ building_machine_primitive_node = {
 		building_heritage_museum
 		building_corporate_heritage_museum
 		building_hive_primitive_node
+	}
+	
+	resources = {
+		category = planet_buildings
+		cost = {
+			minerals = @b1_minerals
+		}
+		upkeep = {
+			energy =@primitive_upkeep
+		}
 	}
 	
 	prerequisites = {
@@ -3195,7 +3497,7 @@ building_machine_primitive_node = {
 #			minerals = @b1_minerals
 #		}
 #		upkeep = {
-#			energy = @b1_upkeep
+#			energy =@primitive_upkeep
 #		}
 #	}
 #
@@ -3280,7 +3582,7 @@ building_solarpunk_gaiaseeder = {
 			minerals = @b1_minerals
 		}
 		upkeep = {
-			energy = @b1_upkeep
+			energy =@primitive_upkeep
 		}
 	}
 
@@ -3352,7 +3654,7 @@ building_solarpunk_ranger_lodge = {
 			minerals = @b1_minerals
 		}
 		upkeep = {
-			energy = @b1_upkeep
+			energy =@primitive_upkeep
 		}
 	}
 
@@ -3429,7 +3731,7 @@ building_solarpunk_sapling = {
 			minerals = @b1_minerals
 		}
 		upkeep = {
-			energy = @b1_upkeep
+			energy =@primitive_upkeep
 		}
 	}
 
@@ -3504,7 +3806,7 @@ building_solarpunk_organic_paradise = {
 			minerals = @b1_minerals
 		}
 		upkeep = {
-			energy = @b1_upkeep
+			energy =@primitive_upkeep
 		}
 	}
 
