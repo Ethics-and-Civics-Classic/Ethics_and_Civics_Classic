@@ -100,6 +100,18 @@ district_hab_housing = {
 			planet_housing_add = 200							# Modded
 		}
 	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_tankbound_empire = yes
+			}
+		}
+		modifier = {
+			job_production_overseer_add = 100
+		}
+	}
 }
 
 district_hab_energy = {
@@ -131,7 +143,7 @@ district_hab_energy = {
 	#}
 
 	resources = {
-		category = planet_districts_hab
+		category = planet_districts_hab_energy
 		cost = {
 			alloys = @hab_cost
 		}
@@ -147,6 +159,32 @@ district_hab_energy = {
 				}
 			}
 			energy = 2
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+				exists = owner								# Modded
+				owner = {
+				OR = {
+					has_valid_civic = civic_labour_unions	# Modded
+					has_valid_civic = civic_shared_burden	# Modded
+				}
+			} 
+		}
+		modifier = {
+			planet_housing_add = 100							# Modded
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { is_tankbound_empire = yes }
+		}
+		modifier = {
+			job_technician_automated_workforce_mult = 1.0
+			job_production_overseer_add = 100
 		}
 	}
 	
@@ -192,31 +230,6 @@ district_hab_energy = {
 	#	job_technician_drone_add = 100
 	#}
 
-	triggered_planet_modifier = {
-		potential = {
-				exists = owner								# Modded
-				owner = {
-				OR = {
-					has_valid_civic = civic_labour_unions	# Modded
-					has_valid_civic = civic_shared_burden	# Modded
-				}
-			} 
-		}
-		modifier = {
-			planet_housing_add = 100							# Modded
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = { is_tankbound_empire = yes }
-		}
-		modifier = {
-			job_technician_automated_workforce_mult = 1.0
-		}
-	}
-
 	# triggered_desc = {	# No Longer Used in Stellaris 4.0
 	#	trigger = {
 	#		exists = owner
@@ -256,11 +269,16 @@ district_hab_energy = {
 		AMOUNT = @habitat_rural_district_jobs
 	}
 
+	inline_script = {
+		script = districts/district_triggered_name_generator
+	}
+
 	on_built = {
 		planet_event = {
 			id = megastructures.200		# Spawn an energy orbital
 		}
 	}
+
 }
 
 district_hab_mining = {
@@ -289,7 +307,7 @@ district_hab_mining = {
 	#}
 
 	resources = {
-		category = planet_districts_hab
+		category = planet_districts_hab_mining
 		cost = {
 			alloys = @hab_cost
 		}
@@ -309,6 +327,45 @@ district_hab_mining = {
 	
 	planet_modifier = {
 		planet_housing_add = 300
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner									# Modded
+			owner = {
+				has_valid_civic = civic_mining_guilds		# Modded
+			}
+		}
+		modifier = {
+			planet_housing_add = 100							# Modded
+			job_miner_add = 100								# Modded
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { 
+				OR = {
+					has_valid_civic = civic_labour_unions	# Modded
+					has_valid_civic = civic_shared_burden	# Modded
+				}
+			} 
+		}
+		modifier = {
+			planet_housing_add = 100							# Modded
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { is_tankbound_empire = yes }
+		}
+		modifier = {
+			job_miner_automated_workforce_mult = 1.0
+			job_production_overseer_add = 100
+		}
 	}
 
 	# triggered_planet_modifier = {	# No Longer Used in Stellaris 4.0
@@ -348,44 +405,6 @@ district_hab_mining = {
 	#	job_fe_acolyte_mine_add = 100
 	#	mult = owner.value:hab_void_dweller_jobs
 	#}
-
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner									# Modded
-			owner = {
-				has_valid_civic = civic_mining_guilds		# Modded
-			}
-		}
-		modifier = {
-			planet_housing_add = 100							# Modded
-			job_miner_add = 100								# Modded
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = { 
-				OR = {
-					has_valid_civic = civic_labour_unions	# Modded
-					has_valid_civic = civic_shared_burden	# Modded
-				}
-			} 
-		}
-		modifier = {
-			planet_housing_add = 100							# Modded
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = { is_tankbound_empire = yes }
-		}
-		modifier = {
-			job_miner_automated_workforce_mult = 1.0
-		}
-	}
 	
 	# triggered_desc = {	# No Longer Used in Stellaris 4.0
 	#	trigger = {
@@ -424,6 +443,10 @@ district_hab_mining = {
 	inline_script = {
 		script = jobs/habitat_miners_add
 		AMOUNT = @habitat_rural_district_jobs
+	}
+
+	inline_script = {
+		script = districts/district_triggered_name_mining
 	}
 
 	on_built = {
