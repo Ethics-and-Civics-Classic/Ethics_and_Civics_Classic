@@ -51,6 +51,7 @@ country_event = {
 		name = "ethic_civic_classic_flag.4.full.proactive"
 		trigger = { has_policy_flag = first_contact_proactive }
 		destroy_situation = FROM
+		add_resource = { unity = 1000 }
 	}
 	
 	option = {
@@ -77,7 +78,7 @@ country_event = {
 				is_xenophile = yes
 			}
 		}
-		hidden_effect = { FROM = { add_situation_progress = -1 } }
+		hidden_effect = { FROM = { add_situation_progress = -10 } }
 		FROM = { set_situation_approach = PrimPlayer_awareness_situation_suppress }
 	}
 	
@@ -114,9 +115,39 @@ situation_event = {
 	}
 	
 	immediate = { 
-		random_list = { #To be expanded upon
-			25 = { add_situation_progress = 1 } 
-			75 = {  } #Does Nothing
+		if = {
+			limit = { situation_progress < 89 }
+			random_list = { #To be expanded upon
+				25 = { add_situation_progress = 1 } 
+				75 = {  } #Does Nothing
+			}
+		}
+		else_if = {
+			limit = {
+				owner = {
+					any_country = {
+						OR = {
+							is_country_type = default
+							is_country_type = fallen_empire
+							is_country_type = awakened_fallen_empire
+							is_country_type = awakened_marauders
+							is_country_type = dormant_marauders
+							is_country_type = marauder_raiders
+							is_country_type = debt_collectors
+							is_country_type = nomad
+							is_country_type = enclave
+							is_country_type = enclave_mercenary
+							#is_country_type = mindwarden_enclave	#Very Niche
+							#is_country_type = gate_builders		#Very Niche
+						}
+						has_communications = PREV
+					}
+				}
+			}
+			random_list = { #To be expanded upon
+				25 = { add_situation_progress = 1 } 
+				75 = {  } #Does Nothing
+			}
 		}
 	}
 }
