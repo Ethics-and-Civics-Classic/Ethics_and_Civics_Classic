@@ -6044,6 +6044,185 @@ building_corporate_clinics = {
 	}
 }
 
+#########################
+# MSI Uplifting Center	#
+#########################
+
+## Pharmaceutical Companies ##
+building_msi_uplift_center = {
+	base_buildtime = 0
+	#icon = building_augmentation_center
+	icon = building_colony_shelter			#Cog Note - The idea of a repurposed ship being the center for uplifting looks fitting.
+	planet_limit = 1
+
+	owner_type = corporate
+
+	category = resource
+
+	potential = {
+		has_branch_office = yes
+		branch_office_owner = {
+			has_origin = origin_slavers
+		}
+		owner = { 
+			OR = {
+				has_modifier = preftl_action_trade_pact_msi 
+				is_primitive = yes
+			}
+		}
+	}
+
+	on_built = {
+		planet = {
+			set_planet_flag = has_private_clinics
+		}
+	}
+
+	on_destroy = {
+		planet = {
+			remove_planet_flag = has_private_clinics
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			branch_office_owner = {
+				is_criminal_syndicate = yes
+				NOT = { is_legit_or_legal_criminal = yes }
+			}
+		}
+		job_corrupt_healthcare_add = 200
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			branch_office_owner = {
+				is_criminal_syndicate = yes
+				is_legit_or_legal_criminal = yes
+			}
+		}
+		planet_crime_floor_add = @crime_floor_from_legal_crime
+	}
+
+	planet_modifier = {
+		job_healthcare_amenities_add = 100	# see output/healthcare_triggered_modifiers
+		planet_doctors_trade_produces_add = 2
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			branch_office_owner = {
+				OR = {
+					is_criminal_syndicate = no
+					AND = {
+						is_criminal_syndicate = yes
+						is_legit_or_legal_criminal = yes
+					}
+				}
+			}
+		}
+		job_healthcare_add = 200
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			always = yes
+		}
+		planet_jobs_trade_produces_mult = 0.005
+		mult = value:num_pops_in_strata|STRATA|specialist|
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			branch_office_owner = {
+				AND = {
+					has_valid_civic = civic_private_healthcare_corporate
+					OR = {
+						has_valid_civic = civic_corporate_toxic_baths
+						has_valid_civic = civic_corporate_toxic_baths_individual_machine
+						has_valid_civic = civic_natural_design
+					}
+				}
+			}
+		}
+		planet_jobs_trade_produces_mult = 0.005
+		mult = value:num_pops_in_strata|STRATA|specialist|
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			branch_office_owner = {
+				has_valid_civic = civic_natural_design
+			}
+		}
+		planet_jobs_trade_produces_mult = 0.005
+		mult = value:num_pops_in_strata|STRATA|specialist|
+	}
+
+	#Trader Jobs from civics
+	triggered_country_modifier = {
+		potential = {
+			branch_office_owner = {
+				has_valid_civic = civic_private_healthcare_corporate
+			}
+		}
+		job_capital_trader_add = @traders_from_civic
+	}
+
+	triggered_country_modifier = {
+		potential = {
+			branch_office_owner = {
+				has_valid_civic = civic_natural_design
+			}
+		}
+		job_capital_trader_add = @traders_from_civic
+	}
+	
+	triggered_country_modifier = {
+		potential = {
+			branch_office_owner = {
+				OR = {
+					has_valid_civic = civic_corporate_toxic_baths
+					has_valid_civic = 	civic_corporate_toxic_baths_individual_machine
+				}
+			}
+		}
+		job_capital_trader_add = @traders_from_civic
+	}
+
+	custom_tooltip = trade_value_from_specialists
+
+	resources = {
+		category = planet_branch_office_buildings
+		#cost = {
+		#	influence = 25
+		#	minerals = @b3_minerals	#FREE!
+		#}
+		produces = {
+			energy = 8
+			unity = 2
+			mult = value:branch_office_value_for_buildings
+		}
+		upkeep = {
+			consumer_goods = 1
+		}
+	}
+
+	#triggered_desc = {
+	#	trigger = {
+	#		exists = planet.owner
+	#	}
+	#	text = building_corporate_clinics_effect
+	#}
+
+	#triggered_desc = {
+	#	text = job_healthcare_effect_desc
+	#}
+	ai_weight = {
+		weight = 10000
+	}
+}
+
 ###########################
 # Augmentation Bazaars	#
 ###########################
