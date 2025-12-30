@@ -561,8 +561,26 @@ PrimPlayer_situation = {
 					remove_modifier = PrimPlayer_separatist_movement
 				}
 			}
-			add_modifier = {
-				modifier = PrimPlayer_through_the_ages
+			if = {
+				limit = { 
+					owner = { 
+						OR = {
+							has_origin = origin_primitive_player_pre_industrial_age 
+							has_origin = origin_primitive_player_industrial_age 
+							has_origin = origin_primitive_player_machine_age 
+							has_origin = origin_primitive_player_atomic_age	
+							has_origin = origin_primitive_player_early_space_age
+						} 
+					}
+				}
+				add_modifier = {
+					modifier = PrimPlayer_through_the_ages
+				}
+			}
+			else = {
+				add_modifier = {
+					modifier = Low_Tech_through_the_ages
+				}
 			}
 		}
 		if = {
@@ -584,6 +602,17 @@ PrimPlayer_situation = {
 						capital_scope = { is_planet_class = pc_nuked }	#Default origin if Nuclear Winter happens, everything else has priority
 					}
 					set_origin = origin_post_apocalyptic
+				}
+				else_if = {
+					limit = { 
+						capital_scope = { 
+							OR = {
+								has_modifier = ocean_paradise_hive
+								has_modifier = ocean_paradise
+							}
+						}
+					}
+					set_origin = origin_ocean_paradise
 				}
 				else = { set_origin = origin_default }	#Default origin, unless Nuclear Winter happens, everything else has priority
 				hidden_effect = { prev = { situation_event = { id = PrimPlay_situation_event.1 } } }
