@@ -40,8 +40,41 @@ base_contact_set = {
 					}
 				}
 			}
+			modifier = {
+				weight = 0
+				from = { has_origin = origin_payback }
+				root.owner = { has_origin = origin_broken_shackles }
+			}
 		}
 		event = first_contact.1 # Country event for owner of first contact site
+	}
+	
+	# Primitive Players
+	stage_event = {
+		summary = fcsum_jaunting_traveler_summary
+		event_weight = {
+			weight = 0
+			modifier = {
+				weight = 1000
+				from = {
+					# Primitive Players should be added here
+					OR = {
+						has_origin = origin_primitive_player_pre_industrial_age
+						has_origin = origin_primitive_player_industrial_age
+						has_origin = origin_primitive_player_machine_age
+						has_origin = origin_primitive_player_atomic_age
+						has_origin = origin_primitive_player_early_space_age
+					}
+				}
+				root.owner = { is_ai = no }	#This allows non-ai (player) empires to *actually* get a first contact event. Otherwise it's infanite searching with no event pop-up
+			}
+			modifier = {
+				weight = 0
+				from = { has_civic = PrimPlayer_civic_the_obelisk }
+				root.owner = { has_origin = origin_broken_shackles }
+			}
+		}
+		event = first_contact.1
 	}
 
 	# Jaunting Traveler
@@ -72,6 +105,65 @@ base_contact_set = {
 			}
 		}
 		event = first_contact.2000
+	}
+	
+	# Payback Origin (Broken Shackles)
+	stage_event = {
+		summary = fcsum_Payback_country_summary
+		event_weight = {
+			weight = 0
+			modifier = {
+				weight = 1500
+				from = { has_origin = origin_payback }
+				root.owner = { has_origin = origin_broken_shackles }
+			}
+		}
+		event = primitive_origin.124
+	}
+	
+	# Obelisk Civic - (Broken Shackles)
+	stage_event = {
+		summary = fcsum_Obelisk_country_summary
+		event_weight = {
+			weight = 0
+			modifier = {
+				weight = 1500
+				from = { has_civic = PrimPlayer_civic_the_obelisk }
+				root.owner = { has_origin = origin_broken_shackles }
+			}
+		}
+		event = primitive_origin.134
+	}
+	
+	# Broken Shackles (Payback Origin)
+	stage_event = {
+		summary = fcsum_BrokenShackles_country_summary
+		event_weight = {
+			weight = 0
+			modifier = {
+				weight = 1000
+				from = { has_origin = origin_broken_shackles }
+				root.owner = { has_origin = origin_payback }
+			}
+		}
+		event = primitive_origin.144
+	}
+	
+	# Broken Shackles - (Obelisk Civic)
+	stage_event = {
+		summary = fcsum_BrokenShackles_country_summary
+		event_weight = {
+			weight = 0
+			modifier = {
+				weight = 1000
+				from = { has_origin = origin_broken_shackles }
+				root.owner = { 
+					has_civic = PrimPlayer_civic_the_obelisk 
+					is_primitive = no
+				}
+			}
+		}
+		event = primitive_origin.154
 	}
 
 	# Evil Slavers (Payback Origin)
@@ -110,7 +202,10 @@ base_contact_set = {
 			modifier = {
 				weight = 1000
 				from = { has_origin = origin_slavers }
-				root.owner = { has_civic = PrimPlayer_civic_the_obelisk }
+				root.owner = { 
+					has_civic = PrimPlayer_civic_the_obelisk 
+					is_primitive = no
+				}
 			}
 		}
 		event = primitive_origin.114
@@ -336,13 +431,108 @@ slavers_finish = {
 				owner = { has_civic = PrimPlayer_civic_the_obelisk }
 			}
 		}
-		event =  primitive_origin.116
+		#event =  primitive_origin.116
 	}
 
 	on_roll_failed = {
 		standard_first_contact_on_roll_failed = { RANDOM_EVENTS = payback_msi_random_events }
 	}
 }
+
+############################
+# Broken Shackles - stage 2#
+############################
+BrokenShackles_stage_2 = {
+	icon = GFX_firstcontact_icon_success
+	picture = GFX_evt_star_chart
+
+	difficulty = 3
+
+	# Payback
+	stage_event = {
+		summary = fcsum_comms_established
+		event_weight = {
+			weight = 0
+			modifier = {
+				weight = 1000
+				owner = { has_origin = origin_payback }
+			}
+		}
+		event = primitive_origin.145
+	}
+	
+	# Obelisk
+	stage_event = {
+		summary = fcsum_comms_established
+		event_weight = {
+			weight = 0
+			modifier = {
+				weight = 1000
+				owner = { has_civic = PrimPlayer_civic_the_obelisk }
+			}
+		}
+		event = primitive_origin.155
+	}
+
+	on_roll_failed = {
+		standard_first_contact_on_roll_failed = { RANDOM_EVENTS = payback_msi_random_events }
+	}
+}
+
+####################
+# Payback - stage 2#
+####################
+Payback_stage_2 = {
+	icon = GFX_firstcontact_icon_success
+	picture = GFX_evt_star_chart
+
+	difficulty = 3
+
+	# Payback
+	stage_event = {
+		summary = fcsum_comms_established
+		event_weight = {
+			weight = 1000
+			#modifier = {
+			#	weight = 
+			#	owner = { has_origin = origin_payback }
+			#}
+		}
+		event = primitive_origin.125
+	}
+
+	on_roll_failed = {
+		standard_first_contact_on_roll_failed = { RANDOM_EVENTS = payback_msi_random_events }
+	}
+}
+
+####################
+# Obelisk - stage 2#
+####################
+Obelisk_stage_2 = {
+	icon = GFX_firstcontact_icon_success
+	picture = GFX_evt_star_chart
+
+	difficulty = 3
+	
+	# Obelisk
+	stage_event = {
+		summary = fcsum_comms_established
+		event_weight = {
+			weight = 1000
+			#modifier = {
+			#	weight = 1000
+			#	owner = { has_civic = PrimPlayer_civic_the_obelisk }
+			#}
+		}
+		event = primitive_origin.135
+	}
+
+	on_roll_failed = {
+		standard_first_contact_on_roll_failed = { RANDOM_EVENTS = payback_msi_random_events }
+	}
+}
+
 
 # Default empires - start off event
 default_stage_1 = {

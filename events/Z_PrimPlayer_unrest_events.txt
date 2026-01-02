@@ -1,0 +1,2234 @@
+namespace = unrest
+namespace = nations
+
+@unrest_event_cooldown = 360
+##############################################################################
+######## SINGLE PLANET EMPIRE - SECESSION/NATIONALIST REVOLT HAPPENS #########	Interstellar Empire event below
+##############################################################################
+situation_event = {
+	id = nations.7
+	title = unrest.4200.name
+	# Regular empires
+	desc = {
+		trigger = {
+			owner = { is_regular_empire = yes }
+			NOT = { exists = event_target:new_owner_empire }
+			NOT = { has_situation_flag = slave_revolt }
+		}
+		text = unrest.4200.desc.regular_no_join
+	}
+	desc = {
+		trigger = {
+			owner = { is_regular_empire = yes }
+			exists = event_target:new_owner_empire
+			NOT = { has_situation_flag = slave_revolt }
+		}
+		text = unrest.4200.desc.regular_join
+	}
+	desc = {
+		trigger = {
+			owner = { is_regular_empire = yes }
+			NOT = { exists = event_target:new_owner_empire }
+			has_situation_flag = slave_revolt
+		}
+		text = unrest.4200.desc.slave.no_join
+	}
+	desc = {
+		trigger = {
+			owner = { is_regular_empire = yes }
+			exists = event_target:new_owner_empire
+			has_situation_flag = slave_revolt
+		}
+		text = unrest.4200.desc.slave.join
+	}
+	# Hive (non-Wilderness) empires
+	desc = {
+		trigger = {
+			owner = {
+				is_hive_empire = yes
+				is_wilderness_empire = no
+			}
+			NOT = { exists = event_target:new_owner_empire }
+			event_target:rebel_empire = {
+				is_hive_empire = yes
+				is_wilderness_empire = no
+			}
+		}
+		text = unrest.4200.desc.hive_no_join
+	}
+	desc = {
+		trigger = {
+			owner = {
+				is_hive_empire = yes
+				is_wilderness_empire = no
+			}
+			NOT = { exists = event_target:new_owner_empire }
+			event_target:rebel_empire = { is_hive_empire = no } # also excludes Wilderness
+		}
+		text = unrest.4200.desc.hive_no_join_regular
+	}
+	desc = {
+		trigger = {
+			owner = {
+				is_hive_empire = yes
+				is_wilderness_empire = no
+			}
+			exists = event_target:new_owner_empire
+		}
+		text = unrest.4200.desc.hive_join
+	}
+	# Machine empires
+	desc = {
+		trigger = {
+			owner = { is_machine_empire = yes }
+			NOT = { exists = event_target:new_owner_empire }
+			event_target:rebel_empire = { is_machine_empire = yes }
+		}
+		text = unrest.4200.desc.machine_no_join
+	}
+	desc = {
+		trigger = {
+			owner = { is_machine_empire = yes }
+			NOT = { exists = event_target:new_owner_empire }
+			event_target:rebel_empire = { is_machine_empire = no }
+		}
+		text = unrest.4200.desc.machine_no_join_regular
+	}
+	desc = {
+		trigger = {
+			owner = { is_machine_empire = yes }
+			exists = event_target:new_owner_empire
+		}
+		text = unrest.4200.desc.machine_join
+	}
+	# Wilderness empires
+	desc = {
+		trigger = {
+			owner = { is_wilderness_empire = yes }
+			NOT = { exists = event_target:new_owner_empire }
+			event_target:rebel_empire = { is_wilderness_empire = yes }
+		}
+		text = unrest.4200.desc.wilderness_no_join
+	}
+	desc = {
+		trigger = {
+			owner = { is_wilderness_empire = yes }
+			NOT = { exists = event_target:new_owner_empire }
+			event_target:rebel_empire = { is_wilderness_empire = no }
+		}
+		text = unrest.4200.desc.wilderness_no_join_regular
+	}
+	desc = {
+		trigger = {
+			owner = { is_wilderness_empire = yes }
+			exists = event_target:new_owner_empire
+		}
+		text = unrest.4200.desc.wilderness_join
+	}
+	picture = GFX_evt_burning_city
+	show_sound = event_ground_battle
+	location = root.target
+	situation = this
+	force_open = yes
+
+	is_triggered_only = yes
+
+	immediate = {
+		save_event_target_as = revolt_situation
+		owner = {
+			save_event_target_as = old_owner
+			if = {
+				limit = { is_ai = yes }
+				log = "AI [This.GetName] suffered a rebellion on [Root.Target.GetName] in [GetYear]"
+			}
+			else = {
+				log = "Player [This.GetName] suffered a rebellion on [Root.Target.GetName] in [GetYear]"
+			}
+		}
+		target = {
+			random_owned_species = {
+				limit = { has_species_flag = rebellion_species@root }
+				save_event_target_as = rebellion_species
+			}
+		}
+		if = {
+			limit = { NOT = { exists = event_target:rebellion_species } }
+			deduce_planetary_separatism_species = yes
+		}
+		random_country = {
+			limit = {
+				has_country_flag = revolt_joiner_empire_@root
+				#Check eligibility again in case there are pacts in the meantime or something went wrong
+				basic_eligibility_for_separatism_joining_trigger = yes
+			}
+			save_event_target_as = new_owner_empire
+		}
+
+		target = {
+			save_event_target_as = rebel_planet
+			create_country = {	#create_rebels gave all starter_tech
+				name = random
+				type = PrimPlayer_ethic_fanatic_nation #Since this is a 0 planet country, PrimPlayer country_type works perfectly
+				ethos = { ethic = ethic_fanatic_authoritarian }
+				civics = {
+					civic = PrimPlayer_civic_nation_state
+				}
+				authority = auth_imperial
+				origin = "origin_separatists"
+				species = event_target:rebellion_species
+				flag = random
+			}
+				last_created_country = {
+					save_event_target_as = rebel_empire
+					add_modifier = {
+						modifier = PrimPlayer_ethic_fanatic_nation_modifier
+						days = -1
+					}
+					if = {
+						limit = {
+							has_trait = trait_necrophage
+						}
+						set_origin = origin_necrophage
+					}
+					else_if = {
+						limit = {
+							has_trait = trait_void_dweller_1
+						}
+						set_origin = origin_void_dwellers
+					}
+					else_if = {
+						limit = {
+							has_trait = trait_void_dweller_2
+						}
+						set_origin = origin_void_machines
+					}
+					else_if = {
+						limit = {
+							has_trait = trait_cave_dweller
+						}
+						set_origin = origin_subterranean
+					}
+					else_if = {
+						limit = {
+							has_trait = trait_robot_cave_dweller
+						}
+						set_origin = origin_subterranean_machines
+					}
+					else_if = {
+						limit = {
+							root.owner = { has_origin = origin_tree_of_life }
+							has_trait = trait_hive_mind
+						}
+						set_origin = origin_tree_of_life
+					}
+
+					if = {
+						limit = {
+							has_trait = trait_machine_unit
+							root.owner = { is_individual_machine = no }
+							NOT = { has_ethic = ethic_gestalt_consciousness }
+						}
+						shift_ethic = ethic_gestalt_consciousness
+						change_government = {
+							authority = auth_machine_intelligence
+							civics = random
+						}
+					}
+					else_if = {
+						limit = {
+							has_trait = trait_hive_mind
+							NOT = { has_ethic = ethic_gestalt_consciousness }
+						}
+						shift_ethic = ethic_gestalt_consciousness
+						change_government = {
+							authority = auth_hive_mind
+							civics = random
+						}
+					}
+					else_if = {
+						limit = {
+							root = { has_situation_flag = slave_revolt }
+						}
+						shift_ethic = ethic_fanatic_egalitarian
+						change_government = random
+					}
+					root = {
+						owner = {
+							if = {
+								limit = { has_ethic = ethic_fanatic_pacifist }
+								event_target:rebel_empire = {
+									shift_ethic = ethic_fanatic_militarist
+								}
+							}
+							else_if = {
+								limit = { has_ethic = ethic_pacifist }
+								event_target:rebel_empire = {
+									shift_ethic = ethic_militarist
+								}
+							}
+							if = {
+								limit = { has_ethic = ethic_fanatic_militarist }
+								event_target:rebel_empire = {
+									shift_ethic = ethic_fanatic_pacifist
+								}
+							}
+							else_if = {
+								limit = { has_ethic = ethic_militarist }
+								event_target:rebel_empire = {
+									shift_ethic = ethic_pacifist
+								}
+							}
+							if = {
+								limit = { has_ethic = ethic_fanatic_authoritarian }
+								event_target:rebel_empire = {
+									shift_ethic = ethic_fanatic_egalitarian
+								}
+							}
+							else_if = {
+								limit = { has_ethic = ethic_authoritarian }
+								event_target:rebel_empire = {
+									shift_ethic = ethic_egalitarian
+								}
+							}
+							if = {
+								limit = { has_ethic = ethic_fanatic_egalitarian }
+								event_target:rebel_empire = {
+									shift_ethic = ethic_fanatic_authoritarian
+								}
+							}
+							else_if = {
+								limit = { has_ethic = ethic_egalitarian }
+								event_target:rebel_empire = {
+									shift_ethic = ethic_authoritarian
+								}
+							}
+							if = {
+								limit = { has_ethic = ethic_fanatic_xenophile }
+								event_target:rebel_empire = {
+									shift_ethic = ethic_fanatic_xenophobe
+								}
+							}
+							else_if = {
+								limit = { has_ethic = ethic_xenophile }
+								event_target:rebel_empire = {
+									shift_ethic = ethic_xenophobe
+								}
+							}
+							if = {
+								limit = { has_ethic = ethic_fanatic_xenophobe }
+								event_target:rebel_empire = {
+									shift_ethic = ethic_fanatic_xenophile
+								}
+							}
+							else_if = {
+								limit = { has_ethic = ethic_xenophobe }
+								event_target:rebel_empire = {
+									shift_ethic = ethic_xenophile
+								}
+							}
+							if = {
+								limit = { has_ethic = ethic_fanatic_spiritualist }
+								event_target:rebel_empire = {
+									shift_ethic = ethic_fanatic_materialist
+								}
+							}
+							else_if = {
+								limit = { has_ethic = ethic_spiritualist }
+								event_target:rebel_empire = {
+									shift_ethic = ethic_materialist
+								}
+							}
+							if = {
+								limit = { has_ethic = ethic_fanatic_materialist }
+								event_target:rebel_empire = {
+									shift_ethic = ethic_fanatic_spiritualist
+								}
+							}
+							else_if = {
+								limit = { has_ethic = ethic_materialist }
+								event_target:rebel_empire = {
+									shift_ethic = ethic_spiritualist
+								}
+							}
+							#E&C Specific
+							if = {
+								limit = { has_ethic = ethic_fanatic_green }
+								event_target:rebel_empire = {
+									shift_ethic = ethic_fanatic_industrial
+								}
+							}
+							else_if = {
+								limit = { has_ethic = ethic_green }
+								event_target:rebel_empire = {
+									shift_ethic = ethic_industrial
+								}
+							}
+							if = {
+								limit = { has_ethic = ethic_fanatic_industrial }
+								event_target:rebel_empire = {
+									shift_ethic = ethic_fanatic_green
+								}
+							}
+							else_if = {
+								limit = { has_ethic = ethic_industrial }
+								event_target:rebel_empire = {
+									shift_ethic = ethic_green
+								}
+							}
+						}
+						change_government = random
+					}
+
+					create_leader = {
+						class = random_ruler
+						species = owner_main_species
+						name = random
+						skill = 5
+						effect = {
+							event_target:rebel_empire = { assign_leader = prev }
+							# add_random_leader_trait = yes
+							# add_random_leader_trait = yes
+						}
+					}
+
+					establish_communications_no_message = root.owner
+					if = {
+						limit = { exists = event_target:new_owner_empire }
+						establish_communications_no_message = event_target:new_owner_empire
+					}
+					#Removed section that would Flip the target planet
+					#Remaining 'else = {}' Section was blocked out since this country is not a true country
+						#add_resource = {
+						#	minerals = 15000
+						#	energy = 15000
+						#	food = 15000
+						#	consumer_goods = 10000
+						#	alloys = 10000
+						#	rare_crystals = 1000
+						#	volatile_motes = 1000
+						#	exotic_gases = 1000
+						#	influence = 1000
+						#	unity = 10000
+						#}
+						#It copies the traditions and technologies in code
+					if = {
+						limit = { event_target:rebel_empire = { has_technology = tech_corvettes } }	#Check if able to make a fleet
+						create_fleet_from_naval_cap = 0.8	
+					}
+					#
+				}
+		}
+	}
+
+	option = {
+		name = unrest.4200.A
+		trigger = {
+			NOT = { exists = event_target:new_owner_empire }
+		}
+		event_target:rebel_empire = {
+			declare_war = {
+				target = root.owner
+				attacker_war_goal = wg_independence
+				name = {
+					key = NAME_WAR_OF_REVOLT
+					variable_string = "[Root.Target.GetName]"
+				}
+			}
+			hidden_effect = { set_country_flag = planetary_revolt_situation_war@root.owner }
+			event_target:rebel_planet = {
+				if = {
+					limit = {
+						#PREV = { has_technology = tech_primitive_space_age_weapons }
+					}
+					while = { 
+						limit = { event_target:rebel_empire = { num_armies < 8 } }
+						create_army = {
+							name = random
+							owner = PREV
+							species = PREV.owner_species
+							type = "assault_army"
+						}
+					}
+				}
+				else_if = {
+					limit = {
+						PREV = { has_technology = tech_primitive_atomic_age_weapons }
+					}
+					while = { 
+						limit = { event_target:rebel_empire = { num_armies < 8 } }
+						create_army = {
+							name = random
+							owner = PREV
+							species = PREV.owner_species
+							type = "postatomic_assault_army"
+						}
+					}
+				}
+				else_if = {
+					limit = {
+						PREV = { has_technology = tech_primitive_industrial_age_weapons }
+					}
+					while = { 
+						limit = { event_target:rebel_empire = { num_armies < 8 } }
+						create_army = {
+							name = random
+							owner = PREV
+							species = PREV.owner_species
+							type = "industrial_assault_army"
+						}
+					}
+				}
+				else = {
+					while = { 
+						limit = { event_target:rebel_empire = { num_armies < 8 } }
+						create_army = {
+							name = random
+							owner = PREV
+							species = PREV.owner_species
+							type = "primitive_assault_army"
+						}
+					}
+				}
+			}
+		}
+		ai_chance = {
+			factor = 5
+			mult = value:revolt_fleet_comparison_factor
+		}
+	}
+	option = {
+		name = unrest.4200.B
+		custom_tooltip = unrest.4200.default_tooltip
+		trigger = {
+			always = no #This is a do-or-die war, no truce options
+			NOT = { exists = event_target:new_owner_empire }
+		}
+		hidden_effect = {
+			#Add truce
+			event_target:rebel_empire = {
+				set_truce = {
+					target = root.owner
+					type = liberation
+				}
+			}
+			root.owner = {
+				set_truce = {
+					target = event_target:rebel_empire
+					type = liberation
+				}
+			}
+		}
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 2
+				owner = { is_pacifist = yes }
+			}
+			modifier = {
+				factor = 10
+				owner = {
+					is_at_war = yes
+					any_relation = {
+						is_at_war_with = prev
+						relative_power = {
+							who = prev
+							value >= superior
+							category = fleet
+						}
+					}
+				}
+			}
+		}
+	}
+	option = {
+		name = UNFORTUNATE
+		custom_tooltip = unrest.4200.joiner_tooltip
+		trigger = {
+			exists = event_target:new_owner_empire
+			owner = { is_at_war_with = event_target:new_owner_empire }
+		}
+	}
+	option = {
+		name = unrest.4200.A
+		trigger = {
+			exists = event_target:new_owner_empire
+			NOT = { owner = { is_at_war_with = event_target:new_owner_empire } }
+		}
+
+		custom_tooltip = unrest.4200.joiner_tooltip
+		event_target:new_owner_empire = {
+			declare_war = {
+				target = root.owner
+				attacker_war_goal = wg_humiliation
+				name = {
+					key = NAME_WAR_OF_REVOLT
+					variable_string = "[Root.Target.GetName]"
+				}
+			}
+			hidden_effect = { set_country_flag = planetary_revolt_situation_war@root.owner }
+			event_target:rebel_planet = {
+				if = {
+					limit = {
+						PREV = { has_technology = tech_primitive_space_age_weapons }
+						always = yes
+					}
+					while = { 
+						limit = { event_target:rebel_empire = { num_armies < 8 } }
+						create_army = {
+							name = random
+							owner = PREV
+							species = PREV.owner_species
+							type = "assault_army"
+						}
+					}
+				}
+				else_if = {
+					limit = {
+						PREV = { has_technology = tech_primitive_atomic_age_weapons }
+					}
+					while = { 
+						limit = { event_target:rebel_empire = { num_armies < 8 } }
+						create_army = {
+							name = random
+							owner = PREV
+							species = PREV.owner_species
+							type = "postatomic_assault_army"
+						}
+					}
+				}
+				else_if = {
+					limit = {
+						PREV = { has_technology = tech_primitive_industrial_age_weapons }
+					}
+					while = { 
+						limit = { event_target:rebel_empire = { num_armies < 8 } }
+						create_army = {
+							name = random
+							owner = PREV
+							species = PREV.owner_species
+							type = "industrial_assault_army"
+						}
+					}
+				}
+				else = {
+					while = { 
+						limit = { event_target:rebel_empire = { num_armies < 8 } }
+						create_army = {
+							name = random
+							owner = PREV
+							species = PREV.owner_species
+							type = "primitive_assault_army"
+						}
+					}
+				}
+			}
+		}
+
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 0 #they can't take them on
+				count_potential_war_participants = {
+					attacker = event_target:new_owner_empire
+					defender = root.owner
+					side = event_target:new_owner_empire
+					limit = {
+						relative_power = { #stronger than root.owner
+							who = root.owner
+							value >= superior
+							category = fleet
+						}
+						count_potential_war_participants = { #and stronger than root.owner's allies
+							attacker = event_target:new_owner_empire
+							defender = root.owner
+							side = root.owner
+							limit = {
+								relative_power = {
+									who = prev
+									value >= equivalent
+									category = fleet
+								}
+							}
+							count = 0
+						}
+					}
+					count > 0
+				}
+			}
+			modifier = { #these come into play when the empires are equivalent
+				factor = 1.5
+				owner = { is_militarist = yes }
+			}
+			modifier = {
+				factor = 0.5
+				owner = { is_pacifist = yes }
+			}
+		}
+	}
+	option = {
+		name = unrest.4200.B
+		trigger = {
+			always = no #This is a do-or-die war, no truce options
+			exists = event_target:new_owner_empire
+			NOT = { owner = { is_at_war_with = event_target:new_owner_empire } }
+		}
+
+		custom_tooltip = unrest.4200.joiner_tooltip
+		owner = {
+			set_truce = {
+				target = event_target:new_owner_empire
+				type = liberation
+			}
+			hidden_effect = {
+				event_target:new_owner_empire = {
+					set_truce = {
+						target = prev
+						type = liberation
+					}
+				}
+			}
+		}
+
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 0 #they can definitely take them on
+				count_potential_war_participants = {
+					attacker = event_target:new_owner_empire
+					defender = root.owner
+					side = event_target:new_owner_empire
+					limit = {
+						relative_power = { #stronger than root.owner
+							who = root.owner
+							value >= equivalent
+							category = fleet
+						}
+					}
+					count = 0
+				}
+			}
+		}
+	}
+
+	after = {
+		if = { #empire can lost its last planet this way
+			limit = { is_scope_valid = yes }
+			hidden_effect = {
+				cleanup_separatism_situation = yes
+				destroy_situation = this
+			}
+		}
+	}
+}
+#################################################
+# Event for if the rebel army wins ##############
+#################################################
+#From.Owner = Defending Country
+#From = situation
+#This = Attacking country
+country_event = {
+	id = nations.8
+	title = "nations.8.title"
+	is_triggered_only = yes
+	picture = GFX_evt_surrender
+	
+	immediate = { 
+		ROOT = {
+			if = {
+				limit = { FROM.OWNER = { has_origin = origin_primitive_player_pre_industrial_age } }
+					set_origin = origin_primitive_player_pre_industrial_age
+				}
+			else_if = {
+				limit = { FROM.OWNER = { has_origin = origin_primitive_player_industrial_age } }
+				set_origin = origin_primitive_player_industrial_age
+			}
+			else_if = {
+				limit = { FROM.OWNER = { has_origin = origin_primitive_player_machine_age } }
+				set_origin = origin_primitive_player_machine_age
+			}
+			else_if = {
+				limit = { FROM.OWNER = { has_origin = origin_primitive_player_atomic_age } }
+				set_origin = origin_primitive_player_atomic_age
+			}
+			else_if = {
+				limit = { FROM.OWNER = { has_origin = origin_primitive_player_early_space_age } }
+				set_origin = origin_primitive_player_early_space_age
+			}
+			else_if = {
+				limit = { FROM.OWNER = { is_eager_explorer_empire = yes } }
+						
+			}
+			else_if = {
+				limit = { FROM.OWNER = { has_origin = origin_payback } }
+				set_origin = origin_payback
+			}
+			else_if = {
+				limit = { FROM.OWNER = { has_origin = origin_broken_shackles } }
+				set_origin = origin_broken_shackles
+			}
+			if = {
+				limit = { FROM.OWNER = { has_civic = PrimPlayer_civic_the_obelisk } }
+				force_add_civic = PrimPlayer_civic_the_obelisk
+			}
+			#####################################################################
+			#							Situation Setup							#
+			#####################################################################
+			# Coggernaut Note:
+			#
+			#								IMPORTANT~!!
+			#
+			# If any changes are made, please update Tech-Stage Excel Sheet.
+			# Stages are more like 'levels' that use tech as XP to get to the next situation stage.
+			#
+			# Tech Scale:
+			# Pre-Industrial = 3
+			# Industrial 	= 6
+			# Mechanized	= 7
+			# Post-Atomic	= 15
+			# Early Space Age= 5
+			#
+			#
+			if = {
+				limit = { FROM.OWNER = { any_situation = { is_situation_type = PrimPlayer_situation } } }
+				start_situation = { type = PrimPlayer_situation target = this }
+			}
+			if = {
+				limit = { is_eager_explorer_empire = yes }
+				random_situation = { limit = { is_situation_type = PrimPlayer_situation } set_situation_approach = PrimPlayer_eager_explorer_approach }
+			}
+			if = {
+				limit = { has_origin = origin_payback }
+				random_situation = { limit = { is_situation_type = PrimPlayer_situation } set_situation_approach = PrimPlayer_payback_approach }
+			}
+			if = {
+				limit = { has_origin = origin_broken_shackles }
+				random_situation = { limit = { is_situation_type = PrimPlayer_situation } set_situation_approach = PrimPlayer_broken_shackles_approach }
+			}
+			if = {
+				limit = { FROM.OWNER = { any_situation = { is_situation_type = PrimPlayer_awareness_situation } } }
+				start_situation = { type = PrimPlayer_awareness_situation target = this }
+			}
+			############################# Engineering Tech#############################
+						if = {
+							limit = { FROM.OWNER = { has_technology = tech_primitive_industrial_age_weapons } }
+							give_technology = { tech = tech_primitive_industrial_age_weapons message = no }
+							#random_situation = { limit = { is_situation_type = PrimPlayer_situation } add_situation_progress = 3 }
+						}
+						if = {
+							limit = { FROM.OWNER = { has_technology = tech_primitive_atomic_age_weapons } }
+							give_technology = { tech = tech_primitive_atomic_age_weapons message = no }
+							#random_situation = { limit = { is_situation_type = PrimPlayer_situation } add_situation_progress = 7 }
+						}
+						if = {	### RARE###
+							limit = { FROM.OWNER = { has_technology = tech_primitive_space_age_weapons } }
+							give_technology = { tech = tech_primitive_space_age_weapons message = no }
+							#random_situation = { limit = { is_situation_type = PrimPlayer_situation } add_situation_progress = 5 }
+						}
+						if = {
+							limit = { FROM.OWNER = { has_technology = tech_mechanized_mining } }
+							give_technology = { tech = tech_mechanized_mining message = no }
+							#random_situation = { limit = { is_situation_type = PrimPlayer_situation } add_situation_progress = 3 }
+						}
+						if = {
+							limit = { FROM.OWNER = { has_technology = tech_mechanized_mining_2 } }
+							give_technology = { tech = tech_mechanized_mining_2 message = no }
+							#random_situation = { limit = { is_situation_type = PrimPlayer_situation } add_situation_progress = 5 }
+						}
+						if = {
+							limit = { FROM.OWNER = { has_technology = tech_flak_batteries_1 } }
+							give_technology = { tech = tech_flak_batteries_1 message = no }
+							#random_situation = { limit = { is_situation_type = PrimPlayer_situation } add_situation_progress = 3 }
+						}
+						if = {
+							limit = { FROM.OWNER = { has_technology = tech_missiles_1 } }
+							give_technology = { tech = tech_missiles_1 message = no }
+							#random_situation = { limit = { is_situation_type = PrimPlayer_situation } add_situation_progress = 7 }
+						}
+						if = {
+							limit = { FROM.OWNER = { has_technology = tech_mass_drivers_1 } }
+							give_technology = { tech = tech_mass_drivers_1 message = no }
+							#random_situation = { limit = { is_situation_type = PrimPlayer_situation } add_situation_progress = 7 }
+						}
+						if = {
+							limit = { FROM.OWNER = { has_technology = tech_pre_industrial_steel_construction } }
+							give_technology = { tech = tech_pre_industrial_steel_construction message = no }
+							#random_situation = { limit = { is_situation_type = PrimPlayer_situation } add_situation_progress = 3 }
+						}
+						if = {
+							limit = { FROM.OWNER = { has_technology = tech_primitive_aluminium_material } }
+							give_technology = { tech = tech_primitive_aluminium_material message = no }
+							#random_situation = { limit = { is_situation_type = PrimPlayer_situation } add_situation_progress = 6 }
+						}
+						if = {
+							limit = { FROM.OWNER = { has_technology = tech_primitive_plastic_material } }
+							give_technology = { tech = tech_primitive_plastic_material message = no }
+							#random_situation = { limit = { is_situation_type = PrimPlayer_situation } add_situation_progress = 7 }
+						}
+						if = {
+							limit = { FROM.OWNER = { has_technology = tech_primitive_composite_material } }
+							give_technology = { tech = tech_primitive_composite_material message = no }
+							#random_situation = { limit = { is_situation_type = PrimPlayer_situation } add_situation_progress = 15 }
+						}
+						if = {
+							limit = { FROM.OWNER = { has_technology = tech_ship_armor_1 } }
+							give_technology = { tech = tech_ship_armor_1 message = no }
+							#random_situation = { limit = { is_situation_type = PrimPlayer_situation } add_situation_progress = 5 }
+						}
+						if = {
+							limit = { FROM.OWNER = { has_technology = tech_primitive_aeroplanes } }
+							give_technology = { tech = tech_primitive_aeroplanes message = no }
+							#random_situation = { limit = { is_situation_type = PrimPlayer_situation } add_situation_progress = 7 }
+						}
+						if = {
+							limit = { FROM.OWNER = { has_technology = tech_primitive_early_aerospace_rocket } }
+							give_technology = { tech = tech_primitive_early_aerospace_rocket message = no }
+							#random_situation = { limit = { is_situation_type = PrimPlayer_situation } add_situation_progress = 15 }
+						}
+						if = {
+							limit = { FROM.OWNER = { has_technology = tech_solar_panel_network } }
+							give_technology = { tech = tech_solar_panel_network message = no }
+							#random_situation = { limit = { is_situation_type = PrimPlayer_situation } add_situation_progress = 15 }
+						}
+						if = {### RARE###
+							limit = { FROM.OWNER = { has_technology = tech_primitive_generation_ship } }
+							give_technology = { tech = tech_primitive_generation_ship message = no }
+							#random_situation = { limit = { is_situation_type = PrimPlayer_situation } add_situation_progress = 5 }
+						}
+						if = {### RARE###
+							limit = { FROM.OWNER = { has_technology = tech_space_international_space_station } }
+							give_technology = { tech = tech_space_international_space_station message = no }
+							#random_situation = { limit = { is_situation_type = PrimPlayer_situation } add_situation_progress = 15 }
+						}
+						if = {### RARE###
+							limit = { FROM.OWNER = { has_technology = tech_starbase_1 } }
+							give_technology = { tech = tech_starbase_1 message = no }
+							#random_situation = { limit = { is_situation_type = PrimPlayer_situation } add_situation_progress = 5 }
+						}
+						if = {
+							limit = { FROM.OWNER = { has_technology = tech_starbase_2 } }
+							give_technology = { tech = tech_starbase_2 message = no }
+							#random_situation = { limit = { is_situation_type = PrimPlayer_situation } add_situation_progress = 5 }
+						}
+						if = {
+							limit = { FROM.OWNER = { has_technology = tech_primitive_thrusters_0 } }
+							give_technology = { tech = tech_primitive_thrusters_0 message = no }
+							#random_situation = { limit = { is_situation_type = PrimPlayer_situation } add_situation_progress = 7 }
+						}
+						if = {
+							limit = { FROM.OWNER = { has_technology = tech_proto_thrusters_1 } }
+							give_technology = { tech = tech_proto_thrusters_1 message = no }
+							#random_situation = { limit = { is_situation_type = PrimPlayer_situation } add_situation_progress = 15 }
+						}
+						if = {
+							limit = { FROM.OWNER = { has_technology = tech_thrusters_1 } }
+							give_technology = { tech = tech_thrusters_1 message = no }
+							#random_situation = { limit = { is_situation_type = PrimPlayer_situation } add_situation_progress = 5 }
+						}
+						if = {
+							limit = { FROM.OWNER = { has_technology = tech_space_exploration } }
+							give_technology = { tech = tech_space_exploration message = no }
+							#random_situation = { limit = { is_situation_type = PrimPlayer_situation } add_situation_progress = 5 }
+						}
+						if = {
+							limit = { FROM.OWNER = { has_technology = tech_corvettes } }
+							give_technology = { tech = tech_corvettes message = no }
+							#random_situation = { limit = { is_situation_type = PrimPlayer_situation } add_situation_progress = 5 }
+						}
+						if = {
+							limit = { FROM.OWNER = { has_technology = tech_assault_armies } }
+							give_technology = { tech = tech_assault_armies message = no }
+							#random_situation = { limit = { is_situation_type = PrimPlayer_situation } add_situation_progress = 5 }
+						}
+						if = {
+							limit = { FROM.OWNER = { has_technology = tech_space_defense_station_1 } }
+							give_technology = { tech = tech_space_defense_station_1 message = no }
+							#random_situation = { limit = { is_situation_type = PrimPlayer_situation } add_situation_progress = 5 }
+						}
+						if = {
+							limit = { FROM.OWNER = { has_technology = tech_basic_industry } }
+							give_technology = { tech = tech_basic_industry message = no }
+							#random_situation = { limit = { is_situation_type = PrimPlayer_situation } add_situation_progress = 5 }
+						}
+						if = {
+							limit = { FROM.OWNER = { has_technology = tech_space_construction } }
+							give_technology = { tech = tech_space_construction message = no }
+							#random_situation = { limit = { is_situation_type = PrimPlayer_situation } add_situation_progress = 5 }
+						}
+						############################# Physics Tech#############################
+						if = {
+							limit = { FROM.OWNER = { has_technology = tech_pd_tracking_1 } }
+							give_technology = { tech = tech_pd_tracking_1 message = no }
+							#random_situation = { limit = { is_situation_type = PrimPlayer_situation } add_situation_progress = 5 }
+						}
+						if = {
+							limit = { FROM.OWNER = { has_technology = tech_primitive_holographic_technology } }
+							give_technology = { tech = tech_primitive_holographic_technology message = no }
+							#random_situation = { limit = { is_situation_type = PrimPlayer_situation } add_situation_progress = 5 }
+						}
+						if = {
+							limit = { FROM.OWNER = { has_technology = tech_lasers_1 } }
+							give_technology = { tech = tech_lasers_1 message = no }
+							#random_situation = { limit = { is_situation_type = PrimPlayer_situation } add_situation_progress = 5 }
+						}
+						if = {
+							limit = { FROM.OWNER = { has_technology = tech_primitive_scientific_method } }
+							give_technology = { tech = tech_primitive_scientific_method message = no }
+							#random_situation = { limit = { is_situation_type = PrimPlayer_situation } add_situation_progress = 3 }
+						}
+						if = {
+							limit = { FROM.OWNER = { has_technology = tech_primitive_combustion_technology } }
+							give_technology = { tech = tech_primitive_combustion_technology message = no }
+							#random_situation = { limit = { is_situation_type = PrimPlayer_situation } add_situation_progress = 6 }
+						}
+						if = {
+							limit = { FROM.OWNER = { has_technology = tech_primitive_electromagnetism_theory } }
+							give_technology = { tech = tech_primitive_electromagnetism_theory message = no }
+							#random_situation = { limit = { is_situation_type = PrimPlayer_situation } add_situation_progress = 6 }
+						}
+						if = {
+							limit = { FROM.OWNER = { has_technology = tech_primitive_radiowave_theory } }
+							give_technology = { tech = tech_primitive_radiowave_theory message = no }
+							#random_situation = { limit = { is_situation_type = PrimPlayer_situation } add_situation_progress = 7 }
+						}
+						if = {
+							limit = { FROM.OWNER = { has_technology = tech_primitive_nuclear_physics } }
+							give_technology = { tech = tech_primitive_nuclear_physics message = no }
+							#random_situation = { limit = { is_situation_type = PrimPlayer_situation } add_situation_progress = 7 }
+						}
+						if = {
+							limit = { FROM.OWNER = { has_technology = tech_primitive_quantum_mechanics_theory } }
+							give_technology = { tech = tech_primitive_quantum_mechanics_theory message = no }
+							#random_situation = { limit = { is_situation_type = PrimPlayer_situation } add_situation_progress = 5 }
+						}
+						if = {
+							limit = { FROM.OWNER = { has_technology = tech_primitive_quantum_electronics_theory } }
+							give_technology = { tech = tech_primitive_quantum_electronics_theory message = no }
+							#random_situation = { limit = { is_situation_type = PrimPlayer_situation } add_situation_progress = 5 }
+						}
+						if = {
+							limit = { FROM.OWNER = { has_technology = tech_primitive_radiowave_telescope } }
+							give_technology = { tech = tech_primitive_radiowave_telescope message = no }
+							#random_situation = { limit = { is_situation_type = PrimPlayer_situation } add_situation_progress = 7 }
+						}
+						if = {
+							limit = { FROM.OWNER = { has_technology = tech_basic_science_lab_1 } }
+							give_technology = { tech = tech_basic_science_lab_1 message = no }
+							#random_situation = { limit = { is_situation_type = PrimPlayer_situation } add_situation_progress = 5 }
+						}
+						if = {
+							limit = { FROM.OWNER = { has_technology = tech_primitive_computing_technology } }
+							give_technology = { tech = tech_primitive_computing_technology message = no }
+							#random_situation = { limit = { is_situation_type = PrimPlayer_situation } add_situation_progress = 6 }
+						}
+						if = {
+							limit = { FROM.OWNER = { has_technology = tech_primitive_atomic_era_computing_technology } }
+							give_technology = { tech = tech_primitive_atomic_era_computing_technology message = no }
+							#random_situation = { limit = { is_situation_type = PrimPlayer_situation } add_situation_progress = 7 }
+						}
+						if = {
+							limit = { FROM.OWNER = { has_technology = tech_primitive_quantum_computing_technology } }
+							give_technology = { tech = tech_primitive_quantum_computing_technology message = no }
+							#random_situation = { limit = { is_situation_type = PrimPlayer_situation } add_situation_progress = 5 }
+						}
+						if = {
+							limit = { FROM.OWNER = { has_technology = tech_primitive_ai_computing_technology } }
+							give_technology = { tech = tech_primitive_ai_computing_technology message = no }
+							#random_situation = { limit = { is_situation_type = PrimPlayer_situation } add_situation_progress = 5 }
+						}
+						if = {
+							limit = { FROM.OWNER = { has_technology = tech_fission_power } }
+							give_technology = { tech = tech_fission_power message = no }
+							#random_situation = { limit = { is_situation_type = PrimPlayer_situation } add_situation_progress = 5 }
+						}
+						# if = {
+						#	limit = { FROM.OWNER = { has_technology = tech_fusion_power } }
+						#	give_technology = { tech = tech_fusion_power message = no }
+						#	random_situation = { limit = { is_situation_type = PrimPlayer_situation } add_situation_progress = 0 }
+						#}
+						# if = {
+						#	limit = { FROM.OWNER = { has_technology = tech_reactor_boosters_1 } }
+						#	give_technology = { tech = tech_reactor_boosters_1 message = no }
+						#	random_situation = { limit = { is_situation_type = PrimPlayer_situation } add_situation_progress = 0 }
+						#}
+						if = {
+							limit = { FROM.OWNER = { has_technology = tech_shields_1 } }
+							give_technology = { tech = tech_shields_1 message = no }
+							#random_situation = { limit = { is_situation_type = PrimPlayer_situation } add_situation_progress = 5 }
+						}
+						if = {
+							limit = { FROM.OWNER = { has_technology = tech_power_plant_1 } }
+							give_technology = { tech = tech_power_plant_1 message = no }
+							#random_situation = { limit = { is_situation_type = PrimPlayer_situation } add_situation_progress = 6 }
+						}
+						if = {### RARE###
+							limit = { FROM.OWNER = { has_technology = tech_power_plant_1_space_age } }
+							give_technology = { tech = tech_power_plant_1_space_age message = no }
+							#random_situation = { limit = { is_situation_type = PrimPlayer_situation } add_situation_progress = 5 }
+						}
+						if = {### RARE###
+							limit = { FROM.OWNER = { has_technology = tech_hyper_drive_1 } }
+							give_technology = { tech = tech_hyper_drive_1 message = no }
+							#random_situation = { limit = { is_situation_type = PrimPlayer_situation } add_situation_progress = 5 }
+						}
+						# if = {### RARE###
+						#	limit = { FROM.OWNER = { has_technology = tech_subspace_drive } }
+						#	give_technology = { tech = tech_subspace_drive message = no }
+						#	random_situation = { limit = { is_situation_type = PrimPlayer_situation } add_situation_progress = 5 }
+						#}
+						if = {### RARE###
+							limit = { FROM.OWNER = { has_technology = tech_hyper_drive_theory } }
+							give_technology = { tech = tech_hyper_drive_theory message = no }
+							#random_situation = { limit = { is_situation_type = PrimPlayer_situation } add_situation_progress = 5 }
+						}
+						############################# Society Tech#############################
+						if = {
+							limit = { FROM.OWNER = { has_technology = tech_primitive_theory_of_evolution } }
+							give_technology = { tech = tech_primitive_theory_of_evolution message = no }
+							#random_situation = { limit = { is_situation_type = PrimPlayer_situation } add_situation_progress = 6 }
+						}
+						#if = {
+						#	limit = { FROM.OWNER = { has_technology = tech_basic_health } }
+							give_technology = { tech = tech_basic_health message = no }
+						#	random_situation = { limit = { is_situation_type = PrimPlayer_situation } add_situation_progress = 6 }
+						#}
+						if = {
+							limit = { FROM.OWNER = { has_technology = tech_primitive_adv_genetic_theory } }
+							give_technology = { tech = tech_primitive_adv_genetic_theory message = no }
+							#random_situation = { limit = { is_situation_type = PrimPlayer_situation } add_situation_progress = 5 }
+						}
+						if = {
+							limit = { FROM.OWNER = { has_technology = tech_planetary_defenses } }
+							give_technology = { tech = tech_planetary_defenses message = no }
+							#random_situation = { limit = { is_situation_type = PrimPlayer_situation } add_situation_progress = 5 }
+						}
+						if = {
+							limit = { FROM.OWNER = { has_technology = tech_industrial_farming } }
+							give_technology = { tech = tech_industrial_farming message = no }
+							#random_situation = { limit = { is_situation_type = PrimPlayer_situation } add_situation_progress = 3 }
+						}
+						if = {
+							limit = { FROM.OWNER = { has_technology = tech_industrial_farming_2 } }
+							give_technology = { tech = tech_industrial_farming_2 message = no }
+							#random_situation = { limit = { is_situation_type = PrimPlayer_situation } add_situation_progress = 5 }
+						}
+						if = {
+							limit = { FROM.OWNER = { has_technology = tech_industrial_city } }
+							give_technology = { tech = tech_industrial_city message = no }
+							#random_situation = { limit = { is_situation_type = PrimPlayer_situation } add_situation_progress = 3 }
+						}
+						# if = {
+						#	limit = { FROM.OWNER = { has_technology = tech_holo_entertainment } }
+						#	give_technology = { tech = tech_holo_entertainment message = no }
+						#	random_situation = { limit = { is_situation_type = PrimPlayer_situation } add_situation_progress = 0 }
+						#}
+						# if = {
+						#	limit = { FROM.OWNER = { has_technology = tech_interplanetary_commerce } }
+						#	give_technology = { tech = tech_interplanetary_commerce message = no }
+						#	random_situation = { limit = { is_situation_type = PrimPlayer_situation } add_situation_progress = 0 }
+						#}
+						if = {
+							limit = { FROM.OWNER = { has_technology = tech_colonization_1 } }
+							give_technology = { tech = tech_colonization_1 message = no }
+							#random_situation = { limit = { is_situation_type = PrimPlayer_situation } add_situation_progress = 5 }
+						}
+						if = {
+							limit = { FROM.OWNER = { has_technology = tech_primitive_nation_state_government } }
+							give_technology = { tech = tech_primitive_nation_state_government message = no }
+							#random_situation = { limit = { is_situation_type = PrimPlayer_situation } add_situation_progress = 3 }
+						}
+						if = {
+							limit = { FROM.OWNER = { has_technology = tech_primitive_unified_planet } }
+							give_technology = { tech = tech_primitive_unified_planet message = no }
+							#random_situation = { limit = { is_situation_type = PrimPlayer_situation } add_situation_progress = 5 }
+						}
+						if = {
+							limit = { FROM.OWNER = { has_technology = tech_planetary_government } }
+							give_technology = { tech = tech_planetary_government message = no }
+							#random_situation = { limit = { is_situation_type = PrimPlayer_situation } add_situation_progress = 5 }
+						}
+						if = {
+							limit = { FROM.OWNER = { has_technology = tech_primitive_historical_archives } }
+							give_technology = { tech = tech_primitive_historical_archives message = no }
+							#random_situation = { limit = { is_situation_type = PrimPlayer_situation } add_situation_progress = 3 }
+						}
+						if = {
+							limit = { FROM.OWNER = { has_technology = tech_primitive_universities } }
+							give_technology = { tech = tech_primitive_universities message = no }
+							#random_situation = { limit = { is_situation_type = PrimPlayer_situation } add_situation_progress = 6 }
+						}
+						if = {
+							limit = { FROM.OWNER = { has_technology = tech_cultural_heritage } }
+							give_technology = { tech = tech_cultural_heritage message = no }
+							#random_situation = { limit = { is_situation_type = PrimPlayer_situation } add_situation_progress = 15 }
+						}
+						if = {
+							limit = { FROM.OWNER = { has_technology = tech_primitive_node } }
+							give_technology = { tech = tech_primitive_node message = no }
+							#random_situation = { limit = { is_situation_type = PrimPlayer_situation } add_situation_progress = 3 }
+						}
+						if = {
+							limit = { FROM.OWNER = { has_technology = tech_primitive_synapses } }
+							give_technology = { tech = tech_primitive_synapses message = no }
+							#random_situation = { limit = { is_situation_type = PrimPlayer_situation } add_situation_progress = 6 }
+						}
+						if = {
+							limit = { FROM.OWNER = { has_technology = tech_hive_node } }
+							give_technology = { tech = tech_hive_node message = no }
+							#random_situation = { limit = { is_situation_type = PrimPlayer_situation } add_situation_progress = 15 }
+						}
+						# if = {
+						#	limit = { FROM.OWNER = { has_technology = tech_xeno_linguistics } }
+						#	give_technology = { tech = tech_xeno_linguistics message = no }
+						#	random_situation = { limit = { is_situation_type = PrimPlayer_situation } add_situation_progress = 5 }
+						#}
+					#
+				#Cog Note - Too Lazy to fix this indent
+			#
+		}
+		FROM.OWNER = { country_event = { id = nations.9 } }
+	}
+	option = {
+		name = "nations.8.gestalt"
+		trigger = { is_gestalt = yes }
+		if = {
+			limit = { NOT = { has_technology = tech_primitive_unified_planet } }
+			give_technology = { tech = tech_primitive_unified_planet message = yes }
+		}
+	}
+	option = {
+		name = "nations.8.authoritarian"
+		trigger = { is_authoritarian = yes }
+		if = {
+			limit = { NOT = { has_technology = tech_primitive_unified_planet } }
+			give_technology = { tech = tech_primitive_unified_planet message = yes }
+		}
+	}
+	option = {
+		name = "nations.8.egalitarian"
+		trigger = { is_egalitarian = yes }
+		if = {
+			limit = { NOT = { has_technology = tech_primitive_unified_planet } }
+			give_technology = { tech = tech_primitive_unified_planet message = yes }
+		}
+	}
+	option = {
+		name = "nations.8.xenophobe"
+		trigger = { is_xenophobe = yes }
+		if = {
+			limit = { NOT = { has_technology = tech_primitive_unified_planet } }
+			give_technology = { tech = tech_primitive_unified_planet message = yes }
+		}
+	}
+	option = {
+		name = "nations.8.xenophile"
+		trigger = { is_xenophile = yes }
+		if = {
+			limit = { NOT = { has_technology = tech_primitive_unified_planet } }
+			give_technology = { tech = tech_primitive_unified_planet message = yes }
+		}
+	}
+	option = {
+		name = "nations.8.militarist"
+		trigger = { is_militarist = yes }
+		if = {
+			limit = { NOT = { has_technology = tech_primitive_unified_planet } }
+			give_technology = { tech = tech_primitive_unified_planet message = yes }
+		}
+	}
+	option = {
+		name = "nations.8.pacifist"
+		trigger = { is_pacifist = yes }
+		if = {
+			limit = { NOT = { has_technology = tech_primitive_unified_planet } }
+			give_technology = { tech = tech_primitive_unified_planet message = yes }
+		}
+	}
+	option = {
+		name = "nations.8.spiritualist"
+		trigger = { is_spiritualist = yes }
+		if = {
+			limit = { NOT = { has_technology = tech_primitive_unified_planet } }
+			give_technology = { tech = tech_primitive_unified_planet message = yes }
+		}
+	}
+	option = {
+		name = "nations.8.materialist"
+		trigger = { is_materialist = yes }
+		if = {
+			limit = { NOT = { has_technology = tech_primitive_unified_planet } }
+			give_technology = { tech = tech_primitive_unified_planet message = yes }
+		}
+	}
+	option = {
+		name = "nations.8.green"
+		trigger = { is_green = yes }
+		if = {
+			limit = { NOT = { has_technology = tech_primitive_unified_planet } }
+			give_technology = { tech = tech_primitive_unified_planet message = yes }
+		}
+	}
+	option = {
+		name = "nations.8.industrial"
+		trigger = { is_industrial = yes }
+		if = {
+			limit = { NOT = { has_technology = tech_primitive_unified_planet } }
+			give_technology = { tech = tech_primitive_unified_planet message = yes }
+		}
+	}
+	option = {
+		name = "nations.8.socialism"
+		trigger = { is_socialism = yes }
+		if = {
+			limit = { NOT = { has_technology = tech_primitive_unified_planet } }
+			give_technology = { tech = tech_primitive_unified_planet message = yes }
+		}
+	}
+	option = {
+		name = "nations.8.capitalism"
+		trigger = { is_capitalism = yes }
+		if = {
+			limit = { NOT = { has_technology = tech_primitive_unified_planet } }
+			give_technology = { tech = tech_primitive_unified_planet message = yes }
+		}
+	}
+}
+
+# From = country, lead attacker
+# This = country, planet owner
+country_event = {
+	id = nations.9
+	title = "nations.9.title"
+	is_triggered_only = yes
+	#location = from.from
+	picture = GFX_evt_surrender
+	
+	desc = {
+		text = "nations.9.desc"
+	}
+	
+	immediate = { 
+		capital_scope = { 
+			set_planet_flag = planetary_revolt_situation_war 
+			if = {
+				limit = { has_planet_flag = orbital_stations_planet }
+				remove_planet_flag = orbital_stations_planet
+				if = {
+					limit = { has_planet_flag = orbital_stations_planet }
+					remove_planet_flag = has_megastructure
+				}
+			}
+		}
+		if = {
+			limit = { has_country_flag = slave_revolt }
+			random_country = {
+				limit = { has_country_flag = planetary_revolt_situation_war@root }
+				set_country_flag = slave_revolt 
+			}
+		}
+		random_country = {
+			limit = { has_country_flag = planetary_revolt_situation_war@root }
+			random_controlled_planet = {
+				limit = { has_planet_flag = planetary_revolt_situation_war }
+				planet_event = { id = nations.10 days = 1 }
+			}
+			remove_country_flag = planetary_revolt_situation_war@root 
+			remove_modifier = PrimPlayer_ethic_fanatic_nation_modifier
+			set_country_flag = origin_separatists_flag
+			set_country_flag = planetary_revolt_situation_war
+			set_player = PREV
+		}
+	}
+	
+	option = {
+		name = "nations.9.a"	
+		random_country = {
+			limit = { has_country_flag = planetary_revolt_situation_war }
+			ROOT = { set_truce = { target = PREV type = liberation } }
+		}
+	}
+}
+
+planet_event = {
+	id = nations.10
+	is_triggered_only = yes
+	hide_window = yes
+	
+	immediate = { 
+		remove_modifier = instability_join_revolt
+		random_country = {
+			limit = { has_country_flag = planetary_revolt_situation_war }
+			ROOT = { set_owner = PREV }
+		}
+		if = {
+			limit = {
+				any_country = { 
+					has_country_flag = slave_revolt 
+					has_country_flag = planetary_revolt_situation_war
+				}
+			}
+			add_modifier = {
+				modifier = free_at_last
+				clear_on_owner_change = yes
+				days = 7200
+			}
+		}
+		else = {
+			add_modifier = {
+				modifier = insurgents_free
+				clear_on_owner_change = yes
+				days = 7200
+			}
+		}
+		hidden_effect = { 
+			owner = { 
+				set_country_type = default 
+				unlock_council_slots = 3
+				remove_country_flag = planetary_revolt_situation_war
+				add_resource = {
+					minerals = 1500
+					energy = 1500
+					food = 1500
+					consumer_goods = 1000
+					alloys = 500
+					rare_crystals = 1000
+					#volatile_motes = 100
+					#exotic_gases = 100
+					#influence = 100
+					unity = 10000
+				}
+				if = {
+					limit = { has_technology = tech_subspace_drive }
+					create_fleet = {
+						name = "NAME_Pre_FTL_Chemical_Ship"
+						effect = {
+							set_owner = root.owner
+							create_ship = {
+								name = "NAME_Pre_FTL_Chemical_Ship"
+								design = "NAME_Early_Engineer_Vessel"
+							}
+							set_location = root
+							set_fleet_stance = passive
+						}
+					}
+				}
+				else_if = {
+					limit = { has_technology = tech_primitive_early_aerospace_rocket }
+					create_fleet = {
+						name = "NAME_Pre_FTL_Chemical_Ship"
+						effect = {
+							set_owner = root.owner
+							create_ship = {
+								name = "NAME_Pre_FTL_Chemical_Ship"
+								design = "NAME_Early_Engineer_Vessel_NoDrive"
+							}
+							set_location = root
+							set_fleet_stance = passive
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+##############################################################################
+######## INTERSTELLAR EMPIRE - SECESSION/NATIONALIST REVOLT HAPPENS ##########
+##############################################################################
+situation_event = {
+	id = unrest.4200
+	title = unrest.4200.name
+	# Regular empires
+	desc = {
+		trigger = {
+			owner = { is_regular_empire = yes }
+			NOT = { exists = event_target:new_owner_empire }
+			NOT = { has_situation_flag = slave_revolt }
+		}
+		text = unrest.4200.desc.regular_no_join
+	}
+	desc = {
+		trigger = {
+			owner = { is_regular_empire = yes }
+			exists = event_target:new_owner_empire
+			NOT = { has_situation_flag = slave_revolt }
+		}
+		text = unrest.4200.desc.regular_join
+	}
+	desc = {
+		trigger = {
+			owner = { is_regular_empire = yes }
+			NOT = { exists = event_target:new_owner_empire }
+			has_situation_flag = slave_revolt
+		}
+		text = unrest.4200.desc.slave.no_join
+	}
+	desc = {
+		trigger = {
+			owner = { is_regular_empire = yes }
+			exists = event_target:new_owner_empire
+			has_situation_flag = slave_revolt
+		}
+		text = unrest.4200.desc.slave.join
+	}
+	# Hive (non-Wilderness) empires
+	desc = {
+		trigger = {
+			owner = {
+				is_hive_empire = yes
+				is_wilderness_empire = no
+			}
+			NOT = { exists = event_target:new_owner_empire }
+			event_target:rebel_empire = {
+				is_hive_empire = yes
+				is_wilderness_empire = no
+			}
+		}
+		text = unrest.4200.desc.hive_no_join
+	}
+	desc = {
+		trigger = {
+			owner = {
+				is_hive_empire = yes
+				is_wilderness_empire = no
+			}
+			NOT = { exists = event_target:new_owner_empire }
+			event_target:rebel_empire = { is_hive_empire = no } # also excludes Wilderness
+		}
+		text = unrest.4200.desc.hive_no_join_regular
+	}
+	desc = {
+		trigger = {
+			owner = {
+				is_hive_empire = yes
+				is_wilderness_empire = no
+			}
+			exists = event_target:new_owner_empire
+		}
+		text = unrest.4200.desc.hive_join
+	}
+	# Machine empires
+	desc = {
+		trigger = {
+			owner = { is_machine_empire = yes }
+			NOT = { exists = event_target:new_owner_empire }
+			event_target:rebel_empire = { is_machine_empire = yes }
+		}
+		text = unrest.4200.desc.machine_no_join
+	}
+	desc = {
+		trigger = {
+			owner = { is_machine_empire = yes }
+			NOT = { exists = event_target:new_owner_empire }
+			event_target:rebel_empire = { is_machine_empire = no }
+		}
+		text = unrest.4200.desc.machine_no_join_regular
+	}
+	desc = {
+		trigger = {
+			owner = { is_machine_empire = yes }
+			exists = event_target:new_owner_empire
+		}
+		text = unrest.4200.desc.machine_join
+	}
+	# Wilderness empires
+	desc = {
+		trigger = {
+			owner = { is_wilderness_empire = yes }
+			NOT = { exists = event_target:new_owner_empire }
+			event_target:rebel_empire = { is_wilderness_empire = yes }
+		}
+		text = unrest.4200.desc.wilderness_no_join
+	}
+	desc = {
+		trigger = {
+			owner = { is_wilderness_empire = yes }
+			NOT = { exists = event_target:new_owner_empire }
+			event_target:rebel_empire = { is_wilderness_empire = no }
+		}
+		text = unrest.4200.desc.wilderness_no_join_regular
+	}
+	desc = {
+		trigger = {
+			owner = { is_wilderness_empire = yes }
+			exists = event_target:new_owner_empire
+		}
+		text = unrest.4200.desc.wilderness_join
+	}
+	picture = GFX_evt_surrender
+	show_sound = event_ground_battle
+	location = root.target
+	situation = this
+	force_open = yes
+
+	is_triggered_only = yes
+
+	immediate = {
+		save_event_target_as = revolt_situation
+		owner = {
+			save_event_target_as = old_owner
+			if = {
+				limit = { is_ai = yes }
+				log = "AI [This.GetName] suffered a rebellion on [Root.Target.GetName] in [GetYear]"
+			}
+			else = {
+				log = "Player [This.GetName] suffered a rebellion on [Root.Target.GetName] in [GetYear]"
+			}
+		}
+		target = {
+			random_owned_species = {
+				limit = { has_species_flag = rebellion_species@root }
+				save_event_target_as = rebellion_species
+			}
+		}
+		if = {
+			limit = { NOT = { exists = event_target:rebellion_species } }
+			deduce_planetary_separatism_species = yes
+		}
+		random_country = {
+			limit = {
+				has_country_flag = revolt_joiner_empire_@root
+				#Check eligibility again in case there are pacts in the meantime or something went wrong
+				basic_eligibility_for_separatism_joining_trigger = yes
+			}
+			save_event_target_as = new_owner_empire
+		}
+
+		target = {
+			save_event_target_as = rebel_planet
+			create_rebels = {
+				name = random
+				ethos = random
+				authority = random
+				civics = random
+				origin = "origin_separatists"
+				species = event_target:rebellion_species
+				flag = random
+				effect = {
+					set_country_type = default #we don't need the rebel country type with this version, but create_rebels effect has useful functionalities
+					save_event_target_as = rebel_empire
+					if = {
+						limit = {
+							has_trait = trait_necrophage
+						}
+						set_origin = origin_necrophage
+					}
+					else_if = {
+						limit = {
+							has_trait = trait_void_dweller_1
+						}
+						set_origin = origin_void_dwellers
+					}
+					else_if = {
+						limit = {
+							has_trait = trait_void_dweller_2
+						}
+						set_origin = origin_void_machines
+					}
+					else_if = {
+						limit = {
+							has_trait = trait_cave_dweller
+						}
+						set_origin = origin_subterranean
+					}
+					else_if = {
+						limit = {
+							has_trait = trait_robot_cave_dweller
+						}
+						set_origin = origin_subterranean_machines
+					}
+					else_if = {
+						limit = {
+							root.owner = { has_origin = origin_tree_of_life }
+							has_trait = trait_hive_mind
+						}
+						set_origin = origin_tree_of_life
+					}
+
+					if = {
+						limit = {
+							has_trait = trait_machine_unit
+							root.owner = { is_individual_machine = no }
+							NOT = { has_ethic = ethic_gestalt_consciousness }
+						}
+						shift_ethic = ethic_gestalt_consciousness
+						change_government = {
+							authority = auth_machine_intelligence
+							civics = random
+						}
+					}
+					else_if = {
+						limit = {
+							has_trait = trait_hive_mind
+							NOT = { has_ethic = ethic_gestalt_consciousness }
+						}
+						shift_ethic = ethic_gestalt_consciousness
+						change_government = {
+							authority = auth_hive_mind
+							civics = random
+						}
+					}
+					else_if = {
+						limit = {
+							root = { has_situation_flag = slave_revolt }
+						}
+						shift_ethic = ethic_fanatic_egalitarian
+						change_government = random
+					}
+					else = {
+						root = {
+							switch = {
+								trigger = has_situation_flag
+								pacifist = {
+									event_target:rebel_empire = {
+										shift_ethic = ethic_fanatic_pacifist
+									}
+								}
+								militarist = {
+									event_target:rebel_empire = {
+										shift_ethic = ethic_fanatic_militarist
+									}
+								}
+								authoritarian = {
+									event_target:rebel_empire = {
+										shift_ethic = ethic_fanatic_authoritarian
+									}
+								}
+								egalitarian = {
+									event_target:rebel_empire = {
+										shift_ethic = ethic_fanatic_egalitarian
+									}
+								}
+								xenophile = {
+									event_target:rebel_empire = {
+										shift_ethic = ethic_fanatic_xenophile
+									}
+								}
+								xenophobe = {
+									event_target:rebel_empire = {
+										shift_ethic = ethic_fanatic_xenophobe
+									}
+								}
+								spiritualist = {
+									event_target:rebel_empire = {
+										shift_ethic = ethic_fanatic_spiritualist
+									}
+								}
+								materialist = {
+									event_target:rebel_empire = {
+										shift_ethic = ethic_fanatic_materialist
+									}
+								}
+								#E&C Specific
+								green = {
+									event_target:rebel_empire = {
+										shift_ethic = ethic_fanatic_green
+									}
+								}
+								industrialist = {
+									event_target:rebel_empire = {
+										shift_ethic = ethic_fanatic_industrial
+									}
+								}
+							}
+						}
+						change_government = {
+							authority = random
+							civics = random
+						}
+					}
+
+					create_leader = {
+						class = random_ruler
+						species = owner_main_species
+						name = random
+						skill = 5
+						effect = {
+							event_target:rebel_empire = { assign_leader = prev }
+							# add_random_leader_trait = yes
+							# add_random_leader_trait = yes
+						}
+					}
+
+					establish_communications_no_message = root.owner
+					if = {
+						limit = { exists = event_target:new_owner_empire }
+						establish_communications_no_message = event_target:new_owner_empire
+					}
+					event_target:rebel_planet = { #Flip the target planet
+						set_owner = event_target:rebel_empire
+						if = {
+							limit = {
+								root = { has_situation_flag = slave_revolt }
+							}
+							add_modifier = {
+								modifier = free_at_last
+								clear_on_owner_change = yes
+								days = 7200
+							}
+						}
+						else = {
+							add_modifier = {
+								modifier = insurgents_free
+								clear_on_owner_change = yes
+								days = 7200
+							}
+						}
+
+						solar_system = {
+							if = {
+								limit = { exists = starbase }
+								starbase = {
+									if = {
+										limit = {
+											is_owned_by = root.owner
+										}
+										set_owner = event_target:rebel_empire
+										if = {
+											limit = { has_starbase_size = starbase_outpost }
+											set_starbase_size = starbase_starport
+											set_starbase_module = {
+												slot = 1
+												module = shipyard
+											}
+											set_starbase_module = {
+												slot = 2
+												module = shipyard
+											}
+										}
+										else_if = {
+											limit = {
+												NOT = { has_starbase_module = shipyard }
+											}
+											set_starbase_module = {
+												slot = 1
+												module = shipyard
+											}
+											set_starbase_module = {
+												slot = 2
+												module = shipyard
+											}
+										}
+									}
+								}
+							}
+							else = {
+								create_starbase = {
+									size = starbase_starport
+									module = shipyard
+									module = shipyard
+									owner = event_target:rebel_empire
+								}
+							}
+							add_claims = {
+								who = root.owner
+								show_notification = no
+							}
+							every_system_planet = {
+								limit = {
+									is_colony = yes
+									NOT = { is_same_value = event_target:rebel_planet }
+									is_owned_by = root.owner
+								}
+								set_owner = event_target:rebel_empire
+							}
+							every_fleet_in_system = {
+								limit = {
+									is_owned_by = root.owner
+									can_go_mia = yes
+								}
+								set_mia = mia_return_home
+							}
+						}
+					}
+					root.owner = {
+						every_owned_planet = { #Flip the additional joiner planets
+							limit = {
+								has_modifier = instability_join_revolt
+								planet_stability < @[ stabilitylevel2 + 10 ]
+								OR = {
+									NOT = { exists = starbase }
+									starbase = { is_owned_by = root.owner }
+								}
+								has_ground_combat = no
+								has_orbital_bombardment = no
+							}
+							if = { #if you check this in the original limit of every_owned_planet, it calcs it before the loop is executed. Which means it will set the owner of the system twice if there are two colonies in the system.
+								limit = {
+									exists = controller
+									controller = { is_same_value = root.owner }
+								}
+								remove_modifier = instability_join_revolt
+								set_owner = event_target:rebel_empire
+								if = {
+									limit = {
+										root = { has_situation_flag = slave_revolt }
+									}
+									add_modifier = {
+										modifier = free_at_last
+										clear_on_owner_change = yes
+										days = 7200
+									}
+								}
+								else = {
+									add_modifier = {
+										modifier = insurgents_free
+										clear_on_owner_change = yes
+										days = 7200
+									}
+								}
+
+								solar_system = {
+									if = {
+										limit = { exists = starbase }
+										starbase = { set_owner = event_target:rebel_empire }
+									}
+									add_claims = {
+										who = root.owner
+										show_notification = no
+									}
+									every_system_planet = {
+										limit = {
+											is_colony = yes
+											NOT = { is_same_value = prevprev }
+											is_owned_by = root.owner
+										}
+										set_owner = event_target:rebel_empire
+									}
+									every_fleet_in_system = {
+										limit = {
+											is_owned_by = root.owner
+											can_go_mia = yes
+										}
+										set_mia = mia_return_home
+									}
+								}
+							}
+						}
+					}
+					every_system_within_border = { #Add a few systems
+						every_neighbor_system = {
+							limit = {
+								exists = owner
+								owner = { is_same_value = root.owner }
+								exists = starbase
+								NOR = {
+									starbase = {
+										OR = {
+											is_starbase_type = sfortress
+											NOT = { is_owned_by = root.owner }
+										}
+									}
+									any_system_planet = {
+										is_colony = yes
+									}
+								}
+							}
+							starbase = { set_owner = event_target:rebel_empire }
+							add_claims = {
+								who = root.owner
+								show_notification = no
+							}
+							every_fleet_in_system = {
+								limit = {
+									is_owned_by = root.owner
+									can_go_mia = yes
+								}
+								set_mia = mia_return_home
+							}
+						}
+					}
+					while = { #Get rid of bordergore systems
+						limit = { #Note: system_within_border caching is quite funky at a time like this when many borders are changing hands. The starbase ownership is checked to be extra sure, since it is not cached (unlike system ownership - though that probably would have worked too)
+							root.owner = {
+								any_system_within_border = {
+									exists = starbase
+									starbase.owner = { is_same_value = prevprev }
+									count_neighbor_system = {
+										count >= 2
+										limit = {
+											exists = starbase.owner
+											starbase.owner = {
+												is_same_value = event_target:rebel_empire
+											}
+										}
+									}
+									NOR = {
+										starbase = { is_starbase_type = sfortress }
+										any_system_planet = {
+											is_colony = yes
+										}
+									}
+								}
+							}
+						}
+						root.owner = {
+							every_system_within_border = {
+								limit = {
+									exists = starbase
+									starbase.owner = { is_same_value = prevprev }
+									count_neighbor_system = {
+										count >= 2
+										limit = {
+											exists = starbase.owner
+											starbase.owner = {
+												is_same_value = event_target:rebel_empire
+											}
+										}
+									}
+									NOR = {
+										starbase = { is_starbase_type = sfortress }
+										any_system_planet = {
+											is_colony = yes
+										}
+									}
+								}
+								starbase = {
+									set_owner = event_target:rebel_empire
+								}
+								add_claims = {
+									who = root.owner
+									show_notification = no
+								}
+								every_fleet_in_system = {
+									limit = {
+										is_owned_by = root.owner
+										can_go_mia = yes
+									}
+									set_mia = mia_return_home
+								}
+							}
+						}
+					}
+
+					if = {
+						limit = { exists = event_target:new_owner_empire }
+						set_country_flag = silence_destroy_event
+						ruler = {
+							save_event_target_as = exiled_rebel
+							exile_leader_as = exiled_rebel
+						}
+						every_owned_starbase = {
+							set_owner = event_target:new_owner_empire
+						}
+						every_owned_planet = {
+							set_owner = event_target:new_owner_empire
+							if = {
+								limit = {
+									root = { has_situation_flag = slave_revolt }
+								}
+								add_modifier = {
+									modifier = slaves_defected
+									clear_on_owner_change = yes
+									days = 7200
+								}
+							}
+						}
+						country_event = { id = unrest.4220 }
+					}
+					else = {
+						add_resource = {
+							minerals = 15000
+							energy = 15000
+							food = 15000
+							consumer_goods = 10000
+							alloys = 10000
+							rare_crystals = 1000
+							volatile_motes = 1000
+							exotic_gases = 1000
+							influence = 1000
+							unity = 10000
+						}
+						#It copies the traditions and technologies in code
+
+						create_fleet_from_naval_cap = 0.8
+					}
+				}
+			}
+		}
+	}
+
+	option = {
+		name = unrest.4200.A
+		trigger = {
+			NOT = { exists = event_target:new_owner_empire }
+		}
+		event_target:rebel_empire = {
+			declare_war = {
+				target = root.owner
+				attacker_war_goal = wg_independence
+				name = {
+					key = NAME_WAR_OF_REVOLT
+					variable_string = "[Root.Target.GetName]"
+				}
+			}
+		}
+		ai_chance = {
+			factor = 5
+			mult = value:revolt_fleet_comparison_factor
+		}
+	}
+	option = {
+		name = unrest.4200.B
+		custom_tooltip = unrest.4200.default_tooltip
+		trigger = {
+			NOT = { exists = event_target:new_owner_empire }
+		}
+		hidden_effect = {
+			#Add truce
+			event_target:rebel_empire = {
+				set_truce = {
+					target = root.owner
+					type = liberation
+				}
+			}
+			root.owner = {
+				set_truce = {
+					target = event_target:rebel_empire
+					type = liberation
+				}
+			}
+		}
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 2
+				owner = { is_pacifist = yes }
+			}
+			modifier = {
+				factor = 10
+				owner = {
+					is_at_war = yes
+					any_relation = {
+						is_at_war_with = prev
+						relative_power = {
+							who = prev
+							value >= superior
+							category = fleet
+						}
+					}
+				}
+			}
+		}
+	}
+	option = {
+		name = UNFORTUNATE
+		custom_tooltip = unrest.4200.joiner_tooltip
+		trigger = {
+			exists = event_target:new_owner_empire
+			owner = { is_at_war_with = event_target:new_owner_empire }
+		}
+	}
+	option = {
+		name = unrest.4200.A
+		trigger = {
+			exists = event_target:new_owner_empire
+			NOT = { owner = { is_at_war_with = event_target:new_owner_empire } }
+		}
+
+		custom_tooltip = unrest.4200.joiner_tooltip
+		event_target:new_owner_empire = {
+			declare_war = {
+				target = root.owner
+				attacker_war_goal = wg_humiliation
+				name = {
+					key = NAME_WAR_OF_REVOLT
+					variable_string = "[Root.Target.GetName]"
+				}
+			}
+		}
+
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 0 #they can't take them on
+				count_potential_war_participants = {
+					attacker = event_target:new_owner_empire
+					defender = root.owner
+					side = event_target:new_owner_empire
+					limit = {
+						relative_power = { #stronger than root.owner
+							who = root.owner
+							value >= superior
+							category = fleet
+						}
+						count_potential_war_participants = { #and stronger than root.owner's allies
+							attacker = event_target:new_owner_empire
+							defender = root.owner
+							side = root.owner
+							limit = {
+								relative_power = {
+									who = prev
+									value >= equivalent
+									category = fleet
+								}
+							}
+							count = 0
+						}
+					}
+					count > 0
+				}
+			}
+			modifier = { #these come into play when the empires are equivalent
+				factor = 1.5
+				owner = { is_militarist = yes }
+			}
+			modifier = {
+				factor = 0.5
+				owner = { is_pacifist = yes }
+			}
+		}
+	}
+	option = {
+		name = unrest.4200.B
+		trigger = {
+			exists = event_target:new_owner_empire
+			NOT = { owner = { is_at_war_with = event_target:new_owner_empire } }
+		}
+
+		custom_tooltip = unrest.4200.joiner_tooltip
+		owner = {
+			set_truce = {
+				target = event_target:new_owner_empire
+				type = liberation
+			}
+			hidden_effect = {
+				event_target:new_owner_empire = {
+					set_truce = {
+						target = prev
+						type = liberation
+					}
+				}
+			}
+		}
+
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 0 #they can definitely take them on
+				count_potential_war_participants = {
+					attacker = event_target:new_owner_empire
+					defender = root.owner
+					side = event_target:new_owner_empire
+					limit = {
+						relative_power = { #stronger than root.owner
+							who = root.owner
+							value >= equivalent
+							category = fleet
+						}
+					}
+					count = 0
+				}
+			}
+		}
+	}
+
+	after = {
+		if = { #empire can lost its last planet this way
+			limit = { is_scope_valid = yes }
+			hidden_effect = {
+				cleanup_separatism_situation = yes
+				destroy_situation = this
+			}
+		}
+	}
+}

@@ -561,10 +561,31 @@ PrimPlayer_situation = {
 					remove_modifier = PrimPlayer_separatist_movement
 				}
 			}
-			add_modifier = {
-				modifier = PrimPlayer_through_the_ages
+			if = {
+				limit = { 
+					owner = { 
+						OR = {
+							has_origin = origin_primitive_player_pre_industrial_age 
+							has_origin = origin_primitive_player_industrial_age 
+							has_origin = origin_primitive_player_machine_age 
+							has_origin = origin_primitive_player_atomic_age	
+							has_origin = origin_primitive_player_early_space_age
+						} 
+					}
+				}
+				add_modifier = {
+					modifier = PrimPlayer_through_the_ages
+				}
+			}
+			else = {
+				add_modifier = {
+					modifier = Low_Tech_through_the_ages
+				}
 			}
 		}
+		########################################
+		# Origin Outcome for Primitive Players #
+		########################################
 		if = {
 			limit = { 
 				owner = { 
@@ -585,10 +606,38 @@ PrimPlayer_situation = {
 					}
 					set_origin = origin_post_apocalyptic
 				}
-				else = { set_origin = origin_default }	#Default origin, unless Nuclear Winter happens, everything else has priority
+				else_if = {
+					limit = { 
+						capital_scope = { 
+							OR = {
+								has_modifier = ocean_paradise_hive
+								has_modifier = ocean_paradise
+							}
+						}
+					}
+					set_origin = origin_ocean_paradise
+				}
+				else_if = {
+					limit = { 
+						has_overlord_dlc = yes
+						is_subject = yes 
+					}
+					set_origin = origin_imperial_vassal	#Default origin if a subject
+				}
+				else_if = {
+					limit = { 
+						has_country_flag = origin_separatists_flag
+					}
+					hidden_effect = { remove_country_flag = origin_separatists_flag }
+					set_origin = origin_separatists	#Default origin if failed a Civil War
+				}
+				else = { set_origin = origin_default }	#Default origin, everything else has priority
 				hidden_effect = { prev = { situation_event = { id = PrimPlay_situation_event.1 } } }
 			}
 		}
+		##################################
+		# Other Through the Ages Empires #
+		##################################
 		else_if = {
 			limit = { owner = { has_origin = origin_broken_shackles } }
 			situation_event = { id = PrimPlay_situation_event.1 }
@@ -675,11 +724,11 @@ PrimPlayer_awareness_situation = {
 		always = no
 	}
 	modifier = {
-		
+		first_contact_speed_mult = -1
 	}
 	stages = {
 		awareness_unaware = {
-			icon = GFX_PrimPlay_situation_stage_industrial_age
+			icon = GFX_situation_stage_1
 			icon_background = GFX_situation_stage_frame_blue
 			end = 10
 			on_first_enter = {
@@ -689,7 +738,7 @@ PrimPlayer_awareness_situation = {
 		}
 		
 		awareness_low = {
-			icon = GFX_PrimPlay_situation_stage_industrial_age
+			icon = GFX_situation_stage_2
 			icon_background = GFX_situation_stage_frame_blue
 			end = 30
 			on_first_enter = {
@@ -699,7 +748,7 @@ PrimPlayer_awareness_situation = {
 		}
 		
 		awareness_partial = {
-			icon = GFX_PrimPlay_situation_stage_machine_age
+			icon = GFX_situation_stage_3
 			icon_background = GFX_situation_stage_frame_blue
 			end = 60
 			on_first_enter = {
@@ -709,7 +758,7 @@ PrimPlayer_awareness_situation = {
 		}
 		
 		awareness_high = {
-			icon = GFX_PrimPlay_situation_stage_machine_age
+			icon = GFX_situation_stage_4
 			icon_background = GFX_situation_stage_frame_blue
 			end = 90
 			on_first_enter = {
@@ -719,21 +768,23 @@ PrimPlayer_awareness_situation = {
 		}
 		
 		awareness_full = {
-			icon = GFX_PrimPlay_situation_stage_machine_age
+			icon = GFX_situation_stage_5
 			icon_background = GFX_situation_stage_frame_blue
 			end = 100
 			on_first_enter = {
 				
 			}
-			custom_tooltip = awareness_full_tt
+			custom_tooltip = PrimPlayer_awareness_situation_stage_5_requirements
 		}
 	}
 	on_progress_complete = {
+		situation_event = { id = ethic_civic_classic_flag.3 }
 		custom_tooltip = awareness_full_tt
 	}
 	on_monthly = {
 		events = {
-			ethic_civic_classic_flag.3
+			#ethic_civic_classic_flag.3		#Now triggered by edict & completing the situation
+			ethic_civic_classic_flag.5		#Radio Telescope Array Events 
 		}
 	}
 	monthly_progress = {
@@ -741,17 +792,81 @@ PrimPlayer_awareness_situation = {
 		modifier = {
 			add = -1
 			desc = PrimPlayer_awareness_situation_suppress
+			situation_progress > 1
 			current_situation_approach = PrimPlayer_awareness_situation_suppress
+		}
+		modifier = {
+			add = 1
+			desc = PrimPlayer_eager_explorer_approach
+			current_situation_approach = PrimPlayer_eager_explorer_approach
+			OR = {
+				situation_progress < 88
+				owner = {
+					any_country = {
+						OR = {
+							is_country_type = default
+							is_country_type = fallen_empire
+							#is_country_type = awakened_fallen_empire	#Very Niche
+							#is_country_type = awakened_marauders		#Very Niche
+							#is_country_type = dormant_marauders		#Very Niche
+							is_country_type = marauder_raiders
+							is_country_type = debt_collectors
+							#is_country_type = nomad					#Very Niche
+							#is_country_type = enclave					#Very Niche
+							#is_country_type = enclave_mercenary		#Very Niche
+							#is_country_type = mindwarden_enclave		#Very Niche
+							#is_country_type = gate_builders			#Very Niche
+						}
+						has_communications = PREV
+					}
+				}
+			}
+		}
+		modifier = {
+			add = 0.1
+			desc = building_pre_ftl_radio_telescope
+			OR = {
+				situation_progress < 88
+				owner = {
+					any_country = {
+						OR = {
+							is_country_type = default
+							is_country_type = fallen_empire
+							#is_country_type = awakened_fallen_empire	#Very Niche
+							#is_country_type = awakened_marauders		#Very Niche
+							#is_country_type = dormant_marauders		#Very Niche
+							is_country_type = marauder_raiders
+							is_country_type = debt_collectors
+							#is_country_type = nomad					#Very Niche
+							#is_country_type = enclave					#Very Niche
+							#is_country_type = enclave_mercenary		#Very Niche
+							#is_country_type = mindwarden_enclave		#Very Niche
+							#is_country_type = gate_builders			#Very Niche
+						}
+						has_communications = PREV
+					}
+				}
+			}
+			owner = {   
+				any_owned_planet = { 
+					num_buildings = {  
+						type = building_pre_ftl_radio_telescope 
+						value > 0
+						disabled = no
+						in_construction = no 
+					}
+				}
+			}
 		}
 	}
 	approach = {
 		name = into_the_unknown
-		icon = GFX_situation_approach_unity
+		icon = GFX_situation_approach_awareness
 		icon_background = GFX_situation_approach_bg_green
 		default = yes
 		on_select = {
 			#set_situation_locked = no
-			custom_tooltip = deficit_approach_do_nothing_tooltip
+			#custom_tooltip = deficit_approach_do_nothing_tooltip
 		}
 		potential = {
 			owner = {
@@ -772,7 +887,7 @@ PrimPlayer_awareness_situation = {
 		default = no
 		on_select = {
 			#set_situation_locked = no
-			custom_tooltip = PrimPlayer_eager_explorer_approach_tooltip
+			custom_tooltip = PrimPlayer_awareness_situation_eager_explorer_approach_tooltip
 		}
 		potential = { owner = { is_eager_explorer_empire = yes } }
 	}
@@ -785,7 +900,14 @@ PrimPlayer_awareness_situation = {
 			#set_situation_locked = yes
 			custom_tooltip = PrimPlayer_awareness_situation_suppress_tooltip
 		}
-		allow = { owner = { is_egalitarian = no } } 
+		allow = { 
+			owner = { 
+				NOR = {
+					is_egalitarian = yes 
+					is_xenophile = yes
+				}
+			}
+		} 
 		potential = {
 			owner = {
 				OR = {
