@@ -1,9 +1,160 @@
-###################################################
-#
-#
-###################################################
 namespace = PrimPlay_situation_event
+namespace = ethic_civic_classic_flag
 
+
+##########################
+# Interstellar Awareness #
+##########################
+#PrimPlayer Awareness situation
+situation_event = {
+	id = ethic_civic_classic_flag.3
+	title = "ethic_civic_classic_flag.4.title"
+	is_triggered_only = yes
+	picture = GFX_evt_infiltration_neutral
+	hide_window = yes
+	
+	trigger = { 
+		NOR = { 
+			current_situation_approach = PrimPlayer_awareness_situation_suppress 
+			has_situation_flag = PrimPlayer_awareness_situation_event
+		} 
+		situation_progress = 100
+	}
+	
+	immediate = { 
+		set_situation_flag = PrimPlayer_awareness_situation_event 
+		owner = { country_event = { id = ethic_civic_classic_flag.4 } }
+	}
+}
+
+#PrimPlayer Awareness situation
+country_event = {
+	id = ethic_civic_classic_flag.4
+	title = "ethic_civic_classic_flag.4.title"
+	is_triggered_only = yes
+	picture = GFX_evt_infiltration_neutral
+	
+	desc = {
+		trigger = {
+			has_policy_flag = first_contact_proactive
+		}
+		text = "ethic_civic_classic_flag.4.proactive.desc"
+	}
+	desc = {
+		trigger = {
+			NOT = { has_policy_flag = first_contact_proactive }
+		} 
+		text = "ethic_civic_classic_flag.4.desc"
+	}
+	
+	option = {
+		name = "ethic_civic_classic_flag.4.full.proactive"
+		trigger = { has_policy_flag = first_contact_proactive }
+		destroy_situation = FROM
+		add_resource = { unity = 1000 }
+	}
+	
+	option = {
+		name = "ethic_civic_classic_flag.4.full"
+		trigger = { NOT = { has_policy_flag = first_contact_proactive } }
+		if = {
+			limit = { capital_scope = { NOT = { has_modifier = culture_shock_diplomacy } } }
+			capital_scope = { 
+				add_modifier = {
+					modifier = culture_shock_diplomacy
+					years = 20
+					clear_on_owner_change = yes
+				}
+			}
+		}
+		destroy_situation = FROM
+	}
+	
+	option = {
+		name = "ethic_civic_classic_flag.4.suppress"
+		allow = {
+			custom_tooltip = {
+				text = civic_tooltip_not_egalitarian_or_xenophile
+				NOR = {
+					is_egalitarian = yes 
+					is_xenophile = yes
+				}
+			}
+			capital_scope = { has_branch_office = no }
+		}
+		hidden_effect = { FROM = { add_situation_progress = -10 } }
+		FROM = { set_situation_approach = PrimPlayer_awareness_situation_suppress }
+	}
+	
+	after = {
+		hidden_effect = {
+			FROM = { remove_situation_flag = PrimPlayer_awareness_situation_event }
+		}
+	}
+}
+
+#PrimPlayer Awareness Gain
+situation_event = {
+	id = ethic_civic_classic_flag.5
+	is_triggered_only = yes
+	picture = GFX_evt_infiltration_neutral
+	hide_window = yes
+	
+	trigger = { 
+		NOR = { 
+			current_situation_approach = PrimPlayer_awareness_situation_suppress 
+			has_situation_flag = PrimPlayer_awareness_situation_event
+		} 
+		owner = {   
+			any_owned_planet = { 
+				num_buildings = {  
+					type = building_pre_ftl_radio_telescope 
+					value > 0
+					disabled = no
+					in_construction = no 
+				}
+			}
+		}
+		situation_progress < 100
+	}
+	
+	immediate = { 
+		if = {
+			limit = { situation_progress < 89 }
+			random_list = { #To be expanded upon
+				25 = { add_situation_progress = 1 } 
+				75 = {  } #Does Nothing
+			}
+		}
+		else_if = {
+			limit = {
+				owner = {
+					any_country = {
+						OR = {
+							is_country_type = default
+							is_country_type = fallen_empire
+							is_country_type = awakened_fallen_empire
+							is_country_type = awakened_marauders
+							is_country_type = dormant_marauders
+							is_country_type = marauder_raiders
+							is_country_type = debt_collectors
+							is_country_type = nomad
+							is_country_type = enclave
+							is_country_type = enclave_mercenary
+							#is_country_type = mindwarden_enclave	#Very Niche
+							#is_country_type = gate_builders		#Very Niche
+						}
+						has_communications = PREV
+					}
+				}
+			}
+			random_list = { #To be expanded upon
+				25 = { add_situation_progress = 1 } 
+				75 = {  } #Does Nothing
+			}
+		}
+	}
+}
 ############################################
 # Through the Ages - End of Situation Event
 ############################################
@@ -128,6 +279,12 @@ country_event = {
 		give_technology = { tech = tech_subspace_drive message = yes }
 		add_tech_progress = { tech = tech_hyper_drive_1 progress = 0.25 }
 		hidden_effect = { random_situation = { limit = { is_situation_type = PrimPlayer_developing_hyperdrive_situation } add_situation_progress = 50 } }
+		hidden_effect = { 
+			if = {
+				limit = { any_situation = { is_situation_type = PrimPlayer_awareness_situation } }
+				random_situation = { limit = { is_situation_type = PrimPlayer_awareness_situation } set_situation_approach = PrimPlayer_eager_explorer_approach }
+			}
+		}
 	}
 	option = {
 		name = PrimPlay_situation_event.2.civic_privatized_exploration
@@ -138,6 +295,12 @@ country_event = {
 		give_technology = { tech = tech_subspace_drive message = yes }
 		add_tech_progress = { tech = tech_hyper_drive_1 progress = 0.25 }
 		hidden_effect = { random_situation = { limit = { is_situation_type = PrimPlayer_developing_hyperdrive_situation } add_situation_progress = 50 } }
+		hidden_effect = { 
+			if = {
+				limit = { any_situation = { is_situation_type = PrimPlayer_awareness_situation } }
+				random_situation = { limit = { is_situation_type = PrimPlayer_awareness_situation } set_situation_approach = PrimPlayer_eager_explorer_approach }
+			}
+		}
 	}
 	option = {
 		name = PrimPlay_situation_event.2.civic_machine_exploration_protocol
@@ -148,6 +311,12 @@ country_event = {
 		give_technology = { tech = tech_subspace_drive message = yes }
 		add_tech_progress = { tech = tech_hyper_drive_1 progress = 0.25 }
 		hidden_effect = { random_situation = { limit = { is_situation_type = PrimPlayer_developing_hyperdrive_situation } add_situation_progress = 50 } }
+		hidden_effect = { 
+			if = {
+				limit = { any_situation = { is_situation_type = PrimPlayer_awareness_situation } }
+				random_situation = { limit = { is_situation_type = PrimPlayer_awareness_situation } set_situation_approach = PrimPlayer_eager_explorer_approach }
+			}
+		}
 	}
 	option = {
 		name = PrimPlay_situation_event.2.civic_hive_stargazers_effects
@@ -158,6 +327,12 @@ country_event = {
 		give_technology = { tech = tech_subspace_drive message = yes }
 		add_tech_progress = { tech = tech_hyper_drive_1 progress = 0.25 }
 		hidden_effect = { random_situation = { limit = { is_situation_type = PrimPlayer_developing_hyperdrive_situation } add_situation_progress = 50 } }
+		hidden_effect = { 
+			if = {
+				limit = { any_situation = { is_situation_type = PrimPlayer_awareness_situation } }
+				random_situation = { limit = { is_situation_type = PrimPlayer_awareness_situation } set_situation_approach = PrimPlayer_eager_explorer_approach }
+			}
+		}
 	}
 	option = {
 		name = PrimPlay_situation_event.2.payback
