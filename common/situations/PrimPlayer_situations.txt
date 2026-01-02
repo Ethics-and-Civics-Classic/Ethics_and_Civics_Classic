@@ -583,6 +583,9 @@ PrimPlayer_situation = {
 				}
 			}
 		}
+		########################################
+		# Origin Outcome for Primitive Players #
+		########################################
 		if = {
 			limit = { 
 				owner = { 
@@ -621,10 +624,20 @@ PrimPlayer_situation = {
 					}
 					set_origin = origin_imperial_vassal	#Default origin if a subject
 				}
-				else = { set_origin = origin_default }	#Default origin, unless Nuclear Winter happens, everything else has priority
+				else_if = {
+					limit = { 
+						has_country_flag = origin_separatists_flag
+					}
+					hidden_effect = { remove_country_flag = origin_separatists_flag }
+					set_origin = origin_separatists	#Default origin if failed a Civil War
+				}
+				else = { set_origin = origin_default }	#Default origin, everything else has priority
 				hidden_effect = { prev = { situation_event = { id = PrimPlay_situation_event.1 } } }
 			}
 		}
+		##################################
+		# Other Through the Ages Empires #
+		##################################
 		else_if = {
 			limit = { owner = { has_origin = origin_broken_shackles } }
 			situation_event = { id = PrimPlay_situation_event.1 }

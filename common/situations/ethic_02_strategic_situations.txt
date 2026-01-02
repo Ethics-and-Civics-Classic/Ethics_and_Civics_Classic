@@ -1,0 +1,658 @@
+##########################################
+# Developing Hyperspace Travel Situation
+##########################################
+planetary_revolt_situation = {
+	picture = GFX_evt_burning_city
+	#category = negative
+	complete_icon_frame = GFX_situation_outcome_meh
+	complete_icon = GFX_situation_outcome_frame_green
+	fail_icon = GFX_situation_outcome_revolt
+	fail_icon_frame = GFX_situation_outcome_frame_red
+	abort_trigger = {
+		owner.capital_scope = { 
+			NOT = { is_controlled_by = root.owner }
+		}
+	}
+	modifier = {
+		planet_stability_add = -20
+		custom_tooltip = planetary_revolt_situation_modifier_tooltip
+	}
+	stages = {
+		stage_1 = {
+			icon = GFX_PrimPlay_developing_hyperdrive_situation_stage
+			icon_background = GFX_situation_stage_frame_blue
+			end = 200
+			on_first_enter = {
+				
+			}
+			custom_tooltip = planetary_revolt_situation_stage_1
+		}
+	}
+	#on_monthly = {
+	#	events = {
+	#		
+	#	}
+	#}
+	monthly_progress = {
+		base = 1 # total: 200
+		modifier = {
+			add = -1
+			desc = PrimPlayer_separatist_movement
+			OWNER = { capital_scope = { has_modifier = PrimPlayer_separatist_movement } }
+		}
+	}
+	on_progress_complete = {
+		random_country = {
+			limit = { has_country_flag = planetary_revolt_situation_war@root.owner }
+			destroy_country = yes
+		}
+		hidden_effect = { destroy_situation = this }
+	}
+	on_abort = {
+		if = {
+			limit = { has_situation_flag = slave_revolt }
+			hidden_effect = { set_country_flag = slave_revolt }
+		}
+		hidden_effect = { owner.capital_scope = { set_planet_flag = planetary_revolt_situation_war@root.owner } }
+		random_country = {
+			limit = { has_country_flag = planetary_revolt_situation_war@root.owner }
+			country_event = { id = nations.8 }
+		}
+	}
+	approach = {
+		name = planetary_revolt_situation_default_approach
+		icon = GFX_situation_approach_sword
+		icon_background = GFX_situation_approach_bg_green
+		default = yes
+		on_select = {
+			custom_tooltip = planetary_revolt_situation_default_approach_tooltip
+		}
+	}
+}
+
+##########################################
+# Planetary Revolt Situation
+##########################################
+
+situation_planetary_revolt = { # Referenced in code - Do not change key
+	picture = GFX_evt_alien_propaganda
+	category = negative
+
+	desc = {
+		trigger = {
+			owner = { is_gestalt = no }
+			NOT = { has_situation_flag = slave_revolt }
+		}
+		text = situation_planetary_revolt_desc_standard
+	}
+	desc = {
+		trigger = {
+			owner = { is_gestalt = no }
+			has_situation_flag = slave_revolt
+		}
+		text = situation_planetary_revolt_desc_slave
+	}
+	desc = {
+		trigger = {
+			owner = { is_gestalt = yes }
+			target = {
+				any_owned_pop_group = {
+					is_sapient = yes
+					NOT = { has_ethic = ethic_gestalt_consciousness }
+				}
+			}
+		}
+		text = situation_planetary_revolt_desc_gestalt_standard
+	}
+	desc = {
+		trigger = {
+			owner = {
+				is_gestalt = yes
+				is_wilderness_empire = no
+			}
+			target = {
+				count_owned_pop_amount = {
+					limit = {
+						is_sapient = yes
+						NOT = { has_ethic = ethic_gestalt_consciousness }
+					}
+					count = 0
+				}
+			}
+		}
+		text = situation_planetary_revolt_desc_gestalt_breakaway_gestalt
+	}
+	desc = {
+		trigger = {
+			owner = { is_wilderness_empire = yes }
+			target = {
+				count_owned_pop_amount = {
+					limit = {
+						is_sapient = yes
+						NOT = { has_ethic = ethic_gestalt_consciousness }
+					}
+					count = 0
+				}
+			}
+		}
+		text = situation_planetary_revolt_desc_gestalt_breakaway_wilderness
+	}
+
+	fail_icon = GFX_situation_outcome_meh
+	fail_icon_frame = GFX_situation_outcome_frame_green
+	complete_icon = GFX_situation_outcome_revolt
+	complete_icon_frame = GFX_situation_outcome_frame_red
+
+	on_start = {
+		if = {
+			limit = { years_passed < 3 }
+			log_error = "Isn't it a bit early to have a revolt? Owner: [Owner.GetName] (Origin: [Owner.GetOriginName]), Target: [Target.GetName]."
+		}
+	}
+
+	on_progress_complete = {
+		random_country = {
+			limit = {
+				has_country_flag = revolt_joiner_empire_@root
+				is_subject = no
+				NOR = {
+					is_in_federation_with = owner
+					has_defensive_pact = owner
+					has_non_aggression_pact = owner
+				}
+			}
+			save_event_target_as = new_owner_empire
+		}
+		if = {
+			limit = { exists = event_target:new_owner_empire }
+			custom_tooltip = situation_planetary_revolt_complete_joiner_tooltip
+		}
+		else = {
+			custom_tooltip = situation_planetary_revolt_complete_tooltip
+		}
+		owner = {
+			if = {
+				limit = {
+					any_owned_planet = {
+						has_modifier = instability_join_revolt
+						planet_stability < @[ stabilitylevel2 + 10 ]
+						exists = controller
+						controller = { is_same_value = root.owner }
+						has_ground_combat = no
+						has_orbital_bombardment = no
+					}
+				}
+				custom_tooltip = planets_joining_revolt_tooltip
+				owned_planet_list_tooltip = {
+					limit = {
+						has_modifier = instability_join_revolt
+						planet_stability < @[ stabilitylevel2 + 10 ]
+						exists = controller
+						controller = { is_same_value = root.owner }
+						has_ground_combat = no
+						has_orbital_bombardment = no
+					}
+				}
+			}
+		}
+		hidden_effect = {
+			target = {
+				set_timed_planet_flag = {
+					flag = recent_revolt_attempt
+					days = 5400
+				}
+			}
+			owner = {
+				# Timeline Rebellion
+				country_event = {
+					id = timeline.7
+					scopes = {
+						from = from.target
+					}
+				}
+				every_owned_planet = {
+					limit = { has_modifier = instability_join_revolt }
+					set_timed_planet_flag = {
+						flag = recent_revolt_attempt
+						days = 5400
+					}
+				}
+			}
+			if = {
+				limit = { 
+					owner = { num_owned_planets = 1 }#If you only have 1 world, different event plays
+				}
+				situation_event = { id = nations.7 }
+				owner = { 
+					start_situation = { type = planetary_revolt_situation target = this } 
+				}
+				hidden_effect = {
+					if = {
+						limit = { has_situation_flag = slave_revolt }
+						random_situation = { limit = { is_situation_type = planetary_revolt_situation } set_situation_flag = slave_revolt }
+					}
+				}
+			}
+			else = { situation_event = { id = unrest.4200 } }
+		}
+	}
+
+	on_fail = {
+		custom_tooltip = situation_planetary_revolt_fail_tooltip
+		hidden_effect = {
+			target = {
+				if = {
+					limit = {
+						root = { has_situation_flag = slave_revolt }
+					}
+					planet_event = { id = unrest.161 }
+				}
+				else = {
+					planet_event = { id = unrest.4300 }
+				}
+				set_timed_planet_flag = {
+					flag = recent_revolt_attempt
+					days = 5400
+				}
+			}
+			owner = {
+				every_owned_planet = {
+					limit = { has_modifier = instability_join_revolt }
+					set_timed_planet_flag = {
+						flag = recent_revolt_attempt
+						days = 5400
+					}
+				}
+			}
+			cleanup_separatism_situation = yes
+			destroy_situation = this
+		}
+	}
+
+	on_abort = {
+		cleanup_separatism_situation = yes
+	}
+
+	abort_trigger = {
+		NOT = {
+			owner = { #otherwise, that event flips ownership, which immediately invalidates the Situation
+				has_active_event = { unrest.4200 }
+			}
+		}
+		OR = {
+			NOT = { exists = target.owner }
+			target.owner = { NOT = { is_same_value = root.owner } }
+			target.controller = { NOT = { is_same_value = root.owner } }
+		}
+	}
+
+	initial_progress = 0
+
+	stages = {
+		revolt_severity_1 = {
+			icon = GFX_situation_stage_1
+			icon_background = GFX_situation_stage_frame_red
+			target_modifier = { planet_stability_add = -10 }
+			end = 25
+		}
+		revolt_severity_2 = {
+			icon = GFX_situation_stage_2
+			icon_background = GFX_situation_stage_frame_red
+			on_first_enter = {
+				if = {
+					limit = { has_situation_flag = slave_revolt }
+					target = {
+						#Sabotage
+						planet_event = { id = unrest.156 }
+					}
+				}
+				else = {
+					#Characteristics of the revolt (ethics)
+					situation_event = { id = unrest.100 }
+				}
+			}
+			target_modifier = { planet_stability_add = -10 }
+			end = 50
+		}
+		revolt_severity_3 = {
+			icon = GFX_situation_stage_3
+			icon_background = GFX_situation_stage_frame_red
+			on_first_enter = {
+				#Characteristics of the revolt (species, other planets joining)
+				situation_event = { id = unrest.4000 }
+			}
+			target_modifier = { planet_stability_add = -10 }
+			end = 75
+		}
+		revolt_severity_4 = {
+			icon = GFX_situation_stage_4
+			icon_background = GFX_situation_stage_frame_red
+			on_first_enter = {
+				#Rebels will ask any other empires for support. If someone can be found, the player is notified.
+				situation_event = { id = unrest.4050 }
+			}
+			target_modifier = { planet_stability_add = -10 }
+			end = 100
+		}
+	}
+
+	approach = {
+		name = approach_revolt_do_nothing
+		icon = GFX_situation_approach_this_is_fine
+		icon_background = GFX_situation_approach_bg_yellow
+		default = yes
+		on_select = {
+			custom_tooltip = deficit_approach_do_nothing_tooltip
+		}
+		ai_weight = {
+			base = 2
+		}
+	}
+
+	approach = {
+		name = approach_revolt_distribute_amenities
+		icon = GFX_situation_approach_amenities
+		icon_background = GFX_situation_approach_bg_green
+		triggered_target_modifier = {
+			potential = {
+				owner = { is_gestalt = no }
+			}
+			modifier = {
+				planet_amenities_add = 2000
+			}
+		}
+		triggered_target_modifier = {
+			potential = {
+				owner = { is_gestalt = yes }
+			}
+			modifier = {
+				planet_amenities_no_happiness_add = 2000
+			}
+		}
+		resources = {
+			category = situations
+			upkeep = {
+				trigger = {
+					owner = { is_gestalt = no }
+				}
+				consumer_goods = 20
+			}
+			upkeep = {
+				trigger = {
+					owner = { is_gestalt = yes }
+				}
+				unity = 30
+			}
+		}
+		ai_weight = {
+			base = 2
+			modifier = {
+				factor = 2
+				OR = {
+					current_situation_approach = approach_revolt_distribute_amenities
+					target = { free_amenities < -5 }
+				}
+			}
+		}
+	}
+
+	approach = {
+		name = approach_revolt_crackdown
+		icon = GFX_situation_approach_whip
+		icon_background = GFX_situation_approach_bg_red
+		target_modifier = {
+			job_soldier_stability_add = 3
+			planet_army_build_speed_mult = 0.5
+			planet_building_stronghold_build_speed_mult = 0.5
+			planet_soldiers_energy_upkeep_add = 1
+		}
+		resources = {
+			category = situations
+			upkeep = {
+				unity = 30
+			}
+		}
+		ai_weight = {
+			base = 1
+			modifier = {
+				factor = 3
+				owner = {
+					OR = {
+						is_militarist = yes
+						is_authoritarian = yes
+						is_machine_empire = yes
+					}
+				}
+			}
+			modifier = {
+				factor = 3
+				target = {
+					OR = {
+						num_assigned_jobs = {
+							job = warrior_drone
+							value > 300
+						}
+						num_assigned_jobs = {
+							job = soldier
+							value > 300
+						}
+					}
+				}
+			}
+		}
+	}
+
+	on_monthly = {
+		events = {
+			unrest.163
+		}
+		random_events = {
+			100 = 0
+			3 = unrest.101
+			3 = unrest.105
+			3 = unrest.110
+			3 = unrest.157
+			3 = unrest.159
+		}
+	}
+
+	#Note: if you alter this, you should consider whether to alter potential_revolt_situation_monthly_progress_estimation too
+	monthly_progress = {
+		base = 0
+		modifier = {
+			add = target.value:revolt_situation_low_stability_factor #0.2 for every point below 25 (so max 5)
+			desc = STRING_LOW_STABILITY
+			target = { planet_stability < @stabilitylevel2 }
+		}
+		modifier = {
+			add = 1
+			desc = STRING_UNEMPLOYMENT
+			target = { num_unemployed >= 200 }
+		}
+		modifier = {
+			add = 2
+			desc = STRING_PURGING
+			target = {
+				has_current_purge = yes
+				any_owned_pop_group = {
+					is_being_purged = yes
+					NOT = {
+						has_purge_type = { type = purge_neutering }
+					}
+				}
+			}
+		}
+		modifier = {
+			add = 1
+			desc = STRING_PURGING
+			target = {
+				has_current_purge = yes
+				count_owned_species = {
+					limit = {
+						OR = {
+							has_citizenship_type = { type = citizenship_purge country = root.owner }
+							has_citizenship_type = { type = citizenship_purge_machine country = root.owner }
+						}
+						NOT = { has_purge_type = { type = purge_neutering country = root.owner } }
+					}
+					count = 0
+				}
+			}
+		}
+		modifier = {
+			add = 1
+			desc = STRING_ASSIMILATION
+			target = {
+				any_owned_species = {
+					has_citizenship_type = { type = citizenship_assimilation country = root.owner }
+				}
+			}
+		}
+		modifier = {
+			subtract = target.value:revolt_situation_high_stability_factor #0.5 for every point above 40
+			desc = STRING_HIGH_STABILITY
+			target = { planet_stability > @stabilitylevel3 }
+		}
+		modifier = {
+			desc = STRING_STARBASE_CITADEL
+			subtract = 1
+			exists = target.solar_system.starbase
+			target.solar_system.starbase = {
+				has_starbase_size >= starbase_citadel
+				NOT = { is_starbase_type = sfortress }
+			}
+		}
+		modifier = {
+			desc = STRING_STARBASE_BASTION
+			subtract = 1
+			exists = target.solar_system.starbase
+			target.solar_system.starbase = {
+				has_starbase_size > starbase_starport
+				has_starbase_size < starbase_citadel
+				is_starbase_type = sfortress
+			}
+		}
+		modifier = {
+			desc = STRING_STARBASE_BASTION
+			subtract = 2
+			exists = target.solar_system.starbase
+			target.solar_system.starbase = {
+				has_starbase_size >= starbase_citadel
+				is_starbase_type = sfortress
+			}
+		}
+		complex_trigger_modifier = {
+			trigger = count_system_colony
+			trigger_scope = target.solar_system
+			parameters = {
+				limit = {
+					NOT = { is_same_value = root.target }
+					planet_stability >= @stabilitylevel3
+					pop_amount > 500
+				}
+			}
+			potential = {
+				target.solar_system = {
+					any_system_colony = {
+						NOT = { is_same_value = root.target }
+						planet_stability >= @stabilitylevel3
+						pop_amount > 500
+					}
+				}
+			}
+			desc = STRING_LOYAL_PLANETS_IN_SYSTEM
+			mode = subtract
+			mult = 2
+		}
+		complex_trigger_modifier = {
+			trigger = count_system_colony
+			trigger_scope = target.solar_system
+			parameters = {
+				limit = {
+					NOT = { is_same_value = root.target }
+					planet_stability < @stabilitylevel2
+					pop_amount > 500
+				}
+			}
+			potential = {
+				target.solar_system = {
+					any_system_colony = {
+						NOT = { is_same_value = root.target }
+						planet_stability < @stabilitylevel2
+						pop_amount > 500
+					}
+				}
+			}
+			desc = STRING_REBELLIOUS_PLANETS_IN_SYSTEM
+			mode = add
+			mult = 2
+		}
+		modifier = {
+			subtract = target.value:revolt_situation_garrison_factor #1 for every 200 over 200, max 5 (at 1200)
+			desc = STRING_PLANETARY_GARRISON
+			target = { planet_garrison_strength > 200 }
+		}
+		modifier = {
+			subtract = 1
+			desc = STRING_WEAK_PLANET
+			target = { pop_amount < 3000 }
+			NOT = {
+				owner = {
+					any_owned_planet = {
+						has_modifier = instability_join_revolt
+					}
+				}
+			}
+		}
+		modifier = {
+			add = 1
+			desc = STRING_STRONG_PLANET
+			target = { pop_amount > 6000 }
+		}
+		modifier = {
+			desc = STRING_REBELLIOUS_JOINER_PLANETS_IN_OWNER
+			add = value:revolt_situation_rebellion_joiners
+			owner = {
+				any_owned_planet = {
+					has_modifier = instability_join_revolt
+					planet_stability < @[ stabilitylevel2 + 10 ]
+					exists = controller
+					controller = { is_same_value = root.owner }
+				}
+			}
+		}
+		modifier = {
+			desc = STRING_OUTSIDE_SUPPORT
+			add = 2
+			any_country = { has_country_flag = revolt_joiner_empire_@root }
+		}
+		modifier = {
+			desc = STRING_FOREIGN_OCCUPATION
+			subtract = 20
+			target.solar_system = {
+				exists = starbase
+				starbase = {
+					NOT = { is_owned_by = root.owner }
+				}
+			}
+		}
+		modifier = {
+			desc = civilian_difficulty
+			mult = 0.1
+			situation_monthly_progress > 0
+			is_difficulty = 0
+			owner = {
+				is_ai = no
+			}
+		}
+		modifier = {
+			desc = cadet_difficulty
+			mult = 0.5
+			situation_monthly_progress > 0
+			is_difficulty = 1
+			owner = {
+				is_ai = no
+			}
+		}
+	}
+}
