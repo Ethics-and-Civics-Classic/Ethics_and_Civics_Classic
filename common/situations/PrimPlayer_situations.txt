@@ -264,7 +264,7 @@ PrimPlayer_unified_planet_situation = {
 	on_fail = {
 		custom_tooltip = PrimPlayer_situation_end
 		hidden_effect = { 
-			remove_country_flag = PrimPlayer_unified_planet_situation_event_flag
+			owner = { remove_country_flag = PrimPlayer_unified_planet_situation_event_flag }
 			owner = {
 				every_owned_planet = {
 					if = {
@@ -496,21 +496,13 @@ PrimPlayer_situation = {
 		}
 	}
 	on_monthly = {
-		# events = {
-		#	enclave.5556
-		#}
-		# random_events = {
-		#	10 = 0
-		#	1 = enclave.5000 # "All Too Lucid"
-		#	1 = enclave.5050 # "Shrouded"
-		#	1 = enclave.5500 # "Shattered Frontier" (> 50% progress)
-		#	1 = enclave.5125 # "Floating Parts" (> 10% progress)
-		#	1 = enclave.5150 # Lightshow - anomaly.235 (>10% progress)
-		#	1 = enclave.5155 # Grimacing - anomaly.230 (>10% progress)
-		#	1 = enclave.5160 # Improbable Teapot - anomaly.4060
-		#	1 = enclave.5185 # Terminal Orbit - anomaly.2570 (>15% progress)
-		#	1 = enclave.5180 # The Color of Science - anomaly.6740 (>15% progress)
-		#}
+		 #events = {
+		 #	enclave.5556
+		 #}
+		 random_events = {
+			10 = 0
+			1 = PrimPlay_situation_event.1001 # Mining Laser Weapon Project
+		}
 	}
 	monthly_progress = {
 		base = 0 # total: 100
@@ -726,14 +718,12 @@ PrimPlayer_awareness_situation = {
 	modifier = {
 		first_contact_speed_mult = -1
 	}
+	
 	stages = {
 		awareness_unaware = {
 			icon = GFX_situation_stage_1
 			icon_background = GFX_situation_stage_frame_blue
 			end = 10
-			on_first_enter = {
-				
-			}
 			custom_tooltip = awareness_unaware_tt
 		}
 		
@@ -741,9 +731,6 @@ PrimPlayer_awareness_situation = {
 			icon = GFX_situation_stage_2
 			icon_background = GFX_situation_stage_frame_blue
 			end = 30
-			on_first_enter = {
-				
-			}
 			custom_tooltip = awareness_low_tt
 		}
 		
@@ -751,30 +738,44 @@ PrimPlayer_awareness_situation = {
 			icon = GFX_situation_stage_3
 			icon_background = GFX_situation_stage_frame_blue
 			end = 60
-			on_first_enter = {
-				
+			triggered_modifier = {
+				potential = { owner = { is_gestalt = no } }
+				pop_ethic_xenophile_attraction_mult = 0.05
+				pop_ethic_materialist_attraction_mult = 0.05
 			}
-			custom_tooltip = awareness_partial_tt
+			custom_tooltip = PrimPlayer_awareness_situation_stage_3_tooltip
 		}
 		
 		awareness_high = {
 			icon = GFX_situation_stage_4
 			icon_background = GFX_situation_stage_frame_blue
 			end = 90
-			on_first_enter = {
+			triggered_modifier = {
+				potential = { owner = { has_policy_flag = first_contact_proactive } }
+				pop_ethic_xenophile_attraction_mult = 0.30
+			}
+			triggered_modifier = {
+				potential = { owner = { has_policy_flag = first_contact_attack_allowed } }
+				pop_ethic_xenophobe_attraction_mult = 0.30
 				
 			}
-			custom_tooltip = awareness_high_tt
+			custom_tooltip = PrimPlayer_awareness_situation_stage_4_tooltip
 		}
 		
 		awareness_full = {
 			icon = GFX_situation_stage_5
 			icon_background = GFX_situation_stage_frame_blue
 			end = 100
-			on_first_enter = {
+			triggered_modifier = {
+				potential = { owner = { has_policy_flag = first_contact_proactive } }
+				pop_ethic_xenophile_attraction_mult = 0.30
+			}
+			triggered_modifier = {
+				potential = { owner = { has_policy_flag = first_contact_attack_allowed } }
+				pop_ethic_xenophobe_attraction_mult = 0.30
 				
 			}
-			custom_tooltip = PrimPlayer_awareness_situation_stage_5_requirements
+			custom_tooltip = PrimPlayer_awareness_situation_stage_5_tooltip
 		}
 	}
 	on_progress_complete = {
@@ -854,6 +855,34 @@ PrimPlayer_awareness_situation = {
 						value > 0
 						disabled = no
 						in_construction = no 
+					}
+				}
+			}
+		}
+		modifier = {
+			add = 0.1
+			desc = PrimPlayer_awareness_situation_enthusiastic_stargazer
+			situation_progress >= 30
+			owner = { is_gestalt = no }
+			OR = {
+				situation_progress < 88
+				owner = {
+					any_country = {
+						OR = {
+							is_country_type = default
+							is_country_type = fallen_empire
+							#is_country_type = awakened_fallen_empire	#Very Niche
+							#is_country_type = awakened_marauders		#Very Niche
+							#is_country_type = dormant_marauders		#Very Niche
+							is_country_type = marauder_raiders
+							is_country_type = debt_collectors
+							#is_country_type = nomad					#Very Niche
+							#is_country_type = enclave					#Very Niche
+							#is_country_type = enclave_mercenary		#Very Niche
+							#is_country_type = mindwarden_enclave		#Very Niche
+							#is_country_type = gate_builders			#Very Niche
+						}
+						has_communications = PREV
 					}
 				}
 			}

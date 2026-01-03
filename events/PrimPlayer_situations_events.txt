@@ -14,10 +14,10 @@ situation_event = {
 	hide_window = yes
 	
 	trigger = { 
-		NOR = { 
-			current_situation_approach = PrimPlayer_awareness_situation_suppress 
-			has_situation_flag = PrimPlayer_awareness_situation_event
-		} 
+		#NOR = { 
+			#current_situation_approach = PrimPlayer_awareness_situation_suppress 
+			NOT = { has_situation_flag = PrimPlayer_awareness_situation_event }
+		#} 
 		situation_progress = 100
 	}
 	
@@ -72,7 +72,25 @@ country_event = {
 	
 	option = {
 		name = "ethic_civic_classic_flag.4.suppress"
+		trigger = {
+			OR = {
+				has_ethic = ethic_fanatic_authoritarian
+				has_ethic = ethic_authoritarian
+				is_authoritarian = no
+			}
+		}
 		allow = {
+			if = {
+				limit = { has_ethic = ethic_fanatic_authoritarian }
+				has_country_resource = { type = influence amount >= 50 }
+			}
+			if = {
+				limit = { has_ethic = ethic_authoritarian }
+				has_country_resource = { type = influence amount >= 75 }
+			}
+			else = {
+				has_country_resource = { type = influence amount >= 100 }
+			}
 			custom_tooltip = {
 				text = civic_tooltip_not_egalitarian_or_xenophile
 				NOR = {
@@ -82,8 +100,28 @@ country_event = {
 			}
 			capital_scope = { has_branch_office = no }
 		}
-		hidden_effect = { FROM = { add_situation_progress = -10 } }
-		FROM = { set_situation_approach = PrimPlayer_awareness_situation_suppress }
+		if = {
+			limit = { has_ethic = ethic_fanatic_authoritarian }
+			add_resource = { influence = -50 }
+		}
+		else_if = {
+			limit = { has_ethic = ethic_authoritarian }
+			add_resource = { influence = -75 }
+		}
+		else = {
+			add_resource = { influence = -100 }
+		}
+		hidden_effect = { 
+			destroy_situation = FROM
+			start_situation = { type = PrimPlayer_awareness_situation target = ROOT }
+		}
+		random_situation = { 
+			limit = { is_situation_type = PrimPlayer_awareness_situation } 
+			set_situation_approach = PrimPlayer_awareness_situation_suppress
+			hidden_effect = { 
+				add_situation_progress = 89 
+			}
+		}
 	}
 	
 	after = {
@@ -351,6 +389,67 @@ country_event = {
 		add_research_option = tech_hyper_drive_1
 	}
 }
+##########################################
+	 #Random Through the Ages events
+##########################################
+situation_event = {
+	id = PrimPlay_situation_event.1001
+	title = PrimPlay_situation_event.1001.title
+	desc = PrimPlay_situation_event.1001.desc
+	picture = GFX_evt_space_crystals
+	#show_sound = event_space_cloud
+	is_triggered_only = yes
+
+	trigger = { 
+		owner = { 
+			has_technology = tech_mechanized_mining_2
+			NOR = {
+				has_tech_option = tech_mining_drone_weapon_1
+				has_technology = tech_mining_drone_weapon_1
+				has_situation_flag = PrimPlay_situation_event_1001_finished
+			}
+		} 
+		
+	}
+
+	option = {
+		name = PrimPlay_situation_event.1001.fund
+		allow = {
+			owner = {
+				has_country_resource = { type = influence amount >= 100 }
+				NOT = { has_ethic = ethic_fanatic_pacifist }
+			}
+		}
+		add_resource = { influence = -100 }
+		owner = {
+			add_research_option = tech_mining_drone_weapon_1
+		}
+		set_situation_flag = PrimPlay_situation_event_1001_finished
+	}
+	
+	option = {
+		name = PrimPlay_situation_event.1001.later
+		trigger = { OWNER = { NOT = { has_ethic = ethic_fanatic_pacifist } } }
+		set_timed_situation_flag = {
+			flag = PrimPlay_situation_event_1001_cancel
+			years = 2
+		}
+	}
+	
+	option = {
+		name = PrimPlay_situation_event.1001.cancel
+		trigger = { 
+			OR = {
+				has_ethic = ethic_fanatic_pacifist
+				NOT = { has_ethic = ethic_fanatic_pacifist }
+			}
+		}
+		set_situation_flag = PrimPlay_situation_event_1001_finished
+	}
+}
+######################
+
+######################
 situation_event = {
 	id = PrimPlay_situation_event.2001
 	hide_window = yes
@@ -727,7 +826,7 @@ situation_event = {
 					}
 					20 = {
 						# Governor is Assassinated
-						owner = { capital_scope = { planet_event = { id = PrimPlay_situation_event.3003 days = 20 } } }
+						owner.capital_scope = { planet_event = { id = PrimPlay_situation_event.3003 days = 20 } }
 					}
 				}
 				modifier = {
@@ -769,7 +868,7 @@ situation_event = {
 	}
 }
 
-situation_event = {
+planet_event = {
 	id = PrimPlay_situation_event.3003
 	title = PrimPlay_situation_event.3003.title
 	desc = PrimPlay_situation_event.3003.desc
