@@ -1015,7 +1015,7 @@ soldier = {
 			name = necromancer_pirate	# Dread Pirate
 			desc = necromancer_pirate
 			icon = necromancer_pirate
-			weight = 75
+			weight = 100
 		}
 		swap_type = {
 			trigger = {
@@ -1025,7 +1025,7 @@ soldier = {
 			name = mercenary_pirate	# Privateer
 			desc = mercenary_pirate
 			icon = mercenary_pirate
-			weight = 75
+			weight = 100
 		}
 		swap_type = {
 			trigger = {
@@ -1035,7 +1035,7 @@ soldier = {
 			name = templar_pirate	# Pirate Knight
 			desc = templar_pirate
 			icon = templar_pirate
-			weight = 75
+			weight = 100
 		}
 		swap_type = {
 			trigger = {
@@ -1266,35 +1266,47 @@ soldier = {
 	}
 
 	possible = {
-		AND = {
-			soldier_job_check_trigger = yes
-			owner = { is_gestalt = no }
-			OR = {
-				has_ethic = ethic_militarist
-				if = {
-					limit = {
-						soldier_is_templar = yes
+		soldier_job_check_trigger = yes
+		owner = { is_gestalt = no }
+		if = {
+			limit = {
+				AND = {
+					soldier_is_templar = yes
+					OR = {
+						soldier_is_mercenary = yes
+						soldier_is_pirate = yes
 					}
-					has_ethic = ethic_spiritualist
-				}
-				if = {
-					limit = {
-						OR = {
-							soldier_is_mercenary = yes
-							soldier_is_pirate = yes
-						}
-					}
-					has_ethic = ethic_capitalism
-				}
-				if = {
-					limit = {
-						soldier_is_templar = no
-						soldier_is_pirate = no
-						soldier_is_mercenary = no
-					}
-					NOT = { has_ethic = ethic_pacifist }
 				}
 			}
+			OR = {
+				has_ethic = ethic_capitalism
+				has_ethic = ethic_spiritualist
+				has_ethic = ethic_militarist
+			}
+		}
+		else_if = {
+			limit = {
+				soldier_is_templar = yes
+			}
+			OR = {
+				has_ethic = ethic_spiritualist
+				has_ethic = ethic_militarist
+			}
+		}
+		else_if = {
+			limit = {
+				OR = {
+					soldier_is_mercenary = yes
+					soldier_is_pirate = yes
+				}
+			}
+			OR = {
+				has_ethic = ethic_capitalism
+				has_ethic = ethic_militarist
+			}
+		}
+		else = {
+			NOT = { has_ethic = ethic_pacifist }
 		}
 	}
 
