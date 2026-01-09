@@ -594,12 +594,18 @@ PrimPlayer_situation = {
 				custom_tooltip = PrimPlayer_reached_space_age
 				if = {
 					limit = { 
+						host_has_dlc = "Apocalypse"
 						capital_scope = { is_planet_class = pc_nuked }	#Default origin if Nuclear Winter happens, everything else has priority
 					}
-					set_origin = origin_post_apocalyptic
+					if = {
+						limit = { species_archetype =  { value = MACHINE } }
+						set_origin = origin_post_apocalyptic_machines
+					}
+					else = { set_origin = origin_post_apocalyptic }
 				}
 				else_if = {
 					limit = { 
+						has_aquatics = yes
 						capital_scope = { 
 							OR = {
 								has_modifier = ocean_paradise_hive
@@ -607,7 +613,22 @@ PrimPlayer_situation = {
 							}
 						}
 					}
-					set_origin = origin_ocean_paradise
+					if = {
+						limit = { species_archetype =  { value = MACHINE } }
+						set_origin = origin_ocean_machines
+					}
+					else = { set_origin = origin_ocean_paradise }
+				}
+				else_if = {
+					limit = { 
+						host_has_dlc = "Utopia"
+						species_archetype = { NOT = { value = MACHINE } }
+						has_technology = tech_robotic_workers
+						any_owned_species = {
+							is_robotic_species = yes
+						}
+					}
+					set_origin = origin_mechanists
 				}
 				else_if = {
 					limit = { 
