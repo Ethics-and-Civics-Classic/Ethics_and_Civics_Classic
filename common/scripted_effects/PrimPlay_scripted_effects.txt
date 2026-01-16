@@ -7,7 +7,172 @@
 # Given a species, create a mod with trait_cybernetic and apply to all pops, leaders
 # And armies that have the original species and the same owner as the scope object.
 # Scope: Something that has a species and an owner
-# create_cybernetic_species_mod = {
+
+#scope = scion
+create_scion_lgate_link = {
+	capital_scope = {
+		solar_system = { save_event_target_as = home_system }
+	}
+	event_target:scion_master = {
+		random_system_within_border = { save_event_target_as = fe_target_system }
+		if = { 
+			limit = { is_materialist = yes }
+			prev = { add_seen_bypass_type = fe_materialist_lgate_base }
+		}
+		if = { 
+			limit = { is_spiritualist = yes }
+			prev = { add_seen_bypass_type = fe_spiritualist_lgate_base }
+		}
+	}
+	set_visited = event_target:fe_target_system
+	event_target:home_system = {
+		event_target:fe_target_system = {
+			###
+			if = { 
+				limit = { event_target:scion_master = { is_materialist = yes } }
+				prev = { # done this way to ensure we don't spawn "orphan wormholes (wormholes that aren't linked to anything)
+					if = {
+						limit = { always = yes }
+						#spawn_natural_wormhole = {	#Removed Vanilla Code
+						#	bypass_type = wormhole
+						#	random_pos = no
+						#	orbit_angle = 360
+						#}
+						spawn_megastructure = {
+							type = fe_materialist_lgate_base
+							orbit_angle = 360
+							orbit_distance = 30
+						}
+						set_star_flag = fe_materialist_lgate
+						random_system_megastructure = {
+							limit = {
+								is_megastructure_type = fe_materialist_lgate_base
+								NOT = { has_megastructure_flag = fe_materialist_lgate_activated }
+							}
+							activate_gateway = this
+							set_megastructure_flag = fe_materialist_lgate_activated
+						}
+					}
+				}
+				if = {
+					#limit = { event_target:scion_master = { any_owned_megastructure = { NOT = { is_megastructure_type = fe_materialist_lgate_base } } } }
+					limit = { always = yes }
+					#spawn_natural_wormhole = {	#Removed Vanilla Code
+					#	bypass_type = wormhole
+					#	random_pos = no
+					#	orbit_angle = 270
+					#}
+					spawn_megastructure = {
+						type = fe_materialist_lgate_base
+						orbit_angle = 270
+						orbit_distance = 30
+					}
+					set_star_flag = fe_materialist_lcluster1
+					random_system_megastructure = {
+						limit = {
+							is_megastructure_type = fe_materialist_lgate_base
+							NOT = { has_megastructure_flag = fe_materialist_lgate_activated }
+						}
+						activate_gateway = this
+						set_megastructure_flag = fe_materialist_lgate_activated
+					}
+				}
+			}
+			else_if = { 
+				limit = { event_target:scion_master = { is_spiritualist = yes } }
+				prev = { # done this way to ensure we don't spawn "orphan wormholes (wormholes that aren't linked to anything)
+					if = {
+						limit = { always = yes }
+						#spawn_natural_wormhole = {	#Removed Vanilla Code
+						#	bypass_type = wormhole
+						#	random_pos = no
+						#	orbit_angle = 360
+						#}
+						spawn_megastructure = {
+							type = fe_spiritualist_lgate_base
+							orbit_angle = 360
+							orbit_distance = 30
+						}
+						set_star_flag = fe_spiritualist_lgate
+						random_system_megastructure = {
+							limit = {
+								is_megastructure_type = fe_spiritualist_lgate_base
+								NOT = { has_megastructure_flag = fe_spiritualist_lgate_activated }
+							}
+							activate_gateway = this
+							set_megastructure_flag = fe_spiritualist_lgate_activated
+						}
+					}
+				}
+				if = {
+					#limit = { event_target:scion_master = { any_owned_megastructure = { NOT = { is_megastructure_type = fe_spiritualist_lgate_base } } } }
+					limit = { always = yes }
+					#spawn_natural_wormhole = {	#Removed Vanilla Code
+					#	bypass_type = wormhole
+					#	random_pos = no
+					#	orbit_angle = 270
+					#}
+					spawn_megastructure = {
+						type = fe_spiritualist_lgate_base
+						orbit_angle = 270
+						orbit_distance = 30
+					}
+					set_star_flag = fe_spiritualist_lcluster1
+					random_system_megastructure = {
+						limit = {
+							is_megastructure_type = fe_spiritualist_lgate_base
+							NOT = { has_megastructure_flag = fe_spiritualist_lgate_activated }
+						}
+						activate_gateway = this
+						set_megastructure_flag = fe_spiritualist_lgate_activated
+					}
+				}
+			}
+			####
+		}
+	}
+	#set_country_flag = encountered_first_wormhole	#Removed Vanilla Code
+	set_country_flag = encountered_first_gateway
+	#add_seen_bypass_type = wormhole	#Removed Vanilla Code
+	add_seen_bypass_type = gateway
+}
+
+synth_queen_scion_warning = {
+	# If playing Scion, FE warn you instead of dragging you into the war
+	if = {
+		limit = {
+			any_playable_country = {
+				OR = {
+					has_origin = origin_scion
+					has_civic = PrimPlayer_civic_scion_materialist
+					has_civic = PrimPlayer_civic_scion_spiritualist
+				}
+				exists = overlord
+				overlord = {
+					has_country_flag = scion_master
+				}
+			}
+		}
+		every_playable_country = {
+			limit = {
+				OR = {
+					has_origin = origin_scion
+					has_civic = PrimPlayer_civic_scion_materialist
+					has_civic = PrimPlayer_civic_scion_spiritualist
+				}
+				exists = overlord
+				overlord = {
+					has_country_flag = scion_master
+				}
+			}
+			# Scion receive a message changing their agreement terms
+			country_event = { id = crisis.8046 days = 7 }
+		}
+	}
+	else = {
+		synth_queen_fe_war = yes
+	}
+}
 
 #THIS = Planet Scope
 PrimPlayer_nuclear_winter_planet_setup = {

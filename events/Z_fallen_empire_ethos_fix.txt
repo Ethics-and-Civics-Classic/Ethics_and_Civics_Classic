@@ -1,4 +1,587 @@
 namespace = ethos_fix
+namespace = fallen_empires
+namespace = federations
+namespace = crisis
+namespace = origin
+
+@scionRewardTimer = 9000 # minimum time between rewards from the Scion, in days (currently 25 years)
+@scionRewardTimerDelay = 9000 # randomized delay added to 'scionRewardTimer', in days (currently 25 years)
+@scionRefusalsCap = 2 # number of times a Scion may refuse their Overlord before they think it rude
+
+########
+# SCION
+########
+
+# Setup
+country_event = {
+	id = origin.5
+	hide_window = yes
+
+	is_triggered_only = yes
+
+	immediate = {
+		set_country_flag = first_contact_event
+		set_country_flag = Story2 # Already encountered spacefarers
+		# Spawn mini-FE if player turned off Fallen Empires but picked this Origin anyway...
+		if = {
+			limit = {
+				NOT = {
+					any_country = {
+						OR = {
+							is_country_type = fallen_empire
+							is_country_type = awakened_fallen_empire
+						}
+					}
+				}
+			}
+			set_country_flag = scion_needs_fe
+			if = {
+				limit = { 
+					is_spiritualist = yes 
+					has_civic = PrimPlayer_civic_scion_spiritualist
+				}
+				random_system = {
+					limit = { has_owner = no }
+					spawn_system = { initializer = "scion_fallen_2" }
+				}
+			}
+			else_if = {
+				limit = { 
+					is_materialist = yes 
+					has_civic = PrimPlayer_civic_scion_materialist
+				}
+				random_system = {
+					limit = { has_owner = no }
+					spawn_system = { initializer = "scion_fallen_1" }
+				}
+			}
+			else = {
+				random_list = {
+					10 = {
+						random_system = {
+							limit = { has_owner = no }
+							spawn_system = { initializer = "scion_fallen_1" }
+						}
+					}
+					10 = {
+						random_system = {
+							limit = { has_owner = no }
+							spawn_system = { initializer = "scion_fallen_2" }
+						}
+					}
+				}
+			}
+			add_extra_hyperlane_to_spawned_system_effect = yes
+		}
+
+		else_if = {
+			limit = {
+				OR = {
+					is_spiritualist = yes
+					has_civic = PrimPlayer_civic_scion_spiritualist
+				}
+				any_country = { has_country_flag = fallen_empire_2 }
+			}
+			random_country = {
+				limit = { has_country_flag = fallen_empire_2 }
+				set_country_flag = scion_master
+				save_event_target_as = scion_master
+				add_opinion_modifier = {
+					who = root
+					modifier = opinion_scion
+				}
+				country_event = { id = origin.20 days = @scionRewardTimer random = @scionRewardTimerDelay }
+				root = {
+					establish_communications_no_message = event_target:scion_master
+					set_subject_of = {
+						who = event_target:scion_master
+						preset = preset_scion
+					}
+					add_opinion_modifier = {
+						who = event_target:scion_master
+						modifier = opinion_scion
+					}
+					country_event = { id = origin.10 days = 3 }
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				OR = {
+					is_materialist = yes
+					has_civic = PrimPlayer_civic_scion_materialist
+				}
+				any_country = { has_country_flag = fallen_empire_1 }
+			}
+			random_country = {
+				limit = { has_country_flag = fallen_empire_1 }
+				set_country_flag = scion_master
+				save_event_target_as = scion_master
+				add_opinion_modifier = {
+					who = root
+					modifier = opinion_scion
+				}
+				country_event = { id = origin.20 days = @scionRewardTimer random = @scionRewardTimerDelay }
+				root = {
+					establish_communications_no_message = event_target:scion_master
+					set_subject_of = {
+						who = event_target:scion_master
+						preset = preset_scion
+					}
+					add_opinion_modifier = {
+						who = event_target:scion_master
+						modifier = opinion_scion
+					}
+					country_event = { id = origin.10 days = 3 }
+				}
+			}
+		}
+		else = {
+			random_country = {
+				limit = {
+					OR = {
+						has_country_flag = fallen_empire_1
+						has_country_flag = fallen_empire_2
+					}
+				}
+				set_country_flag = scion_master
+				save_event_target_as = scion_master
+				add_opinion_modifier = {
+					who = root
+					modifier = opinion_scion
+				}
+				country_event = { id = origin.20 days = @scionRewardTimer random = @scionRewardTimerDelay }
+				root = {
+					establish_communications_no_message = event_target:scion_master
+					set_subject_of = {
+						who = event_target:scion_master
+						preset = preset_scion
+					}
+					add_opinion_modifier = {
+						who = event_target:scion_master
+						modifier = opinion_scion
+					}
+					country_event = { id = origin.10 days = 3 }
+				}
+			}
+		}
+		if = {
+			limit = {
+				exists = event_target:scion_master
+			}
+			#create_scion_wormhole_link = yes	#Removed Vanilla Code
+			create_scion_lgate_link = yes
+		}
+	}
+}
+
+# Intro Diplomatic Message	#Scion
+country_event = {
+	id = origin.10
+	title = TRANSMISSION
+
+	desc = {
+		trigger = {
+			event_target:scion_master = { has_country_flag = fallen_empire_2 }
+			has_origin = origin_scion
+		}
+		text = "origin.10.a.desc"
+	}
+	desc = {
+		trigger = {
+			event_target:scion_master = { has_country_flag = fallen_empire_2 }
+			has_civic = PrimPlayer_civic_scion_spiritualist
+		}
+		text = "origin.10.a.pre_ftl.desc"
+	}
+	desc = {
+		trigger = {
+			event_target:scion_master = { has_country_flag = fallen_empire_1 }
+			has_origin = origin_scion
+		}
+		text = "origin.10.b.desc"
+	}
+	desc = {
+		trigger = {
+			event_target:scion_master = { has_country_flag = fallen_empire_1 }
+			has_civic = PrimPlayer_civic_scion_materialist
+		}
+		text = "origin.10.b.pre_ftl.desc"
+	}
+	diplomatic = yes
+	is_triggered_only = yes
+
+	picture_event_data = {
+		portrait = event_target:scion_master
+		planet_background = event_target:scion_master
+		graphical_culture = event_target:scion_master
+		city_level = event_target:scion_master
+		room = event_target:scion_master
+	}
+
+	immediate = {
+		overlord = { save_event_target_as = scion_master }
+	}
+
+	option = {
+		name = origin.10.a
+		trigger = {
+			event_target:scion_master = { has_country_flag = fallen_empire_2 }
+			has_origin = origin_scion
+		}
+	}
+	option = {
+		name = origin.10.a.pre_ftl
+		trigger = {
+			event_target:scion_master = { has_country_flag = fallen_empire_2 }
+			has_civic = PrimPlayer_civic_scion_spiritualist
+		}
+	}
+	option = {
+		name = origin.10.b
+		trigger = {
+			event_target:scion_master = { has_country_flag = fallen_empire_1 }
+			has_origin = origin_scion
+		}
+	}
+	option = {
+		name = origin.10.b.pre_ftl
+		trigger = {
+			event_target:scion_master = { has_country_flag = fallen_empire_1 }
+			has_civic = PrimPlayer_civic_scion_materialist
+		}
+	}
+}
+
+# Surveyed a Holy World (via on_survey): gatekeeper event
+# this = Science vessel | from = planet
+ship_event = {
+	id = origin.11
+	hide_window = yes
+	is_triggered_only = yes
+
+	trigger = {
+		exists = owner
+		owner = {
+			NOR = {
+				is_ai = yes
+				has_country_flag = encountered_holy_world
+			}
+			OR = {
+				has_origin = origin_scion
+				has_civic = PrimPlayer_civic_scion_materialist
+				has_civic = PrimPlayer_civic_scion_spiritualist
+			}
+			exists = overlord
+			overlord = {
+				is_country_type = fallen_empire # excludes 'awakened_fallen_empire'
+				# OR = {
+				# 	has_country_flag = fallen_empire_1 # Materialist
+				# 	has_country_flag = fallen_empire_2 # Spiritualist
+				# }
+			}
+		}
+		from = {
+			has_modifier = holy_planet
+			is_colony = no
+		}
+	}
+
+	immediate = {
+		owner = {
+			set_country_flag = encountered_holy_world
+			if = {
+				limit = {
+					overlord = {
+						has_country_flag = fallen_empire_2
+					}
+				}
+				country_event = { id = origin.12 } # Spiritualist Overlord's Holy World
+			}
+			else = {
+				country_event = { id = origin.13 } # Another FE's Holy World
+			}
+		}
+	}
+}
+
+# Gift (HIDDEN)
+country_event = {
+	id = origin.20
+	hide_window = yes
+	is_triggered_only = yes
+
+	# Note that applying a trigger here (such as to mirror the 'limit' below) may not be desirable, as it would break the cycle of "Scion" rewards should the subject empire ever be temporarily stolen from the FE.
+
+	immediate = {
+		every_playable_country = {
+			limit = {
+				OR = {
+					has_origin = origin_scion
+					has_civic = PrimPlayer_civic_scion_materialist
+					has_civic = PrimPlayer_civic_scion_spiritualist
+				}
+				root = { is_overlord_to = prev }
+				any_agreement = {
+					agreement_preset = preset_scion
+				}
+			}
+			random_list = {
+				50 = { # Technologies
+					modifier = {
+						factor = 0
+						scion_has_techs = yes
+					}
+					country_event = { id = origin.21 }
+				}
+				50 = { # Resources
+					country_event = { id = origin.24 }
+				}
+			}
+		}
+		# Repeat
+		country_event = { id = origin.20 days = @scionRewardTimer random = @scionRewardTimerDelay }
+	}
+}
+
+# via on_yearly_pulse
+event = {
+	id = origin.200
+	hide_window = yes
+	is_triggered_only = yes
+
+	trigger = {
+		# FE are too busy to care about their scions when the Synth Queen is around
+		NOT = { has_global_flag = synth_queen_happened }
+		any_playable_country = {
+			is_ai = no
+			is_subject = yes
+			any_agreement = {
+				agreement_preset = preset_scion
+			}
+			NAND = {
+				has_country_flag = scion_requested_leader
+				has_country_flag = scion_gave_leader
+				has_country_flag = scion_gave_ships
+				has_country_flag = scion_gave_propulsion_tech
+				has_country_flag = scion_gave_colonization_supplies
+			}
+		}
+	}
+
+	immediate = {
+		random_playable_country = {
+			limit = {
+				is_ai = no
+				is_subject = yes
+				any_agreement = {
+					agreement_preset = preset_scion
+				}
+			}
+			random_list = {
+				250 = { # no Intervention
+					modifier = {
+						factor = 2
+						OR = {
+							years_passed > 50
+							event_target:global_event_country = {
+								check_variable = {
+									which = scion_intervention
+									value > 0
+								}
+							}
+						}
+					}
+				}
+				10 = { # FE requests a Leader
+					modifier = {
+						factor = 0
+						OR = {
+							has_country_flag = scion_requested_leader
+							NOT = {
+								any_owned_leader = {
+									is_ruler = no
+									NOT = { has_leader_flag = fe_gifted_leader }
+									has_base_skill >= 5
+								}
+							}
+						}
+					}
+					country_event = { id = origin.205 }
+					event_target:global_event_country = {
+						change_variable = { which = scion_intervention value = 1 }
+					}
+				}
+				10 = { # FE gives a Leader
+					modifier = {
+						factor = 0
+						has_country_flag = scion_gave_leader
+					}
+					modifier = {
+						factor = 3
+						has_country_flag = scion_requested_leader
+					}
+					country_event = { id = origin.210 }
+					event_target:global_event_country = {
+						change_variable = { which = scion_intervention value = 1 }
+					}
+				}
+				10 = { # FE gives ships
+					modifier = {
+						factor = 0
+						has_country_flag = scion_gave_ships
+					}
+					country_event = { id = origin.215 }
+					event_target:global_event_country = {
+						change_variable = { which = scion_intervention value = 1 }
+					}
+				}
+				10 = { # FE gives propulsion tech boost
+					modifier = {
+						factor = 0
+						NOT = { has_technology = "tech_hyper_drive_theory" } #No Hyperdrive Theory to expand upon
+					}
+					modifier = {
+						factor = 0
+						OR = {
+							years_passed < 25
+							has_country_flag = scion_gave_propulsion_tech
+							has_technology = tech_hyper_drive_3
+						}
+					}
+					modifier = {
+						factor = 5
+						OR = {
+							is_eager_explorer_empire = yes
+							AND = {
+								NOT = { has_technology = tech_hyper_drive_2 }
+								years_passed > 75
+							}
+						}
+					}
+					country_event = { id = origin.220 }
+					event_target:global_event_country = {
+						change_variable = { which = scion_intervention value = 1 }
+					}
+				}
+				10 = { # FE gives colonization supplies
+					modifier = {
+						factor = 0
+						NOT = { has_technology = "tech_hyper_drive_1" } #No Hyperdrive Tech to expand
+					}
+					modifier = {
+						factor = 0
+						OR = {
+							end_game_years_passed > -40
+							has_country_flag = scion_gave_colonization_supplies
+						}
+					}
+					modifier = {
+						factor = 5
+						years_passed > 50
+						count_owned_planet = {
+							limit = { is_colony = yes }
+							count < 3
+						}
+					}
+					country_event = { id = origin.225 }
+					event_target:global_event_country = {
+						change_variable = { which = scion_intervention value = 1 }
+					}
+				}
+			}
+		}
+	}
+}
+
+
+# Has Researched a Fallen Empire tech. FEs are displeased. (unless Scion)
+country_event = {
+	id = crisis.7275
+	hide_window = yes
+	is_triggered_only = yes
+
+	trigger = {
+		is_country_type = default
+		just_researched_fe_tech = yes
+		NOR = {
+			has_origin = origin_scion
+			has_civic = PrimPlayer_civic_scion_materialist
+			has_civic = PrimPlayer_civic_scion_spiritualist
+		}
+	}
+
+	immediate = {
+		every_country = {
+			limit = {
+				OR = {
+					is_country_type = fallen_empire
+					is_country_type = awakened_fallen_empire
+				}
+			}
+			if = {
+				limit = { has_ai_personality = fallen_empire_materialist }
+				add_opinion_modifier = {
+					modifier = opinion_fallen_wannabe_materialist
+					who = root
+				}
+			}
+			else = {
+				add_opinion_modifier = {
+					modifier = opinion_fallen_wannabe
+					who = root
+				}
+			}
+		}
+	}
+}
+
+# Scion FE is instead proud of their pupil.
+country_event = {
+	id = crisis.7280
+	title = TRANSMISSION
+	desc = crisis.7280.desc
+
+	picture_event_data = {
+		portrait = event_target:scion_master
+		planet_background = event_target:scion_master
+		graphical_culture = event_target:scion_master
+		city_level = event_target:scion_master
+		room = event_target:scion_master
+	}
+
+	diplomatic = yes
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	trigger = {
+		is_country_type = default
+		just_researched_fe_tech = yes
+		OR = {
+			has_origin = origin_scion
+			has_civic = PrimPlayer_civic_scion_materialist
+			has_civic = PrimPlayer_civic_scion_spiritualist
+		}
+		exists = overlord
+		overlord = {
+			is_country_type = fallen_empire # excludes 'awakened_fallen_empire'
+		}
+	}
+
+	immediate = {
+		overlord = { save_event_target_as = scion_master }
+	}
+
+	option = {
+		name = origin.4150.a #Thank you
+		add_monthly_resource_mult = {
+			resource = unity
+			value = @tier4unityreward
+			min = @tier4unitymin
+			max = @tier4unitymax
+		}
+	}
+}
 
 event = {
 	id = ethos_fix.1
@@ -26,4 +609,1045 @@ event = {
 			}
 		}
     }
+}
+
+# Encountered Holy World (via on_survey)
+# this = Science vessel | from = planet
+ship_event = {
+	id = fallen_empires.100
+	title = fallen_empires.100.name
+	# Owner has yet to make contact with the FE (string type A)
+	desc = {
+		trigger = {
+			owner = {
+				is_gestalt = no
+				is_spiritualist = no
+				NOT = { has_communications = event_target:spi_fallen_empire }
+			}
+		}
+		text = fallen_empires.100.A.desc
+	}
+	desc = {
+		trigger = {
+			owner = {
+				is_spiritualist = yes
+				NOT = { has_communications = event_target:spi_fallen_empire }
+			}
+		}
+		text = fallen_empires.100.A.desc.spi
+	}
+	desc = {
+		trigger = {
+			owner = {
+				is_gestalt = yes
+				NOT = { has_communications = event_target:spi_fallen_empire }
+			}
+		}
+		text = fallen_empires.100.A.desc.gestalt
+	}
+	# Owner has met the Spiritualist Fallen Empire (string type B)
+	desc = {
+		trigger = {
+			owner = {
+				is_gestalt = no
+				is_spiritualist = no
+				has_communications = event_target:spi_fallen_empire
+			}
+		}
+		text = fallen_empires.100.B.desc
+	}
+	desc = {
+		trigger = {
+			owner = {
+				is_spiritualist = yes
+				has_communications = event_target:spi_fallen_empire
+			}
+		}
+		text = fallen_empires.100.B.desc.spi
+	}
+	desc = {
+		trigger = {
+			owner = {
+				is_gestalt = yes
+				has_communications = event_target:spi_fallen_empire
+			}
+		}
+		text = fallen_empires.100.B.desc.gestalt
+	}
+	inline_script = {
+		script = events/biogenesis_event_art
+		OWNER = owner
+		REGULAR_PICTURE = GFX_evt_ship_in_orbit
+		BIOSHIP_PICTURE = GFX_evt_bio_ships_orbiting
+	}
+	show_sound = event_mystic_reveal_light
+	location = from
+	is_triggered_only = yes
+
+	trigger = {
+		exists = owner
+		owner = {
+			NOR = {
+				is_ai = yes
+				has_country_flag = encountered_holy_world
+				has_origin = origin_scion # see 'origin.11'
+				has_civic = PrimPlayer_civic_scion_materialist
+				has_civic = PrimPlayer_civic_scion_spiritualist
+			}
+		}
+		any_country = {
+			is_country_type = fallen_empire # excludes 'awakened_fallen_empire'
+			has_country_flag = fallen_empire_2
+		}
+		from = {
+			has_modifier = holy_planet
+			is_colony = no
+		}
+	}
+
+	immediate = {
+		random_country = {
+			limit = {
+				is_country_type = fallen_empire
+				has_country_flag = fallen_empire_2
+			}
+			save_event_target_as = spi_fallen_empire
+		}
+		owner = {
+			set_country_flag = encountered_holy_world
+		}
+	}
+
+	option = { # "Curious."
+		name = CURIOUS
+		owner = {
+			add_monthly_resource_mult = {
+				resource = unity
+				value = @tier1unityreward
+				min = @tier1unitymin
+				max = @tier1unitymax
+			}
+		}
+	}
+	option = { # Respectful
+		name = fallen_empires.100.a
+		trigger = {
+			owner = {
+				OR = {
+					is_spiritualist = yes
+					has_policy_flag = diplo_stance_cooperative
+				}
+			}
+		}
+		owner = {
+			add_monthly_resource_mult = {
+				resource = unity
+				value = @tier1unityreward
+				min = @tier1unitymin
+				max = @tier1unitymax
+			}
+		}
+	}
+	option = { # "Ours for the taking."
+		name = fallen_empires.100.b
+		trigger = {
+			owner = {
+				OR = {
+					has_policy_flag = diplo_stance_expansionist
+					is_gestalt = yes
+				}
+				has_communications = event_target:spi_fallen_empire
+			}
+		}
+		owner = {
+			add_monthly_resource_mult = {
+				resource = influence
+				value = @tier1influencereward
+				min = @tier1influencemin
+				max = @tier1influencemax
+			}
+		}
+	}
+	option = { # "We could thrive there."
+		name = fallen_empires.100.c
+		trigger = {
+			owner = {
+				has_policy_flag = diplo_stance_expansionist
+				NOT = { has_communications = event_target:spi_fallen_empire }
+			}
+		}
+		owner = {
+			add_monthly_resource_mult = {
+				resource = unity
+				value = @tier1unityreward
+				min = @tier1unitymin
+				max = @tier1unitymax
+			}
+		}
+	}
+	option = { # Insult
+		name = fallen_empires.100.d
+		trigger = {
+			owner = {
+				is_spiritualist = no
+				has_communications = event_target:spi_fallen_empire
+				OR = {
+					has_policy_flag = diplo_stance_belligerent
+					is_xenophobe = yes
+				}
+			}
+		}
+		owner = {
+			add_monthly_resource_mult = {
+				resource = influence
+				value = @tier1influencereward
+				min = @tier1influencemin
+				max = @tier1influencemax
+			}
+		}
+	}
+	option = { # Spiritualist insult
+		name = fallen_empires.100.e
+		trigger = {
+			owner = {
+				is_spiritualist = yes
+				has_communications = event_target:spi_fallen_empire
+				OR = {
+					has_policy_flag = diplo_stance_belligerent
+					is_xenophobe = yes
+				}
+			}
+		}
+		owner = {
+			add_monthly_resource_mult = {
+				resource = influence
+				value = @tier1influencereward
+				min = @tier1influencemin
+				max = @tier1influencemax
+			}
+		}
+	}
+}
+
+
+country_event = {
+	id = federations.10401
+	title = federations.10400.title
+	desc = federations.10400.desc
+	picture = GFX_evt_signing
+	show_sound = event_factions
+	is_triggered_only = yes
+
+	trigger = {
+		is_galactic_community_member = yes
+		is_in_breach_of_any = yes
+		# Need to check if you are in breach of a pre-FTL Resolution due to Policies not event flags.
+		if = {
+			limit = {
+				is_active_resolution = resolution_pre_ftl_stances_equal_standing
+				in_breach_of = resolution_pre_ftl_stances_equal_standing
+			}
+			OR = {
+				has_policy_flag = interference_not_allowed
+				has_policy_flag = interference_aggressive
+			}
+		}
+		if = {
+			limit = {
+				is_active_resolution = resolution_pre_ftl_stances_non_interference
+				in_breach_of = resolution_pre_ftl_stances_non_interference
+			}
+			OR = {
+				has_policy_flag = interference_active
+				has_policy_flag = interference_aggressive
+			}
+		}
+		if = {
+			limit = {
+				is_active_resolution = resolution_pre_ftl_stances_exploitation
+				in_breach_of = resolution_pre_ftl_stances_exploitation
+			}
+			has_policy_flag = interference_not_allowed
+		}
+		NOT = { has_country_flag = fed_10400_ignore }
+	}
+
+	immediate = {
+		if = {
+			limit = {
+				is_active_resolution = resolution_divinity_a_defined_purpose
+			}
+			random_country = {
+				limit = {
+					is_country_type = default
+					is_synthetic_empire = no
+					is_gestalt = no
+					is_galactic_community_member = yes
+				}
+				owner_species = { save_event_target_as = defined_purpose_random_species }
+			}
+		}
+
+		random_relation = {
+			limit = {
+				any_owned_leader = {
+					is_assigned_to_galcom = yes
+				}
+			}
+			random_owned_leader = {
+				limit = {
+					is_assigned_to_galcom = yes
+				}
+				save_event_target_as = executed_envoy
+			}
+		}
+	}
+
+	# Refuse to comply
+	option = {
+		name = federations.10400.refuse
+		custom_tooltip = FED_WE_WILL_BE_IN_BREACH
+	}
+	# Agree to comply
+	option = {
+		name = federations.10400.comply
+		allow = {
+			custom_tooltip = {
+				fail_text = federations.10400.comply_fail_ethics
+				NOT = {
+					AND = {
+						in_breach_of = resolution_galacticstudies_ethical_guideline_refactoring
+						OR = {
+							AND = {
+								has_technology = tech_selected_lineages
+								is_fanatic_egalitarian = yes
+							}
+							AND = {
+								has_technology = tech_capacity_boosters
+								is_egalitarian = yes
+							}
+						}
+					}
+				}
+			}
+			custom_tooltip = {
+				fail_text = federations.10400.comply_fail_civics
+				NOT = {
+					AND = {
+						has_valid_civic = civic_machine_assimilator
+						OR = {
+							is_active_resolution = resolution_divinity_a_defined_purpose
+							is_active_resolution = resolution_greatergood_universal_prosperity_mandate
+						}
+					}
+				}
+				NOT = {
+					AND = {
+						OR = {
+							is_active_resolution = resolution_greatergood_universal_prosperity_mandate
+							is_active_resolution = resolution_greatergood_balance_in_the_middle
+						}
+						OR = {
+							in_breach_of = resolution_greatergood_universal_prosperity_mandate
+							in_breach_of = resolution_greatergood_balance_in_the_middle
+						}
+						OR = {
+							has_valid_civic = civic_indentured_assets
+							has_valid_civic = civic_slaver_guilds
+						}
+					}
+				}
+			}
+			custom_tooltip = {
+				fail_text = federations.10400.comply_fail_tech
+				NOT = {
+					AND = {
+						is_active_resolution = resolution_greatergood_universal_prosperity_mandate
+						is_egalitarian = no
+						is_gestalt = no
+						in_breach_of = resolution_greatergood_universal_prosperity_mandate
+						NOT = { has_technology = tech_subdermal_stimulation }
+					}
+				}
+			}
+			custom_tooltip = {
+				fail_text = federations.10400.comply_fail_ascension
+				NOT = {
+					AND = {
+						is_synthetic_empire = yes
+						is_active_resolution = resolution_divinity_a_defined_purpose
+					}
+				}
+			}
+			custom_tooltip = {
+				fail_text = federations.10400.comply_fail_origin
+				NAND = {
+					AND = {
+						OR = {
+							has_origin = origin_scion
+							has_civic = PrimPlayer_civic_scion_materialist
+							has_civic = PrimPlayer_civic_scion_spiritualist
+						}
+						exists = overlord
+						overlord = { has_country_flag = scion_master }
+					}
+					is_active_resolution = resolution_galactic_focus_war_in_heaven_denounce_both
+				}
+
+			}
+		}
+
+		breach_fix_resolution_galacticstudies_advanced_xenostudies = yes
+		breach_fix_resolution_galacticstudies_ethical_guideline_refactoring = yes
+
+		# The Greater Good is way too complicated. We can go from the most extreme down.
+		if = {
+			limit = {
+				is_active_resolution = resolution_greatergood_universal_prosperity_mandate
+				in_breach_of = resolution_greatergood_universal_prosperity_mandate
+				is_egalitarian = yes
+			}
+			breach_fix_resolution_greatergood_universal_prosperity_mandate_utopian = yes
+		}
+		else_if = {
+			limit = {
+				is_active_resolution = resolution_greatergood_universal_prosperity_mandate
+				in_breach_of = resolution_greatergood_universal_prosperity_mandate
+				has_technology = tech_subdermal_stimulation
+				is_gestalt = no
+			}
+			breach_fix_resolution_greatergood_universal_prosperity_mandate_chemical = yes
+		}
+		else_if = {
+			limit = {
+				is_gestalt = yes
+				OR = {
+					AND = {
+						is_active_resolution = resolution_greatergood_balance_in_the_middle
+						in_breach_of = resolution_greatergood_balance_in_the_middle
+					}
+					AND = {
+						is_active_resolution = resolution_greatergood_universal_prosperity_mandate
+						in_breach_of = resolution_greatergood_universal_prosperity_mandate
+						NOT = { has_civic = civic_machine_assimilator }
+					}
+				}
+			}
+			breach_fix_resolution_greatergood_balance_in_the_middle_gestalt = yes
+		}
+		else_if = {
+			limit = {
+				is_gestalt = no
+				is_active_resolution = resolution_greatergood_balance_in_the_middle
+				in_breach_of = resolution_greatergood_balance_in_the_middle
+			}
+			breach_fix_resolution_greatergood_balance_in_the_middle = yes
+		}
+		else_if = {
+			limit = {
+				is_active_resolution = resolution_greatergood_greater_than_ourselves
+				in_breach_of = resolution_greatergood_greater_than_ourselves
+				is_militarist = yes
+				host_has_dlc = "Utopia"
+			}
+			breach_fix_resolution_greatergood_greater_than_ourselves_living_standards = yes
+			breach_fix_resolution_greatergood_greater_than_ourselves_thralls = yes
+		}
+		else_if = {
+			limit = {
+				is_active_resolution = resolution_greatergood_greater_than_ourselves
+				in_breach_of = resolution_greatergood_greater_than_ourselves
+				host_has_dlc = "Utopia"
+			}
+			breach_fix_resolution_greatergood_greater_than_ourselves_living_standards = yes
+			breach_fix_resolution_greatergood_greater_than_ourselves_servants = yes
+		}
+		else_if = {
+			limit = {
+				is_active_resolution = resolution_greatergood_greater_than_ourselves
+				in_breach_of = resolution_greatergood_greater_than_ourselves
+				NOT = { host_has_dlc = "Utopia" }
+			}
+			breach_fix_resolution_greatergood_greater_than_ourselves_living_standards = yes
+			breach_fix_resolution_greatergood_greater_than_ourselves_no_utopia = yes
+		}
+		else_if = {
+			limit = {
+				is_active_resolution = resolution_greatergood_greater_than_ourselves
+				in_breach_of = resolution_greatergood_greater_than_ourselves
+			}
+			breach_fix_resolution_greatergood_greater_than_ourselves_living_standards = yes
+		}
+		else_if = {
+			limit = {
+				is_active_resolution = resolution_greatergood_five_year_plans
+				in_breach_of = resolution_greatergood_five_year_plans
+				is_authoritarian = yes
+			}
+			breach_fix_resolution_greatergood_five_year_plans_stratified = yes
+		}
+		else_if = {
+			limit = {
+				is_active_resolution = resolution_greatergood_five_year_plans
+				in_breach_of = resolution_greatergood_five_year_plans
+				is_authoritarian = no
+			}
+			breach_fix_resolution_greatergood_five_year_plans_normal = yes
+		}
+
+		breach_fix_resolution_rulesofwar_reverence_for_life = yes
+		breach_fix_resolution_rulesofwar_independent_tribunals = yes
+		breach_fix_resolution_rulesofwar_last_resort_doctrine = yes
+		breach_fix_resolution_rulesofwar_demobilization_initiative = yes
+
+		breach_fix_resolution_divinity_a_defined_purpose_nonsynthetic = yes
+		breach_fix_resolution_divinity_a_defined_purpose_machine = yes
+
+		breach_fix_resolution_resolution_pre_ftl_stances_equal_standing = yes
+		breach_fix_resolution_resolution_pre_ftl_stances_non_interference = yes
+		breach_fix_resolution_resolution_pre_ftl_stances_exploitation = yes
+
+		ai_chance = {
+			factor = 5
+		}
+	}
+	# Discard and permanently ignore this
+	option = {
+		name = federations.10400.refuse_2
+		custom_tooltip = FED_WE_WILL_BE_IN_BREACH
+		custom_tooltip = federations.10400.refuse_2_tooltip
+		hidden_effect = {
+			set_country_flag = fed_10400_ignore
+		}
+		ai_chance = {
+			factor = 0
+		}
+	}
+	# Execute the Envoys
+	option = {
+		name = federations.10400.execute
+		trigger = {
+			OR = {
+				is_imperial_authority = yes
+				is_xenophobe = yes
+				AND = {
+					is_hive_empire = yes
+					NOR = {
+						NOT = { exists = event_target:executed_envoy }
+						AND = {
+							exists = event_target:executed_envoy
+							event_target:executed_envoy = {
+								NOR = {
+									has_trait = trait_lithoid
+									has_trait = trait_machine_unit
+									has_trait = trait_mechanical
+								}
+							}
+						}
+					}
+				}
+			}
+			is_xenophile = no
+			is_pacifist = no
+		}
+		allow = {
+			NOT = { has_valid_civic = civic_hive_empath }
+		}
+
+		custom_tooltip = FED_WE_WILL_BE_IN_BREACH
+		custom_tooltip = federations.10400.refuse_2_tooltip
+		custom_tooltip = federations.10400.execute_tooltip
+
+		add_monthly_resource_mult = {
+			resource = unity
+			value = @tier3unityreward
+			min = @tier3unitymin
+			max = @tier3unitymax
+		}
+
+		if = {
+			limit = {
+				exists = event_target:executed_envoy
+			}
+			event_target:executed_envoy = {
+				kill_leader = {
+					show_notification = yes
+				}
+			}
+		}
+
+		hidden_effect = {
+			set_country_flag = fed_10400_ignore
+			set_country_flag = executed_galcom_envoys
+			every_playable_country = {
+				limit = {
+					is_galactic_community_member = yes
+					NOR = {
+						is_same_value = root
+						is_xenophobe = yes
+					}
+				}
+				add_opinion_modifier = {
+					who = root
+					modifier = opinion_executed_galcom_envoys
+				}
+			}
+		}
+
+		if = {
+			limit = {
+				is_active_resolution = resolution_galacticstudies_advanced_xenostudies
+				in_breach_of = resolution_galacticstudies_advanced_xenostudies
+				has_policy_flag = ai_outlawed
+				can_set_policy = {
+					policy = artificial_intelligence_policy
+					option = ai_servitude
+				}
+			}
+			set_policy_cooldown = artificial_intelligence_policy
+		}
+
+		if = {
+			limit = {
+				is_active_resolution = resolution_galacticstudies_advanced_xenostudies
+				in_breach_of = resolution_galacticstudies_advanced_xenostudies
+				has_policy_flag = interference_not_allowed
+				can_set_policy = {
+					policy = interference
+					option = interference_active
+				}
+			}
+			set_policy_cooldown = interference
+		}
+
+		if = {
+			limit = {
+				is_active_resolution = resolution_galacticstudies_ethical_guideline_refactoring
+				in_breach_of = resolution_galacticstudies_ethical_guideline_refactoring
+				OR = {
+					AND = {
+						has_technology = tech_capacity_boosters
+						can_set_policy = {
+							policy = leader_enhancement
+							option = leader_enhancement_capacity_boosters
+						}
+					}
+					AND = {
+						NOT = { has_technology = tech_capacity_boosters }
+						has_technology = tech_selected_lineages
+						has_policy_flag = leader_enhancement_natural_selection
+						can_set_policy = {
+							policy = leader_enhancement
+							option = leader_enhancement_selected_lineages
+						}
+					}
+				}
+			}
+			set_policy_cooldown = leader_enhancement
+		}
+
+		if = {
+			limit = {
+				is_active_resolution = resolution_rulesofwar_reverence_for_life
+				in_breach_of = resolution_rulesofwar_reverence_for_life
+				can_set_policy = {
+					policy = purge
+					option = purge_displacement_only
+				}
+			}
+			set_policy_cooldown = purge
+		}
+
+		if = {
+			limit = {
+				is_active_resolution = resolution_rulesofwar_independent_tribunals
+				in_breach_of = resolution_rulesofwar_independent_tribunals
+				can_set_policy = {
+					policy = orbital_bombardment
+					option = orbital_bombardment_selective
+				}
+			}
+			set_policy_cooldown = orbital_bombardment
+		}
+
+		if = {
+			limit = {
+				is_active_resolution = resolution_rulesofwar_last_resort_doctrine
+				in_breach_of = resolution_rulesofwar_last_resort_doctrine
+				OR = {
+					AND = {
+						is_gestalt = no
+						can_set_policy = {
+							policy = war_philosophy
+							option = liberation_wars
+						}
+					}
+					AND = {
+						is_gestalt = yes
+						can_set_policy = {
+							policy = war_philosophy
+							option = no_wars
+						}
+					}
+				}
+			}
+			set_policy_cooldown = war_philosophy
+		}
+
+		if = {
+			limit = {
+				is_active_resolution = resolution_rulesofwar_demobilization_initiative
+				in_breach_of = resolution_rulesofwar_demobilization_initiative
+				can_set_policy = {
+					policy = economic_policy
+					option = economic_policy_balanced
+				}
+			}
+			set_policy_cooldown = economic_policy
+		}
+
+		if = {
+			limit = {
+				is_active_resolution = resolution_divinity_a_defined_purpose
+				in_breach_of = resolution_divinity_a_defined_purpose
+				is_synthetic_empire = no
+				can_set_policy = {
+					policy = artificial_intelligence_policy
+					option = ai_servitude
+				}
+			}
+			set_policy_cooldown = artificial_intelligence_policy
+		}
+
+		if = {
+			limit = {
+				is_active_resolution = resolution_pre_ftl_stances_equal_standing
+				in_breach_of = resolution_pre_ftl_stances_equal_standing
+				has_met_primitives = yes
+				OR = {
+					has_policy_flag = interference_not_allowed
+					has_policy_flag = interference_aggressive
+				}
+				OR = {
+					can_set_policy = {
+						policy = interference
+						option = interference_subtle
+					}
+					can_set_policy = {
+						policy = interference
+						option = interference_active
+					}
+				}
+			}
+			set_policy_cooldown = interference
+		}
+
+		if = {
+			limit = {
+				is_active_resolution = resolution_pre_ftl_stances_non_interference
+				in_breach_of = resolution_pre_ftl_stances_non_interference
+				has_met_primitives = yes
+				NOT = {
+					has_policy_flag = interference_not_allowed
+				}
+				can_set_policy = {
+					policy = interference
+					option = interference_not_allowed
+				}
+			}
+			set_policy_cooldown = interference
+		}
+
+		if = {
+			limit = {
+				is_active_resolution = resolution_pre_ftl_stances_exploitation
+				in_breach_of = resolution_pre_ftl_stances_exploitation
+				has_met_primitives = yes
+				OR = {
+					has_policy_flag = interference_not_allowed
+					has_policy_flag = interference_subtle
+				}
+				OR = {
+					can_set_policy = {
+						policy = interference
+						option = interference_active
+					}
+					can_set_policy = {
+						policy = interference
+						option = interference_aggressive
+					}
+				}
+			}
+			set_policy_cooldown = interference
+		}
+
+		ai_chance = {
+			factor = 0
+		}
+	}
+	# Eat the Envoys
+	option = {
+		name = federations.10400.eat
+		trigger = {
+			OR = {
+				is_hive_empire = yes
+				has_origin = origin_necrophage
+			}
+			OR = {
+				NOT = { exists = event_target:executed_envoy }
+				AND = {
+					exists = event_target:executed_envoy
+					event_target:executed_envoy = {
+						NOR = {
+							has_trait = trait_lithoid
+							has_trait = trait_machine_unit
+							has_trait = trait_mechanical
+						}
+					}
+				}
+			}
+		}
+
+		allow = {
+			NOT = { has_valid_civic = civic_hive_empath }
+		}
+
+		custom_tooltip = FED_WE_WILL_BE_IN_BREACH
+		custom_tooltip = federations.10400.refuse_2_tooltip
+		custom_tooltip = federations.10400.execute_tooltip
+
+		add_monthly_resource_mult = {
+			resource = unity
+			value = @tier3unityreward
+			min = @tier3unitymin
+			max = @tier3unitymax
+		}
+
+		add_resource = {
+			food = 1
+		}
+
+		if = {
+			limit = {
+				exists = event_target:executed_envoy
+			}
+			event_target:executed_envoy = {
+				kill_leader = {
+					show_notification = yes
+				}
+			}
+		}
+
+		hidden_effect = {
+			set_country_flag = fed_10400_ignore
+			set_country_flag = executed_galcom_envoys
+			every_playable_country = {
+				limit = {
+					is_galactic_community_member = yes
+					NOR = {
+						is_same_value = root
+						is_xenophobe = yes
+					}
+				}
+				add_opinion_modifier = {
+					who = root
+					modifier = opinion_executed_galcom_envoys
+				}
+			}
+		}
+
+		if = {
+			limit = {
+				is_active_resolution = resolution_galacticstudies_advanced_xenostudies
+				in_breach_of = resolution_galacticstudies_advanced_xenostudies
+				has_policy_flag = ai_outlawed
+				can_set_policy = {
+					policy = artificial_intelligence_policy
+					option = ai_servitude
+				}
+			}
+			set_policy_cooldown = artificial_intelligence_policy
+		}
+
+		if = {
+			limit = {
+				is_active_resolution = resolution_galacticstudies_advanced_xenostudies
+				in_breach_of = resolution_galacticstudies_advanced_xenostudies
+				NOR = {
+					has_policy_flag = interference_not_allowed
+					has_policy_flag = interference_subtle
+				}
+				can_set_policy = {
+					policy = interference
+					option = interference_active
+				}
+			}
+			set_policy_cooldown = interference
+		}
+
+		if = {
+			limit = {
+				is_active_resolution = resolution_galacticstudies_ethical_guideline_refactoring
+				in_breach_of = resolution_galacticstudies_ethical_guideline_refactoring
+				OR = {
+					AND = {
+						has_technology = tech_capacity_boosters
+						can_set_policy = {
+							policy = leader_enhancement
+							option = leader_enhancement_capacity_boosters
+						}
+					}
+					AND = {
+						NOT = { has_technology = tech_capacity_boosters }
+						has_technology = tech_selected_lineages
+						has_policy_flag = leader_enhancement_natural_selection
+						can_set_policy = {
+							policy = leader_enhancement
+							option = leader_enhancement_selected_lineages
+						}
+					}
+				}
+			}
+			set_policy_cooldown = leader_enhancement
+		}
+
+		if = {
+			limit = {
+				is_active_resolution = resolution_rulesofwar_reverence_for_life
+				in_breach_of = resolution_rulesofwar_reverence_for_life
+				can_set_policy = {
+					policy = purge
+					option = purge_displacement_only
+				}
+			}
+			set_policy_cooldown = purge
+		}
+
+		if = {
+			limit = {
+				is_active_resolution = resolution_rulesofwar_independent_tribunals
+				in_breach_of = resolution_rulesofwar_independent_tribunals
+				can_set_policy = {
+					policy = orbital_bombardment
+					option = orbital_bombardment_selective
+				}
+			}
+			set_policy_cooldown = orbital_bombardment
+		}
+
+		if = {
+			limit = {
+				is_active_resolution = resolution_rulesofwar_last_resort_doctrine
+				in_breach_of = resolution_rulesofwar_last_resort_doctrine
+				OR = {
+					AND = {
+						is_gestalt = no
+						can_set_policy = {
+							policy = war_philosophy
+							option = liberation_wars
+						}
+					}
+					AND = {
+						is_gestalt = yes
+						can_set_policy = {
+							policy = war_philosophy
+							option = no_wars
+						}
+					}
+				}
+			}
+			set_policy_cooldown = war_philosophy
+		}
+
+		if = {
+			limit = {
+				is_active_resolution = resolution_rulesofwar_demobilization_initiative
+				in_breach_of = resolution_rulesofwar_demobilization_initiative
+				can_set_policy = {
+					policy = economic_policy
+					option = economic_policy_balanced
+				}
+			}
+			set_policy_cooldown = economic_policy
+		}
+
+		if = {
+			limit = {
+				is_active_resolution = resolution_divinity_a_defined_purpose
+				in_breach_of = resolution_divinity_a_defined_purpose
+				is_synthetic_empire = no
+				can_set_policy = {
+					policy = artificial_intelligence_policy
+					option = ai_servitude
+				}
+			}
+			set_policy_cooldown = artificial_intelligence_policy
+		}
+
+		if = {
+			limit = {
+				is_active_resolution = resolution_pre_ftl_stances_equal_standing
+				in_breach_of = resolution_pre_ftl_stances_equal_standing
+				has_met_primitives = yes
+				OR = {
+					has_policy_flag = interference_not_allowed
+					has_policy_flag = interference_aggressive
+				}
+				OR = {
+					can_set_policy = {
+						policy = interference
+						option = interference_subtle
+					}
+					can_set_policy = {
+						policy = interference
+						option = interference_active
+					}
+				}
+			}
+			set_policy_cooldown = interference
+		}
+
+		if = {
+			limit = {
+				is_active_resolution = resolution_pre_ftl_stances_non_interference
+				in_breach_of = resolution_pre_ftl_stances_non_interference
+				has_met_primitives = yes
+				NOT = {
+					has_policy_flag = interference_not_allowed
+				}
+				can_set_policy = {
+					policy = interference
+					option = interference_not_allowed
+				}
+			}
+			set_policy_cooldown = interference
+		}
+
+		if = {
+			limit = {
+				is_active_resolution = resolution_pre_ftl_stances_exploitation
+				in_breach_of = resolution_pre_ftl_stances_exploitation
+				has_met_primitives = yes
+				OR = {
+					has_policy_flag = interference_not_allowed
+					has_policy_flag = interference_subtle
+				}
+				OR = {
+					can_set_policy = {
+						policy = interference
+						option = interference_active
+					}
+					can_set_policy = {
+						policy = interference
+						option = interference_aggressive
+					}
+				}
+			}
+			set_policy_cooldown = interference
+		}
+
+		ai_chance = {
+			factor = 0
+		}
+	}
 }

@@ -93,3 +93,497 @@ wg_primitive_uprising = {
 		weight = 1
 	}
 }
+
+#########################################################################################################
+wg_payback_wipe_them_out = {
+	casus_belli = cb_payback
+	hide_if_no_cb = no
+	total_war = yes
+	set_defender_wargoal = wg_payback_msi
+
+	forbidden_peace_offers = {
+		status_quo = ""
+	}
+
+	surrender_acceptance = -1000
+
+	war_exhaustion = 0.25
+
+	potential = {
+		is_country_type = default
+		OR = {
+			has_origin = origin_payback
+			has_civic = PrimPlayer_civic_the_obelisk
+		}
+		has_event_chain = payback_make_them_pay_swords_chain
+		is_pacifist = no
+		from = {
+			OR = {
+				has_origin = origin_slavers
+				has_country_flag = payback_stole_revenge
+			}
+		}
+	}
+
+	possible = {
+		always = yes
+	}
+
+	ai_weight = {
+		weight = 0
+	}
+}
+
+wg_payback_force_ideology = {
+	casus_belli = cb_payback
+	hide_if_no_cb = no
+	set_defender_wargoal = wg_payback_msi
+
+	forbidden_peace_offers = {
+		status_quo = ""
+	}
+
+	surrender_acceptance = -100
+
+	war_exhaustion = 0.25
+
+	potential = {
+		is_country_type = default
+		OR = {
+			has_origin = origin_payback
+			has_civic = PrimPlayer_civic_the_obelisk
+		}
+		has_event_chain = payback_make_them_pay_swords_chain
+		has_total_war_cb = no
+		NOT = { is_in_federation_with = from }
+		NAND = {
+			is_galactic_emperor = yes
+			from = { is_galactic_community_member = yes }
+		}
+		from = {
+			OR = {
+				has_origin = origin_slavers
+				has_country_flag = payback_stole_revenge
+			}
+		}
+	}
+
+	possible = {
+		custom_tooltip = {
+			fail_text = has_claimed_all_systems
+			from = {
+				is_country_type = default
+				any_owned_planet = {
+					is_colony = yes
+					root = {
+						NOT = { has_claim = prev.solar_system }
+					}
+				}
+			}
+		}
+	}
+
+	on_accept = {
+		from = {
+			if = {
+				limit = {
+					is_gestalt = no
+				}
+				custom_tooltip = wg_force_ideology_accept
+				custom_tooltip = wg_force_ideology_accept_2
+			}
+
+			every_subject = {
+				set_subject_of = {
+					who = none
+				}
+				custom_tooltip = wg_independence_accept
+			}
+
+			every_system_within_border = {
+				limit = {
+					Root.from = { has_claim = prev }
+				}
+				remove_claims = { who = Root.from }
+			}
+		}
+
+		if = {
+			limit = {
+				from = { has_federation = yes }
+			}
+			custom_tooltip = wg_force_ideology_accept_3
+		}
+
+		hidden_effect = {
+			from = {
+				if = {
+					limit = {
+						is_gestalt = no
+					}
+					impose_ideology_effect = yes
+				}
+
+				every_subject = {
+					limit = {
+						is_gestalt = no
+					}
+					impose_ideology_effect = yes
+				}
+			}
+			end_rivalry = from
+			from = { end_rivalry = root }
+			every_system_within_border = {
+				limit = {
+					from = { has_claim = prev }
+				}
+				remove_claims = { who = from }
+			}
+			every_country = {
+				limit = {
+					OR = {
+						is_in_federation_with = root
+						AND = {
+							is_subject = yes
+							exists = overlord
+							overlord = { is_same_value = root }
+						}
+					}
+				}
+				end_rivalry = from
+				from = { end_rivalry = prev }
+				add_opinion_modifier = { modifier = opinion_we_liberated who = from }
+				from = { add_opinion_modifier = { modifier = opinion_liberated_us who = prev } }
+				every_system_within_border = {
+					limit = {
+						from = { has_claim = prev }
+					}
+					remove_claims = { who = from }
+				}
+			}
+			from = {
+				add_threat = {
+					who = root
+					amount = 0.10
+				}
+			}
+			from = {
+				leave_alliance = { override_requirements = yes }
+			}
+		}
+	}
+
+	ai_weight = {
+		weight = 0
+	}
+}
+
+wg_payback_tribute = {
+	casus_belli = cb_payback
+	hide_if_no_cb = no
+	set_defender_wargoal = wg_payback_msi
+
+	forbidden_peace_offers = {
+		status_quo = ""
+	}
+
+	surrender_acceptance = -100
+
+	potential = {
+		is_country_type = default
+		OR = {
+			has_origin = origin_payback
+			has_civic = PrimPlayer_civic_the_obelisk
+		}
+		has_event_chain = payback_make_them_pay_swords_chain
+		is_pacifist = no
+		is_megacorp = no
+		is_homicidal = no
+		has_total_war_cb = no
+		from = {
+			OR = {
+				has_origin = origin_slavers
+				has_country_flag = payback_stole_revenge
+			}
+		}
+	}
+	possible = {
+		is_subject = no
+		custom_tooltip = {
+			fail_text = has_claimed_all_systems
+			from = {
+				is_country_type = default
+				any_owned_planet = {
+					is_colony = yes
+					root = {
+						NOT = { has_claim = prev.solar_system }
+					}
+				}
+			}
+		}
+	}
+
+	war_exhaustion = 0.25
+
+	on_accept = {
+		hidden_effect = {
+			from = {
+				add_threat = {
+					who = root
+					amount = 0.25
+				}
+			}
+			set_truce = {
+				target = FROM
+				type = war
+			}
+			FROM = {
+				set_truce = {
+					target = ROOT
+					type = war
+				}
+			}
+		}
+		if = {
+			limit = { from = { has_been_declared_crisis = no } }
+			from = {
+				set_subject_of = {
+					who = root
+					preset = preset_tributary
+				}
+				add_modifier = {
+					modifier = newly_subjugated_loyalty
+					years = 5
+				}
+			}
+		}
+	}
+
+	ai_weight = {
+		weight = 0
+	}
+}
+
+wg_payback_megacorp_subjugate = {
+	casus_belli = cb_payback
+
+	hide_if_no_cb = no
+	set_defender_wargoal = wg_payback_msi
+
+	forbidden_peace_offers = {
+		status_quo = ""
+	}
+
+	surrender_acceptance = -100
+
+	potential = {
+		is_country_type = default
+		OR = {
+			has_origin = origin_payback
+			has_civic = PrimPlayer_civic_the_obelisk
+		}
+		has_event_chain = payback_make_them_pay_swords_chain
+		is_pacifist = no
+		is_megacorp = yes
+		is_homicidal = no
+		has_total_war_cb = no
+		from = {
+			OR = {
+				has_origin = origin_slavers
+				has_country_flag = payback_stole_revenge
+			}
+		}
+	}
+	possible = {
+		is_subject = no
+		custom_tooltip = {
+			fail_text = has_claimed_all_systems
+			from = {
+				is_country_type = default
+				any_owned_planet = {
+					is_colony = yes
+					root = {
+						NOT = { has_claim = prev.solar_system }
+					}
+				}
+			}
+		}
+	}
+
+	war_exhaustion = 0.25
+
+	on_accept = {
+		hidden_effect = {
+			from = {
+				add_threat = {
+					who = root
+					amount = 0.25
+				}
+			}
+			set_truce = {
+				target = FROM
+				type = war
+			}
+			FROM = {
+				set_truce = {
+					target = ROOT
+					type = war
+				}
+			}
+		}
+		FROM = {
+			if = {
+				limit = { has_been_declared_crisis = no }
+				ROOT = {
+					switch = {
+						trigger = has_policy_flag
+						oppressive_terms = {
+							FROM = {
+								set_subject_of = {
+									who = ROOT
+									preset = preset_subsidiary_oppressive
+								}
+							}
+						}
+						balanced_terms = {
+							FROM = {
+								set_subject_of = {
+									who = ROOT
+									preset = preset_subsidiary_balanced
+								}
+							}
+						}
+						benevolent_terms = {
+							FROM = {
+								set_subject_of = {
+									who = ROOT
+									preset = preset_subsidiary_benevolent
+								}
+							}
+						}
+					}
+				}
+				add_modifier = {
+					modifier = newly_subjugated_loyalty
+					years = 5
+				}
+			}
+		}
+	}
+
+	ai_weight = {
+		weight = 0
+	}
+}
+
+wg_payback_msi = {
+	casus_belli = cb_payback
+	hide_if_no_cb = yes
+
+	forbidden_peace_offers = {
+		status_quo = ""
+	}
+
+	surrender_acceptance = -100
+
+	potential = {
+		has_origin = origin_slavers
+		from = {
+			OR = {
+				has_origin = origin_payback
+				has_civic = PrimPlayer_civic_the_obelisk
+			}
+		}
+	}
+
+	war_exhaustion = 0.25
+
+	possible = {
+		always = yes
+	}
+
+	on_accept = {
+		hidden_effect = {
+			from = {
+				add_threat = {
+					who = root
+					amount = 0.5
+				}
+			}
+			set_truce = {
+				target = FROM
+				type = war
+			}
+			FROM = {
+				set_truce = {
+					target = ROOT
+					type = war
+				}
+			}
+		}
+		FROM = {
+			set_subject_of = {
+				who = ROOT
+				preset = preset_payback_subsidiary_benevolent
+			}
+			add_modifier = {
+				modifier = newly_subjugated_loyalty
+				years = 5
+			}
+		}
+	}
+
+	ai_weight = {
+		weight = 0
+	}
+}
+
+wg_payback_msi_humiliation = {
+	casus_belli = cb_humiliation
+	hide_if_no_cb = no
+
+	set_defender_wargoal = wg_humiliation
+
+	surrender_acceptance = -50
+
+	potential = {
+		has_origin = origin_slavers
+		from = {
+			OR = {
+				has_origin = origin_payback
+				has_civic = PrimPlayer_civic_the_obelisk
+			}
+		}
+	}
+
+	war_exhaustion = 0.25
+
+	possible = {
+		always = yes
+	}
+
+	on_accept = {
+		custom_tooltip = wg_humiliation_accept
+		hidden_effect = {
+			add_resource = { influence = 100 }
+			from = {
+				add_modifier = { modifier = humiliated days = 3600 }
+				if = {
+					limit = { has_policy_flag = diplo_stance_supremacist }
+					set_policy = {
+						policy = diplomatic_stance
+						option = diplo_stance_belligerent
+						cooldown = yes
+					}
+					prev = {
+						set_country_flag = humble_pie_achievement
+					}
+				}
+			}
+		}
+	}
+
+	ai_weight = {
+		weight = 1
+	}
+}
