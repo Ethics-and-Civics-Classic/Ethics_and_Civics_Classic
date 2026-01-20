@@ -16,7 +16,20 @@ decision_civilian_local_colony_cruise = {
 	}
 
 	potential = {
-		owner = { is_regular_empire = yes }
+		always = no #Cog Note - I want to keep this disabled while Dev Testing
+		owner = { 
+			has_edict = civilian_resort_colony_cruise_roam_edict
+			is_regular_empire = yes 
+			count_owned_nonprimary_starbase = {
+				count > 0
+				has_starbase_size >= orbital_ring_tier_0	
+				has_starbase_module = orbital_ring_system_tourism
+				distance = {
+					source = PREV.PREV
+					same_solar_system = yes
+				}
+			}
+		}
 		solar_system = {
 			count_fleet_in_system = {
 				count = 0
@@ -70,6 +83,7 @@ decision_civilian_local_colony_cruise_return = {
 	}
 
 	potential = {
+		always = no #Cog Note - I want to keep this disabled while Dev Testing
 		owner = { is_regular_empire = yes }
 		solar_system = {
 			count_fleet_in_system = {
@@ -83,9 +97,11 @@ decision_civilian_local_colony_cruise_return = {
 		custom_tooltip = decision_civilian_local_colony_cruise_pop_return
 		hidden_effect = {
 			weighted_random_owned_pop_group = {
-				create_pop_group = {
-					pop_group = this
-					amount = 500
+				while = {
+					count = 500
+					create_pop_group = {
+						species = this
+					}
 				}
 			}
 		}
