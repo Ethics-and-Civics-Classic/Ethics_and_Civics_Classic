@@ -25,11 +25,14 @@
 # Direct Democracy
 auth_direct_democratic = {
 	election_term_years = 10
-	re_election_allowed = yes
-	max_election_candidates = 12
+	re_election_allowed = no
+	can_have_emergency_elections = yes
+	#max_election_candidates = 12	#Let's make it unlimited, it's direct democracy anyways
 	election_type = democratic
 
 	uses_mandates = yes
+	
+	color = { 81 140 44 255 }
 
 	ruler_council_position = councilor_ruler_direct_democratic
 
@@ -286,7 +289,8 @@ auth_direct_democratic = {
 	}
 
 	tags = {
-		AUTHORITY_ELECTION_DIRECT_DEMOCRATIC
+		AUTHORITY_SUCCESSION_TYPE
+		AUTHORITY_DIRECT_DEMOCRATIC_SUCCESSION
 	}
 }
 
@@ -298,6 +302,8 @@ auth_democratic = {
 	max_election_candidates = 8	# Modded
 
 	uses_mandates = yes
+	
+	color = { 81 140 44 255 }
 
 	ruler_council_position = councilor_ruler_democratic
 
@@ -559,11 +565,13 @@ auth_democratic = {
 auth_oligarchic = {
 	election_term_years = 30
 	election_type = oligarchic
-	re_election_allowed = yes			# Modded
+	re_election_allowed = no
 	can_have_emergency_elections = yes
 	max_election_candidates = 4
 
 	has_agendas = yes
+	
+	color = { 164 135 18 255 }
 
 	ruler_council_position = councilor_ruler_oligarchic
 
@@ -823,6 +831,8 @@ auth_dictatorial = {
 	election_type = oligarchic
 
 	has_agendas = yes
+	
+	color = { 162 85 12 255 }
 
 	ruler_council_position = councilor_ruler_dictatorial
 
@@ -1021,6 +1031,30 @@ auth_dictatorial = {
 			planet_buildings_cost_mult = -0.1
 		}
 	}
+	
+	advanced_authority_swap	= {
+		name = "civic_dystopian_society_authority_dictatorial"
+		description = "civic_dystopian_society_authority_dictatorial_desc"
+		inherit_icon = yes
+		inherit_effects = yes
+		trigger = {
+			is_scope_valid = yes
+			has_civic = civic_dystopian_society
+			NOR = {
+				has_country_flag = cyber_creed_advanced_government
+				has_country_flag = cyber_individualist
+				has_country_flag = cyber_collectivist
+				has_country_flag = synth_physical
+				has_country_flag = synth_virtual
+				has_country_flag = corporeal_government
+			}
+		}
+		modifier = {
+			pop_cat_worker_political_power = -1.5		# Modded
+			pop_cat_specialist_political_power = -3	# Modded
+			pop_cat_elite_happiness = 0.05
+		}
+	}
 
 	# BioGenesis Genetic Ascension Situation Authority Swaps
 	# Purity
@@ -1139,29 +1173,6 @@ auth_dictatorial = {
 		}
 	}
 
-	advanced_authority_swap	= {
-		name = "civic_dystopian_society_authority_dictatorial"
-		description = "civic_dystopian_society_authority_dictatorial_desc"
-		inherit_icon = yes
-		inherit_effects = yes
-		trigger = {
-			is_scope_valid = yes
-			has_civic = civic_dystopian_society
-			NOR = {
-				has_country_flag = cyber_creed_advanced_government
-				has_country_flag = cyber_individualist
-				has_country_flag = cyber_collectivist
-				has_country_flag = synth_physical
-				has_country_flag = synth_virtual
-			}
-		}
-		modifier = {
-			pop_cat_worker_political_power = -1.5
-			pop_cat_specialist_political_power = -3
-			pop_cat_elite_happiness = 0.05
-		}
-	}
-
 	tags = {
 		AUTHORITY_SUCCESSION_TYPE
 		AUTHORITY_DICTATORIAL_SUCCESSION
@@ -1172,6 +1183,8 @@ auth_imperial = {
 	has_heir = yes
 
 	has_agendas = yes
+	
+	color = { 141 38 38 255 }
 
 	ruler_council_position = councilor_ruler_imperial
 
@@ -1471,7 +1484,7 @@ auth_imperial = {
 			AUTHORITY_HAS_HEIR
 		}
 	}
-
+	
 	advanced_authority_swap	= {
 		name = "civic_dystopian_society_authority_imperial"
 		description = "civic_dystopian_society_authority_imperial_desc"
@@ -1486,6 +1499,7 @@ auth_imperial = {
 				has_country_flag = cyber_collectivist
 				has_country_flag = synth_physical
 				has_country_flag = synth_virtual
+				has_country_flag = corporeal_government
 			}
 		}
 		modifier = {
@@ -1505,8 +1519,9 @@ auth_imperial = {
 auth_corporate = {
 	election_term_years = 20
 	election_type = oligarchic
+	re_election_allowed = yes
 	can_have_emergency_elections = yes
-	max_election_candidates = 4
+	max_election_candidates = 6
 	localization_postfix = corporate
 
 	has_agendas = yes
@@ -1576,13 +1591,14 @@ auth_corporate = {
 				has_country_flag = cyber_collectivist
 				has_country_flag = synth_physical
 				has_country_flag = synth_virtual
+				has_country_flag = corporeal_government
 			}
 		}
 		election_term_years = 0
 		election_type = oligarchic
 		can_have_emergency_elections = no
 		modifier = {
-			pop_cat_worker_political_power = 2		# Modded
+			pop_cat_worker_political_power = -2		# Modded
 			pop_cat_specialist_political_power = -1	# Modded
 			pop_cat_ruler_political_power = 2		# Modded
 		}
@@ -1602,11 +1618,12 @@ auth_corporate = {
 				has_country_flag = cyber_collectivist
 				has_country_flag = synth_physical
 				has_country_flag = synth_virtual
+				has_country_flag = corporeal_government
 			}
 		}
 		can_have_emergency_elections = no
 		modifier = {
-			pop_cat_worker_political_power = 1		# Modded
+			pop_cat_worker_political_power = -1		# Modded
 			pop_cat_ruler_political_power = 2		# Modded
 		}
 	}
@@ -1846,7 +1863,7 @@ auth_corporate = {
 
 	tags = {
 		AUTHORITY_SUCCESSION_TYPE
-		AUTHORITY_OLIGARCHIC_SUCCESSION
+		AUTHORITY_CORPORATE_SUCCESSION
 	}
 }
 
