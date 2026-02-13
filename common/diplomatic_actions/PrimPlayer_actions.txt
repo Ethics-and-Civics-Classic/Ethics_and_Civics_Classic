@@ -22,6 +22,275 @@
 # proposable, trigger, root is actor, from is recipient, decides if the action is proposable
 # ai_acceptance: weight field where you can define AI reasons to accept or reject the proposal. Root is recipient, from is actor. Does not overwrite hardcoded reasons, and only using add and subtract is recommended, since multiplication won't affect reasons outside the ai_acceptance field
 
+## Pre-FTL diplo actions
+
+# Reveal Presence (set Awareness to Full)
+action_reveal_presence = {
+	icon = "GFX_diplomacy_reveal_presence"
+	auto_accepted = yes
+	sound = fc_ui_reveal_yourself_button
+
+	potential = {
+		hidden_trigger = {
+			is_country_type = default
+			from = {
+				is_country_type = primitive
+				NOT = { current_awareness_level = full }
+				observation_owner_is_actor = yes
+			}
+		}
+	}
+
+	possible = {
+		custom_tooltip = {
+			fail_text = "requires_not_ongoing_singularity_situation"
+			NOT = {
+				has_active_event = { action.2 }
+			}
+		}
+
+		custom_tooltip = {
+			fail_text = "requires_not_ongoing_singularity_situation"
+			NOT = {
+				any_situation = { is_situation_type = situation_pre_ftl_singularity }
+			}
+		}
+		custom_tooltip = {
+			fail_text = "requires_not_ongoing_observation_event_chain"
+			NOT = {
+				from = {
+					any_situation = {
+						has_situation_flag = has_ongoing_observation_event_chain
+					}
+				}
+			}
+		}
+		custom_tooltip = {
+			fail_text = "requires_actor_not_fanatic_purifiers"
+			OR = {
+				is_same_species = from
+				NOT = { has_valid_civic = civic_fanatic_purifiers	}
+			}
+		}
+		custom_tooltip = {
+			fail_text = "requires_recipient_not_fanatic_purifiers"
+			OR = {
+				is_same_species = from
+				from = { NOT = { has_valid_civic = civic_fanatic_purifiers } }
+			}
+		}
+		custom_tooltip = {
+			fail_text = "requires_actor_not_devouring_swarm"
+			NOT = { has_valid_civic = civic_hive_devouring_swarm	}
+		}
+		custom_tooltip = {
+			fail_text = "requires_recipient_not_devouring_swarm"
+			from = { NOT = { has_valid_civic = civic_hive_devouring_swarm } }
+		}
+		if = {
+			limit = { from = { has_valid_civic = civic_inwards_perfection } }
+			if = {
+				limit = {
+					has_intel = {
+						who = from
+						intel = civics
+					}
+				}
+				custom_tooltip = {
+					fail_text = requires_recipient_not_inward_perfection
+					always = no
+				}
+			}
+			else = {
+				custom_tooltip = {
+					fail_text = diplo_action_no_low_intel
+					always = no
+				}
+			}
+		}
+		custom_tooltip = {
+			fail_text = "requires_actor_not_inward_perfection"
+			NOT = { has_valid_civic = civic_inwards_perfection }
+		}
+		custom_tooltip = {
+			fail_text = "requires_actor_not_machine_terminator"
+			OR = {
+				is_same_species = from
+				NOT = { has_civic = civic_machine_terminator }
+				AND = {
+					has_civic = civic_machine_terminator
+					from = {
+						OR = {
+							has_country_flag = synthetic_empire
+							is_machine_empire = yes
+							is_individual_machine = yes
+						}
+					}
+				}
+			}
+		}
+		# When actor is organic, requires target is not exterminator
+		custom_tooltip = {
+			fail_text = "requires_recipient_not_machine_terminator"
+			OR = {
+				is_same_species = from
+				from = { NOT = { has_civic = civic_machine_terminator } }
+				AND = {
+					from = { has_civic = civic_machine_terminator }
+					OR = {
+						has_country_flag = synthetic_empire
+						is_machine_empire = yes
+						is_individual_machine = yes
+					}
+				}
+			}
+		}
+		custom_tooltip = {
+			fail_text = "requires_actor_not_scorched_earth"
+			OR = {
+				is_genocidal_infernal = no
+				from = { is_infernal_empire = yes }
+			}
+		}
+		custom_tooltip = {
+			fail_text = "requires_recipient_not_scorched_earth"
+			OR = {
+				is_infernal_empire = yes
+				from = { is_genocidal_infernal = no }
+			}
+		}
+		if = {
+			limit = { has_policy_flag = interference_not_allowed }
+			if = {
+				limit = { 
+					has_origin = origin_broken_shackles
+					from = { has_civic = PrimPlayer_civic_the_obelisk }
+				}
+				from = { has_civic = PrimPlayer_civic_the_obelisk }
+			}
+			else = {
+				custom_tooltip = ACTION_CANNOT_INTERFERE_POLICY
+			}
+		}
+		if = {
+			limit = {
+				has_policy_flag = interference_subtle
+				from = { NOT = { current_awareness_level = high } }
+			}
+			if = {
+				limit = { 
+					has_origin = origin_broken_shackles
+					from = { has_civic = PrimPlayer_civic_the_obelisk }
+				}
+				from = { has_civic = PrimPlayer_civic_the_obelisk }
+			}
+			else = {
+				custom_tooltip = {
+					fail_text = "ACTION_CANNOT_LOW_AWARENESS"
+					always = no
+				}
+			}
+		}
+	}
+
+	on_accept = {
+		if = {
+			limit = { 
+				from = { has_civic = PrimPlayer_civic_the_obelisk }
+				has_origin = origin_broken_shackles
+			}
+			from = {
+				switch = {
+					trigger = current_awareness_level
+					none = {
+						capital_scope = {
+							add_modifier = {
+								modifier = culture_shock_broken_shackles
+								years = 50
+							}
+						}
+					}
+					low = {
+						capital_scope = {
+							add_modifier = {
+								modifier = culture_shock_broken_shackles
+								years = 30
+							}
+						}
+					}
+					medium = {
+						capital_scope = {
+							add_modifier = {
+								modifier = culture_shock_broken_shackles
+								years = 15
+							}
+						}
+					}
+					high = {
+						capital_scope = {
+							add_modifier = {
+								modifier = culture_shock_broken_shackles
+								years = 5
+							}
+						}
+					}
+				}
+			}
+		}
+		else = {
+			from = {
+				switch = {
+					trigger = current_awareness_level
+					none = {
+						capital_scope = {
+							add_modifier = {
+								modifier = culture_shock_diplomacy
+								years = 50
+							}
+						}
+					}
+					low = {
+						capital_scope = {
+							add_modifier = {
+								modifier = culture_shock_diplomacy
+								years = 30
+							}
+						}
+					}
+					medium = {
+						capital_scope = {
+							add_modifier = {
+								modifier = culture_shock_diplomacy
+								years = 15
+							}
+						}
+					}
+					high = {
+						capital_scope = {
+							add_modifier = {
+								modifier = culture_shock_diplomacy
+								years = 5
+							}
+						}
+					}
+				}
+			}
+		}
+		hidden_effect = {
+			country_event = { id = first_contact.6000 scopes = { from = from } }
+		}
+	}
+
+	should_ai_propose = {
+		weight = 0
+
+		modifier = {
+			add = 1
+			has_ai_personality_behaviour = uplifter
+		}
+	}
+}
+
 # Trade deal, increases output of observation stations
 action_pre_ftl_trade_PrimPlayer = {
 	icon = "GFX_diplomacy_pre_ftl_trade"
