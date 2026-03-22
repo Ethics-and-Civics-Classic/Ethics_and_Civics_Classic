@@ -4,6 +4,7 @@ namespace = crime
 namespace = action
 namespace = leader
 namespace = paragon_2
+namespace = cyber
 
 # Remove Imperial Heir trait on changing away from Imperial authority.
 country_event = {
@@ -12379,6 +12380,176 @@ fleet_event = {
 					}
 				}
 				root = { auto_move_to_planet = { target = PREV clear_auto_move_on_arrival = yes } }
+			}
+		}
+	}
+}
+
+#####################################################
+#### Guided Sapience Stone-Age Primitive Mechanic ###
+#####################################################
+
+#Guided Sapience create pre-sapients
+planet_event = {
+	id = cyber.7000
+	title = cyber.7000.name
+	desc = cyber.7000.desc
+	picture = GFX_evt_alien_nature
+	show_sound = event_alien_nature
+	location = ROOT
+	trackable = yes
+	is_triggered_only = yes
+	trigger = {
+		owner = { is_guided_sapience_empire = yes }
+		has_planet_flag = create_presapients_no_colonize
+		NOT = { has_planet_flag = pre_sapient_planet }
+		is_artificial = no
+	}
+	
+	immediate = { 
+		remove_planet_flag = create_presapients_no_colonize
+		hidden_effect = { planet_event = { id = cyber.7010 } }
+	}
+
+	option = {
+		name = cyber.7000.a
+		 ai_chance = {
+			factor = 90
+		}
+		custom_tooltip = EaC_civic_mechanic_events.9.a.tooltip
+		owner = {
+			add_resource = {
+				unity = 500
+				influence = 25
+				mult = value:presapients_guided_mult
+			}
+			if = {
+				limit = {
+					NOT = { has_technology = tech_epigenetic_triggers }
+				}
+				add_tech_progress = {
+					tech = tech_epigenetic_triggers
+					progress = 0.05
+				}
+			}
+		}
+		hidden_effect = {
+			owner = {
+				change_variable = {
+					which = presapients_guided
+					value = 1
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = EaC_civic_mechanic_events.9.b
+		allow = { owner = { has_technology = tech_epigenetic_triggers } }
+		ai_chance = {
+			factor = 10
+			modifier = {
+				factor = 0
+				owner = { is_homicidal = yes }
+			}
+		}
+		custom_tooltip = EaC_civic_mechanic_events.9.b.tooltip
+		owner = {
+			add_resource = {
+				unity = 1500
+				influence = 25
+				mult = value:presapients_guided_mult
+			}
+			set_country_flag = built_observation_station
+			random_owned_pop_group = {
+				limit = { species = { is_archetype = PRESAPIENT } }
+				species = {
+					change_species_characteristics = {
+						sapient = yes
+						add_trait = trait_uplifted
+						add_traits_at_start_of_list = yes # optional, pushes out other traits if needed
+					}
+				}
+				set_pop_group_flag = presapients_guided_flag
+				create_country = {
+					name = random
+					authority = random
+					day_zero_contact = no
+					species = THIS
+					origin = origin_default
+					flag = random
+					type = primitive
+				}
+			}
+		}
+		hidden_effect = {
+			set_owner = last_created_country
+			last_created_country = { 
+				#add_tech_progress_situation = yes
+				set_pre_ftl_age_effect = { PRE_FTL_AGE = stone_age } 
+				every_owned_pop_group = {
+					limit = { 
+						NOR = { 
+							has_pop_group_flag = presapients_guided_flag
+							species = { is_archetype = PRESAPIENT } 
+						}
+					}
+					kill_pop_group = {
+						pop_group = this
+						percentage = 1.00
+					}
+				}
+				set_origin = origin_default_pre_ftl
+				if = {
+					limit = { root = { system = { owner = { has_origin = origin_slavers } } } }
+					if = {
+						limit = { NOT = { has_civic = PrimPlayer_civic_the_obelisk } }
+						if = { 
+							limit = { NOT = { has_modifier = origin_slavers_modifier } }
+							add_modifier = {
+								modifier = origin_slavers_modifier	#For Extra Civic Slot
+							}
+						}
+						force_add_civic = PrimPlayer_civic_the_obelisk	#Primitive Society gets obelisk
+					}
+				}
+				every_owned_pop_group = {
+					limit = { 
+						has_pop_group_flag = presapients_guided_flag 
+					}
+					remove_pop_group_flag = presapients_guided_flag
+				}
+			}
+			#setup_pre_ftl_planet = yes	#Cog Note - I don't know if they should get many bonus pops. Probably just a bit like colony ship gives
+		}
+	}
+	after = {
+		#hidden_effect = {
+		#	remove_planet_flag = create_presapients_no_colonize
+		#	planet_event = { id = cyber.7010 }
+		#}
+		if = {
+			limit = { has_modifier = d_genesis_preserve }
+			remove_deposit = d_genesis_preserve
+		}
+		if = {
+			limit = { system = { owner = { has_origin = origin_slavers } } }	#MSI places obelisks instead
+			ROOT = { 
+				if = {
+					limit = { NOT = { has_modifier = PrimPlayer_the_obelisk } }
+					add_modifier = {
+						modifier = PrimPlayer_the_obelisk
+					}
+					add_deposit = d_PrimPlayer_the_obelisk_deposit
+				}
+			}
+		}
+		else = {
+			ROOT = {
+				if = {
+					limit = { NOT = { has_deposit = d_genesis_monument } }
+					add_deposit = d_genesis_monument
+				}
 			}
 		}
 	}

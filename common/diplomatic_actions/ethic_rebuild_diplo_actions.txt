@@ -1,5 +1,187 @@
 # civic_peacekeepers
 
+# Trade deal, increases output of observation stations
+action_pre_ftl_trade = {
+	icon = "GFX_diplomacy_pre_ftl_trade"
+	diplo_view_acceptance_icon = yes
+	AI_acceptance_base_value = -50
+	action_type = positive
+	potential = {
+		hidden_trigger = {
+			has_first_contact_dlc = yes
+			is_country_type = default
+			from = {
+				is_country_type = primitive
+				NOT = { has_pre_ftl_trade = root }
+				current_awareness_level = full
+				NOT = { has_country_flag =  fotd_seperatist_country@root }
+				observation_owner_is_actor = yes
+			}
+		}
+	}
+
+	possible = {
+		custom_tooltip = {
+			fail_text = "requires_recipient_not_invaded"
+			NOT = { is_hostile = from }
+		}
+		custom_tooltip = {
+			fail_text = "requires_actor_not_fanatic_purifiers"
+			OR = {
+				is_same_species = from
+				NOT = { has_valid_civic = civic_fanatic_purifiers }
+			}
+		}
+		custom_tooltip = {
+			fail_text = "requires_recipient_not_fanatic_purifiers"
+			OR = {
+				is_same_species = from
+				from = { NOT = { has_valid_civic = civic_fanatic_purifiers } }
+			}
+		}
+		custom_tooltip = {
+			fail_text = "requires_actor_not_devouring_swarm"
+			NOT = { has_valid_civic = civic_hive_devouring_swarm }
+		}
+		custom_tooltip = {
+			fail_text = "requires_recipient_not_devouring_swarm"
+			from = { NOT = { has_valid_civic = civic_hive_devouring_swarm } }
+		}
+		if = {
+			limit = { from = { has_valid_civic = civic_inwards_perfection } }
+			if = {
+				limit = {
+					has_intel = {
+						who = from
+						intel = civics
+					}
+				}
+				custom_tooltip = {
+					fail_text = requires_recipient_not_inward_perfection
+					always = no
+				}
+			}
+			else = {
+				custom_tooltip = {
+					fail_text = diplo_action_no_low_intel
+					always = no
+				}
+			}
+		}
+		custom_tooltip = {
+			fail_text = "requires_actor_not_inward_perfection"
+			NOT = { has_valid_civic = civic_inwards_perfection }
+		}
+		custom_tooltip = {
+			fail_text = "requires_actor_not_machine_terminator"
+			OR = {
+				is_same_species = from
+				NOT = { has_civic = civic_machine_terminator }
+				AND = {
+					has_civic = civic_machine_terminator
+					from = {
+						OR = {
+							has_country_flag = synthetic_empire
+							is_machine_empire = yes
+							is_individual_machine = yes
+						}
+					}
+				}
+			}
+		}
+		# When actor is organic, requires target is not exterminator
+		custom_tooltip = {
+			fail_text = "requires_recipient_not_machine_terminator"
+			OR = {
+				is_same_species = from
+				from = { NOT = { has_civic = civic_machine_terminator } }
+				AND = {
+					from = { has_civic = civic_machine_terminator }
+					OR = {
+						has_country_flag = synthetic_empire
+						is_machine_empire = yes
+						is_individual_machine = yes
+					}
+				}
+			}
+		}
+		custom_tooltip = {
+			fail_text = "requires_actor_not_scorched_earth"
+			OR = {
+				is_genocidal_infernal = no
+				from = { is_infernal_empire = yes }
+			}
+		}
+		custom_tooltip = {
+			fail_text = "requires_recipient_not_scorched_earth"
+			OR = {
+				is_infernal_empire = yes
+				from = { is_genocidal_infernal = no }
+			}
+		}
+		custom_tooltip = {
+			fail_text = "ACTION_CANNOT_INTERFERE_POLICY"
+			OR = {
+				has_policy_flag = interference_subtle
+				has_policy_flag = interference_active
+				has_country_flag = MSI
+			}
+		}
+	}
+
+	on_accept = {
+		hidden_effect = {
+			from = {
+				capital_scope.observation_outpost = {
+					add_modifier = {
+						modifier = preftl_action_trade_pact
+					}
+				}
+				capital_scope.observation_outpost = {
+					set_event_locked = yes
+				}
+			}
+			country_event = { # Patron Objective Counter: po_establish_trade_agreement / po_establish_diplomatic_pact
+				id = shroud.10360
+				scopes = {
+					from = from
+				}
+			}
+		}
+	}
+
+	should_ai_propose = {
+		weight = 0
+
+		modifier = {
+			add = 1
+			has_ai_personality_behaviour = uplifter
+		}
+
+		modifier = {
+			add = 1
+			has_corporate_government = yes
+		}
+	}
+
+	ai_acceptance = {
+		modifier = {
+			add = -100
+			capital_scope = {
+				has_modifier = culture_shock_diplomacy
+			}
+			desc = NO_DIPLOMATIC_CULTURE_SHOCK
+		}
+		modifier = {
+			add = -1000
+			capital_scope = {
+				has_modifier = pre_ftl_distrustful
+			}
+			desc = pre_ftl_distrustful
+		}
+	}
+}
+
 # Improve opinion
 action_improve_relation = {
 	icon = "GFX_diplomacy_improve_relation"
