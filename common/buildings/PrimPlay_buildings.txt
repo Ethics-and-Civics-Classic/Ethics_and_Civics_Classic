@@ -258,6 +258,115 @@
 ##
 ## OTHER
 ##
+building_early_spaceport = {
+	can_build = yes
+	base_buildtime = 180
+	can_demolish = yes
+	can_be_ruined = no
+	planet_limit = 1
+
+	category = resource
+	
+	building_sets = {
+		pre_ftl
+	}
+
+	potential = {
+		exists = owner
+		owner = {
+			is_primitive = no
+			has_technology = tech_primitive_early_aerospace_rocket
+			num_starbases = 0
+		}
+	}
+
+	destroy_trigger = {
+		exists = owner
+		owner = {
+			num_starbases > 0
+		}
+	}
+	
+	resources = {
+		category = planet_buildings
+		upkeep = {
+			trigger = { exists = owner }
+			energy = 5
+			minerals = 10
+		}
+		cost = {
+			minerals = @b1_minerals
+		}
+	}
+
+	custom_tooltip = "building_early_spaceport_tooltip"
+	
+	prerequisites = {
+		"tech_primitive_early_aerospace_rocket"
+	}
+	
+	upgrades = {
+		"building_early_spaceport_launch"
+	}
+}
+building_early_spaceport_launch = {
+	can_build = no
+	base_buildtime = 360
+	can_demolish = yes
+	can_be_ruined = no
+	planet_limit = 1
+
+	category = resource
+	
+	building_sets = {
+		pre_ftl
+	}
+
+	potential = {
+		exists = owner
+		owner = {
+			is_primitive = no
+			any_situation = { is_situation_type = PrimPlayer_situation } # Much more efficient trigger
+			has_technology = tech_primitive_early_aerospace_rocket
+		}
+	}
+	
+	resources = {
+		category = planet_buildings
+		upkeep = {
+			trigger = { exists = owner }
+			energy =@primitive_upkeep
+		}
+		cost = {
+			minerals = @b1_minerals
+		}
+	}
+	
+	on_built = { 
+		create_fleet = {
+			name = "NAME_Pre_FTL_Chemical_Ship"
+			effect = {
+				set_owner = prev.owner
+				create_ship = {
+					name = "NAME_Pre_FTL_Chemical_Ship"
+					design = "NAME_Early_Engineer_Vessel_NoDrive"
+				}
+				set_fleet_flag = inteplanetary_flight_fleet
+				set_location = prev
+				set_fleet_stance = passive
+				last_created_ship = { set_ship_flag = inteplanetary_flight_fleet }
+			}
+		}
+		hidden_effect = { 
+			last_created_fleet = { 
+				fleet_event = { id = random_primitive_events.3 }	#First Launch to Space!
+			}
+			planet_event = { id = random_primitive_events.31 }
+		}
+	}
+
+	custom_tooltip = "NAME_Pre_FTL_Chemical_Ship"
+}
 building_fallout_shelter = {
 	can_build = yes
 	base_buildtime = @b1_time
