@@ -4561,6 +4561,31 @@ fleet_event = {
 
 		# Give enclave creator's tech, start situation, and set creator flag
 		event_target:mercenary_enclave_country = {
+			if = {
+				limit = {
+					FROM.OWNER = { 
+						has_civic = civic_military_dictatorship_corporate
+						#is_subject = no #Special on_action will remove subject-status if overlord is not pirate lord
+					}
+				}
+				set_subject_of = { 
+					who = FROM.OWNER
+					allow_instant_negotiation = no
+					preset = preset_pirate_enclave
+					#use_demanded_terms = yes	#Crashes Game if used alongside preset
+					
+				}
+				random_agreement = {
+					limit = {
+						owner = { is_same_value = FROM.OWNER }
+						target = { is_same_value = event_target:mercenary_enclave_country }
+					}
+					add_loyalty = 600
+				}
+			}
+			else = { 
+				set_truce = { target = FROM.OWNER type = guarantee }
+			}
 			copy_techs_from = { target = event_target:mercenary_enclave_creator }
 			start_situation = {
 				type = pirate_mercenary_dividends
@@ -4972,6 +4997,24 @@ country_event = {
 		else = {
 			add_resource = { energy = 3000 }
 		}
+	}
+}
+
+# If Pirate Lord's enclave changes owners --> this on_action triggers an event to release subject
+# this = subject
+# from = overlord
+country_event = {
+	id = EaC_civic_mechanic_events.201
+	hide_window = yes
+	is_triggered_only = yes
+
+	trigger = {
+		is_country_type = enclave_mercenary
+		overlord = { NOT = { has_civic = civic_military_dictatorship_corporate } }
+	}
+
+	immediate = {
+		release_subject = yes	#Pirate Lord lost control of pirate enclave subject
 	}
 }
 
