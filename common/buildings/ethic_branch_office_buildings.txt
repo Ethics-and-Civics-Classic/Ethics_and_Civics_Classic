@@ -3738,6 +3738,7 @@ building_pirate_haven = {
 		branch_office_owner = {
 			OR = {
 				has_valid_civic = civic_crusader_spirit_corporate
+				has_civic = civic_pirate_mercenary_enclave
 				is_illegal_criminal = yes
 			}
 		}
@@ -3776,7 +3777,10 @@ building_pirate_haven = {
 		potential = {
 			exists = owner
 			owner = {
-				has_civic = civic_military_dictatorship_corporate	#Cog Note - This is to check and see if politicians should be added instead
+				OR = {
+					has_civic = civic_military_dictatorship_corporate	#Cog Note - This is to check and see if politicians should be added instead
+					has_civic = civic_pirate_mercenary_enclave
+				}
 			}
 		}
 		modifier = {
@@ -3883,7 +3887,10 @@ building_pirate_haven = {
 	triggered_planet_modifier = {
 		potential = {
 			branch_office_owner = {
-				has_valid_civic = civic_crusader_spirit_corporate
+				OR = {
+					has_valid_civic = civic_crusader_spirit_corporate
+					has_civic = civic_pirate_mercenary_enclave
+				}
 			}
 		}
 		planet_jobs_trade_produces_mult = @trade_value_from_jobs
@@ -3957,7 +3964,10 @@ building_pirate_haven = {
 	triggered_country_modifier = {
 		potential = {
 			branch_office_owner = {
-				has_valid_civic = civic_crusader_spirit_corporate
+				OR = {
+					has_valid_civic = civic_crusader_spirit_corporate
+					has_civic = civic_pirate_mercenary_enclave
+				}
 			}
 		}
 		job_capital_trader_add = @traders_from_civic
@@ -3968,16 +3978,13 @@ building_pirate_haven = {
 	resources = {
 		category = planet_branch_office_buildings
 		cost = {
-			influence = 20
-			minerals = 500
-		}
-		cost = {
 			trigger = {
 				owner = {
-					has_authority = auth_corporate
+					NOT = { has_civic = civic_pirate_mercenary_enclave }
 				}
 			}
-			influence = 20
+			influence = 40
+			minerals = 500
 		}
 		upkeep = {
 			energy = 10
@@ -4021,7 +4028,11 @@ building_pirate_haven = {
 	destroy_trigger = {
 		exists = owner
 		branch_office_owner = {
-			is_legit_or_legal_criminal = yes
+			if = {
+				limit = { NOT = { has_civic = civic_pirate_mercenary_enclave } }
+				is_legit_or_legal_criminal = yes
+			}
+			else = { always = no }
 			NOT = { 
 				has_valid_civic = civic_crusader_spirit_corporate
 			}
@@ -4620,7 +4631,12 @@ building_smuggling_rings = {
 
 	potential = {
 		has_branch_office = yes
-		branch_office_owner = { is_criminal_syndicate = yes }
+		branch_office_owner = { 
+			OR = {
+				is_criminal_syndicate = yes 
+				has_civic = civic_pirate_mercenary_enclave
+			}
+		}
 	}
 
 	planet_modifier = {
@@ -4634,7 +4650,10 @@ building_smuggling_rings = {
 		potential = {
 			exists = owner
 			branch_office_owner = {
-				has_civic = civic_military_dictatorship_corporate
+				OR = {
+					has_civic = civic_pirate_mercenary_enclave
+					has_civic = civic_military_dictatorship_corporate
+				}
 			}
 		}
 		modifier = {
@@ -4734,6 +4753,15 @@ building_smuggling_rings = {
 		planet_jobs_trade_produces_mult = 0.02
 		mult = value:num_jobs_with_tag|TAG|trade|
 	}
+	
+	triggered_planet_modifier = {
+		potential = {
+			branch_office_owner = {
+				has_civic = civic_pirate_mercenary_enclave
+			}
+		}
+		planet_criminal_trade_produces_add = 7.5
+	}
 
 	#Trader Jobs from civics
 	triggered_country_modifier = {
@@ -4813,16 +4841,13 @@ building_smuggling_rings = {
 	resources = {
 		category = planet_branch_office_buildings
 		cost = {
-			influence = 30
-			minerals = @b3_minerals
-		}
-		cost = {
 			trigger = {
 				owner = {
-					has_authority = auth_corporate
+					NOT = { has_valid_civic = civic_memory_vault_corporate }
 				}
 			}
-			influence = 30
+			influence = 60
+			minerals = @b3_minerals
 		}
 		upkeep = {
 			energy = 3
@@ -4832,7 +4857,11 @@ building_smuggling_rings = {
 	destroy_trigger = {
 		exists = owner
 		branch_office_owner = {
-			is_legit_or_legal_criminal = yes
+			if = {
+				limit = { NOT = { has_civic = civic_pirate_mercenary_enclave } }
+				is_legit_or_legal_criminal = yes
+			}
+			else = { always = no }
 		}
 	}
 
@@ -4842,6 +4871,13 @@ building_smuggling_rings = {
 
 	ai_weight = {
 		weight = 100
+
+		modifier = {
+			weight = 100
+			branch_office_owner = {
+				has_civic = civic_pirate_mercenary_enclave
+			}
+		}
 	}
 }
 
