@@ -2018,17 +2018,40 @@ planet_event = {
 
 	immediate = {
 		solar_system = {   
-			random_neighbor_system = {
-				limit = { 
-					has_owner = no
-					any_system_planet = { is_colonizable = yes } #Check for colonizable world
-				}	
-				random_system_planet = {
+			if = {
+				limit = { any_neighbor_system = { any_system_planet = { is_colonizable = no } } } #Check for colonizable world }
+				random_neighbor_system = {
 					limit = { 
-						has_owner = no 
-						is_colonizable = yes
+						has_owner = no
+						any_system_planet = { is_colonizable = no } #Check for colonizable world
+					}	
+					random_system_planet = {
+						limit = { 
+							has_owner = no 
+							is_colonizable = no
+							is_asteroid = no
+							is_star = no
+							is_moon = no
+							NOT = { is_planet_class = pc_gas_giant }
+							change_pc = pc_continental
+						}
+						planet_event = { id = primitive_origin.203 }
 					}
-					planet_event = { id = primitive_origin.203 }
+				}
+			}
+			else = {
+				random_neighbor_system = {
+					limit = { 
+						has_owner = no
+						any_system_planet = { is_colonizable = yes } #Check for colonizable world
+					}	
+					random_system_planet = {
+						limit = { 
+							has_owner = no 
+							is_colonizable = yes
+						}
+						planet_event = { id = primitive_origin.203 }
+					}
 				}
 			}
 		}

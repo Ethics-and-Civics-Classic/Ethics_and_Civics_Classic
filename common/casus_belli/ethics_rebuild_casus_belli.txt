@@ -8,6 +8,40 @@
 #								# Notification when a claim CB is generated)
 #}
 
+cb_expel_corp = {
+	show_in_diplomacy = yes
+	show_notification = yes
+	potential = {
+		is_country_type = default
+		from = { is_megacorp = yes }
+		#is_megacorp = no				#Cog Note - Megacorps can now have branches via niche labor-rights civics
+	}
+	is_valid = {
+		NOT = { has_commercial_pact = from }
+		NOT = { is_in_federation_with = from }
+		NOT = { from = { is_overlord_to = root } }
+		NOT = { root = { is_overlord_to = from } }
+		if = {
+			limit = {
+				exists = from.overlord
+			}
+			NOT = { from.overlord = { is_same_value = root.overlord } }
+		}
+		any_owned_planet = {
+			has_branch_office = from
+		}
+	}
+	proxy_war_resources = {
+		category = proxy_war
+		cost = {
+			influence = 100
+		}
+	}
+	on_proxy_war_start = {
+		pay_proxy_war_additional_resources = { VALUE = -25 }
+	}
+}
+
 cb_payback = {
 	show_in_diplomacy = yes
 	show_notification = yes

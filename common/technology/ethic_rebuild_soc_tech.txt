@@ -94,6 +94,110 @@
 #	}
 #}
 
+tech_gravity_wells = {
+	cost = @tier2cost1
+	area = physics
+	tier = 1	#Changed to Tier 1
+	category = { field_manipulation }
+	weight = @tier2weight1
+	prerequisites = { "tech_primitive_quantum_mechanics_theory" "tech_proto_thrusters_1" }
+	feature_flags = {
+		unlock_gravity_snares
+	}
+
+	potential = {
+		has_grand_archive_dlc = yes
+		OR = {
+			has_encountered_any_fauna = yes
+			has_valid_civic = civic_primitive_enthusiasts
+			is_beastmasters_empire = yes
+		}
+	}
+	
+	weight_modifier = {
+		modifier = {
+            factor = 50
+            has_valid_civic = civic_primitive_enthusiasts
+        }
+	}
+
+	ai_weight = {
+		modifier = {
+			factor = 0.5
+			NOT = {
+				has_valid_civic = civic_primitive_enthusiasts
+				is_beastmasters_empire = yes
+			}
+		}
+		modifier = {
+			factor = 0
+			OR = {
+				NOT = { is_country_type = default }
+				is_homicidal = yes
+			}
+		}
+	}
+}
+
+############
+# Vivarium #
+############
+
+tech_alien_cloning = {
+	cost = @tier2cost1
+	area = society
+	tier = 2
+	category = { biology }
+	weight = @tier2weight1
+	prerequisites = { tech_gravity_wells }
+	ai_update_type = military
+
+	potential = {
+		has_grand_archive_dlc = yes
+		OR = {
+			is_beastmasters_empire = yes
+			has_valid_civic = civic_primitive_enthusiasts
+			can_research_technology = tech_genome_mapping
+		}
+	}
+
+	feature_flags = {
+		alien_cloning_unlocked
+	}
+
+	technology_swap = {
+		name = tech_alien_cloning_beastmasters
+		inherit_effects = yes
+		trigger = {
+			is_beastmasters_empire = yes
+		}
+		weight = {
+			factor = 1
+		}
+	}
+
+	weight_modifier = {
+		modifier = {
+            factor = @federation_perk_factor
+            has_federation = yes
+            federation = {
+                any_member = { has_technology = tech_alien_cloning }
+				NOT = { has_federation_law = fleet_contribution_none }
+            }
+        }
+		modifier = {
+            factor = 50
+            has_valid_civic = civic_primitive_enthusiasts
+        }
+	}
+
+	prereqfor_desc = {
+		custom = {
+			title = tech_alien_cloning_tt
+		}
+	}
+}
+
 # Pirate Leaders
 tech_pirate_leaders = {
 	cost = @tier1cost1
