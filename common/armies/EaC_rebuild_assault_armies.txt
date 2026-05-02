@@ -1,0 +1,169 @@
+#Defensive armies can't transport off the planet
+#maintenance is directly scripted here. 0.25 translates to 0.25 monthly cost (excluding other upkeep modifiers)
+#morale_damage = 1		# average morale damage of the army, default: auto (calculated from morale * MORALE_DAMAGE_MULT)
+
+#ai_weight: as standard, but note that it pre-filters by whether the country can recruit this army (measuring by whether it is an assault army, whether it has the tech prereqs, and whether it passes potential_country)
+
+# Clone Armies
+clone_army = {
+	damage = 1.00
+	health = 1.00
+	morale = 1.00
+	collateral_damage = 1.25
+	war_exhaustion = 0.50
+	time = 30
+	icon = GFX_army_type_clone
+	pop_limited = no
+
+	resources = {
+		category = armies
+		cost = {
+			trigger = {
+				from = {
+					country_uses_bio_ships = no
+				}
+			}
+			minerals = 75
+		}
+		cost = {
+			trigger = {
+				from = {
+					country_uses_bio_ships = yes
+				}
+			}
+			food = 75
+			mult = @mineral_to_food_cost_ratio
+		}
+
+		upkeep = {
+			energy = 0.75
+		}
+	}
+
+	prerequisites = { "tech_gene_banks" }
+
+	show_tech_unlock_if = {
+		OR = {
+			is_machine_empire = no
+			has_civic = civic_machine_assimilator
+		}
+	}
+
+	potential_country = {
+		OR = {
+			is_machine_empire = no
+			has_civic = civic_machine_assimilator
+		}
+		is_wilderness_empire = no
+	}
+	potential = {
+		from = {
+			NOR = {
+				has_trait = "trait_mechanical"
+				has_trait = "trait_machine_unit"
+				has_trait = "trait_limited_cybernetic"
+				is_sapient = no
+			}
+		}
+	}
+
+	ai_weight = {
+		base = 100
+		modifier = {
+			set = 0
+			OR = {
+				is_fallen_empire = yes
+				has_technology = tech_telepathy
+				has_technology = tech_gene_seed_purification
+				NAND = {
+					is_militarist = yes
+					has_technology = tech_gene_banks
+				}
+			}
+		}
+		modifier = {
+			factor = 2
+			OR = {
+				has_origin = origin_clone_army
+				has_civic = civic_barbaric_despoilers_PrimPlayer
+			}
+		}
+	}
+}
+
+# Perfected Clone Armies
+perfected_clone_army = {
+	damage = 1.5				# 2.25 - 4.50
+	health = 1.5				# 300
+	morale = 1.5				# 300
+	morale_damage = 1			# 1.50 - 3.00
+	collateral_damage = 0.50	# 50%
+	war_exhaustion = 0.25		# 25%
+	time = 30
+	icon = GFX_army_type_clone
+	pop_limited = no
+
+	resources = {
+		category = armies
+		cost = {
+			trigger = {
+				from = {
+					country_uses_bio_ships = no
+				}
+			}
+			minerals = 100
+		}
+		cost = {
+			trigger = {
+				from = {
+					country_uses_bio_ships = yes
+				}
+			}
+			food = 100
+			mult = @mineral_to_food_cost_ratio
+		}
+
+		upkeep = {
+			energy = 1
+		}
+	}
+
+	show_tech_unlock_if = {
+		OR = {
+			has_active_tradition = tr_cloning_somatic_synthesization
+			has_active_tradition = tr_cloning_somatic_synthesization_clone_army
+		}
+	}
+
+	potential_country = {
+		OR = {
+			has_active_tradition = tr_cloning_somatic_synthesization
+			has_active_tradition = tr_cloning_somatic_synthesization_clone_army
+		}
+	}
+	potential = {
+		from = {
+			NOR = {
+				has_trait = "trait_mechanical"
+				has_trait = "trait_machine_unit"
+				has_trait = "trait_limited_cybernetic"
+				is_sapient = no
+			}
+		}
+	}
+
+	ai_weight = {
+		base = 100
+		modifier = {
+			set = 0
+			is_fallen_empire = yes
+		}
+		modifier = {
+			factor = 2
+			OR = {
+				has_origin = origin_clone_army
+				has_civic = civic_barbaric_despoilers_PrimPlayer
+			}
+		}
+	}
+}
