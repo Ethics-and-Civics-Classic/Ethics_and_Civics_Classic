@@ -1907,3 +1907,109 @@ tech_colonization_1 = {
 		weight = 100000
 	}
 }
+
+# ##################
+# Terraformation
+# ##################
+
+tech_terrestrial_sculpting = {
+	cost = @tier2cost3
+	area = society
+	tier = 1	#Cog Note lowered this from Vanilla's tier = 2 so Primitive Players can get this easier
+	category = { new_worlds }
+	prerequisites = { "tech_colonization_1" }
+	weight = @tier2weight3
+
+	feature_flags = {
+		build_terraform_station
+	}
+
+	weight_modifier = {
+		factor = 1.5	# terraforming needs to be a bit more common
+		modifier = {
+			factor = 0
+			is_lithoid_devouring_swarm = yes
+		}
+
+		modifier = {
+			factor = 1.25
+			has_tradition = tr_expansion_adopt
+		}
+		modifier = { #if you're a fish, you're definitely gonna prioritise finding out how to make more oceans
+			factor = 1.25
+			has_trait = trait_aquatic
+		}
+		modifier = {
+			factor = 1.25
+			has_trait = trait_robot_aquatic
+		}
+		modifier = {
+			factor = 1.25
+			has_origin = origin_life_seeded
+		}
+		modifier = {
+			add = 5
+			has_origin = origin_wilderness
+		}
+	}
+
+	technology_swap = {
+		name = tech_terrestrial_sculpting_wilderness
+		inherit_icon = yes
+		inherit_effects = no
+		trigger = {
+			is_wilderness_empire = yes
+		}
+		modifier = {
+			custom_tooltip = tech_terrestrial_sculpting_wilderness_effect
+		}
+	}
+
+	ai_weight = {
+		factor = @terraforming_tech_ai_factor
+
+		modifier = {
+			factor = 2
+			OR = {
+				is_xenophobe = yes
+				is_hive_empire = yes
+			}
+		}
+		modifier = {
+			factor = 0
+			OR = {
+				has_origin = origin_shattered_ring
+				has_void_dweller_origin = yes
+			}
+			is_ai = yes
+		}
+		modifier = {
+			factor = 5
+			any_system_within_border = {
+				any_system_planet = {
+					is_colonizable = yes
+					habitability = {
+						who = root
+						value < 0.5
+					}
+				}
+			}
+		}
+		modifier = { #Hydrocentric is really good and needs this
+			factor = 1000
+			has_trait = trait_aquatic
+		}
+		modifier = {
+			factor = 1000
+			has_trait = trait_robot_aquatic
+		}
+		modifier = {
+			factor = 100
+			has_origin = origin_life_seeded
+		}
+		modifier = {
+			factor = 2
+			is_ai = no #auto-research
+		}
+	}
+}

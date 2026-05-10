@@ -246,7 +246,43 @@ ship_event = {
 		} 	
 		text = "random_primitive_events.2.desc.not_colonizable"
 	}
-	
+	desc = {
+		trigger = { 
+			FROM = { 
+				is_planet_class = pc_asteroid 
+				NOR = { 
+					has_planet_flag = PrimPlayer_asteroid_N01_6_3942
+					has_planet_flag = PrimPlayer_asteroid_K63_4_1078
+					has_planet_flag = PrimPlayer_asteroid_TBR_733 
+				}
+			} 
+		}
+		text = "random_primitive_events.2.desc.pc_asteroid"
+	}
+	desc = {
+		trigger = { 
+			FROM = { 
+				has_planet_flag = PrimPlayer_asteroid_N01_6_3942
+			}
+		}
+		text = "anomaly.30.desc"
+	}
+	desc = {
+		trigger = { 
+			FROM = { 
+				has_planet_flag = PrimPlayer_asteroid_K63_4_1078
+			}
+		}
+		text = "anomaly.25.desc"
+	}
+	desc = {
+		trigger = { 
+			FROM = { 
+				has_planet_flag = PrimPlayer_asteroid_TBR_733
+			}
+		}
+		text = "anomaly.10.desc"
+	}
 	desc = {
 		trigger = { 
 			FROM = { 
@@ -317,6 +353,7 @@ ship_event = {
 					OR = {
 						is_planet_class = pc_barren 
 						is_planet_class = pc_barren_cold
+						is_planet_class = pc_frozen
 					}
 				}
 			}
@@ -332,7 +369,89 @@ ship_event = {
 						}
 					}
 				}
-				from = { set_planet_flag = PrimPlayer_terraforming_candidate }
+				if = { 
+					limit = { 
+						OWNER = { owner_main_species = { has_trait = trait_aquatic } }
+					}
+					if = {
+						limit = { 
+							from = {
+								solar_system = {
+									count_system_planet = {
+										count >= 1
+										limit = { is_planet_class = pc_frozen }
+									}
+								}
+							}
+						}
+						if = {
+							limit = { from = { is_planet_class = pc_frozen } }
+							from = { set_planet_flag = PrimPlayer_terraforming_candidate }
+						}
+					}
+					else_if = {
+						limit = { 
+							from = {
+								solar_system = {
+									count_system_planet = {
+										count >= 1
+										limit = { is_planet_class = pc_barren_cold }
+									}
+								}
+							}
+						}
+						if = {
+							limit = { from = { is_planet_class = pc_barren_cold } }
+							from = { set_planet_flag = PrimPlayer_terraforming_candidate }
+						}
+					}
+					else = {
+						if = {
+							limit = { from = { is_planet_class = pc_barren } }
+							from = { set_planet_flag = PrimPlayer_terraforming_candidate }
+						}
+					}
+				}
+				else = { 
+					if = {
+						limit = { 
+							from = {
+								solar_system = {
+									count_system_planet = {
+										count >= 1
+										limit = { is_planet_class = pc_barren }
+									}
+								}
+							}
+						}
+						if = {
+							limit = { from = { is_planet_class = pc_barren } }
+							from = { set_planet_flag = PrimPlayer_terraforming_candidate }
+						}
+					}
+					else_if = {
+						limit = { 
+							from = {
+								solar_system = {
+									count_system_planet = {
+										count >= 1
+										limit = { is_planet_class = pc_barren_cold }
+									}
+								}
+							}
+						}
+						if = {
+							limit = { from = { is_planet_class = pc_barren_cold } }
+							from = { set_planet_flag = PrimPlayer_terraforming_candidate }
+						}
+					}
+					else = {
+						if = {
+							limit = { from = { is_planet_class = pc_frozen } }
+							from = { set_planet_flag = PrimPlayer_terraforming_candidate }
+						}
+					}
+				}
 				hidden_effect = { owner = { set_country_flag = terraforming_candidate_found } }
 			}
 			else_if = {
@@ -340,7 +459,95 @@ ship_event = {
 					owner = { NOT = { has_country_flag = terraforming_candidate_found } }
 					from = { planet_size > 14 }
 				}
-				from = { set_planet_flag = PrimPlayer_terraforming_candidate }
+				if = {
+					limit = { 
+						OWNER = { owner_main_species = { has_trait = trait_aquatic } }
+					}
+					if = {
+						limit = { 
+							from = {
+								solar_system = {
+									count_system_planet = {
+										count >= 1
+										limit = { 
+											is_planet_class = pc_frozen 
+											planet_size > 14
+										}
+									}
+								}
+							}
+						}
+						if = {
+							limit = { from = { is_planet_class = pc_frozen } }
+							from = { set_planet_flag = PrimPlayer_terraforming_candidate }
+						}
+					}
+					else_if = {
+						limit = { 
+							from = {
+								solar_system = {
+									count_system_planet = {
+										count >= 1
+										limit = { 
+											is_planet_class = pc_barren_cold 
+											planet_size > 14
+										}
+									}
+								}
+							}
+						}
+						if = {
+							limit = { from = { is_planet_class = pc_barren_cold } }
+							from = { set_planet_flag = PrimPlayer_terraforming_candidate }
+						}
+					}
+					else = {
+						if = {
+							limit = { from = { is_planet_class = pc_barren } }
+							from = { set_planet_flag = PrimPlayer_terraforming_candidate }
+						}
+					}
+				}
+				else = { 
+					if = {
+						limit = { 
+							from = {
+								solar_system = {
+									count_system_planet = {
+										count >= 1
+										limit = { is_planet_class = pc_barren }
+									}
+								}
+							}
+						}
+						if = {
+							limit = { from = { is_planet_class = pc_barren } }
+							from = { set_planet_flag = PrimPlayer_terraforming_candidate }
+						}
+					}
+					else_if = {
+						limit = { 
+							from = {
+								solar_system = {
+									count_system_planet = {
+										count >= 1
+										limit = { is_planet_class = pc_barren_cold }
+									}
+								}
+							}
+						}
+						if = {
+							limit = { from = { is_planet_class = pc_barren_cold } }
+							from = { set_planet_flag = PrimPlayer_terraforming_candidate }
+						}
+					}
+					else = {
+						if = {
+							limit = { from = { is_planet_class = pc_frozen } }
+							from = { set_planet_flag = PrimPlayer_terraforming_candidate }
+						}
+					}
+				}
 				hidden_effect = { owner = { set_country_flag = terraforming_candidate_found } }
 			}
 		}
@@ -352,6 +559,7 @@ ship_event = {
 			FROM = { 
 				is_colonizable = yes #Not Habitable
 				NOR = {
+					is_planet_class = pc_asteroid
 					is_planet_class = pc_gas_giant
 					is_planet_class = pc_molten
 					is_planet_class = pc_barren
@@ -387,6 +595,183 @@ ship_event = {
 				value = @tier1researchreward
 				min = @tier1researchmin
 				max = @tier1researchmax
+			}
+		}
+	}
+	
+	option = {
+		name = "random_primitive_events.2.option.pc_asteroid"	
+		trigger = { 
+			FROM = { 
+				is_planet_class = pc_asteroid 
+				NOR = { 
+					has_planet_flag = PrimPlayer_asteroid_N01_6_3942
+					has_planet_flag = PrimPlayer_asteroid_TBR_733 
+					has_planet_flag = PrimPlayer_asteroid_K63_4_1078
+				}
+			} 
+		}
+		owner = {
+			add_monthly_resource_mult = {
+				resource = physics_research
+				value = @tier1researchreward
+				min = @tier1researchmin
+				max = @tier1researchmax
+			}
+		}
+	}
+	
+	### Junkyard
+	option = {
+		name = anomaly.30.a
+		trigger = { FROM = { has_planet_flag = PrimPlayer_asteroid_N01_6_3942 } }
+		FROM = {
+			add_modifier = {
+				modifier = "junkyard"
+				days = -1
+			}
+		}
+		hidden_effect = {
+			from = {
+				if = {
+					limit = {
+						NOT = { has_deposit_for = shipclass_mining_station }
+					}
+					clear_deposits = yes
+				}
+				remove_planet_flag = PrimPlayer_asteroid_N01_6_3942
+			}
+			owner = { country_event = { id = story.5 days = 30 } }
+		}
+		FROM = {
+			add_deposit = d_minerals_3
+		}
+		owner = {
+			pop_lcluster_event = yes
+		}
+	}
+	
+	#anomaly.25	Normal
+	option = {
+		name = anomaly.25.a
+		trigger = {
+			FROM = { has_planet_flag = PrimPlayer_asteroid_K63_4_1078 }
+		}
+		FROM = {
+			add_modifier = {
+				modifier = "derelict_shipyard"
+				days = -1
+			}
+		}
+		hidden_effect = {
+			FROM = {
+				if = {
+					limit = {
+						NOT = { has_deposit_for = shipclass_research_station }
+					}
+					clear_deposits = yes
+				}
+				remove_planet_flag = PrimPlayer_asteroid_K63_4_1078
+			}
+			owner = { country_event = { id = story.5 days = 30 } }
+		}
+		FROM = {
+			add_deposit = d_engineering_3
+		}
+	}
+	
+	#anomaly.10	Normal
+	option = {
+		name = anomaly.10.a
+		trigger = {
+			FROM = { has_planet_flag = PrimPlayer_asteroid_TBR_733 }
+			owner = {
+				is_lithoid_empire = no
+			}
+		}
+		FROM = {
+			add_modifier = {
+				modifier = "asteroid_life"
+				days = -1
+			}
+		}
+		hidden_effect = {
+			FROM = {
+				if = {
+					limit = {
+						NOT = { has_deposit_for = shipclass_research_station }
+					}
+					clear_deposits = yes
+				}
+				remove_planet_flag = PrimPlayer_asteroid_TBR_733
+			}
+			owner = { country_event = { id = story.2 days = 30 } }
+		}
+		FROM = {
+			add_deposit = d_society_3
+		}
+		owner = {
+			#if = {
+				#limit = { has_grand_archive_dlc = yes }
+				#Leads to an event chain where you can recieve a Cutholoids Hatchling
+				#add_to_vivarium = {
+				#	design = NAME_Cutholoids_Hatchling
+				#	rarity = highest
+				#	amount = 1
+				#}
+			#}
+			if = {
+				limit = { has_origin = origin_evolutionary_predators }
+				give_evolutionary_predator_situation_progress_and_dna = { AMOUNT = small TYPE = lithoid }
+			}
+		}
+	}
+	
+	#anomaly.10 Lithoid
+	option = {
+		trigger = {
+			FROM = { has_planet_flag = PrimPlayer_asteroid_TBR_733 }
+			owner = {
+				is_lithoid_empire = yes
+			}
+		}
+		icon = {
+			icon = GFX_lithoid
+			text = IS_LITHOID_EMPIRE_ICON_TIP
+		}
+		name = anomaly.10.b
+		FROM = {
+			add_deposit = d_society_6
+			add_modifier = {
+				modifier = "asteroid_life"
+				days = -1
+			}
+		}
+		hidden_effect = {
+			from = {
+				if = {
+					limit = {
+						NOT = { has_deposit_for = shipclass_research_station }
+					}
+					clear_deposits = yes
+				}
+				remove_planet_flag = PrimPlayer_asteroid_TBR_733
+			}
+			owner = { country_event = { id = story.2 days = 30 } }
+		}
+		owner = {
+			#if = {
+				#limit = { has_grand_archive_dlc = yes }
+				#Leads to an event chain where you can recieve a Cutholoids Hatchling
+				#add_to_vivarium = {
+				#	design = NAME_Cutholoids_Hatchling
+				#	rarity = highest
+				#	amount = 1
+				#}
+			#}
+			if = {
+				limit = { has_origin = origin_evolutionary_predators }
+				give_evolutionary_predator_situation_progress_and_dna = { AMOUNT = small TYPE = lithoid }
 			}
 		}
 	}
@@ -438,9 +823,28 @@ ship_event = {
 		if = {
 			limit = {
 				from = { has_planet_flag = PrimPlayer_terraforming_candidate }
+				OWNER = { owner_main_species = { has_trait = trait_aquatic } }
 			}
 			add_resource = { unity = 500 }
 			from = { add_modifier = { modifier = "terraforming_candidate" days = -1 } }
+			if = {
+				limit = { from = { is_planet_class = pc_barren_cold } }
+				owner = { start_situation = { type = PrimPlayer_terraform_situation target = from } }
+			}
+			if = {
+				limit = { from = { is_planet_class = pc_barren } }
+				owner = { start_situation = { type = PrimPlayer_terraform_situation target = from } }
+			}
+			hidden_effect = { from = { remove_planet_flag = PrimPlayer_terraforming_candidate } }
+		}
+		if = {
+			limit = {
+				from = { has_planet_flag = PrimPlayer_terraforming_candidate }
+				OWNER = { owner_main_species = { NOT = { has_trait = trait_aquatic } } }
+			}
+			add_resource = { unity = 500 }
+			from = { add_modifier = { modifier = "terraforming_candidate" days = -1 } }
+			owner = { start_situation = { type = PrimPlayer_terraform_situation target = from } }
 			hidden_effect = { from = { remove_planet_flag = PrimPlayer_terraforming_candidate } }
 		}
 	}
@@ -468,6 +872,15 @@ ship_event = {
 				min = @tier1researchmin
 				max = @tier1researchmax
 			}
+		}
+		if = {
+			limit = {
+				from = { has_planet_flag = PrimPlayer_terraforming_candidate }
+			}
+			add_resource = { unity = 500 }
+			from = { add_modifier = { modifier = "terraforming_candidate" days = -1 } }
+			owner = { start_situation = { type = PrimPlayer_terraform_frozen_situation target = from } }
+			hidden_effect = { from = { remove_planet_flag = PrimPlayer_terraforming_candidate } }
 		}
 	}
 	
