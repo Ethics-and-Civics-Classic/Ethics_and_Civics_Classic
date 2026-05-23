@@ -564,7 +564,7 @@ tech_primitive_space_age_weapons = {
 	start_tech = yes
 	is_rare = yes
 	weight = 1000
-	prerequisites = { "tech_primitive_atomic_age_weapons" "tech_lasers_1" "tech_ship_armor_1" "tech_shields_1" }
+	prerequisites = { "tech_primitive_atomic_age_weapons" "tech_lasers_1" "tech_ship_armor_1" "tech_shields_1" "tech_corvettes" "tech_pd_tracking_1" }
 	
 	gateway = military_infrastructure
 	
@@ -585,6 +585,20 @@ tech_primitive_space_age_weapons = {
 			has_origin = origin_primitive_player_machine_age 
 			has_origin = origin_primitive_player_atomic_age
 			has_origin = origin_primitive_player_early_space_age
+		}
+	}
+	
+	weight_modifier = {
+		modifier = {
+			factor = 0
+			NOR = {
+				has_technology = tech_primitive_atomic_age_weapons
+				has_technology = tech_lasers_1
+				has_technology = tech_ship_armor_1
+				has_technology = tech_shields_1
+				has_technology = tech_corvettes
+				has_technology = tech_pd_tracking_1
+			}
 		}
 	}
 }
@@ -1445,6 +1459,102 @@ tech_planetary_government = {
 			factor = 1.5
 			has_ethic = ethic_fanatic_authoritarian
 		}
+	}
+}
+
+#Interstellar Empire
+tech_planetary_unification = {
+	cost = @tier1cost1
+	area = society
+	tier = 1
+	category = { statecraft }
+	prerequisites = { "tech_planetary_government" }
+	weight = @tier1weight1
+
+	gateway = capital
+
+	feature_flags = {
+		campaign_edicts
+	}
+
+	# also unlocks planet-happiness edict and gives a one time Unity award
+
+	modifier = {
+		country_unity_produces_mult = 0.025
+		show_only_custom_tooltip = no
+		custom_tooltip = tech_planetary_unification_effect
+	}
+
+	weight_modifier = {
+		factor = 1
+		modifier = {
+			factor = 4
+			has_technology = tech_hyper_drive_theory
+		}
+		modifier = {
+			factor = 0.75
+			NOT = {
+				is_pacifist = yes
+			}
+		}
+	}
+
+	ai_weight = {
+		factor = @capital_tech_ai_factor
+		modifier = {
+			factor = 0.75
+			NOT = {
+				is_pacifist = yes
+			}
+		}
+		modifier = {
+			factor = 1.25
+			has_ethic = ethic_authoritarian
+		}
+		modifier = {
+			factor = 1.5
+			has_ethic = ethic_fanatic_authoritarian
+		}
+
+	}
+}
+
+#Colonial Centralization
+tech_colonial_centralization = {
+	cost = @tier2cost2
+	area = society
+	tier = 2
+	category = { new_worlds }
+	prerequisites = { "tech_planetary_unification" }
+	weight = @tier2weight2
+
+	gateway = capital
+
+	# unlocks Planetary Capital
+	# unlocks production-targets edict
+
+	technology_swap = { # Wilderness icon swap
+		name = tech_wilderness_colonial_centralization
+		inherit_icon = no
+		inherit_effects = yes
+		trigger = {
+			is_wilderness_empire = yes
+		}
+	}
+
+	modifier = {
+		country_official_cap_add = 1
+		country_commander_cap_add = 1
+		country_scientist_cap_add = 1
+	}
+
+	weight_modifier = {
+		factor = 4
+	}
+
+	ai_weight = {
+		factor = @capital_tech_ai_factor
+
 	}
 }
 
