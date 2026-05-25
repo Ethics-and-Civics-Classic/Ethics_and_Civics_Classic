@@ -1,0 +1,458 @@
+#Let's make CoM spawn with EaC stuff
+
+### Deneb System - UNE start
+une_deneb_system = {
+	name = "NAME_Deneb"
+	class = "sc_a"
+	asteroid_belt = {
+		type = rocky_asteroid_belt
+		radius = 90
+	}
+
+	init_effect = {
+		every_neighbor_system = {
+			set_star_flag = empire_cluster
+			every_neighbor_system = {
+				set_star_flag = empire_cluster
+			}
+		}
+		generate_home_system_resources = yes
+	}
+
+	flags = { empire_home_system deneb_system }
+
+	usage = misc_system_init
+
+	usage_odds = {
+		base = 0
+		modifier = {
+			any_country = {
+				has_country_flag = human_1
+				is_human_species = yes
+				NOT = { has_origin = origin_lost_colony }
+				NOT = { has_origin = origin_broken_shackles }
+			}
+			NOT = { any_system = { has_star_flag = deneb_system } }
+			NOT = { has_star_flag = empire_cluster }
+			num_ai_empires_setting >= 1
+
+			add = 99999
+		}
+	}
+
+	max_instances = 1
+
+	planet = {
+		name = "NAME_Deneb"
+		class = "pc_a_star"
+		orbit_distance = 0
+		orbit_angle = 1
+		size = 40
+		has_ring = no
+	}
+
+	planet = {
+		name = "NAME_Inferno"
+		class = "pc_molten"
+		orbit_distance = 60
+		orbit_angle = 45
+		size = 10
+		has_ring = no
+	}
+
+	planet = {
+		name = "NAME_DT4-298"
+		class = "pc_asteroid"
+		orbit_distance = 30
+		orbit_angle = 340
+		size = 5
+		has_ring = no
+	}
+
+	planet = {
+		name = "NAME_LR-2129"
+		class = "pc_asteroid"
+		orbit_distance = 0
+		orbit_angle = 160
+		size = 5
+		has_ring = no
+	}
+
+	planet = {
+		name = "NAME_GR-345"
+		class = "pc_asteroid"
+		orbit_distance = 0
+		orbit_angle = 270
+		size = 5
+		has_ring = no
+	}
+
+	planet = {
+		name = "NAME_Olympus"
+		class = "pc_gas_giant"
+		orbit_distance = 30
+		orbit_angle = 200
+		size = 40
+		has_ring = no
+		entity = "gas_giant_02_entity"
+
+		moon = {
+			name = "NAME_New_Luna"
+			class = "pc_frozen"
+			size = 5
+			orbit_distance = 18
+			orbit_angle = 100
+			has_ring = no
+		}
+		moon = {
+			name = "NAME_Unity"
+			class = pc_continental
+			orbit_distance = 5
+			orbit_angle = 340
+			size = 18
+			starting_planet = yes
+			has_ring = no
+			entity = "continental_planet_01_entity"
+			deposit_blockers = none
+			modifiers = none
+			flags = { planet_unity }
+
+			init_effect = {
+				prevent_anomaly = yes
+				random_country = {
+					limit = { has_country_flag = human_1 }
+					save_event_target_as = une
+					owner_species = {
+						save_event_target_as = human_species
+					}
+				}
+				create_country = {
+					name = "NAME_Commonwealth_of_Man"
+					adjective = "PRESCRIPTED_adjective_humans2"
+					authority = "auth_dictatorial"
+
+
+					civics = {
+						civic = civic_nationalistic_zeal
+						civic = civic_military_dictatorship
+						civic = civic_police_state
+					}
+					species = event_target:human_species
+					name_list = "HUMAN2"
+					ship_prefix = "CNS"
+					ethos = {
+						ethic = "ethic_authoritarian"
+						ethic = "ethic_xenophobe"
+						ethic = "ethic_fanatic_militarist"
+						ethic = "ethic_capitalism"
+
+
+					}
+					flag = {
+						icon= {
+							category = "human"
+							file = "flag_human_4.dds"
+						}
+						background= {
+							category = "backgrounds"
+							file = "stripe.dds"
+						}
+						colors={
+							"red"
+							"black"
+							"null"
+							"null"
+						}
+					}
+					type = default
+					origin = "origin_lost_colony"
+					effect = {
+						save_global_event_target_as = npc_CoM
+						set_country_flag = parent_system_spawned
+						add_resource = {
+							minerals = 800
+							energy = 800
+							food = 800
+							alloys = 400
+							consumer_goods = 400
+							influence = 200
+						}
+						if = {
+							limit = {
+								event_target:une = {
+									has_origin = origin_necrophage
+								}
+							}
+							set_origin = origin_necrophage
+							set_country_flag = necrophage_commonwealth
+						}
+						if = {
+							limit = {
+								event_target:une = {
+									has_origin = origin_clone_army
+								}
+							}
+							set_origin = origin_clone_army
+						}
+					}
+				}
+				create_colony = {
+					owner = event_target:npc_CoM
+				}
+				generate_start_deposits_and_blockers = yes
+				clear_blockers = yes
+				generate_start_buildings_and_districts = yes
+				generate_start_pops = yes
+				event_target:npc_CoM = {
+					set_country_flag = human_2
+					set_country_flag = special_intro_for@event_target:une
+					create_starting_leaders = yes
+					country_event = { id = game_start.9 }
+					country_event = { id = game_start.33 days = 1 } # needs delay for system ownership to settle
+				}
+				set_name = "NAME_Unity"
+			}
+		}
+	}
+
+	planet = {
+		name = "NAME_Marble"
+		class = "pc_barren_cold"
+		orbit_distance = 20
+		orbit_angle = 325
+		size = 10
+		has_ring = no
+	}
+
+	planet = {
+		name = "NAME_Hyperion"
+		class = "pc_gas_giant"
+		orbit_distance = 20
+		orbit_angle = 110
+		size = 30
+		has_ring = no
+		entity = "gas_giant_05_entity"
+
+		moon = {
+			name = "NAME_Helios"
+			class = "pc_frozen"
+			size = 8
+			orbit_distance = 14
+			orbit_angle = 14
+			has_ring = no
+		}
+	}
+
+	planet = {
+		name = "NAME_Tumbleweed"
+		class = "pc_barren"
+		orbit_distance = 20
+		orbit_angle = 35
+		size = 15
+		has_ring = no
+	}
+
+	planet = {
+		name = "NAME_Jackson's_Planet"
+		class = "pc_frozen"
+		orbit_distance = 20
+		orbit_angle = 150
+		size = 20
+		has_ring = no
+	}
+
+	init_effect = {
+		create_starbase = {
+			size = starbase_starport
+			module = shipyard
+			building = crew_quarters
+			owner = event_target:npc_CoM
+			effect = {
+				set_starbase_module = {
+					slot = 2
+					module = trading_hub
+				}
+			}
+		}
+	}
+
+	neighbor_system = {
+		trigger = { num_guaranteed_colonies >= 2 }
+		hyperlane_jumps = { min = 1 max = @jumps }
+		initializer = "deneb_neighbor_t1"
+	}
+	neighbor_system = {
+		trigger = { num_guaranteed_colonies >= 1 }
+		hyperlane_jumps = { min = 1 max = @jumps }
+		initializer = "deneb_neighbor_t1_first_colony"
+	}
+}
+
+# Neighbor Tier 1
+deneb_neighbor_t1 = {
+	class = "rl_standard_stars"
+	flags = { neighbor_t1 }
+
+	init_effect = {
+		every_neighbor_system = { set_star_flag = empire_cluster }
+	}
+
+	planet = {
+		count = 1
+		class = star
+		orbit_distance = 0
+		orbit_angle = 1
+		size = { min = 20 max = 30 }
+		has_ring = no
+	}
+
+	change_orbit = 45
+
+	planet = {
+		count = { min = 0 max = 2 }
+		orbit_distance = 20
+		change_orbit = @base_moon_distance
+
+		moon = {
+			count = { min = 0 max = 1 }
+			orbit_distance = 5
+		}
+	}
+
+	planet = {
+		count = { min = 2 max = 5 }
+		orbit_distance = 20
+	}
+
+	neighbor_system = {
+		hyperlane_jumps = { min = 1 max = @jumps }
+		initializer = "deneb_neighbor_t2_second_colony"
+	}
+}
+
+# Neighbor Tier 1 First Colony
+deneb_neighbor_t1_first_colony = {
+	class = "rl_standard_stars"
+	flags = { neighbor_t1_first_colony }
+
+	init_effect = {
+		every_neighbor_system = { set_star_flag = empire_cluster }
+	}
+
+	planet = {
+		count = 1
+		class = star
+		orbit_distance = 0
+		orbit_angle = 1
+		size = { min = 20 max = 30 }
+		has_ring = no
+	}
+
+	change_orbit = 45
+
+	planet = {
+		count = { min = 0 max = 2 }
+		orbit_distance = 20
+
+		change_orbit = @base_moon_distance
+
+		moon = {
+			count = { min = 0 max = 1 }
+			orbit_distance = 5
+		}
+	}
+
+	planet = {
+		count = 1
+		orbit_distance = 25
+		class = "pc_continental"
+		modifiers = none
+		anomaly = none
+		orbit_angle = { min = 90 max = 270 }
+		size = { min = 12 max = 18 }
+	}
+
+	planet = {
+		count = { min = 2 max = 5 }
+		orbit_distance = 25
+
+		change_orbit = @base_moon_distance
+
+		moon = {
+			count = { min = 0 max = 1 }
+			orbit_distance = 5
+		}
+	}
+
+	neighbor_system = {
+		hyperlane_jumps = { min = 1 max = @jumps }
+		initializer = "neighbor_t2"
+	}
+}
+
+# Neighbor Tier 2 Second Colony
+deneb_neighbor_t2_second_colony = {
+	class = "rl_standard_stars"
+	flags = { neighbor_t2_second_colony }
+
+	init_effect = {
+		every_neighbor_system = { set_star_flag = empire_cluster }
+	}
+
+	planet = {
+		count = 1
+		class = star
+		orbit_distance = 0
+		orbit_angle = 1
+		size = { min = 20 max = 30 }
+		has_ring = no
+	}
+
+	change_orbit = 25
+
+	planet = {
+		count = 2
+		orbit_angle = { min = 90 max = 270 }
+		orbit_distance = 20
+	}
+
+	planet = {
+		count = 1
+		orbit_distance = 25
+		class = "pc_continental"
+		modifiers = none
+		anomaly = none
+		orbit_angle = { min = 90 max = 270 }
+		size = { min = 14 max = 24 }
+
+		change_orbit = @base_moon_distance
+
+		moon = {
+			count = { min = 0 max = 1 }
+			class = random_non_colonizable
+			orbit_angle = { min = 90 max = 270 }
+			orbit_distance = 5
+		}
+	}
+
+	planet = {
+		count = 2
+		orbit_angle = { min = 90 max = 270 }
+		orbit_distance = 20
+
+		change_orbit = @base_moon_distance
+
+		moon = {
+			count = { min = 0 max = 1 }
+			class = random_non_colonizable
+			orbit_angle = { min = 90 max = 270 }
+			orbit_distance = 5
+		}
+	}
+
+	planet = {
+		count = { min = 0 max = 2 }
+		orbit_angle = { min = 90 max = 270 }
+		orbit_distance = 20
+	}
+}
