@@ -1,0 +1,44 @@
+#####################################
+# Open Storm Chaser Capsule Project #
+#####################################
+
+special_project = {
+	key = "STORM_CHASER_CAPSULE_PROJECT"
+	#event_chain = "treasure_hunters_origin_story_chain"
+	cost = 1000
+	tech_department = physics_technology
+	timelimit = -1
+	picture = GFX_evt_astral_rift_psionic_stranger_2
+	icon = "gfx/interface/icons/situation_log/situation_log_tick.dds"
+	location = yes
+	remove_when_completed = yes
+
+	event_scope = planet_event
+
+	on_success = {
+		create_ambient_object = {
+			type = nebula_L3_entity
+			scale = 0.02
+			location = this
+			use_3d_location = yes
+		}
+		last_created_ambient_object = {
+			set_ambient_object_flag = stormfall_planet_nascent
+		}
+		add_modifier = {
+			modifier = cs_storm_chasers_homeworld_storm_attraction
+		}
+		create_influence_field_if_needed = yes
+
+		owner = {
+			start_situation = {
+				type = situation_stormfall
+				target = prev
+			}
+		}
+		if = {
+			limit = { has_modifier = irradiated_wasteland }	#Might conflict with tomb world
+			remove_modifier = irradiated_wasteland
+		}
+	}
+}

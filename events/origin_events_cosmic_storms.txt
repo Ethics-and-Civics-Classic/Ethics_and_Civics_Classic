@@ -1,0 +1,1801 @@
+############################################
+##### EVENTS - ORIGIN - Cosmic Storms ######
+# By Jordy van Opstal & Bertine van Hövell #
+############################################
+
+### Stormfall Situation ###
+
+# Fired by: on_game_start_country
+country_event = { #
+	id = cstorms.3101
+	hide_window = yes
+	is_triggered_only = yes
+
+	trigger = {
+		has_cosmic_storms_dlc = yes
+		has_origin = origin_storm_chasers
+	}
+
+	immediate = {
+		owner.capital_scope = {
+			create_ambient_object = {
+				type = nebula_L3_entity
+				scale = 0.02
+				location = this
+				use_3d_location = yes
+			}
+			last_created_ambient_object = {
+				set_ambient_object_flag = stormfall_planet_nascent
+			}
+			add_modifier = {
+				modifier = cs_storm_chasers_homeworld_storm_attraction
+			}
+			create_influence_field_if_needed = yes
+		}
+
+		start_situation = {
+			type = situation_stormfall
+			target = root
+		}
+	}
+}
+
+# Fired by: situation stage on_first_enter
+situation_event = { # Stage 1 Start
+	id = cstorms.3100
+	title = "cstorms.3100.name"
+	desc = "cstorms.3100.desc"
+	picture = GFX_evt_vortex
+	show_sound = event_wind_ruins
+	location = owner.capital_scope
+
+	is_triggered_only = yes
+
+	immediate = {
+		set_situation_flag = situation_stormfall_pause
+	}
+
+	option = {
+		name = "cstorms.3100.a"
+		remove_situation_flag = situation_stormfall_pause
+		set_situation_flag = situation_stormfall_project_pause
+		owner = {
+			enable_special_project = {
+				name = "PROJECT_TEMPEST_BREWING"
+				location = capital_scope
+			}
+			hidden_effect = {
+				if = {
+					limit = {
+						OR = {
+							has_origin = origin_primitive_player_pre_industrial_age 
+							has_origin = origin_primitive_player_industrial_age 
+							has_origin = origin_primitive_player_machine_age 
+							has_origin = origin_primitive_player_atomic_age
+							has_origin = origin_primitive_player_early_space_age
+						}
+					}
+					set_country_flag = situation_stormfall_pursued 
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = "cstorms.3100.b"	#Cancels the situation but you maintain the planet modifier
+		trigger = {
+			owner = {
+				OR = {
+					has_origin = origin_primitive_player_pre_industrial_age 
+					has_origin = origin_primitive_player_industrial_age 
+					has_origin = origin_primitive_player_machine_age 
+					has_origin = origin_primitive_player_atomic_age
+					has_origin = origin_primitive_player_early_space_age
+				}
+			}
+		}
+		owner = {
+			random_situation = { limit = { is_situation_type = situation_stormfall } destroy_situation = THIS }
+			hidden_effect = { set_country_flag = situation_stormfall_canceled }
+		}
+	}
+}
+
+# Fired by: special project completion
+situation_event = { # Stage 1 Story
+	id = cstorms.3105
+	title = "cstorms.3105.name"
+	desc = "cstorms.3105.desc"
+	picture = GFX_evt_origin_stormchasers_event_progress
+	show_sound = event_laboratory_sound
+	location = owner.capital_scope
+
+	is_triggered_only = yes
+
+	immediate = {
+		remove_situation_flag = situation_stormfall_project_pause
+		set_situation_flag = situation_stormfall_pause
+		set_situation_flag = stormfall_tempest_brewing_finished
+	}
+
+	option = {
+		name = "cstorms.3105.a"
+		custom_tooltip = "cstorms.3105.a.tt"
+		owner = { give_technology = { tech = tech_storm_manipulation } }
+	}
+
+	after = {
+		remove_situation_flag = situation_stormfall_pause
+	}
+}
+
+# Fired by: situation on_monthly
+situation_event = { # Stage 1 Story
+	id = cstorms.3110
+	title = "cstorms.3110.name"
+	desc = {
+		trigger = {
+			owner = { is_gestalt = no }
+		}
+		text = "cstorms.3110.desc.regular"
+	}
+	desc = {
+		trigger = {
+			owner = { is_hive_empire = yes }
+		}
+		text = "cstorms.3110.desc.hive"
+	}
+	desc = {
+		trigger = {
+			owner = { is_machine_empire = yes }
+		}
+		text = "cstorms.3110.desc.machine"
+	}
+	picture = GFX_evt_astral_rift_windswept_planet
+	show_sound = event_laboratory_sound
+	location = owner.capital_scope
+
+	is_triggered_only = yes
+
+	trigger = {
+		NOT = { has_situation_flag = cstorms_3110_happened }
+		situation_progress >= 100
+	}
+
+	immediate = {
+		remove_situation_flag = situation_stormfall_project_pause
+		set_situation_flag = situation_stormfall_pause
+		set_situation_flag = cstorms_3110_happened
+	}
+
+	option = {
+		name = "cstorms.3110.a"
+		custom_tooltip = "cstorms.3110.a.tt"
+		set_situation_flag = electric_planet_storm
+		ai_chance = {
+			factor = 1
+		}
+	}
+	option = {
+		name = "cstorms.3110.b"
+		custom_tooltip = "cstorms.3110.b.tt"
+		set_situation_flag = magnetic_planet_storm
+		ai_chance = {
+			factor = 1
+		}
+	}
+	option = {
+		name = "cstorms.3110.c"
+		custom_tooltip = "cstorms.3110.c.tt"
+		set_situation_flag = gravity_planet_storm
+		ai_chance = {
+			factor = 1
+		}
+	}
+
+	after = {
+		remove_situation_flag = situation_stormfall_pause
+	}
+}
+
+# Fired by: situation on_monthly
+situation_event = { # Stage 1 Story
+	id = cstorms.3130
+	title = "cstorms.3130.name"
+	desc = {
+		trigger = {
+			has_situation_flag = electric_planet_storm
+		}
+		text = "cstorms.3130.desc.electric"
+	}
+	desc = {
+		trigger = {
+			has_situation_flag = magnetic_planet_storm
+		}
+		text = "cstorms.3130.desc.magnetic"
+	}
+	desc = {
+		trigger = {
+			has_situation_flag = gravity_planet_storm
+		}
+		text = "cstorms.3130.desc.gravity"
+	}
+	picture = GFX_evt_astral_rift_windswept_planet
+	show_sound = event_solar_fusion
+	location = owner.capital_scope
+
+	is_triggered_only = yes
+
+	trigger = {
+		NOT = { has_situation_flag = cstorms_3130_happened }
+		situation_progress >= 200
+	}
+
+	immediate = {
+		set_situation_flag = situation_stormfall_pause
+		set_situation_flag = cstorms_3130_happened
+
+		owner.capital_scope.solar_system = {
+			random_system_ambient_object = {
+				limit = { has_ambient_object_flag = stormfall_planet_nascent }
+				destroy_ambient_object = this
+			}
+		}
+
+		switch = {
+			trigger = has_situation_flag
+			electric_planet_storm = {
+				owner.capital_scope = {
+					create_ambient_object = {
+						type = electric_storm
+						scale = 0.02
+						location = this
+						use_3d_location = yes
+					}
+					last_created_ambient_object = {
+						set_ambient_object_flag = stormfall_planet_storm
+					}
+				}
+			}
+			magnetic_planet_storm = {
+				owner.capital_scope = {
+					create_ambient_object = {
+						type = magnetic_storm
+						scale = 0.02
+						location = this
+						use_3d_location = yes
+					}
+					last_created_ambient_object = {
+						set_ambient_object_flag = stormfall_planet_storm
+					}
+				}
+			}
+			gravity_planet_storm = {
+				owner.capital_scope = {
+					create_ambient_object = {
+						type = gravity_storm
+						scale = 0.02
+						location = this
+						use_3d_location = yes
+					}
+					last_created_ambient_object = {
+						set_ambient_object_flag = stormfall_planet_storm
+					}
+				}
+			}
+		}
+	}
+
+	option = {
+		name = "cstorms.3130.a"
+		custom_tooltip = "cstorms.3130.a.tt.regular"
+		trigger = {
+			owner = { is_gestalt = no }
+		}
+	}
+	option = {
+		name = "cstorms.3130.a"
+		custom_tooltip = "cstorms.3130.a.tt.gestalt"
+		trigger = {
+			owner = { is_gestalt = yes }
+		}
+	}
+
+	after = {
+		remove_situation_flag = situation_stormfall_pause
+		set_situation_flag = storm_planet_ongoing
+	}
+}
+
+# Fired by: situation stage on_first_enter
+situation_event = { # Stage 2 Start
+	id = cstorms.3140
+	title = "cstorms.3140.name"
+	desc = {
+		trigger = {
+			has_situation_flag = electric_planet_storm
+		}
+		text = "cstorms.3140.desc.electric"
+	}
+	desc = {
+		trigger = {
+			has_situation_flag = magnetic_planet_storm
+		}
+		text = "cstorms.3140.desc.magnetic"
+	}
+	desc = {
+		trigger = {
+			has_situation_flag = gravity_planet_storm
+		}
+		text = "cstorms.3140.desc.gravity"
+	}
+	picture = GFX_evt_vortex
+	show_sound = event_scanner
+
+	is_triggered_only = yes
+
+	immediate = {
+		set_situation_flag = situation_stormfall_pause
+
+		owner.capital_star = {
+			create_ambient_object = {
+				type = nebula_L3_entity
+				location = this
+				use_3d_location = yes
+				entity_offset_height = 5
+			}
+			last_created_ambient_object = {
+				set_ambient_object_flag = stormfall_system_storm
+			}
+		}
+	}
+
+	option = {
+		name = "cstorms.3140.a.infra"
+		custom_tooltip = "cstorms.3140.a.tt.electric"
+		trigger = {
+			has_situation_flag = electric_planet_storm
+		}
+		set_situation_flag = electric_system_storm
+		set_timed_situation_flag = {
+			flag = system_storm_infrastructure_cost
+			months = 24
+		}
+		ai_chance = {
+			factor = 1
+		}
+	}
+	option = {
+		name = "cstorms.3140.a.infra"
+		custom_tooltip = "cstorms.3140.b.tt.magnetic"
+		trigger = {
+			has_situation_flag = magnetic_planet_storm
+		}
+		set_situation_flag = magnetic_system_storm
+		set_timed_situation_flag = {
+			flag = system_storm_infrastructure_cost
+			months = 24
+		}
+		ai_chance = {
+			factor = 1
+		}
+	}
+	option = {
+		name = "cstorms.3140.a.infra"
+		custom_tooltip = "cstorms.3140.c.tt.gravity"
+		trigger = {
+			has_situation_flag = gravity_planet_storm
+		}
+		set_situation_flag = gravity_system_storm
+		set_timed_situation_flag = {
+			flag = system_storm_infrastructure_cost
+			months = 24
+		}
+		ai_chance = {
+			factor = 1
+		}
+	}
+	option = {
+		name = "cstorms.3140.a"
+		custom_tooltip = "cstorms.3140.a.tt"
+		trigger = {
+			NOT = { has_situation_flag = electric_planet_storm }
+		}
+		set_situation_flag = electric_system_storm
+		set_timed_situation_flag = {
+			flag = electric_system_storm_cost
+			months = 24
+		}
+		ai_chance = {
+			factor = 1
+		}
+	}
+	option = {
+		name = "cstorms.3140.b"
+		custom_tooltip = "cstorms.3140.b.tt"
+		trigger = {
+			NOT = { has_situation_flag = magnetic_planet_storm }
+		}
+		set_situation_flag = magnetic_system_storm
+		set_timed_situation_flag = {
+			flag = magnetic_system_storm_cost
+			months = 24
+		}
+		ai_chance = {
+			factor = 1
+		}
+	}
+	option = {
+		name = "cstorms.3140.c"
+		custom_tooltip = "cstorms.3140.c.tt"
+		trigger = {
+			NOT = { has_situation_flag = gravity_planet_storm }
+		}
+		set_situation_flag = gravity_system_storm
+		set_timed_situation_flag = {
+			flag = gravity_system_storm_cost
+			months = 24
+		}
+		ai_chance = {
+			factor = 1
+		}
+	}
+
+	after = {
+		remove_situation_flag = situation_stormfall_pause
+	}
+}
+
+# Fired by: situation on_monthly
+situation_event = { # Stage 2 End
+	id = cstorms.3160
+	title = "cstorms.3160.name"
+	desc = "cstorms.3160.desc"
+	picture = GFX_evt_storm_formation
+	show_sound = event_scanner
+	location = owner.capital_scope
+
+	is_triggered_only = yes
+
+	trigger = {
+		NOT = { has_situation_flag = cstorms_3160_happened }
+		situation_progress >= 450
+	}
+
+	immediate = {
+		set_situation_flag = situation_stormfall_pause
+		set_situation_flag = cstorms_3160_happened
+		remove_situation_flag = storm_planet_ongoing
+
+		owner.capital_scope.solar_system = {
+			random_system_ambient_object = {
+				limit = { has_ambient_object_flag = stormfall_planet_storm }
+				destroy_ambient_object = this
+			}
+		}
+
+		switch = {
+			trigger = has_situation_flag
+			electric_planet_storm = {
+				owner.capital_scope = {
+					add_deposit = d_buzzing_plains
+				}
+			}
+			magnetic_planet_storm = {
+				owner.capital_scope = {
+					add_deposit = d_geothermal_vent
+				}
+			}
+			gravity_planet_storm = {
+				owner.capital_scope = {
+					add_deposit = d_rich_mountain
+				}
+			}
+			solar_planet_storm = {
+				owner.capital_scope = {
+					add_deposit = d_irradiated_valley
+				}
+			}
+		}
+	}
+
+	option = {
+		name = "cstorms.3160.a"
+		custom_tooltip = "cstorms.3160.a.tt.electric"
+		trigger = {	has_situation_flag = electric_planet_storm }
+	}
+	option = {
+		name = "cstorms.3160.a"
+		custom_tooltip = "cstorms.3160.a.tt.magnetic"
+		trigger = {	has_situation_flag = magnetic_planet_storm	}
+	}
+	option = {
+		name = "cstorms.3160.a"
+		custom_tooltip = "cstorms.3160.a.tt.gravity"
+		trigger = {	has_situation_flag = gravity_planet_storm }
+	}
+
+	after = {
+		remove_situation_flag = situation_stormfall_pause
+	}
+}
+
+# Fired by: situation stage on_first_enter
+situation_event = { # Stage 3 Start
+	id = cstorms.3170
+	title = "cstorms.3170.name"
+	desc = {
+		trigger = {
+			has_situation_flag = storm_scientist_exists
+			has_situation_flag = storm_commander_exists
+		}
+		text = "cstorms.3170.desc.both"
+	}
+	desc = {
+		trigger = {
+			has_situation_flag = storm_scientist_exists
+			NOT = { has_situation_flag = storm_commander_exists }
+		}
+		text = "cstorms.3170.desc.scientist"
+	}
+	desc = {
+		trigger = {
+			NOT = { has_situation_flag = storm_scientist_exists }
+			has_situation_flag = storm_commander_exists
+		}
+		text = "cstorms.3170.desc.commander"
+	}
+	desc = {
+		trigger = {
+			NOR = {
+				has_situation_flag = storm_scientist_exists
+				has_situation_flag = storm_commander_exists
+			}
+		}
+		text = "cstorms.3170.desc.none"
+	}
+
+	picture = GFX_evt_vortex
+	show_sound = event_scanner
+	location = owner.capital_scope
+
+	is_triggered_only = yes
+
+	immediate = {
+		set_situation_flag = situation_stormfall_pause
+
+		if = {
+			limit = {
+				owner = {
+					any_owned_leader = {
+						leader_class = scientist
+						is_ruler = no
+						is_heir = no
+						is_exploring_astral_rift = no
+						is_gestalt_node = no
+					}
+				}
+			}
+			owner = {
+				random_owned_leader = {
+					limit = {
+						leader_class = scientist
+						is_ruler = no
+						is_heir = no
+						is_exploring_astral_rift = no
+						is_gestalt_node = no
+					}
+					set_leader_flag = storm_leader
+					save_event_target_as = storm_scientist
+				}
+			}
+			set_situation_flag = storm_scientist_exists
+		}
+
+		if = {
+			limit = {
+				owner = {
+					any_owned_leader = {
+						leader_class = commander
+						is_ruler = no
+						is_heir = no
+						is_gestalt_node = no
+					}
+				}
+			}
+			owner = {
+				random_owned_leader = {
+					limit = {
+						leader_class = commander
+						is_ruler = no
+						is_heir = no
+						is_gestalt_node = no
+					}
+					set_leader_flag = storm_leader
+					save_event_target_as = storm_commander
+				}
+			}
+			set_situation_flag = storm_commander_exists
+		}
+	}
+
+	option = {
+		name = "cstorms.3170.c"
+		ai_chance = {
+			factor = 1
+		}
+	}
+	option = {
+		name = "cstorms.3170.a"
+		custom_tooltip = "cstorms.3170.a.tt"
+		trigger = {
+			has_situation_flag = storm_scientist_exists
+		}
+		set_situation_flag = stormfall_send_scientist
+		ai_chance = {
+			factor = 1
+		}
+	}
+	option = {
+		name = "cstorms.3170.b"
+		custom_tooltip = "cstorms.3170.b.tt"
+		trigger = {
+			has_situation_flag = storm_commander_exists
+		}
+		set_situation_flag = stormfall_send_commander
+		ai_chance = {
+			factor = 1
+		}
+	}
+
+	after = {
+		switch = {
+			trigger = has_situation_flag
+			stormfall_send_scientist = {
+				if = {
+					limit = {
+						owner = {
+							any_owned_leader = {
+								leader_class = scientist
+								has_leader_flag = storm_leader
+							}
+						}
+					}
+					owner = {
+						random_owned_leader = {
+							limit = {
+								leader_class = scientist
+								has_leader_flag = storm_leader
+							}
+							exile_leader_as = storm_leader@owner
+						}
+					}
+					random_list = {
+						90 = { set_situation_flag = storm_leader_success }
+						10 = { set_situation_flag = storm_leader_failure }
+					}
+					set_situation_flag = situation_stormfall_leader_ongoing
+				}
+			}
+			stormfall_send_commander = {
+				if = {
+					limit = {
+						owner = {
+							any_owned_leader = {
+								leader_class = commander
+								has_leader_flag = storm_leader
+							}
+						}
+					}
+					owner = {
+						random_owned_leader = {
+							limit = {
+								leader_class = commander
+								has_leader_flag = storm_leader
+							}
+							exile_leader_as = storm_leader@owner
+						}
+					}
+					random_list = {
+						90 = { set_situation_flag = storm_leader_success }
+						10 = { set_situation_flag = storm_leader_failure }
+					}
+					set_situation_flag = situation_stormfall_leader_ongoing
+				}
+			}
+		}
+		remove_situation_flag = situation_stormfall_pause
+	}
+}
+
+# Fired by: situation on_progress_complete
+situation_event = { # Stage 3 End
+	id = cstorms.3190
+	title = "cstorms.3190.name"
+	desc = {
+		trigger = {
+			has_situation_flag = storm_leader_success
+		}
+		text = "cstorms.3190.desc.success"
+	}
+	desc = {
+		trigger = {
+			has_situation_flag = storm_leader_failure
+		}
+		text = "cstorms.3190.desc.failure"
+	}
+	desc = {
+		trigger = {
+			NOR = {
+				has_situation_flag = storm_leader_success
+				has_situation_flag = storm_leader_failure
+			}
+		}
+		text = "cstorms.3190.desc.wait"
+	}
+	picture = GFX_evt_origin_stormchasers_specialproject
+	show_sound = event_celebration
+	location = owner.capital_scope
+
+	is_triggered_only = yes
+
+	trigger = {
+		NOT = { has_situation_flag = cstorms_3190_happened }
+		situation_progress >= 700
+	}
+
+	immediate = {
+		set_situation_flag = situation_stormfall_pause
+		set_situation_flag = cstorms_3190_happened
+
+		owner.capital_scope.solar_system = {
+			random_system_ambient_object = {
+				limit = { has_ambient_object_flag = stormfall_system_storm }
+				destroy_ambient_object = this
+			}
+		}
+
+		switch = {
+			trigger = has_situation_flag
+			electric_system_storm = {
+				owner = {
+					spawn_random_storm = {
+						type = electric_storm
+						cosmic_storm_start_position = capital_scope.solar_system
+						immediate = yes
+					}
+				}
+			}
+			magnetic_system_storm = {
+				owner = {
+					spawn_random_storm = {
+						type = magnetic_storm
+						cosmic_storm_start_position = capital_scope.solar_system
+						immediate = yes
+					}
+				}
+			}
+			gravity_system_storm = {
+				owner = {
+					spawn_random_storm = {
+						type = gravity_storm
+						cosmic_storm_start_position = capital_scope.solar_system
+						immediate = yes
+					}
+				}
+			}
+		}
+		last_created_cosmic_storm = {
+			set_storm_flag = storm_stormfall
+		}
+	}
+
+	option = {
+		name = "cstorms.3190.a.success"
+		trigger = {
+			has_situation_flag = storm_leader_success
+		}
+		destroy_situation = this
+		owner = {
+			return_leader_from_exile = storm_leader@owner
+
+			add_monthly_resource_mult = {
+				resource = unity
+				value = @tier4unityreward
+				min = @tier4unitymin
+				max = @tier4unitymax
+			}
+		}
+	}
+	option = {
+		name = "cstorms.3190.a.failure"
+		trigger = {
+			has_situation_flag = storm_leader_failure
+		}
+		destroy_situation = this
+		custom_tooltip = "cstorms.3190.a.failure.tt"
+		hidden_effect = {
+			owner = {
+				kill_exiled_leader = storm_leader@owner
+			}
+		}
+		owner = {
+			add_monthly_resource_mult = {
+				resource = unity
+				value = @tier5unityreward
+				min = @tier5unitymin
+				max = @tier5unitymax
+			}
+		}
+	}
+	option = {
+		name = "cstorms.3190.a.wait"
+		trigger = {
+			NOR = {
+				has_situation_flag = storm_leader_success
+				has_situation_flag = storm_leader_failure
+			}
+		}
+		destroy_situation = this
+		owner = {
+			add_monthly_resource_mult = {
+				resource = unity
+				value = @tier3unityreward
+				min = @tier3unitymin
+				max = @tier3unitymax
+			}
+		}
+	}
+
+
+	after = {
+		owner = {
+			if = {
+				limit = { is_gestalt = yes }
+				add_modifier = {
+					modifier = cs_storm_chasers_storm_fruition_gestalt
+					days = 3600
+				}
+			}
+			else = {
+				add_modifier = {
+					modifier = cs_storm_chasers_storm_fruition
+					days = 3600
+				}
+			}
+		}
+	}
+}
+
+# Start the storm fever event chain.
+
+# This event checks if Stormfall is finished at the midgame pulse. Otherwise it retriggers after 5 years.
+country_event = {
+	id = cstorms.3200
+	hide_window = yes
+	is_triggered_only = yes
+
+	immediate = {
+		if = {
+			limit = {
+				any_situation = {
+					is_situation_type = situation_stormfall
+				}
+			}
+			hidden_effect = { owner = { country_event = { id = cstorms.3200 days = 1800 } } }
+		}
+		#Cog Note - if enabled, only storm chasers origin outcome can do the situation outcome
+		#else_if = {
+		#	limit = {
+		#		OR = {
+		#			has_origin = origin_primitive_player_pre_industrial_age 
+		#			has_origin = origin_primitive_player_industrial_age 
+		#			has_origin = origin_primitive_player_machine_age 
+		#			has_origin = origin_primitive_player_atomic_age
+		#			has_origin = origin_primitive_player_early_space_age
+		#		}
+		#	}
+		#	hidden_effect = { owner = { country_event = { id = cstorms.3200 days = 1800 } } }
+		#}
+		else = {
+			hidden_effect = { owner = { country_event = { id = cstorms.3205 days = 15 } } }
+		}
+	}
+}
+
+country_event = {
+	id = cstorms.3205
+	title = "cstorms.3205.name"
+	picture = GFX_evt_cosmic_storms_shroud_storm
+	show_sound = event_public_unrest
+
+	is_triggered_only = yes
+
+	desc = {
+		trigger = {
+			is_gestalt = no
+		}
+		text = "cstorms.3205.normal"
+	}
+	desc = {
+		trigger = {
+			is_gestalt = yes
+		}
+		text = "cstorms.3205.gestalt"
+	}
+
+	trigger = {
+		has_cosmic_storms_dlc = yes
+		OR = {
+			has_origin = origin_storm_chasers
+			has_origin = origin_primitive_player_pre_industrial_age 
+			has_origin = origin_primitive_player_industrial_age 
+			has_origin = origin_primitive_player_machine_age 
+			has_origin = origin_primitive_player_atomic_age
+			has_origin = origin_primitive_player_early_space_age
+		}
+	}
+
+	option = {
+		name = "cstorms.3205.a"
+		custom_tooltip = "cstorms.3205.tooltip"
+		add_modifier = {
+			modifier = cs_storm_chasers_bad_vibes
+		}
+		hidden_effect = {
+			owner = {
+				country_event = {
+					id = cstorms.300
+				}
+			}
+		}
+	}
+}
+
+country_event = {
+	id = cstorms.3215
+	title = "cstorms.3215.name"
+	desc = "cstorms.3215.desc"
+	picture = GFX_evt_cosmic_storms_shroud_storm
+	show_sound = event_conversation
+	event_chain = cs_stormfever_chain
+
+	is_triggered_only = yes
+
+	option = {
+		name = "cstorms.3215.a"
+		end_event_chain = cs_stormfever_chain
+
+		hidden_effect = {
+			country_event = {
+				id = cstorms.3220
+				days = 1800
+				random = 360
+			}
+		}
+	}
+}
+
+# Storm Frenzy: A Chaser's Creed
+country_event = {
+	id = cstorms.3220
+	title = "cstorms.3220.name"
+	desc = "cstorms.3220.desc"
+	picture = GFX_evt_origin_stormchasers_specialproject
+	show_sound = event_conversation
+
+	is_triggered_only = yes
+
+	option = {
+		name = INTRIGUING
+		begin_event_chain = {
+			event_chain = cs_stormfrenzy_chain
+		}
+		enable_special_project = {
+			name = PROJECT_SOW_THE_BIG_ONE
+			location = capital_scope
+		}
+	}
+}
+
+# Storm Frenzy: Dark Matter Cultivation
+country_event = {
+	id = cstorms.3222
+	title = "cstorms.3222.name"
+	desc = "cstorms.3222.desc"
+	picture = GFX_evt_black_hole
+	show_sound = event_conversation
+	event_chain = cs_stormfrenzy_chain
+
+	is_triggered_only = yes
+
+	immediate = {
+		owner = {
+			if = {
+				limit = { is_gestalt = yes }
+				add_modifier = { modifier = cs_storm_chasers_storm_frenzy_1_gestalt }
+			}
+			else = {
+				add_modifier = { modifier = cs_storm_chasers_storm_frenzy_1 }
+			}
+		}
+	}
+
+	option = {
+		name = "cstorms.3222.a"
+		custom_tooltip = "nexus_opinion_first_hit_tt"
+		allow = {
+			resource_stockpile_compare = {
+				resource = sr_dark_matter
+				value >= 200
+			}
+		}
+		add_resource = { sr_dark_matter = -200 }
+
+		country_event = { id = cstorms.3224 }
+	}
+	option = {
+		name = "cstorms.3222.b"
+		custom_tooltip = "nexus_opinion_first_hit_tt"
+		enable_special_project = {
+			name = PROJECT_DARK_SEEDING
+			location = capital_scope
+		}
+	}
+
+	after = {
+		hidden_effect = {
+			every_playable_country = {
+				limit = {
+					is_country_type = default
+					has_communications = from
+					NOT = {
+						is_same_value = root
+					}
+				}
+				add_opinion_modifier = {
+					who = root
+					modifier = nexus_opinion_first_hit
+				}
+			}
+		}
+	}
+}
+
+country_event = { # Onset of The Big One
+	id = cstorms.3224
+	title = "cstorms.3224.name"
+	desc = "cstorms.3224.desc"
+	picture = GFX_evt_origin_stormchasers_event_progress
+	show_sound = event_conversation
+	event_chain = cs_stormfrenzy_chain
+
+	is_triggered_only = yes
+
+	immediate = {
+		owner = {
+			if = {
+				limit = { is_gestalt = yes }
+				add_modifier = { modifier = cs_storm_chasers_storm_frenzy_2_gestalt }
+				remove_modifier = cs_storm_chasers_storm_frenzy_1_gestalt
+			}
+			else = {
+				add_modifier = { modifier = cs_storm_chasers_storm_frenzy_2 }
+				remove_modifier = cs_storm_chasers_storm_frenzy_1
+			}
+		}
+		create_ambient_object = {
+			type = nebula_L8_entity
+			entity_offset_height = -5
+			location = this
+		}
+		last_created_ambient_object = {
+			set_ambient_object_flag = nascent_nexus_storm
+		}
+	}
+
+	option = {
+		name = "cstorms.3224.a"
+		custom_tooltip = "nexus_opinion_second_hit_tt"
+		hidden_effect = {
+			country_event = {
+				id = cstorms.3225
+				days = 360
+				random = 60
+			}
+		}
+	}
+
+	after = {
+		hidden_effect = {
+			every_playable_country = {
+				limit = {
+					is_country_type = default
+					has_communications = from
+					NOT = {
+						is_same_value = root
+					}
+				}
+				remove_opinion_modifier = {
+					who = root
+					modifier = nexus_opinion_first_hit
+				}
+				add_opinion_modifier = {
+					who = root
+					modifier = nexus_opinion_second_hit
+				}
+			}
+		}
+	}
+}
+
+
+
+# Storm Frenzy: The Big One's Smorgasbord
+country_event = {
+	id = cstorms.3225
+	title = "cstorms.3225.name"
+	desc = "cstorms.3225.desc"
+	picture = GFX_evt_ongoing_disaster
+	show_sound = event_conversation
+	event_chain = cs_stormfrenzy_chain
+
+	is_triggered_only = yes
+
+	option = {
+		name = "cstorms.3225.a"
+		allow = {
+			owner = {
+				resource_stockpile_compare = { resource = energy value >= 100 }
+				resource_stockpile_compare = { resource = minerals value >= 100 }
+				resource_stockpile_compare = { resource = food value >= 100 }
+				resource_stockpile_compare = { resource = alloys value >= 100 }
+				resource_stockpile_compare = { resource = consumer_goods value >= 100 }
+				resource_stockpile_compare = { resource = rare_crystals value >= 100 }
+				resource_stockpile_compare = { resource = exotic_gases value >= 100 }
+				resource_stockpile_compare = { resource = volatile_motes value >= 100 }
+				if = {
+					limit = { owner = { has_technology = tech_mine_zro } }
+					resource_stockpile_compare = { resource = sr_zro value >= 100 }
+				}
+				if = {
+					limit = { owner = { has_technology = tech_mine_living_metal } }
+					resource_stockpile_compare = { resource = sr_living_metal value >= 100 }
+				}
+				if = {
+					limit = { resource_stockpile_compare = { resource = nanites value >= 1 } } #nanites don't require a technology, so we're checking if the player has access to them.
+					resource_stockpile_compare = { resource = nanites value >= 100 }
+				}
+				if = {
+					limit = { has_ancrel = yes }
+					resource_stockpile_compare = { resource = minor_artifacts value >= 100 }
+				}
+			}
+		}
+		add_resource = {
+			energy = -100
+			minerals = -100
+			food = -100
+			alloys = -100
+			consumer_goods = -100
+			rare_crystals = -100
+			exotic_gases = -100
+			volatile_motes = -100
+		}
+		if = {
+			limit = { owner = { has_technology = tech_mine_zro } }
+			add_resource = { sr_zro = -100 }
+		}
+		if = {
+			limit = { owner = { has_technology = tech_mine_living_metal } }
+			add_resource = { sr_living_metal = -100 }
+		}
+		if = {
+			limit = { resource_stockpile_compare = { resource = nanites value >= 1 } } #nanites don't require a technology, so we're checking if the player has access to them.
+			add_resource = { nanites = -100 }
+		}
+		if = {
+			limit = { has_ancrel = yes }
+			add_resource = { minor_artifacts = -100 }
+		}
+		enable_special_project = {
+			name = PROJECT_EVERY_ITEM_ON_THE_MENU
+			location = capital_scope
+		}
+	}
+	option = {
+		name = "cstorms.3225.b"
+		enable_special_project = {
+			name = PROJECT_EVERY_ITEM_ON_THE_MENU_REPEAT
+			location = capital_scope
+		}
+	}
+}
+
+country_event = {
+	id = cstorms.3226 # The Big One's Smorgasbord - occurs after you have enough resources and start the special project
+	title = "cstorms.3226.name"
+	desc = "cstorms.3226.desc"
+	picture = GFX_evt_ongoing_disaster
+	show_sound = event_conversation
+	event_chain = cs_stormfrenzy_chain
+
+	is_triggered_only = yes
+
+	option = {
+		name = "cstorms.3225.a"
+		allow = {
+			resource_stockpile_compare = { resource = energy value >= 500 }
+			resource_stockpile_compare = { resource = alloys value >= 50 }
+			resource_stockpile_compare = { resource = consumer_goods value >= 3 }
+			resource_stockpile_compare = { resource = rare_crystals value >= 1 }
+			resource_stockpile_compare = { resource = volatile_motes value >= 5 }
+		}
+
+		add_resource = {
+			energy = -500
+			alloys = -50
+			consumer_goods = -3
+			rare_crystals = -1
+			volatile_motes = -5
+		}
+
+		enable_special_project = {
+			name = PROJECT_EVERY_ITEM_ON_THE_MENU
+			location = capital_scope
+		}
+	}
+	option = {
+		name = cstorms.3225.b
+		enable_special_project = {
+			name = PROJECT_EVERY_ITEM_ON_THE_MENU_REPEAT
+			location = capital_scope
+		}
+	}
+}
+
+# Storm Frenzy: The Final Push
+country_event = {
+	id = cstorms.3227
+	title = "cstorms.3227.name"
+	desc = "cstorms.3227.desc"
+	picture = GFX_evt_origin_stormchasers_event_progress
+	show_sound = event_conversation
+	event_chain = cs_stormfrenzy_chain
+
+	is_triggered_only = yes
+
+	immediate = {
+		owner = {
+			if = {
+				limit = { is_gestalt = yes }
+				add_modifier = { modifier = cs_storm_chasers_storm_frenzy_3_gestalt }
+				remove_modifier = cs_storm_chasers_storm_frenzy_2_gestalt
+			}
+			else = {
+				add_modifier = { modifier = cs_storm_chasers_storm_frenzy_3 }
+				remove_modifier = cs_storm_chasers_storm_frenzy_2
+			}
+		}
+	}
+	option = {
+		name = "cstorms.3227.a"
+		custom_tooltip = "cstorms.3227.a.tt"
+
+		hidden_effect = {
+			every_playable_country = {
+				limit = {
+					is_country_type = default
+					has_communications = from
+					NOT = {
+						is_same_value = root
+					}
+				}
+				remove_opinion_modifier = {
+					who = root
+					modifier = nexus_opinion_second_hit
+				}
+				add_opinion_modifier = {
+					who = root
+					modifier = nexus_opinion_third_hit
+				}
+			}
+
+			country_event = {
+				id = cstorms.3230
+				days = 40
+			}
+		}
+	}
+	option = {
+		name = "cstorms.3227.b"
+		custom_tooltip = "cstorms.3227.b.tt"
+
+		hidden_effect = {
+			country_event = {
+				id = cstorms.3235
+				days = 40
+			}
+		}
+	}
+}
+
+# Storm Frenzy: Genesis of the Big One
+country_event = {
+	id = cstorms.3230
+	title = "cstorms.3230.name"
+	desc = "cstorms.3230.desc"
+	picture = GFX_evt_cosmic_storms_nexus_storm
+	show_sound = event_conversation
+	event_chain = cs_stormfrenzy_chain
+
+	is_triggered_only = yes
+
+	immediate = {
+		spawn_random_storm = {
+			type = "nexus_storm"
+			cosmic_storm_start_position = capital_scope.solar_system
+			immediate = yes
+		}
+		every_ambient_object = {
+			limit = {
+				has_ambient_object_flag = nascent_nexus_storm
+			}
+			destroy_ambient_object = this
+		}
+
+		set_country_flag = is_nexus_spawner
+		set_country_flag = has_spawned_nexus_storm
+	}
+
+	option = {
+		name = "cstorms.3230.a"
+		end_event_chain = cs_stormfrenzy_chain
+		custom_tooltip = "nexus_opinion_summon_hit_tt"
+		trigger = { 
+			owner = { 
+				OR = {
+					has_origin = origin_storm_chasers	#we do this so the little storm chaser icon appears with this option.
+					always = yes	#For Through the Ages
+				}
+			} 
+		} 
+	}
+
+	after = {
+		remove_country_flag = is_nexus_spawner
+
+		hidden_effect = {
+			every_playable_country = {
+				limit = {
+					is_country_type = default
+					has_communications = from
+					NOT = {
+						is_same_value = root
+					}
+				}
+				remove_opinion_modifier = {
+					who = root
+					modifier = nexus_opinion_third_hit
+				}
+				add_opinion_modifier = {
+					who = root
+					modifier = nexus_opinion_summon_hit
+				}
+			}
+		}
+	}
+}
+
+# Storm Frenzy: Storm Coda
+country_event = {
+	id = cstorms.3235
+	title = "cstorms.3235.name"
+	desc = "cstorms.3235.desc"
+	picture = GFX_evt_origin_stormchasers_specialproject
+	show_sound = event_conversation
+	event_chain = cs_stormfrenzy_chain
+
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	immediate = {
+		every_ambient_object = {
+			limit = {
+				has_ambient_object_flag = nascent_nexus_storm
+			}
+			destroy_ambient_object = this
+		}
+	}
+
+	option = {
+		name = "cstorms.3235.a"
+		end_event_chain = cs_stormfrenzy_chain
+		custom_tooltip = "cstorms.3235.a.tt"
+		trigger = { 
+			owner = { 
+				OR = {
+					has_origin = origin_storm_chasers	#we do this so the little storm chaser icon appears with this option.
+					always = yes	#For Through the Ages
+				}
+			} 
+		} 
+		owner = {
+			if = {
+				limit = { is_gestalt = yes }
+				add_modifier = { modifier = cs_storm_chasers_the_code_gestalt }
+				remove_modifier = cs_storm_chasers_storm_frenzy_3_gestalt
+			}
+			else = {
+				add_modifier = { modifier = cs_storm_chasers_the_code }
+				remove_modifier = cs_storm_chasers_storm_frenzy_3
+			}
+		}
+	}
+
+	after = {
+		hidden_effect = {
+			every_playable_country = {
+				limit = {
+					is_country_type = default
+					has_communications = from
+					NOT = {
+						is_same_value = root
+					}
+				}
+				remove_opinion_modifier = {
+					who = root
+					modifier = nexus_opinion_second_hit
+				}
+				remove_opinion_modifier = {
+					who = root
+					modifier = nexus_opinion_third_hit
+				}
+				add_opinion_modifier = {
+					who = root
+					modifier = nexus_opinion_the_code
+				}
+			}
+		}
+	}
+}
+
+# Storm Fever Challenges
+
+country_event = {
+	id = cstorms.300
+	is_triggered_only = yes
+	hide_window = yes
+
+	immediate = {
+		begin_event_chain = {
+			event_chain = cs_stormfever_chain
+		}
+		enable_mission = {
+			name = MISSION_CS_STORM_FEVER_CHALLENGE_1
+		}
+
+		STORM_FEVER_ENABLE_CHALLENGE_2 = yes
+
+		enable_mission = {
+			name = MISSION_CS_STORM_FEVER_CHALLENGE_3
+		}
+
+		enable_mission = {
+			name = MISSION_CS_STORM_FEVER_CHALLENGE_4
+		}
+
+		enable_mission = {
+			name = MISSION_CS_STORM_FEVER_CHALLENGE_5
+		}
+
+		enable_mission = {
+			name = MISSION_CS_STORM_FEVER_CHALLENGE_6
+		}
+	}
+}
+
+# This = owner of fleet 1 (combatant)
+# From = owner of fleet 2 (destroyed)
+# FromFrom = fleet 1
+# FromFromFrom = fleet 2
+# trigger from on_fleet_destroyed_perp
+country_event = {
+	id = cstorms.305
+	title = "cstorms.305.name"
+	desc = "cstorms.305.desc"
+	picture = GFX_evt_origin_stormchasers_event_progress
+	show_sound = event_space_battle
+	location = from
+
+	fire_only_once = yes
+	is_triggered_only =  yes
+
+	trigger = {
+		has_event_chain = cs_stormfever_chain
+
+		# Was the fleet defeated in a cosmic storm?
+		fromfromfrom = {
+			solar_system = {
+				is_inside_storm = yes
+			}
+		}
+	}
+
+	immediate = {
+		add_mission_counter = {
+			mission = MISSION_CS_STORM_FEVER_CHALLENGE_1
+			counter = fleets_defeated_in_storm
+			amount = 1
+		}
+	}
+
+	option = {
+		name = "cstorms.305.a"
+		hidden_effect = {
+			remove_modifier = cs_storm_chasers_bad_vibes
+		}
+	}
+}
+
+# Storm Fever challenge 2: Explore the far edge of the Galaxy
+# Triggered from on_entering_system_fleet
+# Scope = Fleet
+# From = System
+fleet_event = {
+	id = cstorms.310
+	title = "cstorms.310.name"
+	desc = "cstorms.310.desc"
+	picture = GFX_evt_origin_stormchasers_event_progress
+	show_sound = event_ship_thrusters
+
+	fire_only_once = yes
+	is_triggered_only =  yes
+
+	trigger = {
+		owner = {
+			has_event_chain = cs_stormfever_chain
+		}
+
+		from = {
+			has_star_flag = stormfever_challenge_2_target_system
+		}
+	}
+
+	immediate = {
+		owner = {
+			add_mission_counter = {
+				mission = MISSION_CS_STORM_FEVER_CHALLENGE_2
+				counter = far_edge_explored
+				amount = 1
+			}
+		}
+	}
+
+	option = {
+		name = "cstorms.310.a"
+		hidden_effect = {
+			owner = {
+				remove_modifier = cs_storm_chasers_bad_vibes
+			}
+		}
+	}
+}
+
+# Storm fever Challenge 5: Investigate the Unearthed! (Investigate an anomaly/digsite that was spawned by a storm)
+# Triggered from anomaly/digsite events
+country_event = {
+	id = cstorms.320
+	title = "cstorms.320.name"
+	desc = "cstorms.320.desc"
+	picture = GFX_evt_origin_stormchasers_event_progress
+
+	fire_only_once = yes
+	is_triggered_only =  yes
+
+	trigger = {
+		has_event_chain = cs_stormfever_chain
+	}
+
+	immediate = {
+		add_mission_counter = {
+			mission = MISSION_CS_STORM_FEVER_CHALLENGE_4
+			counter = storm_unraveled_event_investigated
+			amount = 1
+		}
+	}
+
+	option = {
+		name = "cstorms.320.a"
+		hidden_effect = {
+			remove_modifier = cs_storm_chasers_bad_vibes
+		}
+	}
+}
+
+
+country_event = {
+	id = cstorms.315
+	title = "cstorms.315.name"
+	picture = GFX_evt_origin_stormchasers_event_progress
+	show_sound = event_ship_thrusters
+
+	desc = {
+		trigger = { is_gestalt = no }
+		text = "cstorms.315.desc.normal"
+	}
+	desc = {
+		trigger = { is_gestalt = yes }
+		text = "cstorms.315.desc.gestalt"
+	}
+
+	fire_only_once = yes
+	is_triggered_only = yes
+
+	trigger = {
+		has_event_chain = cs_stormfever_chain
+	}
+
+	option = {
+		name = "cstorms.315.a"
+		hidden_effect = {
+			remove_modifier = cs_storm_chasers_bad_vibes
+		}
+	}
+}
+
+# Storm Fever challenge 5: Spread Seasonal Joy! (Send a storm to another empire)
+# Triggered from the challenge's own on_monthly.
+# This: Country
+country_event = {
+	id = cstorms.325
+	title = "cstorms.325.name"
+	desc = "cstorms.325.desc"
+	picture = GFX_evt_origin_stormchasers_event_progress
+	fire_only_once = yes
+	is_triggered_only =  yes
+
+	trigger = {
+		has_event_chain = cs_stormfever_chain
+
+		any_owned_storm_influence_field = {
+			any_system_in_cosmic_storm_influence_field = {
+				is_inside_storm = yes
+				exists = owner
+				NOT = {
+					is_owned_by = prevprev
+				}
+			}
+		}
+	}
+
+	immediate = {
+		add_mission_counter = {
+			mission = MISSION_CS_STORM_FEVER_CHALLENGE_5
+			counter = send_storm_to_other_empire
+			amount = 1
+		}
+	}
+
+	option = {
+		name = "cstorms.325.a"
+		hidden_effect = {
+			remove_modifier = cs_storm_chasers_bad_vibes
+		}
+	}
+}
+
+# Storm Fever challenge 6: Succumb to Tempest (Have a Storm Rider die inside a storm)
+# Triggered from on_leader_death
+# This = Country
+# From = Leader
+country_event = {
+	id = cstorms.330
+	title = "cstorms.330.name"
+	picture = GFX_evt_ship_travel
+
+	fire_only_once = yes
+	is_triggered_only =  yes
+
+	desc = {
+		trigger = { is_gestalt = no }
+		text = cstorms.330.desc.normal
+	}
+	desc = {
+		trigger = { is_gestalt = yes }
+		text = cstorms.330.desc.gestalt
+	}
+
+	trigger = {
+		has_event_chain = cs_stormfever_chain
+
+		from = {
+			exists = solar_system
+			has_storm_rider_trait = yes
+			solar_system = {
+				is_inside_storm = yes
+			}
+		}
+	}
+
+	immediate = {
+		add_mission_counter = {
+			mission = MISSION_CS_STORM_FEVER_CHALLENGE_6
+			counter = rider_died_in_storm
+			amount = 1
+		}
+	}
+
+	option = {
+		name = "cstorms.330.a"
+		hidden_effect = {
+			remove_modifier = cs_storm_chasers_bad_vibes
+		}
+	}
+}
+# Storm Fever challenge 6: Succumb to Tempest (Have a Storm Rider go MIA inside a storm)
+# Triggered from on_emergency_ftl
+# This = fleet
+# From = system escaped from
+fleet_event = {
+	id = cstorms.331
+	title = "cstorms.330.name"
+	picture = GFX_evt_ship_travel
+
+	fire_only_once = yes
+	is_triggered_only =  yes
+
+	desc = {
+		trigger = {
+			exists = owner
+			owner = {
+				is_gestalt = no
+			}
+		}
+		text = cstorms.331.desc.normal
+	}
+	desc = {
+		trigger = {
+			exists = owner
+			owner = {
+				is_gestalt = yes
+			}
+		}
+		text = cstorms.331.desc.gestalt
+	}
+
+	trigger = {
+		exists = owner
+		owner = {
+			has_event_chain = cs_stormfever_chain
+		}
+
+		from = {
+			exists = solar_system
+			solar_system = {
+				is_inside_storm = yes
+			}
+		}
+		exists = leader
+		leader = {
+			has_storm_rider_trait = yes
+		}
+	}
+
+	immediate = {
+		owner = {
+			add_mission_counter = {
+				mission = MISSION_CS_STORM_FEVER_CHALLENGE_6
+				counter = rider_died_in_storm
+				amount = 1
+			}
+		}
+	}
+
+	option = {
+		name = "cstorms.330.a"
+		hidden_effect = {
+			remove_modifier = cs_storm_chasers_bad_vibes
+		}
+	}
+}

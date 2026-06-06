@@ -226,30 +226,241 @@ situation_event = {
 		trigger = { owner = { has_origin = origin_broken_shackles } }
 		text = "PrimPlay_situation_event.1.broken_shackles.desc"
 	}
-	picture = GFX_evt_ship_travel
 	show_sound = event_celebration
 	is_triggered_only = yes
+	force_open = yes	#This event is important
+	
+	diplomatic = yes
+	# custom_gui = "enclave_mercenary_window"
+	# custom_gui_option = "enclave_mercenary_option"
+	picture_event_data = {
+		portrait = owner
+		planet_background = owner
+		graphical_culture = owner
+		city_level = owner
+		room = observation_post_room
+	}
+	location = owner.capital_scope
+	
 
+	trigger = {
+	}
+	
+	option = {
+		name = origin_post_apocalyptic
+		exclusive_trigger = { 
+			owner = {
+				NOR = {
+					has_origin = origin_payback
+					has_origin = origin_broken_shackles
+					is_eager_explorer_empire = yes
+				}
+				host_has_dlc = "Apocalypse"
+				capital_scope = { is_planet_class = pc_nuked }	#Default origin if Nuclear Winter happens, everything else has priority
+			}
+		}
+		owner = {
+			if = {
+				limit = { owner_species =  { is_robotic = yes } }
+				hidden_effect = { set_origin = origin_post_apocalyptic_machines }
+				custom_tooltip = PrimPlay_situation_event.1.origin_post_apocalyptic_machines
+			}
+			else = { 
+				hidden_effect = { set_origin = origin_post_apocalyptic } 
+				custom_tooltip = PrimPlay_situation_event.1.origin_post_apocalyptic
+			}
+		}
+	}
+	
+	option = {
+		name = origin_separatists
+		exclusive_trigger = { 
+			owner = { 
+				NOR = {
+					has_origin = origin_payback
+					has_origin = origin_broken_shackles
+					is_eager_explorer_empire = yes
+				}
+				has_country_flag = origin_separatists_flag 
+				if = {
+					limit = { host_has_dlc = "Apocalypse" }
+					capital_scope = { NOT = { is_planet_class = pc_nuked } }	#Default origin if Nuclear Winter happens, everything else has priority
+				}
+			}
+		}
+		owner = { 
+			hidden_effect = { set_origin = origin_separatists }
+			custom_tooltip = PrimPlay_situation_event.1.origin_separatists
+		}
+	}
+	
 	option = {
 		name = PrimPlay_situation_event.1.a
+		exclusive_trigger = { owner = { is_eager_explorer_empire = yes } }
+	}
+	
+	option = {
+		name = PrimPlay_situation_event.1.payback
+		exclusive_trigger = { owner = { has_origin = origin_payback } }
+	}
+	
+	option = {
+		name = PrimPlay_situation_event.1.broken_shackles
+		exclusive_trigger = { owner = { has_origin = origin_broken_shackles } }
+	}
+	
+	option = {
+		name = origin_ocean_paradise
+		trigger = { 
+			owner = {
+				has_aquatics = yes
+				capital_scope = { 
+					OR = {
+						has_modifier = ocean_paradise_hive
+						has_modifier = ocean_paradise
+					}
+				}
+			}
+		}
+		owner = {
+			if = {
+				limit = { owner_species =  { is_robotic = yes } }
+				hidden_effect = { set_origin = origin_ocean_machines }
+				custom_tooltip = PrimPlay_situation_event.1.origin_ocean_machines
+			}
+			else = { 
+				hidden_effect = { set_origin = origin_ocean_paradise }
+				custom_tooltip = PrimPlay_situation_event.1.origin_ocean_paradise
+			}
+		}
+	}
+	
+	option = {
+		name = origin_mechanists
+		trigger = { 
+			owner = {
+				host_has_dlc = "Utopia"
+				owner_species =  { is_robotic = no }
+				has_technology = tech_robotic_workers
+				any_owned_species = {
+					is_robotic = yes
+				}
+			}
+		}
+		owner = { 
+			hidden_effect = { set_origin = origin_mechanists }
+			custom_tooltip = PrimPlay_situation_event.1.origin_mechanists
+		}
+	}
+	
+	option = {
+		name = origin_galactic_doorstep
+		trigger = { 
+			owner = {
+				OR = {
+					has_civic = PrimPlayer_civic_scion_materialist
+					has_civic = PrimPlayer_civic_scion_spiritualist
+					any_owned_megastructure = { 
+						OR = {
+							is_megastructure_type = gateway_restored
+							is_megastructure_type = gateway_ruined
+							is_megastructure_type = gateway_final
+						}
+					}
+				}
+			}
+		}
+		owner = { 
+			hidden_effect = { set_origin = origin_galactic_doorstep }
+			custom_tooltip = PrimPlay_situation_event.1.origin_galactic_doorstep
+		}
+	}
+	
+	option = {
+		name = origin_imperial_vassal
+		trigger = { 
+			owner = { 
+				has_overlord_dlc = yes
+				is_subject = yes 
+				#Cog Note - Scion doesn't really fit Imperial Vassal, but I don't see why it can't be allowed
+				#NOR = {
+				#	has_civic = PrimPlayer_civic_scion_materialist
+				#	has_civic = PrimPlayer_civic_scion_spiritualist
+				#}
+			}
+		}
+		owner = { 
+			hidden_effect = { set_origin = origin_imperial_vassal }
+			custom_tooltip = PrimPlay_situation_event.1.origin_imperial_vassal
+		}
+	}
+	
+	option = {
+		name = origin_storm_chasers
+		trigger = { 
+			owner = { 
+				has_country_flag = situation_stormfall_pursued
+				has_cosmic_storms_dlc = yes
+				NOR = {
+					#text = civic_tooltip_not_genocidal
+					has_civic = civic_hive_devouring_swarm
+					has_civic = civic_fanatic_purifiers
+					has_civic = civic_machine_terminator
+					has_civic = civic_scorched_earth
+					has_civic = civic_hive_scorched_earth
+				}
+			}
+		}
+		hidden_effect = { owner = { set_origin = origin_storm_chasers } }
+		custom_tooltip = PrimPlay_situation_event.1.origin_storm_chasers
+		give_technology = { message = yes tech = tech_storm_prediction_1 }
+	}
+	
+	option = {
+		name = origin_default
+		hidden_effect = { owner = { set_origin = origin_default } }
+		custom_tooltip = PrimPlay_situation_event.1.origin_default
+	}
+	
+	option = { 
+		name = origin_primitive_player_early_space_age
 		trigger = {
 			owner = {
 				NOR = {
 					has_origin = origin_payback
 					has_origin = origin_broken_shackles
+					is_eager_explorer_empire = yes
 				}
 			}
 		}
+		default_hide_option = yes
+		owner = { set_origin = origin_primitive_player_early_space_age }
+		custom_tooltip = PrimPlay_situation_event.1.fallback_if_no_selection
+		hidden_effect = { situation_event = { id = PrimPlay_situation_event.1 } }
 	}
-	option = {
-		name = PrimPlay_situation_event.1.payback
-		trigger = { owner = { has_origin = origin_payback } }
+	
+	after = { 
+		if = {
+			limit = { Not = { has_origin = origin_primitive_player_early_space_age } }
+			destroy_situation = this 
+			hidden_effect = { 
+				owner = { 
+					if = {
+						limit = { has_country_flag = origin_separatists_flag }
+						remove_country_flag = origin_separatists_flag 
+					}
+					if = {
+						limit = { has_country_flag = situation_stormfall_pursued }
+						remove_country_flag = situation_stormfall_pursued 
+					}
+					if = {
+						limit = { has_country_flag = situation_stormfall_canceled }
+						remove_country_flag = situation_stormfall_canceled 
+					}
+				} 
+			}
+		}
 	}
-	option = {
-		name = PrimPlay_situation_event.1.broken_shackles
-		trigger = { owner = { has_origin = origin_broken_shackles } }
-	}
-	after = { destroy_situation = this }
 }
 
 ############################################
@@ -409,16 +620,23 @@ situation_event = {
 	is_triggered_only = yes
 
 	trigger = { 
-		NOT = { has_situation_flag = PrimPlay_situation_event_1001_finished }
+		NOR = { 
+			has_situation_flag = PrimPlay_situation_event_1001_finished 
+			has_situation_flag = PrimPlay_situation_event_1001_cancel
+			has_situation_flag = PrimPlay_situation_event_1001_pause
+		}
 		owner = { 
 			has_technology = tech_mechanized_mining_2
 			NOR = {
 				has_tech_option = tech_mining_drone_weapon_1
 				has_technology = tech_mining_drone_weapon_1
+				has_modifier = drone_mining_techniques
 			}
 		} 
 		
 	}
+	
+	immediate = { set_situation_flag = PrimPlay_situation_event_1001_pause }
 
 	option = {
 		name = PrimPlay_situation_event.1001.fund
@@ -440,7 +658,7 @@ situation_event = {
 		trigger = { OWNER = { NOT = { has_ethic = ethic_fanatic_pacifist } } }
 		set_timed_situation_flag = {
 			flag = PrimPlay_situation_event_1001_cancel
-			years = 2
+			years = 3
 		}
 	}
 	
@@ -462,6 +680,86 @@ situation_event = {
 			}
 		}
 	}
+	
+	after = { remove_situation_flag = PrimPlay_situation_event_1001_pause }
+}
+situation_event = {
+	id = PrimPlay_situation_event.1002
+	title = PrimPlay_situation_event.1002.title
+	desc = PrimPlay_situation_event.1002.desc
+	picture = GFX_evt_astral_rift_psionic_stranger_2
+	show_sound = event_space_cloud
+	is_triggered_only = yes
+
+	trigger = { 
+		has_cosmic_storms_dlc = yes
+		NOR = { 
+			has_situation_flag = PrimPlay_situation_event_1002_finished 
+			has_situation_flag = PrimPlay_situation_event_1002_cancel
+			has_situation_flag = PrimPlay_situation_event_1002_pause
+		}
+		owner = { has_technology = tech_primitive_radiowave_telescope }
+	}
+	
+	immediate = { set_situation_flag = PrimPlay_situation_event_1002_pause }
+
+	option = {
+		name = PrimPlay_situation_event.1002.fund
+		allow = {
+			owner = {
+				has_country_resource = { type = influence amount >= 100 }
+			}
+		}
+		owner = {
+			add_resource = { influence = -100 }
+			capital_scope = {
+				enable_special_project = {
+					name = "STORM_CHASER_CAPSULE_PROJECT"
+					location = this
+					owner = PREV.PREV
+				}
+				if = {
+					limit = { NOT = { has_modifier = irradiated_wasteland } }	#Might conflict with tomb world
+					add_modifier = {
+						modifier = "irradiated_wasteland"
+					}
+				}
+			}
+		}
+		set_situation_flag = PrimPlay_situation_event_1002_finished
+	}
+	
+	option = {
+		name = PrimPlay_situation_event.1002.later
+		set_timed_situation_flag = {
+			flag = PrimPlay_situation_event_1002_cancel
+			years = 3
+		}
+		owner.capital_scope = {
+			if = {
+				limit = { NOT = { has_modifier = irradiated_wasteland } }	#Might conflict with tomb world
+				add_modifier = {
+					modifier = "irradiated_wasteland"
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = PrimPlay_situation_event.1002.cancel
+		allow = {
+			owner = { has_technology = tech_primitive_thrusters_0 }
+		}
+		owner.capital_scope = {
+			if = {
+				limit = { has_modifier = irradiated_wasteland }	#Might conflict with tomb world
+				remove_modifier = irradiated_wasteland
+			}
+		}
+		set_situation_flag = PrimPlay_situation_event_1002_finished
+	}
+	
+	after = { remove_situation_flag = PrimPlay_situation_event_1002_pause }
 }
 ######################
 
@@ -1100,3 +1398,11 @@ planet_event = {
 		name = PrimPlay_situation_event.3005.a
 	}
 }
+
+
+
+
+
+
+
+

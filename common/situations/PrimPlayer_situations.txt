@@ -506,6 +506,7 @@ PrimPlayer_situation = {
 		 random_events = {
 			10 = 0
 			1 = PrimPlay_situation_event.1001 # Mining Laser Weapon Project
+			1 = PrimPlay_situation_event.1002 #Cosmic Storm Project
 		}
 	}
 	monthly_progress = {
@@ -579,114 +580,14 @@ PrimPlayer_situation = {
 				}
 			}
 		}
-		########################################
-		# Origin Outcome for Primitive Players #
-		########################################
-		if = {
-			limit = { 
-				owner = { 
-					OR = {
-						has_origin = origin_primitive_player_pre_industrial_age 
-						has_origin = origin_primitive_player_industrial_age 
-						has_origin = origin_primitive_player_machine_age 
-						has_origin = origin_primitive_player_atomic_age	
-						has_origin = origin_primitive_player_early_space_age
-					} 
-				}
-			}
-			owner = {
-				custom_tooltip = PrimPlayer_reached_space_age
-				if = {
-					limit = { 
-						host_has_dlc = "Apocalypse"
-						capital_scope = { is_planet_class = pc_nuked }	#Default origin if Nuclear Winter happens, everything else has priority
-					}
-					if = {
-						limit = { owner_species =  { is_robotic = yes } }
-						set_origin = origin_post_apocalyptic_machines
-					}
-					else = { set_origin = origin_post_apocalyptic }
-				}
-				else_if = {
-					limit = { 
-						has_aquatics = yes
-						capital_scope = { 
-							OR = {
-								has_modifier = ocean_paradise_hive
-								has_modifier = ocean_paradise
-							}
-						}
-					}
-					if = {
-						limit = { owner_species =  { is_robotic = yes } }
-						set_origin = origin_ocean_machines
-					}
-					else = { set_origin = origin_ocean_paradise }
-				}
-				else_if = {
-					limit = { 
-						host_has_dlc = "Utopia"
-						owner_species =  { is_robotic = no }
-						has_technology = tech_robotic_workers
-						any_owned_species = {
-							is_robotic = yes
-						}
-					}
-					set_origin = origin_mechanists
-				}
-				else_if = {
-					limit = { 
-						OR = {
-							has_civic = PrimPlayer_civic_scion_materialist
-							has_civic = PrimPlayer_civic_scion_spiritualist
-							any_owned_megastructure = { 
-								OR = {
-									is_megastructure_type = gateway_restored
-									is_megastructure_type = gateway_ruined
-									is_megastructure_type = gateway_final
-								}
-							}
-						}
-					}
-					set_origin = origin_galactic_doorstep	#Default origin if owns a warpgate
-				}
-				else_if = {
-					limit = { 
-						has_overlord_dlc = yes
-						is_subject = yes 
-					}
-					set_origin = origin_imperial_vassal	#Default origin if a subject
-				}
-				else_if = {
-					limit = { 
-						has_country_flag = origin_separatists_flag
-					}
-					hidden_effect = { remove_country_flag = origin_separatists_flag }
-					set_origin = origin_separatists	#Default origin if failed a Civil War
-				}
-				else = { set_origin = origin_default }	#Default origin, everything else has priority
-				hidden_effect = { prev = { situation_event = { id = PrimPlay_situation_event.1 } } }
-			}
+		owner = {
+			custom_tooltip = PrimPlayer_reached_space_age
+			prev = { situation_event = { id = PrimPlay_situation_event.1 } }
 		}
-		##################################
-		# Other Through the Ages Empires #
-		##################################
-		else_if = {
-			limit = { owner = { has_origin = origin_broken_shackles } }
-			situation_event = { id = PrimPlay_situation_event.1 }
-		}
-		else_if = {
-			limit = { owner = { has_origin = origin_payback } }
-			situation_event = { id = PrimPlay_situation_event.1 }
-		}
-		else_if = {
-			limit = { owner = { is_eager_explorer_empire = yes } }
-			situation_event = { id = PrimPlay_situation_event.1 }
-		}
-		else = {
-			custom_tooltip = ERROR
-			situation_event = { id = PrimPlay_situation_event.1 }
-		}
+		#else = {
+		#	custom_tooltip = ERROR
+		#	situation_event = { id = PrimPlay_situation_event.1 }
+		#}
 	}
 	on_fail = {
 		custom_tooltip = PrimPlayer_situation_end
