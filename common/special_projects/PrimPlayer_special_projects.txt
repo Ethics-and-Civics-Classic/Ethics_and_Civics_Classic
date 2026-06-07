@@ -57,9 +57,9 @@ special_project = {
 	
 	same_option_group_as = { STORM_CHASER_CAPSULE_PROJECT }
 	
-	requirements = {
-		owner = { has_technology = tech_primitive_thrusters_0 }
-	}
+	#requirements = {
+	#	owner = { has_technology = tech_primitive_thrusters_0 }	#Not the right condition for this code-section
+	#}
 
 	event_scope = planet_event
 
@@ -135,6 +135,46 @@ special_project = {
 
 	on_success = {
 		planet_event = { id = random_primitive_events.252 }
+	}
+
+	on_fail = {
+	}
+}
+
+special_project = {
+	key = "SPACE_CRITTER_FEEDING_GROUND_PROJECT"
+	#event_chain = "PrimPlayer_subterranean_civilization_chain"
+	cost = 3000
+	tech_department = society_technology
+	picture = GFX_evt_underground_civilization
+	timelimit = 360
+	location = yes
+
+	event_scope = planet_event
+	
+	requirements = {
+		shipclass_science_ship = 1
+		leader = scientist
+		skill > 0
+	}
+	
+	#OR = {
+	#	has_technology = tech_alien_life_studies 
+	#	is_guided_sapience_empire = yes
+	#}
+
+	on_success = {
+		from = {
+			if = {
+				limit = { has_modifier = atmospheric_ecosystem }
+				remove_modifier = atmospheric_ecosystem
+			}
+			if = {
+				limit = { NOT = { has_modifier = space_critter_feeding_ground } }
+				add_modifier = { modifier = "space_critter_feeding_ground" days = -1 }
+			}
+			add_deposit = d_society_3
+		}
 	}
 
 	on_fail = {
