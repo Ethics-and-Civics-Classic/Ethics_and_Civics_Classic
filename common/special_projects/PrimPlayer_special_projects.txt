@@ -4,7 +4,7 @@
 
 special_project = {
 	key = "STORM_CHASER_CAPSULE_PROJECT"
-	#event_chain = "treasure_hunters_origin_story_chain"
+	event_chain = "STORM_CHASER_CAPSULE_PROJECT_chain"
 	cost = 1000
 	tech_department = physics_technology
 	timelimit = -1
@@ -35,10 +35,108 @@ special_project = {
 				type = situation_stormfall
 				target = prev
 			}
+			end_event_chain = "STORM_CHASER_CAPSULE_PROJECT_chain"
 		}
 		if = {
 			limit = { has_modifier = irradiated_wasteland }	#Might conflict with tomb world
 			remove_modifier = irradiated_wasteland
 		}
+	}
+}
+
+special_project = {
+	key = "STORM_CHASER_CAPSULE_PROJECT_CANCEL"
+	event_chain = "STORM_CHASER_CAPSULE_PROJECT_chain"
+	cost = 100
+	tech_department = engineering_technology
+	timelimit = -1
+	picture = GFX_evt_astral_rift_psionic_stranger_2
+	icon = "gfx/interface/icons/situation_log/situation_log_physic.dds"
+	location = yes
+	remove_when_completed = yes
+	
+	same_option_group_as = { STORM_CHASER_CAPSULE_PROJECT }
+	
+	requirements = {
+		owner = { has_technology = tech_primitive_thrusters_0 }
+	}
+
+	event_scope = planet_event
+
+	on_success = {
+		if = {
+			limit = { has_modifier = irradiated_wasteland }	#Might conflict with tomb world
+			remove_modifier = irradiated_wasteland
+		}
+		owner = { end_event_chain = "STORM_CHASER_CAPSULE_PROJECT_chain" }
+	}
+}
+
+special_project = {
+	key = "PRIMPLAYER_SEISMIC_DISTURBANCE_1_PROJECT"
+	event_chain = "PrimPlayer_subterranean_civilization_chain"
+	cost = 1000
+	tech_department = society_technology
+	picture = GFX_evt_underground_civilization
+	timelimit = 360
+
+	event_scope = planet_event
+
+	on_success = {
+		planet_event = { id = random_primitive_events.251 }
+		owner = { end_event_chain = "PrimPlayer_subterranean_civilization_chain" }
+	}
+
+	on_fail = {
+	}
+}
+
+special_project = {
+	key = "PRIMPLAYER_SEISMIC_DISTURBANCE_2_PROJECT"
+	event_chain = "PrimPlayer_subterranean_civilization_chain"
+	cost = 5000
+	tech_department = engineering_technology
+	picture = GFX_evt_nuclear_explosion
+	timelimit = 360
+
+	same_option_group_as = { PRIMPLAYER_SEISMIC_DISTURBANCE_1_PROJECT }
+
+	event_scope = planet_event
+
+	on_success = {
+		planet_event = { id = random_primitive_events.252 }
+		owner = { end_event_chain = "PrimPlayer_subterranean_civilization_chain" }
+	}
+
+	on_fail = {
+		end_event_chain = "PrimPlayer_subterranean_civilization_chain"
+		random_list = {
+			60 = {
+				FROM = { planet_event = { id = random_primitive_events.254 } }
+			}
+			40 = {
+				FROM = { planet_event = { id = random_primitive_events.259 } }
+				modifier = {
+					factor = 0
+					owner = { is_homicidal = yes }
+				}
+			}
+		}
+	}
+}
+
+special_project = {
+	key = "PRIMPLAYER_SEISMIC_DISTURBANCE_3_PROJECT"
+	cost = 5000
+	tech_department = engineering_technology
+	picture = GFX_evt_nuclear_explosion
+
+	event_scope = planet_event
+
+	on_success = {
+		planet_event = { id = random_primitive_events.252 }
+	}
+
+	on_fail = {
 	}
 }

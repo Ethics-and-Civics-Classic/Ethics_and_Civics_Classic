@@ -1552,6 +1552,7 @@ ship_event = {
 			limit = { from = { has_planet_flag = anomaly_685_flag } }
 			### Runaway Greenhouse Effect
 			from = { add_modifier = { modifier = "toxic_terraforming_candidate" days = -1 } }
+			owner = { start_situation = { type = PrimPlayer_terraform_toxic_situation target = from } }
 			ship_event = { id = anomaly.685 scopes = { FROM = FROM } }
 			hidden_effect = { from = { remove_planet_flag = anomaly_685_flag } }
 		}
@@ -1658,7 +1659,6 @@ country_event = {
 				reroll_deposits = yes
 			}
 		}
-		hidden_effect = { country_event = { id = random_primitive_events.216 days = 720 scopes = { from = from } } }
 	}
 	
 	option = {
@@ -1849,7 +1849,6 @@ country_event = {
 				reroll_deposits = yes
 			}
 		}
-		hidden_effect = { country_event = { id = random_primitive_events.216 days = 720 scopes = { from = from } } }
 	}
 	
 	option = {
@@ -2021,18 +2020,211 @@ planet_event = {
 	}
 }
 
-#Subterranean Civilization Oppurtunity (Odd Seismic Activity)
+planet_event = {
+	id = random_primitive_events.216
+	title = "random_primitive_events.217.title"
+	is_triggered_only = yes
+	hide_window = yes
+	
+	immediate = {
+		from.owner = { 
+			destroy_situation = from
+			country_event = { id = random_primitive_events.217 } 
+		}
+	}
+}
+country_event = {
+	id = random_primitive_events.217
+	title = "random_primitive_events.217.title"
+	is_triggered_only = yes
+	location = from
+	picture = GFX_evt_ocean_planet
+	show_sound = event_celebration
+	
+	desc = {
+		text = "random_primitive_events.217.desc"
+	}
+	
+	option = {
+		name = "random_primitive_events.217.a"	
+		from = { 
+			remove_modifier = toxic_terraforming_candidate
+			change_pc = pc_continental
+			create_colony = {
+				owner = ROOT
+				#ethos = random
+			}
+			hidden_effect = {
+				create_pop_group = {
+					size = 100
+					species = root.owner_main_species
+				}
+				reroll_deposits = yes
+			}
+		}
+		hidden_effect = { country_event = { id = random_primitive_events.218 days = 180 scopes = { from = from } } }
+	}
+	
+	option = {
+		name = "random_primitive_events.217.b"	
+		from = { 
+			remove_modifier = toxic_terraforming_candidate
+			change_pc = pc_continental
+		}
+		random_country = {
+			limit = {  
+				has_communications = root
+				is_country_type = PrimPlayer_ethic_fanatic_nation
+			}
+			add_opinion_modifier = {
+				who = root
+				modifier = opinion_bold_explorers
+			}
+			custom_tooltip = random_primitive_events.217.b.tooltip
+			hidden_effect = { 
+				set_origin = origin_default_pre_ftl
+				set_country_type = primitive
+				set_country_flag = PrimPlayer_ethic_fanatic_nation_colony@root	#To avoid flag changing
+				set_pre_ftl_age_effect = { PRE_FTL_AGE = early_space_age }
+				add_awareness = 100
+				set_country_flag = first_contact_completed@root
+				root = { set_country_flag = first_contact_completed@prev }
+				every_situation = { 
+					limit = { is_situation_type = pre_ftl_tech_progress_situation } 
+					set_situation_progress = 0
+				}
+				copy_techs_from = {
+					target = root
+					#except = { }
+				}
+				from = {
+					create_colony = {
+						owner = PREV
+					}
+					create_pop_group = {
+						size = 1000
+						species = prev.owner_main_species
+					}
+					set_planet_flag = PrimPlayer_ethic_fanatic_nation_colony@root
+					#add_building = building_colony_shelter
+					planet_event = { id = random_primitive_events.215 days = 360 }
+					reroll_deposits = yes
+				}
+				create_fleet = {
+					name = "NAME_Pre_FTL_Chemical_Ship"
+					effect = {
+						set_owner = prev
+						create_ship = {
+							name = "NAME_Pre_FTL_Chemical_Ship"
+							design = "NAME_Early_Engineer_Vessel_NoDrive"
+						}
+						set_fleet_flag = inteplanetary_flight_fleet
+						set_location = from
+						set_fleet_stance = passive
+						last_created_ship = { set_ship_flag = inteplanetary_flight_fleet }
+					}
+				}
+				add_resource = {
+					minerals = 5000
+					food = 5000
+					energy = 5000
+				}
+				if = { 
+					limit = { 
+						OR = {
+							has_ethic = ethic_fanatic_authoritarian
+							has_ethic = ethic_fanatic_militarist
+							has_ethic = ethic_fanatic_xenophobe
+						}
+					}
+					set_policy = { policy = diplomatic_stance option = diplo_stance_fearful cooldown = yes }
+				}
+				else_if = { 
+					limit = { 
+						OR = {
+							has_ethic = ethic_fanatic_egalitarian
+							has_ethic = ethic_fanatic_pacifist
+							has_ethic = ethic_fanatic_xenophile
+							has_ethic = ethic_fanatic_socialism
+						}
+					}
+					set_policy = { policy = diplomatic_stance option = diplo_stance_eager cooldown = yes }
+				}
+				else = { set_policy = { policy = diplomatic_stance option = diplo_stance_uncertain cooldown = yes } }
+				root = {
+					if = { 
+						limit = { prev = { has_ethic = ethic_fanatic_authoritarian } }
+						capital_scope = { remove_deposit = d_ethic_fanatic_authoritarian_nation_blocker }
+					}
+					else_if = { 
+						limit = { prev = { has_ethic = ethic_fanatic_egalitarian } }
+						capital_scope = { remove_deposit = d_ethic_fanatic_egalitarian_nation_blocker }
+					}
+					else_if = { 
+						limit = { prev = { has_ethic = ethic_fanatic_xenophobe } }
+						capital_scope = { remove_deposit = d_ethic_fanatic_xenophobe_nation_blocker }
+					}
+					else_if = { 
+						limit = { prev = { has_ethic = ethic_fanatic_xenophile } }
+						capital_scope = { remove_deposit = d_ethic_fanatic_xenophile_nation_blocker }
+					}
+					else_if = { 
+						limit = { prev = { has_ethic = ethic_fanatic_militarist } }
+						capital_scope = { remove_deposit = d_ethic_fanatic_militarist_nation_blocker }
+					}
+					else_if = { 
+						limit = { prev = { has_ethic = ethic_fanatic_pacifist } }
+						capital_scope = { remove_deposit = d_ethic_fanatic_pacifist_nation_blocker }
+					}
+					else_if = { 
+						limit = { prev = { has_ethic = ethic_fanatic_spiritualist } }
+						capital_scope = { remove_deposit = d_ethic_fanatic_spiritualist_nation_blocker }
+					}
+					else_if = { 
+						limit = { prev = { has_ethic = ethic_fanatic_materialist } }
+						capital_scope = { remove_deposit = d_ethic_fanatic_materialist_nation_blocker }
+					}
+					else_if = { 
+						limit = { prev = { has_ethic = ethic_fanatic_green } }
+						capital_scope = { remove_deposit = d_ethic_fanatic_green_nation_blocker }
+					}
+					else_if = { 
+						limit = { prev = { has_ethic = ethic_fanatic_industrial } }
+						capital_scope = { remove_deposit = d_ethic_fanatic_industrial_nation_blocker }
+					}
+					else_if = { 
+						limit = { prev = { has_ethic = ethic_fanatic_socialism } }
+						capital_scope = { remove_deposit = d_ethic_fanatic_socialism_nation_blocker }
+					}
+					else_if = { 
+						limit = { prev = { has_ethic = ethic_fanatic_capitalism } }
+						capital_scope = { remove_deposit = d_ethic_fanatic_capitalism_nation_blocker }
+					}
+				}
+			}
+		}
+		hidden_effect = { 
+			set_timed_country_flag = { # 'New Contact' Pop Faction Demand (see factions.11)
+				flag = recent_comms_timed
+				days = 3600
+			}
+		}
+	}
+}
+##############################################################
+#Subterranean Civilization Oppurtunity (Odd Seismic Activity)#
+##############################################################
 #FROM = Planet
 #ROOT = Country
 country_event = {
-	id = random_primitive_events.216
-	title = "random_primitive_events.216.title"
+	id = random_primitive_events.218
+	title = "random_primitive_events.218.title"
 	is_triggered_only = yes
 	location = from
 	picture = GFX_evt_ocean_planet
 	show_sound = event_celebration
 	desc = {
-		text = "random_primitive_events.216.desc"
+		text = "random_primitive_events.218.desc"
 	}
 	trigger = { 
 		FROM = { 
@@ -2044,23 +2236,1655 @@ country_event = {
 	
 	
 	option = {
-		name = "random_primitive_events.216.a"
-		allow = {
-			has_country_resource = { type = influence amount >= 100 }
-		}
-		add_resource = { influence = -100 }
+		name = "random_primitive_events.218.a"
 		FROM = {
-			
+			planet_event = { id = random_primitive_events.250 days = 30 }
 		}
 	}
 	
 	option = {
-		name = "random_primitive_events.216.b"
+		name = "random_primitive_events.218.b"
 		from = { 
 		
 		}
 	}
 }
+
+### Seismic Disturbances
+planet_event = {
+	id = random_primitive_events.250
+	title = "random_primitive_events.250.name"
+	desc = {
+		trigger = {
+			owner = {
+				is_subterranean_empire = no
+			}
+		}
+		text = "random_primitive_events.250.desc"
+	}
+	desc = {
+		trigger = {
+			owner = {
+				is_subterranean_empire = yes
+			}
+		}
+		text = "random_primitive_events.250.desc.subterranean"
+	}
+
+	picture = GFX_evt_in_the_dark
+	show_sound = event_air_raid_siren
+	location = ROOT
+	trackable = yes
+	event_chain = PrimPlayer_subterranean_civilization_chain
+
+	pre_triggers = {
+		is_ai = no
+		has_owner = yes
+	}
+
+	trigger = {
+		owner = { is_wilderness_empire = no }
+		pop_amount > 0	
+		NOR = {
+			#has_global_flag = seismic_disturbance_global
+			#has_planet_flag = colony_event
+			#is_planet_class = pc_nuked
+			#is_planet_class = pc_ringworld_habitable
+			#is_planet_class = pc_shattered_ring_habitable
+			#is_planet_class = pc_habitat
+			is_planet_class = pc_city
+			is_planet_class = pc_relic
+			is_planet_class = pc_volcanic
+		}
+	}
+
+	is_triggered_only = yes
+
+	immediate = {
+		owner = { save_event_target_as = subterranean_planet_owner@root.owner }
+		#set_global_flag = seismic_disturbance_global
+		set_planet_flag = seismic_disturbance
+		set_planet_flag = colony_event
+		add_deposit = d_underground_farm_blocked
+		add_deposit = d_underground_mine_blocked
+		add_deposit = d_underground_generator_blocked
+		PrimPlayer_create_subterranean_nation = { FLAG = subterranean_nation@ROOT.OWNER }	#Why does vanilla make this faction 4 times? Because it uses it to check & establish event target
+		begin_event_chain = {
+			event_chain = "PrimPlayer_subterranean_civilization_chain"
+			target = ROOT
+		}
+	}
+
+	option = {
+		name = random_primitive_events.250.a
+		tooltip = {
+			begin_event_chain = {
+				event_chain = "PrimPlayer_subterranean_civilization_chain"
+				target = ROOT
+			}
+		}
+		enable_special_project = {
+			name = "PRIMPLAYER_SEISMIC_DISTURBANCE_1_PROJECT" #Establish Communications
+			location = this
+			owner = root
+		}
+		enable_special_project = {
+			name = "PRIMPLAYER_SEISMIC_DISTURBANCE_2_PROJECT" #Preemptive Strike
+			location = this
+			owner = root
+		}
+
+	}
+	option = {
+		name = distar.216.a.exter
+		exclusive_trigger = { owner = { is_homicidal = yes } }
+		tooltip = {
+			begin_event_chain = {
+				event_chain = "PrimPlayer_subterranean_civilization_chain"
+				target = ROOT
+			}
+		}
+		enable_special_project = {
+			name = "PRIMPLAYER_SEISMIC_DISTURBANCE_2_PROJECT" #Preemptive Strike
+			location = this
+			owner = root
+		}
+
+	}
+}
+
+# Special Project Completed 1
+planet_event = {
+	id = random_primitive_events.251
+	title = "PROJECT_COMPLETE"
+	desc = "random_primitive_events.251.desc"
+	picture = GFX_evt_underground_civilization
+	show_sound = event_alien_signal
+	location = ROOT
+	event_chain = PrimPlayer_subterranean_civilization_chain
+
+	is_triggered_only = yes
+
+	immediate = {
+		owner = { save_event_target_as = subterranean_planet_owner@root.owner }
+		set_planet_flag = seismic_disturbance_friendly
+		PrimPlayer_create_subterranean_nation = { FLAG = subterranean_nation@ROOT.OWNER }	#Why does vanilla make this faction 4 times?
+	}
+
+	option = {
+		name = random_primitive_events.251.a
+		hidden_effect = {
+			owner = { country_event = { id = random_primitive_events.253 } }
+		}
+	}
+}
+
+# Special Project Completed 2 or 3
+planet_event = {
+	id = random_primitive_events.252
+	title = "PROJECT_COMPLETE"
+	desc = "random_primitive_events.252.desc"
+	picture = GFX_evt_underground_civilization
+	show_sound = event_structural_collapse
+	location = ROOT
+	event_chain = PrimPlayer_subterranean_civilization_chain
+
+	is_triggered_only = yes
+
+	immediate = {
+		set_planet_flag = seismic_disturbance_destroyed
+		remove_planet_flag = seismic_disturbance_war
+
+		remove_deposit = d_underground_farm_blocked
+		remove_deposit = d_underground_mine_blocked
+		remove_deposit = d_underground_generator_blocked
+
+		add_deposit = d_underground_farm_dead
+		add_deposit = d_underground_mine_dead
+		add_deposit = d_underground_generator_dead
+
+		remove_deposit = d_underground_contact_zone
+	}
+
+	option = {
+		name = random_primitive_events.252.a
+		custom_tooltip = underground_expansion_tooltip
+	}
+}
+
+# Subterranean Aliens
+country_event = {
+	id = random_primitive_events.253
+	title = "random_primitive_events.253.name"
+	desc = {
+		trigger = {
+			is_subterranean_empire = no
+		}
+		text = "random_primitive_events.253.desc"
+	}
+	desc = {
+		trigger = {
+			is_subterranean_empire = yes
+		}
+		text = "random_primitive_events.253.desc.subterranean"
+	}
+
+	is_triggered_only = yes
+
+	diplomatic = yes
+
+	picture_event_data = {
+		room = no_video_feed_room
+	}
+
+	option = {
+		name = random_primitive_events.253.a
+		response_text = random_primitive_events.253.a.response
+		is_dialog_only = yes
+	}
+	option = {
+		trigger = {
+			is_subterranean_empire = no
+		}
+		name = random_primitive_events.253.b
+		response_text = "random_primitive_events.253.b.response"
+		hidden_effect = {
+			FROM = {
+				set_planet_flag = seismic_disturbance_friendly
+				PrimPlayer_create_subterranean_nation = { FLAG = subterranean_nation@ROOT }	#Why does vanilla make this faction 4 times?
+			}
+		}
+		FROM = {
+			add_modifier = {
+				modifier = "subterranean_civilization"
+				days = -1
+			}
+			add_deposit = d_underground_contact_zone
+			#set_planet_flag = trade_size_increase
+		}
+	}
+	option = {
+		trigger = {
+			is_subterranean_empire = yes
+		}
+		name = random_primitive_events.253.b
+		response_text = "random_primitive_events.253.b.response.subterranean"
+		hidden_effect = {
+			FROM = {
+				set_planet_flag = seismic_disturbance_friendly
+				PrimPlayer_create_subterranean_nation = { FLAG = subterranean_nation@ROOT }	#Why does vanilla make this faction 4 times?
+			}
+		}
+		FROM = {
+			add_modifier = {
+				modifier = "subterranean_civilization"
+				days = -1
+			}
+			add_deposit = d_underground_contact_zone
+			#set_planet_flag = trade_size_increase
+		}
+	}
+	option = {
+		name = random_primitive_events.253.c
+		response_text = random_primitive_events.253.c.response
+		hidden_effect = {
+			FROM = {
+				planet_event = { id = random_primitive_events.254 days = 35 random = 40 }
+			}
+		}
+	}
+}
+
+# Subterranean Invasion!
+planet_event = {
+	id = random_primitive_events.254
+	title = "random_primitive_events.254.name"
+	desc = {
+		trigger = {
+			owner = {
+				is_subterranean_empire = no
+			}
+		}
+		text = "random_primitive_events.254.desc"
+	}
+	desc = {
+		trigger = {
+			owner = {
+				is_subterranean_empire = yes
+			}
+		}
+		text = "random_primitive_events.254.desc.subterranean"
+	}
+	picture = GFX_evt_ground_combat
+	show_sound = event_ground_battle
+	location = ROOT
+	event_chain = PrimPlayer_subterranean_civilization_chain
+
+	is_triggered_only = yes
+
+	immediate = {
+		PrimPlayer_create_subterranean_nation = { FLAG = subterranean_nation@ROOT.OWNER } #makes sure the event targets are set	#Why does vanilla make this faction 4 times?
+		owner = {
+			set_country_flag = has_fought_subterraneans
+			set_country_flag = subterranean_invasion_country
+		}
+		set_planet_flag = subterranean_invasion_planet
+		event_target:subterranean_nation@root.owner = {
+			create_leader = {
+				class = commander
+				species = owner_main_species
+				name = random
+				skill = 3
+			}
+		}
+		if = {
+			limit = {
+				event_target:subterranean_nation@root.owner = {
+					NOT = { has_country_flag = tech_request_approved }
+				}
+			}
+			while = {
+				count = 6
+				create_army = {
+					name = "NAME_Invading_Horde"
+					owner = event_target:subterranean_nation@root.owner
+					species = event_target:subterranean_species@root.owner
+					type = "subterranean_industrial_army"
+					leader = last_created_leader
+				}
+			}
+		}
+		if = {
+			limit = {
+				event_target:subterranean_nation@root.owner = { has_country_flag = tech_request_approved }
+			}
+			while = {
+				count = 6
+				create_army = {
+					name = "NAME_Invading_Horde"
+					owner = event_target:subterranean_nation@root.owner
+					species = event_target:subterranean_species@root.owner
+					type = "subterranean_postatomic_army"
+					leader = last_created_leader
+				}
+			}
+		}
+	}
+
+	after = {
+		remove_deposit = d_underground_contact_zone
+	}
+
+	option = {
+		name = random_primitive_events.254.a
+		custom_tooltip = subterranean_invasion
+	}
+}
+
+# Victory
+country_event = {
+	id = random_primitive_events.256
+	title = "random_primitive_events.256.name"
+	desc = {
+		trigger = {
+			is_subterranean_empire = no
+		}
+		text = "random_primitive_events.256.desc"
+	}
+	desc = {
+		trigger = {
+			is_subterranean_empire = yes
+		}
+		text = "random_primitive_events.256.desc.subterranean"
+	}
+	picture = GFX_evt_ground_combat
+	show_sound = event_ground_battle
+	location = FROMFROM
+	trackable = yes
+	event_chain = PrimPlayer_subterranean_civilization_chain
+
+	is_triggered_only = yes
+
+	trigger = {
+		has_country_flag = subterranean_invasion_country
+		NOT = { has_country_flag = subterraneans_defeated_once }
+		FROMFROM = { has_planet_flag = subterranean_invasion_planet }
+	}
+
+	immediate = {
+		remove_country_flag = subterranean_invasion_country
+		set_country_flag = subterraneans_defeated_once
+		FROMFROM = {
+			set_planet_flag = seismic_disturbance_war
+			remove_planet_flag = subterranean_invasion_planet
+		}
+	}
+
+	option = {
+		name = random_primitive_events.256.a
+		enable_special_project = {
+			name = "PRIMPLAYER_SEISMIC_DISTURBANCE_3_PROJECT" #Destroy them
+			location = FROMFROM
+			owner = ROOT
+		}
+	}
+}
+
+# Defeat
+country_event = {
+	id = random_primitive_events.257
+	title = "random_primitive_events.257.name"
+	desc = "random_primitive_events.257.desc"
+	picture = GFX_evt_surrender
+	show_sound = event_alien_signal
+	location = FROMFROM
+	event_chain = PrimPlayer_subterranean_civilization_chain
+
+	is_triggered_only = yes
+
+	trigger = {
+		has_country_flag = subterranean_invasion_country
+		FROMFROM = { has_planet_flag = subterranean_invasion_planet }
+		from = { is_country_type = PrimPlayer_adversary }
+	}
+
+	immediate = {
+		remove_country_flag = subterranean_invasion_country
+		save_event_target_as = subterranean_former_planet_owner@root
+		from = {
+			save_event_target_as = subterranean_nation@ROOT
+			owner_species = { save_event_target_as = subterranean_species@ROOT }
+		}
+		fromfrom = {
+			create_country = {
+				name = random
+				species = event_target:subterranean_species@ROOT
+				type = default
+				auto_delete = yes
+				origin = origin_subterranean
+				ethos = {
+					ethic = ethic_fanatic_militarist
+					ethic = ethic_authoritarian
+				}
+				authority = random
+				civics = random
+				flag = {
+					icon = {
+						category = "zoological"
+						file = "flag_zoological_10.dds"
+					}
+					background = {
+						category = "backgrounds"
+						file = "new_dawn.dds"
+					}
+					colors = {
+						"red"
+						"black"
+						"null"
+						"null"
+					}
+				}
+			}
+			last_created_country = {
+				set_relation_flag = {
+					who = event_target:subterranean_former_planet_owner@ROOT
+					flag = subwar
+				}
+				set_country_flag = subterranean_empire
+				establish_communications_no_message = event_target:subterranean_former_planet_owner@ROOT
+				save_event_target_as = subterranean_empire@root
+				owner_species = { save_event_target_as = subterranean_species@root }
+			}
+		}
+		from = { destroy_country = yes }
+		FROMFROM = {
+			remove_planet_flag = subterranean_invasion_planet
+			save_event_target_as = conquered_planet@root
+			set_owner = event_target:subterranean_empire@ROOT
+			if = {
+				limit = {
+					pop_amount > 200
+				}
+				random_owned_pop_group = {
+					kill_single_pop = yes
+				}
+			}
+			if = {
+				limit = {
+					pop_amount > 100
+				}
+				random_owned_pop_group = {
+					kill_single_pop = yes
+				}
+			}
+			create_pop_group = { species = event_target:subterranean_species@ROOT }
+			create_pop_group = { species = event_target:subterranean_species@ROOT }
+			create_army = {
+				name = "NAME_Loot_Equipped_Army"
+				owner = event_target:subterranean_empire@ROOT
+				species = event_target:subterranean_species@ROOT
+				type = "defense_army"
+			}
+			create_army = {
+				name = "NAME_Loot_Equipped_Army"
+				owner = event_target:subterranean_empire@ROOT
+				species = event_target:subterranean_species@ROOT
+				type = "defense_army"
+			}
+			# flip starbase
+			solar_system = {
+				if = {
+					limit = { exists = starbase }
+					starbase = { set_owner = event_target:subterranean_empire@ROOT }
+				}
+			}
+		}
+	}
+
+	option = {
+		name = "ONSCREEN"
+		end_event_chain = "PrimPlayer_subterranean_civilization_chain"
+		country_event = { id = random_primitive_events.258 }
+	}
+}
+
+# Incoming Transmission
+country_event = {
+	id = random_primitive_events.258
+	title = TRANSMISSION
+	desc = {
+		trigger = {
+			is_subterranean_empire = no
+		}
+		text = "random_primitive_events.258.desc"
+	}
+	desc = {
+		trigger = {
+			is_subterranean_empire = yes
+		}
+		text = "random_primitive_events.258.desc.subterranean"
+	}
+
+	diplomatic = yes
+
+	is_triggered_only = yes
+
+	picture_event_data = {
+		portrait = event_target:subterranean_empire@ROOT
+		room = event_target:subterranean_empire@ROOT.ruler
+	}
+
+	option = {
+		name = random_primitive_events.258.a
+	}
+}
+
+# Aliens Surface
+planet_event = {
+	id = random_primitive_events.259
+	title = "random_primitive_events.259.name"
+	desc = {
+		trigger = {
+			owner = {
+				is_subterranean_empire = no
+			}
+		}
+		text = "random_primitive_events.259.desc"
+	}
+	desc = {
+		trigger = {
+			owner = {
+				is_subterranean_empire = yes
+			}
+		}
+		text = "random_primitive_events.259.desc.subterranean"
+	}
+	picture = GFX_evt_alien_cavemen
+	show_sound = event_pre_ftl_civilization
+	location = ROOT
+	event_chain = PrimPlayer_subterranean_civilization_chain
+
+	is_triggered_only = yes
+
+	trigger = {
+		owner = { is_guided_sapience_empire = no }
+	}
+
+	option = {
+		name = random_primitive_events.259.a
+		owner = {
+			country_event = { id = random_primitive_events.253 }
+		}
+	}
+}
+
+# Another Invasion
+planet_event = {
+	id = random_primitive_events.260
+	title = "random_primitive_events.254.name"
+	desc = "random_primitive_events.260.desc"
+	picture = GFX_evt_ground_combat
+	show_sound = event_ground_battle
+	location = ROOT
+	event_chain = PrimPlayer_subterranean_civilization_chain
+
+	pre_triggers = {
+		has_owner = yes
+		is_homeworld = no
+		original_owner = yes
+		has_ground_combat = no
+	}
+
+	trigger = {
+		has_planet_flag = seismic_disturbance_war
+		pop_amount > 0
+	}
+
+	mean_time_to_happen = {
+		months = 240
+	}
+
+	immediate = {
+		owner = { set_country_flag = subterranean_invasion_country }
+		set_planet_flag = subterranean_invasion_planet
+		random_country = {
+			limit = {
+				is_country_type = PrimPlayer_adversary
+				has_country_flag = subterranean_nation@ROOT.OWNER
+			}
+			save_event_target_as = subterranean_nation@root
+			owner_species = { save_event_target_as = subterranean_species@root }
+			create_leader = {
+				class = commander
+				species = event_target:subterranean_species@root.owner
+				name = random
+				skill = 3
+			}
+		}
+		if = {
+			limit = {
+				event_target:subterranean_nation@root.owner = {
+					NOT = { has_country_flag = tech_request_approved }
+				}
+			}
+			create_army = {
+				name = "NAME_Invading_Horde"
+				owner = event_target:subterranean_nation@root.owner
+				species = event_target:subterranean_species@root.owner
+				type = "industrial_army"
+				leader = last_created_leader
+			}
+			create_army = {
+				name = "NAME_Invading_Horde"
+				owner = event_target:subterranean_nation@root.owner
+				species = event_target:subterranean_species@root.owner
+				type = "industrial_army"
+				leader = last_created_leader
+			}
+			create_army = {
+				name = "NAME_Invading_Horde"
+				owner = event_target:subterranean_nation@root.owner
+				species = event_target:subterranean_species@root.owner
+				type = "industrial_army"
+				leader = last_created_leader
+			}
+			create_army = {
+				name = "NAME_Invading_Horde"
+				owner = event_target:subterranean_nation@root.owner
+				species = event_target:subterranean_species@root.owner
+				type = "industrial_army"
+				leader = last_created_leader
+			}
+			create_army = {
+				name = "NAME_Invading_Horde"
+				owner = event_target:subterranean_nation@root.owner
+				species = event_target:subterranean_species@root.owner
+				type = "industrial_army"
+				leader = last_created_leader
+			}
+			create_army = {
+				name = "NAME_Invading_Horde"
+				owner = event_target:subterranean_nation@root.owner
+				species = event_target:subterranean_species@root.owner
+				type = "industrial_army"
+				leader = last_created_leader
+			}
+			create_army = {
+				name = "NAME_Invading_Horde"
+				owner = event_target:subterranean_nation@root.owner
+				species = event_target:subterranean_species@root.owner
+				type = "industrial_army"
+				leader = last_created_leader
+			}
+			create_army = {
+				name = "NAME_Invading_Horde"
+				owner = event_target:subterranean_nation@root.owner
+				species = event_target:subterranean_species@root.owner
+				type = "industrial_army"
+				leader = last_created_leader
+			}
+			break = yes
+		}
+		if = {
+			limit = {
+				event_target:subterranean_nation@root.owner = { has_country_flag = tech_request_approved }
+			}
+			create_army = {
+				name = "NAME_Invading_Horde"
+				owner = event_target:subterranean_nation@root.owner
+				species = event_target:subterranean_species@root.owner
+				type = "postatomic_army"
+				leader = last_created_leader
+			}
+			create_army = {
+				name = "NAME_Invading_Horde"
+				owner = event_target:subterranean_nation@root.owner
+				species = event_target:subterranean_species@root.owner
+				type = "postatomic_army"
+				leader = last_created_leader
+			}
+			create_army = {
+				name = "NAME_Invading_Horde"
+				owner = event_target:subterranean_nation@root.owner
+				species = event_target:subterranean_species@root.owner
+				type = "postatomic_army"
+				leader = last_created_leader
+			}
+			create_army = {
+				name = "NAME_Invading_Horde"
+				owner = event_target:subterranean_nation@root.owner
+				species = event_target:subterranean_species@root.owner
+				type = "postatomic_army"
+				leader = last_created_leader
+			}
+			create_army = {
+				name = "NAME_Invading_Horde"
+				owner = event_target:subterranean_nation@root.owner
+				species = event_target:subterranean_species@root.owner
+				type = "postatomic_army"
+				leader = last_created_leader
+			}
+			create_army = {
+				name = "NAME_Invading_Horde"
+				owner = event_target:subterranean_nation@root.owner
+				species = event_target:subterranean_species@root.owner
+				type = "postatomic_army"
+				leader = last_created_leader
+			}
+			create_army = {
+				name = "NAME_Invading_Horde"
+				owner = event_target:subterranean_nation@root.owner
+				species = event_target:subterranean_species@root.owner
+				type = "postatomic_army"
+				leader = last_created_leader
+			}
+			create_army = {
+				name = "NAME_Invading_Horde"
+				owner = event_target:subterranean_nation@root.owner
+				species = event_target:subterranean_species@root.owner
+				type = "postatomic_army"
+				leader = last_created_leader
+			}
+			break = yes
+		}
+	}
+
+	option = {
+		name = random_primitive_events.260.a
+		custom_tooltip = subterranean_invasion_2
+	}
+}
+
+# Collapse
+planet_event = {
+	id = random_primitive_events.261
+	title = "random_primitive_events.261.name"
+	desc = "random_primitive_events.261.desc"
+	picture = GFX_evt_underground_civilization
+	show_sound = event_structural_collapse
+	location = ROOT
+	event_chain = PrimPlayer_subterranean_civilization_chain
+
+	pre_triggers = {
+		has_owner = yes
+		is_homeworld = no
+		original_owner = yes
+		has_ground_combat = no
+	}
+
+	trigger = {
+		has_planet_flag = seismic_disturbance_war
+		NOT = { has_planet_flag = seismic_disturbance_collapse }
+		has_army = yes
+		pop_amount > 0
+	}
+
+	mean_time_to_happen = {
+		months = 240
+	}
+
+	immediate = {
+		set_planet_flag = seismic_disturbance_collapse
+	}
+
+	option = {
+		name = random_primitive_events.261.a
+		add_deposit = d_sinkhole_subterraneans
+		random_planet_army = {
+			limit = {
+				is_owned_by = planet.owner
+			}
+			remove_army = yes
+		}
+	}
+}
+
+# Raiding Parties
+planet_event = {
+	id = random_primitive_events.262
+	title = "random_primitive_events.262.name"
+	desc = "random_primitive_events.262.desc"
+	picture = GFX_evt_burning_settlement
+	show_sound = event_ground_battle
+	location = ROOT
+	event_chain = PrimPlayer_subterranean_civilization_chain
+
+	pre_triggers = {
+		has_owner = yes
+		is_homeworld = no
+		original_owner = yes
+		has_ground_combat = no
+	}
+
+	trigger = {
+		has_planet_flag = seismic_disturbance_war
+		NOT = { has_planet_flag = seismic_disturbance_raid }
+		pop_amount > 0
+	}
+
+	mean_time_to_happen = {
+		months = 240
+	}
+
+	immediate = {
+		set_planet_flag = seismic_disturbance_raid
+		add_planet_devastation = 10
+	}
+
+	option = {
+		name = random_primitive_events.262.a
+		tooltip = {
+			add_planet_devastation = 10
+		}
+	}
+}
+
+# Surface Attack
+planet_event = {
+	id = random_primitive_events.263
+	title = "random_primitive_events.263.name"
+	desc = "random_primitive_events.263.desc"
+	picture = GFX_evt_burning_settlement
+	show_sound = event_ground_battle
+	location = ROOT
+	event_chain = PrimPlayer_subterranean_civilization_chain
+
+	pre_triggers = {
+		has_owner = yes
+		is_homeworld = no
+		original_owner = yes
+		has_ground_combat = no
+	}
+
+	trigger = {
+		has_planet_flag = seismic_disturbance_war
+		NOT = { has_planet_flag = seismic_disturbance_attack }
+		pop_amount > 100
+	}
+
+	mean_time_to_happen = {
+		months = 240
+	}
+
+	immediate = {
+		set_planet_flag = seismic_disturbance_attack
+	}
+
+	option = {
+		name = random_primitive_events.263.a
+		add_planet_devastation = 10
+		random_owned_pop_group = {
+			kill_single_pop = yes
+		}
+		add_deposit = d_sinkhole_subterraneans
+	}
+}
+
+# Survivor Pocket
+planet_event = {
+	id = random_primitive_events.264
+	title = "random_primitive_events.264.name"
+	desc = "random_primitive_events.264.desc"
+	picture = GFX_evt_in_the_dark
+	show_sound = event_scanner
+	location = ROOT
+	event_chain = PrimPlayer_subterranean_civilization_chain
+
+	pre_triggers = {
+		has_owner = yes
+		is_homeworld = no
+		original_owner = yes
+	}
+
+	trigger = {
+		has_planet_flag = seismic_disturbance_destroyed
+		NOT = { has_planet_flag = seismic_disturbance_pocket }
+		has_ground_combat = no
+		pop_amount > 0
+	}
+
+	mean_time_to_happen = {
+		months = 240
+	}
+
+	immediate = {
+		set_planet_flag = seismic_disturbance_pocket
+		create_species = {
+			name = random
+			class = random_non_machine
+			portrait = random
+			traits = random
+			homeworld = planet
+		}
+		last_created_species = {
+			save_event_target_as = subterranean_species@root.owner
+		}
+	}
+
+	option = {
+		name = random_primitive_events.264.a
+	}
+	option = {
+		name = {
+			trigger = {
+				owner = {
+					is_subterranean_empire = no
+				}
+			}
+			text = "random_primitive_events.264.b"
+		}
+		name = {
+			trigger = {
+				owner = {
+					is_subterranean_empire = yes
+				}
+			}
+			text = "random_primitive_events.264.b.subterranean"
+		}
+		trigger = {
+			#free_housing > 500
+			owner = { OR = { is_authoritarian = yes is_xenophobe = yes } }
+		}
+		hidden_effect = {
+			owner = {
+				if = {
+					limit = { any_situation = { is_situation_type = PrimPlayer_situation } }	#Provides Subterranean Origin Outcome
+					owner = { set_country_flag = origin_subterranean_population_adopted }
+				}
+			}
+			create_pop_group = {
+				species = event_target:subterranean_species@root.owner
+				ethos = {
+					ethic = "ethic_spiritualist"
+				}
+			}
+			create_pop_group = {
+				species = event_target:subterranean_species@root.owner
+				ethos = {
+					ethic = "ethic_spiritualist"
+				}
+				effect = { save_event_target_as = subterranean_species_pop_group@root.owner }
+			}
+			event_target:subterranean_species_pop_group@root.owner = {
+				set_citizenship_type = { type = citizenship_slavery cooldown = yes }
+			}
+		}
+	}
+}
+
+# Subterranean Expansion
+planet_event = {
+	id = random_primitive_events.265
+	title = "random_primitive_events.257.name"
+	desc = "random_primitive_events.265.desc"
+	picture = GFX_evt_in_the_dark
+	show_sound = event_construction
+	location = ROOT
+	event_chain = PrimPlayer_subterranean_civilization_chain
+
+	pre_triggers = {
+		has_owner = yes
+		is_homeworld = no
+		original_owner = yes
+		has_ground_combat = no
+	}
+
+	trigger = {
+		has_planet_flag = seismic_disturbance_destroyed
+		NOT = { has_planet_flag = seismic_disturbance_expansion }
+		#has_any_strategic_resource = no
+		pop_amount > 0
+		#planet_size < 25
+	}
+
+	mean_time_to_happen = {
+		months = 240
+	}
+
+	immediate = {
+		set_planet_flag = seismic_disturbance_expansion
+	}
+
+	option = {
+		name = EXCELLENT
+		add_modifier = {
+			modifier = "subterranean_expansion"
+			days = -1
+		}
+		#change_planet_size = +1
+	}
+}
+
+# Gold!
+planet_event = {
+	id = random_primitive_events.266
+	title = "random_primitive_events.266.name"
+	desc = {
+		trigger = {
+			owner = {
+				is_subterranean_empire = no
+			}
+		}
+		text = "random_primitive_events.266.desc"
+	}
+	desc = {
+		trigger = {
+			owner = {
+				is_subterranean_empire = yes
+			}
+		}
+		text = "random_primitive_events.266.desc.subterranean"
+	}
+	picture = GFX_evt_in_the_dark
+	show_sound = event_mystic_reveal
+	location = ROOT
+	event_chain = PrimPlayer_subterranean_civilization_chain
+
+	pre_triggers = {
+		has_owner = yes
+		is_homeworld = no
+		original_owner = yes
+		has_ground_combat = no
+	}
+
+	trigger = {
+		has_planet_flag = seismic_disturbance_destroyed
+		NOT = { has_planet_flag = seismic_disturbance_gold }
+		pop_amount > 0
+	}
+
+	mean_time_to_happen = {
+		months = 240
+	}
+
+	immediate = {
+		hidden_effect = {
+			set_planet_flag = seismic_disturbance_gold
+		}
+	}
+
+	option = {
+		name = EXCELLENT
+		owner = {
+			add_monthly_resource_mult = {
+				resource = energy
+				value = @tier1materialreward
+				min = @tier1materialmin
+				max = @tier1materialmax
+			}
+		}
+	}
+}
+
+# Treasury
+planet_event = {
+	id = random_primitive_events.267
+	title = "random_primitive_events.267.name"
+	desc = "random_primitive_events.267.desc"
+	picture = GFX_evt_in_the_dark
+	show_sound = event_radio_chatter
+	location = ROOT
+	event_chain = PrimPlayer_subterranean_civilization_chain
+
+	pre_triggers = {
+		has_owner = yes
+		is_homeworld = no
+		original_owner = yes
+		has_ground_combat = no
+	}
+
+	trigger = {
+		has_planet_flag = seismic_disturbance_destroyed
+		NOT = { has_planet_flag = seismic_disturbance_treasury }
+		pop_amount > 0
+	}
+
+	mean_time_to_happen = {
+		months = 240
+	}
+
+	immediate = {
+		set_planet_flag = seismic_disturbance_treasury
+	}
+
+	option = {
+		name = EXCELLENT
+		owner = {
+			add_monthly_resource_mult = {
+				resource = energy
+				value = @tier1materialreward
+				min = @tier1materialmin
+				max = @tier1materialmax
+			}
+		}
+	}
+}
+
+# Earthquakes 1
+planet_event = {
+	id = random_primitive_events.268
+	title = "random_primitive_events.268.name"
+	desc = "random_primitive_events.268.desc"
+	picture = GFX_evt_burning_city
+	show_sound = event_burning_city
+	location = ROOT
+	event_chain = PrimPlayer_subterranean_civilization_chain
+
+	pre_triggers = {
+		has_owner = yes
+		is_homeworld = no
+		original_owner = yes
+		has_ground_combat = no
+	}
+
+	trigger = {
+		has_planet_flag = seismic_disturbance_destroyed
+		NOT = { has_planet_flag = seismic_disturbance_quake }
+		pop_amount > 0
+	}
+
+	mean_time_to_happen = {
+		months = 240
+	}
+
+	immediate = {
+		set_planet_flag = seismic_disturbance_quake
+		add_planet_devastation = 10
+
+	}
+
+	option = {
+		name = UNFORTUNATE
+		tooltip = {
+			add_planet_devastation = 10
+		}
+	}
+}
+
+# Famine
+planet_event = {
+	id = random_primitive_events.269
+	title = "random_primitive_events.269.name"
+	desc = "random_primitive_events.269.desc"
+	picture = GFX_evt_alien_cavemen
+	show_sound = event_pre_ftl_civilization
+	location = ROOT
+	event_chain = PrimPlayer_subterranean_civilization_chain
+
+	pre_triggers = {
+		has_owner = yes
+		is_homeworld = no
+		original_owner = yes
+		has_ground_combat = no
+	}
+
+	trigger = {
+		has_planet_flag = seismic_disturbance_friendly
+		NOT = { has_planet_flag = seismic_disturbance_famine }
+		pop_amount > 0
+	}
+
+	mean_time_to_happen = {
+		months = 240
+	}
+
+	immediate = {
+		set_planet_flag = seismic_disturbance_famine
+	}
+
+	option = {
+		name = random_primitive_events.269.a
+		allow = {
+			owner = {
+				resource_stockpile_compare = { resource = food value >= 50 }
+			}
+		}
+		owner = {
+			add_resource = { food = -50 }
+		}
+		hidden_effect = {
+			change_variable = {
+				which = "angry_subterraneans"
+				value = -1
+			}
+		}
+		custom_tooltip = subterraneans_pleased
+	}
+	option = {
+		name = random_primitive_events.269.b
+		hidden_effect = {
+			change_variable = {
+				which = "angry_subterraneans"
+				value = 1
+			}
+		}
+		custom_tooltip = subterraneans_displeased
+	}
+}
+
+# Gift
+planet_event = {
+	id = random_primitive_events.270
+	title = "random_primitive_events.270.name"
+	desc = {
+		trigger = {
+			owner = {
+				is_subterranean_empire = no
+			}
+		}
+		text = "random_primitive_events.270.desc"
+	}
+	desc = {
+		trigger = {
+			owner = {
+				is_subterranean_empire = yes
+			}
+		}
+		text = "random_primitive_events.270.desc.subterranean"
+	}
+	picture = GFX_evt_alien_cavemen
+	show_sound = event_pre_ftl_civilization
+	location = ROOT
+	event_chain = PrimPlayer_subterranean_civilization_chain
+
+	pre_triggers = {
+		has_owner = yes
+		is_homeworld = no
+		original_owner = yes
+		has_ground_combat = no
+	}
+
+	trigger = {
+		has_planet_flag = seismic_disturbance_friendly
+		NOT = { has_planet_flag = seismic_disturbance_gift }
+		pop_amount > 0
+		check_variable = {
+			which = "angry_subterraneans"
+			value < 1
+		}
+	}
+
+	mean_time_to_happen = {
+		months = 240
+	}
+
+	immediate = {
+		set_planet_flag = seismic_disturbance_gift
+	}
+
+	option = {
+		name = random_primitive_events.270.a
+		owner = {
+			add_monthly_resource_mult = {
+				resource = minerals
+				value = @tier1materialreward
+				min = @tier1materialmin
+				max = @tier1materialmax
+			}
+		}
+	}
+}
+
+# Subterranean Refugees
+planet_event = {
+	id = random_primitive_events.271
+	title = "random_primitive_events.271.name"
+	desc = {
+		trigger = {
+			owner = {
+				is_subterranean_empire = no
+			}
+		}
+		text = "random_primitive_events.271.desc"
+	}
+	desc = {
+		trigger = {
+			owner = {
+				is_subterranean_empire = yes
+			}
+		}
+		text = "random_primitive_events.271.desc.subterranean"
+	}
+	picture = GFX_evt_alien_cavemen
+	show_sound = event_pre_ftl_civilization
+	location = ROOT
+	event_chain = PrimPlayer_subterranean_civilization_chain
+
+	pre_triggers = {
+		has_owner = yes
+		is_homeworld = no
+		original_owner = yes
+		has_ground_combat = no
+	}
+
+	trigger = {
+		has_planet_flag = seismic_disturbance_friendly
+		NOT = { has_planet_flag = seismic_disturbance_refugees }
+		pop_amount > 0	
+		#free_housing > 0
+	}
+
+	mean_time_to_happen = {
+		months = 240
+	}
+
+	immediate = {
+		set_planet_flag = seismic_disturbance_refugees
+		random_country = {
+			limit = {
+				is_country_type = PrimPlayer_adversary
+				has_country_flag = subterranean_nation@ROOT.OWNER
+			}
+			owner_species = { save_event_target_as = subterranean_species@root.owner }
+		}
+	}
+
+	option = {
+		name = random_primitive_events.271.a
+		trigger = {
+			#free_housing > 0
+		}
+		create_pop_group = {
+			species = event_target:subterranean_species@root.owner
+			ethos = {
+				ethic = "ethic_spiritualist"
+			}
+		}
+		hidden_effect = {
+			owner = {
+				if = {
+					limit = { any_situation = { is_situation_type = PrimPlayer_situation } }	#Provides Subterranean Origin Outcome
+					owner = { set_country_flag = origin_subterranean_population_adopted }
+				}
+			}
+			change_variable = {
+				which = "angry_subterraneans"
+				value = 1
+			}
+		}
+		custom_tooltip = subterraneans_displeased
+	}
+	option = {
+		name = random_primitive_events.271.b
+		hidden_effect = {
+			change_variable = {
+				which = "angry_subterraneans"
+				value = -1
+			}
+		}
+		custom_tooltip = subterraneans_pleased
+	}
+}
+
+# Xeno Anthropologists
+planet_event = {
+	id = random_primitive_events.272
+	title = "random_primitive_events.272.name"
+	desc = "random_primitive_events.272.desc"
+	picture = GFX_evt_underground_civilization
+	show_sound = event_pre_ftl_civilization
+	location = ROOT
+	event_chain = PrimPlayer_subterranean_civilization_chain
+
+	pre_triggers = {
+		has_owner = yes
+		is_homeworld = no
+		original_owner = yes
+		has_ground_combat = no
+	}
+
+	trigger = {
+		has_planet_flag = seismic_disturbance_friendly
+		NOT = { has_planet_flag = seismic_disturbance_anthropologists }
+		pop_amount > 0	
+		check_variable = {
+			which = "angry_subterraneans"
+			value < 1
+		}
+	}
+
+	mean_time_to_happen = {
+		months = 240
+	}
+
+	immediate = {
+		set_planet_flag = seismic_disturbance_anthropologists
+	}
+
+	option = {
+		name = EXCELLENT
+		owner = {
+			add_monthly_resource_mult = {
+				resource = society_research
+				value = @tier3researchreward
+				min = @tier3researchmin
+				max = @tier3researchmax
+			}
+		}
+	}
+}
+
+# Earthquakes 2
+planet_event = {
+	id = random_primitive_events.273
+	title = "random_primitive_events.268.name"
+	desc = "random_primitive_events.273.desc"
+	picture = GFX_evt_underground_civilization
+	show_sound = event_air_raid_siren
+	location = ROOT
+	event_chain = PrimPlayer_subterranean_civilization_chain
+
+	pre_triggers = {
+		has_owner = yes
+		is_homeworld = no
+		original_owner = yes
+		has_ground_combat = no
+	}
+
+	trigger = {
+		has_planet_flag = seismic_disturbance_friendly
+		NOT = { has_planet_flag = seismic_disturbance_quake2 }
+		pop_amount > 0	
+	}
+
+	mean_time_to_happen = {
+		months = 240
+	}
+
+	immediate = {
+		set_planet_flag = seismic_disturbance_quake2
+		add_planet_devastation = 10
+	}
+
+	option = {
+		name = random_primitive_events.273.a
+		tooltip = {
+			add_planet_devastation = 10
+		}
+		every_owned_pop_group = {
+			add_modifier = {
+				modifier = "pop_angry_subterranean"
+				days = 3600
+			}
+		}
+	}
+	option = {
+		name = random_primitive_events.273.b
+		tooltip = {
+			add_planet_devastation = 10
+		}
+		hidden_effect = {
+			change_variable = {
+				which = "angry_subterraneans"
+				value = 1
+			}
+		}
+		custom_tooltip = subterraneans_displeased
+	}
+}
+
+# Request for Technology
+planet_event = {
+	id = random_primitive_events.274
+	title = "random_primitive_events.274.name"
+	desc = "random_primitive_events.274.desc"
+	picture = GFX_evt_alien_cavemen
+	show_sound = event_pre_ftl_civilization
+	location = ROOT
+	event_chain = PrimPlayer_subterranean_civilization_chain
+
+	pre_triggers = {
+		has_owner = yes
+		is_homeworld = no
+		original_owner = yes
+		has_ground_combat = no
+	}
+
+	trigger = {
+		has_planet_flag = seismic_disturbance_friendly
+		NOT = { has_planet_flag = seismic_disturbance_tech }
+		pop_amount > 0	
+	}
+
+	mean_time_to_happen = {
+		months = 240
+	}
+
+	immediate = {
+		set_planet_flag = seismic_disturbance_tech
+	}
+
+	option = {
+		name = random_primitive_events.274.a
+		hidden_effect = {
+			change_variable = {
+				which = "angry_subterraneans"
+				value = 1
+			}
+		}
+		custom_tooltip = subterraneans_displeased
+	}
+	option = {
+		name = random_primitive_events.274.b
+		owner = {
+			add_modifier = {
+				modifier = subterranean_tech_transaction
+				days = 3600
+			}
+		}
+		hidden_effect = {
+			change_variable = {
+				which = "angry_subterraneans"
+				value = -1
+			}
+			random_country = {
+				limit = {
+					is_country_type = PrimPlayer_adversary
+					has_country_flag = subterranean_nation@ROOT.OWNER
+				}
+				set_country_flag = tech_request_approved
+			}
+		}
+		custom_tooltip = subterraneans_pleased
+	}
+}
+
+# Message Delivered
+planet_event = {
+	id = random_primitive_events.275
+	title = "random_primitive_events.275.name"
+	desc = "random_primitive_events.275.desc"
+	picture = GFX_evt_alien_cavemen
+	show_sound = event_pre_ftl_civilization
+	location = ROOT
+	event_chain = PrimPlayer_subterranean_civilization_chain
+
+	pre_triggers = {
+		has_owner = yes
+		is_homeworld = no
+		original_owner = yes
+	}
+
+	trigger = {
+		has_planet_flag = seismic_disturbance_friendly
+		check_variable = {
+			which = "angry_subterraneans"
+			value > 2
+		}
+	}
+
+	mean_time_to_happen = {
+		days = 20
+	}
+
+	immediate = {
+		hidden_effect = {
+			remove_planet_flag = seismic_disturbance_friendly
+		}
+	}
+
+	option = {
+		name = random_primitive_events.275.a
+		owner = {
+			country_event = { id = random_primitive_events.276 }
+		}
+	}
+}
+
+# Message
+country_event = {
+	id = random_primitive_events.276
+	title = "random_primitive_events.276.name"
+	desc = {
+		trigger = {
+			owner = {
+				is_subterranean_empire = no
+			}
+		}
+		text = "random_primitive_events.276.desc"
+	}
+	desc = {
+		trigger = {
+			owner = {
+				is_subterranean_empire = yes
+			}
+		}
+		text = "random_primitive_events.276.desc.subterranean"
+	}
+
+	is_triggered_only = yes
+
+	diplomatic = yes
+
+	picture_event_data = {
+		room = no_video_feed_room
+	}
+
+	immediate = {
+		random_country = {
+			limit = {
+				has_country_flag = subterranean_nation@ROOT
+				is_country_type = PrimPlayer_adversary
+			}
+			save_event_target_as = subterranean_nation@root
+		}
+	}
+
+	option = {
+		name = random_primitive_events.276.a
+		FROM = {
+			remove_modifier = "subterranean_civilization"
+		}
+		hidden_effect = {
+			FROM = {
+				planet_event = { id = random_primitive_events.254 days = 35 random = 40 }
+			}
+		}
+	}
+}
+
+########################################################################################################
+
 
 fleet_event = {
 	id = random_primitive_events.3

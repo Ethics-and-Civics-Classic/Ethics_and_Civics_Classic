@@ -417,6 +417,32 @@ situation_event = {
 	}
 	
 	option = {
+		name = origin_subterranean
+		trigger = { 
+			owner = { 
+				has_country_flag = origin_subterranean_population_adopted
+				owner_main_species = { NOT = { has_trait = trait_machine_unit } }
+				has_overlord_dlc = yes
+			}
+		}
+		hidden_effect = { owner = { set_origin = origin_subterranean } }
+		custom_tooltip = PrimPlay_situation_event.1.origin_subterranean
+	}
+	
+	option = {
+		name = origin_subterranean_machines
+		trigger = { 
+			owner = { 
+				has_country_flag = origin_subterranean_population_adopted
+				owner_main_species = { has_trait = trait_machine_unit }
+				has_overlord_dlc = yes
+			}
+		}
+		hidden_effect = { owner = { set_origin = origin_subterranean_machines } }
+		custom_tooltip = PrimPlay_situation_event.1.origin_subterranean_machines
+	}
+	
+	option = {
 		name = origin_default
 		hidden_effect = { owner = { set_origin = origin_default } }
 		custom_tooltip = PrimPlay_situation_event.1.origin_default
@@ -693,9 +719,9 @@ situation_event = {
 
 	trigger = { 
 		has_cosmic_storms_dlc = yes
+		owner.capital_scope.solar_system = { is_inside_storm = yes }
 		NOR = { 
 			has_situation_flag = PrimPlay_situation_event_1002_finished 
-			has_situation_flag = PrimPlay_situation_event_1002_cancel
 			has_situation_flag = PrimPlay_situation_event_1002_pause
 		}
 		owner = { has_technology = tech_primitive_radiowave_telescope }
@@ -705,13 +731,11 @@ situation_event = {
 
 	option = {
 		name = PrimPlay_situation_event.1002.fund
-		allow = {
-			owner = {
-				has_country_resource = { type = influence amount >= 100 }
-			}
-		}
 		owner = {
-			add_resource = { influence = -100 }
+			begin_event_chain = {
+				event_chain = STORM_CHASER_CAPSULE_PROJECT_chain
+				target = capital_scope
+			}
 			capital_scope = {
 				enable_special_project = {
 					name = "STORM_CHASER_CAPSULE_PROJECT"
@@ -731,18 +755,32 @@ situation_event = {
 	
 	option = {
 		name = PrimPlay_situation_event.1002.later
-		set_timed_situation_flag = {
-			flag = PrimPlay_situation_event_1002_cancel
-			years = 3
-		}
-		owner.capital_scope = {
-			if = {
-				limit = { NOT = { has_modifier = irradiated_wasteland } }	#Might conflict with tomb world
-				add_modifier = {
-					modifier = "irradiated_wasteland"
+		default_hide_option = yes
+		owner = {
+			begin_event_chain = {
+				event_chain = STORM_CHASER_CAPSULE_PROJECT_chain
+				target = capital_scope
+			}
+			capital_scope = {
+				enable_special_project = {
+					name = "STORM_CHASER_CAPSULE_PROJECT"
+					location = this
+					owner = PREV.PREV
+				}
+				enable_special_project = {
+					name = "STORM_CHASER_CAPSULE_PROJECT_CANCEL"
+					location = this
+					owner = PREV.PREV
+				}
+				if = {
+					limit = { NOT = { has_modifier = irradiated_wasteland } }	#Might conflict with tomb world
+					add_modifier = {
+						modifier = "irradiated_wasteland"
+					}
 				}
 			}
 		}
+		set_situation_flag = PrimPlay_situation_event_1002_finished
 	}
 	
 	option = {
@@ -750,10 +788,23 @@ situation_event = {
 		allow = {
 			owner = { has_technology = tech_primitive_thrusters_0 }
 		}
-		owner.capital_scope = {
-			if = {
-				limit = { has_modifier = irradiated_wasteland }	#Might conflict with tomb world
-				remove_modifier = irradiated_wasteland
+		owner = {
+			begin_event_chain = {
+				event_chain = STORM_CHASER_CAPSULE_PROJECT_chain
+				target = capital_scope
+			}
+			capital_scope = {
+				enable_special_project = {
+					name = "STORM_CHASER_CAPSULE_PROJECT_CANCEL"
+					location = this
+					owner = PREV.PREV
+				}
+				if = {
+					limit = { NOT = { has_modifier = irradiated_wasteland } }	#Might conflict with tomb world
+					add_modifier = {
+						modifier = "irradiated_wasteland"
+					}
+				}
 			}
 		}
 		set_situation_flag = PrimPlay_situation_event_1002_finished

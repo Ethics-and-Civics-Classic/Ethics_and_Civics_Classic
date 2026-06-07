@@ -933,7 +933,14 @@ PrimPlayer_terraform_situation = {
 		#}
 	}
 	on_progress_complete = {
-			target = { planet_event = { id = random_primitive_events.211 } }
+		if = {
+			limit = { 
+				OWNER = { owner_main_species = { has_trait = trait_aquatic } }
+				target = { is_planet_class = pc_barren_cold }
+			}
+			target = { planet_event = { id = random_primitive_events.213 } }	#Ocean World
+		}
+		else = { target = { planet_event = { id = random_primitive_events.211 } } }
 	}
 	monthly_progress = {
 		base = 0 # total: 100
@@ -944,7 +951,7 @@ PrimPlayer_terraform_situation = {
 			current_situation_approach = PrimPlayer_terraform_situation_approach_halt
 		}
 		modifier = {
-			add = 0.5
+			add = 0.75
 			#add = 2	#Test Speed
 			desc = PrimPlayer_terraform_situation_approach_terraform
 			current_situation_approach = PrimPlayer_terraform_situation_approach_terraform
@@ -1014,7 +1021,7 @@ PrimPlayer_terraform_frozen_situation = {
 		#}
 	}
 	on_progress_complete = {
-			target = { planet_event = { id = random_primitive_events.213 } }
+		target = { planet_event = { id = random_primitive_events.213 } }
 	}
 	monthly_progress = {
 		base = 0 # total: 100
@@ -1025,7 +1032,7 @@ PrimPlayer_terraform_frozen_situation = {
 			current_situation_approach = PrimPlayer_terraform_situation_approach_halt
 		}
 		modifier = {
-			add = 0.5
+			add = 0.75
 			#add = 2	#Test Speed
 			desc = PrimPlayer_terraform_situation_approach_terraform
 			current_situation_approach = PrimPlayer_terraform_situation_approach_terraform
@@ -1054,13 +1061,95 @@ PrimPlayer_terraform_frozen_situation = {
 			owner = { has_technology = tech_terrestrial_sculpting }
 			#any_fleet_in_orbit = { is_ship_class = shipclass_science_ship }
 			TARGET = { any_fleet_in_orbit = { is_ship_class = shipclass_constructor } }
-			TARGET = { any_fleet_in_orbit = { is_ship_class = shipclass_constructor } }
 		} 
 		resources = {
 			category = situations
 			upkeep = {
 				energy = 50
 				food = 15
+				influence = 2
+			}
+		}
+	}
+}
+
+PrimPlayer_terraform_toxic_situation = {
+	picture = GFX_evt_toxic_planet
+	#fail_icon_frame = GFX_situation_outcome_frame_blue
+	#fail_icon = GFX_situation_outcome_unknown
+	#complete_icon_frame = GFX_situation_outcome_frame_blue
+	#complete_icon = GFX_situation_outcome_positive
+	abort_trigger = {
+		#target = { is_colonizable = yes }
+	}
+	modifier = {
+		
+	}
+	
+	stages = {
+		PrimPlayer_terraform_situation_stage_1 = {
+			icon = GFX_situation_stage_1
+			icon_background = GFX_situation_stage_frame_blue
+			end = 100
+			#custom_tooltip = awareness_unaware_tt
+		}
+		#PrimPlayer_terraform_situation_stage_2 = {
+		#	icon = GFX_situation_stage_2
+		#	icon_background = GFX_situation_stage_frame_blue
+		#	end = 100
+		#	#custom_tooltip = awareness_unaware_tt
+		#}
+	}
+	on_progress_complete = {
+		target = { planet_event = { id = random_primitive_events.216 } }
+	}
+	monthly_progress = {
+		base = 0 # total: 100
+		modifier = {
+			add = -0.1
+			desc = PrimPlayer_terraform_situation_approach_halt
+			situation_progress > 1
+			current_situation_approach = PrimPlayer_terraform_situation_approach_halt
+		}
+		modifier = {
+			add = 0.75
+			#add = 2	#Test Speed
+			desc = PrimPlayer_terraform_situation_approach_terraform
+			current_situation_approach = PrimPlayer_terraform_situation_approach_terraform
+		}
+	}
+	approach = {
+		name = PrimPlayer_terraform_situation_approach_halt
+		icon = GFX_situation_approach_research
+		icon_background = GFX_situation_approach_bg_red
+		default = yes
+		on_select = {
+			#set_situation_locked = yes
+			#custom_tooltip = 
+		}
+	}
+	approach = {
+		name = PrimPlayer_terraform_situation_approach_terraform
+		icon = GFX_situation_approach_research
+		icon_background = GFX_situation_approach_bg_green
+		default = no
+		on_select = {
+			#set_situation_locked = no
+			#custom_tooltip = 
+		}
+		allow = { 
+			owner = { 
+				has_technology = tech_terrestrial_sculpting 
+				has_ascension_perk = ap_detox
+			}
+			#any_fleet_in_orbit = { is_ship_class = shipclass_science_ship }
+			TARGET = { any_fleet_in_orbit = { is_ship_class = shipclass_constructor } }
+		} 
+		resources = {
+			category = situations
+			upkeep = {
+				energy = 75
+				food = 20
 				influence = 2
 			}
 		}

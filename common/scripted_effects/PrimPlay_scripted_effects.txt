@@ -4,6 +4,122 @@
 
 # reset_planet = { reroll_deposits = yes }
 
+# Checks if Subterraneans (player-only event nation) exists
+# Creates the country and saves it if it does not
+# use in planet scope
+PrimPlayer_create_subterranean_nation = {
+	optimize_memory
+	if = {
+		limit = {
+			NOT = {	#There can be multiples
+				any_country = {
+					is_country_type = PrimPlayer_adversary
+					has_country_flag = $FLAG$	#Establishes Dynamic has_country_flag
+				}
+			}
+		}
+		if = {
+			limit = { has_toxoids = yes }
+			create_species = {
+				name = random
+				class = TOX
+				portrait = random
+				traits = {
+					trait = trait_cave_dweller
+					trait = trait_inorganic_breath
+					trait = trait_incubator
+					trait = random_traits
+				}
+				homeworld = root
+			}
+		}
+		else = {
+			create_species = {
+				name = random
+				class = random_non_machine
+				portrait = random
+				traits = {
+					trait = trait_cave_dweller
+					trait = random_traits
+				}
+				homeworld = root
+			}
+		}
+		create_country = {
+			name = "NAME_Subterranean_Nation"
+			species = last_created_species
+			type = PrimPlayer_adversary
+			ethos = random
+			origin = origin_subterranean
+			auto_delete = no
+			flag = {
+				icon = {
+					category = "zoological"
+					file = "flag_zoological_10.dds"
+				}
+				background= {
+					category = "backgrounds"
+					file = "new_dawn.dds"
+				}
+				colors={
+					"red"
+					"black"
+					"null"
+					"null"
+				}
+			}
+			effect = {
+				set_relation_flag = {
+					who = root.owner
+					flag = subterror
+				}
+				change_country_flag = {
+					icon = {
+						category = "pre_ftl"
+						file = "preftl_industrial_age.dds"
+					}
+					background = {
+						category = "backgrounds"
+						file = "new_dawn.dds"
+					}
+					colors = {
+						"beige"
+						"yellow"
+						"null"
+						"null"
+					}
+				}
+				#set_pre_ftl_age_effect = { PRE_FTL_AGE = industrial_age }	#Doing it manually, they have no planet
+				remove_pre_ftl_flags = yes
+				set_pre_ftl_age = industrial_age
+				set_country_flag = industrial_age
+				#set_country_flag = recently_advanced	#Been like this for 1000's of years
+				#start_situation = {
+				#	type = pre_ftl_tech_progress_situation	#We don't want them advancing automatically, perhaps we can overwrite the event?
+				#}
+				add_awareness = 100
+				set_country_flag = $FLAG$
+				establish_contact = { who = event_target:subterranean_planet_owner@root.owner location = root }
+				establish_communications_no_message = event_target:subterranean_planet_owner@root.owner
+				save_event_target_as = subterranean_nation@root.owner
+				owner_species = { save_event_target_as = subterranean_species@root.owner }
+			}
+		}
+	}
+	else_if = {
+		limit = {
+			NOT = { exists = event_target:subterranean_nation@root.owner }
+		}
+		random_country = {
+			limit = {
+				is_country_type = PrimPlayer_adversary
+				has_country_flag = $FLAG$	#Establishes Dynamic has_country_flag
+			}
+			save_event_target_as = subterranean_nation@root.owner
+		}
+	}
+}
+
 # Given a species, create a mod with trait_cybernetic and apply to all pops, leaders
 # And armies that have the original species and the same owner as the scope object.
 # Scope: Something that has a species and an owner
