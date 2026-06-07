@@ -19,7 +19,7 @@ namespace = primitive_origin
 ## Space Critters Behaviour
 
 # Luring critters to space station | fired by on_monthly_pulse_country
-# this = country
+# this = planet
 planet_event = {
 	id = primitive_origin.7300
 	hide_window = yes
@@ -30,39 +30,201 @@ planet_event = {
 	}
 
 	immediate = {
-		save_event_target_as = feeder_starbase	#Cog Note - Actually a feeder planet
-		solar_system = {
-			save_event_target_as = feeder_starbase_system
-		}
+		planet_event = { id = primitive_origin.7300 days = 720 }	#loops the event every 2 years
+		#save_event_target_as = feeder_starbase	#Cog Note - Actually a feeder planet
+		#solar_system = {
+		#	save_event_target_as = feeder_starbase_system
+		#}
 
 		# first, check if there are valid critters in the system
 		if = {
 			limit = {
-				event_target:feeder_starbase_system = {
-					any_valid_lured_critter_fleet = yes
+				solar_system = {
+					any_fleet_in_system = {
+						owner = {
+							#is_pacified_space_critter_country_type = yes
+							OR = {
+								is_country_type = tiyanki
+								AND = {
+									OR = {
+										is_country_type = amoeba
+										is_country_type = amoeba_borderless
+									}
+									root = { 
+										has_owner = yes
+										owner = { has_country_flag = pacified_amoebas }
+									}
+								}
+								AND = {
+									is_country_type = crystal
+									root = { 
+										has_owner = yes
+										owner = { has_country_flag = pacified_crystals }
+									}
+								}
+							}
+						}
+						NOR = {
+							has_fleet_flag = fruitful_lured_critter
+							has_fleet_flag = fruitful_seeded_critter
+							has_fleet_flag = is_garrison_fleet
+						}
+					}
 				}
 			}
-			event_target:feeder_starbase_system = {
-				lure_valid_critter_fleet = yes
+			solar_system = {
+				random_fleet_in_system = {
+					limit = {
+						owner = {
+							#is_pacified_space_critter_country_type = yes
+							OR = {
+								is_country_type = tiyanki
+								AND = {
+									OR = {
+										is_country_type = amoeba
+										is_country_type = amoeba_borderless
+									}
+									root = { 
+										has_owner = yes
+										owner = { has_country_flag = pacified_amoebas }
+									}
+								}
+								AND = {
+									is_country_type = crystal
+									root = { 
+										has_owner = yes
+										owner = { has_country_flag = pacified_crystals }
+									}
+								}
+							}
+						}
+						NOR = {
+							has_fleet_flag = fruitful_lured_critter
+							has_fleet_flag = fruitful_seeded_critter
+							has_fleet_flag = is_garrison_fleet
+						}
+					}
+					#save_event_target_as = lured_critter
+					set_fleet_flag = fruitful_lured_critter
+					auto_move_to_planet = {
+						target = ROOT	#Move to Gas Giant
+						clear_auto_move_on_arrival = yes
+					}
+				}
 			}
 		}
 		# if not, look for neighbor systems
 		else_if = {
 			limit = {
 				# Looking for pacified critters that aren't guarding a system or carrying seeds
-				event_target:feeder_starbase_system = {
+				solar_system = {
 					any_neighbor_system = {
-						any_valid_lured_critter_fleet = yes
+						any_fleet_in_system = {
+							owner = {
+								#is_pacified_space_critter_country_type = yes
+								OR = {
+									is_country_type = tiyanki
+									AND = {
+										OR = {
+											is_country_type = amoeba
+											is_country_type = amoeba_borderless
+										}
+										root = { 
+											has_owner = yes
+											owner = { has_country_flag = pacified_amoebas }
+										}
+									}
+									AND = {
+										is_country_type = crystal
+										root = { 
+											has_owner = yes
+											owner = { has_country_flag = pacified_crystals }
+										}
+									}
+								}
+							}
+							NOR = {
+								has_fleet_flag = fruitful_lured_critter
+								has_fleet_flag = fruitful_seeded_critter
+								has_fleet_flag = is_garrison_fleet
+							}
+						}
 					}
 				}
 			}
 			# Prioritize the nearby critters if there's a valid target
-			event_target:feeder_starbase_system = {
+			solar_system = {
 				random_neighbor_system = {
 					limit = {
-						any_valid_lured_critter_fleet = yes
+						any_fleet_in_system = {
+							owner = {
+								#is_pacified_space_critter_country_type = yes
+								OR = {
+									is_country_type = tiyanki
+									AND = {
+										OR = {
+											is_country_type = amoeba
+											is_country_type = amoeba_borderless
+										}
+										root = { 
+											has_owner = yes
+											owner = { has_country_flag = pacified_amoebas }
+										}
+									}
+									AND = {
+										is_country_type = crystal
+										root = { 
+											has_owner = yes
+											owner = { has_country_flag = pacified_crystals }
+										}
+									}
+								}
+							}
+							NOR = {
+								has_fleet_flag = fruitful_lured_critter
+								has_fleet_flag = fruitful_seeded_critter
+								has_fleet_flag = is_garrison_fleet
+							}
+						}
 					}
-					lure_valid_critter_fleet = yes
+					random_fleet_in_system = {
+						limit = {
+							owner = {
+								#is_pacified_space_critter_country_type = yes
+								OR = {
+									is_country_type = tiyanki
+									AND = {
+										OR = {
+											is_country_type = amoeba
+											is_country_type = amoeba_borderless
+										}
+										root = { 
+											has_owner = yes
+											owner = { has_country_flag = pacified_amoebas }
+										}
+									}
+									AND = {
+										is_country_type = crystal
+										root = { 
+											has_owner = yes
+											owner = { has_country_flag = pacified_crystals }
+										}
+									}
+								}
+							}
+							NOR = {
+								has_fleet_flag = fruitful_lured_critter
+								has_fleet_flag = fruitful_seeded_critter
+								has_fleet_flag = is_garrison_fleet
+							}
+						}
+						#save_event_target_as = lured_critter
+						set_fleet_flag = fruitful_lured_critter
+						auto_move_to_planet = {
+							target = ROOT	#Move to Gas Giant
+							clear_auto_move_on_arrival = yes
+						}
+					}
 				}
 			}
 		}
@@ -70,7 +232,27 @@ planet_event = {
 		else = {
 			random_country = {
 				limit = {
-					is_pacified_space_critter_country_type = yes
+					#is_pacified_space_critter_country_type = yes
+					OR = {
+						is_country_type = tiyanki
+						AND = {
+							OR = {
+								is_country_type = amoeba
+								is_country_type = amoeba_borderless
+							}
+							root = { 
+								has_owner = yes
+								owner = { has_country_flag = pacified_amoebas }
+							}
+						}
+						AND = {
+							is_country_type = crystal
+							root = { 
+								has_owner = yes
+								owner = { has_country_flag = pacified_crystals }
+							}
+						}
+					}
 				}
 				random_owned_fleet = {
 					limit = {
@@ -80,24 +262,29 @@ planet_event = {
 							has_fleet_flag = is_garrison_fleet
 						}
 					}
-					save_event_target_as = lured_critter
+					#save_event_target_as = lured_critter
+					set_fleet_flag = fruitful_lured_critter
+					auto_move_to_planet = {
+						target = ROOT	#Move to Gas Giant
+						clear_auto_move_on_arrival = yes
+					}
 				}
 			}
 		}
 
-		# push the lured critter towards the starbase
-		if = {
-			limit = {
-				exists = event_target:lured_critter
-			}
-			event_target:lured_critter = {
-				set_fleet_flag = fruitful_lured_critter
-				auto_move_to_planet = {
-					target = event_target:feeder_starbase.star
-					clear_auto_move_on_arrival = yes
-				}
-			}
-		}
+		# push the lured critter towards the Gas Giant
+		#if = {
+		#	limit = {
+		#		exists = event_target:lured_critter
+		#	}
+		#	event_target:lured_critter = {
+		#		set_fleet_flag = fruitful_lured_critter
+		#		auto_move_to_planet = {
+		#			target = ROOT	#Move to Gas Giant
+		#			clear_auto_move_on_arrival = yes
+		#		}
+		#	}
+		#}
 	}
 }
 
@@ -2118,8 +2305,8 @@ planet_event = {
 							is_star = no
 							is_moon = no
 							NOT = { is_planet_class = pc_gas_giant }
-							change_pc = pc_continental
 						}
+						change_pc = pc_continental
 						planet_event = { id = primitive_origin.203 }
 					}
 				}
