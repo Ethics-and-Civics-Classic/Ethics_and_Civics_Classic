@@ -768,6 +768,540 @@ politician = {
 	}
 }
 
+dystopian_enforcer = {
+	category = ruler
+	swappable_data = {
+		default = {
+			condition_string = BATTLE_THRALL_JOB_TRIGGER
+			building_icon = building_precinct_house
+			icon = enforcer
+		}
+		swap_type = {
+			trigger = {
+				enforcer_is_educator_trigger = yes
+			}
+			name = educator
+			desc = educator
+			icon = educator
+			building_icon = building_state_academy
+			condition_string = BATTLE_THRALL_JOB_TRIGGER
+			weight = 10
+		}
+		swap_type = {
+			trigger = {
+				OWNER = { has_edict = negotiate_with_crime_lords_edict }
+			}
+			icon = pirate_lord_enforcer
+			building_icon = building_precinct_house
+			condition_string = BATTLE_THRALL_JOB_TRIGGER
+			weight = 15
+		}
+		swap_type = {
+			trigger = {
+				enforcer_is_educator_trigger = no
+				OWNER = { has_civic = civic_military_dictatorship_corporate }
+			}
+			name = pirate_lord_enforcer
+			desc = pirate_lord_enforcer
+			icon = pirate_lord_enforcer
+			building_icon = building_precinct_house
+			condition_string = BATTLE_THRALL_JOB_TRIGGER
+			weight = 20
+		}
+		swap_type = {
+			trigger = {
+				enforcer_is_educator_trigger = no
+				OWNER = { has_civic = civic_criminal_heritage }
+			}
+			name = mob_boss_enforcer
+			desc = mob_boss_enforcer
+			icon = mob_boss_enforcer
+			building_icon = building_precinct_house
+			condition_string = BATTLE_THRALL_JOB_TRIGGER
+			weight = 20
+		}
+		swap_type = {
+			trigger = {
+				enforcer_is_educator_trigger = no
+				OWNER = { 
+					has_civic = civic_brand_loyalty
+					is_authoritarian = yes
+					NOR = {
+						has_civic = civic_military_dictatorship_corporate 
+						has_civic = civic_criminal_heritage
+					}
+				}
+			}
+			name = loyalty_enforcer
+			desc = loyalty_enforcer
+			icon = loyalty_enforcer
+			#building_icon = building_state_academy
+			condition_string = BATTLE_THRALL_JOB_TRIGGER
+			weight = 20
+		}
+		swap_type = {
+			trigger = {
+				exists = owner
+				OWNER = { 
+					is_hive_empire = yes 
+					is_wilderness_empire = no
+				}
+			}
+			name = patrol_drone
+			desc = patrol_drone
+			icon = patrol_drone
+			building_icon = building_stronghold
+			condition_string = DRONE_JOB_TRIGGER
+			weight = 30
+		}
+		swap_type = {
+			trigger = {
+				exists = owner
+				owner = { is_wilderness_empire = yes }
+			}
+			name = immunosymbiont
+			desc = immunosymbiont
+			icon = patrol_drone
+			building_icon = capital_wilderness_3
+			condition_string = DRONE_JOB_TRIGGER
+			weight = 40
+		}
+	}
+
+	tags = { crime enforcer }
+	
+	possible_pre_triggers = {
+		has_owner = yes
+		is_being_purged = no
+		is_being_assimilated = no
+		is_sapient = yes
+	}
+
+	possible = {
+		battle_thrall_job_check_trigger = yes
+	}
+
+	resources = {
+		category = planet_enforcers
+		inline_script = "jobs/job_enforcer_triggered_resources"
+		produces = {
+			trigger = {
+				exists = owner										# Modded
+				owner = { has_valid_civic = civic_police_state }	# Modded
+			}
+			unity = 1												# Modded
+		}
+		produces = {
+			trigger = {
+				exists = owner										# Modded
+				owner = { is_hive_empire = yes }	# Modded
+			}
+			unity = 0.5												# Modded
+		}
+		produces = {
+			trigger = {
+				exists = planet
+				OWNER = { 
+					OR = {
+						has_civic = civic_military_dictatorship_corporate 
+						has_civic = civic_criminal_heritage
+						AND = {
+							has_civic = civic_brand_loyalty
+							is_authoritarian = yes
+						}
+					}
+				}
+			}
+			unity = 1
+		}
+		upkeep = {
+			trigger = {
+				exists = planet
+				planet = { has_modifier = anticrime_campaign }
+			}
+			energy = 2
+		}
+		upkeep = {
+			trigger = {
+				exists = planet
+				OWNER = { 
+					OR = {
+						has_civic = civic_military_dictatorship_corporate 
+						has_civic = civic_criminal_heritage
+						AND = {
+							has_civic = civic_brand_loyalty
+							is_authoritarian = yes
+						}
+					}
+				}
+			}
+			trade = 0.5
+		}
+		#Distributism
+		produces = {
+			trigger = {
+				owner = { has_valid_civic = civic_distributism }
+			}
+			trade = 1
+		}
+	}
+	
+	triggered_planet_modifier = {
+		potential = {
+			enforcer_is_educator_trigger = no
+			owner = { is_hive_empire = yes }
+		}
+		planet_crime_no_happiness_add = -20
+		planet_defense_armies_add = 1
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			enforcer_is_educator_trigger = no
+			owner = { is_hive_empire = no }
+			OWNER = { NOT = { has_edict = negotiate_with_crime_lords_edict } }
+		}
+		planet_crime_add = -25
+	}
+	
+	triggered_planet_modifier = {
+		potential = {
+			enforcer_is_educator_trigger = yes
+			owner = { is_hive_empire = no }
+			OWNER = { NOT = { has_edict = negotiate_with_crime_lords_edict } }
+		}
+		planet_crime_add = -20
+	}
+	
+	triggered_planet_modifier = {
+		potential = {
+			enforcer_is_educator_trigger = no
+		}
+		planet_defense_armies_add = 2
+		planet_stability_add = 1
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			enforcer_is_educator_trigger = yes
+		}
+		planet_defense_armies_add = 1
+		pop_government_ethic_attraction = 0.1
+	}
+	
+	inline_script = "jobs/job_enforcer_additional_modifiers"
+
+	triggered_planet_modifier = {	#Modded
+		potential = {
+			exists = owner
+			owner = { has_valid_civic = civic_police_state }
+		}
+		modifier = {
+			planet_crime_add = -5
+		}
+	}
+
+	weight = {
+		weight = @specialist_job_weight
+
+		modifier = {
+			mult = value:job_weights_modifier|JOB|enforcer|RESOURCE|unity|FACTOR|0.25|
+			owner = { has_active_tradition = tr_domination_judgment_corps }
+		}
+		modifier = {
+			factor = 50
+		}
+		modifier = {
+			factor = 0.2
+			has_citizenship_rights = no
+			NOT = { has_trait = trait_mechanical }
+		}
+		modifier = {
+			factor = 2
+			has_trait = trait_resilient
+		}
+		modifier = {
+			factor = 2
+			has_trait = trait_very_strong
+		}
+		modifier = {
+			factor = 1.5
+			has_trait = trait_strong
+		}
+		modifier = {
+			factor = 10
+			is_enslaved = yes
+			has_slavery_type = { type = slavery_military }
+		}
+		modifier = {
+			factor = 0.50
+			has_trait = trait_weak
+		}
+		modifier = {
+			factor = 0.1
+			can_take_servant_job = yes
+		}
+		modifier = {
+			factor = 1.1
+			has_trait = trait_cybernetic
+		}
+		modifier = {
+			factor = 2
+			has_trait = trait_presapient_earthbound
+		}
+		modifier = {
+			factor = 1.1
+			has_trait = trait_limited_regeneration
+		}
+		modifier = {
+			factor = 0.8
+			is_enslaved = yes
+			has_slavery_type = { type = slavery_indentured }
+		}
+		modifier = {
+			factor = 2
+			has_trait = trait_lithoid
+		}
+	}
+	
+	# Description
+	#triggered_desc = {
+	#	trigger = {
+	#		exists = owner
+	#		enforcer_is_educator_trigger = no
+	#		OWNER = { has_civic = civic_military_dictatorship_corporate }
+	#	}
+	#	text = job_pirate_lord_enforcer_effect_desc
+	#}
+	# Description
+	#triggered_desc = {
+	#	trigger = {
+	#		exists = owner
+	#		enforcer_is_educator_trigger = no
+	#		OWNER = { has_civic = civic_criminal_heritage }
+	#	}
+	#	text = job_mob_boss_enforcer_effect_desc
+	#}
+	
+	
+	
+	promotion = {
+		time = @standard_promotion_time
+		effect = {
+			pop_amount_change_category = {
+				CATEGORY = ruler
+				AMOUNT = local_pop_amount
+			}
+		}
+	}
+}
+
+telepath = {
+	category = specialist
+	can_be_automated = no
+	swappable_data = {
+		default = {
+			condition_string = SPECIALIST_JOB_TRIGGER
+			building_icon = building_psi_corps
+			icon = telepath
+		}
+		swap_type = {
+			trigger = {
+				enforcer_is_educator_trigger = yes
+			}
+			name = educator_telepath
+			desc = educator_telepath
+			icon = telepath
+			building_icon = building_psi_corps
+			condition_string = SPECIALIST_JOB_TRIGGER
+			weight = 10
+		}
+	}
+
+	possible_pre_triggers = {
+		has_owner = yes
+		is_being_purged = no
+		is_being_assimilated = no
+		is_sapient = yes
+	}
+
+	tags = { crime enforcer unity telepath psionic_aura }
+
+	possible_precalc = can_fill_specialist_job
+	possible = {
+		has_psionic_species_trait = yes
+	}
+
+	resources = {
+		category = planet_telepaths
+		inline_script = "jobs/job_enforcer_triggered_resources"
+		produces = {
+			unity = 9
+		}
+		produces = {
+			trigger = {
+				exists = owner
+				owner = { has_active_tradition = tr_domination_judgment_corps }
+			}
+			unity = 1
+		}
+		#Distributism
+		produces = {
+			trigger = {
+				owner = { has_valid_civic = civic_distributism }
+			}
+			trade = 1
+		}
+		produces = {
+			trigger = {
+				exists = owner
+				owner = { has_country_flag = whisperers_covenant_confirmed }
+			}
+			physics_research = 3
+			engineering_research = 3
+			society_research = 3
+		}
+		produces = {
+			trigger = {
+				exists = owner
+				owner = { has_country_flag = whisperers_covenant_rank_1 }
+			}
+			physics_research = 3
+			engineering_research = 3
+			society_research = 3
+		}
+		produces = {
+			trigger = {
+				exists = owner										# Modded
+				owner = { has_valid_civic = civic_police_state }	# Modded
+			}
+			unity = 1												# Modded
+		}
+		upkeep = {
+			energy = 1
+		}
+		upkeep = {
+			trigger = {
+				exists = planet
+				planet = { has_modifier = anticrime_campaign }
+			}
+			energy = 2
+		}
+	}
+	
+	inline_script = "jobs/job_enforcer_additional_modifiers"
+	inline_script = "jobs/job_telepath_additional_modifiers"
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_country_flag = instrument_covenant_confirmed }
+		}
+		planet_amenities_add = 700
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_country_flag = instrument_covenant_rank_1 }
+		}
+		planet_amenities_add = 800
+	}
+
+	#triggered_planet_modifier = {
+	#	potential = {
+	#		exists = owner
+	#		owner  = { has_tradition = tr_psionics_breach_shroud }
+	#	}
+	#	modifier = {
+	#		# planet_psionic_jobs_produces_mult = 0.05	# No Longer Used in Stellaris 4.0
+	#	}
+	#}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_edict = thought_enforcement }
+		}
+		modifier = {
+			planet_crime_add = -30
+		}
+	}
+
+	# triggered_planet_modifier = {	# No Longer Used in Stellaris 4.0
+	#	potential = {
+	#		has_councilor = { COUNCILOR = "councilor_psionic_sovereign" }
+	#	}
+	#	planet_psionic_jobs_produces_mult = 0.01
+	#	mult = value:councilor_level|TYPE|councilor_psionic_sovereign|
+	#}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_country_flag = composer_covenant_confirmed }
+		}
+		modifier = {
+			founder_species_growth_mult = 0.02
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_country_flag = composer_covenant_rank_1 }
+		}
+		modifier = {
+			founder_species_growth_mult = 0.03
+		}
+	}
+
+	triggered_country_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_country_flag = eater_covenant_confirmed }
+		}
+		country_naval_cap_add = 5
+	}
+
+	triggered_country_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_country_flag = eater_covenant_rank_1 }
+		}
+		country_naval_cap_add = 7
+	}
+
+	weight = {
+		weight = @specialist_job_weight
+		mult = 2
+		mult = value:job_weights_modifier|JOB|telepath|RESOURCE|unity|
+		modifier = {
+			factor = 0.2
+			has_citizenship_rights = no
+		}
+		modifier = {
+			factor = 2
+			has_trait = trait_resilient
+		}
+		#modifier = {
+		#	factor = 0.1
+		#	can_take_servant_job = yes
+		#}
+		# modifier = {
+		#	factor = 1.5
+		#	has_job_type = telepath	# No Longer Used in Stellaris 4.0
+		#}
+		modifier = {
+			factor = 0.1
+			is_enslaved = yes
+			has_slavery_type = { type = slavery_indentured }
+		}
+	}
+
+	inline_script = "jobs/automodding_priority_unity"
+}
+
 # Offworld Pirate Captains
 commandante_pirate_offworld = { #Steam: Added by branch offices off-world
 	category = ruler
