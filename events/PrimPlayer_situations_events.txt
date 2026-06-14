@@ -360,6 +360,8 @@ situation_event = {
 				OR = {
 					has_civic = PrimPlayer_civic_scion_materialist
 					has_civic = PrimPlayer_civic_scion_spiritualist
+					has_civic = civic_scion_materialist
+					has_civic = civic_scion_spiritualist
 					any_owned_megastructure = { 
 						OR = {
 							is_megastructure_type = gateway_restored
@@ -386,6 +388,8 @@ situation_event = {
 				#NOR = {
 				#	has_civic = PrimPlayer_civic_scion_materialist
 				#	has_civic = PrimPlayer_civic_scion_spiritualist
+				#	has_civic = civic_scion_materialist
+				#	has_civic = civic_scion_spiritualist
 				#}
 			}
 		}
@@ -413,7 +417,32 @@ situation_event = {
 		}
 		hidden_effect = { owner = { set_origin = origin_storm_chasers } }
 		custom_tooltip = PrimPlay_situation_event.1.origin_storm_chasers
-		give_technology = { message = yes tech = tech_storm_prediction_1 }
+		owner = { give_technology = { message = yes tech = tech_storm_prediction_1 } }
+	}
+	
+	option = {
+		name = origin_fruitful
+		trigger = { 
+			owner = { 
+				has_country_flag = situation_fruitful_partnership_pursued
+			}
+		}
+		allow = {
+			owner = {
+				OR = {
+					is_xenophile = yes
+					is_pacifist = yes
+					has_ethic = ethic_gestalt_consciousness
+				}
+				NOR = {
+					has_authority = auth_machine_intelligence
+					has_civic = civic_hive_devouring_swarm
+				}
+			}
+		}
+		hidden_effect = { owner = { set_origin = origin_fruitful } }
+		custom_tooltip = PrimPlay_situation_event.1.origin_fruitful
+		owner = { give_technology = { message = yes tech = tech_critter_feeder } }
 	}
 	
 	option = {
@@ -467,7 +496,7 @@ situation_event = {
 	
 	after = { 
 		if = {
-			limit = { Not = { has_origin = origin_primitive_player_early_space_age } }
+			limit = { owner = { Not = { has_origin = origin_primitive_player_early_space_age } } }
 			destroy_situation = this 
 			hidden_effect = { 
 				owner = { 
@@ -482,6 +511,30 @@ situation_event = {
 					if = {
 						limit = { has_country_flag = situation_stormfall_canceled }
 						remove_country_flag = situation_stormfall_canceled 
+					}
+					if = {
+						limit = { has_country_flag = situation_fruitful_partnership_pursued }
+						remove_country_flag = situation_fruitful_partnership_pursued 
+					}
+					if = {
+						limit = { has_civic = PrimPlayer_civic_scion_materialist }
+						force_remove_civic = PrimPlayer_civic_scion_materialist
+						force_add_civic = civic_scion_materialist 						
+					}
+					if = {
+						limit = { has_civic = PrimPlayer_civic_scion_spiritualist }
+						force_remove_civic = PrimPlayer_civic_scion_spiritualist
+						force_add_civic = civic_scion_spiritualist 
+					}
+					if = {
+						limit = { has_civic = PrimPlayer_civic_here_be_dragons }
+						force_remove_civic = PrimPlayer_civic_here_be_dragons
+						force_add_civic = civic_here_be_dragons  
+					}
+					if = {
+						limit = { has_civic = PrimPlayer_civic_barbaric_despoilers_khan }
+						force_remove_civic = PrimPlayer_civic_barbaric_despoilers_khan
+						force_add_civic = civic_barbaric_despoilers_khan  
 					}
 				} 
 			}
@@ -812,6 +865,55 @@ situation_event = {
 	
 	after = { remove_situation_flag = PrimPlay_situation_event_1002_pause }
 }
+
+country_event = {
+	id = random_primitive_events.1003
+	title = "random_primitive_events.1003.title"
+	is_triggered_only = yes
+	#location = from
+	picture = GFX_evt_gravity_snare
+	show_sound = event_space_amoeba
+	
+	desc = {
+		text = "random_primitive_events.1003.desc"
+	}
+	
+	trigger = {
+		has_grand_archive_dlc = yes
+		NOT = { has_situation_flag = PrimPlay_situation_event_1002_finished }
+		OWNER = {
+			NOT = { has_technology = tech_gravity_wells }
+			has_technology = tech_primitive_quantum_mechanics_theory
+			has_technology = tech_proto_thrusters_1
+			has_encountered_any_fauna = yes
+		}
+		NOT = { has_situation_flag = PrimPlay_situation_event_1003_pause }
+	}
+	
+	immediate = { set_situation_flag = PrimPlay_situation_event_1003_pause }
+	
+	option = {
+		name = "random_primitive_events.1003.tech_gravity_wells"	
+		allow = {
+			owner = {
+				has_country_resource = { type = influence amount >= 100 }
+			}
+		}
+		owner = {
+			add_resource = { influence = -100 }
+			add_research_option = tech_gravity_wells
+		}
+		set_situation_flag = PrimPlay_situation_event_1002_finished
+	}
+	
+	option = {
+		name = "random_primitive_events.1003.cancel"	
+		set_situation_flag = PrimPlay_situation_event_1002_finished
+	}
+	
+	after = { remove_situation_flag = PrimPlay_situation_event_1003_pause }
+}
+
 ######################
 
 ######################
@@ -837,6 +939,8 @@ situation_event = {
 								has_origin = origin_galactic_doorstep
 								has_civic = PrimPlayer_civic_scion_materialist
 								has_civic = PrimPlayer_civic_scion_spiritualist
+								has_civic = civic_scion_materialist
+								has_civic = civic_scion_spiritualist
 							}
 							NOT = { has_technology = tech_gateway_activation }
 						}
@@ -851,6 +955,8 @@ situation_event = {
 								has_origin = origin_galactic_doorstep
 								has_civic = PrimPlayer_civic_scion_materialist
 								has_civic = PrimPlayer_civic_scion_spiritualist
+								has_civic = civic_scion_materialist
+								has_civic = civic_scion_spiritualist
 							}
 							NOT = { has_technology = tech_gateway_construction }
 						}
