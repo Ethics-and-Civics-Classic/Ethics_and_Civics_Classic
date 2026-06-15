@@ -5,7 +5,12 @@ event = {
 	hide_window = yes
 	is_triggered_only = yes
 	trigger = {
-		any_playable_country = {
+		any_country = {
+			is_nomadic = no
+			OR = {
+				is_country_type = default
+				is_fallen_empire = yes
+			}
 			has_technology = "tech_starbase_1"		# Modded for PrimPlayer Compatibility
 			any_owned_planet = {
 				is_controlled_by = PREV
@@ -21,7 +26,8 @@ event = {
 		every_system = {
 			limit = {
 				NOT = { exists = starbase }
-				any_system_colony = {
+				any_system_planet_colony = {
+					carrier_is_type = planet
 					exists = owner
 					has_ground_combat = no
 					OR = {
@@ -29,13 +35,16 @@ event = {
 						AND = {
 							has_shroud_dlc = yes
 							NOT = {
-								has_planet_flag = exile_planet
+								has_carrier_flag = exile_planet
 							}
 						}
 					}
 					owner = {
 						OR = {
-							is_country_type = default
+							AND = {
+								is_country_type = default
+								is_nomadic = no
+							}
 							is_country_type = fallen_empire
 							is_country_type = awakened_fallen_empire
 						}
@@ -64,7 +73,7 @@ event = {
 								}
 								is_cloaked = no
 							}
-							any_system_colony = {
+							any_system_planet_colony = {
 								exists = owner
 								NOT = { is_same_value = prevprev }
 								owner = {
@@ -90,7 +99,7 @@ event = {
 						AND = {
 							has_shroud_dlc = yes
 							NOT = {
-								has_planet_flag = exile_planet
+								has_carrier_flag = exile_planet
 							}
 						}
 					}
@@ -125,7 +134,7 @@ event = {
 								}
 								is_cloaked = no
 							}
-							any_system_colony = {
+							any_system_planet_colony = {
 								exists = owner
 								owner = {
 									NOT = { is_same_value = prevprevprev.owner }
@@ -142,19 +151,19 @@ event = {
 				# Fruitful Origin - the outpost is being created for the first time
 				if = {
 					limit = {
-						has_planet_flag = seed_pods_colonization
+						has_carrier_flag = seed_pods_colonization
 					}
-					planet_event = { id = origin.7400 }
+					carrier_event = { id = origin.7400 }
 				}
 				# else, fire the normal "Outpost Rebuilt!" event
 				else = {
-					planet_event = { id = action.91 }
+					carrier_event = { id = action.91 }
 				}
 			}
 		}
 	}
 }
-planet_event = {
+carrier_event = {
 	id = action.91
 	title = action.91.name
 	desc = action.91.desc
@@ -258,7 +267,7 @@ planet_event = {
 #						has_technology = "tech_starbase_1"
 #					}
 #				}
-#				planet_event = { id = action.91 }
+#				carrier_event = { id = action.91 }
 #			}
 #		}
 #	}
