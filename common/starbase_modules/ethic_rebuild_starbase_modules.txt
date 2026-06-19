@@ -176,3 +176,237 @@ trading_hub = {
 		}
 	}
 }
+
+waystation_treasure_vault = {
+	icon = "GFX_waystation_treasure_vault"
+	section = "REFINERY_STARBASE_SECTION"
+	construction_days = @waystation_build_time_180
+	starbase_type = waystation
+	category = sm_economy_cat
+
+	starbase_limit = {
+		base = 1
+	}
+
+	potential = {
+		is_waystation_starbase = yes
+	}
+
+	possible = {
+		custom_tooltip = {
+			fail_text = requires_subject_colony_no
+			success_text = requires_subject_colony
+			solar_system? = {
+				any_system_planet = {
+					is_colony = yes
+					owner? = {
+						has_overlord = root.owner
+						is_primitive = no
+					}
+				}
+			}
+		}
+	}
+
+	destroy_trigger = {
+		NOT = {
+			solar_system = {
+				any_system_planet = {
+					is_colony = yes
+					owner? = {
+						has_overlord = root.owner
+						is_primitive = no
+					}
+				}
+			}
+		}
+	}
+
+	station_modifier = {
+		starbase_stockpile_capacity_add = @waystation_stockpile_500
+		monthly_tribute_percentage_add = 0.01
+	}
+
+	on_finished = {
+		if = {
+			limit = {
+				NOT = { has_starbase_flag = tribute_collected }
+			}
+			starbase_event = {
+				id = nomads.8035
+				days = 30
+			}
+		}
+		if = {
+			limit = {
+				NOT = { has_starbase_flag = tribute_vault_loyalty_set }
+			}
+			set_starbase_flag = tribute_vault_loyalty_set
+			solar_system = {
+				random_system_planet = {
+					limit = {
+						is_colony = yes
+						owner? = {
+							has_overlord = root.owner
+							is_primitive = no
+						}
+					}
+					owner = {
+						if = {
+							limit = { is_variable_set = tribute_vault_count }
+							change_variable = {
+								which = tribute_vault_count
+								value = 1
+							}
+							else = {
+								set_variable = {
+									which = tribute_vault_count
+									value = 1
+								}
+							}
+						}
+						refresh_tribute_vault_loyalty = yes
+					}
+				}
+			}
+		}
+	}
+
+	on_destroyed = {
+		remove_starbase_flag = tribute_vault_loyalty_set
+		solar_system = {
+			random_system_planet = {
+				limit = {
+					is_colony = yes
+					owner? = {
+						has_overlord = root.owner
+						is_primitive = no
+					}
+				}
+				owner = {
+					if = {
+						limit = {
+							is_variable_set = tribute_vault_count
+							check_variable = {
+								which = tribute_vault_count
+								value > 0
+							}
+						}
+						change_variable = {
+							which = tribute_vault_count
+							value = -1
+						}
+					}
+					refresh_tribute_vault_loyalty = yes
+				}
+			}
+		}
+	}
+
+	resources = {
+		category = starbase_waystations_modules
+		cost = {
+			alloys = @waystation_cost_alloys_150
+		}
+		upkeep = {
+			trade = @waystation_upkeep_trade_4
+		}
+	}
+
+	custom_tooltip_with_modifiers = waystation_treasure_vault_tt
+
+	triggered_station_modifier = {
+		potential = {
+			owner? = {
+				OR = {
+					has_origin = origin_heirs_of_the_khan
+					has_origin = origin_heirs_of_the_khan_corporate
+				}
+			}
+		}
+		custom_tooltip = waystation_treasure_vault_heirs_of_the_khan_tt
+		show_only_custom_tooltip = no
+		monthly_tribute_percentage_add = 0.04
+		starbase_stockpile_capacity_add = @waystation_stockpile_250
+	}
+
+	triggered_station_modifier = {
+		potential = {
+			owner? = {
+				any_subject = {
+					any_agreement = {
+						agreement_preset = preset_relic_satrapy
+					}
+				}
+			}
+		}
+		custom_tooltip = waystation_treasure_vault_satrapy_tt
+		show_only_custom_tooltip = no
+		monthly_tribute_percentage_add = 0.025
+		starbase_stockpile_capacity_add = @waystation_stockpile_250
+	}
+
+	triggered_station_modifier = {
+		potential = {
+			owner? = {
+				has_country_flag = sacred_path_embrace_chaos
+			}
+		}
+		custom_tooltip = waystation_treasure_vault_embrace_chaos_tt
+		show_only_custom_tooltip = no
+		monthly_tribute_percentage_add = 0.015
+		starbase_stockpile_capacity_add = @waystation_stockpile_250
+	}
+
+	triggered_station_modifier = {
+		potential = {
+			owner? = {
+				has_valid_civic = civic_barbaric_despoilers
+			}
+		}
+		custom_tooltip = waystation_treasure_vault_despoilers_tt
+		show_only_custom_tooltip = no
+		monthly_tribute_percentage_add = 0.015
+		starbase_stockpile_capacity_add = @waystation_stockpile_250
+	}
+
+	triggered_station_modifier = {
+		potential = {
+			owner? = {
+				has_valid_civic = civic_void_reavers
+			}
+		}
+		custom_tooltip = waystation_treasure_vault_void_reavers_tt
+		show_only_custom_tooltip = no
+		monthly_tribute_percentage_add = 0.015
+		starbase_stockpile_capacity_add = @waystation_stockpile_250
+	}
+
+	triggered_station_modifier = {
+		potential = {
+			owner? = {
+				has_valid_civic = civic_crusader_spirit_corporate
+			}
+		}
+		custom_tooltip = waystation_treasure_vault_letters_of_marque_tt
+		show_only_custom_tooltip = no
+		monthly_tribute_percentage_add = 0.015
+		starbase_stockpile_capacity_add = @waystation_stockpile_250
+	}
+
+	triggered_station_modifier = {
+		potential = {
+			owner? = {
+				has_ascension_perk = ap_nihilistic_acquisition
+			}
+		}
+		custom_tooltip = waystation_treasure_vault_nihilistic_acquisition_tt
+		show_only_custom_tooltip = no
+		monthly_tribute_percentage_add = 0.015
+		starbase_stockpile_capacity_add = @waystation_stockpile_250
+	}
+
+	ai_weight = {
+		weight = 100 #use same weight here - ai weighting is done in starbase_types.txt
+	}
+}

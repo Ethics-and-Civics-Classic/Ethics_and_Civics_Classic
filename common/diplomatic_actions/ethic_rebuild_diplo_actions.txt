@@ -1,3 +1,620 @@
+# Turns another empire into a subject peacefully.
+# Intricacies of this relationship, including subject type, are determined by terms of the Agreement between Overlord and subject.
+action_demand_subjugation = {
+	icon = "GFX_diplomacy_status_has_vassal"
+	requires_actor_peace = yes
+	requires_recipient_peace = yes
+	diplo_view_acceptance_icon = no
+	should_notify_all_communications = yes
+	requires_recipient_independence = no
+	AI_acceptance_base_value = -50
+	action_type = aggressive
+
+	potential = {
+		hidden_trigger = {
+			FROM = {
+				NOT = {
+					has_overlord = ROOT
+				}
+			}
+		}
+	}
+
+	possible = {
+		custom_tooltip = {
+			fail_text = "requires_actor_not_fanatic_purifiers"
+			OR = {
+				is_same_species = from
+				NOT = { has_valid_civic = civic_fanatic_purifiers }
+			}
+		}
+		custom_tooltip = {
+			fail_text = "requires_recipient_not_fanatic_purifiers"
+			OR = {
+				is_same_species = from
+				from = { NOT = { has_valid_civic = civic_fanatic_purifiers } }
+			}
+		}
+		custom_tooltip = {
+			fail_text = "requires_actor_not_devouring_swarm"
+			NOT = { has_valid_civic = civic_hive_devouring_swarm }
+		}
+		custom_tooltip = {
+			fail_text = "requires_recipient_not_devouring_swarm"
+			from = { NOT = { has_valid_civic = civic_hive_devouring_swarm } }
+		}
+		custom_tooltip = {
+			fail_text = "requires_actor_not_machine_terminator"
+			OR = {
+				is_same_species = from
+				NOT = { has_civic = civic_machine_terminator }
+				AND = {
+					has_civic = civic_machine_terminator
+					from = {
+						OR = {
+							has_country_flag = synthetic_empire
+							is_machine_empire = yes
+							is_individual_machine = yes
+						}
+					}
+				}
+			}
+		}
+		custom_tooltip = {
+			fail_text = "requires_recipient_not_machine_terminator"
+			OR = {
+				is_same_species = from
+				from = { NOT = { has_civic = civic_machine_terminator } }
+				AND = {
+					from = { has_civic = civic_machine_terminator }
+					OR = {
+						has_country_flag = synthetic_empire
+						is_machine_empire = yes
+						is_individual_machine = yes
+					}
+				}
+			}
+		}
+		custom_tooltip = {
+			fail_text = "requires_actor_not_scorched_earth"
+			OR = {
+				is_genocidal_infernal = no
+				from = { is_infernal_empire = yes }
+			}
+		}
+		custom_tooltip = {
+			fail_text = "requires_recipient_not_scorched_earth"
+			OR = {
+				is_infernal_empire = yes
+				from = { is_genocidal_infernal = no }
+			}
+		}
+		if = {
+			limit = {
+				from = { has_valid_civic = civic_pompous_purists }
+				NOT = { root = { is_overlord_to = from } }
+			}
+			if = {
+				limit = {
+					has_intel = {
+						who = from
+						intel = civics
+					}
+				}
+				custom_tooltip = {
+					fail_text = requires_recipient_not_pompous
+					always = no
+				}
+			}
+			else = {
+				custom_tooltip = {
+					fail_text = diplo_action_no_low_intel
+					always = no
+				}
+			}
+		}
+		custom_tooltip = {
+			fail_text = "requires_recipient_not_in_galactic_empire"
+			NAND = {
+				has_galactic_emperor = yes
+				is_galactic_community_member = no
+				from = { is_galactic_community_member = yes }
+			}
+		}
+		custom_tooltip = {
+			fail_text = "requires_recipient_not_custodian"
+			from = { is_galactic_custodian = no }
+		}
+		custom_tooltip = {
+			fail_text = "requires_recipient_not_gal_emperor"
+			from = { is_galactic_emperor = no }
+		}
+		custom_tooltip = {
+			fail_text = "requires_recipient_not_btc"
+			from = { has_been_declared_crisis = no }
+		}
+		custom_tooltip = {
+			fail_text = "requires_not_guaranteeing_independence"
+			NOT = {
+				is_guaranteeing = from
+			}
+		}
+		if = {
+			limit = {
+				NOR = {
+					has_menace_perk = menp_intimidation
+					has_valid_civic = civic_feudal_realm
+				}
+			}
+			# Requirements:
+			# - 50 Trust OR Excellent Opinion OR Can ignore trust values
+			# - An Embassy OR the Diplomatic Networking tradition.
+			custom_tooltip = {
+				fail_text = requires_50_trust_or_excellent
+				OR = {
+					opinion_level = {
+						who = from
+						level >= excellent
+					}
+					from = {
+						trust = {
+							who = root
+							value >= 50
+						}
+					}
+					can_ignore_trust_requirements_for_subjects = yes
+					AND = {
+						has_valid_civic = civic_hive_familiar_face
+						from = {
+							trust = {
+								who = root
+								value >= 25
+							}
+						}
+					}
+				}
+			}
+			custom_tooltip = {
+				fail_text = requires_embassy_or_diplomatic_networking
+				OR = {
+					has_embassy = from
+					has_active_tradition = tr_diplomacy_diplomatic_networking
+					can_ignore_trust_requirements_for_subjects = yes
+				}
+			}
+		}
+		custom_tooltip = {
+			fail_text = "requires_recipient_not_khan"
+			from = { NOT = { has_country_flag = heir_of_the_khan_khan } }
+		}
+	}
+
+	proposable = {
+		if = {
+			limit = {
+				hidden_trigger = { from = { is_country_type = awakened_fallen_empire } }
+			}
+			hidden_trigger = { always = yes }
+		}
+	}
+
+	should_ai_propose = {
+		modifier = {
+			mult = 0
+			from = {
+				trust = {
+					who = root
+					value < 50
+				}
+			}
+		}
+	}
+
+	ai_acceptance = {
+		modifier = {
+			add = -100
+			from = {
+				trust = {
+					who = root
+					value < 50
+				}
+				NOT = { has_country_flag = heir_of_the_khan_khan }
+			}
+			desc = LACK_OF_TRUST
+		}
+		modifier = {
+			add = -50
+			root = {
+				is_militarist = yes
+				has_faction = imperialist
+			}
+			desc = TOO_IMPERIAL
+		}
+		modifier = { # If the Khan is bordering you, you are a lot more likely to be a subject
+			add = 50
+			from = {
+				has_country_flag = heir_of_the_khan_khan
+				is_neighbor_of = root
+			}
+			desc = NEIGHBORING_KHAN
+		}
+		modifier = { # If any of your neighbors are a satrapy, then that too makes you likely to be a subject
+			add = 25
+			from = {
+				has_country_flag = heir_of_the_khan_khan
+			}
+			any_neighbor_country = {
+				is_subject = yes
+				any_agreement = { agreement_preset = preset_satrapy }
+			}
+			desc = NEIGHBORING_SATRAPY
+		}
+		modifier = { # AI Heirs of the Khan empires will join you
+			add = 50
+			from = {
+				has_country_flag = heir_of_the_khan_khan
+			}
+			OR = {
+				has_origin = origin_heirs_of_the_khan
+				has_origin = origin_heirs_of_the_khan_corporate
+			}
+			desc = RIGHTFUL_KHAN
+		}
+
+		modifier = { # If you have defensive pacts then you are less likely to submit to the player Khan
+			subtract = value:num_defensive_pacts_times_25
+			from = {
+				has_country_flag = heir_of_the_khan_khan
+			}
+			desc = NUMBER_OF_DEFENSIVE_PACTS
+		}
+
+		modifier = {
+			subtract = 100
+			desc = IN_GALACTIC_EMPIRE
+			has_galactic_emperor = yes
+			is_galactic_community_member = yes
+			from = {
+				has_country_flag = heir_of_the_khan_khan
+			}
+		}
+		modifier = {
+			subtract = 100
+			desc = IN_GLACTIC_COMMUNITY_CUSTODIAN
+			has_galactic_custodian = yes
+			is_galactic_community_member = yes
+			from = {
+				has_country_flag = heir_of_the_khan_khan
+			}
+		}
+
+		modifier = { # Nomads never want to be subjects
+			subtract = 100
+			desc = WANTS_TO_BE_FREE
+			is_nomadic = yes
+		}
+
+		modifier = { # Planetbound empires don't trust nomadic overlords
+			subtract = 100
+			desc = NOMADIC_OVERLORD
+			is_nomadic = no
+			from = {
+				is_nomadic = yes
+			}
+		}
+
+		modifier = { # If you are equal or stronger than the Khan, disregard all of the above modifiers
+			mult = 0
+			from = {
+				has_country_flag = heir_of_the_khan_khan
+			}
+			relative_power = {
+				who = from
+				category = all
+				value >= equivalent
+			}
+			desc = BLANK_STRING
+		}
+	}
+}
+
+# Ask to become subject.
+# Intricacies of this relationship, including subject type, are determined by terms of the Agreement between Overlord and subject.
+action_ask_to_become_subjugated = {
+	icon = "GFX_diplomacy_status_has_vassal"
+	requires_actor_peace = yes
+	requires_recipient_peace = yes
+	diplo_view_acceptance_icon = no
+	should_notify_all_communications = yes
+	AI_acceptance_base_value = -50
+	action_type = positive
+
+	potential = {
+		hidden_trigger = {
+			is_subject = no
+		}
+	}
+
+	possible = {
+		custom_tooltip = {
+			fail_text = "requires_actor_not_fanatic_purifiers"
+			NOT = { has_valid_civic = civic_fanatic_purifiers	}
+		}
+		custom_tooltip = {
+			fail_text = "requires_recipient_not_fanatic_purifiers"
+			from = { NOT = { has_valid_civic = civic_fanatic_purifiers } }
+		}
+		custom_tooltip = {
+			fail_text = "requires_actor_not_devouring_swarm"
+			NOT = { has_valid_civic = civic_hive_devouring_swarm }
+		}
+		custom_tooltip = {
+			fail_text = "requires_recipient_not_devouring_swarm"
+			from = { NOT = { has_valid_civic = civic_hive_devouring_swarm } }
+		}
+		custom_tooltip = {
+			fail_text = "requires_actor_not_machine_terminator"
+			OR = {
+				is_same_species = from
+				NOT = { has_civic = civic_machine_terminator }
+				AND = {
+					has_civic = civic_machine_terminator
+					from = {
+						OR = {
+							has_country_flag = synthetic_empire
+							is_machine_empire = yes
+							is_individual_machine = yes
+						}
+					}
+				}
+			}
+		}
+		custom_tooltip = {
+			fail_text = "requires_recipient_not_machine_terminator"
+			OR = {
+				is_same_species = from
+				from = { NOT = { has_civic = civic_machine_terminator } }
+				AND = {
+					from = { has_civic = civic_machine_terminator }
+					OR = {
+						has_country_flag = synthetic_empire
+						is_machine_empire = yes
+						is_individual_machine = yes
+					}
+				}
+			}
+		}
+		custom_tooltip = {
+			fail_text = "requires_actor_not_scorched_earth"
+			OR = {
+				is_genocidal_infernal = no
+				from = { is_infernal_empire = yes }
+			}
+		}
+		custom_tooltip = {
+			fail_text = "requires_recipient_not_scorched_earth"
+			OR = {
+				is_infernal_empire = yes
+				from = { is_genocidal_infernal = no }
+			}
+		}
+		custom_tooltip = {
+			fail_text = "federation_actor_no_separate_treaties"
+			NOT = {
+				AND = {
+					has_federation = yes
+					federation = { has_federation_law = treaties_separate_no }
+					NOT = { federation = { any_member = { is_same_value = root.from } } }
+				}
+			}
+		}
+		custom_tooltip = {
+			fail_text = "federation_recipient_no_separate_treaties"
+			from = {
+				NOT = {
+					AND = {
+						has_federation = yes
+						federation = {
+							has_federation_law = treaties_separate_no
+						}
+						NOT = { federation = { any_member = { is_same_value = root } } }
+					}
+				}
+			}
+		}
+		custom_tooltip = {
+			fail_text = "requires_not_in_galactic_empire"
+			OR = {
+				NAND = {
+					has_galactic_emperor = yes
+					is_galactic_community_member = no
+					from = { is_galactic_community_member = yes }
+				}
+				NAND = {
+					has_galactic_emperor = yes
+					is_galactic_community_member = yes
+					from = { is_galactic_community_member = no }
+				}
+			}
+		}
+		custom_tooltip = {
+			fail_text = "requires_recipient_not_custodian"
+			is_galactic_custodian = no
+		}
+		custom_tooltip = {
+			fail_text = "requires_recipient_not_gal_emperor"
+			is_galactic_emperor = no
+		}
+		custom_tooltip = {
+			fail_text = "requires_recipient_not_btc"
+			has_been_declared_crisis = no
+		}
+		custom_tooltip = {
+			fail_text = "requires_actor_not_pompous"
+			NOT = { has_valid_civic = civic_pompous_purists	}
+		}
+		custom_tooltip = {
+			fail_text = "requires_actor_not_khan"
+			NOT = { has_country_flag = heir_of_the_khan_khan }
+		}
+		# Requirements:
+		# - 50 Trust OR Excellent Opinion OR Can ignore trust values
+		# - An Embassy OR the Diplomatic Networking tradition.
+		custom_tooltip = {
+			fail_text = requires_50_trust_or_excellent
+			OR = {
+				opinion_level = {
+					who = from
+					level >= excellent
+				}
+				from = {
+					trust = {
+						who = root
+						value >= 50
+					}
+				}
+				from = {
+					can_ignore_trust_requirements_for_subjects = yes
+				}
+				AND = {
+					has_valid_civic = civic_hive_familiar_face
+					from = {
+						trust = {
+							who = root
+							value >= 25
+						}
+					}
+				}
+			}
+		}
+		custom_tooltip = {
+			fail_text = requires_embassy_or_diplomatic_networking
+			OR = {
+				has_embassy = from
+				has_active_tradition = tr_diplomacy_diplomatic_networking
+				from = { can_ignore_trust_requirements_for_subjects = yes }
+			}
+		}
+	}
+
+	should_ai_propose = {
+		modifier = { # If the Khan is bordering you, you are a lot more likely to be a subject
+			add = 50
+			from = {
+				has_country_flag = heir_of_the_khan_khan
+				is_neighbor_of = root
+			}
+			desc = NEIGHBORING_KHAN
+		}
+		modifier = { # If any of your neighbors are a satrapy, then that too makes you likely to be a subject
+			add = 25
+			from = {
+				has_country_flag = heir_of_the_khan_khan
+			}
+			any_neighbor_country = {
+				is_subject = yes
+				any_agreement = { agreement_preset = preset_satrapy }
+			}
+			desc = NEIGHBORING_SATRAPY
+		}
+		modifier = { # AI Heirs of the Khan empires will join you
+			add = 50
+			from = {
+				has_country_flag = heir_of_the_khan_khan
+			}
+			OR = {
+				has_origin = origin_heirs_of_the_khan
+				has_origin = origin_heirs_of_the_khan_corporate
+			}
+			desc = RIGHTFUL_KHAN
+		}
+
+		modifier = { # If you have defensive pacts then you are less likely to submit to the player Khan
+			subtract = value:num_defensive_pacts_times_25
+			from = {
+				has_country_flag = heir_of_the_khan_khan
+			}
+			desc = NUMBER_OF_DEFENSIVE_PACTS
+		}
+
+		modifier = {
+			subtract = 100
+			desc = IN_GALACTIC_EMPIRE
+			has_galactic_emperor = yes
+			is_galactic_community_member = yes
+			from = {
+				has_country_flag = heir_of_the_khan_khan
+			}
+		}
+		modifier = {
+			subtract = 100
+			desc = IN_GLACTIC_COMMUNITY_CUSTODIAN
+			has_galactic_custodian = yes
+			is_galactic_community_member = yes
+			from = {
+				has_country_flag = heir_of_the_khan_khan
+			}
+		}
+
+		modifier = { # Nomads never want to be subjects
+			subtract = 100
+			desc = WANTS_TO_BE_FREE
+			from = { is_nomadic = yes }
+		}
+
+		modifier = { # Planetbound empires don't trust nomadic overlords
+			subtract = 100
+			desc = NOMADIC_OVERLORD
+			is_nomadic = yes
+			from = {
+				is_nomadic = no
+			}
+		}
+
+		modifier = {
+			mult = 0
+			from = {
+				trust = {
+					who = root
+					value < 50
+				}
+				NOT = { has_country_flag = heir_of_the_khan_khan }
+			}
+		}
+		modifier = {
+			mult = 0
+			relative_power = {
+				who = from
+				category = all
+				value >= equivalent
+			}
+		}
+		modifier = {
+			add = -100
+			root = {
+				is_militarist = yes
+				has_faction = imperialist
+			}
+			desc = TOO_IMPERIAL
+		}
+	}
+
+	ai_acceptance = {
+		modifier = {
+			add = -100
+			from = {
+				trust = {
+					who = root
+					value < 50
+				}
+			}
+			NOT = { has_country_flag = heir_of_the_khan_khan }
+			desc = LACK_OF_TRUST
+		}
+	}
+}
+
+
 # civic_peacekeepers
 
 

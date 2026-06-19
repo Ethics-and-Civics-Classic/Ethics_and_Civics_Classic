@@ -2,3 +2,96 @@
 # Relics - 
 ########################
 
+r_khans_throne = {
+	activation_duration = @triumph_duration
+	portrait = "GFX_relic_khans_throne"
+	sound = "relic_activation_khans_throne"
+
+	resources = {
+		category = relics
+		# Activation cost
+		cost = {
+			unity = @activation_cost
+		}
+	}
+
+	ai_weight = {
+		weight = 100
+		modifier = {
+			factor = 2
+			is_militarist = yes
+		}
+		modifier = {
+			factor = 3
+			is_at_war = yes
+		}
+	}
+
+	triggered_country_modifier = {
+		potential = {
+			is_nomadic = no
+		}
+		country_claim_influence_cost_mult = -0.20
+	}
+	triggered_country_modifier = {
+		potential = {
+			is_nomadic = yes
+			NOR = {
+				has_origin = origin_heirs_of_the_khan
+				has_origin = origin_heirs_of_the_khan_corporate
+				has_civic = PrimPlayer_civic_barbaric_despoilers_khan
+				has_civic = civic_barbaric_despoilers_khan
+			}
+		}
+		country_naval_cap_add = 200
+	}
+
+	triggered_country_modifier = {
+		potential = {
+			NOR = {
+				has_origin = origin_heirs_of_the_khan
+				has_origin = origin_heirs_of_the_khan_corporate
+				has_valid_civic = civic_barbaric_despoilers
+				has_valid_civic = civic_barbaric_despoilers_corporate
+				has_valid_civic = PrimPlayer_civic_barbaric_despoilers_khan
+				has_valid_civic = civic_barbaric_despoilers_khan
+			}
+		}
+		custom_tooltip = khans_throne_passive_effect
+	}
+	triggered_country_modifier = {
+		potential = {
+			OR = {
+				has_origin = origin_heirs_of_the_khan
+				has_origin = origin_heirs_of_the_khan_corporate
+				has_civic = PrimPlayer_civic_barbaric_despoilers_khan
+				has_civic = civic_barbaric_despoilers_khan
+			}
+		}
+		country_naval_cap_add = 400
+	}
+
+	score = 3000
+
+	active_effect = {
+		add_modifier = {
+			modifier = "drums_of_war"
+			days = @triumph_duration
+		}
+		custom_tooltip = relic_triumph_cooldown
+		hidden_effect = {
+			add_modifier = {
+				modifier = "relic_activation_cooldown"
+				days = @triumph_duration
+			}
+		}
+	}
+
+	# Possible check for activation
+	possible = {
+		inline_script = {
+			script = relics/activation_checks
+			RELIC = r_khans_throne
+		}
+	}
+}

@@ -4,6 +4,398 @@
 
 # 02_special_decisions.txt#
 
+decision_primplayer_unified_planet = {
+	owned_planets_only = yes
+	sound = event_administrative_work
+	icon = "GFX_edict_type_policy"
+	
+	resources = {
+		category = decisions
+		cost = {
+			influence = 250
+		}
+	}
+
+	potential = {
+		OWNER = {
+			NOR = {
+				any_situation = { is_situation_type = PrimPlayer_unified_planet_situation }
+				has_technology = tech_primitive_unified_planet
+				has_country_flag = PrimPlayer_unified_planet_situation_event_flag
+			}
+			OR= {
+				has_origin = origin_broken_shackles
+				# So primitive players don't start with it unlocked
+				has_origin = origin_primitive_player_pre_industrial_age
+				has_origin = origin_primitive_player_industrial_age
+				has_origin = origin_primitive_player_machine_age
+				has_origin = origin_primitive_player_atomic_age
+				has_origin = origin_primitive_player_early_space_age
+			}
+		}
+		OR = {
+			has_deposit = d_ethic_fanatic_authoritarian_nation_blocker
+			has_deposit = d_ethic_fanatic_egalitarian_nation_blocker
+			has_deposit = d_ethic_fanatic_xenophobe_nation_blocker
+			has_deposit = d_ethic_fanatic_xenophile_nation_blocker
+			has_deposit = d_ethic_fanatic_militarist_nation_blocker
+			has_deposit = d_ethic_fanatic_pacifist_nation_blocker
+			has_deposit = d_ethic_fanatic_spiritualist_nation_blocker
+			has_deposit = d_ethic_fanatic_materialist_nation_blocker
+			has_deposit = d_ethic_fanatic_green_nation_blocker
+			has_deposit = d_ethic_fanatic_industrial_nation_blocker
+			has_deposit = d_ethic_fanatic_socialism_nation_blocker
+			has_deposit = d_ethic_fanatic_capitalism_nation_blocker
+		}
+	}
+
+	allow = {
+		OR = {
+			hidden_trigger = {
+				NOT = {
+					any_country = {
+						has_communications = ROOT
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+					}
+				}
+			}
+			is_planet_class = pc_nuked
+			NOR = {
+				has_deposit = d_ethic_fanatic_authoritarian_nation_blocker
+				has_deposit = d_ethic_fanatic_egalitarian_nation_blocker
+				has_deposit = d_ethic_fanatic_xenophobe_nation_blocker
+				has_deposit = d_ethic_fanatic_xenophile_nation_blocker
+				has_deposit = d_ethic_fanatic_militarist_nation_blocker
+				has_deposit = d_ethic_fanatic_pacifist_nation_blocker
+				has_deposit = d_ethic_fanatic_spiritualist_nation_blocker
+				has_deposit = d_ethic_fanatic_materialist_nation_blocker
+				has_deposit = d_ethic_fanatic_green_nation_blocker
+				has_deposit = d_ethic_fanatic_industrial_nation_blocker
+				has_deposit = d_ethic_fanatic_socialism_nation_blocker
+				has_deposit = d_ethic_fanatic_capitalism_nation_blocker
+			}
+		}
+	}
+
+	effect = {
+		hidden_effect = { 
+			set_country_flag = PrimPlayer_unified_planet_situation_event_flag 
+			if = {
+				limit = { 
+					has_deposit = d_ethic_fanatic_authoritarian_nation_blocker
+				}
+				remove_deposit = d_ethic_fanatic_authoritarian_nation_blocker
+			}
+			if = {
+				limit = { 
+					has_deposit = d_ethic_fanatic_egalitarian_nation_blocker
+				}
+				remove_deposit = d_ethic_fanatic_egalitarian_nation_blocker
+			}
+			if = {
+				limit = { 
+					has_deposit = d_ethic_fanatic_xenophobe_nation_blocker
+				}
+				remove_deposit = d_ethic_fanatic_xenophobe_nation_blocker
+			}
+			if = {
+				limit = { 
+					has_deposit = d_ethic_fanatic_xenophile_nation_blocker
+				}
+				remove_deposit = d_ethic_fanatic_xenophile_nation_blocker
+			}
+			if = {
+				limit = { 
+					has_deposit = d_ethic_fanatic_militarist_nation_blocker
+				}
+				remove_deposit = d_ethic_fanatic_militarist_nation_blocker
+			}
+			if = {
+				limit = { 
+					has_deposit = d_ethic_fanatic_pacifist_nation_blocker
+				}
+				remove_deposit = d_ethic_fanatic_pacifist_nation_blocker
+			}
+			if = {
+				limit = { 
+					has_deposit = d_ethic_fanatic_spiritualist_nation_blocker
+				}
+				remove_deposit = d_ethic_fanatic_spiritualist_nation_blocker
+			}
+			if = {
+				limit = { 
+					has_deposit = d_ethic_fanatic_materialist_nation_blocker
+				}
+				remove_deposit = d_ethic_fanatic_materialist_nation_blocker
+			}
+			if = {
+				limit = { 
+					has_deposit = d_ethic_fanatic_green_nation_blocker
+				}
+				remove_deposit = d_ethic_fanatic_green_nation_blocker
+			}
+			if = {
+				limit = { 
+					has_deposit = d_ethic_fanatic_industrial_nation_blocker
+				}
+				remove_deposit = d_ethic_fanatic_industrial_nation_blocker
+			}
+			if = {
+				limit = { 
+					has_deposit = d_ethic_fanatic_socialism_nation_blocker
+				}
+				remove_deposit = d_ethic_fanatic_socialism_nation_blocker
+			}
+			if = {
+				limit = { 
+					has_deposit = d_ethic_fanatic_capitalism_nation_blocker
+				}
+				remove_deposit = d_ethic_fanatic_capitalism_nation_blocker
+			}
+		}
+		OWNER = {
+			give_technology = { tech = tech_federation_code message = yes }
+			country_event = { id = PrimPlay_situation_event.3 }
+			custom_tooltip = PrimPlayer_situation_add_progress_tooltip
+		}
+	}
+
+	ai_weight = {
+		weight = 100	#AI wants to do
+	}
+}
+
+decision_planet_luxuries_boost = {
+	owned_planets_only = yes
+	sound = event_administrative_work
+	icon = decision_luxuries
+
+	resources = {
+		category = decisions
+		cost = {
+			trigger = {
+				pop_amount < 1000
+			}
+			consumer_goods = 100
+		}
+		cost = {
+			trigger = {
+				pop_amount >= 1000
+				pop_amount < 2000
+			}
+			consumer_goods = 200
+		}
+		cost = {
+			trigger = {
+				pop_amount >= 2000
+				pop_amount < 3000
+			}
+			consumer_goods = 300
+		}
+		cost = {
+			trigger = {
+				pop_amount >= 3000
+				pop_amount < 4000
+			}
+			consumer_goods = 400
+		}
+		cost = {
+			trigger = {
+				pop_amount >= 4000
+				pop_amount < 5000
+			}
+			consumer_goods = 500
+		}
+		cost = {
+			trigger = {
+				pop_amount >= 5000
+				pop_amount < 6000
+			}
+			consumer_goods = 600
+		}
+		cost = {
+			trigger = {
+				pop_amount >= 6000
+				pop_amount < 7000
+			}
+			consumer_goods = 700
+		}
+		cost = {
+			trigger = {
+				pop_amount >= 7000
+				pop_amount < 8500
+			}
+			consumer_goods = 800
+		}
+		cost = {
+			trigger = {
+				pop_amount >= 8500
+				pop_amount < 10000
+			}
+			consumer_goods = 900
+		}
+		cost = {
+			trigger = {
+				pop_amount >= 10000
+			}
+			consumer_goods = 1000
+		}
+	}
+	
+	prerequisites = { tech_holo_entertainment } 
+
+	potential = {
+		owner = {
+			is_regular_empire = yes 
+			is_nomadic = no
+		}
+		NOT = { has_designation = col_nanotech_world }
+	}
+
+	allow = {
+		NOT = { has_modifier = planet_luxuries_boost }
+	}
+
+	effect = {
+		add_modifier = { modifier = "planet_luxuries_boost" days = 3600 }
+	}
+
+	ai_weight = {
+		weight = 1
+		modifier = {
+			add = 10
+			free_amenities < -5
+			pop_amount > 1000
+			owner = {
+				resource_income_compare = {
+					resource = consumer_goods
+					value > 0
+				}
+				resource_stockpile_compare = {
+					resource = consumer_goods
+					value > 300
+				}
+			}
+		}
+		modifier = {
+			factor = 0
+			free_amenities > 20
+		}
+	}
+}
+
+# Expel Excess Population
+decision_expel_population = {
+	owned_planets_only = yes
+	sound = event_administrative_work
+	icon = decision_expel_population
+
+	resources = {
+		category = decisions
+		cost = {
+			unity = 250
+		}
+	}
+	
+	prerequisites = { tech_primitive_unified_planet } 
+
+	potential = {
+		owner = {
+			is_regular_empire = yes
+			NOT = { has_policy_flag = population_controls_not_allowed }
+		}
+	}
+
+
+	allow = {
+		free_housing < 0
+		NOT = { has_modifier = planet_population_expelled }
+		custom_tooltip = {
+			fail_text = "decision_expel_population_fail_tooltip"
+			any_owned_pop_group = {
+				can_think = yes
+				NOR = {
+					has_trait = trait_hive_mind
+					is_non_sapient_robot = yes
+					is_pop_category = ruler
+				}
+			}
+		}
+	}
+
+
+	effect = {
+		custom_tooltip = decision_expel_population_effects
+		add_modifier = { modifier = "planet_population_expelled" days = 1800 }
+		hidden_effect = {
+			reroll_random = yes
+			switch = {
+				trigger = free_housing
+				-900 < { set_variable = { which = expel_pop_var value = 10 } } # 10
+				-800 < { set_variable = { which = expel_pop_var value = 9 } } # 9
+				-700 < { set_variable = { which = expel_pop_var value = 8 } } # 8
+				-600 < { set_variable = { which = expel_pop_var value = 7 } } # 7
+				-500 < { set_variable = { which = expel_pop_var value = 6 } } # 6
+				-400 < { set_variable = { which = expel_pop_var value = 5 } } # 5
+				-300 < { set_variable = { which = expel_pop_var value = 4 } } # 4
+				-200 < { set_variable = { which = expel_pop_var value = 3 } } # 3
+				-100 < { set_variable = { which = expel_pop_var value = 2 } } # 2
+				0 < { set_variable = { which = expel_pop_var value = 1 } } # 1
+			}
+			while = {
+				count = expel_pop_var
+
+				weighted_random_owned_pop_group = {
+					limit = {
+						can_think = yes
+						NOR = {
+							has_trait = trait_hive_mind
+							is_non_sapient_robot = yes
+							is_pop_category = ruler
+						}
+					}
+					weights = {
+						# can use add or mult
+						base = 1
+						modifier = {
+							add = 100
+							is_pop_category = purge
+						}
+						modifier = {
+							factor = 5
+							is_unemployed = yes
+						}
+						modifier = {
+							factor = 10
+							has_citizenship_rights = no
+						}
+						modifier = {
+							add = 10
+							OR = {
+								is_pop_category = worker
+								is_enslaved = yes
+							}
+						}
+					}
+					if = {
+						limit = { is_valid_refugee_pop = yes }
+						save_event_target_as = refugee_pop #Must be saved for refugee_pop_effect to work
+						refugee_pop_effect = yes
+					}
+					else = {
+						kill_single_pop = yes
+					}
+				}
+			}
+			clear_variable = expel_pop_var
+		}
+	}
+
+	ai_weight = {
+		weight = 0
+	}
+}
+
 # Negotiate with Crime Lords
 decision_negotiate_with_crime_lords = {
 	owned_planets_only = yes

@@ -324,9 +324,23 @@ country_event = {
 
 		# Champions of the Empire
 		# Adds a random common trait
+		#if = {
+		#	limit = {
+		#		has_tradition = tr_aptitude_champions_of_the_empire
+		#	}
+		#	from = {
+		#		add_trait = {
+		#			trait = random_common
+		#			show_message = no
+		#		}
+		#	}
+		#}
+		
+		# Aptitude Traditions
+		# Adds a random common trait
 		if = {
 			limit = {
-				has_tradition = tr_aptitude_champions_of_the_empire
+				has_tradition = tr_aptitude_finish
 			}
 			from = {
 				add_trait = {
@@ -685,6 +699,24 @@ country_event = {
 				}
 			}
 		}
+		
+		# Reaver trait
+		# Adds the Plunderer trait
+		if = {
+			limit = {
+				from.species = { has_trait = trait_reavers }
+				from = {
+					leader_class = commander
+					is_xenophile = no
+					is_pacifist = no
+				}
+			}
+			from = {
+				give_trait_no_notify_ignore_autocracy_restriction = {
+					TRAIT = leader_trait_plunderer
+				}
+			}
+		}
 	}
 }
 
@@ -929,6 +961,23 @@ country_event = {
 					trait = leader_trait_psionic
 					show_message = no
 				}
+			}
+		}
+		
+		# Reaver trait
+		# Adds the Plunderer trait
+		every_owned_leader = {
+			limit = {
+				is_xenophile = no
+				is_pacifist = no
+				is_gestalt = no
+				leader_class = commander
+				species = {
+					has_trait = trait_reavers
+				}
+			}
+			give_trait_no_notify_ignore_autocracy_restriction = {
+				TRAIT = leader_trait_plunderer
 			}
 		}
 	}
@@ -1256,6 +1305,22 @@ leader_event = {
 						show_message = no
 					}
 				}
+			}
+		}
+		
+		# Reaver trait
+		# Adds the Plunderer trait
+		if = {
+			limit = {
+				is_xenophile = no
+				is_pacifist = no
+				leader_class = commander
+				species = {
+					has_trait = trait_reavers
+				}
+			}
+			give_trait_no_notify_ignore_autocracy_restriction = {
+				TRAIT = leader_trait_plunderer
 			}
 		}
 	}
@@ -3647,7 +3712,10 @@ fleet_event = {
 		trigger = {
 			owner = {
 				has_civic = civic_criminal_heritage
-				has_civic = civic_crusader_spirit_corporate
+				OR = {
+					has_valid_civic = civic_crusader_spirit_corporate
+					has_valid_civic = civic_void_reavers
+				}
 			}
 		}
 		text = "EaC_civic_mechanic_events.2.desc.criminal_heritage"
@@ -3657,7 +3725,10 @@ fleet_event = {
 			owner = {
 				if = {
 					limit = { has_civic = civic_criminal_heritage }
-					NOT = { has_valid_civic = civic_crusader_spirit_corporate }
+					NOR = {
+						has_valid_civic = civic_crusader_spirit_corporate
+						has_valid_civic = civic_void_reavers
+					}
 				}
 				else = { NOT = { has_valid_civic = civic_military_dictatorship_corporate } }
 			}
@@ -3681,7 +3752,10 @@ fleet_event = {
 			owner = {
 				if = {
 					limit = { has_civic = civic_criminal_heritage }
-					NOT = { has_valid_civic = civic_crusader_spirit_corporate }
+					NOR = {
+						has_valid_civic = civic_crusader_spirit_corporate
+						has_valid_civic = civic_void_reavers
+					}
 				}
 				else = { NOT = { has_valid_civic = civic_military_dictatorship_corporate } }
 			}
@@ -3854,7 +3928,10 @@ fleet_event = {
 		trigger = {
 			owner = {
 				has_civic = civic_criminal_heritage
-				has_civic = civic_crusader_spirit_corporate
+				OR = {
+					has_valid_civic = civic_crusader_spirit_corporate
+					has_valid_civic = civic_void_reavers
+				}
 			}
 		}
 		allow = {
@@ -6676,7 +6753,10 @@ country_event = {
 					has_civic = civic_military_dictatorship_corporate
 					AND = {
 						has_civic = civic_criminal_heritage
-						has_civic = civic_crusader_spirit_corporate
+						OR = {
+							has_valid_civic = civic_crusader_spirit_corporate
+							has_valid_civic = civic_void_reavers
+						}
 					}
 				}
 				their_opinion = { who = event_target:mercenary_enclave_country value > 79 }
@@ -6691,7 +6771,10 @@ country_event = {
 					has_civic = civic_military_dictatorship_corporate
 					AND = {
 						has_civic = civic_criminal_heritage
-						has_civic = civic_crusader_spirit_corporate
+						OR = {
+							has_valid_civic = civic_crusader_spirit_corporate
+							has_valid_civic = civic_void_reavers
+						}
 					}
 				}
 				their_opinion = { who = event_target:mercenary_enclave_country value < 80 }
@@ -6707,7 +6790,10 @@ country_event = {
 					has_civic = civic_military_dictatorship_corporate
 					AND = {
 						has_civic = civic_criminal_heritage
-						has_civic = civic_crusader_spirit_corporate
+						OR = {
+							has_valid_civic = civic_crusader_spirit_corporate
+							has_valid_civic = civic_void_reavers
+						}
 					}
 				}
 				their_opinion = { who = event_target:mercenary_enclave_country value < 29 }
@@ -6723,7 +6809,10 @@ country_event = {
 					has_civic = civic_military_dictatorship_corporate
 					AND = {
 						has_civic = civic_criminal_heritage
-						has_civic = civic_crusader_spirit_corporate
+						OR = {
+							has_valid_civic = civic_crusader_spirit_corporate
+							has_valid_civic = civic_void_reavers
+						}
 					}
 				}
 				their_opinion = { who = event_target:mercenary_enclave_country value < -31 }
@@ -6736,7 +6825,10 @@ country_event = {
 			root = {
 				if = {
 					limit = { has_civic = civic_criminal_heritage }
-					NOT = { has_valid_civic = civic_crusader_spirit_corporate }
+					NOR = {
+						has_valid_civic = civic_crusader_spirit_corporate
+						has_valid_civic = civic_void_reavers
+					}
 				}
 				else = { NOT = { has_valid_civic = civic_military_dictatorship_corporate } }
 			}

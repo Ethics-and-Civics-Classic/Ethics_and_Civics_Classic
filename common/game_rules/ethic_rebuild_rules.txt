@@ -3,6 +3,51 @@
 # If rules here evaluate to true, there might still be other rules that make the action unavailable.
 # If a rule here evaluates to false the action will become unavailable
 
+#Root = country
+#This = planet
+# NOTE: Any time you update this game rule, update the nomad_can_settle_trigger trigger as well
+can_nomad_settle = {
+	hidden_trigger = {
+		root = { is_nomadic = yes }
+	}
+	custom_tooltip = {
+		fail_text = "SETTLE_BLOCKED_BY_ORIGIN"
+		root = {
+			NOR = {
+				has_origin = origin_sacred_path
+				has_origin = origin_heirs_of_the_khan
+				has_origin = origin_heirs_of_the_khan_corporate
+				AND = {
+					has_origin = origin_forever_cruise
+					NOT = {
+						has_country_flag = forever_cruise_planetfall
+					}
+				}
+			}
+		}
+	}
+
+	custom_tooltip = {
+		fail_text = "SETTLE_MISSING_TRADITION"
+		if = {
+			limit = {
+				root = {
+					NOR = {
+						has_origin = origin_forever_cruise
+						has_origin = origin_sacred_path
+						has_origin = origin_heirs_of_the_khan
+						has_origin = origin_heirs_of_the_khan_corporate
+					}
+				}
+			}
+			OR = {
+				root = { has_tradition = tr_adaptability_finish }
+				root = { has_tradition = tr_versatility_finish }
+			}
+		}
+	}
+}
+
 # This = country establishing contact | From = target country
 # Final check for whether there should be a first contact site spawned. Main check is via country type 'contact_rule', in code. See also: error-logging/fixing event 'action.240', which duplicates this trigger.
 can_have_first_contact = {
