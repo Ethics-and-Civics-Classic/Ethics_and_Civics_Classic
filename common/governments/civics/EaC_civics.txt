@@ -2508,8 +2508,6 @@ civic_catalytic_processing = {
 }
 
 civic_crafters = {
-	playable = { has_humanoids = yes }
-	ai_playable = { has_humanoids = yes }
 	description = "civic_tooltip_crafters_effects"
 	potential = {
 		ethics = { NOT = { value = ethic_gestalt_consciousness } }
@@ -2555,8 +2553,6 @@ civic_crafters = {
 }
 
 civic_pleasure_seekers = {
-	playable = { has_humanoids = yes }
-	ai_playable = { has_humanoids = yes }
 	description = "civic_tooltip_pleasure_seekers_effects"
 	potential = {
 		ethics = { NOT = { value = ethic_gestalt_consciousness } }
@@ -2644,18 +2640,15 @@ civic_idyllic_bloom = {
 		authority = { NOT = { value = auth_corporate } }
 	}
 	possible = {
-		species_class = {
-			OR = {
-				value = FUN
-				value = PLANT
-				#value = BIOGENESIS	#Not a real species
+		OR = {
+			species_class = {
+				OR = {
+					value = FUN
+					value = PLANT
+					#value = BIOGENESIS	#Not a real species
+				}
 			}
-		}
-		ethics = {
-			OR = {
-				value = ethic_green			# Modded
-				value = ethic_fanatic_green	# Modded
-			}
+			ethics = { value = ethic_fanatic_green } # Modded 
 		}
 		origin = {
 			NOR = {
@@ -4454,6 +4447,7 @@ civic_star_settlers = {
 		ethics = { NOT = { value = ethic_gestalt_consciousness } } 
 	}
 	possible = {
+		is_nomadic = no	#This civic doesn't really -function- as a nomad
 		ethics = {
 			OR = {
 				text = civic_tooltip_pacifist
@@ -4462,6 +4456,15 @@ civic_star_settlers = {
 			}
 		}
 		origin = {
+			#NOR = {
+			#	value = origin_sacred_path
+			#	value = origin_forever_cruise
+			#}
+			#NOR = {
+			#	text = origin_tooltip_not_heirs_of_the_khan
+			#	value = origin_heirs_of_the_khan
+			#	value = origin_heirs_of_the_khan_corporate
+			#}
 			NOR = {
 				text = origin_tooltip_atleast_early_space_age
 				value = origin_primitive_player_pre_industrial_age
@@ -4692,6 +4695,7 @@ civic_exploration = {
 		ethics = { NOT = { value = ethic_gestalt_consciousness } } 
 	}
 	possible = {
+		is_nomadic = no
 		ethics = {
 			OR = {
 				text = civic_tooltip_materialist
@@ -7006,8 +7010,6 @@ civic_corporate_catalytic_processing = {
 }
 
 civic_corporate_hedonism = {
-	playable = { has_humanoids = yes }
-	ai_playable = { has_humanoids = yes }
 	description = "civic_tooltip_corporate_hedonism_effects"
 	potential = {
 		ethics = { NOT = { value = ethic_gestalt_consciousness } }
@@ -7182,8 +7184,6 @@ civic_corporate_machine_anglers = {
 }
 
 civic_corporate_crafters = {
-	playable = { has_humanoids = yes }
-	ai_playable = { has_humanoids = yes }
 	description = "civic_tooltip_crafters_effects"
 	potential = {
 		OR = {
@@ -9914,11 +9914,23 @@ civic_star_seekers = {
 	potential = {
 		authority = { NOT = { value = auth_corporate } }
 		ethics = { NOT = { value = ethic_gestalt_consciousness}}
-	}
-	possible = {
 		is_nomadic = yes
 	}
+	possible = {
+		ethics = {
+			OR = {
+				text = civic_tooltip_materialist_or_pacifist_or_xenophile
+				value = ethic_materialist
+				value = ethic_fanatic_materialist
+				value = ethic_xenophile
+				value = ethic_fanatic_xenophile
+				value = ethic_pacifist
+				value = ethic_fanatic_pacifist
+			}
+		}
+	}
 	description = "civic_star_seekers_effect_tooltip"
+	negative_description = "civic_tooltip_exploration_negative_effects"
 
 	random_weight = {
 		base = @civic_rare_random_weight
@@ -9929,5 +9941,62 @@ civic_star_seekers = {
 
 	modifier = {
 		ship_speed_mult = 0.2
+		science_ship_survey_speed = 0.15
+		ship_anomaly_generation_chance_mult = 0.15
+		ship_anomaly_research_speed_mult = 0.20 # 0.25 # 3.11
+		ship_archaeological_site_excavation_speed_mult = 0.25
+		ship_archaeological_site_clues_add = 1
+		station_researchers_produces_mult = 0.10 # 0.15 # 3.11
+		ship_hyperlane_range_add = 1
+		station_researchers_upkeep_mult = 0.10 # 0.15 # 3.11
+		ship_armor_mult = -0.15
+	}
+}
+
+civic_corporate_star_seekers = {
+	modification = yes
+	playable = { has_nomads_dlc = yes }
+	ai_playable = { has_nomads_dlc = yes }
+	potential = {
+		OR = {
+			authority = { value = auth_corporate }
+			civics = { value = civic_galactic_sovereign_megacorp }
+		}
+		is_nomadic = yes
+	}
+	possible = {
+		ethics = {
+			OR = {
+				text = civic_tooltip_materialist_or_pacifist_or_xenophile
+				value = ethic_materialist
+				value = ethic_fanatic_materialist
+				value = ethic_xenophile
+				value = ethic_fanatic_xenophile
+				value = ethic_pacifist
+				value = ethic_fanatic_pacifist
+			}
+		}
+	}
+	description = "civic_star_seekers_effect_tooltip"
+	negative_description = "civic_tooltip_exploration_negative_effects"
+
+	random_weight = {
+		base = @civic_rare_random_weight
+	}
+	ai_weight = {
+		base = @civic_rare_random_weight
+	}
+
+	modifier = {
+		ship_speed_mult = 0.2
+		science_ship_survey_speed = 0.15
+		ship_anomaly_generation_chance_mult = 0.15
+		ship_anomaly_research_speed_mult = 0.20 # 0.25 # 3.11
+		ship_archaeological_site_excavation_speed_mult = 0.25
+		ship_archaeological_site_clues_add = 1
+		station_researchers_produces_mult = 0.10 # 0.15 # 3.11
+		ship_hyperlane_range_add = 1
+		station_researchers_upkeep_mult = 0.10 # 0.15 # 3.11
+		ship_armor_mult = -0.15
 	}
 }

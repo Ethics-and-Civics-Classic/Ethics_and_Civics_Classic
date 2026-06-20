@@ -172,9 +172,27 @@ can_excavate_outside_borders = {
 	OR = {
 		has_tradition = tr_archivism_frontier_archaeology
 		NOT = { has_technology = "tech_starbase_1" }	# Modded for PrimPlayer Compatibility so they can do archaeology
+		is_nomadic = yes
 	}
-	from = {
-		solar_system = { NOT = { exists = owner } }
+	OR = {
+		from = { # regular case
+			solar_system = { NOT = { exists = owner } }
+		}
+		AND = { # Nomadic with Research Agreement
+			from = {
+				solar_system = { exists = owner }
+			}
+			is_nomadic = yes
+			has_research_agreement = from.solar_system.owner
+		}
+		# Nomadic empire with Archivism - will upset the system owner
+		AND = {
+			from = {
+				solar_system = { exists = owner }
+			}
+			is_nomadic = yes
+			has_tradition = tr_archivism_frontier_archaeology
+		}
 	}
 }
 
@@ -461,7 +479,7 @@ can_modify_species = {
 
 # This = planet
 # Root = country
-can_build_branch_office_on_planet = {
+can_build_branch_office_on_colony = {
 	custom_tooltip = {
 		text = close_branch_office_flag
 		NOT = { has_carrier_flag = close_branch_office_flag@ROOT }
@@ -789,9 +807,13 @@ can_fill_ruler_job = {
 				}
 			}
 			# Rule out Organic Trophies
-			NOT = {
+			NOR = {
 				has_citizenship_type = {
 					type = citizenship_organic_trophy
+					country = owner
+				}
+				has_citizenship_type = {
+					type = citizenship_cruise_passenger
 					country = owner
 				}
 			}
