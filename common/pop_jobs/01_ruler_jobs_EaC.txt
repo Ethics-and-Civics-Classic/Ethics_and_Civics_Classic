@@ -1,7 +1,6 @@
 ##################
 ### Fancy Jobs ###
 ##################
-###test
 
 politician = {
 	category = ruler
@@ -40,22 +39,13 @@ politician = {
 			desc = job_noble_desc
 			weight = 10
 		}
-#		swap_type = {	# Enriad - Elite Merchants are Moguls
-#			trigger = {
-#				politician_is_merchant = yes
-#			}
-#			name = mogul
-#			icon = mogul
-#			desc = job_mogul_desc
-#			weight = 10
-#		}
-		swap_type = {
+		swap_type = {	# Enriad - Elite Merchants are Moguls
 			trigger = {
 				politician_is_merchant = yes
 			}
-			name = merchant
-			icon = merchant
-			desc = job_merchant_desc
+			name = mogul
+			icon = mogul
+			desc = job_mogul_desc
 			weight = 10
 		}
 		swap_type = {
@@ -301,17 +291,17 @@ politician = {
 		is_sapient = yes
 	}
 	
-	#possible = {
- 	#	if = {												# Enriad - disable it if you dont want Strong Spiritualist Restriction for Priest jobs
-	#		limit = { planet = { politician_is_high_priest = yes } }
-	#		OR = {
-	#			has_ethic = ethic_spiritualist
-	#			has_trait = trait_machine_cult_cybernetic
-	#			owner = { is_individual_machine = yes }		# Cog Note - This is the fix/bypass for individualist machines
-	#			owner = { is_gestalt = yes }
-	#		}
-	#	}
- 	#}
+	possible = {
+ 		if = {												# Enriad - disable it if you dont want Strong Spiritualist Restriction for Priest jobs
+			limit = { planet = { politician_is_high_priest = yes } }
+			OR = {
+				has_ethic = ethic_spiritualist
+				has_trait = trait_machine_cult_cybernetic
+				owner = { is_individual_machine = yes }		# Cog Note - This is the fix/bypass for individualist machines
+				owner = { is_gestalt = yes }
+			}
+		}
+ 	}
 
 	possible_precalc = can_fill_ruler_job
 
@@ -335,22 +325,6 @@ politician = {
 			trade = 4
 		}
 		##Mogul
-		#produces = {
-		#	trigger = {
-		#		exists = planet
-		#		planet = {
-		#			OR = {
-		#				politician_is_merchant = yes
-		#				politician_is_augmentation_merchant = yes
-		#				politician_is_ashbroker = yes
-		#			}
-		#		}
-		#	}
-		#	unity = -2
-		#	trade = 6
-		#}
-
-		##Merchant
 		produces = {
 			trigger = {
 				exists = planet
@@ -362,10 +336,9 @@ politician = {
 					}
 				}
 			}
-			unity = -1.5
+			unity = -2
 			trade = 6
 		}
-
 		##Science Director
 		produces = {
 			trigger = {
@@ -618,19 +591,19 @@ politician = {
 		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
 	}
 	#Mogul			# Enriad - All bonuses halved to match previous version numbers
-	#triggered_planet_modifier = {
-	#	potential = {
-	#		always = yes
-	#		planet = {
-	#			OR = {
-	#				politician_is_merchant = yes
-	#				politician_is_augmentation_merchant = yes
-	#			}
-	#		}
-	#	}
-	#	planet_amenities_add = 100
-	#	mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
-	#}
+	triggered_planet_modifier = {
+		potential = {
+			always = yes
+			planet = {
+				OR = {
+					politician_is_merchant = yes
+					politician_is_augmentation_merchant = yes
+				}
+			}
+		}
+		planet_amenities_add = 100
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	}
 	triggered_planet_modifier = {
 		potential = {
 			exists = owner
@@ -756,9 +729,11 @@ politician = {
 		planet_stability_add = @inf_dancer_stability
 	}
 	
+	inline_script = "output/politician_output_modifier"
 
 	weight = {
 		weight = @ruler_job_weight
+		mult = value:job_weights_modifier|JOB|politician|RESOURCE|unity|
 		mult = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
 		modifier = {
 			factor = 0.1
@@ -782,15 +757,6 @@ politician = {
 	#inline_script = "jobs/automodding_priority_unity"
 	inline_script = "jobs/automodding_priority_charisma"
 	
-	#    promotion = {
-	#	time = @standard_promotion_time
-	#	effect = {
-	#		pop_amount_change_category = {
-	#			CATEGORY = ruler
-	#			AMOUNT = local_pop_amount
-	#		}
-	#	}
-	#}
 }
 
 dystopian_enforcer = {
@@ -1030,6 +996,7 @@ dystopian_enforcer = {
 		weight = @specialist_job_weight
 
 		modifier = {
+			mult = value:job_weights_modifier|JOB|enforcer|RESOURCE|unity|FACTOR|0.25|
 			owner = { has_active_tradition = tr_domination_judgment_corps }
 		}
 		modifier = {
@@ -1109,15 +1076,6 @@ dystopian_enforcer = {
 	
 	
 	
-	#promotion = {
-	#	time = @standard_promotion_time
-	#	effect = {
-	#		pop_amount_change_category = {
-	#			CATEGORY = ruler
-	#			AMOUNT = local_pop_amount
-	#		}
-	#	}
-	#}
 }
 
 telepath = {
@@ -1301,6 +1259,7 @@ telepath = {
 		mult = 2
 		mult = value:job_weights_modifier|JOB|telepath|RESOURCE|unity|
 		modifier = {
+			factor = 0.2
 			has_citizenship_rights = no
 		}
 		modifier = {
@@ -1397,7 +1356,7 @@ commandante_pirate_offworld = { #Steam: Added by branch offices off-world
 
 	triggered_planet_modifier = {
 		potential = {
-			owner = {has_trait = trait_repugnant}
+			has_trait = trait_repugnant
 		}
 		planet_amenities_add = -100
 		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
@@ -1605,127 +1564,127 @@ commandante_pirate = { 		#Steam: Defunct as of 4.0, kept for archival purposes
 		always = no
 	}
 
- #	possible_pre_triggers = {
- #		has_owner = yes
- #		is_enslaved = no
- #		is_being_purged = no
- #		is_being_assimilated = no
- #		is_sapient = yes
- #	}
- #
- #	possible_precalc = can_fill_ruler_job
- #
- #	country_modifier = {
- #		country_naval_cap_add = 2
- #	}
- #
- #	resources = {
- #		category = planet_bureaucrats
- #		produces = {
- #			unity = 2
- #		}
- #		produces = {
- #			trigger = {
- #				exists = owner
- #				owner = {  has_valid_civic = civic_citizen_service }
- #			}
- #			unity = 1
- #		}
- #		produces = {
- #			trigger = {
- #				exists = owner
- #				owner = { has_valid_civic = civic_byzantine_bureaucracy }
- #			}
- #			unity = 1
- #		}
- #		upkeep = {
- #			consumer_goods = 2
- #		}
- #		upkeep = {
- #			trigger = {
- #				exists = owner
- #				owner = { has_valid_civic = civic_byzantine_bureaucracy }
- #			}
- #			consumer_goods = -1
- #		}
- #	}
- #
- #	planet_modifier = {
- #		planet_orbital_bombardment_damage = -0.10
- #		planet_stability_add = 3
- #		planet_defense_armies_add = 1
- #		pop_government_ethic_attraction = -0.015
- #	}
- #
- #	triggered_planet_modifier = {
- #		potential = {
- #			always = yes
- #		}
- #		planet_amenities_add = 300
- #		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
- #	}
- #
- #	# pop_group_modifier = {	# No Longer Used in Stellaris 4.0
- #	#	pop_defense_armies_add = 1
- #	#}
- #
- #	triggered_planet_modifier = {
- #		potential = {
- #			has_trait = trait_repugnant
- #		}
- #		planet_amenities_add = -100
- #		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
- #	}
- #
- #	triggered_planet_modifier = {
- #		potential = {
- #			exists = owner
- #			owner = {  has_valid_civic = civic_citizen_service }
- #		}
- #		planet_amenities_add = 300
- #		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
- #	}
- #
- #	triggered_country_modifier = {
- #		potential = {
- #			exists = owner
- #			owner = { has_valid_civic = civic_byzantine_bureaucracy }
- #		}
- #		modifier = {
- #			empire_size_pops_mult = -0.005
- #		}
- #	}
- #
- #	weight = {
- #		weight = @ruler_job_weight
- #		mult = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
- #		modifier = {
- #			factor = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
- #			has_trait = trait_repugnant
- #		}
- #		modifier = {
- #			factor = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
- #			owner = { has_valid_civic = civic_citizen_service }
- #		}
- #		modifier = {
- #			factor = 2.0
- #			OR = {
- #				has_trait = trait_very_strong
- #			}
- #		}
- #		modifier = {
- #			factor = 1.5
- #			OR = {
- #				has_trait = trait_strong
- #			}
- #		}
- #		# modifier = {
- #		#	factor = 5
- #		#	has_job_type = commandante_pirate	# No Longer Used in Stellaris 4.0
- #		#}
- #	}
- #
- #	inline_script = "jobs/automodding_priority_unity"
+#	possible_pre_triggers = {
+#		has_owner = yes
+#		is_enslaved = no
+#		is_being_purged = no
+#		is_being_assimilated = no
+#		is_sapient = yes
+#	}
+#
+#	possible_precalc = can_fill_ruler_job
+#
+#	country_modifier = {
+#		country_naval_cap_add = 2
+#	}
+#
+#	resources = {
+#		category = planet_bureaucrats
+#		produces = {
+#			unity = 2
+#		}
+#		produces = {
+#			trigger = {
+#				exists = owner
+#				owner = {  has_valid_civic = civic_citizen_service }
+#			}
+#			unity = 1
+#		}
+#		produces = {
+#			trigger = {
+#				exists = owner
+#				owner = { has_valid_civic = civic_byzantine_bureaucracy }
+#			}
+#			unity = 1
+#		}
+#		upkeep = {
+#			consumer_goods = 2
+#		}
+#		upkeep = {
+#			trigger = {
+#				exists = owner
+#				owner = { has_valid_civic = civic_byzantine_bureaucracy }
+#			}
+#			consumer_goods = -1
+#		}
+#	}
+#
+#	planet_modifier = {
+#		planet_orbital_bombardment_damage = -0.10
+#		planet_stability_add = 3
+#		planet_defense_armies_add = 1
+#		pop_government_ethic_attraction = -0.015
+#	}
+#
+#	triggered_planet_modifier = {
+#		potential = {
+#			always = yes
+#		}
+#		planet_amenities_add = 300
+#		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+#	}
+#
+#	# pop_group_modifier = {	# No Longer Used in Stellaris 4.0
+#	#	pop_defense_armies_add = 1
+#	#}
+#
+#	triggered_planet_modifier = {
+#		potential = {
+#			has_trait = trait_repugnant
+#		}
+#		planet_amenities_add = -100
+#		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+#	}
+#
+#	triggered_planet_modifier = {
+#		potential = {
+#			exists = owner
+#			owner = {  has_valid_civic = civic_citizen_service }
+#		}
+#		planet_amenities_add = 300
+#		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+#	}
+#
+#	triggered_country_modifier = {
+#		potential = {
+#			exists = owner
+#			owner = { has_valid_civic = civic_byzantine_bureaucracy }
+#		}
+#		modifier = {
+#			empire_size_pops_mult = -0.005
+#		}
+#	}
+#
+#	weight = {
+#		weight = @ruler_job_weight
+#		mult = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
+#		modifier = {
+#			factor = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
+#			has_trait = trait_repugnant
+#		}
+#		modifier = {
+#			factor = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
+#			owner = { has_valid_civic = civic_citizen_service }
+#		}
+#		modifier = {
+#			factor = 2.0
+#			OR = {
+#				has_trait = trait_very_strong
+#			}
+#		}
+#		modifier = {
+#			factor = 1.5
+#			OR = {
+#				has_trait = trait_strong
+#			}
+#		}
+#		# modifier = {
+#		#	factor = 5
+#		#	has_job_type = commandante_pirate	# No Longer Used in Stellaris 4.0
+#		#}
+#	}
+#
+#	inline_script = "jobs/automodding_priority_unity"
 }
 
 #Thinker
@@ -2053,213 +2012,6 @@ mogul = {		#Steam: Defunct as of 4.0, kept for archival purposes
 	# }
 
 	# inline_script = "jobs/automodding_priority_trade"
-}
-knight_commander = {
-	category = ruler
-
-	swappable_data = {
-		default = {
-			condition_string = RULER_JOB_TRIGGER
-			building_icon = building_order_keep
-		}
-	}
-
-	tags = { unity research amenities soldier }
-
-	possible_pre_triggers = {
-		has_owner = yes
-		is_enslaved = no
-		is_being_purged = no
-		is_being_assimilated = no
-		is_sapient = yes
-	}
-
-	possible_precalc = can_fill_ruler_job
-	possible = {
-		hidden_trigger = { exists = owner }
-		owner = {
-			is_gestalt = no
-		}
-	}
-
-	resources = {
-		category = planet_knights
-		produces = {
-			trigger = { exists = owner }
-			unity = 2
-			mult = value:knight_commander_unity_output_modifier
-		}
-		produces = {
-			trigger = { exists = owner }
-			physics_research = 1
-			engineering_research = 1
-			society_research = 1
-			mult = value:knight_commander_research_output_modifier
-		}
-		produces = {
-			trigger = {
-				owner? = { has_country_flag = cosmogenesis_knights }
-			}
-			advanced_logic = 1
-			mult = value:knight_commander_research_output_modifier
-		}
-		upkeep = {
-			alloys = 200
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			always = yes
-		}
-		planet_amenities_add = 50000
-		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
-	}
-
-	country_modifier = {
-		country_naval_cap_add = 600
-	}
-
-	weight = {
-		weight = @high_prio_specialist_job_weight
-	}
-
-	inline_script = "jobs/automodding_priority_charisma"
-
-}
-
-dystopian_telepath = {
-	category = ruler
-	can_be_automated = no
-
-	swappable_data = {
-		default = {
-			condition_string = RULER_JOB_TRIGGER
-			building_icon = building_psi_corps
-			icon = telepath
-		}
-		swap_type = {
-			trigger = {
-				enforcer_is_educator_trigger = yes
-			}
-			name = educator_telepath
-			desc = educator_telepath
-			icon = telepath
-			building_icon = building_psi_corps
-			condition_string = RULER_JOB_TRIGGER
-			weight = 10
-		}
-	}
-
-	inline_script = "jobs/job_telepath"
-
-	possible_precalc = can_fill_ruler_job
-
-	weight = {
-		weight = @specialist_job_weight
-		mult = 2
-		modifier = {
-			factor = 0.2
-			has_citizenship_rights = no
-		}
-		modifier = {
-			factor = 0.1
-			is_enslaved = yes
-			has_slavery_type = { type = slavery_indentured }
-		}
-	}
-
-}
-
-# Fake jobs for leader backgrounds
-head_researcher = {
-	category = ruler
-
-	swappable_data = {
-		default = {
-			condition_string = RULER_JOB_TRIGGER
-			building_icon = building_institute
-			icon = researcher
-		}
-	}
-	possible = {
-		always = no
-	}
-}
-
-high_priest = {
-	category = ruler
-
-	swappable_data = {
-		default = {
-			condition_string = RULER_JOB_TRIGGER
-			building_icon = building_citadel_of_faith
-		}
-	}
-
-	possible = {
-		always = no
-	}
-}
-
-noble = {
-	category = ruler
-
-	swappable_data = {
-		default = {
-			condition_string = RULER_JOB_TRIGGER
-			building_icon = building_palace
-		}
-	}
-
-	possible = {
-		always = no
-	}
-}
-
-merchant = {
-	category = ruler
-
-	swappable_data = {
-		default = {
-			condition_string = RULER_JOB_TRIGGER
-			building_icon = building_galactic_stock_exchange
-		}
-	}
-
-	possible = {
-		always = no
-	}
-}
-
-executive = {
-	category = ruler
-
-	swappable_data = {
-		default = {
-			condition_string = RULER_JOB_TRIGGER
-			building_icon = building_capital
-		}
-	}
-
-	possible = {
-		always = no
-	}
-}
-
-warden = {
-	category = ruler
-	swappable_data = {
-		default = {
-			condition_string = RULER_JOB_TRIGGER
-			building_icon = building_capital
-			icon = enforcer
-		}
-	}
-
-	possible = {
-		always = no
-	}
 }
 
 #Steam: Re-organized to clean up top of file, here are jobs totally removed
