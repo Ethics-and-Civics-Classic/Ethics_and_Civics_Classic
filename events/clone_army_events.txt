@@ -85,102 +85,120 @@ country_event = {
 				is_colony = yes
 				is_under_colonization = no
 			}
-
-			# Figure out how many (not disabled) VATS the planet has.
-			export_trigger_value_to_variable = {
-				trigger = num_buildings
-				parameters = {
-					type = building_clone_army_clone_vat
-					disabled = no
+carrier = {
+				export_trigger_value_to_variable = {
+					trigger = num_buildings
+					parameters = {
+						type = building_clone_army_clone_vat
+						disabled = no
+					}
+					variable = num_ancient_clone_vats
 				}
-				variable = num_ancient_clone_vats
-			}
-			# If there are no ancient clone vats, set the variable to 1 to prevent a divide by 0 later on
-			if = {
-				limit = {
-					check_variable = { which = num_ancient_clone_vats value = 0 }
-				}
-				set_variable = { which = num_ancient_clone_vats value = 1 }
-			}
-
-			# Figure out Clone Army Population
-			set_variable = { which = num_clone_pops value = 0 }
-			set_variable = {
-				which = num_clone_pops
-				value = value:clone_pops_value
-			}
-
-			### Variable 'clone_pops_missing' read by 'should_force_decline_species' and must be updated.
-			### clone_pops_missing = clone_soldiers_sustained - num_clone_pops
-			export_modifier_to_variable = {
-				modifier = clone_soldiers_sustained
-				variable = clone_pops_missing
-			}
-			subtract_variable = { which = clone_pops_missing value = num_clone_pops }
-
-			### Override it to -1 if there are no pops on the planet, but the planet could not sustain them
-			### Only applies after colonization. Prevents pops from auto-migrating and immediately being purged
-			if = {
-				limit = {
-					check_variable = { which = num_clone_pops value = 0 }
-					check_modifier_value = { modifier = clone_soldiers_sustained value = 0 }
-				}
-				set_variable = { which = clone_pops_missing value = -1 }
-			}
-
-			### Variable 'clone_pops_missing_per_vat' is read by 'building_clone_army_clone_vat' and must be updated.
-			set_variable = { which = clone_pops_missing_per_vat value = 0 }
-
-			# Always remove modifier. Reapply further down if still needed.
-			remove_modifier = modifier_clone_pops_decline
-
-			if = {
-				limit = {
-					check_variable = { which = clone_pops_missing value > 0 }
+				# If there are no ancient clone vats, set the variable to 1 to prevent a divide by 0 later on
+				if = {
+					limit = {
+						check_variable = { which = num_ancient_clone_vats value = 0 }
+					}
+					set_variable = { which = num_ancient_clone_vats value = 1 }
 				}
 
-				### Growing.
-				### clone_pops_missing_per_vat = clone_pops_missing / num_ancient_clone_vats, don't divide by 0.
-				set_variable = { which = clone_pops_missing_per_vat value = clone_pops_missing }
-				divide_variable = { which = clone_pops_missing_per_vat value = num_ancient_clone_vats }
-			}
-			else_if = {
-				limit = {
-					check_variable = { which = clone_pops_missing value = 0 }
+				# Figure out Clone Army Population
+				set_variable = { which = num_clone_pops value = 0 }
+				set_variable = {
+					which = num_clone_pops
+					value = value:clone_pops_value
 				}
-				### Pop stable.
-			}
-			else_if = {
-				limit = { ### No need to set modifier if no declining pops present
-					check_variable = { which = num_clone_pops value > 0 }
-					OR = {
-						NOT = { exists = declining_species }
-						declining_species = {
-							OR = {
-								has_trait = trait_clone_soldier_infertile
-								has_trait = trait_clone_soldier_infertile_full_potential
-							}
+
+				### Variable 'clone_pops_missing' read by 'should_force_decline_species' and must be updated.
+				### clone_pops_missing = clone_soldiers_sustained - num_clone_pops
+				set_variable = { which = clone_pops_missing value = 0 }
+				colony? = {
+					export_modifier_to_variable = {
+						modifier = clone_soldiers_sustained
+						variable = clone_pops_missing
+					}
+					prev = {
+						set_variable = {
+							which = clone_pops_missing
+							value = prev.clone_pops_missing
 						}
 					}
 				}
-				### Pop above max, should decline. Variable 'clone_pops_missing' is negative:
-				# Divide clone_pops_missing by 100 to renormalise
-				divide_variable = { which = clone_pops_missing value = 100 }
-				### clone_pops_decline_factor = ( 4 % per month - clone_pops_missing ) / BASE_POP_DECLINE
-				set_variable = { which = clone_pops_decline_factor value = 4 }
-				subtract_variable = { which = clone_pops_decline_factor value = clone_pops_missing }
-				divide_variable = { which = clone_pops_decline_factor value = 5 }	# 5 should match BASE_POP_DECLINE.
-				subtract_variable = { which = clone_pops_decline_factor value = 1 }	# Subtract base decline.
+				subtract_variable = { which = clone_pops_missing value = num_clone_pops }
 
-				add_modifier = {
-					modifier = modifier_clone_pops_decline
-					multiplier = clone_pops_decline_factor
-					clear_on_owner_change = yes
+				### Override it to -1 if there are no pops on the planet, but the planet could not sustain them
+				### Only applies after colonization. Prevents pops from auto-migrating and immediately being purged
+				if = {
+					limit = {
+						check_variable = { which = num_clone_pops value = 0 }
+						colony? = {
+							check_modifier_value = { modifier = clone_soldiers_sustained value = 0 }
+						}
+					}
+					set_variable = { which = clone_pops_missing value = -1 }
 				}
-			}
 
-			# Debug growth/decline.
-			#log = "Clones on '[This.GetName]'. clone_pops_missing is: [This.clone_pops_missing], clone_pops_missing_per_vat: [This.clone_pops_missing_per_vat], clone_pops_decline_factor: [This.clone_pops_decline_factor]"
+				### Variable 'clone_pops_missing_per_vat' is read by 'building_clone_army_clone_vat' and must be updated.
+				set_variable = { which = clone_pops_missing_per_vat value = 0 }
+
+				# Always remove modifier. Reapply further down if still needed.
+				remove_modifier = modifier_clone_pops_decline
+
+				if = {
+					limit = {
+						check_variable = { which = clone_pops_missing value > 0 }
+					}
+
+					### Growing.
+					### clone_pops_missing_per_vat = clone_pops_missing / num_ancient_clone_vats, don't divide by 0.
+					set_variable = { which = clone_pops_missing_per_vat value = clone_pops_missing }
+					divide_variable = { which = clone_pops_missing_per_vat value = num_ancient_clone_vats }
+				}
+				else_if = {
+					limit = {
+						check_variable = { which = clone_pops_missing value = 0 }
+					}
+					### Pop stable.
+				}
+				else_if = {
+					limit = { ### No need to set modifier if no declining pops present
+						check_variable = { which = num_clone_pops value > 0 }
+						OR = {
+							NOT = { exists = declining_species }
+							declining_species = {
+								OR = {
+									has_trait = trait_clone_soldier_infertile
+									has_trait = trait_clone_soldier_infertile_full_potential
+								}
+							}
+						}
+					}
+					### Pop above max, should decline. Variable 'clone_pops_missing' is negative:
+					# Divide clone_pops_missing by 100 to renormalise
+					divide_variable = { which = clone_pops_missing value = 100 }
+					### clone_pops_decline_factor = ( 4 % per month - clone_pops_missing ) / BASE_POP_DECLINE
+					set_variable = { which = clone_pops_decline_factor value = 4 }
+					subtract_variable = { which = clone_pops_decline_factor value = clone_pops_missing }
+					divide_variable = { which = clone_pops_decline_factor value = 5 } # 5 should match BASE_POP_DECLINE.
+					subtract_variable = { which = clone_pops_decline_factor value = 1 } # Subtract base decline.
+
+					add_modifier = {
+						modifier = modifier_clone_pops_decline
+						multiplier = clone_pops_decline_factor
+						clear_on_owner_change = yes
+					}
+				}
+
+				colony? = {
+					set_variable = {
+						which = clone_pops_missing
+						value = prev.clone_pops_missing
+					}
+				}
+
+				# Debug growth/decline.
+				#log = "Clones on '[This.GetName]'. clone_pops_missing is: [This.clone_pops_missing], clone_pops_missing_per_vat: [This.clone_pops_missing_per_vat], clone_pops_decline_factor: [This.clone_pops_decline_factor]"
+			}
 		}
 	}
 }
@@ -212,11 +230,11 @@ carrier_event = {
 	}
 }
 
-############################
+####################################################################
 #
-# Archaeology Site Chain
+# Archaeology Site Chain	#Debated Origin & Homeworld Excavation
 #
-############################
+####################################################################
 
 # Debated Origin & Homeworld Excavation
 carrier_event = {
@@ -268,10 +286,23 @@ carrier_event = {
 		owner = { add_modifier = { modifier = debated_origin days = -1 } }
 		hidden_effect = {
 			owner = {
-				set_country_flag = clone_army_origin_arcsite_owner_@prev
+				set_country_flag = clone_army_origin_arcsite_owner_@this
 			}
 		}
-		create_archaeological_site = clone_army_digsite
+		if = {
+			limit = { owner = { is_nomadic = yes } }
+			random_galaxy_planet = {
+				limit = {
+					is_star = no
+					is_surveyed = { who = root.owner status = yes }
+				}
+				#change_pc = pc_relic	#Should be a relic world but this should be investigated further
+				create_archaeological_site = clone_army_digsite
+			}
+		}
+		else = {
+			create_archaeological_site = clone_army_digsite
+		}
 	}
 	
 	option = {
@@ -289,10 +320,23 @@ carrier_event = {
 		owner = { add_modifier = { modifier = debated_origin_barbaric_despoiler days = -1 } }
 		hidden_effect = {
 			owner = {
-				set_country_flag = clone_army_origin_arcsite_owner_@prev
+				set_country_flag = clone_army_origin_arcsite_owner_@this
 			}
 		}
-		create_archaeological_site = clone_army_digsite
+		if = {
+			limit = { owner = { is_nomadic = yes } }
+			random_galaxy_planet = {
+				limit = {
+					is_star = no
+					is_surveyed = { who = root.owner status = yes }
+				}
+				#change_pc = pc_relic	#Should be a relic world but this should be investigated further
+				create_archaeological_site = clone_army_digsite
+			}
+		}
+		else = {
+			create_archaeological_site = clone_army_digsite
+		}
 	}
 }
 
@@ -985,6 +1029,9 @@ country_event = {
 		if = {
 			limit = {
 				has_biogenesis_dlc = yes
+				has_cybernetic_ascension = no
+				has_psionic_ascension = no
+				has_synthetic_ascension = no
 			}
 			custom_tooltip = clones.23.bio.tt
 		}
@@ -1004,8 +1051,8 @@ country_event = {
 					has_trait = leader_trait_clone_army_commander
 				}
 				remove_trait = leader_trait_clone_army_commander
-				add_trait = {
-					trait = leader_trait_clone_army_full_commander
+				give_trait_no_notify_ignore_autocracy_restriction = {
+					TRAIT = leader_trait_clone_army_full_commander
 				}
 			}
 			every_pool_leader = {
@@ -1013,7 +1060,7 @@ country_event = {
 					has_trait = leader_trait_clone_army_commander
 				}
 				remove_trait = leader_trait_clone_army_commander
-				add_trait = {
+				give_trait_no_notify_ignore_autocracy_restriction = {
 					trait = leader_trait_clone_army_full_commander
 				}
 			}
@@ -1033,6 +1080,9 @@ country_event = {
 		if = {
 			limit = {
 				has_biogenesis_dlc = yes
+				has_cybernetic_ascension = no
+				has_psionic_ascension = no
+				has_synthetic_ascension = no
 			}
 			custom_tooltip = clones.23.bio.tt
 		}
@@ -1052,10 +1102,10 @@ country_event = {
 					has_trait = leader_trait_clone_army_commander
 				}
 				remove_trait = leader_trait_clone_army_commander
-				add_trait = {
+				give_trait_no_notify_ignore_autocracy_restriction = {
 					trait = leader_trait_clone_army_full_commander
 				}
-				add_trait = {
+				give_trait_no_notify_ignore_autocracy_restriction = {
 					trait = leader_trait_ruler_precursor_great_khan
 				}
 			}
@@ -1064,10 +1114,10 @@ country_event = {
 					has_trait = leader_trait_clone_army_commander
 				}
 				remove_trait = leader_trait_clone_army_commander
-				add_trait = {
+				give_trait_no_notify_ignore_autocracy_restriction = {
 					trait = leader_trait_clone_army_full_commander
 				}
-				add_trait = {
+				give_trait_no_notify_ignore_autocracy_restriction = {
 					trait = leader_trait_ruler_precursor_great_khan
 				}
 			}
@@ -1075,7 +1125,7 @@ country_event = {
 				limit = {
 					species = { has_trait = trait_clone_soldier_infertile_full_potential }
 				}
-				add_trait = {
+				give_trait_no_notify_ignore_autocracy_restriction = {
 					trait = leader_trait_ruler_precursor_great_khan
 				}
 			}
@@ -1083,7 +1133,7 @@ country_event = {
 				limit = {
 					species = { has_trait = trait_clone_soldier_infertile_full_potential }
 				}
-				add_trait = {
+				give_trait_no_notify_ignore_autocracy_restriction = {
 					trait = leader_trait_ruler_precursor_great_khan
 				}
 			}
@@ -1128,7 +1178,7 @@ country_event = {
 						limit = {
 							leader_class = commander
 						}
-						add_trait = {
+						give_trait_no_notify_ignore_autocracy_restriction = {
 							trait = leader_trait_clone_army_fertile_commander
 						}
 					}
@@ -1143,15 +1193,15 @@ country_event = {
 						limit = {
 							leader_class = commander
 						}
-						add_trait = {
+						give_trait_no_notify_ignore_autocracy_restriction = {
 							trait = leader_trait_clone_army_full_commander
 						}
-						add_trait = {
+						give_trait_no_notify_ignore_autocracy_restriction = {
 							trait = leader_trait_ruler_precursor_great_khan
 						}
 					}
 					else = { 
-						add_trait = {
+						give_trait_no_notify_ignore_autocracy_restriction = {
 							trait = leader_trait_ruler_precursor_great_khan
 						}
 					}
@@ -1166,7 +1216,7 @@ country_event = {
 						limit = {
 							leader_class = commander
 						}
-						add_trait = {
+						give_trait_no_notify_ignore_autocracy_restriction = {
 							trait = leader_trait_clone_army_commander
 						}
 					}
@@ -1183,7 +1233,7 @@ country_event = {
 						limit = {
 							leader_class = commander
 						}
-						add_trait = {
+						give_trait_no_notify_ignore_autocracy_restriction = {
 							trait = leader_trait_clone_army_fertile_commander
 						}
 					}
@@ -1198,7 +1248,7 @@ country_event = {
 						limit = {
 							leader_class = commander
 						}
-						add_trait = {
+						give_trait_no_notify_ignore_autocracy_restriction = {
 							trait = leader_trait_clone_army_full_commander
 						}
 					}
@@ -1213,7 +1263,7 @@ country_event = {
 						limit = {
 							leader_class = commander
 						}
-						add_trait = {
+						give_trait_no_notify_ignore_autocracy_restriction = {
 							trait = leader_trait_clone_army_commander
 						}
 					}
@@ -1242,6 +1292,12 @@ carrier_event = {
 	}
 	immediate = {
 		clear_variable = clone_pops_missing
+		colony? = {
+			if = {
+				limit = { is_variable_set = clone_pops_missing }
+				clear_variable = clone_pops_missing
+			}
+		}
 		if = {
 			limit = { has_modifier = modifier_clone_pops_decline }
 			remove_modifier = modifier_clone_pops_decline
