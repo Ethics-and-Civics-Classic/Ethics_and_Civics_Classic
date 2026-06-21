@@ -1004,6 +1004,223 @@ action_harm_relation = {
 	}
 }
 
+# Form a commercial pact with another empire, increases value of both trade networks
+# Usable by regular empires only. Raises trust over time.
+action_form_commercial_pact = {
+	icon = "GFX_diplomacy_status_commercial_pact"
+	diplo_view_acceptance_icon = yes
+	should_notify_all_communications = yes
+	requires_actor_independence = yes
+	requires_recipient_independence = yes
+	AI_acceptance_base_value = -50
+	action_type = positive
+	possible = {
+		custom_tooltip = {
+			fail_text = "requires_actor_not_fanatic_purifiers"
+			OR = {
+				is_same_species = from
+				NOT = { has_valid_civic = civic_fanatic_purifiers }
+			}
+		}
+		custom_tooltip = {
+			fail_text = "requires_recipient_not_fanatic_purifiers"
+			OR = {
+				is_same_species = from
+				from = { NOT = { has_valid_civic = civic_fanatic_purifiers } }
+			}
+		}
+		custom_tooltip = {
+			fail_text = "requires_actor_not_scorched_earth"
+			OR = {
+				is_genocidal_infernal = no
+				from = { is_infernal_empire = yes }
+			}
+		}
+		custom_tooltip = {
+			fail_text = "requires_recipient_not_scorched_earth"
+			OR = {
+				is_infernal_empire = yes
+				from = { is_genocidal_infernal = no }
+			}
+		}
+		if = {
+			limit = { from = { has_valid_civic = civic_inwards_perfection } }
+			if = {
+				limit = {
+					has_intel = {
+						who = from
+						intel = civics
+					}
+				}
+				custom_tooltip = {
+					fail_text = requires_recipient_not_inward_perfection
+					always = no
+				}
+			}
+			else = {
+				custom_tooltip = {
+					fail_text = diplo_action_no_low_intel
+					always = no
+				}
+			}
+		}
+		custom_tooltip = {
+			fail_text = "requires_actor_not_inward_perfection"
+			NOT = { has_valid_civic = civic_inwards_perfection }
+		}
+		#custom_tooltip = {
+		#	fail_text = "requires_actor_not_criminal_heritage"
+		#	is_criminal_syndicate = no
+		#}
+		#if = {
+		#	limit = { from = { is_criminal_syndicate = yes } }
+		#	if = {
+		#		limit = {
+		#			has_intel = {
+		#				who = from
+		#				intel = civics
+		#			}
+		#		}
+		#		custom_tooltip = {
+		#			fail_text = requires_recipient_not_criminal_heritage
+		#			always = no
+		#		}
+		#	}
+		#	else = {
+		#		custom_tooltip = {
+		#			fail_text = diplo_action_no_low_intel
+		#			always = no
+		#		}
+		#	}
+		#}
+		custom_tooltip = {
+			fail_text = "federation_actor_no_separate_treaties"
+			NOT = {
+				AND = {
+					has_federation = yes
+					federation = { has_federation_law = treaties_separate_no }
+					NOT = { federation = { any_member = { is_same_value = root.from } } }
+				}
+			}
+		}
+		custom_tooltip = {
+			fail_text = "federation_recipient_no_separate_treaties"
+			from = {
+				NOT = {
+					AND = {
+						has_federation = yes
+						federation = {
+							has_federation_law = treaties_separate_no
+						}
+						NOT = { federation = { any_member = { is_same_value = root } } }
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				from = { has_valid_civic = civic_pompous_purists }
+				NOT = { root = { is_overlord_to = from } }
+			}
+			if = {
+				limit = {
+					has_intel = {
+						who = from
+						intel = civics
+					}
+				}
+				custom_tooltip = {
+					fail_text = requires_recipient_not_pompous
+					always = no
+				}
+			}
+			else = {
+				custom_tooltip = {
+					fail_text = diplo_action_no_low_intel
+					always = no
+				}
+			}
+		}
+		# Requirements:
+		# - 20 Trust OR Good Opinion
+		# - An Embassy OR the Diplomatic Networking tradition OR Universal Transactions
+		custom_tooltip = {
+			fail_text = requires_20_trust_or_good
+			OR = {
+				from = {
+					is_country_type = PrimPlayer_ethic_fanatic_nation
+				}
+				opinion_level = {
+					who = from
+					level >= good
+				}
+				from = {
+					trust = {
+						who = root
+						value >= 20
+					}
+				}
+				AND = {
+					has_valid_civic = civic_hive_familiar_face
+					from = {
+						trust = {
+							who = root
+							value >= 10
+						}
+					}
+				}
+				# We don't take into consideration relations' status when dealing with the Mirror Empire
+				from = { is_country_type = mirrored_country }
+			}
+		}
+		if = {
+			limit = { 
+				from = {
+					is_country_type = PrimPlayer_ethic_fanatic_nation
+				}
+			}
+			always = yes
+		}
+		else_if = {
+			limit = {
+				is_megacorp = no
+			}
+			custom_tooltip = {
+				fail_text = requires_embassy_or_diplomatic_networking
+				OR = {
+					has_embassy = from
+					has_active_tradition = tr_diplomacy_diplomatic_networking
+				}
+			}
+		}
+		else = {
+			custom_tooltip = {
+				fail_text = requires_embassy_diplomatic_networking_or_universal_transactions
+				OR = {
+					has_embassy = from
+					has_active_tradition = tr_diplomacy_diplomatic_networking
+					has_ascension_perk = ap_universal_transactions
+				}
+			}
+		}
+	}
+	
+	ai_acceptance = {
+		modifier = {
+			add = 150
+			has_policy_flag = diplo_stance_mercantile
+			is_country_type = PrimPlayer_ethic_fanatic_nation
+			desc = diplo_stance_mercantile
+		}
+		modifier = {
+			add = 100
+			has_policy_flag = diplo_stance_cooperative
+			is_country_type = PrimPlayer_ethic_fanatic_nation
+			desc = diplo_stance_cooperative
+		}
+	}
+}
+
 action_form_migration_pact = {
 	icon = "GFX_diplomacy_status_migration_pact"
 	diplo_view_acceptance_icon = yes
