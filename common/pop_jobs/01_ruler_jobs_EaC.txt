@@ -48,6 +48,15 @@ politician = {
 			desc = job_mogul_desc
 			weight = 10
 		}
+		#swap_type = {
+		#	trigger = {
+		#		politician_is_merchant = yes
+		#	}
+		#	name = merchant
+		#	icon = merchant
+		#	desc = job_merchant_desc
+		#	weight = 10
+		#}
 		swap_type = {
 			trigger = {
 				politician_is_high_priest = yes
@@ -339,6 +348,23 @@ politician = {
 			unity = -2
 			trade = 6
 		}
+
+		##Merchant
+		#produces = {
+		#	trigger = {
+		#		exists = planet
+		#		planet = {
+		#			OR = {
+		#				politician_is_merchant = yes
+		#				politician_is_augmentation_merchant = yes
+		#				politician_is_ashbroker = yes
+		#			}
+		#		}
+		#	}
+		#	unity = -1.5
+		#	trade = 6
+		#}
+
 		##Science Director
 		produces = {
 			trigger = {
@@ -2012,6 +2038,213 @@ mogul = {		#Steam: Defunct as of 4.0, kept for archival purposes
 	# }
 
 	# inline_script = "jobs/automodding_priority_trade"
+}
+knight_commander = {
+	category = ruler
+
+	swappable_data = {
+		default = {
+			condition_string = RULER_JOB_TRIGGER
+			building_icon = building_order_keep
+		}
+	}
+
+	tags = { unity research amenities soldier }
+
+	possible_pre_triggers = {
+		has_owner = yes
+		is_enslaved = no
+		is_being_purged = no
+		is_being_assimilated = no
+		is_sapient = yes
+	}
+
+	possible_precalc = can_fill_ruler_job
+	possible = {
+		hidden_trigger = { exists = owner }
+		owner = {
+			is_gestalt = no
+		}
+	}
+
+	resources = {
+		category = planet_knights
+		produces = {
+			trigger = { exists = owner }
+			unity = 2
+			mult = value:knight_commander_unity_output_modifier
+		}
+		produces = {
+			trigger = { exists = owner }
+			physics_research = 1
+			engineering_research = 1
+			society_research = 1
+			mult = value:knight_commander_research_output_modifier
+		}
+		produces = {
+			trigger = {
+				owner? = { has_country_flag = cosmogenesis_knights }
+			}
+			advanced_logic = 1
+			mult = value:knight_commander_research_output_modifier
+		}
+		upkeep = {
+			alloys = 200
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			always = yes
+		}
+		planet_amenities_add = 50000
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	}
+
+	country_modifier = {
+		country_naval_cap_add = 600
+	}
+
+	weight = {
+		weight = @high_prio_specialist_job_weight
+	}
+
+	inline_script = "jobs/automodding_priority_charisma"
+
+}
+
+dystopian_telepath = {
+	category = ruler
+	can_be_automated = no
+
+	swappable_data = {
+		default = {
+			condition_string = RULER_JOB_TRIGGER
+			building_icon = building_psi_corps
+			icon = telepath
+		}
+		swap_type = {
+			trigger = {
+				enforcer_is_educator_trigger = yes
+			}
+			name = educator_telepath
+			desc = educator_telepath
+			icon = telepath
+			building_icon = building_psi_corps
+			condition_string = RULER_JOB_TRIGGER
+			weight = 10
+		}
+	}
+
+	inline_script = "jobs/job_telepath"
+
+	possible_precalc = can_fill_ruler_job
+
+	weight = {
+		weight = @specialist_job_weight
+		mult = 2
+		modifier = {
+			factor = 0.2
+			has_citizenship_rights = no
+		}
+		modifier = {
+			factor = 0.1
+			is_enslaved = yes
+			has_slavery_type = { type = slavery_indentured }
+		}
+	}
+
+}
+
+# Fake jobs for leader backgrounds
+head_researcher = {
+	category = ruler
+
+	swappable_data = {
+		default = {
+			condition_string = RULER_JOB_TRIGGER
+			building_icon = building_institute
+			icon = researcher
+		}
+	}
+	possible = {
+		always = no
+	}
+}
+
+high_priest = {
+	category = ruler
+
+	swappable_data = {
+		default = {
+			condition_string = RULER_JOB_TRIGGER
+			building_icon = building_citadel_of_faith
+		}
+	}
+
+	possible = {
+		always = no
+	}
+}
+
+noble = {
+	category = ruler
+
+	swappable_data = {
+		default = {
+			condition_string = RULER_JOB_TRIGGER
+			building_icon = building_palace
+		}
+	}
+
+	possible = {
+		always = no
+	}
+}
+
+#merchant = {
+#	category = ruler
+#
+#	swappable_data = {
+#		default = {
+#			condition_string = RULER_JOB_TRIGGER
+#			building_icon = building_galactic_stock_exchange
+#		}
+#	}
+#
+#	possible = {
+#		always = no
+#	}
+#}
+
+executive = {
+	category = ruler
+
+	swappable_data = {
+		default = {
+			condition_string = RULER_JOB_TRIGGER
+			building_icon = building_capital
+		}
+	}
+
+	possible = {
+		always = no
+	}
+}
+
+warden = {
+	category = ruler
+	swappable_data = {
+		default = {
+			condition_string = RULER_JOB_TRIGGER
+			building_icon = building_capital
+			icon = enforcer
+		}
+	}
+
+	possible = {
+		always = no
+	}
 }
 
 #Steam: Re-organized to clean up top of file, here are jobs totally removed
