@@ -726,11 +726,17 @@ action_pre_ftl_trade = {
 			has_first_contact_dlc = yes
 			is_country_type = default
 			from = {
-				is_country_type = primitive
+				OR = {
+					is_country_type = primitive
+					is_country_type = PrimPlayer_ethic_fanatic_nation
+				}
 				NOT = { has_pre_ftl_trade = root }
-				current_awareness_level = full
+				if = { 
+					limit = { is_country_type = primitive }
+					current_awareness_level = full
+					observation_owner_is_actor = yes
+				}
 				NOT = { has_country_flag =  fotd_seperatist_country@root }
-				observation_owner_is_actor = yes
 			}
 		}
 	}
@@ -847,7 +853,11 @@ action_pre_ftl_trade = {
 	on_accept = {
 		hidden_effect = {
 			from = {
-				 if = { 
+				 if = {
+					limit = { from = { is_country_type = PrimPlayer_ethic_fanatic_nation } }
+					
+				 }
+				 else_if = { 
 					limit = { capital_scope = { NOT ={ has_carrier_flag = PrimPlayer_ethic_fanatic_nation_colony@root } } }
 					capital_scope.observation_outpost = {
 						add_modifier = {
@@ -905,6 +915,12 @@ action_pre_ftl_trade = {
 
 	ai_acceptance = {
 		modifier = {
+			add = 50
+			has_authority = auth_corporate
+			is_country_type = PrimPlayer_ethic_fanatic_nation
+			desc = auth_corporate
+		}
+		modifier = {
 			add = -100
 			capital_scope = {
 				has_modifier = culture_shock_diplomacy
@@ -932,9 +948,15 @@ action_stop_pre_ftl_trade = {
 		hidden_trigger = {
 			is_country_type = default
 			from = {
-				is_country_type = primitive
+				OR = {
+					is_country_type = primitive
+					is_country_type = PrimPlayer_ethic_fanatic_nation
+				}
 				has_pre_ftl_trade = root
-				observation_owner_is_actor = yes
+				if = { 
+					limit = { is_country_type = primitive }
+					observation_owner_is_actor = yes
+				}
 			}
 		}
 	}
@@ -943,32 +965,38 @@ action_stop_pre_ftl_trade = {
 		hidden_effect = {
 			from = {
 				if = {
-					limit = {
-						capital_scope = {
-							has_observation_outpost = yes
-						}
-					}
-					capital_scope.observation_outpost = {
-						remove_modifier = preftl_action_trade_pact
-					}
+					limit = { from = { is_country_type = PrimPlayer_ethic_fanatic_nation } }
+					
 				}
-				if = {
-					limit = {
-						NOR = {
-							has_country_flag = preftl_societal_enlightenment_pact
-							has_country_flag = open_technological_enlightenment_pact
-							capital_scope.observation_outpost = {
-								has_modifier = preftl_action_trade_pact
+				else = { 
+					if = {
+						limit = {
+							capital_scope = {
+								has_observation_outpost = yes
 							}
 						}
+						capital_scope.observation_outpost = {
+							remove_modifier = preftl_action_trade_pact
+						}
 					}
-					capital_scope.observation_outpost = {
-						set_event_locked = no
+					if = {
+						limit = {
+							NOR = {
+								has_country_flag = preftl_societal_enlightenment_pact
+								has_country_flag = open_technological_enlightenment_pact
+								capital_scope.observation_outpost = {
+									has_modifier = preftl_action_trade_pact
+								}
+							}
+						}
+						capital_scope.observation_outpost = {
+							set_event_locked = no
+						}
 					}
-				}
-				random_owned_fleet = {
-					limit = { has_fleet_flag = pre_ftl_civilian_trade_freighter }
-					destroy_fleet = this
+					random_owned_fleet = {
+						limit = { has_fleet_flag = pre_ftl_civilian_trade_freighter }
+						destroy_fleet = this
+					}
 				}
 				
 			}
