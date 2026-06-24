@@ -7,6 +7,7 @@ generate_start_pops = {
 				OR = {
 					has_origin = origin_syncretic_evolution
 					has_origin = origin_necrophage
+					has_origin = origin_forever_cruise
 					has_valid_civic = civic_machine_servitor
 					has_valid_civic = civic_machine_cult_machine
 					has_valid_civic = civic_machine_assimilator
@@ -100,7 +101,20 @@ generate_start_pops = {
 				}
 			}
 		}
-		# generate_servitor_assmiliator_secondary_pops = yes # No Longer Used in Stellaris 4.0
+		# Forever Cruise: set citizenship type
+		if = {
+			limit = {
+				owner = { has_origin = origin_forever_cruise }
+			}
+			last_created_species = {
+				set_citizenship_type = {
+					country = prev.owner
+					type = citizenship_cruise_crew
+				}
+				set_species_flag = cruise_founding_crew
+				save_global_event_target_as = cruise_crew_species@prev.owner
+			}
+		}
 		generate_civic_secondary_pops = yes
 		make_nascent_starting_pops = yes
 	}
@@ -885,6 +899,48 @@ generate_civic_secondary_pops = {
 		create_pop_group = {
 			size = 1000
 			species = last_created_species
+		}
+	}
+
+	# Forever Cruise: set citizenship, living standard & preference; spawn Pops
+	if = {
+		limit = {
+			owner = { has_origin = origin_forever_cruise }
+		}
+		if = {
+			limit = {
+				owner = { has_valid_civic = civic_machine_servitor }
+			}
+			# Pops were already spawned by the Rogue Servitor block above; only re-tag here.
+			last_created_species = {
+				set_citizenship_type = {
+					country = prev.owner
+					type = citizenship_organic_trophy
+				}
+				set_species_flag = cruise_founding_passenger
+				save_global_event_target_as = cruise_passenger_species@prev.owner
+			}
+		}
+		else = {
+			last_created_species = {
+				set_citizenship_type = {
+					country = prev.owner
+					type = citizenship_cruise_passenger
+				}
+				set_living_standard = {
+					country = prev.owner
+					type = living_standard_cruise_passenger
+				}
+				set_species_flag = cruise_founding_passenger
+				save_global_event_target_as = cruise_passenger_species@prev.owner
+			}
+			while = {
+				count = @civilians_counter
+				create_pop_group = {
+					size = @civilians_gamestart
+					species = last_created_species
+				}
+			}
 		}
 	}
 }
