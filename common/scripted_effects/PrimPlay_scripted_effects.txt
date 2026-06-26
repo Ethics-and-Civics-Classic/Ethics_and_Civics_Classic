@@ -1,20 +1,11 @@
-# increase/decrease_planet_temperature = {}
-
-# wipe_pop_ethos = {}
-
-# reset_planet = { reroll_deposits = yes }
-
-# Checks if Subterraneans (player-only event nation) exists
-# Creates the country and saves it if it does not
-# use in planet scope
 PrimPlayer_create_subterranean_nation = {
 	optimize_memory
 	if = {
 		limit = {
-			NOT = {	#There can be multiples
+			NOT = {	
 				any_country = {
 					is_country_type = PrimPlayer_adversary
-					has_country_flag = $FLAG$	#Establishes Dynamic has_country_flag
+					has_country_flag = $FLAG$	
 				}
 			}
 		}
@@ -89,14 +80,9 @@ PrimPlayer_create_subterranean_nation = {
 						"null"
 					}
 				}
-				#set_pre_ftl_age_effect = { PRE_FTL_AGE = industrial_age }	#Doing it manually, they have no planet
 				remove_pre_ftl_flags = yes
 				set_pre_ftl_age = industrial_age
 				set_country_flag = industrial_age
-				#set_country_flag = recently_advanced	#Been like this for 1000's of years
-				#start_situation = {
-				#	type = pre_ftl_tech_progress_situation	#We don't want them advancing automatically, perhaps we can overwrite the event?
-				#}
 				add_awareness = 100
 				set_country_flag = $FLAG$
 				establish_contact = { who = event_target:subterranean_planet_owner@root.owner location = root }
@@ -113,18 +99,12 @@ PrimPlayer_create_subterranean_nation = {
 		random_country = {
 			limit = {
 				is_country_type = PrimPlayer_adversary
-				has_country_flag = $FLAG$	#Establishes Dynamic has_country_flag
+				has_country_flag = $FLAG$	
 			}
 			save_event_target_as = subterranean_nation@root.owner
 		}
 	}
 }
-
-# Given a species, create a mod with trait_cybernetic and apply to all pops, leaders
-# And armies that have the original species and the same owner as the scope object.
-# Scope: Something that has a species and an owner
-
-#scope = scion
 create_scion_lgate_link = {
 	capital_scope = {
 		solar_system = { save_event_target_as = home_system }
@@ -143,17 +123,11 @@ create_scion_lgate_link = {
 	set_visited = event_target:fe_target_system
 	event_target:home_system = {
 		event_target:fe_target_system = {
-			###
 			if = { 
 				limit = { event_target:scion_master = { is_materialist = yes } }
-				prev = { # done this way to ensure we don't spawn "orphan wormholes (wormholes that aren't linked to anything)
+				prev = { 
 					if = {
 						limit = { always = yes }
-						#spawn_natural_wormhole = {	#Removed Vanilla Code
-						#	bypass_type = wormhole
-						#	random_pos = no
-						#	orbit_angle = 360
-						#}
 						spawn_megastructure = {
 							type = fe_materialist_lgate_base
 							orbit_angle = 360
@@ -171,13 +145,7 @@ create_scion_lgate_link = {
 					}
 				}
 				if = {
-					#limit = { event_target:scion_master = { any_owned_megastructure = { NOT = { is_megastructure_type = fe_materialist_lgate_base } } } }
 					limit = { always = yes }
-					#spawn_natural_wormhole = {	#Removed Vanilla Code
-					#	bypass_type = wormhole
-					#	random_pos = no
-					#	orbit_angle = 270
-					#}
 					spawn_megastructure = {
 						type = fe_materialist_lgate_base
 						orbit_angle = 270
@@ -196,14 +164,9 @@ create_scion_lgate_link = {
 			}
 			else_if = { 
 				limit = { event_target:scion_master = { is_spiritualist = yes } }
-				prev = { # done this way to ensure we don't spawn "orphan wormholes (wormholes that aren't linked to anything)
+				prev = { 
 					if = {
 						limit = { always = yes }
-						#spawn_natural_wormhole = {	#Removed Vanilla Code
-						#	bypass_type = wormhole
-						#	random_pos = no
-						#	orbit_angle = 360
-						#}
 						spawn_megastructure = {
 							type = fe_spiritualist_lgate_base
 							orbit_angle = 360
@@ -221,13 +184,7 @@ create_scion_lgate_link = {
 					}
 				}
 				if = {
-					#limit = { event_target:scion_master = { any_owned_megastructure = { NOT = { is_megastructure_type = fe_spiritualist_lgate_base } } } }
 					limit = { always = yes }
-					#spawn_natural_wormhole = {	#Removed Vanilla Code
-					#	bypass_type = wormhole
-					#	random_pos = no
-					#	orbit_angle = 270
-					#}
 					spawn_megastructure = {
 						type = fe_spiritualist_lgate_base
 						orbit_angle = 270
@@ -244,17 +201,12 @@ create_scion_lgate_link = {
 					}
 				}
 			}
-			####
 		}
 	}
-	#set_country_flag = encountered_first_wormhole	#Removed Vanilla Code
 	set_country_flag = encountered_first_gateway
-	#add_seen_bypass_type = wormhole	#Removed Vanilla Code
 	add_seen_bypass_type = gateway
 }
-
 synth_queen_scion_warning = {
-	# If playing Scion, FE warn you instead of dragging you into the war
 	if = {
 		limit = {
 			any_playable_country = {
@@ -285,7 +237,6 @@ synth_queen_scion_warning = {
 					has_country_flag = scion_master
 				}
 			}
-			# Scion receive a message changing their agreement terms
 			country_event = { id = crisis.8046 days = 7 }
 		}
 	}
@@ -293,8 +244,6 @@ synth_queen_scion_warning = {
 		synth_queen_fe_war = yes
 	}
 }
-
-#THIS = Planet Scope
 PrimPlayer_nuclear_winter_planet_setup = {
 			add_planet_devastation = 90
 			hidden_effect = {
@@ -350,11 +299,9 @@ PrimPlayer_nuclear_winter_planet_setup = {
 				modify_species = {
 					species = THIS
 					add_trait = trait_survivor
-					#ideal_planet_class = pc_nuked	#Cog Note - Technically this is recent, not evolved, and potentially too disruptive to gameplay... unfun?
 				}
 			}
 }
-
 ethic_fanatic_nation_setup_effect = {
 	add_modifier = {
 		modifier = PrimPlayer_ethic_fanatic_nation_modifier
@@ -369,7 +316,7 @@ ethic_fanatic_nation_setup_effect = {
 				}
 			} 
 		}
-		give_technology = { tech = tech_missiles_1 message = no }	#Cog Note - if starting at this age, they need nuclear warhead technology
+		give_technology = { tech = tech_missiles_1 message = no }	
 	}
 	establish_communications_no_message = root
 	create_leader = {
@@ -381,62 +328,56 @@ ethic_fanatic_nation_setup_effect = {
 		set_age = 0
 	}
 	set_leader = last_created_leader
-	# save_global_event_target_as = gray_country
-	
-	### Primitive Nation Diplomacy ###
-		#Ensures players understand other countries exist
 		if = {
 			limit = { has_ethic = ethic_fanatic_authoritarian }
-			country_event = { id = nations.11201 days = 1 random = 350 }	# ethic_fanatic_authoritarian#
+			country_event = { id = nations.11201 days = 1 random = 350 }	
 		}
 		else_if = {
 			limit = { has_ethic = ethic_fanatic_egalitarian }
-			country_event = { id = nations.12201 days = 1 random = 350 }	# ethic_fanatic_egalitarian#
+			country_event = { id = nations.12201 days = 1 random = 350 }	
 		}
 		else_if = {
 			limit = { has_ethic = ethic_fanatic_xenophobe }
-			country_event = { id = nations.13201 days = 1 random = 350 }	# ethic_fanatic_xenophobe#
+			country_event = { id = nations.13201 days = 1 random = 350 }	
 		}
 		else_if = {
 			limit = { has_ethic = ethic_fanatic_xenophile }
-			country_event = { id = nations.14201 days = 1 random = 350 }	# ethic_fanatic_xenophile#
+			country_event = { id = nations.14201 days = 1 random = 350 }	
 		}
 		else_if = {
 			limit = { has_ethic = ethic_fanatic_militarist }
-			country_event = { id = nations.15201 days = 1 random = 350 }	# ethic_fanatic_militarist#
+			country_event = { id = nations.15201 days = 1 random = 350 }	
 		}
 		else_if = {
 			limit = { has_ethic = ethic_fanatic_pacifist }
-			country_event = { id = nations.16201 days = 1 random = 350 }	# ethic_fanatic_pacifist#
+			country_event = { id = nations.16201 days = 1 random = 350 }	
 		}
 		else_if = {
 			limit = { has_ethic = ethic_fanatic_spiritualist }
-			country_event = { id = nations.17201 days = 1 random = 350 }	# ethic_fanatic_spiritualist#
+			country_event = { id = nations.17201 days = 1 random = 350 }	
 		}
 		else_if = {
 			limit = { has_ethic = ethic_fanatic_materialist }
-			country_event = { id = nations.18201 days = 1 random = 350 }	# ethic_fanatic_materialist#
+			country_event = { id = nations.18201 days = 1 random = 350 }	
 		}
 		else_if = {
 			limit = { has_ethic = ethic_fanatic_green }
-			country_event = { id = nations.19201 days = 1 random = 350 }	# ethic_fanatic_green#
+			country_event = { id = nations.19201 days = 1 random = 350 }	
 		}
 		else_if = {
 			limit = { has_ethic = ethic_fanatic_industrial }
-			country_event = { id = nations.20201 days = 1 random = 350 }	# ethic_fanatic_industrial#
+			country_event = { id = nations.20201 days = 1 random = 350 }	
 		}
 		else_if = {
 			limit = { has_ethic = ethic_fanatic_capitalism }
-			country_event = { id = nations.21201 days = 1 random = 350 }	# ethic_fanatic_capitalism#
+			country_event = { id = nations.21201 days = 1 random = 350 }	
 		}
 		else_if = {
 			limit = { has_ethic = ethic_fanatic_socialism }
-			country_event = { id = nations.22201 days = 1 random = 350 }	# ethic_fanatic_socialism#
+			country_event = { id = nations.22201 days = 1 random = 350 }	
 		}
 }
-
 primitive_nation_absorption_effect = {
-	#hidden_effect = {
 		if = {
 			limit = { planet = { is_planet_class = pc_nuked } }
 			hidden_effect = {
@@ -547,7 +488,7 @@ primitive_nation_absorption_effect = {
 									ethos = { ethic = ethic_capitalism }
 								}
 							}
-							else = {	#Fallback
+							else = {	
 								create_pop_group = {
 									size = 300
 									species = prev
@@ -679,7 +620,7 @@ primitive_nation_absorption_effect = {
 									ethos = { ethic = ethic_capitalism }
 								}
 							}
-							else = {	#Fallback
+							else = {	
 								create_pop_group = {
 									size = 1000
 									species = prev
@@ -702,9 +643,7 @@ primitive_nation_absorption_effect = {
 			custom_tooltip = d_primitive_nation_absorption_effect_tooltip
 		}
 		hidden_effect = { owner = { country_event = { id = nations.6 } } }
-	#}
 }
-
 nuclear_winter_clear_nation_deposit_flag = {
 			hidden_effect = {
 				if = {
@@ -757,9 +696,6 @@ nuclear_winter_clear_nation_deposit_flag = {
 				}
 			}
 }
-
-# generate_home_system_resources = {
-
 generate_start_buildings_and_blockers = {
 	random_tile = {
 		limit = { has_blocker = no has_building = no num_adjacent_tiles > 3 }
@@ -842,8 +778,7 @@ generate_start_buildings_and_blockers = {
 		set_deposit = d_rich_energy_deposit			
 	}	
 }
-
-reset_start_buildings_and_blockers_post_apoc = { # Selectively resets necessary tiles for Post-Apoc Civic users. Relies on "generate_start_buildings_and_blockers" and game_start.32
+reset_start_buildings_and_blockers_post_apoc = { 
 	random_tile = {
 		limit = { has_building = "building_colony_shelter" }
 		set_deposit = d_energy_deposit
@@ -924,7 +859,7 @@ reset_start_buildings_and_blockers_post_apoc = { # Selectively resets necessary 
 			}
 		}
 	}
-	random_tile = { # Turns one farm tile into empty tile
+	random_tile = { 
 		limit = {
 			OR = {
 				has_deposit = "d_farmland_deposit"
@@ -1018,26 +953,21 @@ reset_start_buildings_and_blockers_post_apoc = { # Selectively resets necessary 
 			}
 		}
 	}
-	if = { # Ensures at least one empty tile, if no farm tile was generated to nuke
+	if = { 
 		limit = { any_tile = { NOT = { has_deposit = no } } }
 		random_tile = {
 			limit = { has_blocker = no has_building = no has_deposit = yes }
 			clear_deposits = yes
 		}
 		else = {
-			# Do nothing
 		}
 	}
 }
-
-reset_start_buildings_and_blockers_life_seeded = { # Selectively resets necessary tiles for Life-Seeded Civic users. Is triggered after "generate_start_buildings_and_blockers" by game_start.34
-	# Find capitol and buildings, and then remove them
-	# This is needed because planet's deposits were re-rolled after
+reset_start_buildings_and_blockers_life_seeded = { 
 	every_tile = {
 		limit = { has_building = yes }
 		remove_building = yes
 	}
-	# Set up a new capitol and nearby buildings
 	random_tile = {
 		limit = { has_blocker = no has_building = no num_adjacent_tiles > 3 }
 		set_building = "building_colony_shelter"
@@ -1059,13 +989,9 @@ reset_start_buildings_and_blockers_life_seeded = { # Selectively resets necessar
 		}
 		random_neighboring_tile = {
 			limit = { has_blocker = no has_building = no }
-			# set_building = "building_mining_network_1"		# Deprecated Vanilla Code
 			set_deposit = d_rich_mineral_deposit
 		}
 	}
-	
-	# Add the lab
-	# Has pop = yes to make sure they use the tiles that were first generated for this task
 	random_tile = {
 		limit = { has_blocker = no has_building = no has_pop = yes  }
 		set_building = "building_basic_science_lab_1"
@@ -1081,37 +1007,24 @@ reset_start_buildings_and_blockers_life_seeded = { # Selectively resets necessar
 			}					
 		}	
 	}
-	# Add mine and power plant
-	# Has pop = yes to make sure they use the tiles that were first generated for this task
-	# random_tile = {	# Deprecated Vanilla Code
-	#	limit = { has_blocker = no has_building = no has_pop = yes }
-	#	set_building = "building_mining_network_1"
-	#	set_deposit = d_mineral_deposit
-	#}
 	random_tile = {
 		limit = { has_blocker = no has_building = no has_pop = yes  }
 		set_building = "building_primitive_power_plant"
 		set_deposit = d_rich_energy_deposit
 	}
-	
-	# Move pops to tiles
 	every_tile = {
 		limit = { has_building = yes has_pop = no }
-		
 		save_event_target_as = needs_worker	
 		planet = {
 			weighted_random_owned_pop_group = {
 				limit = { tile = { has_building = no } }
-
 				resettle_pop = {
 					pop = this
 					tile = event_target:needs_worker
 				}
-			
 			}		
 		}
 	}
-	# Add blockers
 	random_tile = {
 		limit = { has_blocker = no has_building = no has_pop = no }
 		set_blocker = "tb_failing_infrastructure"

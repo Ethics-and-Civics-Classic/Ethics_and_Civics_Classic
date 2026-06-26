@@ -1,26 +1,15 @@
-############################
-#
-# Subject Events
-#
-# Written by Joachim Holmsen
-#
-############################
-
 namespace = subject
-
-country_event = { # SUBJECT - The outcome of the bickering between the admirals and their sides
+country_event = { 
 	id = subject.1145
 	title = subject.1145.title
 	desc = subject.1145.desc
 	picture = GFX_evt_grand_speech
 	show_sound = evn_ove_grand_speech
-
 	is_triggered_only = yes
-
 	immediate = {
 		admirals_bickering_replacement_effect = yes
-		random_list = { # Random chance for which side wins, based on choices in previous events
-			1 = { # Democratic side
+		random_list = { 
+			1 = { 
 				modifier = {
 					factor = overlord_admirals_bickering_democratic_side
 				}
@@ -32,7 +21,7 @@ country_event = { # SUBJECT - The outcome of the bickering between the admirals 
 					save_event_target_as = admiral_winner
 				}
 			}
-			1 = { # Oligarchic side
+			1 = { 
 				modifier = {
 					factor = overlord_admirals_bickering_oligarchic_side
 				}
@@ -45,8 +34,8 @@ country_event = { # SUBJECT - The outcome of the bickering between the admirals 
 				}
 			}
 		}
-		random_list = { # Random chance for what happened to the losers
-			30 = { # They killed their opponents
+		random_list = { 
+			30 = { 
 				modifier = {
 					factor = 2
 					has_country_flag = admirals_bickering_oligarchic_victory
@@ -56,7 +45,7 @@ country_event = { # SUBJECT - The outcome of the bickering between the admirals 
 					years = 1
 				}
 			}
-			30 = { # Their opponents were released after their faction was dismantled
+			30 = { 
 				modifier = {
 					factor = 2
 					has_country_flag = admirals_bickering_democratic_victory
@@ -66,7 +55,7 @@ country_event = { # SUBJECT - The outcome of the bickering between the admirals 
 					years = 1
 				}
 			}
-			10 = { # Their opponents ran off to form their own country
+			10 = { 
 				modifier = {
 					factor = 0
 					NOT = {
@@ -81,8 +70,8 @@ country_event = { # SUBJECT - The outcome of the bickering between the admirals 
 				}
 			}
 		}
-		random_list = { # Random chance for how serious they are about their demands
-			50 = { # Just instituting their leadership (be it democratic or oligarchic)
+		random_list = { 
+			50 = { 
 				modifier = {
 					factor = 0
 					OR = {
@@ -101,7 +90,7 @@ country_event = { # SUBJECT - The outcome of the bickering between the admirals 
 					years = 1
 				}
 			}
-			50 = { # Their side is already in charge (e.g democracy won in a democracy), so they'll leave it at that
+			50 = { 
 				modifier = {
 					factor = 0
 					OR = {
@@ -120,7 +109,7 @@ country_event = { # SUBJECT - The outcome of the bickering between the admirals 
 					years = 1
 				}
 			}
-			25 = { # Side won, and demands for their leader to be put in charge of the government
+			25 = { 
 				modifier = {
 					factor = 0.25
 					OR = {
@@ -140,7 +129,7 @@ country_event = { # SUBJECT - The outcome of the bickering between the admirals 
 				}
 			}
 		}
-		if = { # Separatist movement happens on Immediate, while the rest is checked in option
+		if = { 
 			limit = {
 				has_country_flag = admirals_bickering_separatist_opponents
 				any_owned_planet = {
@@ -154,7 +143,7 @@ country_event = { # SUBJECT - The outcome of the bickering between the admirals 
 						is_capital = no
 					}
 					save_event_target_as = separatist_home
-					if = { # Democratic victory
+					if = { 
 						limit = {
 							root = { has_country_flag = admirals_bickering_democratic_victory }
 						}
@@ -170,7 +159,7 @@ country_event = { # SUBJECT - The outcome of the bickering between the admirals 
 							}
 							ethos = {
 								ethic = ethic_authoritarian
-								ethic = ethic_fanatic_militarist # ethic_militarist  # E&CC Compatibility
+								ethic = ethic_fanatic_militarist 
 								ethic = ethic_materialist
 							}
 							effect = {
@@ -179,7 +168,7 @@ country_event = { # SUBJECT - The outcome of the bickering between the admirals 
 							}
 						}
 					}
-					else_if = { # Oligarchic victory
+					else_if = { 
 						limit = {
 							root = { has_country_flag = admirals_bickering_oligarchic_victory }
 						}
@@ -195,7 +184,7 @@ country_event = { # SUBJECT - The outcome of the bickering between the admirals 
 							}
 							ethos = {
 								ethic = ethic_egalitarian
-								ethic = ethic_fanatic_militarist # ethic_militarist  # E&CC Compatibility
+								ethic = ethic_fanatic_militarist 
 								ethic = ethic_materialist
 							}
 							effect = {
@@ -240,11 +229,9 @@ country_event = { # SUBJECT - The outcome of the bickering between the admirals 
 			}
 		}
 	}
-
 	option = {
 		name = subject.1145.a
-		### FIRST - Check if you are changing government type
-		if = { # Democratic victory
+		if = { 
 			limit = {
 				is_democracy = no
 				has_country_flag = admirals_bickering_democratic_victory
@@ -266,7 +253,7 @@ country_event = { # SUBJECT - The outcome of the bickering between the admirals 
 				remove_invalid_civics = yes
 			}
 		}
-		else_if = { # Oligarchic Victory
+		else_if = { 
 			limit = {
 				is_oligarchy = no
 				has_country_flag = admirals_bickering_oligarchic_victory
@@ -291,30 +278,28 @@ country_event = { # SUBJECT - The outcome of the bickering between the admirals 
 				remove_invalid_civics = yes
 			}
 		}
-		### SECOND - Check if you are changing leadership
 		if = {
 			limit = {
 				has_country_flag = admirals_bickering_imposed_leadership
 			}
-			if = { # Democratic
+			if = { 
 				limit = {
 					has_country_flag = admirals_bickering_democratic_victory
 				}
 				set_leader = event_target:admiral_democracy
 			}
-			else_if = { # Oligarchic
+			else_if = { 
 				limit = {
 					has_country_flag = admirals_bickering_oligarchic_victory
 				}
 				set_leader = event_target:admiral_oligarchy
 			}
 		}
-		### THIRDLY - Check if you are killing/exiling old rivals
-		if = { # Killing rivals
+		if = { 
 			limit = {
 				has_country_flag = admirals_bickering_killed_opponents
 			}
-			if = { # Democrats killing Oligarchs
+			if = { 
 				limit = {
 					has_country_flag = admirals_bickering_democratic_victory
 				}
@@ -322,7 +307,7 @@ country_event = { # SUBJECT - The outcome of the bickering between the admirals 
 					kill_leader = { show_notification = no }
 				}
 			}
-			else_if = { # Oligarchs killing Democrats
+			else_if = { 
 				limit = {
 					has_country_flag = admirals_bickering_oligarchic_victory
 				}
@@ -331,11 +316,11 @@ country_event = { # SUBJECT - The outcome of the bickering between the admirals 
 				}
 			}
 		}
-		else_if = { # Exiling rivals
+		else_if = { 
 			limit = {
 				has_country_flag = admirals_bickering_released_opponents
 			}
-			if = { # Democrats exiling Oligarchs
+			if = { 
 				limit = {
 					has_country_flag = admirals_bickering_democratic_victory
 				}
@@ -343,7 +328,7 @@ country_event = { # SUBJECT - The outcome of the bickering between the admirals 
 					exile_leader_as = missing_admiral_rival
 				}
 			}
-			else_if = { # Oligarchs exiling Democrats
+			else_if = { 
 				limit = {
 					has_country_flag = admirals_bickering_oligarchic_victory
 				}

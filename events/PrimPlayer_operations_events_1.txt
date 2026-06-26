@@ -1,58 +1,27 @@
-###########################################
-#
-# Nemesis Espionage Events
-# Written by Gemma Thomson
-#
-###########################################
-
 namespace = EaC_operation
-
-# SUBTERFUGE (.1XXX)
-# SABOTAGE (.2XXX)
-# MANIPULATION (.3XXX)
-# PROVOCATION (.4XXX)
-# RANDOM EVENTS (.5XXX)
-# CUSTODIAN (.6XXX)
-# INTEL (.7XXX)
-
 @operationBribeCost1 = -400
 @operationBribeCost2 = -600
 @operationBribeCost3 = -800
 @operationBribeThreshold1 = 400
 @operationBribeThreshold2 = 600
 @operationBribeThreshold3 = 800
-
-@StealTechnologyAmount = 1000 # Amount of science research in every discipline which will be granted if the EaC_operation cannot steal a Technology
-@StealTechnologyTimer = 2160 # Days (6 years) until Steal Technology can be repeated. Referenced in tooltip strings "EaC_operation.1026.tooltip.cooldown" and "EaC_operation_steal_technology_too_recent".
-# @SabotageStarbaseTimer = 1440 # Days (4 years) until Sabotage Starbase can be repeated against this target.
-@CrisisBeaconTimer = 1440 # Days (4 years) until Crisis Beacon can be attempted again. Referenced in tooltip string "EaC_operation_crisis_beacon_too_recent".
-
-# Number of days before a single event should (ideally) stand a chance of coming up again.
+@StealTechnologyAmount = 1000 
+@StealTechnologyTimer = 2160 
+@CrisisBeaconTimer = 1440 
 @Random_operationEventTimer = 600
 @Random_operationEventTimerLong = 1000
-
 @PrimPlayer_operation_locate_strategic_targets_infiltration_days = 5400
-
-###########################
-# GATHER INFORMATION
-###########################
-# this = EaC_operation; from = target (country)
-
-# Single Stage EaC_operation - the stakes have never been lower
 espionage_operation_event = {
 	id = EaC_operation.7000
 	title = "PrimPlayer_operation_locate_strategic_targets"
 	desc = "EaC_operation.7000.desc"
-
 	picture = GFX_evt_spymaster
 	show_sound = event_espionage_concluded
 	espionage_operation = yes
 	is_triggered_only = yes
-
 	trigger = {
 		exists = from
 	}
-
 	immediate = {
 		random_list = {
 			1 = {
@@ -363,7 +332,6 @@ espionage_operation_event = {
 			}
 		}
 	}
-
 	option = {
 		trigger = {
 			has_espionage_operation_flag = intel_report_gov_3
@@ -505,12 +473,10 @@ espionage_operation_event = {
 			}
 		}
 	}
-
 	after = {
 		spynetwork = {
 			add_spy_network_level_on_success_effect = { VALUE = -5 }
 		}
-		# Scope doubled up for tooltip reasons
 		spynetwork = {
 			if = {
 				limit = {
@@ -551,10 +517,6 @@ espionage_operation_event = {
 					owner = { NOT = { has_country_flag = EaC_operation_complete_gather_information } }
 				}
 				owner = {
-					# change_variable = {
-					#	which = tinker_tailor_soldier_blorg_achievement_count
-					#	value = 1
-					#}
 					set_country_flag = EaC_operation_complete_gather_information
 				}
 			}
@@ -562,27 +524,17 @@ espionage_operation_event = {
 		destroy_espionage_operation = this
 	}
 }
-
-###########################
-# GATHER INFORMATION
-###########################
-# this = EaC_operation; from = target (country)
-
-# Single Stage EaC_operation - the stakes have never been lower
 espionage_operation_event = {
 	id = EaC_operation.1000
 	title = "EaC_operation_establish_underground_railroad"
 	desc = "EaC_operation.1000.desc"
-
 	picture = GFX_evt_spymaster
 	show_sound = event_espionage_concluded
 	espionage_operation = yes
 	is_triggered_only = yes
-
 	trigger = {
 		exists = from
 	}
-
 	immediate = {
 		random_list = {
 			1 = {
@@ -893,7 +845,6 @@ espionage_operation_event = {
 			}
 		}
 	}
-
 	option = {
 		trigger = {
 			has_espionage_operation_flag = intel_report_gov_3
@@ -1035,12 +986,10 @@ espionage_operation_event = {
 			}
 		}
 	}
-
 	after = {
 		spynetwork = {
 			add_spy_network_level_on_success_effect = { VALUE = -5 }
 		}
-		# Scope doubled up for tooltip reasons
 		spynetwork = {
 			if = {
 				limit = {
@@ -1076,29 +1025,13 @@ espionage_operation_event = {
 			}
 		}
 		hidden_effect = {
-			#if = {
-			#	limit = {
-			#		owner = { NOT = { has_country_flag = EaC_operation_complete_establish_underground_railroad } }
-			#	}
-			#	owner = {
-			#		# change_variable = {
-			#		#	which = tinker_tailor_soldier_blorg_achievement_count
-			#		#	value = 1
-			#		#}
-			#		set_country_flag = EaC_operation_complete_establish_underground_railroad
-			#	}
-			#}
 			if = {
 				limit = {
 					from = { NOT = { has_country_flag = EaC_operation_complete_establish_underground_railroad@prev.owner } }
 				}
 				from = {
-					# change_variable = {
-					#	which = tinker_tailor_soldier_blorg_achievement_count
-					#	value = 1
-					#}
 					set_timed_country_flag = {
-						flag = EaC_operation_complete_establish_underground_railroad@prev.owner # Used to track who built the railroad
+						flag = EaC_operation_complete_establish_underground_railroad@prev.owner 
 						days = @PrimPlayer_operation_locate_strategic_targets_infiltration_days
 					}
 					add_modifier = {

@@ -1,41 +1,4 @@
-# Reloadable with 'reload stats'
-# This file is where you start when you want to configure something new, then go to sections
-
-####################
-# NOTE FOR MODDERS #
-####################
-# modifier = { } only takes the following modifiers
-# hull, shield & armor add/mult and regen add perc/static
-# Evasion add/mult
-# speed/base speed mult
-# Weapon damage mult
-# Upkeep mult
-# For other modifiers, use ship_modifier = { }
-# use_shipnames_from = other_size # Allows a ship size to use names from another size
-# icon = ship_size_military_1
-		# ship_size_military_1 is default. The following sprite keys are generated from it:
-			# GFX_text_<key>
-			# GFX_<key>
-			# GFX_<key>_top
-			# GFX_<key>_top_damaged
-# icon_frame: now only used for starbases. Value of 2 or more means it shows up on the galaxy map, 1-5 denote which icon it uses on starbase sprite sheets (e.g. gfx/interface/icons/starbase_ship_sizes.dds)
-# ai_ship_data = {					# For determining how many ships the AI wants. Ships it can't recruit (i.e. Missing tech prereqs or fails potential_country or possible_country) are pre-filtered out.
-# 	fraction = { }					# As standard, base, modifier = { factor }, etc. The AI will want this divided by the total fraction it is able to recruit. Note: it is the fraction of the naval cap, so the final value is divided by size_multiplier
-#									# Note: if the fraction is > 0, the following lines will not be applied
-#	min = 1							# Sets a minimum absolute number the country will aim to have
-#	system_mult/planet_mult = 0.1	# Adds this amount for each system/planet the country owns. I.e. Min + ( num planets * planet_mult ) + ( num systems * system_mult )
-#	max = 5							# Sets a maximum absolute number the country will aim to have. Note that it will still want only the minimum unless you define a system_mult or planet_mult
-#}
-
 @build_block_radius_civilian = 20
-
-####################
-
-###########################
-# Civilian Trade Mechanic #
-###########################
-
-# Civilian Local Cruise Ship
 civilian_local_colony_cruise = {
 	graphical_culture = no
 	entity = pre_ftl_colony_vessel_entity
@@ -46,9 +9,6 @@ civilian_local_colony_cruise = {
 	modifier = {
 		ship_evasion_add = @colony_evasion
 	}
-	#ship_modifier = {
-	#	ship_hyperlane_range_add = 1
-	#}
 	hull_scale = 1.50
 	size_multiplier = 0
 	fleet_slot_size = 0
@@ -57,11 +17,9 @@ civilian_local_colony_cruise = {
 	icon = ship_size_colonizer
 	base_buildtime = @colony_build_time
 	use_shipnames_from = colonizer
-
 	combat_disengage_chance = 2.0
-
-	enable_default_design = no	# If yes, countries will have an auto-generated design at start
-	enable_3dview_in_ship_browser = no # If yes, ship design will have a 3d view in the ship browser
+	enable_default_design = no	
+	enable_3dview_in_ship_browser = no 
 	is_designable = no
 	components_add_to_cost = no
 	prerequisites = { "tech_colonization_1" }
@@ -69,16 +27,13 @@ civilian_local_colony_cruise = {
 	class = shipclass_colonizer
 	construction_type = starbase_shipyard
 	required_component_set = "civilian_trader_power_core"
-	#required_component_set = "civilian_trader_ftl_components"
 	required_component_set = "civilian_trader_thruster_components"
 	required_component_set = "civilian_trader_sensor_components"
-	#required_component_set = "civilian_trader_science_cloaking_components"
 	required_component_set = "civilian_resort_colony_cruise_components"
 	valid_target_aggressive_stance = no
 	auto_upgrade = no
 	is_hero_ship = yes
 	hero_ship_fleet_background = "GFX_fleet_view_main_precom_bg"
-
 	resources = {
 		category = colonies
 		upkeep = {
@@ -86,29 +41,12 @@ civilian_local_colony_cruise = {
 			alloys = @colony_upkeep_alloys
 		}
 	}
-	
 	potential_construction = {
-		#has_starbase_module = orbital_ring_system_tourism
 		always = no
 	}
-	
 	possible_construction = {
-		#custom_tooltip = {
-			#fail_text = civilian_resort_colony_cruise_reached_cap
-			#any_owned_nonprimary_starbase = {
-			#	is_same_value = PREV
-			#	solar_system = {
-			#		count_fleet_in_system = {
-			#			count < 1	#Change this to a variable so it equals amount of resort worlds
-			#			limit = { is_ship_size = civilian_local_colony_cruise }
-			#		}
-			#	}
-			#}
-		#}
 	}
 }
-
-# Civilian Resort World Cruise
 civilian_resort_colony_cruise = {
 	graphical_culture = no
 	entity = pre_ftl_colony_vessel_entity
@@ -119,9 +57,6 @@ civilian_resort_colony_cruise = {
 	modifier = {
 		ship_evasion_add = @colony_evasion
 	}
-	#ship_modifier = {
-	#	ship_hyperlane_range_add = 1
-	#}
 	hull_scale = 1.50
 	size_multiplier = 0
 	fleet_slot_size = 0
@@ -130,11 +65,9 @@ civilian_resort_colony_cruise = {
 	icon = ship_size_colonizer
 	base_buildtime = @colony_build_time
 	use_shipnames_from = colonizer
-
 	combat_disengage_chance = 2.0
-
-	enable_default_design = no	# If yes, countries will have an auto-generated design at start
-	enable_3dview_in_ship_browser = yes # If yes, ship design will have a 3d view in the ship browser
+	enable_default_design = no	
+	enable_3dview_in_ship_browser = yes 
 	is_designable = yes
 	components_add_to_cost = yes
 	prerequisites = { "tech_resort_colonies" }
@@ -151,11 +84,8 @@ civilian_resort_colony_cruise = {
 	auto_upgrade = no
 	is_hero_ship = yes
 	hero_ship_fleet_background = "GFX_fleet_view_main_precom_bg"
-
 	resources = {
 		category = colonies
-		# Alloys
-		# 200 normally
 		cost = {
 			trigger = {
 				from = {
@@ -165,7 +95,6 @@ civilian_resort_colony_cruise = {
 			}
 			alloys = @colony_cost_base
 		}
-		# 100 if you're a virtual empire
 		cost = {
 			trigger = {
 				from = {
@@ -175,7 +104,6 @@ civilian_resort_colony_cruise = {
 			}
 			alloys = @colony_cost_low
 		}
-		# Halved if you use biological ships
 		cost = {
 			trigger = {
 				from = {
@@ -196,9 +124,6 @@ civilian_resort_colony_cruise = {
 			alloys = @colony_cost_low
 			mult = 0.5
 		}
-
-		# Consumer goods for non-gestalt empires
-		# 200 normally
 		cost = {
 			trigger = {
 				from = {
@@ -208,7 +133,6 @@ civilian_resort_colony_cruise = {
 			}
 			consumer_goods = @colony_cost_base
 		}
-		# 100 if you're a virtual empire
 		cost = {
 			trigger = {
 				from = {
@@ -218,8 +142,6 @@ civilian_resort_colony_cruise = {
 			}
 			consumer_goods = @colony_cost_low
 		}
-		# Food for organics
-		# 200 normally
 		cost = {
 			trigger = {
 				from = {
@@ -233,7 +155,6 @@ civilian_resort_colony_cruise = {
 			}
 			food = @colony_cost_base
 		}
-		# 500 if you're a hive mind
 		cost = {
 			trigger = {
 				from = {
@@ -244,8 +165,6 @@ civilian_resort_colony_cruise = {
 			}
 			food = @colony_cost_high
 		}
-
-		# Additional food to replace alloys if you use biological ships
 		cost = {
 			trigger = {
 				from = {
@@ -266,9 +185,6 @@ civilian_resort_colony_cruise = {
 			food = @colony_cost_low
 			mult = @halved_alloy_to_food_cost_ratio
 		}
-
-		# Minerals for lithoids
-		# 200 normally
 		cost = {
 			trigger = {
 				from = {
@@ -282,7 +198,6 @@ civilian_resort_colony_cruise = {
 			}
 			minerals = @colony_cost_base
 		}
-		# 500 if you're a hive mind
 		cost = {
 			trigger = {
 				from = {
@@ -293,8 +208,6 @@ civilian_resort_colony_cruise = {
 			}
 			minerals = @colony_cost_high
 		}
-		# Energy for machines
-		# 200 normally
 		cost = {
 			trigger = {
 				from = {
@@ -305,7 +218,6 @@ civilian_resort_colony_cruise = {
 			}
 			energy = @colony_cost_base
 		}
-		# 200 for synth fert
 		cost = {
 			trigger = {
 				from = {
@@ -314,7 +226,6 @@ civilian_resort_colony_cruise = {
 			}
 			energy = @colony_cost_base
 		}
-		# 400 if you're a virtual empire
 		cost = {
 			trigger = {
 				from = {
@@ -325,7 +236,6 @@ civilian_resort_colony_cruise = {
 			}
 			energy = @colony_cost_mid
 		}
-		# 500 if you're a machine intelligence
 		cost = {
 			trigger = {
 				from = {
@@ -336,7 +246,6 @@ civilian_resort_colony_cruise = {
 			}
 			energy = @colony_cost_high
 		}
-		# 700 if you're a virtual empire
 		cost = {
 			trigger = {
 				from = {
@@ -347,13 +256,11 @@ civilian_resort_colony_cruise = {
 			}
 			energy = @colony_cost_very_high
 		}
-
 		upkeep = {
 			energy = @colony_upkeep_energy
 			alloys = @colony_upkeep_alloys
 		}
 	}
-	
 	possible_construction = {
 		owner = { 
 			any_owned_planet = { has_modifier = resort_colony } 
@@ -362,16 +269,13 @@ civilian_resort_colony_cruise = {
 			fail_text = civilian_resort_colony_cruise_reached_cap
 			owner = {	
 				count_owned_fleet = {
-					count < 1	#Change this to a variable so it equals amount of resort worlds
+					count < 1	
 					limit = { is_ship_size = civilian_resort_colony_cruise }
 				}
 			}
 		}
 	}
 }
-
-
-# Civilian Trader Freighter
 civilian_trade_freighter = {
 	graphical_culture = no
 	entity = cargo_transport_containers_entity
@@ -382,9 +286,6 @@ civilian_trade_freighter = {
 	modifier = {
 		ship_evasion_add = @construction_evasion
 	}
-	#ship_modifier = {
-	#	ship_hyperlane_range_add = 1
-	#}
 	hull_scale = 1.50
 	size_multiplier = 1
 	fleet_slot_size = 1
@@ -395,25 +296,17 @@ civilian_trade_freighter = {
 	ship_class_icon_frame = 56
 	base_buildtime = @science_build_time
 	use_shipnames_from = transport
-
 	combat_disengage_chance = 2.0
-
-	enable_default_design = yes	# If yes, countries will have an auto-generated design at start
-	enable_3dview_in_ship_browser = no # If yes, ship design will have a 3d view in the ship browser
+	enable_default_design = yes	
+	enable_3dview_in_ship_browser = no 
 	is_designable = no
 	components_add_to_cost = no
 	prerequisites = { "tech_primitive_generation_ship" }
 	is_civilian = yes
 	class = shipclass_transport
 	construction_type = starbase_shipyard
-	#required_component_set = "power_core"
-	#required_component_set = "ftl_components"
-	#required_component_set = "thruster_components"
-	#required_component_set = "sensor_components"
-	#required_component_set = "science_cloaking_components"
 	valid_target_aggressive_stance = no
 	auto_upgrade = yes
-
 	resources = {
 		category = ships
 		cost = {
@@ -424,13 +317,10 @@ civilian_trade_freighter = {
 			alloys = @science_upkeep_alloys
 		}
 	}
-
 	potential_country = {
 		always = no
 	}
 }
-
-# Civilian Trade Tanker
 civilian_trade_tanker = {
 	graphical_culture = no
 	entity = pre_ftl_laser_ship_entity
@@ -441,9 +331,6 @@ civilian_trade_tanker = {
 	modifier = {
 		ship_evasion_add = @construction_evasion
 	}
-	#ship_modifier = {
-	#	ship_hyperlane_range_add = 1
-	#}
 	hull_scale = 1.50
 	size_multiplier = 1
 	fleet_slot_size = 1
@@ -453,25 +340,17 @@ civilian_trade_tanker = {
 	ship_class_icon_frame = 56
 	base_buildtime = @science_build_time
 	use_shipnames_from = transport
-
 	combat_disengage_chance = 2.0
-
-	enable_default_design = yes	# If yes, countries will have an auto-generated design at start
-	enable_3dview_in_ship_browser = no # If yes, ship design will have a 3d view in the ship browser
+	enable_default_design = yes	
+	enable_3dview_in_ship_browser = no 
 	is_designable = no
 	components_add_to_cost = no
 	prerequisites = { "tech_primitive_generation_ship" }
 	is_civilian = yes
 	class = shipclass_transport
 	construction_type = starbase_shipyard
-	#required_component_set = "power_core"
-	#required_component_set = "ftl_components"
-	#required_component_set = "thruster_components"
-	#required_component_set = "sensor_components"
-	#required_component_set = "science_cloaking_components"
 	valid_target_aggressive_stance = no
 	auto_upgrade = yes
-
 	resources = {
 		category = ships
 		cost = {
@@ -482,7 +361,6 @@ civilian_trade_tanker = {
 			alloys = @science_upkeep_alloys
 		}
 	}
-
 	potential_country = {
 		always = no
 	}
