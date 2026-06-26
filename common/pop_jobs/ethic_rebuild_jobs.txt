@@ -352,11 +352,9 @@ bio_trophy_unemployment = {
 	}
 
 	possible = {
-		OR = {
-			has_citizenship_type = { type = citizenship_organic_trophy country = owner }
-			has_citizenship_type = { type = citizenship_organic_civilian country = owner }
-		}
-		planet = { NOT = { is_planet_class = pc_cosmogenesis_world } }
+		has_citizenship_type = { type = citizenship_organic_trophy country = owner }
+		colony? = { NOT = { is_planet_class = pc_cosmogenesis_world } }
+		owner? = { is_hospitality_servitor_empire = no }
 	}
 
 	resources = {
@@ -458,6 +456,12 @@ civilian = {
 		hidden_trigger = { exists = owner }
 		owner = {
 			is_gestalt = no
+			}
+			NOT = {
+			has_citizenship_type = {
+				type = citizenship_cruise_passenger
+				country = owner
+			}
 			NOR = {
 				is_primitive = yes
 				any_situation = { is_situation_type = PrimPlayer_situation } # Much more efficient trigger
@@ -478,6 +482,18 @@ civilian = {
 		default = {
 			building_icon = building_residence
 		}
+		# Tourists
+		swap_type = {
+			trigger = {
+				exists = owner
+				has_modifier = resort_colony
+			}
+			name = tourist
+			desc = tourist_desc
+			icon = trader
+			building_icon = building_amusement_megaplex
+			weight = 6
+		}		
 		# Hedonists
 		swap_type = {
 			trigger = {
