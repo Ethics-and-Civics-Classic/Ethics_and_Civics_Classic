@@ -1,31 +1,19 @@
-##############################
-# Imperialist Faction
-##############################
-
 imperialist = {
 	election_header = "GFX_faction_header_yellow"
-	guiding_ethic = ethic_militarist # Only pops of this ethic can join the faction
+	guiding_ethic = ethic_militarist
 	visual_ethic = "imperialist_visual_ethic"
-
 	unique = yes
 	support_multiplier = 1
-
 	resources = {
 		category = pop_factions
 		produces = {
 			trigger = {
 				owner = {
 					NOT = { has_edict = civic_crowdsourcing_edict }
-					#NOR = {
-					#	has_civic = civic_anarchy_utopia
-					#	has_civic = civic_crowdsourcing
-					#	has_civic = civic_corporate_crowdsourcing
-					#}
 				}
 			}
 			unity = @faction_base_output
 		}
-		#Anarchy Ideals
 		produces = {
 			trigger = {
 				owner = {
@@ -36,7 +24,6 @@ imperialist = {
 			unity = @faction_base_output
 			mult = @faction_anarchy_unity_ratio
 		}
-		#Crowdsourcing
 		produces = {
 			trigger = {
 				owner = {
@@ -48,7 +35,6 @@ imperialist = {
 			society_research = @faction_minor_output
 			mult = @crowdsourcing_multiplier
 		}
-		#Anarchy Ideals
 		produces = {
 			trigger = {
 				owner = {
@@ -61,24 +47,17 @@ imperialist = {
 			mult = @crowdsourcing_anarchy_multiplier
 		}
 	}
-
 	extortion_resource = {
 		category = pop_factions
 		produces = {
 			trigger = {
 				owner = {
 					NOT = { has_edict = civic_crowdsourcing_edict }
-					#NOR = {
-					#	has_civic = civic_anarchy_utopia
-					#	has_civic = civic_crowdsourcing
-					#	has_civic = civic_corporate_crowdsourcing
-					#}
 				}
 			}
 			alloys = @faction_base_output
 			mult = @faction_extortion_alloys_ratio
 		}
-		#Anarchy Ideals
 		produces = {
 			trigger = {
 				owner = {
@@ -89,7 +68,6 @@ imperialist = {
 			alloys = @faction_base_output
 			mult = @faction_extortion_alloys_anarchy_ratio
 		}
-		#Crowdsourcing
 		produces = {
 			trigger = {
 				owner = {
@@ -101,7 +79,6 @@ imperialist = {
 			society_research = @faction_minor_output
 			mult = @faction_extortion_crowdsourcing_ratio
 		}
-		#Anarchy Ideals
 		produces = {
 			trigger = {
 				owner = {
@@ -114,12 +91,9 @@ imperialist = {
 			mult = @faction_extortion_crowdsourcing_anarchy_ratio
 		}
 	}
-
-	# Note: number of potential or actual members is checked by POP_FACTION_MIN_POTENTIAL_MEMBERS define
 	is_potential = {
 		is_faction_allowed = yes
 	}
-
 	parameters = {
 		empire = {
 			type = country
@@ -128,22 +102,18 @@ imperialist = {
 			}
 		}
 	}
-
 	can_join_pre_triggers = {
 		is_enslaved = no
 		is_being_purged = no
 	}
-
 	can_join_faction = {
 		is_shackled_robot = no
-		has_culture_shock = no	#Modded
+		has_culture_shock = no
 		can_think = yes
-		is_militarist = yes		#Modded
+		is_militarist = yes
 	}
-
 	attraction = {
 		base = 100
-
 		modifier = {
 			factor = 1.25
 			exists = from
@@ -152,7 +122,6 @@ imperialist = {
 				leader = { is_ruler = yes }
 			}
 		}
-
 		modifier = {
 			factor = 0.75
 			exists = from
@@ -160,51 +129,41 @@ imperialist = {
 				NOT = { exists = leader }
 			}
 		}
-
 		modifier = {
 			factor = 1.25
 			has_citizenship_rights = yes
 		}
 	}
-
 	leader = {
 		base = 100
-
 		modifier = {
 			factor = 0.0
 			is_event_leader = yes
 		}
 	}
-	
 	demand = {
 		title = "POLITICAL_PLURALISM"
 		unfulfilled_title = "POLITICAL_PLURALISM"
 		desc = "POLITICAL_PLURALISM_DESC"
-
 		fulfilled_effect = 10
-
 		potential = {
 			exists = owner
 			owner = {
 				has_valid_civic = civic_parliamentary_system
 			}
 		}
-
 		trigger = {
 			owner = {
 				has_valid_civic = civic_parliamentary_system
 			}
 		}
 	}
-	
 	demand = {
 		title = "IMPERIALIST_MILITARY_FEDERATION"
 		unfulfilled_title = "IMPERIALIST_MILITARY_FEDERATION"
 		desc = "IMPERIALIST_MILITARY_FEDERATION_DESC"
-
 		fulfilled_effect = 15
 		unfulfilled_effect = -0.001
-
 		potential = {
 			exists = owner
 			owner = {
@@ -212,32 +171,26 @@ imperialist = {
 				has_federation = yes
 			}
 		}
-
 		trigger = {
 			owner = {
 				has_federation = yes
 					federation = {
 						has_federation_type = military_federation
 					}
-				
 			}
 		}
 	}
-	
 	demand = {
 		title = "MARTIAL_BROTHERHOOD"
 		unfulfilled_title = "MARTIAL_BROTHERHOOD"
 		desc = "MARTIAL_BROTHERHOOD_DESC"
-
 		fulfilled_effect = 10
-
 		potential = {
 			exists = owner
 			owner = {
 				has_valid_civic = civic_martial_brotherhood
 			}
 		}
-
 		trigger = {
 			owner = { 
 				OR = {
@@ -246,28 +199,20 @@ imperialist = {
 			}
 		}
 	}
-	
-	
-	# DEMAND: Faction Outraged (by a GalCom Resolution)
 	inline_script = {
 		script = pop_faction_types/demand_faction_outraged
 		FLAG = galcom_resolution_passed_anti_imperialist
 	}
-
-	# DEMAND: Faction Pleased (by a GalCom Resolution)
 	inline_script = {
 		script = pop_faction_types/demand_faction_pleased
 		FLAG = galcom_resolution_passed_pro_imperialist
 	}
-
 	demand = {
 		title = "IMPERIALIST_PHILOSOPHY"
 		unfulfilled_title = "IMPERIALIST_NO_PHILOSOPHY"
 		desc = "IMPERIALIST_PHILOSOPHY_DESC"
-
 		unfulfilled_effect = -30
 		fulfilled_effect = 0.001
-
 		potential = {
 			exists = owner
 			owner = {
@@ -279,7 +224,6 @@ imperialist = {
 				}
 			}
 		}
-
 		trigger = {
 			owner = { 
 				OR = {
@@ -289,22 +233,17 @@ imperialist = {
 			}
 		}
 	}
-	
-	
 	demand = {
 		title = "LIBERATION_PHILOSOPHY"
 		unfulfilled_title = "LIBERATION_NO_PHILOSOPHY"
 		desc = "LIBERATION_PHILOSOPHY_DESC"
-
 		fulfilled_effect = 20
-
 		potential = {
 			exists = owner
 			owner = {
 				OR = { has_valid_civic = civic_xeno_militarist }
 			}
 		}
-
 		trigger = {
 			owner = { 
 				OR = {
@@ -314,17 +253,12 @@ imperialist = {
 			}
 		}
 	}
-
-
-
 	demand = {
 		title = "IMPERIALIST_DEFENSIVE_PACTS"
 		unfulfilled_title = "NO_IMPERIALIST_DEFENSIVE_PACTS"
 		desc = "IMPERIALIST_DEFENSIVE_PACTS_DESC"
-
 		fulfilled_effect = 20
 		unfulfilled_effect = -0.001
-
 		potential = {
 			exists = owner
 			owner = {
@@ -332,7 +266,6 @@ imperialist = {
 				has_valid_civic = civic_xeno_militarist
 			}
 		}
-
 		trigger = {
 			owner = {
 				count_playable_country = {
@@ -345,15 +278,12 @@ imperialist = {
 			}
 		}
 	}
-
 	demand = {
 		title = "IMPERIALIST_CONQUEST"
 		unfulfilled_title = "IMPERIALIST_NO_CONQUEST"
 		desc = "IMPERIALIST_CONQUEST_DESC"
-
 		fulfilled_effect = 10
 		unfulfilled_effect = -0.001
-
 		potential = {
 			exists = owner
 			owner = {
@@ -364,44 +294,36 @@ imperialist = {
 				}
 			}
 		}
-
 		trigger = {
 			owner = {
 				has_country_flag = imperialist_conquest_timed_flag
 			}
 		}
 	}
-
 	demand = {
 		title = "SUPREMACIST_FANATIC_PURIFIERS"
 		unfulfilled_title = "SUPREMACIST_NOT_FANATIC_PURIFIERS"
 		desc = "SUPREMACIST_FANATIC_PURIFIERS_DESC"
-
 		fulfilled_effect = 10
 		unfulfilled_effect = -0.001
-
 		potential = {
 			exists = owner
 			owner = {
 				has_valid_civic = civic_fanatic_purifiers
 			}
 		}
-
 		trigger = {
 			owner = {
 				has_valid_civic = civic_fanatic_purifiers
 			}
 		}
 	}
-
 	demand = {
 		title = "IMPERIALIST_RIVALS1"
 		unfulfilled_title = "IMPERIALIST_FEW_RIVALS1"
 		desc = "IMPERIALIST_RIVALS_DESC1"
-
 		fulfilled_effect = 5
 		unfulfilled_effect = -5
-
 		potential = {
 			exists = owner
 			owner = {
@@ -410,22 +332,18 @@ imperialist = {
 				num_rivals < 2
 			}
 		}
-
 		trigger = {
 			owner = {
 				num_rivals > 0
 			}
 		}
 	}
-
 	demand = {
 		title = "IMPERIALIST_RIVALS2"
 		unfulfilled_title = "IMPERIALIST_FEW_RIVALS2"
 		desc = "IMPERIALIST_RIVALS_DESC2"
-
 		fulfilled_effect = 10
 		unfulfilled_effect = -0.001
-
 		potential = {
 			exists = owner
 			owner = {
@@ -437,22 +355,18 @@ imperialist = {
 				num_rivals = 2
 			}
 		}
-
 		trigger = {
 			owner = {
 				num_rivals > 1
 			}
 		}
 	}
-
 	demand = {
 		title = "IMPERIALIST_RIVALS3"
 		unfulfilled_title = "IMPERIALIST_FEW_RIVALS3"
 		desc = "IMPERIALIST_RIVALS_DESC3"
-
 		fulfilled_effect = 15
 		unfulfilled_effect = -0.001
-
 		potential = {
 			exists = owner
 			owner = {
@@ -464,22 +378,18 @@ imperialist = {
 				num_rivals > 2
 			}
 		}
-
 		trigger = {
 			owner = {
 				num_rivals > 2
 			}
 		}
 	}
-
 	demand = {
-		title = "IMPERIALIST_OVERLORD" # Imperial Hegemony
+		title = "IMPERIALIST_OVERLORD"
 		unfulfilled_title = "IMPERIALIST_NOT_OVERLORD"
 		desc = "IMPERIALIST_OVERLORD_DESC"
-
 		fulfilled_effect = 5
 		unfulfilled_effect = -0.001
-
 		potential = {
 			exists = owner
 			owner = {
@@ -487,7 +397,6 @@ imperialist = {
 				NOT = { has_valid_civic = civic_fanatic_purifiers }
 			}
 		}
-
 		trigger = {
 			OR = {
 				owner = {
@@ -503,33 +412,26 @@ imperialist = {
 			}
 		}
 	}
-
 	demand = {
 		title = IMPERIALIST_FEDERATION
 		unfulfilled_title = IMPERIALIST_FEDERATION_NOT_MILITARIST
 		desc = "IMPERIALIST_FEDERATION_DESC"
-
 		fulfilled_effect = 5
 		unfulfilled_effect = -0.001
-
 		potential = {
 			exists = owner.federation
 			has_federations_dlc = yes
 		}
-
 		trigger = {
 			owner.federation = { has_federation_type = military_federation }
 		}
 	}
-
 	demand = {
 		title = IMPERIALIST_FLEET_USAGE_HIGH
 		unfulfilled_title = IMPERIALIST_FLEET_USAGE_NOT_HIGH
 		desc = IMPERIALIST_FLEET_USAGE_HIGH_DESC
-
 		fulfilled_effect = 5
 		unfulfilled_effect = -0.001
-
 		potential = {
 			exists = owner
 			owner = {
@@ -539,20 +441,16 @@ imperialist = {
 				}
 			}
 		}
-
 		trigger = {
 			owner = { used_naval_capacity_percent > 1 }
 		}
 	}
-
 	demand = {
 		title = IMPERIALIST_FLEET_USAGE_LOW
 		unfulfilled_title = IMPERIALIST_FLEET_USAGE_NOT_LOW
 		desc = IMPERIALIST_FLEET_USAGE_LOW_DESC
-
 		fulfilled_effect = 0.001
 		unfulfilled_effect = -10
-
 		potential = {
 			exists = owner
 			owner = {
@@ -560,20 +458,16 @@ imperialist = {
 				is_at_war = no
 			}
 		}
-
 		trigger = {
 			owner = { used_naval_capacity_percent > 0.75 }
 		}
 	}
-
 	demand = {
 		title = "IMPERIALIST_UNDERLING"
 		unfulfilled_title = "IMPERIALIST_NOT_UNDERLING"
 		desc = "IMPERIALIST_UNDERLING_DESC"
-
 		unfulfilled_effect = -25
 		fulfilled_effect = 0.001
-
 		potential = {
 			exists = owner
 			owner = {
@@ -581,22 +475,18 @@ imperialist = {
 				is_subject = yes
 			}
 		}
-
 		trigger = {
 			owner = {
 				is_subject = no
 			}
 		}
 	}
-
 	demand = {
 		title = "IMPERIALIST_BULWARK"
 		unfulfilled_title = "IMPERIALIST_NOT_BULWARK"
 		desc = "IMPERIALIST_BULWARK_DESC"
-
 		unfulfilled_effect = -25
 		fulfilled_effect = 0.001
-
 		potential = {
 			exists = owner
 			owner = {
@@ -604,7 +494,6 @@ imperialist = {
 				is_subject = yes
 			}
 		}
-
 		trigger = {
 			owner = {
 				OR = {
@@ -614,15 +503,12 @@ imperialist = {
 			}
 		}
 	}
-
 	demand = {
 		title = "IMPERIALIST_SLAYER"
 		unfulfilled_title = "IMPRERIALIST_NOT_SLAYER"
 		desc = "IMPERIALIST_SLAYER_DESC"
-
 		fulfilled_effect = 5
 		unfulfilled_effect = -0.001
-
 		potential = {
 			exists = owner
 			owner = {
@@ -632,22 +518,18 @@ imperialist = {
 				}
 			}
 		}
-
 		trigger = {
 			owner = {
 				has_country_flag = killed_guardian
 			}
 		}
 	}
-
 	demand = {
 		title = "IMPERIALIST_MILITARY_APPLICATIONS"
 		unfulfilled_title = "IMPERIALIST_NO_MILITARY_APPLICATIONS"
 		desc = "IMPERIALIST_MILITARY_APPLICATIONS_DESC"
-
 		fulfilled_effect = 5
 		unfulfilled_effect = -0.001
-
 		potential = {
 			exists = owner
 			owner = {
@@ -660,7 +542,6 @@ imperialist = {
 				}
 			}
 		}
-
 		trigger = {
 			owner = {
 				OR = {
@@ -671,15 +552,12 @@ imperialist = {
 			}
 		}
 	}
-
 	demand = {
 		title = "IMPERIALIST_PEACEFUL_APPLICATIONS"
 		unfulfilled_title = "IMPERIALIST_NO_PEACEFUL_APPLICATIONS"
 		desc = "IMPERIALIST_PEACEFUL_APPLICATIONS_DESC"
-
 		unfulfilled_effect = -5
 		fulfilled_effect = 0.001
-
 		potential = {
 			exists = owner
 			owner = {
@@ -693,7 +571,6 @@ imperialist = {
 				}
 			}
 		}
-
 		trigger = {
 			owner = {
 				NOR = {
@@ -705,15 +582,12 @@ imperialist = {
 			}
 		}
 	}
-
 	demand = {
 		title = "STRONG_DIPLO_STANCE"
 		unfulfilled_title = "STRONG_DIPLO_STANCE"
 		desc = "STRONG_DIPLO_STANCE_DESC"
-
 		fulfilled_effect = 10
 		unfulfilled_effect = -0.001
-
 		potential = {
 			exists = owner
 			owner = {
@@ -726,7 +600,6 @@ imperialist = {
 				}
 			}
 		}
-
 		trigger = {
 			owner = {
 				OR = {
@@ -737,15 +610,12 @@ imperialist = {
 			}
 		}
 	}
-
 	demand = {
 		title = "WEAK_DIPLO_STANCE"
 		unfulfilled_title = "WEAK_DIPLO_STANCE"
 		desc = "WEAK_DIPLO_STANCE_DESC"
-
 		fulfilled_effect = 0.01
 		unfulfilled_effect = -10
-
 		potential = {
 			exists = owner
 			owner = {
@@ -754,22 +624,18 @@ imperialist = {
 				has_policy_flag = diplo_stance_cooperative
 			}
 		}
-
 		trigger = {
 			owner = {
 				NOT = { has_policy_flag = diplo_stance_cooperative }
 			}
 		}
 	}
-
 	demand = {
 		title = "IMPERIALIST_BENEVOLENT_SUBJUGATION_POLICY"
 		unfulfilled_title = "IMPERIALIST_NO_BENEVOLENT_SUBJUGATION_POLICY"
 		desc = "IMPERIALIST_BENEVOLENT_SUBJUGATION_POLICY_DESC"
-
 		unfulfilled_effect = -5
 		fulfilled_effect = 0.001
-
 		potential = {
 			exists = owner
 			owner = {
@@ -777,48 +643,39 @@ imperialist = {
 				has_policy_flag = benevolent_terms
 			}
 		}
-
 		trigger = {
 			owner = {
 				NOT = { has_policy_flag = benevolent_terms }
 			}
 		}
 	}
-
 	demand = {
 		title = "IMPERIALIST_OPPRESSIVE_SUBJUGATION_POLICY"
 		unfulfilled_title = "IMPERIALIST_ADOPT_OPPRESSIVE_SUBJUGATION_POLICY"
 		desc = "IMPERIALIST_OPPRESSIVE_SUBJUGATION_POLICY_DESC"
-
 		fulfilled_effect = 5
 		unfulfilled_effect = -0.001
-
 		potential = {
 			exists = owner
 			owner = {
 				NOR = { is_subject = yes has_policy_flag = benevolent_terms }
 			}
 		}
-
 		trigger = {
 			owner = {
 				has_policy_flag = oppressive_terms
 			}
 		}
 	}
-
-	# Faction Demands for Ruler and Council positions.
 	inline_script = {
 		script = "paragon/global_faction_demands"
 		ETHIC = ethic_militarist
 		ETHIC_FANATIC = ethic_fanatic_militarist
 		ETHIC_OPPOSED = ethic_pacifist
 	} 
-
 	on_create = {
 		pop_faction_event = { id = factions.1 }
 	}
-
 	on_destroy = {
 		if = {
 			limit = {
@@ -833,16 +690,13 @@ imperialist = {
 			remove_modifier = suppressed_militarist
 		}
 	}
-
 	actions = {
 		embrace_faction = {
 			title = "EMBRACE_FACTION"
 			description = "EMBRACE_FACTION_DESC"
-
 			cost = {
 				unity = 5000
 			}
-
 			potential = {
 				exists = owner
 				owner = {
@@ -852,7 +706,6 @@ imperialist = {
 					}
 				}
 			}
-
 			valid = {
 				custom_tooltip = {
 					fail_text = EMBRACE_FACTION_COOLDOWN
@@ -865,7 +718,6 @@ imperialist = {
 					NOT = { has_ethic = "ethic_fanatic_militarist" }
 				}
 			}
-
 			effect = {
 				add_modifier = { modifier = embraced_faction years = 10 }
 				parameter:empire = {
@@ -897,7 +749,6 @@ imperialist = {
 					}
 				}
 			}
-
 			ai_weight = {
 				base = 1
 				modifier = {
@@ -924,7 +775,6 @@ imperialist = {
 		promote_faction = {
 			title = "PROMOTE_FACTION"
 			description = "PROMOTE_FACTION_DESC"
-
 			potential = {
 				exists = owner
 				parameter:empire = {
@@ -934,13 +784,11 @@ imperialist = {
 					}
 				}
 			}
-
 			effect = {
 				parameter:empire = {
 					add_modifier = { modifier = promoted_militarist days = -1 }
 				}
 			}
-
 			ai_weight = {
 				base = 0
 			}
@@ -948,18 +796,15 @@ imperialist = {
 		cancel_promote_faction = {
 			title = "CANCEL_PROMOTE_FACTION"
 			description = "CANCEL_PROMOTE_FACTION_DESC"
-
 			potential = {
 				exists = owner
 				parameter:empire = { has_modifier = promoted_militarist }
 			}
-
 			effect = {
 				parameter:empire = {
 					remove_modifier = promoted_militarist
 				}
 			}
-
 			ai_weight = {
 				base = 0
 			}
@@ -967,7 +812,6 @@ imperialist = {
 		suppress_faction = {
 			title = "SUPPRESS_FACTION"
 			description = "SUPPRESS_FACTION_DESC"
-
 			potential = {
 				exists = owner
 				parameter:empire = {
@@ -977,14 +821,12 @@ imperialist = {
 					}
 				}
 			}
-
 			effect = {
 				add_modifier = { modifier = suppressed_faction days = -1 }
 				parameter:empire = {
 					add_modifier = { modifier = suppressed_militarist days = -1 }
 				}
 			}
-
 			ai_weight = {
 				base = 0
 			}
@@ -992,28 +834,23 @@ imperialist = {
 		cancel_suppress_faction = {
 			title = "CANCEL_SUPPRESS_FACTION"
 			description = "CANCEL_SUPPRESS_FACTION_DESC"
-
 			potential = {
 				exists = owner
 				parameter:empire = { has_modifier = suppressed_militarist }
 			}
-
 			effect = {
 				remove_modifier = suppressed_faction
 				parameter:empire = {
 					remove_modifier = suppressed_militarist
 				}
 			}
-
 			ai_weight = {
 				base = 0
 			}
 		}
-		# Faction Extortion Buttons
 		extort_faction = {
 			title = "EXTORT_FACTION"
 			description = "EXTORT_FACTION_DESC"
-
 			potential = {
 				exists = owner
 				owner = {
@@ -1022,13 +859,11 @@ imperialist = {
 				}
 				is_faction_extorted = no
 			}
-
 			effect = {
 				set_faction_extorted = yes
 				custom_tooltip = alloys_extortion_tt
 				custom_tooltip = ONLY_ONE_EXTORTED_FACTION_TT
 			}
-
 			ai_weight = {
 				base = 0
 			}
@@ -1036,7 +871,6 @@ imperialist = {
 		cancel_extort_faction = {
 			title = "CANCEL_EXTORT_FACTION"
 			description = "CANCEL_EXTORT_FACTION_DESC"
-
 			potential = {
 				exists = owner
 				owner = {
@@ -1045,11 +879,9 @@ imperialist = {
 				}
 				is_faction_extorted = yes
 			}
-
 			effect = {
 				set_faction_extorted = no
 			}
-
 			ai_weight = {
 				base = 0
 			}

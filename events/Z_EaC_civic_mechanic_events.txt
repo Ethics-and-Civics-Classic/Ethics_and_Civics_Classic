@@ -5,18 +5,10 @@ namespace = action
 namespace = leader
 namespace = paragon_2
 namespace = cyber
-
-# Modder Note:
-# This file is where civic mechanic events are placed. Please only use EaC_civic_mechanic_events namespace, as adding multiple namespaces is very laggy.
-
-
-# Remove Imperial Heir trait on changing away from Imperial authority.
 country_event = {
 	id = action.502
 	hide_window = yes
-
 	is_triggered_only = yes
-
 	trigger = {
 		any_owned_leader = {
 			has_trait = trait_imperial_heir
@@ -25,21 +17,18 @@ country_event = {
 			is_imperial_authority = yes
 		}
 	}
-
 	immediate = {
 		every_owned_leader = {
 			limit = {
 				has_trait = trait_imperial_heir
 			}
 			remove_trait = trait_imperial_heir
-
-			# Treasure Hunters origin - Adds the Adventurous Spirit trait
 			if = {
 				limit = {
 					root = { 
 						OR = {
 							has_origin = origin_treasure_hunters
-							has_civic = civic_military_dictatorship_corporate	# Modded
+							has_civic = civic_military_dictatorship_corporate
 						}
 					}
 				}
@@ -51,38 +40,28 @@ country_event = {
 		}
 	}
 }
-
-
-############################
-#
-# On destroying enemy ship.
-#
-############################
 country_event = {
 	id = paragon_2.1005
 	hide_window = yes
 	is_triggered_only = yes
-
 	immediate = {
-		FROMFROM = { # Winning ship.
+		FROMFROM = {
 			if = {
 				limit = { exists = fleet.leader }
 				fleet.leader = {
-
-					# Corsair / Corsair II
 					if = {
 						limit = {
 							OR = {
 								has_trait = leader_trait_corsair
 								has_trait = leader_trait_corsair_2
 							}
-							ROOT.FROM = { # Owner of losing ship.
+							ROOT.FROM = {
 								is_default_or_fallen = yes
 							}
 						}
 						if = {
 							limit = { has_trait = leader_trait_corsair }
-							ROOT = { # Owner of winning ship.
+							ROOT = {
 								add_resource = {
 									energy = @trait_corsair_amt
 									mult = value:hells_heart_effect
@@ -90,7 +69,7 @@ country_event = {
 							}
 						}
 						else = {
-							ROOT = { # Owner of winning ship.
+							ROOT = {
 								add_resource = {
 									energy = @trait_corsair_2_amt
 									mult = value:hells_heart_effect
@@ -98,18 +77,15 @@ country_event = {
 							}
 						}
 					}
-					
-					# Warrior Culture / Warrior Culture II
 					if = {
 						limit = {
 							has_trait_tier1or2 = {
 								TRAIT = leader_trait_warrior_culture
 							}
-							ROOT.FROM = { # Owner of losing ship.
+							ROOT.FROM = {
 								is_default_or_fallen = yes
 							}
 						}
-
 						ROOT = {
 							if = {
 								limit = { PREV = { has_trait = leader_trait_warrior_culture } }
@@ -124,18 +100,15 @@ country_event = {
 							}
 						}
 					}
-
-					# Crusader / Crusader II
 					if = {
 						limit = {
 							has_trait_tier1or2 = {
 								TRAIT = leader_trait_crusader
 							}
-							ROOT.FROM = { # Owner of losing ship.
+							ROOT.FROM = {
 								is_default_or_fallen = yes
 							}
 						}
-
 						ROOT = {
 							if = {
 								limit = { PREV = { has_trait = leader_trait_crusader } }
@@ -150,15 +123,13 @@ country_event = {
 							}
 						}
 					}
-
-					# Shipbreaker / Shipbreaker II
 					if = {
 						limit = {
 							OR = {
 								has_trait = leader_trait_shipbreaker
 								has_trait = leader_trait_shipbreaker_2
 							}
-							ROOT.FROM = { # Owner of losing fleet.
+							ROOT.FROM = {
 								is_default_or_fallen = yes
 							}
 						}
@@ -180,8 +151,6 @@ country_event = {
 							}
 						}
 					}
-
-					# Juryrigger / Juryrigger II
 					if = {
 						limit = {
 							OR = {
@@ -204,33 +173,18 @@ country_event = {
 		}
 	}
 }
-
-############################
-#
-# On army killed in combat.
-#
-############################
-# This = owner
-# From = army
-# FromFrom = opponent
-# FromFromFrom = planet
 country_event = {
 	id = paragon_2.1040
 	hide_window = yes
 	is_triggered_only = yes
-
 	immediate = {
-		FROMFROMFROM = { # Planet where ground combat is taking place.
-
-			# Check if dead army is a defensive army.
+		FROMFROMFROM = {
 			if = {
 				limit = {
 					any_ground_combat_defender = {
 						is_same_value = ROOT.FROM
 					}
 				}
-
-				# Check if attacking army has general with Crusader trait.
 				random_ground_combat_attacker = {
 					limit = {
 						exists = leader
@@ -249,8 +203,6 @@ country_event = {
 				}
 			}
 		}
-
-		# If attacking army has a leader with Crusader trait, award Unity.
 		if = {
 			limit = { exists = event_target:attacking_general }
 			FROMFROM = {
@@ -261,7 +213,7 @@ country_event = {
 						}
 					}
 					add_resource = {
-						unity = 40 # Tier 1
+						unity = 40
 					}
 				}
 				if = {
@@ -271,7 +223,7 @@ country_event = {
 						}
 					}
 					add_resource = {
-						unity = 60 # Tier 2
+						unity = 60
 					}
 				}
 				if = {
@@ -281,7 +233,7 @@ country_event = {
 						}
 					}
 					add_resource = {
-						consumer_goods = 30 # Tier 1
+						consumer_goods = 30
 					}
 				}
 				if = {
@@ -291,53 +243,21 @@ country_event = {
 						}
 					}
 					add_resource = {
-						consumer_goods = 50 # Tier 2
+						consumer_goods = 50
 					}
 				}
 			}
 		}
 	}
 }
-
-############################
-#
-# Leader Events
-#
-############################
-
-# Fired by on_added_to_leader_pool
-# A leader is added to the leader pool, available for recruitment
-# scope: country, from: leader
-# Add traits from civics and origins
 country_event = {
 	id = leader.100
 	hide_window = yes
-
 	is_triggered_only = yes
-
-
 	trigger = {
 		NOT = { has_country_flag = spawning_renowned_leader }
 	}
-
 	immediate = {
-
-		# Champions of the Empire
-		# Adds a random common trait
-		#if = {
-		#	limit = {
-		#		has_tradition = tr_aptitude_champions_of_the_empire
-		#	}
-		#	from = {
-		#		add_trait = {
-		#			trait = random_common
-		#			show_message = no
-		#		}
-		#	}
-		#}
-		
-		# Aptitude Traditions
-		# Adds a random common trait
 		if = {
 			limit = {
 				has_tradition = tr_aptitude_finish
@@ -349,9 +269,6 @@ country_event = {
 				}
 			}
 		}
-
-		# Optimized Neurology
-		# Adds a random common trait
 		if = {
 			limit = {
 				has_country_flag = genetic_ascension_stage_1_purity
@@ -364,9 +281,6 @@ country_event = {
 				}
 			}
 		}
-
-		# Aristocratic Elite
-		# 20% Chance for a random positive trait and a random negative trait
 		if = {
 			limit = {
 				has_valid_civic = civic_aristocratic_elite
@@ -383,15 +297,11 @@ country_event = {
 							trait = random_negative
 							show_message = no
 						}
-						# Variable "leader_pending_negative_traits_unmodified" doesn't exist yet, can't reduce it yet. Check made in paragon_2.2200.
 						change_background_job = noble
 					}
 				}
 			}
 		}
-
-		# Technocracy
-		# Adds a random expertise trait
 		if = {
 			limit = {
 				OR = {
@@ -406,49 +316,48 @@ country_event = {
 				add_random_expertise_trait_effect = yes
 			}
 		}
-		
-		# Warrior Culture
-		# Adds the Warrior Culture trait
 		if = {
 			limit = {
 				has_valid_civic = civic_warrior_culture
 				from = { leader_class = commander }
 			}
 			from = {
+				if = {
+					limit = { can_add_trait = leader_trait_warrior_culture }
 				give_trait_no_notify_ignore_autocracy_restriction = {
 					TRAIT = leader_trait_warrior_culture
 				}
+				}
 			}
 		}
-
-		# Crusader Spirit
-		# Adds the Crusader trait
 		if = {
 			limit = {
 				has_valid_civic = civic_crusader_spirit
 				from = { leader_class = commander }
 			}
 			from = {
+				if = {
+					limit = { can_add_trait = leader_trait_crusader }
 				give_trait_no_notify_ignore_autocracy_restriction = {
 					TRAIT = leader_trait_crusader
 				}
+				}
 			}
 		}
-
-		# Letters of Marque
-		# Adds the Corsair trait
 		if = {
 			limit = {
 				has_civic = civic_crusader_spirit_corporate
 				from = { leader_class = commander }
 			}
 			from = {
+				if = {
+					limit = { can_add_trait = leader_trait_corsair }
 				give_trait_no_notify_ignore_autocracy_restriction = {
 					TRAIT = leader_trait_corsair
 				}
+				}
 			}
 		}
-		# Pirate Leadership - Random Pirate Trait
 		if = {
 			limit = {
 				has_technology = tech_pirate_leaders
@@ -456,26 +365,32 @@ country_event = {
 			from = {
 				random_list = { 
 					34 = { 
+						if = {
+							limit = { can_add_trait = leader_trait_buccaneer }
 						give_trait_no_notify_ignore_autocracy_restriction = {
 							TRAIT = leader_trait_buccaneer
 						} 
-					} 
-					33 = { 
-						give_trait_no_notify_ignore_autocracy_restriction = {
-							TRAIT = leader_trait_trailblazer
 						}
 					} 
 					33 = { 
+						if = {
+							limit = { can_add_trait = leader_trait_trailblazer }
+						give_trait_no_notify_ignore_autocracy_restriction = {
+							TRAIT = leader_trait_trailblazer
+						}
+						}
+					} 
+					33 = { 
+						if = {
+							limit = { can_add_trait = leader_trait_treasure_hoarder }
 						give_trait_no_notify_ignore_autocracy_restriction = {
 							TRAIT = leader_trait_treasure_hoarder
+						}
 						}
 					}
 				}
 			}
 		}
-
-		# Tactical Algorithms
-		# Adds the Tactical Algorithms trait
 		if = {
 			limit = {
 				has_civic = civic_machine_tactical_algorithms
@@ -488,9 +403,6 @@ country_event = {
 				}
 			}
 		}
-
-		# Storm Chasers
-		# Adds the Storm Rider trait
 		if = {
 			limit = {
 				has_origin = origin_storm_chasers
@@ -519,24 +431,22 @@ country_event = {
 				}
 			}
 		}
-
-		# Treasure Hunters
-		# Adds the Adventurous Spirit trait
 		if = {
 			limit = {
 				OR = {
 					has_origin = origin_treasure_hunters
-					has_civic = civic_military_dictatorship_corporate	# Modded
+					has_civic = civic_military_dictatorship_corporate
 				}
 			}
 			from = {
+				if = {
+					limit = { can_add_trait = leader_trait_adventurous_spirit_3 }
 				give_trait_no_notify_ignore_autocracy_restriction = {
 					TRAIT = leader_trait_adventurous_spirit_3
 				}
+				}
 			}
 		}
-
-		# Biochemical Composure/Cloning Authorities
 		if = {
 			limit = {
 				from = {
@@ -546,7 +456,6 @@ country_event = {
 			from = {
 				random_list = {
 					75 = {
-						# Base 75% chance of nothing
 						modifier = {
 							factor = 0
 							root = {
@@ -564,8 +473,6 @@ country_event = {
 				}
 			}
 		}
-
-		# Genetic Purity Authorities
 		if = {
 			limit = {
 				is_purity_authority = yes
@@ -584,8 +491,6 @@ country_event = {
 				}
 			}
 		}
-
-		# Biotic Dominion
 		if = {
 			limit = {
 				is_purity_authority = yes
@@ -601,9 +506,6 @@ country_event = {
 				}
 			}
 		}
-
-		# Unplugged
-		# Adds Cybernetic Benefits Trait
 		if = {
 			limit = {
 				has_origin = origin_unplugged
@@ -614,7 +516,6 @@ country_event = {
 					}
 				}
 			}
-
 			owner_main_species = {
 				switch = {
 					trigger = has_trait
@@ -645,8 +546,6 @@ country_event = {
 				}
 			}
 		}
-		# Entropy Drinkers
-		# Adds the Psionic trait
 		if = {
 			limit = { is_entropy_drinkers_empire = yes }
 			from = {
@@ -656,7 +555,6 @@ country_event = {
 				}
 			}
 		}
-
 		if = {
 			limit = {
 				has_shroud_dlc = yes
@@ -670,7 +568,6 @@ country_event = {
 				}
 			}
 		}
-
 		if = {
 			limit = {
 				has_shroud_dlc = yes
@@ -699,9 +596,6 @@ country_event = {
 				}
 			}
 		}
-		
-		# Reaver trait
-		# Adds the Plunderer trait
 		if = {
 			limit = {
 				from.species = { has_trait = trait_reavers }
@@ -712,26 +606,21 @@ country_event = {
 				}
 			}
 			from = {
+				if = {
+					limit = { can_add_trait = leader_trait_plunderer }
 				give_trait_no_notify_ignore_autocracy_restriction = {
 					TRAIT = leader_trait_plunderer
+				}
 				}
 			}
 		}
 	}
 }
-
-# Fired by on_game_start_country
-# scope: country
-# Add traits from civics and origins
 country_event = {
 	id = leader.110
 	hide_window = yes
-
 	is_triggered_only = yes
-
 	immediate = {
-		# Aristocratic Elite
-		# 20% Chance for a random positive trait and a random negative trait
 		if = {
 			limit = {
 				has_valid_civic = civic_aristocratic_elite
@@ -748,15 +637,11 @@ country_event = {
 							trait = random_negative
 							show_message = no
 						}
-						# Variable "leader_pending_negative_traits_unmodified" doesn't exist yet, can't reduce it yet. Check made in paragon_2.2200.
 						change_background_job = noble
 					}
 				}
 			}
 		}
-
-		# Remnants
-		# Adds a Archaeostudies Expertise trait
 		if = {
 			limit = {
 				has_ancrel = yes
@@ -776,9 +661,6 @@ country_event = {
 				}
 			}
 		}
-
-		# Static Research Analysis
-		# Adds a random Expertise trait
 		if = {
 			limit = {
 				is_machine_empire = yes
@@ -791,9 +673,6 @@ country_event = {
 				add_random_expertise_trait_effect = yes
 			}
 		}
-
-		# Technocracy
-		# Adds a random Expertise trait
 		if = {
 			limit = {
 				OR = {
@@ -810,9 +689,6 @@ country_event = {
 				add_random_expertise_trait_effect = yes
 			}
 		}
-		
-		# Warrior Culture
-		# Adds the Warrior Culture trait
 		if = {
 			limit = {
 				has_valid_civic = civic_warrior_culture
@@ -821,14 +697,14 @@ country_event = {
 				limit = {
 					leader_class = commander
 				}
+				if = {
+					limit = { can_add_trait = leader_trait_warrior_culture }
 				give_trait_no_notify_ignore_autocracy_restriction = {
 					TRAIT = leader_trait_warrior_culture
 				}
+				}
 			}
 		}
-
-		# Crusader Spirit
-		# Adds the Crusader trait
 		if = {
 			limit = {
 				has_valid_civic = civic_crusader_spirit
@@ -837,26 +713,28 @@ country_event = {
 				limit = {
 					leader_class = commander
 				}
+				if = {
+					limit = { can_add_trait = leader_trait_crusader }
 				give_trait_no_notify_ignore_autocracy_restriction = {
 					TRAIT = leader_trait_crusader
 				}
+				}
 			}
 		}
-
-		# Letters of Marque
-		# Adds the Corsair trait
 		if = {
 			limit = { has_civic = civic_crusader_spirit_corporate }
 			every_owned_leader = {
 				limit = {
 					leader_class = commander
 				}
+				if = {
+					limit = { can_add_trait = leader_trait_corsair }
 				give_trait_no_notify_ignore_autocracy_restriction = {
 					TRAIT = leader_trait_corsair
 				}
+				}
 			}
 		}
-		# Pirate Leadership - Random Pirate Trait
 		if = {
 			limit = {
 				has_technology = tech_pirate_leaders
@@ -864,26 +742,32 @@ country_event = {
 			every_owned_leader = {
 				random_list = { 
 					34 = { 
+						if = {
+							limit = { can_add_trait = leader_trait_buccaneer }
 						give_trait_no_notify_ignore_autocracy_restriction = {
 							TRAIT = leader_trait_buccaneer
 						} 
-					} 
-					33 = { 
-						give_trait_no_notify_ignore_autocracy_restriction = {
-							TRAIT = leader_trait_trailblazer
 						}
 					} 
 					33 = { 
+						if = {
+							limit = { can_add_trait = leader_trait_trailblazer }
+						give_trait_no_notify_ignore_autocracy_restriction = {
+							TRAIT = leader_trait_trailblazer
+						}
+						}
+					} 
+					33 = { 
+						if = {
+							limit = { can_add_trait = leader_trait_treasure_hoarder }
 						give_trait_no_notify_ignore_autocracy_restriction = {
 							TRAIT = leader_trait_treasure_hoarder
+						}
 						}
 					}
 				}
 			}
 		}
-
-		# Tactical Algorithms
-		# Adds the Tactical Algorithms trait
 		if = {
 			limit = {
 				has_civic = civic_machine_tactical_algorithms
@@ -898,9 +782,6 @@ country_event = {
 				}
 			}
 		}
-
-		# Storm Chasers
-		# Adds the Storm Rider trait
 		if = {
 			limit = {
 				has_origin = origin_storm_chasers
@@ -929,25 +810,22 @@ country_event = {
 				}
 			}
 		}
-
-		# Treasure Hunters
-		# Adds the Adventurous Spirit trait
 		if = {
 			limit = {
 				OR = {
 					has_origin = origin_treasure_hunters
-					has_civic = civic_military_dictatorship_corporate	# Modded
+					has_civic = civic_military_dictatorship_corporate
 				}
 			}
 			every_owned_leader = {
+				if = {
+					limit = { can_add_trait = leader_trait_adventurous_spirit_3 }
 				give_trait_no_notify_ignore_autocracy_restriction = {
 					TRAIT = leader_trait_adventurous_spirit_3
 				}
+				}
 			}
 		}
-
-		# Entropy Drinkers
-		# Adds the Psionic trait
 		if = {
 			limit = {
 				is_entropy_drinkers_empire = yes
@@ -963,9 +841,6 @@ country_event = {
 				}
 			}
 		}
-		
-		# Reaver trait
-		# Adds the Plunderer trait
 		every_owned_leader = {
 			limit = {
 				is_xenophile = no
@@ -976,25 +851,23 @@ country_event = {
 					has_trait = trait_reavers
 				}
 			}
+			if = {
+				limit = { can_add_trait = leader_trait_plunderer }
 			give_trait_no_notify_ignore_autocracy_restriction = {
 				TRAIT = leader_trait_plunderer
+			}
 			}
 		}
 	}
 }
-
-# New heir appointed
 leader_event = {
 	id = leader.200
 	hide_window = yes
 	is_triggered_only = yes
-
 	trigger = {
 		exists = owner
 	}
-
 	immediate = {
-		# Set age to be younger than normal.
 		set_variable_to_random_value = {
 			which = heir_age_mod
 			min = -10
@@ -1002,46 +875,27 @@ leader_event = {
 			rounded = yes
 		}
 		add_age = heir_age_mod
-
-		####################
-		# CLASS RANDOMISER #
-		####################
-
-		# Set skill level to 1
 		set_skill = 1
-		# Add generic level modifiers
 		add_skill_without_trait_selection = owner.modifier:leader_initial_skill
-
 		if = {
 			limit = {
 				owner = {
 					OR = {
-						# Commander
 						has_valid_civic = civic_crusader_spirit_corporate
 						has_technology = tech_pirate_leaders
 						has_tradition = tr_supremacy_war_games
 						has_valid_civic = civic_distinguished_admiralty
 						has_valid_civic = civic_crusader_spirit
 						has_valid_civic = civic_warrior_culture
-						# Official
 						has_valid_civic = civic_aristocratic_elite
 						has_tradition = tr_domination_colonial_viceroys
-						# Scientist
 						has_valid_civic = civic_technocracy
 						has_tradition = tr_discovery_science_division
-						# Current Ruler's Class
 						has_valid_civic = civic_philosopher_king
 					}
 				}
 			}
-
-			# All classes have a base weight of 10.
-			# Civics that boost only one class add 40.
-			# Civics that boost two classes add 20 to each class.
-			# Traditions that boost a class add 20.
-
 			random_list = {
-				# Commander
 				0 = {
 					modifier = {
 						add = value:heir_class_weight_commander
@@ -1049,7 +903,6 @@ leader_event = {
 					change_leader_class = commander
 					add_skill_without_trait_selection = owner.modifier:commander_initial_skill
 				}
-				# Official
 				0 = {
 					modifier = {
 						add = value:heir_class_weight_official
@@ -1057,7 +910,6 @@ leader_event = {
 					change_leader_class = official
 					add_skill_without_trait_selection = owner.modifier:official_initial_skill
 				}
-				# Scientist
 				0 = {
 					modifier = {
 						add = value:heir_class_weight_scientist
@@ -1067,12 +919,6 @@ leader_event = {
 				}
 			}
 		}
-
-		##########
-		# TRAITS #
-		##########
-
-		# Initial Traits, set after determining class.
 		add_trait = {
 			trait = trait_imperial_heir
 			show_message = no
@@ -1081,8 +927,6 @@ leader_event = {
 			trait = random_common
 			show_message = no
 		}
-
-		# Chance for a negative trait.
 		random_list = {
 			95 = { }
 			5 = {
@@ -1094,16 +938,12 @@ leader_event = {
 					trait = random_negative
 					show_message = no
 				}
-				# Variable "leader_pending_negative_traits_unmodified" doesn't exist yet, can't reduce it yet. Checked now made in paragon_2.2200.
 				modifier = {
 					factor = 0
 					owner = { has_valid_civic = civic_philosopher_king }
 				}
 			}
 		}
-
-		# Champions of the Empire
-		# Adds a random common trait
 		if = {
 			limit = {
 				owner = {
@@ -1115,9 +955,6 @@ leader_event = {
 				show_message = no
 			}
 		}
-
-		# Optimized Neurology
-		# Adds a random common trait
 		if = {
 			limit = {
 				owner = {
@@ -1129,8 +966,6 @@ leader_event = {
 				trait = random_common
 			}
 		}
-
-		# Under One Rule
 		if = {
 			limit = {
 				owner = {
@@ -1145,8 +980,6 @@ leader_event = {
 				show_message = no
 			}
 		}
-
-		# Technocracy
 		if = {
 			limit = {
 				owner = {
@@ -1161,7 +994,6 @@ leader_event = {
 			}
 			add_random_expertise_trait_effect = yes
 		}
-		# Warrior Culture
 		if = {
 			limit = {
 				owner = {
@@ -1169,12 +1001,13 @@ leader_event = {
 				}
 				leader_class = commander
 			}
+			if = {
+				limit = { can_add_trait = leader_trait_warrior_culture }
 			give_trait_no_notify_ignore_autocracy_restriction = {
 				TRAIT = leader_trait_warrior_culture
 			}
+			}
 		}
-		
-		# Crusader Spirit
 		if = {
 			limit = {
 				owner = {
@@ -1182,12 +1015,13 @@ leader_event = {
 				}
 				leader_class = commander
 			}
+			if = {
+				limit = { can_add_trait = leader_trait_crusader }
 			give_trait_no_notify_ignore_autocracy_restriction = {
 				TRAIT = leader_trait_crusader
 			}
+			}
 		}
-
-		# Letters of Marque
 		if = {
 			limit = {
 				owner = {
@@ -1195,11 +1029,13 @@ leader_event = {
 				}
 				leader_class = commander
 			}
+			if = {
+				limit = { can_add_trait = leader_trait_corsair }
 			give_trait_no_notify_ignore_autocracy_restriction = {
 				TRAIT = leader_trait_corsair
 			}
+			}
 		}
-		# Pirate Leadership - Random Pirate Trait
 		if = {
 			limit = {
 				owner = {
@@ -1208,25 +1044,31 @@ leader_event = {
 			}
 			random_list = { 
 				34 = { 
+					if = {
+						limit = { can_add_trait = leader_trait_buccaneer }
 					give_trait_no_notify_ignore_autocracy_restriction = {
 						TRAIT = leader_trait_buccaneer
 					} 
-				} 
-				33 = { 
-					give_trait_no_notify_ignore_autocracy_restriction = {
-						TRAIT = leader_trait_trailblazer
 					}
 				} 
 				33 = { 
+					if = {
+						limit = { can_add_trait = leader_trait_trailblazer }
+					give_trait_no_notify_ignore_autocracy_restriction = {
+						TRAIT = leader_trait_trailblazer
+					}
+					}
+				} 
+				33 = { 
+					if = {
+						limit = { can_add_trait = leader_trait_treasure_hoarder }
 					give_trait_no_notify_ignore_autocracy_restriction = {
 						TRAIT = leader_trait_treasure_hoarder
+					}
 					}
 				}
 			}
 		}
-
-		# Storm Chasers
-		# Adds the Storm Rider trait
 		if = {
 			limit = {
 				owner = {
@@ -1255,42 +1097,41 @@ leader_event = {
 				}
 			}
 		}
-
-		# Treasure Hunters
 		if = {
 			limit = {
 				owner = {
 					OR = {
 						has_origin = origin_treasure_hunters
-						has_civic = civic_military_dictatorship_corporate	# Modded
+						has_civic = civic_military_dictatorship_corporate
 					}
 				}
 			}
+			if = {
+				limit = { can_add_trait = leader_trait_adventurous_spirit_3 }
 			give_trait_no_notify_ignore_autocracy_restriction = {
 				TRAIT = leader_trait_adventurous_spirit_3
 			}
+			}
 		}
-
-		# Entropy Drinkers
 		if = {
 			limit = {
 				owner = {
 					is_entropy_drinkers_empire = yes
 				}
 			}
+			if = {
+				limit = { can_add_trait = leader_trait_psionic }
 			give_trait_no_notify_ignore_autocracy_restriction = {
 				TRAIT = leader_trait_psionic
 			}
+			}
 		}
-
-		# Biochemical Composure/Cloning Authorities
 		if = {
 			limit = {
 				leader_can_have_backup_clone = yes
 			}
 			random_list = {
 				75 = {
-					# Base 75% chance of nothing
 					modifier = {
 						factor = 0
 						root = {
@@ -1307,9 +1148,6 @@ leader_event = {
 				}
 			}
 		}
-		
-		# Reaver trait
-		# Adds the Plunderer trait
 		if = {
 			limit = {
 				is_xenophile = no
@@ -1319,23 +1157,20 @@ leader_event = {
 					has_trait = trait_reavers
 				}
 			}
+			if = {
+				limit = { can_add_trait = leader_trait_plunderer }
 			give_trait_no_notify_ignore_autocracy_restriction = {
 				TRAIT = leader_trait_plunderer
+			}
 			}
 		}
 	}
 }
-
-# Modder Note:
-# This file is where civic mechanic events are placed. Please only use EaC_civic_mechanic_events namespace, as adding multiple namespaces is very laggy.
-
-# 0.100 - Memory Vault Civic + Memoralist - Gives random leader trait to elected council leader. Can pay influence to make it a specific destiny trait.
 country_event = {
 	id = EaC_civic_mechanic_events.100
 	hide_window = yes
 	is_triggered_only = yes
 	fire_only_once = no
-
 	trigger = {
 		if = {
 			limit = { is_memory_vault_empire = yes }
@@ -1349,7 +1184,7 @@ country_event = {
 				limit = { has_base_skill = 1 }
 				root = {
 					set_variable = {
-						which = ruler_ancestor_level # Must be directly referring to a variable
+						which = ruler_ancestor_level
 						value = 1
 					}
 				}
@@ -1358,7 +1193,7 @@ country_event = {
 				limit = { has_base_skill = 2 }
 				root = {
 					set_variable = {
-						which = ruler_ancestor_level # Must be directly referring to a variable
+						which = ruler_ancestor_level
 						value = 2
 					}
 				}
@@ -1367,7 +1202,7 @@ country_event = {
 				limit = { has_base_skill = 3 }
 				root = {
 					set_variable = {
-						which = ruler_ancestor_level # Must be directly referring to a variable
+						which = ruler_ancestor_level
 						value = 3
 					}
 				}
@@ -1376,7 +1211,7 @@ country_event = {
 				limit = { has_base_skill = 4 }
 				root = {
 					set_variable = {
-						which = ruler_ancestor_level # Must be directly referring to a variable
+						which = ruler_ancestor_level
 						value = 4
 					}
 				}
@@ -1385,7 +1220,7 @@ country_event = {
 				limit = { has_base_skill = 5 }
 				root = {
 					set_variable = {
-						which = ruler_ancestor_level # Must be directly referring to a variable
+						which = ruler_ancestor_level
 						value = 5
 					}
 				}
@@ -1394,7 +1229,7 @@ country_event = {
 				limit = { has_base_skill = 6 }
 				root = {
 					set_variable = {
-						which = ruler_ancestor_level # Must be directly referring to a variable
+						which = ruler_ancestor_level
 						value = 6
 					}
 				}
@@ -1403,7 +1238,7 @@ country_event = {
 				limit = { has_base_skill = 7 }
 				root = {
 					set_variable = {
-						which = ruler_ancestor_level # Must be directly referring to a variable
+						which = ruler_ancestor_level
 						value = 7
 					}
 				}
@@ -1412,7 +1247,7 @@ country_event = {
 				limit = { has_base_skill = 8 }
 				root = {
 					set_variable = {
-						which = ruler_ancestor_level # Must be directly referring to a variable
+						which = ruler_ancestor_level
 						value = 8
 					}
 				}
@@ -1421,7 +1256,7 @@ country_event = {
 				limit = { has_base_skill = 9 }
 				root = {
 					set_variable = {
-						which = ruler_ancestor_level # Must be directly referring to a variable
+						which = ruler_ancestor_level
 						value = 9
 					}
 				}
@@ -1429,7 +1264,7 @@ country_event = {
 			else = {
 				root = {
 					set_variable = {
-						which = ruler_ancestor_level # Must be directly referring to a variable
+						which = ruler_ancestor_level
 						value = 10
 					}
 				}
@@ -1437,14 +1272,11 @@ country_event = {
 		}
 	}
 }
-
-# Allows imperial authority's ruler to pass skill level to the heir
 country_event = {
 	id = EaC_civic_mechanic_events.101
 	hide_window = yes
 	is_triggered_only = yes
 	fire_only_once = no
-
 	trigger = {
 		if = {
 			limit = { is_memory_vault_empire = yes }
@@ -1460,7 +1292,7 @@ country_event = {
 				limit = { has_base_skill = 1 }
 				root = {
 					set_variable = {
-						which = ruler_ancestor_level # Must be directly referring to a variable
+						which = ruler_ancestor_level
 						value = 1
 					}
 				}
@@ -1469,7 +1301,7 @@ country_event = {
 				limit = { has_base_skill = 2 }
 				root = {
 					set_variable = {
-						which = ruler_ancestor_level # Must be directly referring to a variable
+						which = ruler_ancestor_level
 						value = 2
 					}
 				}
@@ -1478,7 +1310,7 @@ country_event = {
 				limit = { has_base_skill = 3 }
 				root = {
 					set_variable = {
-						which = ruler_ancestor_level # Must be directly referring to a variable
+						which = ruler_ancestor_level
 						value = 3
 					}
 				}
@@ -1487,7 +1319,7 @@ country_event = {
 				limit = { has_base_skill = 4 }
 				root = {
 					set_variable = {
-						which = ruler_ancestor_level # Must be directly referring to a variable
+						which = ruler_ancestor_level
 						value = 4
 					}
 				}
@@ -1496,7 +1328,7 @@ country_event = {
 				limit = { has_base_skill = 5 }
 				root = {
 					set_variable = {
-						which = ruler_ancestor_level # Must be directly referring to a variable
+						which = ruler_ancestor_level
 						value = 5
 					}
 				}
@@ -1505,7 +1337,7 @@ country_event = {
 				limit = { has_base_skill = 6 }
 				root = {
 					set_variable = {
-						which = ruler_ancestor_level # Must be directly referring to a variable
+						which = ruler_ancestor_level
 						value = 6
 					}
 				}
@@ -1514,7 +1346,7 @@ country_event = {
 				limit = { has_base_skill = 7 }
 				root = {
 					set_variable = {
-						which = ruler_ancestor_level # Must be directly referring to a variable
+						which = ruler_ancestor_level
 						value = 7
 					}
 				}
@@ -1523,7 +1355,7 @@ country_event = {
 				limit = { has_base_skill = 8 }
 				root = {
 					set_variable = {
-						which = ruler_ancestor_level # Must be directly referring to a variable
+						which = ruler_ancestor_level
 						value = 8
 					}
 				}
@@ -1532,7 +1364,7 @@ country_event = {
 				limit = { has_base_skill = 9 }
 				root = {
 					set_variable = {
-						which = ruler_ancestor_level # Must be directly referring to a variable
+						which = ruler_ancestor_level
 						value = 9
 					}
 				}
@@ -1540,7 +1372,7 @@ country_event = {
 			else = {
 				root = {
 					set_variable = {
-						which = ruler_ancestor_level # Must be directly referring to a variable
+						which = ruler_ancestor_level
 						value = 10
 					}
 				}
@@ -1548,14 +1380,11 @@ country_event = {
 		}
 	}
 }
-
-# Allows imperial authority's ruler to pass skill level to the heir
 leader_event = {
 	id = EaC_civic_mechanic_events.102
 	hide_window = yes
 	is_triggered_only = yes
 	fire_only_once = no
-
 	trigger = {
 		owner = {
 			if = {
@@ -1569,8 +1398,6 @@ leader_event = {
 		owner = { country_event = { id = EaC_civic_mechanic_events.103 days = 16 } }
 	}
 }
-
-# This is a SUPER EVENT which enables the effects
 country_event = {
 	id = EaC_civic_mechanic_events.103
 	picture = GFX_evt_astral_rift_library
@@ -1578,9 +1405,6 @@ country_event = {
 	hide_window = no
 	is_triggered_only = yes
 	fire_only_once = no
-
-	# location = Capital
-
 	trigger = {
 		if = {
 			limit = { is_memory_vault_empire = yes }
@@ -1593,296 +1417,6 @@ country_event = {
 		else = { always = no }
 	}
 	title = EaC_civic_mechanic_events.103.title.other
-	##########################
-	# Vault of Knowledge Civic#
-	##########################
-	# Displays proper TITLE based on authority and leader type
-	# title = {
-	#	trigger = {
-	#		root = { RULER = { leader_class = official } }
-	#		is_memory_vault_empire = yes
-	#		OR = {
-	#			has_authority = auth_direct_democratic
-	#			is_democratic_authority = yes
-	#		}
-	#	}
-	#	text = "EaC_civic_mechanic_events.103.title.official_elected"
-	#}
-	# title = {
-	#	trigger = {
-	#		root = { RULER = { leader_class = official } }
-	#		is_memory_vault_empire = yes
-	#		is_oligarchic_authority = yes
-	#	}
-	#	text = "EaC_civic_mechanic_events.103.title.official_elected_20"
-	#}
-	# title = {
-	#	trigger = {
-	#		is_memorialist_empire = no
-	#		root = { RULER = { leader_class = official } }
-	#		is_memory_vault_empire = yes
-	#		is_dictatorial_authority = yes
-	#	}
-	#	text = "EaC_civic_mechanic_events.103.title.official_dictator"
-	#}
-	# title = {
-	#	trigger = {
-	#		is_memorialist_empire = yes
-	#		root = { RULER = { leader_class = official } }
-	#		is_memory_vault_empire = yes
-	#		is_dictatorial_authority = yes
-	#	}
-	#	text = "EaC_civic_mechanic_events.103.title.official_dictator_is_memorialist_empire"
-	#}
-	# title = {
-	#	trigger = {
-	#		is_memorialist_empire = no
-	#		root = { RULER = { leader_class = official } }
-	#		is_memory_vault_empire = yes
-	#		is_imperial_authority = yes
-	#	}
-	#	text = "EaC_civic_mechanic_events.103.title.official_imperial"
-	#}
-	# title = {
-	#	trigger = {
-	#		is_memorialist_empire = yes
-	#		root = { RULER = { leader_class = official } }
-	#		is_memory_vault_empire = yes
-	#		is_imperial_authority = yes
-	#	}
-	#	text = "EaC_civic_mechanic_events.103.title.official_imperial_is_memorialist_empire"
-	#}
-	# title = {
-	#	trigger = {
-	#		root = { RULER = { leader_class = official } }
-	#		is_memory_vault_empire = yes
-	#		is_hive_empire = yes
-	#	}
-	#	text = "EaC_civic_mechanic_events.103.title.official_hive_is_memorialist_empire"
-	#}
-	# title = {
-	#	trigger = {
-	#		root = { RULER = { leader_class = official } }
-	#		is_memory_vault_empire = yes
-	#		is_megacorp = yes
-	#	}
-	#	text = "EaC_civic_mechanic_events.103.title.official_megacorp"
-	#}
-	# title = {
-	#	trigger = {
-	#		root = { RULER = { leader_class = official } }
-	#		is_memory_vault_empire = yes
-	#		is_machine_empire = yes
-	#	}
-	#	text = "EaC_civic_mechanic_events.103.title.official_machine_is_memorialist_empire"
-	#}
-	# title = {
-	#	trigger = {
-	#		root = { RULER = { leader_class = commander } }
-	#		is_memory_vault_empire = yes
-	#		OR = {
-	#			has_authority = auth_direct_democratic
-	#			is_democratic_authority = yes
-	#		}
-	#	}
-	#	text = "EaC_civic_mechanic_events.103.title.commander_elected"
-	#}
-	# title = {
-	#	trigger = {
-	#		root = { RULER = { leader_class = commander } }
-	#		is_memory_vault_empire = yes
-	#		is_oligarchic_authority = yes
-	#	}
-	#	text = "EaC_civic_mechanic_events.103.title.commander_elected_20"
-	#}
-	# title = {
-	#	trigger = {
-	#		is_memorialist_empire = no
-	#		root = { RULER = { leader_class = commander } }
-	#		is_memory_vault_empire = yes
-	#		is_dictatorial_authority = yes
-	#	}
-	#	text = "EaC_civic_mechanic_events.103.title.commander_dictator"
-	#}
-	# title = {
-	#	trigger = {
-	#		is_memorialist_empire = yes
-	#		root = { RULER = { leader_class = commander } }
-	#		is_memory_vault_empire = yes
-	#		is_dictatorial_authority = yes
-	#	}
-	#	text = "EaC_civic_mechanic_events.103.title.commander_dictator_is_memorialist_empire"
-	#}
-	# title = {
-	#	trigger = {
-	#		is_memorialist_empire = no
-	#		root = { RULER = { leader_class = commander } }
-	#		is_memory_vault_empire = yes
-	#		is_imperial_authority = yes
-	#	}
-	#	text = "EaC_civic_mechanic_events.103.title.commander_imperial"
-	#}
-	# title = {
-	#	trigger = {
-	#		is_memorialist_empire = yes
-	#		root = { RULER = { leader_class = commander } }
-	#		is_memory_vault_empire = yes
-	#		is_imperial_authority = yes
-	#	}
-	#	text = "EaC_civic_mechanic_events.103.title.commander_imperial_is_memorialist_empire"
-	#}
-	# title = {
-	#	trigger = {
-	#		root = { RULER = { leader_class = commander } }
-	#		is_memory_vault_empire = yes
-	#		is_hive_empire = yes
-	#	}
-	#	text = "EaC_civic_mechanic_events.103.title.commander_hive_is_memorialist_empire"
-	#}
-	# title = {
-	#	trigger = {
-	#		root = { RULER = { leader_class = commander } }
-	#		is_memory_vault_empire = yes
-	#		is_megacorp = yes
-	#	}
-	#	text = "EaC_civic_mechanic_events.103.title.commander_megacorp"
-	#}
-	# title = {
-	#	trigger = {
-	#		root = { RULER = { leader_class = commander } }
-	#		is_memory_vault_empire = yes
-	#		is_machine_empire = yes
-	#	}
-	#	text = "EaC_civic_mechanic_events.103.title.commander_machine_is_memorialist_empire"
-	#}
-	# title = {
-	#	trigger = {
-	#		root = { RULER = { leader_class = scientist } }
-	#		is_memory_vault_empire = yes
-	#		OR = {
-	#			has_authority = auth_direct_democratic
-	#			is_democratic_authority = yes
-	#		}
-	#	}
-	#	text = "EaC_civic_mechanic_events.103.title.scientist_elected"
-	#}
-	# title = {
-	#	trigger = {
-	#		root = { RULER = { leader_class = scientist } }
-	#		is_memory_vault_empire = yes
-	#		is_oligarchic_authority = yes
-	#	}
-	#	text = "EaC_civic_mechanic_events.103.title.scientist_elected_20"
-	#}
-	# title = {
-	#	trigger = {
-	#		is_memorialist_empire = no
-	#		root = { RULER = { leader_class = scientist } }
-	#		is_memory_vault_empire = yes
-	#		is_dictatorial_authority = yes
-	#	}
-	#	text = "EaC_civic_mechanic_events.103.title.scientist_dictator"
-	#}
-	# title = {
-	#	trigger = {
-	#		is_memorialist_empire = yes
-	#		root = { RULER = { leader_class = scientist } }
-	#		is_memory_vault_empire = yes
-	#		is_dictatorial_authority = yes
-	#	}
-	#	text = "EaC_civic_mechanic_events.103.title.scientist_dictator_is_memorialist_empire"
-	#}
-	# title = {
-	#	trigger = {
-	#		is_memorialist_empire = no
-	#		root = { RULER = { leader_class = scientist } }
-	#		is_memory_vault_empire = yes
-	#		is_imperial_authority = yes
-	#	}
-	#	text = "EaC_civic_mechanic_events.103.title.scientist_imperial"
-	#}
-	# title = {
-	#	trigger = {
-	#		is_memorialist_empire = yes
-	#		root = { RULER = { leader_class = scientist } }
-	#		is_memory_vault_empire = yes
-	#		is_imperial_authority = yes
-	#	}
-	#	text = "EaC_civic_mechanic_events.103.title.scientist_imperial_is_memorialist_empire"
-	#}
-	# title = {
-	#	trigger = {
-	#		root = { RULER = { leader_class = scientist } }
-	#		is_memory_vault_empire = yes
-	#		is_hive_empire = yes
-	#	}
-	#	text = "EaC_civic_mechanic_events.103.title.scientist_hive_is_memorialist_empire"
-	#}
-	# title = {
-	#	trigger = {
-	#		root = { RULER = { leader_class = scientist } }
-	#		is_memory_vault_empire = yes
-	#		is_megacorp = yes
-	#	}
-	#	text = "EaC_civic_mechanic_events.103.title.scientist_megacorp"
-	#}
-	# title = {
-	#	trigger = {
-	#		root = { RULER = { leader_class = scientist } }
-	#		is_memory_vault_empire = yes
-	#		is_machine_empire = yes
-	#	}
-	#	text = "EaC_civic_mechanic_events.103.title.scientist_machine_is_memorialist_empire"
-	#}
-	####################
-	## Heroic Past Civic#
-	####################
-	# title = {
-	#	trigger = {
-	#		root = { RULER = { leader_class = official } }
-	#		root = { has_civic = civic_heroic_tales }
-	#	}
-	#	text = "EaC_civic_mechanic_events.103.title.civic_heroic_tales.official"
-	#}
-	# title = {
-	#	trigger = {
-	#		root = { RULER = { leader_class = commander } }
-	#		root = { has_civic = civic_heroic_tales }
-	#	}
-	#	text = "EaC_civic_mechanic_events.103.title.civic_heroic_tales.commander"
-	#}
-	# title = {
-	#	trigger = {
-	#		root = { RULER = { leader_class = scientist } }
-	#		root = { has_civic = civic_heroic_tales }
-	#	}
-	#	text = "EaC_civic_mechanic_events.103.title.civic_heroic_tales.scientist"
-	#}
-	########################
-	## Other / Error Message#
-	########################
-	# title = {
-	#	trigger = {
-	#		NOT = {
-	#			has_authority = auth_direct_democratic
-	#			is_democratic_authority = yes
-	#			is_oligarchic_authority = yes
-	#			is_dictatorial_authority = yes
-	#			is_imperial_authority = yes
-	#			is_hive_empire = yes
-	#			is_megacorp = yes
-	#			is_machine_empire = yes
-	#		}
-	#	}
-	#	text = "EaC_civic_mechanic_events.103.title.other"
-	#}
-	###############
-	# Description #
-	###############
-	##########################
-	# Vault of Knowledge Civic#
-	##########################
-	# Displays proper description based on authority and leader type
 	desc = {
 		trigger = {
 			root = { RULER = { leader_class = official } }
@@ -2120,9 +1654,6 @@ country_event = {
 		}
 		text = "EaC_civic_mechanic_events.103.desc.scientist_machine_is_memorialist_empire"
 	}
-	###################
-	# Heroic Past Civic#
-	###################
 	desc = {
 		trigger = {
 			root = { RULER = { leader_class = official } }
@@ -2144,9 +1675,6 @@ country_event = {
 		}
 		text = "EaC_civic_mechanic_events.103.desc.civic_heroic_tales.scientist"
 	}
-	#######################
-	# Other / Error Message#
-	#######################
 	desc = {
 		trigger = {
 			NOT = {
@@ -2162,10 +1690,6 @@ country_event = {
 		}
 		text = "EaC_civic_mechanic_events.103.desc.other"
 	}
-
-
-
-	# Displays proper options based on authority and leader type
 	option = {
 		trigger = {
 			ruler = { leader_class = official }
@@ -2229,14 +1753,13 @@ country_event = {
 					custom_tooltip = EaC_civic_mechanic_events.103.tooltip.leader_is_max_level
 				}
 			}
-			# Memoralist Civic Effects
 			else_if = {
 				limit = {
 					OR = {
 						has_base_skill = 9
 						root = {
 							check_variable = {
-								which = ruler_ancestor_level # Must be directly referring to a variable
+								which = ruler_ancestor_level
 								value = 9
 							}
 						}
@@ -2254,7 +1777,7 @@ country_event = {
 						has_base_skill = 8
 						root = {
 							check_variable = {
-								which = ruler_ancestor_level # Must be directly referring to a variable
+								which = ruler_ancestor_level
 								value = 8
 							}
 						}
@@ -2272,7 +1795,7 @@ country_event = {
 						has_base_skill = 7
 						root = {
 							check_variable = {
-								which = ruler_ancestor_level # Must be directly referring to a variable
+								which = ruler_ancestor_level
 								value = 7
 							}
 						}
@@ -2290,7 +1813,7 @@ country_event = {
 						has_base_skill = 6
 						root = {
 							check_variable = {
-								which = ruler_ancestor_level # Must be directly referring to a variable
+								which = ruler_ancestor_level
 								value = 6
 							}
 						}
@@ -2308,7 +1831,7 @@ country_event = {
 						has_base_skill = 5
 						root = {
 							check_variable = {
-								which = ruler_ancestor_level # Must be directly referring to a variable
+								which = ruler_ancestor_level
 								value = 5
 							}
 						}
@@ -2326,7 +1849,7 @@ country_event = {
 						has_base_skill = 4
 						root = {
 							check_variable = {
-								which = ruler_ancestor_level # Must be directly referring to a variable
+								which = ruler_ancestor_level
 								value = 4
 							}
 						}
@@ -2344,7 +1867,7 @@ country_event = {
 						has_base_skill = 3
 						root = {
 							check_variable = {
-								which = ruler_ancestor_level # Must be directly referring to a variable
+								which = ruler_ancestor_level
 								value = 3
 							}
 						}
@@ -2362,7 +1885,7 @@ country_event = {
 						has_base_skill = 2
 						root = {
 							check_variable = {
-								which = ruler_ancestor_level # Must be directly referring to a variable
+								which = ruler_ancestor_level
 								value = 2
 							}
 						}
@@ -2380,7 +1903,7 @@ country_event = {
 						has_base_skill = 1
 						root = {
 							check_variable = {
-								which = ruler_ancestor_level # Must be directly referring to a variable
+								which = ruler_ancestor_level
 								value = 1
 							}
 						}
@@ -2426,14 +1949,13 @@ country_event = {
 					custom_tooltip = EaC_civic_mechanic_events.103.tooltip.leader_is_max_level
 				}
 			}
-			# Memoralist Civic Effects
 			else_if = {
 				limit = {
 					OR = {
 						has_base_skill = 9
 						root = {
 							check_variable = {
-								which = ruler_ancestor_level # Must be directly referring to a variable
+								which = ruler_ancestor_level
 								value = 9
 							}
 						}
@@ -2451,7 +1973,7 @@ country_event = {
 						has_base_skill = 8
 						root = {
 							check_variable = {
-								which = ruler_ancestor_level # Must be directly referring to a variable
+								which = ruler_ancestor_level
 								value = 8
 							}
 						}
@@ -2469,7 +1991,7 @@ country_event = {
 						has_base_skill = 7
 						root = {
 							check_variable = {
-								which = ruler_ancestor_level # Must be directly referring to a variable
+								which = ruler_ancestor_level
 								value = 7
 							}
 						}
@@ -2487,7 +2009,7 @@ country_event = {
 						has_base_skill = 6
 						root = {
 							check_variable = {
-								which = ruler_ancestor_level # Must be directly referring to a variable
+								which = ruler_ancestor_level
 								value = 6
 							}
 						}
@@ -2505,7 +2027,7 @@ country_event = {
 						has_base_skill = 5
 						root = {
 							check_variable = {
-								which = ruler_ancestor_level # Must be directly referring to a variable
+								which = ruler_ancestor_level
 								value = 5
 							}
 						}
@@ -2523,7 +2045,7 @@ country_event = {
 						has_base_skill = 4
 						root = {
 							check_variable = {
-								which = ruler_ancestor_level # Must be directly referring to a variable
+								which = ruler_ancestor_level
 								value = 4
 							}
 						}
@@ -2541,7 +2063,7 @@ country_event = {
 						has_base_skill = 3
 						root = {
 							check_variable = {
-								which = ruler_ancestor_level # Must be directly referring to a variable
+								which = ruler_ancestor_level
 								value = 3
 							}
 						}
@@ -2559,7 +2081,7 @@ country_event = {
 						has_base_skill = 2
 						root = {
 							check_variable = {
-								which = ruler_ancestor_level # Must be directly referring to a variable
+								which = ruler_ancestor_level
 								value = 2
 							}
 						}
@@ -2577,7 +2099,7 @@ country_event = {
 						has_base_skill = 1
 						root = {
 							check_variable = {
-								which = ruler_ancestor_level # Must be directly referring to a variable
+								which = ruler_ancestor_level
 								value = 1
 							}
 						}
@@ -2728,14 +2250,13 @@ country_event = {
 					custom_tooltip = EaC_civic_mechanic_events.103.tooltip.leader_is_max_level
 				}
 			}
-			# Memoralist Civic Effects
 			else_if = {
 				limit = {
 					OR = {
 						has_base_skill = 9
 						root = {
 							check_variable = {
-								which = ruler_ancestor_level # Must be directly referring to a variable
+								which = ruler_ancestor_level
 								value = 9
 							}
 						}
@@ -2753,7 +2274,7 @@ country_event = {
 						has_base_skill = 8
 						root = {
 							check_variable = {
-								which = ruler_ancestor_level # Must be directly referring to a variable
+								which = ruler_ancestor_level
 								value = 8
 							}
 						}
@@ -2771,7 +2292,7 @@ country_event = {
 						has_base_skill = 7
 						root = {
 							check_variable = {
-								which = ruler_ancestor_level # Must be directly referring to a variable
+								which = ruler_ancestor_level
 								value = 7
 							}
 						}
@@ -2789,7 +2310,7 @@ country_event = {
 						has_base_skill = 6
 						root = {
 							check_variable = {
-								which = ruler_ancestor_level # Must be directly referring to a variable
+								which = ruler_ancestor_level
 								value = 6
 							}
 						}
@@ -2807,7 +2328,7 @@ country_event = {
 						has_base_skill = 5
 						root = {
 							check_variable = {
-								which = ruler_ancestor_level # Must be directly referring to a variable
+								which = ruler_ancestor_level
 								value = 5
 							}
 						}
@@ -2825,7 +2346,7 @@ country_event = {
 						has_base_skill = 4
 						root = {
 							check_variable = {
-								which = ruler_ancestor_level # Must be directly referring to a variable
+								which = ruler_ancestor_level
 								value = 4
 							}
 						}
@@ -2843,7 +2364,7 @@ country_event = {
 						has_base_skill = 3
 						root = {
 							check_variable = {
-								which = ruler_ancestor_level # Must be directly referring to a variable
+								which = ruler_ancestor_level
 								value = 3
 							}
 						}
@@ -2861,7 +2382,7 @@ country_event = {
 						has_base_skill = 2
 						root = {
 							check_variable = {
-								which = ruler_ancestor_level # Must be directly referring to a variable
+								which = ruler_ancestor_level
 								value = 2
 							}
 						}
@@ -2879,7 +2400,7 @@ country_event = {
 						has_base_skill = 1
 						root = {
 							check_variable = {
-								which = ruler_ancestor_level # Must be directly referring to a variable
+								which = ruler_ancestor_level
 								value = 1
 							}
 						}
@@ -2925,14 +2446,13 @@ country_event = {
 					custom_tooltip = EaC_civic_mechanic_events.103.tooltip.leader_is_max_level
 				}
 			}
-			# Memoralist Civic Effects
 			else_if = {
 				limit = {
 					OR = {
 						has_base_skill = 9
 						root = {
 							check_variable = {
-								which = ruler_ancestor_level # Must be directly referring to a variable
+								which = ruler_ancestor_level
 								value = 9
 							}
 						}
@@ -2950,7 +2470,7 @@ country_event = {
 						has_base_skill = 8
 						root = {
 							check_variable = {
-								which = ruler_ancestor_level # Must be directly referring to a variable
+								which = ruler_ancestor_level
 								value = 8
 							}
 						}
@@ -2968,7 +2488,7 @@ country_event = {
 						has_base_skill = 7
 						root = {
 							check_variable = {
-								which = ruler_ancestor_level # Must be directly referring to a variable
+								which = ruler_ancestor_level
 								value = 7
 							}
 						}
@@ -2986,7 +2506,7 @@ country_event = {
 						has_base_skill = 6
 						root = {
 							check_variable = {
-								which = ruler_ancestor_level # Must be directly referring to a variable
+								which = ruler_ancestor_level
 								value = 6
 							}
 						}
@@ -3004,7 +2524,7 @@ country_event = {
 						has_base_skill = 5
 						root = {
 							check_variable = {
-								which = ruler_ancestor_level # Must be directly referring to a variable
+								which = ruler_ancestor_level
 								value = 5
 							}
 						}
@@ -3022,7 +2542,7 @@ country_event = {
 						has_base_skill = 4
 						root = {
 							check_variable = {
-								which = ruler_ancestor_level # Must be directly referring to a variable
+								which = ruler_ancestor_level
 								value = 4
 							}
 						}
@@ -3040,7 +2560,7 @@ country_event = {
 						has_base_skill = 3
 						root = {
 							check_variable = {
-								which = ruler_ancestor_level # Must be directly referring to a variable
+								which = ruler_ancestor_level
 								value = 3
 							}
 						}
@@ -3058,7 +2578,7 @@ country_event = {
 						has_base_skill = 2
 						root = {
 							check_variable = {
-								which = ruler_ancestor_level # Must be directly referring to a variable
+								which = ruler_ancestor_level
 								value = 2
 							}
 						}
@@ -3076,7 +2596,7 @@ country_event = {
 						has_base_skill = 1
 						root = {
 							check_variable = {
-								which = ruler_ancestor_level # Must be directly referring to a variable
+								which = ruler_ancestor_level
 								value = 1
 							}
 						}
@@ -3227,14 +2747,13 @@ country_event = {
 					custom_tooltip = EaC_civic_mechanic_events.103.tooltip.leader_is_max_level
 				}
 			}
-			# Memoralist Civic Effects
 			else_if = {
 				limit = {
 					OR = {
 						has_base_skill = 9
 						root = {
 							check_variable = {
-								which = ruler_ancestor_level # Must be directly referring to a variable
+								which = ruler_ancestor_level
 								value = 9
 							}
 						}
@@ -3252,7 +2771,7 @@ country_event = {
 						has_base_skill = 8
 						root = {
 							check_variable = {
-								which = ruler_ancestor_level # Must be directly referring to a variable
+								which = ruler_ancestor_level
 								value = 8
 							}
 						}
@@ -3270,7 +2789,7 @@ country_event = {
 						has_base_skill = 7
 						root = {
 							check_variable = {
-								which = ruler_ancestor_level # Must be directly referring to a variable
+								which = ruler_ancestor_level
 								value = 7
 							}
 						}
@@ -3288,7 +2807,7 @@ country_event = {
 						has_base_skill = 6
 						root = {
 							check_variable = {
-								which = ruler_ancestor_level # Must be directly referring to a variable
+								which = ruler_ancestor_level
 								value = 6
 							}
 						}
@@ -3306,7 +2825,7 @@ country_event = {
 						has_base_skill = 5
 						root = {
 							check_variable = {
-								which = ruler_ancestor_level # Must be directly referring to a variable
+								which = ruler_ancestor_level
 								value = 5
 							}
 						}
@@ -3324,7 +2843,7 @@ country_event = {
 						has_base_skill = 4
 						root = {
 							check_variable = {
-								which = ruler_ancestor_level # Must be directly referring to a variable
+								which = ruler_ancestor_level
 								value = 4
 							}
 						}
@@ -3342,7 +2861,7 @@ country_event = {
 						has_base_skill = 3
 						root = {
 							check_variable = {
-								which = ruler_ancestor_level # Must be directly referring to a variable
+								which = ruler_ancestor_level
 								value = 3
 							}
 						}
@@ -3360,7 +2879,7 @@ country_event = {
 						has_base_skill = 2
 						root = {
 							check_variable = {
-								which = ruler_ancestor_level # Must be directly referring to a variable
+								which = ruler_ancestor_level
 								value = 2
 							}
 						}
@@ -3378,7 +2897,7 @@ country_event = {
 						has_base_skill = 1
 						root = {
 							check_variable = {
-								which = ruler_ancestor_level # Must be directly referring to a variable
+								which = ruler_ancestor_level
 								value = 1
 							}
 						}
@@ -3424,14 +2943,13 @@ country_event = {
 					custom_tooltip = EaC_civic_mechanic_events.103.tooltip.leader_is_max_level
 				}
 			}
-			# Memoralist Civic Effects
 			else_if = {
 				limit = {
 					OR = {
 						has_base_skill = 9
 						root = {
 							check_variable = {
-								which = ruler_ancestor_level # Must be directly referring to a variable
+								which = ruler_ancestor_level
 								value = 9
 							}
 						}
@@ -3449,7 +2967,7 @@ country_event = {
 						has_base_skill = 8
 						root = {
 							check_variable = {
-								which = ruler_ancestor_level # Must be directly referring to a variable
+								which = ruler_ancestor_level
 								value = 8
 							}
 						}
@@ -3467,7 +2985,7 @@ country_event = {
 						has_base_skill = 7
 						root = {
 							check_variable = {
-								which = ruler_ancestor_level # Must be directly referring to a variable
+								which = ruler_ancestor_level
 								value = 7
 							}
 						}
@@ -3485,7 +3003,7 @@ country_event = {
 						has_base_skill = 6
 						root = {
 							check_variable = {
-								which = ruler_ancestor_level # Must be directly referring to a variable
+								which = ruler_ancestor_level
 								value = 6
 							}
 						}
@@ -3503,7 +3021,7 @@ country_event = {
 						has_base_skill = 5
 						root = {
 							check_variable = {
-								which = ruler_ancestor_level # Must be directly referring to a variable
+								which = ruler_ancestor_level
 								value = 5
 							}
 						}
@@ -3521,7 +3039,7 @@ country_event = {
 						has_base_skill = 4
 						root = {
 							check_variable = {
-								which = ruler_ancestor_level # Must be directly referring to a variable
+								which = ruler_ancestor_level
 								value = 4
 							}
 						}
@@ -3539,7 +3057,7 @@ country_event = {
 						has_base_skill = 3
 						root = {
 							check_variable = {
-								which = ruler_ancestor_level # Must be directly referring to a variable
+								which = ruler_ancestor_level
 								value = 3
 							}
 						}
@@ -3557,7 +3075,7 @@ country_event = {
 						has_base_skill = 2
 						root = {
 							check_variable = {
-								which = ruler_ancestor_level # Must be directly referring to a variable
+								which = ruler_ancestor_level
 								value = 2
 							}
 						}
@@ -3575,7 +3093,7 @@ country_event = {
 						has_base_skill = 1
 						root = {
 							check_variable = {
-								which = ruler_ancestor_level # Must be directly referring to a variable
+								which = ruler_ancestor_level
 								value = 1
 							}
 						}
@@ -3666,9 +3184,6 @@ country_event = {
 			}
 		}
 	}
-	####################
-	# Civic heroic tales#
-	####################
 	option = {
 		trigger = {
 			ruler = { leader_class = official }
@@ -3691,19 +3206,12 @@ country_event = {
 		name = EaC_civic_mechanic_events.103.option.civic_heroic_tales.scientist.a
 	}
 }
-#
-#####################################################################################################################
-# MERCENARY ENCLAVES OVERWRITE
-#####################################################################################################################
-
-# Spawn Mercenary enclave
 fleet_event = {
 	id = enclave.2
 	title = "enclave.2.name"
 	picture = GFX_evt_mercenary_enclave
 	show_sound = event_cityscape
 	is_triggered_only = yes
-
 	desc = {
 		trigger = { owner = { has_civic = civic_military_dictatorship_corporate } }
 		text = "EaC_civic_mechanic_events.2.desc"
@@ -3732,19 +3240,15 @@ fleet_event = {
 				}
 				else = { NOT = { has_valid_civic = civic_military_dictatorship_corporate } }
 			}
-
 		}
 		text = "enclave.2.desc"
 	}
-
 	trigger = {
 		is_merc_enclave_founding_allowed = yes
 	}
-
 	immediate = {
 		set_event_locked = yes
 	}
-
 	option = {
 		name = DEAL
 		custom_tooltip = "enclave.2.a.tooltip"
@@ -3795,7 +3299,6 @@ fleet_event = {
 				influence = -100
 			}
 		}
-
 		hidden_effect = {
 			owner = {
 				set_country_flag = tutorial_met_mercenary_enclave
@@ -3803,7 +3306,6 @@ fleet_event = {
 			}
 			fleet_event = { id = enclave.21 }
 		}
-
 		ai_chance = {
 			factor = 10
 			modifier = {
@@ -3838,7 +3340,6 @@ fleet_event = {
 			}
 		}
 	}
-
 	option = {
 		name = EaC_civic_mechanic_events.2.a
 		custom_tooltip = "EaC_civic_mechanic_events.2.a.tooltip"
@@ -3878,7 +3379,6 @@ fleet_event = {
 				influence = -100
 			}
 		}
-
 		hidden_effect = {
 			owner = {
 				set_country_flag = tutorial_met_mercenary_enclave
@@ -3886,7 +3386,6 @@ fleet_event = {
 			}
 			fleet_event = { id = EaC_civic_mechanic_events.21 }
 		}
-
 		ai_chance = {
 			factor = 1000
 			modifier = {
@@ -3921,7 +3420,6 @@ fleet_event = {
 			}
 		}
 	}
-
 	option = {
 		name = EaC_civic_mechanic_events.2.a.criminal_heritage
 		custom_tooltip = "EaC_civic_mechanic_events.2.a.tooltip"
@@ -3969,7 +3467,6 @@ fleet_event = {
 				influence = -100
 			}
 		}
-
 		hidden_effect = {
 			owner = {
 				set_country_flag = tutorial_met_mercenary_enclave
@@ -3977,7 +3474,6 @@ fleet_event = {
 			}
 			fleet_event = { id = EaC_civic_mechanic_events.21 }
 		}
-
 		ai_chance = {
 			factor = 100
 			modifier = {
@@ -4012,42 +3508,34 @@ fleet_event = {
 			}
 		}
 	}
-
 	option = {
 		name = NODEAL
-
 		ai_chance = {
 			factor = 5
 			modifier = {
 				factor = 0.1
 				owner = {
-
 					is_militarist = yes
 					NOT = { has_ethic = ethic_fanatic_pacifist }
 				}
 			}
 		}
 	}
-
 	abort_trigger = {
 		owner = {
 			has_origin = origin_mindwardens
 		}
 	}
-
 	after = {
 		hidden_effect = {
 			set_event_locked = no
 		}
 	}
 }
-
-# Khan dies, mercenaries leave
 event = {
 	id = enclave.2055
 	hide_window = yes
 	is_triggered_only = yes
-
 	trigger = {
 		has_global_flag = great_khan_dead
 		any_country = {
@@ -4061,7 +3549,6 @@ event = {
 			}
 		}
 	}
-
 	immediate = {
 		random_country = {
 			limit = {
@@ -4069,7 +3556,6 @@ event = {
 			}
 			save_event_target_as = khan_country
 		}
-
 		random_country = {
 			limit = {
 				is_country_type = enclave_mercenary
@@ -4097,13 +3583,10 @@ event = {
 		}
 	}
 }
-
-# Unemployed mercs return to merc station
 event = {
 	id = enclave.2065
 	hide_window = yes
 	is_triggered_only = yes
-
 	trigger = {
 		any_country = {
 			is_country_type = enclave_mercenary
@@ -4113,7 +3596,6 @@ event = {
 			}
 		}
 	}
-
 	immediate = {
 		random_country = {
 			limit = {
@@ -4127,13 +3609,10 @@ event = {
 		}
 	}
 }
-
-# Khan hires available mercs
 event = {
 	id = enclave.2045
 	hide_window = yes
 	is_triggered_only = yes
-
 	trigger = {
 		any_country = {
 			is_country_type = awakened_marauders
@@ -4149,7 +3628,6 @@ event = {
 			}
 		}
 	}
-
 	immediate = {
 		random_country = {
 			limit = {
@@ -4174,7 +3652,6 @@ event = {
 				}
 			}
 			save_event_target_as = mercenary_enclave_country
-			# Check if the patron is a player to give them a chance at a counteroffer
 			if = {
 				limit = {
 					event_target:mercenary_enclave_country = {
@@ -4189,7 +3666,6 @@ event = {
 						}
 					}
 				}
-				# Khan hires only the main fleet
 				ordered_controlled_fleet = {
 					limit = {
 						is_ship_class = shipclass_military
@@ -4239,12 +3715,10 @@ event = {
 		}
 	}
 }
-
-country_event = { # Assign an admiral to hired merc fleet if they lose theirs
+country_event = {
 	id = enclave.2075
 	hide_window = yes
 	is_triggered_only = yes
-
 	trigger = {
 		has_civic = civic_mercenary_enclave
 		NOT = { has_valid_civic = civic_mercenary_enclave }
@@ -4255,7 +3729,6 @@ country_event = { # Assign an admiral to hired merc fleet if they lose theirs
 			}
 		}
 	}
-
 	immediate = {
 		create_leader = {
 			class = commander
@@ -4278,14 +3751,10 @@ country_event = { # Assign an admiral to hired merc fleet if they lose theirs
 		}
 	}
 }
-
-# Mercenary Enclave Greetings: Gatekeeper event
-# Via on_custom_diplomacy | this = target country (player); from = country being contacted
 country_event = {
 	id = enclave.200
 	hide_window = yes
 	is_triggered_only = yes
-
 	trigger = {
 		from = {
 			is_country_type = enclave_mercenary
@@ -4294,60 +3763,55 @@ country_event = {
 		}
 		NOT = {
 			has_active_event = {
-				enclave.205 # GREETINGS
-				enclave.210 # HIRE FLEET
-				enclave.211 # THANKS FOR RENTAL
-				enclave.215 # MANAGE HIRED FLEET
-				enclave.220 # MERCENARY GARRISON starbase building
-				enclave.235 # Expand Mercenary Fleet
-				enclave.240 # Tactical Appraisal
-				enclave.245 # Tactical Appraisal Khan
-				enclave.250 # Tactical Appraisal Gray Tempest
-				enclave.255 # Tactical Appraisal Prethoryn
-				enclave.260 # Tactical Appraisal Unbidden
-				enclave.270 # Hire Armies
-				enclave.275 # Merc Pays Back Patron
-				enclave.280 # Patron Panel
-				enclave.285 # Recall Fleet
-				EaC_civic_mechanic_events.205 # GREETINGS
-				EaC_civic_mechanic_events.210 # HIRE FLEET
-				EaC_civic_mechanic_events.211 # THANKS FOR RENTAL
-				EaC_civic_mechanic_events.215 # MANAGE HIRED FLEET
-				EaC_civic_mechanic_events.220 # MERCENARY GARRISON starbase building
-				EaC_civic_mechanic_events.235 # Expand Mercenary Fleet
-				EaC_civic_mechanic_events.240 # Tactical Appraisal
-				EaC_civic_mechanic_events.245 # Tactical Appraisal Khan
-				EaC_civic_mechanic_events.250 # Tactical Appraisal Gray Tempest
-				EaC_civic_mechanic_events.255 # Tactical Appraisal Prethoryn
-				EaC_civic_mechanic_events.260 # Tactical Appraisal Unbidden
-				EaC_civic_mechanic_events.270 # Hire Armies
-				EaC_civic_mechanic_events.275 # Merc Pays Back Patron
-				EaC_civic_mechanic_events.280 # Patron Panel
-				EaC_civic_mechanic_events.285 # Recall Fleet
+				enclave.205
+				enclave.210
+				enclave.211
+				enclave.215
+				enclave.220
+				enclave.235
+				enclave.240
+				enclave.245
+				enclave.250
+				enclave.255
+				enclave.260
+				enclave.270
+				enclave.275
+				enclave.280
+				enclave.285
+				EaC_civic_mechanic_events.205
+				EaC_civic_mechanic_events.210
+				EaC_civic_mechanic_events.211
+				EaC_civic_mechanic_events.215
+				EaC_civic_mechanic_events.220
+				EaC_civic_mechanic_events.235
+				EaC_civic_mechanic_events.240
+				EaC_civic_mechanic_events.245
+				EaC_civic_mechanic_events.250
+				EaC_civic_mechanic_events.255
+				EaC_civic_mechanic_events.260
+				EaC_civic_mechanic_events.270
+				EaC_civic_mechanic_events.275
+				EaC_civic_mechanic_events.280
+				EaC_civic_mechanic_events.285
 			}
 		}
 	}
-
 	immediate = {
 		ai_trade_facility = {
 			offer_hire_mercenary_fleet = yes
 			offer_prolong_fleet_contract = yes
 			from = {
 				save_event_target_as = mercenary_enclave_country
-				# Failsafe to catch if fleets are no longer on loan
 				remove_loaning_fleet_flag = yes
 			}
 			country_event = { id = enclave.205 }
 		}
 	}
 }
-
-# Mercs under attack recall their fleet
 country_event = {
 	id = enclave.27
 	hide_window = yes
 	is_triggered_only = yes
-
 	trigger = {
 		is_country_type = enclave_mercenary
 		NOT = { has_valid_civic = civic_pirate_mercenary_enclave }
@@ -4356,7 +3820,6 @@ country_event = {
 			fromfromfrom = { is_ship_size = enclave_mercenary_station }
 		}
 	}
-
 	immediate = {
 		save_event_target_as = mercenary_enclave_country
 		random_owned_fleet = {
@@ -4375,7 +3838,7 @@ country_event = {
 			save_event_target_as = mercenary_fleet
 			controller = {
 				save_event_target_as = mercenary_client
-				if = { # No Refund if the client is the attacker
+				if = {
 					limit = {
 						NOT = {
 							event_target:mercenary_client = {
@@ -4390,13 +3853,10 @@ country_event = {
 		set_country_flag = enclave_under_attack
 	}
 }
-
-# Merc Enclave Destroyed (HIDDEN)
 country_event = {
 	id = enclave.23
 	hide_window = yes
 	is_triggered_only = yes
-
 	trigger = {
 		owner = {
 			is_country_type = enclave_mercenary
@@ -4406,7 +3866,6 @@ country_event = {
 			}
 		}
 	}
-
 	immediate = {
 		fromfrom = {
 			solar_system = {
@@ -4438,23 +3897,16 @@ country_event = {
 		}
 	}
 }
-
-# This = fleet
-# From = country that borrowed the fleet
-# fromfrom = country that owns the fleet
-# Is fired immediately after fleet is leased out
 fleet_event = {
 	id = enclave.2085
 	hide_window = yes
 	is_triggered_only = yes
-
 	trigger = {
 		fromfrom = {
 			has_civic = civic_mercenary_enclave
 			NOT = { has_valid_civic = civic_pirate_mercenary_enclave }
 		}
 	}
-
 	immediate = {
 		if = {
 			limit = {
@@ -4467,13 +3919,10 @@ fleet_event = {
 		}
 	}
 }
-
-# Flag the enclave to block the AI from hiring mercs too quickly
 fleet_event = {
 	id = enclave.2058
 	hide_window = yes
 	is_triggered_only = yes
-
 	trigger = {
 		fromfrom = {
 			has_civic = civic_mercenary_enclave
@@ -4483,7 +3932,6 @@ fleet_event = {
 			}
 		}
 	}
-
 	immediate = {
 		fromfrom = {
 			set_timed_country_flag = {
@@ -4493,13 +3941,10 @@ fleet_event = {
 		}
 	}
 }
-
-# Merc Fleet Lease Ended
 fleet_event = {
 	id = enclave.2059
 	hide_window = yes
 	is_triggered_only = yes
-
 	trigger = {
 		from = {
 			is_ai = no
@@ -4509,11 +3954,9 @@ fleet_event = {
 			NOT = { has_valid_civic = civic_pirate_mercenary_enclave }
 		}
 	}
-
 	immediate = {
 		fromfrom = {
 			save_event_target_as = mercenary_enclave_country
-			# Failsafe to catch if fleets are no longer on loan
 			remove_loaning_fleet_flag = yes
 		}
 		from = {
@@ -4521,23 +3964,16 @@ fleet_event = {
 		}
 	}
 }
-
-# This = fleet
-# From = country that borrowed the fleet
-# fromfrom = country that owns the fleet
-# fromfromfrom = country that initiated the ending (the same as owner in a case of expiration)
 fleet_event = {
 	id = enclave.2080
 	hide_window = yes
 	is_triggered_only = yes
-
 	trigger = {
 		fromfrom = {
 			has_civic = civic_mercenary_enclave
 			NOT = { has_valid_civic = civic_pirate_mercenary_enclave }
 		}
 	}
-
 	immediate = {
 		if = {
 			limit = {
@@ -4549,27 +3985,14 @@ fleet_event = {
 		}
 	}
 }
-
-#####################################################################################################################
-#####################################################################################################################
-#####################################################################################################################
-#####################################################################################################################
-# 0.200 - Letters of Marque + Pirate Lord = allows for pirate bay mercenary enclaves
-#####################################################################################################################
-# PIRATE BAY ENCLAVES################################################################################################
-#####################################################################################################################
-
 fleet_event = {
 	id = EaC_civic_mechanic_events.21
 	hide_window = yes
 	is_triggered_only = yes
-
 	immediate = {
-		# Save creator empire as event target
 		owner = {
 			save_event_target_as = mercenary_enclave_creator
 		}
-		# Set up the ruler and species
 		leader = {
 			species = {
 				save_event_target_as = mercenary_enclave_species
@@ -4577,12 +4000,10 @@ fleet_event = {
 			exile_leader_as = mercenary_enclave_leader
 			save_event_target_as = mercenary_enclave_leader
 		}
-		# Set up the enclave starbase
 		solar_system = {
 			set_star_flag = enclave
 			set_star_flag = EaC_civic_mechanic_events.pirate_enclave.star_flag
 			set_star_flag = mercenary_enclave_system
-			# Set up on a moon only if an asteroid isn't available
 			if = {
 				limit = {
 					count_system_planet = {
@@ -4604,7 +4025,6 @@ fleet_event = {
 				}
 			}
 		}
-		# Create the Mercenary country, and assign a flavour ethic. Note that these are applied in priority order, so a patron who is Xenophilic, Authoritarian *and* Materialistic will found an enclave which is Fanatic Militarist and Materialist, as Materialism is listed first.
 		if = {
 			limit = {
 				owner = { is_materialist = yes }
@@ -4638,23 +4058,17 @@ fleet_event = {
 		else = {
 			create_pirate_mercenary_enclave_country = { INHERITED_ETHIC = ethic_xenophile }
 		}
-
-
-		# Give enclave creator's tech, start situation, and set creator flag
 		event_target:mercenary_enclave_country = {
 			if = {
 				limit = {
 					FROM.OWNER = { 
 						has_civic = civic_military_dictatorship_corporate
-						#is_subject = no #Special on_action will remove subject-status if overlord is not pirate lord
 					}
 				}
 				set_subject_of = { 
 					who = FROM.OWNER
 					allow_instant_negotiation = no
 					preset = preset_pirate_enclave
-					#use_demanded_terms = yes	#Crashes Game if used alongside preset
-					
 				}
 				random_agreement = {
 					limit = {
@@ -4677,7 +4091,6 @@ fleet_event = {
 				who =  event_target:mercenary_enclave_creator
 				amount = 30
 			}
-			# Check for active resolutions and give associated modifiers to enclave
 			if = {
 				limit = {
 					is_active_resolution = resolution_defenseprivatization_defense_contracts
@@ -4718,25 +4131,19 @@ fleet_event = {
 					modifier = resolution_defenseprivatization_corporate_warlords_merc_naval_cap
 				}
 			}
-
-			# Set a flag to prevent the AI from instantly hiring them
 			set_timed_country_flag = {
 				flag = merc_ai_delay
 				years = 1
 			}
 		}
-
 		owner = {
 			add_modifier = {
 				modifier = country_enclave_capacity_decrease_modifier
 				multiplier = value:created_enclave_number
 			}
 		}
-
-		# Transfer ownership of the fleet
 		set_owner = event_target:mercenary_enclave_country
 	}
-
 	after = {
 		event_target:mercenary_enclave_creator = {
 			country_event = { id = EaC_civic_mechanic_events.205 }
@@ -4746,25 +4153,20 @@ fleet_event = {
 		}
 	}
 }
-
-country_event = { # Flag the enclave creator for enclave capacity purposes
+country_event = {
 	id = EaC_civic_mechanic_events.22
 	hide_window = yes
 	is_triggered_only = yes
-
 	immediate = {
 		event_target:mercenary_enclave_creator = {
 			set_country_flag = merc_enclave_founder@root
 		}
 	}
 }
-
-# Merc Enclave Destroyed (HIDDEN)
 country_event = {
 	id = EaC_civic_mechanic_events.23
 	hide_window = yes
 	is_triggered_only = yes
-
 	trigger = {
 		owner = {
 			is_country_type = enclave_mercenary
@@ -4774,7 +4176,6 @@ country_event = {
 			}
 		}
 	}
-
 	immediate = {
 		fromfrom = {
 			solar_system = {
@@ -4806,12 +4207,10 @@ country_event = {
 		}
 	}
 }
-
-country_event = { # After enclave destruction, give back enclave cap
+country_event = {
 	id = EaC_civic_mechanic_events.24
 	hide_window = yes
 	is_triggered_only = yes
-
 	after = {
 		add_modifier = {
 			modifier = country_enclave_capacity_decrease_modifier
@@ -4819,21 +4218,17 @@ country_event = { # After enclave destruction, give back enclave cap
 		}
 	}
 }
-
-country_event = { # Merc Destroyed (Destroyer)
+country_event = {
 	id = EaC_civic_mechanic_events.25
 	title = "EaC_civic_mechanic_events.25"
 	desc = "EaC_civic_mechanic_events.25.desc"
 	picture = GFX_evt_space_debris
 	location = event_target:merc_system
 	show_sound = event_ship_bridge
-
 	is_triggered_only = yes
-
 	immediate = {
 		set_country_flag = destroyed_mercs
 	}
-
 	option = {
 		name = EXCELLENT
 		add_resource = {
@@ -4842,24 +4237,20 @@ country_event = { # Merc Destroyed (Destroyer)
 		}
 	}
 }
-
-country_event = { # Merc Destroyed
+country_event = {
 	id = EaC_civic_mechanic_events.26
 	title = "EaC_civic_mechanic_events.25"
 	desc = "EaC_civic_mechanic_events.26.desc"
 	picture = GFX_evt_space_debris
 	location = event_target:merc_system
 	show_sound = event_ship_bridge
-
 	is_triggered_only = yes
-
 	immediate = {
 		add_modifier = {
 			modifier = country_enclave_capacity_decrease_modifier
 			multiplier = value:created_enclave_number
 		}
 	}
-
 	option = {
 		name = UNFORTUNATE
 		trigger = {
@@ -4873,13 +4264,10 @@ country_event = { # Merc Destroyed
 		}
 	}
 }
-
-# Mercs under attack recall their fleet
 country_event = {
 	id = EaC_civic_mechanic_events.27
 	hide_window = yes
 	is_triggered_only = yes
-
 	trigger = {
 		is_country_type = enclave_mercenary
 		has_civic = civic_pirate_mercenary_enclave
@@ -4888,7 +4276,6 @@ country_event = {
 			fromfromfrom = { is_ship_size = enclave_pirate_mercenary_station }
 		}
 	}
-
 	immediate = {
 		save_event_target_as = mercenary_enclave_country
 		random_owned_fleet = {
@@ -4907,7 +4294,7 @@ country_event = {
 			save_event_target_as = mercenary_fleet
 			controller = {
 				save_event_target_as = mercenary_client
-				if = { # No Refund if the client is the attacker
+				if = {
 					limit = {
 						NOT = {
 							event_target:mercenary_client = {
@@ -4922,33 +4309,6 @@ country_event = {
 		set_country_flag = enclave_under_attack
 	}
 }
-
-# Merc sue for peace
-# country_event = {
-#	id = EaC_civic_mechanic_events.28
-#	title = "EaC_civic_mechanic_events.28"
-#	desc = "EaC_civic_mechanic_events.28.desc"
-#	picture = GFX_evt_space_debris # Change pic and sound
-#	location = event_target:merc_system
-#	show_sound = event_ship_bridge
-#
-#	is_triggered_only = yes
-#
-#	option = {
-#		name = EaC_civic_mechanic_events.28.a
-#		trigger = {
-#			# Refuse
-#		}
-#	}
-#	option = {
-#		name = EaC_civic_mechanic_events.28.b
-#		trigger = {
-#			# Accept
-#		}
-#	}
-#}
-
-# Emergency Requisition (Client Side)
 country_event = {
 	id = EaC_civic_mechanic_events.29
 	title = "EaC_civic_mechanic_events.27"
@@ -4956,16 +4316,13 @@ country_event = {
 	picture = GFX_evt_mercenary_fleet
 	location = event_target:merc_system
 	show_sound = evn_ove_mercenary_fleet
-
 	is_triggered_only = yes
-
 	trigger = {
 		exists = event_target:mercenary_fleet
 		event_target:mercenary_fleet = {
 			is_leased = yes
 		}
 	}
-
 	immediate = {
 		event_target:mercenary_fleet = {
 			end_fleet_contract = {
@@ -4978,8 +4335,7 @@ country_event = {
 			}
 		}
 	}
-
-	option = { # Refund money good luck
+	option = {
 		name = EaC_civic_mechanic_events.27.a
 		if = {
 			limit = {
@@ -5029,7 +4385,7 @@ country_event = {
 			add_resource = { energy = 3000 }
 		}
 	}
-	option = { # Refund money be grumpy
+	option = {
 		name = EaC_civic_mechanic_events.27.b
 		if = {
 			limit = {
@@ -5080,32 +4436,22 @@ country_event = {
 		}
 	}
 }
-
-# If Pirate Lord's enclave changes owners --> this on_action triggers an event to release subject
-# this = subject
-# from = overlord
 country_event = {
 	id = EaC_civic_mechanic_events.201
 	hide_window = yes
 	is_triggered_only = yes
-
 	trigger = {
 		has_civic = civic_pirate_mercenary_enclave
 		overlord = { NOT = { has_civic = civic_military_dictatorship_corporate } }
 	}
-
 	immediate = {
-		release_subject = yes	#Pirate Lord lost control of pirate enclave subject
+		release_subject = yes
 	}
 }
-
-# Mercenary Enclave Greetings: Gatekeeper event
-# Via on_custom_diplomacy | this = target country (player); from = country being contacted
 country_event = {
 	id = EaC_civic_mechanic_events.200
 	hide_window = yes
 	is_triggered_only = yes
-
 	trigger = {
 		from = {
 			is_country_type = enclave_mercenary
@@ -5113,56 +4459,51 @@ country_event = {
 		}
 		NOT = {
 			has_active_event = {
-				EaC_civic_mechanic_events.205 # GREETINGS
-				EaC_civic_mechanic_events.210 # HIRE FLEET
-				EaC_civic_mechanic_events.211 # THANKS FOR RENTAL
-				EaC_civic_mechanic_events.215 # MANAGE HIRED FLEET
-				EaC_civic_mechanic_events.220 # MERCENARY GARRISON starbase building
-				EaC_civic_mechanic_events.235 # Expand Mercenary Fleet
-				EaC_civic_mechanic_events.240 # Tactical Appraisal
-				EaC_civic_mechanic_events.245 # Tactical Appraisal Khan
-				EaC_civic_mechanic_events.250 # Tactical Appraisal Gray Tempest
-				EaC_civic_mechanic_events.255 # Tactical Appraisal Prethoryn
-				EaC_civic_mechanic_events.260 # Tactical Appraisal Unbidden
-				EaC_civic_mechanic_events.270 # Hire Armies
-				EaC_civic_mechanic_events.275 # Merc Pays Back Patron
-				EaC_civic_mechanic_events.280 # Patron Panel
-				EaC_civic_mechanic_events.285 # Recall Fleet
-				enclave.205 # GREETINGS
-				enclave.210 # HIRE FLEET
-				enclave.211 # THANKS FOR RENTAL
-				enclave.215 # MANAGE HIRED FLEET
-				enclave.220 # MERCENARY GARRISON starbase building
-				enclave.235 # Expand Mercenary Fleet
-				enclave.240 # Tactical Appraisal
-				enclave.245 # Tactical Appraisal Khan
-				enclave.250 # Tactical Appraisal Gray Tempest
-				enclave.255 # Tactical Appraisal Prethoryn
-				enclave.260 # Tactical Appraisal Unbidden
-				enclave.270 # Hire Armies
-				enclave.275 # Merc Pays Back Patron
-				enclave.280 # Patron Panel
-				enclave.285 # Recall Fleet
+				EaC_civic_mechanic_events.205
+				EaC_civic_mechanic_events.210
+				EaC_civic_mechanic_events.211
+				EaC_civic_mechanic_events.215
+				EaC_civic_mechanic_events.220
+				EaC_civic_mechanic_events.235
+				EaC_civic_mechanic_events.240
+				EaC_civic_mechanic_events.245
+				EaC_civic_mechanic_events.250
+				EaC_civic_mechanic_events.255
+				EaC_civic_mechanic_events.260
+				EaC_civic_mechanic_events.270
+				EaC_civic_mechanic_events.275
+				EaC_civic_mechanic_events.280
+				EaC_civic_mechanic_events.285
+				enclave.205
+				enclave.210
+				enclave.211
+				enclave.215
+				enclave.220
+				enclave.235
+				enclave.240
+				enclave.245
+				enclave.250
+				enclave.255
+				enclave.260
+				enclave.270
+				enclave.275
+				enclave.280
+				enclave.285
 			}
 		}
 	}
-
 	immediate = {
 		ai_trade_facility = {
 			offer_hire_mercenary_fleet = yes
 			offer_prolong_fleet_contract = yes
 			from = {
 				save_event_target_as = mercenary_enclave_country
-				# Failsafe to catch if fleets are no longer on loan
 				remove_loaning_fleet_flag = yes
 			}
 			country_event = { id = EaC_civic_mechanic_events.205 }
 		}
 	}
 }
-
-# Post-First Contact setup
-# from = First Contact site owner
 country_event = {
 	id = enclave.204
 	hide_window = yes
@@ -5205,9 +4546,6 @@ country_event = {
 		}
 	}
 }
-
-# Mercenary Enclave: GREETINGS
-# This = player country; event_target:mercenary_enclave_country = enclave country
 country_event = {
 	id = EaC_civic_mechanic_events.205
 	title = EaC_civic_mechanic_events.205.name
@@ -5225,9 +4563,7 @@ country_event = {
 		}
 		text = EaC_civic_mechanic_events.205.desc.hostile
 	}
-
 	is_triggered_only = yes
-
 	diplomatic = yes
 	custom_gui = "enclave_mercenary_window"
 	custom_gui_option = "enclave_mercenary_option"
@@ -5236,7 +4572,6 @@ country_event = {
 		room = mercenary_enclave_room
 	}
 	location = event_target:mercenary_enclave_system
-
 	immediate = {
 		event_target:mercenary_enclave_country = {
 			species = {
@@ -5268,16 +4603,12 @@ country_event = {
 				}
 			}
 		}
-		# Without this immediate is not invoked when event runs in a special mode that allows AI to collect trade data
 		run_in_ai_mode = yes
 	}
-
-	# Hostility options
 	option = {
 		name = EaC_civic_mechanic_events.205.i
 		trigger = {
 			is_hostile = event_target:mercenary_enclave_country
-			# NOT = { is_homicidal = yes }
 		}
 		allow = {
 			resource_stockpile_compare = {
@@ -5331,14 +4662,11 @@ country_event = {
 			}
 		}
 	}
-
-	# Hire fleet
 	option = {
 		name = EaC_civic_mechanic_events.205.a
 		trigger = {
 			NOR = {
 				is_hostile = event_target:mercenary_enclave_country
-				# is_homicidal = yes
 			}
 			event_target:mercenary_enclave_country = {
 				NOT = { has_country_flag = fleet_commandeered }
@@ -5394,14 +4722,12 @@ country_event = {
 			}
 		}
 	}
-	# Manage hired fleet (extend loan, recall)
 	option = {
 		name = EaC_civic_mechanic_events.205.b
 		custom_tooltip = mercenary_tt_managefleet
 		trigger = {
 			NOR = {
 				is_hostile = event_target:mercenary_enclave_country
-				# is_homicidal = yes
 			}
 			any_controlled_fleet = {
 				is_ship_class = shipclass_military
@@ -5418,14 +4744,12 @@ country_event = {
 			country_event = { id = EaC_civic_mechanic_events.215 }
 		}
 	}
-	# Mercenary Garrison starbase building
 	option = {
 		name = EaC_civic_mechanic_events.205.c
 		custom_tooltip = mercenary_tt_garrison
 		trigger = {
 			NOR = {
 				is_hostile = event_target:mercenary_enclave_country
-				# is_homicidal = yes
 			}
 			NOT = { has_country_flag = pirate_mercenary_enclave_bought_pirate_mercenary_garrison }
 			event_target:mercenary_enclave_country = {
@@ -5447,15 +4771,12 @@ country_event = {
 			country_event = { id = EaC_civic_mechanic_events.220 }
 		}
 	}
-
-	# Tactical Appraisal
 	option = {
 		name = EaC_civic_mechanic_events.205.e
 		custom_tooltip = mercenary_tt_tactical
 		trigger = {
 			NOR = {
 				is_hostile = event_target:mercenary_enclave_country
-				# is_homicidal = yes
 			}
 			OR = {
 				any_country = {
@@ -5503,15 +4824,12 @@ country_event = {
 			country_event = { id = EaC_civic_mechanic_events.240 }
 		}
 	}
-
-	# Recruit Armies
 	option = {
 		name = EaC_civic_mechanic_events.205.f
 		custom_tooltip = mercenary_tt_hirearmies
 		trigger = {
 			NOR = {
 				is_hostile = event_target:mercenary_enclave_country
-				# is_homicidal = yes
 			}
 		}
 		allow = {
@@ -5526,15 +4844,12 @@ country_event = {
 			country_event = { id = EaC_civic_mechanic_events.270 }
 		}
 	}
-
-	# Mercenary Logistic Services
 	option = {
 		name = EaC_civic_mechanic_events.205.g
 		custom_tooltip = mercenary_tt_logistic
 		trigger = {
 			NOR = {
 				is_hostile = event_target:mercenary_enclave_country
-				# is_homicidal = yes
 			}
 			event_target:mercenary_enclave_country = {
 				trust = {
@@ -5557,13 +4872,10 @@ country_event = {
 				}
 			}
 		}
-
 		hidden_effect = {
 			country_event = { id = EaC_civic_mechanic_events.2030 }
 		}
 	}
-
-	# Patron Panel
 	option = {
 		name = EaC_civic_mechanic_events.205.h
 		custom_tooltip = mercenary_tt_patron
@@ -5574,7 +4886,6 @@ country_event = {
 			}
 			NOR = {
 				is_hostile = event_target:mercenary_enclave_country
-				# is_homicidal = yes
 			}
 			exists = event_target:mercenary_patron
 			event_target:mercenary_patron = {
@@ -5585,7 +4896,6 @@ country_event = {
 			country_event = { id = EaC_civic_mechanic_events.280 }
 		}
 	}
-	# Is Pirate Lord
 	option = {
 		name = EaC_civic_mechanic_events.205.j
 		custom_tooltip = mercenary_tt_patron
@@ -5593,7 +4903,6 @@ country_event = {
 			has_civic = civic_military_dictatorship_corporate
 			NOR = {
 				is_hostile = event_target:mercenary_enclave_country
-				# is_homicidal = yes
 			}
 			exists = event_target:mercenary_patron
 			event_target:mercenary_patron = {
@@ -5604,8 +4913,6 @@ country_event = {
 			country_event = { id = EaC_civic_mechanic_events.280 }
 		}
 	}
-
-	# Is Criminal Heritage
 	option = {
 		name = EaC_civic_mechanic_events.205.k
 		custom_tooltip = mercenary_tt_patron
@@ -5613,7 +4920,6 @@ country_event = {
 			has_civic = civic_criminal_heritage
 			NOR = {
 				is_hostile = event_target:mercenary_enclave_country
-				# is_homicidal = yes
 			}
 			exists = event_target:mercenary_patron
 			event_target:mercenary_patron = {
@@ -5624,8 +4930,6 @@ country_event = {
 			country_event = { id = EaC_civic_mechanic_events.280 }
 		}
 	}
-
-	# Cease dialog
 	option = {
 		name = GOODBYE
 		trigger = {
@@ -5635,24 +4939,18 @@ country_event = {
 		}
 		default_hide_option = yes
 	}
-
 	after = {
 		hidden_effect = {
 			set_country_flag = mercenary_enclave_diplomacy_engaged
 		}
 	}
 }
-
-# Mercenary Enclave: HIRE FLEET
-# This = player country; event_target:mercenary_enclave_country = enclave country
 country_event = {
 	id = EaC_civic_mechanic_events.210
 	base = EaC_civic_mechanic_events.205
 	desc_clear = yes
 	option_clear = yes
-
 	desc = EaC_civic_mechanic_events.210.desc
-
 	immediate = {
 		event_target:mercenary_enclave_country = {
 			if = {
@@ -5689,7 +4987,6 @@ country_event = {
 				save_event_target_as = mercenary_admiral
 				set_immortal = yes
 			}
-			# Can hire only the main fleet
 			ordered_controlled_fleet = {
 				limit = {
 					is_ship_class = shipclass_military
@@ -5708,18 +5005,14 @@ country_event = {
 				}
 			}
 		}
-		# Without this the immediate is not invoked when the event runs in the special mode that allows AI to collect trade data
 		run_in_ai_mode = yes
 	}
-
-	# Discuss another matter (return to menu)
 	option = {
 		name = EaC_civic_mechanic_events.215.a
 		hidden_effect = {
 			country_event = { id = EaC_civic_mechanic_events.205 }
 		}
 	}
-
 	option = {
 		name = DEAL
 		ai_trade_facility = {
@@ -5733,7 +5026,7 @@ country_event = {
 						is_offer_terms_actual = { target = event_target:mercenary_enclave_country }
 					}
 					make_special_trade = { target = event_target:mercenary_enclave_country }
-					set_country_flag = mercenary_enclave_rented_fleet # For tracking returning customers
+					set_country_flag = mercenary_enclave_rented_fleet
 					event_target:mercenary_enclave_country = {
 						add_trust = {
 							who = root
@@ -5752,32 +5045,23 @@ country_event = {
 			country_event = { id = EaC_civic_mechanic_events.211 }
 		}
 	}
-
 	option = {
 		name = GOODBYE
 		default_hide_option = yes
 	}
 }
-
-# Mercenary Enclave: THANKS FOR RENTAL
-# This = player country; event_target:mercenary_enclave_country = enclave country
 country_event = {
 	id = EaC_civic_mechanic_events.211
 	base = EaC_civic_mechanic_events.205
 	desc_clear = yes
 	desc = EaC_civic_mechanic_events.211.desc
 }
-
-# Mercenary Enclave: MANAGE HIRED FLEET
-# This = player country; event_target:mercenary_enclave_country = enclave country
 country_event = {
 	id = EaC_civic_mechanic_events.215
 	base = EaC_civic_mechanic_events.205
 	desc_clear = yes
 	option_clear = yes
-
 	desc = EaC_civic_mechanic_events.215.desc
-
 	immediate = {
 		random_controlled_fleet = {
 			limit = {
@@ -5786,19 +5070,14 @@ country_event = {
 			}
 			save_event_target_as = mercenary_fleet
 		}
-		# Without this immediate is not invoked when event runs in a special mode that allows AI to collect trade data
 		run_in_ai_mode = yes
 	}
-
-	# Discuss another matter (return to menu)
 	option = {
 		name = EaC_civic_mechanic_events.215.a
 		hidden_effect = {
 			country_event = { id = EaC_civic_mechanic_events.205 }
 		}
 	}
-
-	# Extend the hire
 	option = {
 		name = EaC_civic_mechanic_events.215.b
 		ai_trade_facility = {
@@ -5829,8 +5108,6 @@ country_event = {
 			country_event = { id = EaC_civic_mechanic_events.205 }
 		}
 	}
-
-	# Terminate Contract
 	option = {
 		name = EaC_civic_mechanic_events.215.c
 		hidden_effect = {
@@ -5843,33 +5120,23 @@ country_event = {
 			country_event = { id = EaC_civic_mechanic_events.205 }
 		}
 	}
-
-	# Goodbye
 	option = {
 		name = GOODBYE
 		default_hide_option = yes
 	}
 }
-
-# Mercenary Enclave: MERCENARY GARRISON starbase building
-# This = player country; event_target:mercenary_enclave_country = enclave country
 country_event = {
 	id = EaC_civic_mechanic_events.220
 	base = EaC_civic_mechanic_events.205
 	desc_clear = yes
 	option_clear = yes
-
 	desc = EaC_civic_mechanic_events.220.desc
-
-	# Discuss another matter (return to menu)
 	option = {
 		name = EaC_civic_mechanic_events.215.a
 		hidden_effect = {
 			country_event = { id = EaC_civic_mechanic_events.205 }
 		}
 	}
-
-	# Buy the license to install garrisons
 	option = {
 		name = DEAL
 		allow = {
@@ -5898,30 +5165,22 @@ country_event = {
 			country_event = { id = EaC_civic_mechanic_events.205 }
 		}
 	}
-
 	option = {
 		name = GOODBYE
 		default_hide_option = yes
 	}
 }
-
-# Mercenary Enclave: THANKS FOR PURCHASE
-# This = player country; event_target:mercenary_enclave_country = enclave country
 country_event = {
 	id = EaC_civic_mechanic_events.225
 	base = EaC_civic_mechanic_events.205
 	desc_clear = yes
 	desc = EaC_civic_mechanic_events.225.desc
 }
-
-# Mercenary Enclave: Expand Mercenary Fleet
-# This = player country; event_target:mercenary_enclave_country = enclave country
 country_event = {
 	id = EaC_civic_mechanic_events.235
 	base = EaC_civic_mechanic_events.205
 	desc_clear = yes
 	option_clear = yes
-
 	desc = {
 		trigger = {
 			event_target:mercenary_enclave_country = {
@@ -5966,8 +5225,6 @@ country_event = {
 		}
 		text = EaC_civic_mechanic_events.235.5.desc
 	}
-
-	# Discuss another matter (return to menu)
 	option = {
 		name = EaC_civic_mechanic_events.215.a
 		default_hide_option = yes
@@ -5975,8 +5232,6 @@ country_event = {
 			country_event = { id = EaC_civic_mechanic_events.205 }
 		}
 	}
-
-	# First Increase
 	option = {
 		name = DEAL
 		trigger = {
@@ -6007,7 +5262,6 @@ country_event = {
 			country_event = { id = EaC_civic_mechanic_events.225 }
 		}
 	}
-	# Second Increase
 	option = {
 		name = DEAL
 		trigger = {
@@ -6039,7 +5293,6 @@ country_event = {
 			country_event = { id = EaC_civic_mechanic_events.225 }
 		}
 	}
-	# Third Increase
 	option = {
 		name = DEAL
 		trigger = {
@@ -6049,7 +5302,6 @@ country_event = {
 			}
 		}
 		allow = {
-			# Opinion trigger ?
 			has_country_resource = { type = energy amount >= 5500 }
 			has_country_resource = { type = alloys amount >= 2750 }
 		}
@@ -6072,7 +5324,6 @@ country_event = {
 			country_event = { id = EaC_civic_mechanic_events.225 }
 		}
 	}
-	# Fourth Increase
 	option = {
 		name = DEAL
 		trigger = {
@@ -6104,7 +5355,6 @@ country_event = {
 			country_event = { id = EaC_civic_mechanic_events.225 }
 		}
 	}
-	# Fifth Increase
 	option = {
 		name = DEAL
 		trigger = {
@@ -6138,26 +5388,18 @@ country_event = {
 		}
 	}
 }
-
-# Mercenary Enclave: TACTICAL APPRAISAL
-# This = player country; event_target:mercenary_enclave_country = enclave country
 country_event = {
 	id = EaC_civic_mechanic_events.240
 	base = EaC_civic_mechanic_events.205
 	desc_clear = yes
 	option_clear = yes
-
 	desc = EaC_civic_mechanic_events.240.desc
-
-	# Discuss another matter (return to menu)
 	option = {
 		name = EaC_civic_mechanic_events.215.a
 		hidden_effect = {
 			country_event = { id = EaC_civic_mechanic_events.205 }
 		}
 	}
-
-	# Khan
 	option = {
 		name = EaC_civic_mechanic_events.240.a
 		trigger = {
@@ -6179,7 +5421,6 @@ country_event = {
 			country_event = { id = EaC_civic_mechanic_events.245 }
 		}
 	}
-
 	option = {
 		name = EaC_civic_mechanic_events.240.a
 		trigger = {
@@ -6193,8 +5434,6 @@ country_event = {
 			country_event = { id = EaC_civic_mechanic_events.245 }
 		}
 	}
-
-	# Gray Tempest
 	option = {
 		name = EaC_civic_mechanic_events.240.b
 		trigger = {
@@ -6220,7 +5459,6 @@ country_event = {
 			country_event = { id = EaC_civic_mechanic_events.250 }
 		}
 	}
-
 	option = {
 		name = EaC_civic_mechanic_events.240.b
 		trigger = {
@@ -6238,8 +5476,6 @@ country_event = {
 			country_event = { id = EaC_civic_mechanic_events.250 }
 		}
 	}
-
-	# Prethoryn Swarm
 	option = {
 		name = EaC_civic_mechanic_events.240.c
 		trigger = {
@@ -6261,7 +5497,6 @@ country_event = {
 			country_event = { id = EaC_civic_mechanic_events.255 }
 		}
 	}
-
 	option = {
 		name = EaC_civic_mechanic_events.240.c
 		trigger = {
@@ -6275,8 +5510,6 @@ country_event = {
 			country_event = { id = EaC_civic_mechanic_events.255 }
 		}
 	}
-
-	# Unbidden Extradimensional
 	option = {
 		name = EaC_civic_mechanic_events.240.d
 		trigger = {
@@ -6298,7 +5531,6 @@ country_event = {
 			country_event = { id = EaC_civic_mechanic_events.260 }
 		}
 	}
-
 	option = {
 		name = EaC_civic_mechanic_events.240.d
 		trigger = {
@@ -6312,8 +5544,6 @@ country_event = {
 			country_event = { id = EaC_civic_mechanic_events.260 }
 		}
 	}
-
-	# Contingency
 	option = {
 		name = EaC_civic_mechanic_events.240.e
 		trigger = {
@@ -6335,7 +5565,6 @@ country_event = {
 			country_event = { id = EaC_civic_mechanic_events.265 }
 		}
 	}
-
 	option = {
 		name = EaC_civic_mechanic_events.240.e
 		trigger = {
@@ -6349,8 +5578,6 @@ country_event = {
 			country_event = { id = EaC_civic_mechanic_events.265 }
 		}
 	}
-
-	# Cetana
 	option = {
 		name = EaC_civic_mechanic_events.240.f
 		trigger = {
@@ -6378,7 +5605,6 @@ country_event = {
 			country_event = { id = EaC_civic_mechanic_events.266 }
 		}
 	}
-
 	option = {
 		name = EaC_civic_mechanic_events.240.f
 		trigger = {
@@ -6399,70 +5625,54 @@ country_event = {
 		}
 	}
 }
-
-## Tactical Appraisal Events
-#Khan
 country_event = {
 	id = EaC_civic_mechanic_events.245
 	base = EaC_civic_mechanic_events.205
 	desc_clear = yes
 	desc = EaC_civic_mechanic_events.245.desc
 }
-# Gray Tempest
 country_event = {
 	id = EaC_civic_mechanic_events.250
 	base = EaC_civic_mechanic_events.205
 	desc_clear = yes
 	desc = EaC_civic_mechanic_events.250.desc
 }
-# Prethoryn
 country_event = {
 	id = EaC_civic_mechanic_events.255
 	base = EaC_civic_mechanic_events.205
 	desc_clear = yes
 	desc = EaC_civic_mechanic_events.255.desc
 }
-# Unbidden
 country_event = {
 	id = EaC_civic_mechanic_events.260
 	base = EaC_civic_mechanic_events.205
 	desc_clear = yes
 	desc = EaC_civic_mechanic_events.260.desc
 }
-# Contingency
 country_event = {
 	id = EaC_civic_mechanic_events.265
 	base = EaC_civic_mechanic_events.205
 	desc_clear = yes
 	desc = EaC_civic_mechanic_events.265.desc
 }
-# Synth Queen
 country_event = {
 	id = EaC_civic_mechanic_events.266
 	base = EaC_civic_mechanic_events.205
 	desc_clear = yes
 	desc = EaC_civic_mechanic_events.266.desc
 }
-
-# Mercenary EaC_civic_mechanic_events: HIRE ARMIES
-# This = player country; event_target:mercenary_enclave_country = enclave country
 country_event = {
 	id = EaC_civic_mechanic_events.270
 	base = EaC_civic_mechanic_events.205
 	desc_clear = yes
 	option_clear = yes
-
 	desc = EaC_civic_mechanic_events.270.desc
-
-	# Discuss another matter (return to menu)
 	option = {
 		name = EaC_civic_mechanic_events.215.a
 		hidden_effect = {
 			country_event = { id = EaC_civic_mechanic_events.205 }
 		}
 	}
-
-	# Small Army
 	option = {
 		name = EaC_civic_mechanic_events.270.a
 		trigger = {
@@ -6482,7 +5692,6 @@ country_event = {
 					amount = 5
 				}
 			}
-
 			create_fleet = {
 				effect = {
 					set_owner = root
@@ -6499,12 +5708,9 @@ country_event = {
 					}
 				}
 			}
-
 			country_event = { id = EaC_civic_mechanic_events.205 }
 		}
 	}
-
-	# Small Mecha Army
 	option = {
 		name = EaC_civic_mechanic_events.270.b
 		trigger = {
@@ -6527,7 +5733,6 @@ country_event = {
 					amount = 10
 				}
 			}
-
 			create_fleet = {
 				effect = {
 					set_owner = root
@@ -6544,12 +5749,9 @@ country_event = {
 					}
 				}
 			}
-
 			country_event = { id = EaC_civic_mechanic_events.205 }
 		}
 	}
-
-	# Medium Army
 	option = {
 		name = EaC_civic_mechanic_events.270.c
 		trigger = {
@@ -6569,7 +5771,6 @@ country_event = {
 					amount = 10
 				}
 			}
-
 			create_fleet = {
 				effect = {
 					set_owner = root
@@ -6586,12 +5787,9 @@ country_event = {
 					}
 				}
 			}
-
 			country_event = { id = EaC_civic_mechanic_events.205 }
 		}
 	}
-
-	# Medium Mecha Army
 	option = {
 		name = EaC_civic_mechanic_events.270.d
 		trigger = {
@@ -6614,7 +5812,6 @@ country_event = {
 					amount = 15
 				}
 			}
-
 			create_fleet = {
 				effect = {
 					set_owner = root
@@ -6631,12 +5828,9 @@ country_event = {
 					}
 				}
 			}
-
 			country_event = { id = EaC_civic_mechanic_events.205 }
 		}
 	}
-
-	# Large Army
 	option = {
 		name = EaC_civic_mechanic_events.270.e
 		trigger = {
@@ -6656,7 +5850,6 @@ country_event = {
 					amount = 15
 				}
 			}
-
 			create_fleet = {
 				effect = {
 					set_owner = root
@@ -6673,21 +5866,15 @@ country_event = {
 					}
 				}
 			}
-
-
 			country_event = { id = EaC_civic_mechanic_events.205 }
 		}
 	}
 }
-
-# Merc Pays Back Patron
 country_event = {
 	id = EaC_civic_mechanic_events.275
 	hide_window = yes
 	is_triggered_only = yes
-
 	immediate = {
-		# Check who owns the system the enclave is in and register them as the target for the payment event.
 		random_owned_fleet = {
 			limit = {
 				is_ship_size = enclave_pirate_mercenary_station
@@ -6728,7 +5915,6 @@ country_event = {
 			}
 		}
 	}
-
 	after = {
 		start_situation = {
 			type = pirate_mercenary_dividends
@@ -6737,15 +5923,11 @@ country_event = {
 		destroy_situation = from
 	}
 }
-
-# Mercenary Enclave: PATRON PANEL
-# This = player country; event_target:mercenary_enclave_country = enclave country
 country_event = {
 	id = EaC_civic_mechanic_events.280
 	base = EaC_civic_mechanic_events.205
 	desc_clear = yes
 	option_clear = yes
-
 	desc = {
 		trigger = {
 			root = {
@@ -6837,7 +6019,6 @@ country_event = {
 		text = EaC_civic_mechanic_events.280.b.desc
 		text = EaC_civic_mechanic_events.280.c.desc
 	}
-
 	immediate = {
 		event_target:mercenary_enclave_country = {
 			random_owned_fleet = {
@@ -6849,16 +6030,12 @@ country_event = {
 			}
 		}
 	}
-
-	# Discuss another matter (return to menu)
 	option = {
 		name = EaC_civic_mechanic_events.215.a
 		hidden_effect = {
 			country_event = { id = EaC_civic_mechanic_events.205 }
 		}
 	}
-
-	# Expand Mercenary Fleet
 	option = {
 		name = EaC_civic_mechanic_events.205.d
 		trigger = {
@@ -6878,8 +6055,6 @@ country_event = {
 			country_event = { id = EaC_civic_mechanic_events.235 }
 		}
 	}
-
-	# Recall Fleet
 	option = {
 		name = EaC_civic_mechanic_events.280.b
 		trigger = {
@@ -6905,8 +6080,6 @@ country_event = {
 			country_event = { id = EaC_civic_mechanic_events.285 }
 		}
 	}
-
-	# Share Technology
 	option = {
 		name = EaC_civic_mechanic_events.280.c
 		allow = {
@@ -6922,16 +6095,12 @@ country_event = {
 		}
 	}
 }
-
-# Mercenary Enclave: RECALL FLEET
 country_event = {
 	id = EaC_civic_mechanic_events.285
 	base = EaC_civic_mechanic_events.205
 	desc_clear = yes
 	option_clear = yes
-
 	desc = EaC_civic_mechanic_events.285.desc
-
 	immediate = {
 		event_target:loaned_mercenary_fleet = {
 			controller = {
@@ -6939,17 +6108,12 @@ country_event = {
 			}
 		}
 	}
-
-	# Discuss another matter (return to menu)
 	option = {
 		name = EaC_civic_mechanic_events.215.a
 		hidden_effect = {
 			country_event = { id = EaC_civic_mechanic_events.205 }
 		}
 	}
-
-	# Multiple options to scale costs with fleet size
-	# Size 0
 	option = {
 		name = DEAL
 		trigger = {
@@ -6974,15 +6138,13 @@ country_event = {
 					flag = fleet_commandeered_reserved
 					years = 1
 				}
-
-				country_event = { id = EaC_civic_mechanic_events.289 days = 90 } # In three months, bring fleet back for repairs
+				country_event = { id = EaC_civic_mechanic_events.289 days = 90 }
 			}
 			event_target:current_mercenary_client = {
-				country_event = { id = EaC_civic_mechanic_events.294 } # Three months warning and refund
+				country_event = { id = EaC_civic_mechanic_events.294 }
 			}
 		}
 	}
-	# Size 1
 	option = {
 		name = DEAL
 		trigger = {
@@ -7008,15 +6170,13 @@ country_event = {
 					flag = fleet_commandeered_reserved
 					years = 1
 				}
-
-				country_event = { id = EaC_civic_mechanic_events.289 days = 180 } # In six months, give fleet to patron
+				country_event = { id = EaC_civic_mechanic_events.289 days = 180 }
 			}
 			event_target:current_mercenary_client = {
-				country_event = { id = EaC_civic_mechanic_events.295 } # Three months warning and refund
+				country_event = { id = EaC_civic_mechanic_events.295 }
 			}
 		}
 	}
-	# Size 2
 	option = {
 		name = DEAL
 		trigger = {
@@ -7042,14 +6202,13 @@ country_event = {
 					flag = fleet_commandeered_reserved
 					years = 1
 				}
-				country_event = { id = EaC_civic_mechanic_events.289 days = 180 } # In six months, give fleet to patron
+				country_event = { id = EaC_civic_mechanic_events.289 days = 180 }
 			}
 			event_target:current_mercenary_client = {
-				country_event = { id = EaC_civic_mechanic_events.296 } # Three months warning and refund
+				country_event = { id = EaC_civic_mechanic_events.296 }
 			}
 		}
 	}
-	# Size 3
 	option = {
 		name = DEAL
 		trigger = {
@@ -7075,14 +6234,13 @@ country_event = {
 					flag = fleet_commandeered_reserved
 					years = 1
 				}
-				country_event = { id = EaC_civic_mechanic_events.289 days = 180 } # In six months, give fleet to patron
+				country_event = { id = EaC_civic_mechanic_events.289 days = 180 }
 			}
 			event_target:current_mercenary_client = {
-				country_event = { id = EaC_civic_mechanic_events.297 } # Three months warning and refund
+				country_event = { id = EaC_civic_mechanic_events.297 }
 			}
 		}
 	}
-	# Size 4
 	option = {
 		name = DEAL
 		trigger = {
@@ -7108,15 +6266,13 @@ country_event = {
 					flag = fleet_commandeered_reserved
 					years = 1
 				}
-
-				country_event = { id = EaC_civic_mechanic_events.289 days = 180 } # In six months, give fleet to patron
+				country_event = { id = EaC_civic_mechanic_events.289 days = 180 }
 			}
 			event_target:current_mercenary_client = {
-				country_event = { id = EaC_civic_mechanic_events.298 } # Three months warning and refund
+				country_event = { id = EaC_civic_mechanic_events.298 }
 			}
 		}
 	}
-	# Size 5
 	option = {
 		name = DEAL
 		trigger = {
@@ -7141,31 +6297,25 @@ country_event = {
 					flag = fleet_commandeered_reserved
 					years = 1
 				}
-
-				country_event = { id = EaC_civic_mechanic_events.289 days = 180 } # In six months, give fleet to patron
+				country_event = { id = EaC_civic_mechanic_events.289 days = 180 }
 			}
 			event_target:current_mercenary_client = {
-				country_event = { id = EaC_civic_mechanic_events.299 } # Three months warning and refund
+				country_event = { id = EaC_civic_mechanic_events.299 }
 			}
 		}
 	}
-
 	option = {
 		name = GOODBYE
 		default_hide_option = yes
 	}
 }
-
-# Mercenary Fleet Commandeered (Merc Side)
 country_event = {
 	id = EaC_civic_mechanic_events.289
 	hide_window = yes
 	is_triggered_only = yes
-
 	trigger = {
 		exists = event_target:loaned_mercenary_fleet
 	}
-
 	immediate = {
 		random_owned_fleet = {
 			limit = {
@@ -7189,7 +6339,7 @@ country_event = {
 			save_event_target_as = mercenary_enclave_country
 		}
 		event_target:mercenary_patron = {
-			country_event = { id = EaC_civic_mechanic_events.290 days = 90 } # Transfer fleet to Patron. Wait three month to merge fleet with reinforcements and repair
+			country_event = { id = EaC_civic_mechanic_events.290 days = 90 }
 		}
 		event_target:mercenary_fleet = {
 			end_fleet_contract = {
@@ -7203,8 +6353,6 @@ country_event = {
 		}
 	}
 }
-
-# Mercenary Fleet Commandeered (patron side)
 country_event = {
 	id = EaC_civic_mechanic_events.290
 	title = EaC_civic_mechanic_events.290.name
@@ -7212,7 +6360,6 @@ country_event = {
 	picture = GFX_evt_mercenary_fleet
 	show_sound = evn_ove_mercenary_fleet
 	is_triggered_only = yes
-
 	immediate = {
 		from = {
 			if = {
@@ -7272,15 +6419,10 @@ country_event = {
 		}
 		set_country_flag = mercenary_enclave_rented_fleet
 	}
-
 	option = {
 		name = EXCELLENT
 	}
 }
-
-# Mercenary Enclave: FLEET COMMANDEERED SIX MONTH WARNING AND REFUND
-# Variants for mercenary tier and refund amount
-#Tier 0
 country_event = {
 	id = EaC_civic_mechanic_events.294
 	title = EaC_civic_mechanic_events.294.name
@@ -7288,7 +6430,6 @@ country_event = {
 	picture = GFX_evt_mercenary_fleet
 	show_sound = evn_ove_mercenary_fleet
 	is_triggered_only = yes
-
 	option = {
 		name = UNFORTUNATE
 		add_resource = { energy = 3000 }
@@ -7298,7 +6439,6 @@ country_event = {
 		add_resource = { energy = 3000 }
 	}
 }
-#Tier 1
 country_event = {
 	id = EaC_civic_mechanic_events.295
 	title = EaC_civic_mechanic_events.294.name
@@ -7306,7 +6446,6 @@ country_event = {
 	picture = GFX_evt_mercenary_fleet
 	show_sound = evn_ove_mercenary_fleet
 	is_triggered_only = yes
-
 	option = {
 		name = UNFORTUNATE
 		add_resource = { energy = 6000 }
@@ -7316,7 +6455,6 @@ country_event = {
 		add_resource = { energy = 6000 }
 	}
 }
-#Tier 2
 country_event = {
 	id = EaC_civic_mechanic_events.296
 	title = EaC_civic_mechanic_events.294.name
@@ -7324,7 +6462,6 @@ country_event = {
 	picture = GFX_evt_mercenary_fleet
 	show_sound = evn_ove_mercenary_fleet
 	is_triggered_only = yes
-
 	option = {
 		name = UNFORTUNATE
 		add_resource = { energy = 12000 }
@@ -7334,7 +6471,6 @@ country_event = {
 		add_resource = { energy = 12000 }
 	}
 }
-#Tier 3
 country_event = {
 	id = EaC_civic_mechanic_events.297
 	title = EaC_civic_mechanic_events.294.name
@@ -7342,7 +6478,6 @@ country_event = {
 	picture = GFX_evt_mercenary_fleet
 	show_sound = evn_ove_mercenary_fleet
 	is_triggered_only = yes
-
 	option = {
 		name = UNFORTUNATE
 		add_resource = { energy = 20000 }
@@ -7352,7 +6487,6 @@ country_event = {
 		add_resource = { energy = 20000 }
 	}
 }
-#Tier 4
 country_event = {
 	id = EaC_civic_mechanic_events.298
 	title = EaC_civic_mechanic_events.294.name
@@ -7360,7 +6494,6 @@ country_event = {
 	picture = GFX_evt_mercenary_fleet
 	show_sound = evn_ove_mercenary_fleet
 	is_triggered_only = yes
-
 	option = {
 		name = UNFORTUNATE
 		add_resource = { energy = 30000 }
@@ -7370,7 +6503,6 @@ country_event = {
 		add_resource = { energy = 30000 }
 	}
 }
-#Tier 5
 country_event = {
 	id = EaC_civic_mechanic_events.299
 	title = EaC_civic_mechanic_events.294.name
@@ -7378,7 +6510,6 @@ country_event = {
 	picture = GFX_evt_mercenary_fleet
 	show_sound = evn_ove_mercenary_fleet
 	is_triggered_only = yes
-
 	option = {
 		name = UNFORTUNATE
 		add_resource = { energy = 44000 }
@@ -7388,12 +6519,6 @@ country_event = {
 		add_resource = { energy = 44000 }
 	}
 }
-
-
-# Additional Mercenary Events
-# Mercenary Dividends
-
-## Tech Reward
 country_event = {
 	id = EaC_civic_mechanic_events.2000
 	title = EaC_civic_mechanic_events.2000.name
@@ -7401,7 +6526,6 @@ country_event = {
 	picture = GFX_evt_mercenary_enclave
 	show_sound = evn_ove_mercenary_enclave
 	is_triggered_only = yes
-
 	option = {
 		name = EXCELLENT
 		trigger = {
@@ -7434,7 +6558,6 @@ country_event = {
 			max = @tier1materialmax
 		}
 	}
-
 	option = {
 		name = EXCELLENT
 		trigger = {
@@ -7468,7 +6591,6 @@ country_event = {
 			max = @tier2materialmax
 		}
 	}
-
 	option = {
 		name = EXCELLENT
 		trigger = {
@@ -7502,7 +6624,6 @@ country_event = {
 		}
 	}
 }
-## Raw Resources Reward
 country_event = {
 	id = EaC_civic_mechanic_events.2005
 	title = EaC_civic_mechanic_events.2000.name
@@ -7510,7 +6631,6 @@ country_event = {
 	picture = GFX_evt_mercenary_enclave
 	show_sound = evn_ove_mercenary_enclave
 	is_triggered_only = yes
-
 	option = {
 		name = EXCELLENT
 		trigger = {
@@ -7537,7 +6657,6 @@ country_event = {
 			max = @tier1materialmax
 		}
 	}
-
 	option = {
 		name = EXCELLENT
 		trigger = {
@@ -7565,7 +6684,6 @@ country_event = {
 			max = @tier2materialmax
 		}
 	}
-
 	option = {
 		name = EXCELLENT
 		trigger = {
@@ -7593,7 +6711,6 @@ country_event = {
 		}
 	}
 }
-## Cash Reward
 country_event = {
 	id = EaC_civic_mechanic_events.2010
 	title = EaC_civic_mechanic_events.2000.name
@@ -7601,7 +6718,6 @@ country_event = {
 	picture = GFX_evt_mercenary_enclave
 	show_sound = evn_ove_mercenary_enclave
 	is_triggered_only = yes
-
 	option = {
 		name = EXCELLENT
 		trigger = {
@@ -7616,7 +6732,6 @@ country_event = {
 			max = @tier2materialmax
 		}
 	}
-
 	option = {
 		name = EXCELLENT
 		trigger = {
@@ -7632,7 +6747,6 @@ country_event = {
 			max = @tier3materialmax
 		}
 	}
-
 	option = {
 		name = EXCELLENT
 		trigger = {
@@ -7648,7 +6762,6 @@ country_event = {
 		}
 	}
 }
-## Ships Reward
 country_event = {
 	id = EaC_civic_mechanic_events.2015
 	title = EaC_civic_mechanic_events.2000.name
@@ -7656,15 +6769,13 @@ country_event = {
 	picture = GFX_evt_mercenary_enclave
 	show_sound = evn_ove_mercenary_enclave
 	is_triggered_only = yes
-
 	immediate = {
-		# Get Ships Design
 		event_target:mercenary_enclave_country = {
 			random_controlled_ship = {
 				limit = { is_ship_size = corvette }
 				save_event_target_as = mercenary_dividend_corvette
 			}
-			if = { # We don't really want them to give ships they don't have. But they must always be able to provide Corvettes.
+			if = {
 				limit = {
 					NOT = { exists = event_target:mercenary_dividend_corvette }
 				}
@@ -7687,7 +6798,6 @@ country_event = {
 			}
 		}
 	}
-
 	option = {
 		name = EXCELLENT
 		trigger = {
@@ -7746,7 +6856,6 @@ country_event = {
 			}
 		}
 	}
-
 	option = {
 		name = EXCELLENT
 		trigger = {
@@ -7850,7 +6959,6 @@ country_event = {
 			}
 		}
 	}
-
 	option = {
 		name = EXCELLENT
 		trigger = {
@@ -7962,7 +7070,6 @@ country_event = {
 		}
 	}
 }
-## Jackpot Reward
 country_event = {
 	id = EaC_civic_mechanic_events.2020
 	title = EaC_civic_mechanic_events.2000.name
@@ -7975,15 +7082,13 @@ country_event = {
 			NOT = { has_modifier = merc_financial_troubles }
 		}
 	}
-
 	immediate = {
-		# Get Ships Design
 		event_target:mercenary_enclave_country = {
 			random_controlled_ship = {
 				limit = { is_ship_size = corvette }
 				save_event_target_as = mercenary_dividend_corvette
 			}
-			if = { # We don't really want them to give ships they don't have. But they must always be able to provide Corvettes.
+			if = {
 				limit = {
 					NOT = { exists = event_target:mercenary_dividend_corvette }
 				}
@@ -8006,7 +7111,6 @@ country_event = {
 			}
 		}
 	}
-
 	option = {
 		name = EXCELLENT
 		trigger = {
@@ -8063,7 +7167,6 @@ country_event = {
 			}
 		}
 	}
-
 	option = {
 		name = EXCELLENT
 		trigger = {
@@ -8167,7 +7270,6 @@ country_event = {
 							count = 2
 							create_ship = {
 								name = random
-
 								design = event_target:mercenary_dividend_corvette
 								graphical_culture = event_target:mercenary_enclave_country
 							}
@@ -8192,7 +7294,6 @@ country_event = {
 			}
 		}
 	}
-
 	option = {
 		name = EXCELLENT
 		trigger = {
@@ -8269,7 +7370,6 @@ country_event = {
 							count = 4
 							create_ship = {
 								name = random
-
 								design = event_target:mercenary_dividend_cruiser
 								graphical_culture = event_target:mercenary_enclave_country
 							}
@@ -8321,7 +7421,6 @@ country_event = {
 		}
 	}
 }
-## Sadpot
 country_event = {
 	id = EaC_civic_mechanic_events.2025
 	title = EaC_civic_mechanic_events.2000.name
@@ -8329,7 +7428,6 @@ country_event = {
 	picture = GFX_evt_mercenary_enclave
 	show_sound = evn_ove_mercenary_enclave
 	is_triggered_only = yes
-
 	option = {
 		name = EaC_civic_mechanic_events.2025.a
 		add_monthly_resource_mult = {
@@ -8347,7 +7445,6 @@ country_event = {
 			}
 		}
 	}
-
 	option = {
 		name = EaC_civic_mechanic_events.2025.b
 		event_target:mercenary_enclave_country = {
@@ -8376,7 +7473,6 @@ country_event = {
 			}
 		}
 	}
-
 	option = {
 		name = EaC_civic_mechanic_events.2025.c
 		trigger = {
@@ -8395,7 +7491,6 @@ country_event = {
 			}
 		}
 	}
-
 	option = {
 		name = EaC_civic_mechanic_events.2025.c
 		trigger = {
@@ -8415,7 +7510,6 @@ country_event = {
 			}
 		}
 	}
-
 	option = {
 		name = EaC_civic_mechanic_events.2025.c
 		trigger = {
@@ -8435,24 +7529,18 @@ country_event = {
 		}
 	}
 }
-
-# Logistic service
 country_event = {
 	id = EaC_civic_mechanic_events.2030
 	base = EaC_civic_mechanic_events.205
 	desc_clear = yes
 	option_clear = yes
-
 	desc = EaC_civic_mechanic_events.2030.desc
-
-	# Discuss another matter (return to menu)
 	option = {
 		name = EaC_civic_mechanic_events.215.a
 		hidden_effect = {
 			country_event = { id = EaC_civic_mechanic_events.205 }
 		}
 	}
-
 	option = {
 		name = DEAL
 		trigger = { max_naval_capacity < 76 }
@@ -8475,7 +7563,6 @@ country_event = {
 			country_event = { id = EaC_civic_mechanic_events.2035 days = 3600 }
 		}
 	}
-
 	option = {
 		name = DEAL
 		trigger = {
@@ -8501,7 +7588,6 @@ country_event = {
 			country_event = { id = EaC_civic_mechanic_events.2035 days = 3600 }
 		}
 	}
-
 	option = {
 		name = DEAL
 		trigger = {
@@ -8527,7 +7613,6 @@ country_event = {
 			country_event = { id = EaC_civic_mechanic_events.2035 days = 3600 }
 		}
 	}
-
 	option = {
 		name = DEAL
 		trigger = {
@@ -8553,7 +7638,6 @@ country_event = {
 			country_event = { id = EaC_civic_mechanic_events.2035 days = 3600 }
 		}
 	}
-
 	option = {
 		name = DEAL
 		trigger = {
@@ -8579,8 +7663,6 @@ country_event = {
 		}
 	}
 }
-
-# Continue Logistic Services?
 country_event = {
 	id = EaC_civic_mechanic_events.2035
 	title = EaC_civic_mechanic_events.2035.name
@@ -8588,7 +7670,6 @@ country_event = {
 	picture = GFX_evt_mercenary_enclave
 	show_sound = evn_ove_mercenary_enclave
 	is_triggered_only = yes
-
 	option = {
 		name = DEAL
 		trigger = { max_naval_capacity < 76 }
@@ -8611,7 +7692,6 @@ country_event = {
 			country_event = { id = EaC_civic_mechanic_events.2035 days = 3600 }
 		}
 	}
-
 	option = {
 		name = DEAL
 		trigger = {
@@ -8637,7 +7717,6 @@ country_event = {
 			country_event = { id = EaC_civic_mechanic_events.2035 days = 3600 }
 		}
 	}
-
 	option = {
 		name = DEAL
 		trigger = {
@@ -8663,7 +7742,6 @@ country_event = {
 			country_event = { id = EaC_civic_mechanic_events.2035 days = 3600 }
 		}
 	}
-
 	option = {
 		name = DEAL
 		trigger = {
@@ -8689,7 +7767,6 @@ country_event = {
 			country_event = { id = EaC_civic_mechanic_events.2035 days = 3600 }
 		}
 	}
-
 	option = {
 		name = DEAL
 		trigger = {
@@ -8714,30 +7791,22 @@ country_event = {
 			country_event = { id = EaC_civic_mechanic_events.2035 days = 3600 }
 		}
 	}
-
 	option = {
 		name = EaC_civic_mechanic_events.2035.a
 	}
 }
-
-# Mercenary Enclave: SHARE TECHNOLOGY
 country_event = {
 	id = EaC_civic_mechanic_events.2040
 	base = EaC_civic_mechanic_events.205
 	desc_clear = yes
 	option_clear = yes
-
 	desc = EaC_civic_mechanic_events.2040.desc
-
-	# Discuss another matter (return to menu)
 	option = {
 		name = EaC_civic_mechanic_events.215.a
 		hidden_effect = {
 			country_event = { id = EaC_civic_mechanic_events.205 }
 		}
 	}
-
-	# Offer technology for a small fee
 	option = {
 		name = DEAL
 		add_resource = { energy = 1000 }
@@ -8757,23 +7826,18 @@ country_event = {
 				}
 				copy_techs_from = { target = root }
 			}
-
 			country_event = { id = EaC_civic_mechanic_events.225 }
 		}
 	}
-
 	option = {
 		name = GOODBYE
 		default_hide_option = yes
 	}
 }
-
-# Khan hires available mercs
 event = {
 	id = EaC_civic_mechanic_events.2045
 	hide_window = yes
 	is_triggered_only = yes
-
 	trigger = {
 		any_country = {
 			is_country_type = awakened_marauders
@@ -8789,7 +7853,6 @@ event = {
 			}
 		}
 	}
-
 	immediate = {
 		random_country = {
 			limit = {
@@ -8814,7 +7877,6 @@ event = {
 				}
 			}
 			save_event_target_as = mercenary_enclave_country
-			# Check if the patron is a player to give them a chance at a counteroffer
 			if = {
 				limit = {
 					event_target:mercenary_enclave_country = {
@@ -8829,7 +7891,6 @@ event = {
 						}
 					}
 				}
-				# Khan hires only the main fleet
 				ordered_controlled_fleet = {
 					limit = {
 						is_ship_class = shipclass_military
@@ -8874,7 +7935,6 @@ event = {
 		}
 	}
 }
-
 country_event = {
 	id = EaC_civic_mechanic_events.2050
 	title = EaC_civic_mechanic_events.2050.name
@@ -8882,8 +7942,7 @@ country_event = {
 	picture = GFX_evt_mercenary_fleet
 	show_sound = evn_ove_mercenary_fleet
 	is_triggered_only = yes
-
-	option = { # Yes, open diplomacy
+	option = {
 		name = EaC_civic_mechanic_events.2050.a
 		custom_tooltip = EaC_civic_mechanic_events.2050.a.tt
 		hidden_effect = {
@@ -8893,8 +7952,7 @@ country_event = {
 			}
 		}
 	}
-
-	option = { # Nope
+	option = {
 		name = EaC_civic_mechanic_events.2050.b
 		custom_tooltip = EaC_civic_mechanic_events.2050.a.tt
 		hidden_effect = {
@@ -8903,8 +7961,7 @@ country_event = {
 			}
 		}
 	}
-
-	option = { # Nope, but rude
+	option = {
 		name = EaC_civic_mechanic_events.2050.c
 		custom_tooltip = EaC_civic_mechanic_events.2050.b.tt
 		hidden_effect = {
@@ -8914,12 +7971,10 @@ country_event = {
 		}
 	}
 }
-
 country_event = {
 	id = EaC_civic_mechanic_events.2051
 	hide_window = yes
 	is_triggered_only = yes
-
 	trigger = {
 		event_target:mercenary_enclave_country = {
 			NOT = {
@@ -8929,7 +7984,6 @@ country_event = {
 			}
 		}
 	}
-
 	immediate = {
 		event_target:mercenary_enclave_country = {
 			ordered_controlled_fleet = {
@@ -8955,13 +8009,10 @@ country_event = {
 		}
 	}
 }
-
-# Khan dies, mercenaries leave
 event = {
 	id = EaC_civic_mechanic_events.2055
 	hide_window = yes
 	is_triggered_only = yes
-
 	trigger = {
 		has_global_flag = great_khan_dead
 		any_country = {
@@ -8975,7 +8026,6 @@ event = {
 			}
 		}
 	}
-
 	immediate = {
 		random_country = {
 			limit = {
@@ -8983,7 +8033,6 @@ event = {
 			}
 			save_event_target_as = khan_country
 		}
-
 		random_country = {
 			limit = {
 				is_country_type = enclave_mercenary
@@ -9011,13 +8060,10 @@ event = {
 		}
 	}
 }
-
-# Flag the enclave to block the AI from hiring mercs too quickly
 fleet_event = {
 	id = EaC_civic_mechanic_events.2058
 	hide_window = yes
 	is_triggered_only = yes
-
 	trigger = {
 		fromfrom = {
 			has_civic = civic_mercenary_enclave
@@ -9026,7 +8072,6 @@ fleet_event = {
 			}
 		}
 	}
-
 	immediate = {
 		fromfrom = {
 			set_timed_country_flag = {
@@ -9036,13 +8081,10 @@ fleet_event = {
 		}
 	}
 }
-
-# Merc Fleet Lease Ended
 fleet_event = {
 	id = EaC_civic_mechanic_events.2059
 	hide_window = yes
 	is_triggered_only = yes
-
 	trigger = {
 		from = {
 			is_ai = no
@@ -9052,11 +8094,9 @@ fleet_event = {
 			has_civic = civic_pirate_mercenary_enclave
 		}
 	}
-
 	immediate = {
 		fromfrom = {
 			save_event_target_as = mercenary_enclave_country
-			# Failsafe to catch if fleets are no longer on loan
 			remove_loaning_fleet_flag = yes
 		}
 		from = {
@@ -9064,7 +8104,6 @@ fleet_event = {
 		}
 	}
 }
-
 country_event = {
 	id = EaC_civic_mechanic_events.2060
 	title = EaC_civic_mechanic_events.2060.name
@@ -9072,25 +8111,20 @@ country_event = {
 	picture = GFX_evt_mercenary_fleet
 	show_sound = evn_ove_mercenary_fleet
 	is_triggered_only = yes
-
-	option = { # Nope
+	option = {
 		name = EaC_civic_mechanic_events.2060.a
 	}
-
-	option = { # Yes, open diplomacy
+	option = {
 		name = EaC_civic_mechanic_events.2060.b
 		hidden_effect = {
 			country_event = { id = EaC_civic_mechanic_events.205 }
 		}
 	}
 }
-
-# Unemployed mercs return to merc station
 event = {
 	id = EaC_civic_mechanic_events.2065
 	hide_window = yes
 	is_triggered_only = yes
-
 	trigger = {
 		any_country = {
 			is_country_type = enclave_mercenary
@@ -9100,7 +8134,6 @@ event = {
 			}
 		}
 	}
-
 	immediate = {
 		random_country = {
 			limit = {
@@ -9114,12 +8147,10 @@ event = {
 		}
 	}
 }
-
 country_event = {
 	id = EaC_civic_mechanic_events.2070
 	hide_window = yes
 	is_triggered_only = yes
-
 	trigger = {
 		any_owned_fleet = {
 			is_leased = no
@@ -9133,7 +8164,6 @@ country_event = {
 			}
 		}
 	}
-
 	immediate = {
 		random_owned_fleet = {
 			limit = {
@@ -9154,12 +8184,10 @@ country_event = {
 		}
 	}
 }
-
-country_event = { # Assign an admiral to hired merc fleet if they lose theirs
+country_event = {
 	id = EaC_civic_mechanic_events.2075
 	hide_window = yes
 	is_triggered_only = yes
-
 	trigger = {
 		has_civic = civic_mercenary_enclave
 		has_civic = civic_pirate_mercenary_enclave
@@ -9170,7 +8198,6 @@ country_event = { # Assign an admiral to hired merc fleet if they lose theirs
 			}
 		}
 	}
-
 	immediate = {
 		create_leader = {
 			class = commander
@@ -9194,23 +8221,16 @@ country_event = { # Assign an admiral to hired merc fleet if they lose theirs
 		}
 	}
 }
-
-# This = fleet
-# From = country that borrowed the fleet
-# fromfrom = country that owns the fleet
-# fromfromfrom = country that initiated the ending (the same as owner in a case of expiration)
 fleet_event = {
 	id = EaC_civic_mechanic_events.2080
 	hide_window = yes
 	is_triggered_only = yes
-
 	trigger = {
 		fromfrom = {
 			has_civic = civic_mercenary_enclave
 			has_civic = civic_pirate_mercenary_enclave
 		}
 	}
-
 	immediate = {
 		if = {
 			limit = {
@@ -9222,23 +8242,16 @@ fleet_event = {
 		}
 	}
 }
-
-# This = fleet
-# From = country that borrowed the fleet
-# fromfrom = country that owns the fleet
-# Is fired immediately after fleet is leased out
 fleet_event = {
 	id = EaC_civic_mechanic_events.2085
 	hide_window = yes
 	is_triggered_only = yes
-
 	trigger = {
 		fromfrom = {
 			has_civic = civic_mercenary_enclave
 			has_civic = civic_pirate_mercenary_enclave
 		}
 	}
-
 	immediate = {
 		if = {
 			limit = {
@@ -9251,47 +8264,22 @@ fleet_event = {
 		}
 	}
 }
-
-# FROM = fleet
-# THIS = SYSTEM
-# FROM.owner = Country that owns it
-# Is fired immediately after off world trading post module is removed
 fleet_event = {
 	id = EaC_civic_mechanic_events.2090
 	hide_window = yes
 	is_triggered_only = yes
-
 	immediate = {
 		solar_system = { set_star_flag = EaC_civic_mechanic_events.pirate_enclave.offworld_trading_company.star_flag }
 	}
 }
-
-# FROM = fleet
-# THIS = SYSTEM
-# FROM.owner = Country that owns it
-# Is fired immediately after off world trading post module is removed
 fleet_event = {
 	id = EaC_civic_mechanic_events.2091
 	hide_window = yes
 	is_triggered_only = yes
-
 	immediate = {
 		solar_system = { remove_star_flag = EaC_civic_mechanic_events.pirate_enclave.offworld_trading_company.star_flag }
 	}
 }
-
-# EaC_civic_mechanic_events.3 - Crime & General Strike Mechanics
-#################################################################################################################################
-#################################################################################################################################
-#################################################################################################################################
-#####																														#####
-#####								GENERAL STRIKES & CRIME MECHANICS														#####
-#####																														#####
-#################################################################################################################################
-#################################################################################################################################
-#################################################################################################################################
-
-# Undgerground Labor Movement (Unemployment) (Reworked Criminal Underworld)
 carrier_event = {
 	id = crime.1
 	title = EaC_civic_mechanic_events.1.name
@@ -9300,7 +8288,6 @@ carrier_event = {
 			if = {
 				limit = { owner = { is_gestalt = no } }
 				text = EaC_civic_mechanic_events.1.desc
-
 				if = {
 					limit = { owner = { is_twisted_experimenters_empire = yes } }
 					text = newline
@@ -9310,7 +8297,6 @@ carrier_event = {
 			else_if = {
 				limit = { owner = { is_hive_empire = yes } }
 				text = crime.1.b.desc
-
 				if = {
 					limit = { owner = { is_twisted_experimenters_empire = yes } }
 					text = newline
@@ -9346,11 +8332,9 @@ carrier_event = {
 	show_sound = event_criminal_activity
 	location = root
 	is_triggered_only = yes
-
 	pre_triggers = {
 		has_owner = yes
 	}
-
 	trigger = {
 		is_under_colonization = no
 		is_colony = yes
@@ -9358,18 +8342,18 @@ carrier_event = {
 			is_country_type = default
 		}
 		pop_amount > 500
-		num_unemployed > 500 #early out before the expensive count_owned_pop to come
+		num_unemployed > 500
 		NOR = {
-			has_carrier_flag = criminal_underworld_disappeared 	# Cooldown
+			has_carrier_flag = criminal_underworld_disappeared
 			has_carrier_flag = criminal_underworld_event_up
-			has_carrier_flag = EaC_labor_movements_disappeared 	# Cooldown		# Modded
-			has_carrier_flag = EaC_labor_movements_event_up						# Modded
-			has_carrier_flag = EaC_underground_railroad_disappeared # Cooldown	# Modded
-			has_carrier_flag = EaC_underground_railroad_event_up					# Modded
-			has_modifier = EaC_slave_revolts									# Modded
-			has_modifier = EaC_underground_railroad_expanded 					# Modded
-			has_modifier = EaC_worker_commune									# Modded
-			has_modifier = EaC_labor_movements									# Modded
+			has_carrier_flag = EaC_labor_movements_disappeared
+			has_carrier_flag = EaC_labor_movements_event_up
+			has_carrier_flag = EaC_underground_railroad_disappeared
+			has_carrier_flag = EaC_underground_railroad_event_up
+			has_modifier = EaC_slave_revolts
+			has_modifier = EaC_underground_railroad_expanded
+			has_modifier = EaC_worker_commune
+			has_modifier = EaC_labor_movements
 			has_carrier_flag = shattered_frontier_planet
 			has_modifier = unemployment_benefits
 			has_modifier = activity_program
@@ -9411,13 +8395,11 @@ carrier_event = {
 			}
 		}
 	}
-
 	immediate = {
 		set_carrier_flag = criminal_underworld_event_up
 		set_carrier_flag = EaC_labor_movements_event_up
 		set_carrier_flag = EaC_underground_railroad_event_up
 	}
-
 	weight_multiplier = {
 		factor = 1
 		modifier = {
@@ -9437,7 +8419,6 @@ carrier_event = {
 			num_unemployed > 2000
 		}
 	}
-
 	option = {
 		name = {
 			trigger = {
@@ -9482,9 +8463,6 @@ carrier_event = {
 		custom_tooltip = crime.1.a3.tooltip
 		hidden_effect = { add_modifier = { modifier = "standby_mode" years = 10 } }
 	}
-
-	#Bottom Option
-
 	option = {
 		trigger = {
 			owner = { is_twisted_experimenters_empire = yes }
@@ -9510,7 +8488,6 @@ carrier_event = {
 			add_modifier = { modifier = "drone_deviancy_experimenters" days = -1 }
 		}
 	}
-
 	option = {
 		name = EaC_civic_mechanic_events.1.b
 		trigger = {
@@ -9539,7 +8516,6 @@ carrier_event = {
 		}
 		add_modifier = { modifier = drone_corruption days = -1 }
 	}
-
 	after = {
 		hidden_effect = {
 			remove_carrier_flag = criminal_underworld_event_up
@@ -9548,10 +8524,6 @@ carrier_event = {
 		}
 	}
 }
-
-# GENERIC
-
-# Bribed Officials - # Reflavored to fit with general strike mechanic
 carrier_event = {
 	id = crime.2
 	title = EaC_civic_mechanic_events.2.name
@@ -9577,15 +8549,12 @@ carrier_event = {
 	show_sound = event_criminal_activity
 	location = root
 	is_triggered_only = yes
-
 	pre_triggers = {
 		has_owner = yes
 	}
-
 	trigger = {
 		has_criminal_underworld_modifier = yes
 	}
-
 	immediate = {
 		add_modifier = { modifier = bribed_officials years = 10 }
 		set_timed_carrier_flag = {
@@ -9600,9 +8569,7 @@ carrier_event = {
 			}
 		}
 	}
-
 	option = {
-		#name = EaC_civic_mechanic_events.2.a
 		name = {
 			trigger = {
 				if = {
@@ -9623,7 +8590,6 @@ carrier_event = {
 			custom_tooltip = EaC_planet_general_strike_flag_tooltip
 		}
 	}
-
 	option = {
 		name = EaC_civic_mechanic_events.2.b
 		trigger = { owner = {  is_authoritarian = yes } }
@@ -9635,7 +8601,6 @@ carrier_event = {
 			custom_tooltip = EaC_planet_general_strike_flag_tooltip
 		}
 	}
-
 	option = {
 		name = EaC_civic_mechanic_events.2.c
 		trigger = {
@@ -9661,8 +8626,6 @@ carrier_event = {
 		}
 	}
 }
-
-# Drug Trade # Reflavoring an existing crime event about drug abuse - adding modded flavor
 carrier_event = {
 	id = crime.3
 	title = crime.3.name
@@ -9686,15 +8649,12 @@ carrier_event = {
 	show_sound = event_criminal_activity
 	location = root
 	is_triggered_only = yes
-
 	pre_triggers = {
 		has_owner = yes
 	}
-
 	trigger = {
 		has_modifier = criminal_underworld
 	}
-
 	immediate = {
 		add_modifier = { modifier = substance_abuse years = 10 }
 		set_timed_carrier_flag = {
@@ -9712,7 +8672,6 @@ carrier_event = {
 			}
 		}
 	}
-
 	option = {
 		name = EaC_civic_mechanic_events.3.a
 		trigger = { owner = { is_gestalt = yes } }
@@ -9720,7 +8679,6 @@ carrier_event = {
 			add_modifier = { modifier = substance_abuse years = 10 }
 		}
 	}
-
 	option = {
 		name = EaC_civic_mechanic_events.3.a.has_public_healthcare
 		trigger = {
@@ -9732,7 +8690,6 @@ carrier_event = {
 			add_modifier = { modifier = substance_abuse years = 10 }
 		}
 	}
-
 	option = {
 		name = EaC_civic_mechanic_events.3.b.has_private_healthcare
 		trigger = {
@@ -9753,7 +8710,6 @@ carrier_event = {
 			custom_tooltip = EaC_planet_general_strike_flag_tooltip
 		}
 	}
-
 	option = {
 		name = EaC_civic_mechanic_events.3.b.has_private_healthcare
 		trigger = {
@@ -9767,7 +8723,6 @@ carrier_event = {
 			add_modifier = { modifier = substance_abuse years = 10 }
 		}
 	}
-
 	option = {
 		name = EaC_civic_mechanic_events.3.c.not_public_healthcare
 		trigger = {
@@ -9790,14 +8745,10 @@ carrier_event = {
 		owner = { set_policy = { policy = healthcare option = public_healthcare cooldown = yes } }
 	}
 }
-
-# Crime Gatekeeper (Normies)
 country_event = {
 	id = crime.51
 	hide_window = yes
-
 	is_triggered_only = yes
-
 	immediate = {
 		random_owned_planet = {
 			limit = {
@@ -9870,7 +8821,7 @@ country_event = {
 					}
 					carrier_event = { id = crime.8 days = 1 random = 300 }
 				}
-				10 = { # Gang Wars
+				10 = {
 					modifier = {
 						factor = 0
 						has_criminal_underworld_modifier = no
@@ -9878,7 +8829,7 @@ country_event = {
 					}
 					carrier_event = { id = crime.100 days = 1 random = 300 }
 				}
-				10 = { # Center of Drug Trade
+				10 = {
 					modifier = {
 						factor = 0
 						has_criminal_underworld_modifier = no
@@ -9886,7 +8837,7 @@ country_event = {
 					}
 					carrier_event = { id = crime.200 days = 1 random = 300 }
 				}
-				10 = { # Mob Rule
+				10 = {
 					modifier = {
 						factor = 0
 						has_criminal_underworld_modifier = no
@@ -9996,8 +8947,6 @@ country_event = {
 		}
 	}
 }
-
-# Enforcers Clash with Strikers
 carrier_event = {
 	id = EaC_civic_mechanic_events.3004
 	title = EaC_civic_mechanic_events.4.name
@@ -10013,23 +8962,19 @@ carrier_event = {
 	show_sound = event_ground_battle
 	location = root
 	is_triggered_only = yes
-
 	pre_triggers = {
 		has_owner = yes
 	}
-
 	trigger = {
-		has_modifier = EaC_labor_movements # Changed copy of --> criminal_underworld
+		has_modifier = EaC_labor_movements
 	}
-
 	immediate = {
 		add_planet_devastation = 15
 		set_timed_carrier_flag = {
-			flag = EaC_planet_general_strike_flag # Changed copy of --> planet_crime_flag
+			flag = EaC_planet_general_strike_flag
 			days = 3600
 		}
 	}
-
 	option = {
 		name = EaC_civic_mechanic_events.4.not_anticrime_campaign.a
 		trigger = { NOT = { has_modifier = anticrime_campaign } }
@@ -10039,7 +8984,6 @@ carrier_event = {
 		add_modifier = { modifier = "anticrime_campaign" days = -1 }
 		custom_tooltip = EaC_planet_general_strike_flag_tooltip
 	}
-
 	option = {
 		name = EaC_civic_mechanic_events.4.not_anticrime_campaign.b
 		trigger = { NOT = { has_modifier = anticrime_campaign } }
@@ -10048,7 +8992,6 @@ carrier_event = {
 		}
 		hidden_effect = { remove_carrier_flag = EaC_planet_general_strike_flag }
 	}
-
 	option = {
 		name = EaC_civic_mechanic_events.4.has_anticrime_campaign.c
 		trigger = { has_modifier = anticrime_campaign }
@@ -10057,7 +9000,6 @@ carrier_event = {
 		}
 		custom_tooltip = EaC_planet_general_strike_flag_tooltip
 	}
-
 	option = {
 		name = EaC_civic_mechanic_events.4.has_anticrime_campaign.d
 		trigger = { has_modifier = anticrime_campaign }
@@ -10068,8 +9010,6 @@ carrier_event = {
 		hidden_effect = { remove_carrier_flag = EaC_planet_general_strike_flag }
 	}
 }
-
-# Smugglers --> Underground Railroad Reported
 carrier_event = {
 	id = EaC_civic_mechanic_events.3005
 	title = EaC_civic_mechanic_events.5.name
@@ -10078,30 +9018,25 @@ carrier_event = {
 	show_sound = event_criminal_activity
 	location = root
 	is_triggered_only = yes
-
 	pre_triggers = {
 		has_owner = yes
 	}
-
 	trigger = {
 		has_modifier = EaC_underground_railroad_activity
 	}
-
 	immediate = {
 		add_modifier = { modifier = EaC_underground_railroad_smuggling years = 10 }
 		set_timed_carrier_flag = {
-			flag = EaC_planet_underground_railroad_flag # Was changed to seperate EaC_planet_general_strike_flag type events
+			flag = EaC_planet_underground_railroad_flag
 			days = 3600
 		}
 	}
-
 	option = {
 		name = EaC_civic_mechanic_events.5.a
 		tooltip = {
 			add_modifier = { modifier = EaC_underground_railroad_smuggling years = 10 }
 		}
 	}
-
 	option = {
 		name = EaC_civic_mechanic_events.5.b
 		tooltip = {
@@ -10109,8 +9044,6 @@ carrier_event = {
 		}
 	}
 }
-
-# Crime Wave --> Slave Runaway
 carrier_event = {
 	id = EaC_civic_mechanic_events.3006
 	title = EaC_civic_mechanic_events.6.name
@@ -10119,30 +9052,25 @@ carrier_event = {
 	show_sound = event_criminal_activity
 	location = root
 	is_triggered_only = yes
-
 	pre_triggers = {
 		has_owner = yes
 	}
-
 	trigger = {
 		has_modifier = EaC_underground_railroad_activity
 	}
-
 	immediate = {
-		add_modifier = { modifier = EaC_inspired_slave_resistance years = 10 }	# crime_wave --> EaC_inspired_slave_resistance
+		add_modifier = { modifier = EaC_inspired_slave_resistance years = 10 }
 		set_timed_carrier_flag = {
 			flag = EaC_planet_underground_railroad_flag
 			years = 10
 		}
 	}
-
 	option = {
 		name = EaC_civic_mechanic_events.6.a
 		tooltip = {
 			add_modifier = { modifier = EaC_inspired_slave_resistance years = 10 }
 		}
 	}
-
 	option = {
 		name = EaC_civic_mechanic_events.6.b
 		tooltip = {
@@ -10150,8 +9078,6 @@ carrier_event = {
 		}
 	}
 }
-
-# Contraband Seized
 carrier_event = {
 	id = EaC_civic_mechanic_events.3007
 	title = EaC_civic_mechanic_events.7.name
@@ -10160,34 +9086,25 @@ carrier_event = {
 	show_sound = event_criminal_activity
 	location = root
 	is_triggered_only = yes
-
 	pre_triggers = {
 		has_owner = yes
 	}
-
 	trigger = {
 		has_modifier = EaC_underground_railroad_activity
 	}
-
 	immediate = {
 		set_timed_carrier_flag = {
 			flag = EaC_planet_underground_railroad_flag
 			years = 10
 		}
 	}
-
 	option = {
 		name = EaC_civic_mechanic_events.7.a
-
 	}
-
 	option = {
 		name = EaC_civic_mechanic_events.7.b
-
 	}
 }
-
-# Crime Boss Arrested
 carrier_event = {
 	id = EaC_civic_mechanic_events.3008
 	title = EaC_civic_mechanic_events.8.name
@@ -10196,15 +9113,12 @@ carrier_event = {
 	show_sound = event_criminal_activity
 	location = root
 	is_triggered_only = yes
-
 	pre_triggers = {
 		has_owner = yes
 	}
-
 	trigger = {
 		has_modifier = EaC_underground_railroad_activity
 	}
-
 	immediate = {
 		set_timed_carrier_flag = {
 			flag = EaC_planet_underground_railroad_flag
@@ -10212,14 +9126,12 @@ carrier_event = {
 		}
 		add_modifier = { modifier = EaC_underground_railroad_conductor_arrested years = 10 }
 	}
-
 	option = {
 		name = EaC_civic_mechanic_events.8.a
 		tooltip = {
 			add_modifier = { modifier = EaC_underground_railroad_conductor_arrested years = 10 }
 		}
 	}
-
 	option = {
 		name = EaC_civic_mechanic_events.8.b
 		tooltip = {
@@ -10227,8 +9139,6 @@ carrier_event = {
 		}
 	}
 }
-
-# Criminal Underworld Appears (High Crime)	- # Underground Labor Movements
 carrier_event = {
 	id = EaC_civic_mechanic_events.30401
 	title = EaC_civic_mechanic_events.40.name
@@ -10250,18 +9160,6 @@ carrier_event = {
 		}
 		text = EaC_civic_mechanic_events.40.desc
 	}
-	# desc = {
-	#	trigger = {
-	#		owner = { is_hive_empire = yes }
-	#	}
-	#	text = EaC_civic_mechanic_events.40.b.desc
-	#}
-	# desc = {
-	#	trigger = {
-	#		owner = { is_machine_empire = yes }
-	#	}
-	#	text = EaC_civic_mechanic_events.40.c.desc
-	#}
 	picture = {
 		trigger = {
 			owner = {
@@ -10270,26 +9168,12 @@ carrier_event = {
 		}
 		picture = GFX_evt_dark_alley
 	}
-	# picture = {
-	#	trigger = {
-	#		owner = { is_hive_empire = yes }
-	#	}
-	#	picture = GFX_evt_hive_mind
-	#}
-	# picture = {
-	#	trigger = {
-	#		owner = { is_machine_empire = yes }
-	#	}
-	#	picture = GFX_evt_glitchy_matrix
-	#}
 	show_sound = event_criminal_activity
 	location = root
 	is_triggered_only = yes
-
 	pre_triggers = {
 		has_owner = yes
 	}
-
 	trigger = {
 		owner = {
 			is_gestalt = no
@@ -10315,16 +9199,11 @@ carrier_event = {
 		NOR = {
 			has_carrier_flag = EaC_labor_movements_event_up
 			has_modifier = unemployment_benefits
-			# has_modifier = activity_program
-			# has_modifier = standby_mode
 			has_modifier = EaC_labor_movements
-			# has_modifier = drone_deviancy
-			# has_modifier = drone_corruption
 			has_modifier = EaC_worker_commune
 		}
-		NOT = { has_carrier_flag = EaC_labor_movements_disappeared } # Cooldown
+		NOT = { has_carrier_flag = EaC_labor_movements_disappeared }
 	}
-
 	weight_multiplier = {
 		factor = 1
 		modifier = {
@@ -10340,27 +9219,12 @@ carrier_event = {
 			planet_crime >= 90
 		}
 	}
-
 	immediate = {
 		set_carrier_flag = EaC_labor_movements_event_up
 		set_timed_carrier_flag = { flag = EaC_labor_movements_appeared years = 10 }
 		add_modifier = { modifier = "EaC_labor_movements" days = -1 }
 		break = yes
-		# if = {
-		#	limit = {
-		#		owner = { is_hive_empire = yes }
-		#	}
-		#	add_modifier = { modifier = "drone_deviancy" days = -1 }
-		#	break = yes
-		#}
-		# if = {
-		#	limit = {
-		#		owner = { is_machine_empire = yes }
-		#	}
-		#	add_modifier = { modifier = "drone_corruption" days = -1 }
-		#}
 	}
-
 	option = {
 		name = EaC_civic_mechanic_events.40.a
 		trigger = {
@@ -10372,33 +9236,12 @@ carrier_event = {
 			add_modifier = { modifier = "EaC_labor_movements" days = -1 }
 		}
 	}
-	# option = {
-	#	name = EaC_civic_mechanic_events.40.b
-	#	trigger = {
-	#		owner = { is_hive_empire = yes }
-	#	}
-	#	tooltip = {
-	#		add_modifier = { modifier = "drone_deviancy" days = -1 }
-	#	}
-	#}
-	# option = {
-	#	name = EaC_civic_mechanic_events.40.c
-	#	trigger = {
-	#		owner = { is_machine_empire = yes }
-	#	}
-	#	tooltip = {
-	#		add_modifier = { modifier = "drone_corruption" days = -1 }
-	#	}
-	#}
-
 	after = {
 		hidden_effect = {
 			remove_carrier_flag = EaC_labor_movements_event_up
 		}
 	}
 }
-
-# Criminal Underworld Appears (High Crime)	- # Underground Railroad
 carrier_event = {
 	id = EaC_civic_mechanic_events.30402
 	title = EaC_civic_mechanic_events.40.name
@@ -10420,18 +9263,6 @@ carrier_event = {
 		}
 		text = EaC_civic_mechanic_events.40.desc
 	}
-	# desc = {
-	#	trigger = {
-	#		owner = { is_hive_empire = yes }
-	#	}
-	#	text = EaC_civic_mechanic_events.40.b.desc
-	#}
-	# desc = {
-	#	trigger = {
-	#		owner = { is_machine_empire = yes }
-	#	}
-	#	text = EaC_civic_mechanic_events.40.c.desc
-	#}
 	picture = {
 		trigger = {
 			owner = {
@@ -10440,26 +9271,12 @@ carrier_event = {
 		}
 		picture = GFX_evt_dark_alley
 	}
-	# picture = {
-	#	trigger = {
-	#		owner = { is_hive_empire = yes }
-	#	}
-	#	picture = GFX_evt_hive_mind
-	#}
-	# picture = {
-	#	trigger = {
-	#		owner = { is_machine_empire = yes }
-	#	}
-	#	picture = GFX_evt_glitchy_matrix
-	#}
 	show_sound = event_criminal_activity
 	location = root
 	is_triggered_only = yes
-
 	pre_triggers = {
 		has_owner = yes
 	}
-
 	trigger = {
 		owner = {
 			is_gestalt = no
@@ -10479,14 +9296,11 @@ carrier_event = {
 		NOR = {
 			has_carrier_flag = EaC_underground_railroad_event_up
 			has_modifier = EaC_underground_railroad_activity
-			# has_modifier = drone_deviancy
-			# has_modifier = drone_corruption
 			has_modifier = EaC_slave_revolts
 			has_modifier = EaC_underground_railroad_expanded
 		}
-		NOT = { has_carrier_flag = EaC_underground_railroad_disappeared } # Cooldown
+		NOT = { has_carrier_flag = EaC_underground_railroad_disappeared }
 	}
-
 	weight_multiplier = {
 		factor = 1
 		modifier = {
@@ -10502,27 +9316,12 @@ carrier_event = {
 			planet_crime >= 90
 		}
 	}
-
 	immediate = {
 		set_carrier_flag = EaC_underground_railroad_event_up
 		set_timed_carrier_flag = { flag = EaC_underground_railroad_appeared years = 10 }
 		add_modifier = { modifier = "EaC_underground_railroad_activity" days = -1 }
 		break = yes
-		# if = {
-		#	limit = {
-		#		owner = { is_hive_empire = yes }
-		#	}
-		#	add_modifier = { modifier = "drone_deviancy" days = -1 }
-		#	break = yes
-		#}
-		# if = {
-		#	limit = {
-		#		owner = { is_machine_empire = yes }
-		#	}
-		#	add_modifier = { modifier = "drone_corruption" days = -1 }
-		#}
 	}
-
 	option = {
 		name = EaC_civic_mechanic_events.40.a
 		trigger = {
@@ -10534,38 +9333,15 @@ carrier_event = {
 			add_modifier = { modifier = "EaC_underground_railroad_activity" days = -1 }
 		}
 	}
-	# option = {
-	#	name = EaC_civic_mechanic_events.40.b
-	#	trigger = {
-	#		owner = { is_hive_empire = yes }
-	#	}
-	#	tooltip = {
-	#		add_modifier = { modifier = "drone_deviancy" days = -1 }
-	#	}
-	#}
-	# option = {
-	#	name = EaC_civic_mechanic_events.40.c
-	#	trigger = {
-	#		owner = { is_machine_empire = yes }
-	#	}
-	#	tooltip = {
-	#		add_modifier = { modifier = "drone_corruption" days = -1 }
-	#	}
-	#}
-
 	after = {
 		hidden_effect = {
 			remove_carrier_flag = EaC_underground_railroad_event_up
 		}
 	}
 }
-###################################################################################
-# Criminal Underworld Disappears (Low Crime) OR (Low Ideology)	- Labor Movements #
-###################################################################################
 carrier_event = {
 	id = EaC_civic_mechanic_events.30411
 	title = EaC_civic_mechanic_events.41.name
-	# (Low Crime)#
 	desc = {
 		trigger = {
 			count_enslaved_species = { count = 1 }
@@ -10616,7 +9392,6 @@ carrier_event = {
 		}
 		text = EaC_civic_mechanic_events.41.desc.has_ethic_libertarian.has_ethic_cooperative.no_slaves
 	}
-	# (Low Ideology)#
 	desc = {
 		trigger = {
 			count_enslaved_species = { count = 1 }
@@ -10667,18 +9442,6 @@ carrier_event = {
 		}
 		text = EaC_civic_mechanic_events.41.desc.no_ethic_libertarian.no_ethic_cooperative.no_slaves
 	}
-	# desc = {
-	#	trigger = {
-	#		owner = { is_hive_empire = yes }
-	#	}
-	#	text = EaC_civic_mechanic_events.41.b.desc
-	#}
-	# desc = {
-	#	trigger = {
-	#		owner = { is_machine_empire = yes }
-	#	}
-	#	text = EaC_civic_mechanic_events.41.c.desc
-	#}
 	picture = {
 		trigger = {
 			owner = {
@@ -10687,26 +9450,12 @@ carrier_event = {
 		}
 		picture = GFX_evt_dark_alley
 	}
-	# picture = {
-	#	trigger = {
-	#		owner = { is_hive_empire = yes }
-	#	}
-	#	picture = GFX_evt_hive_mind
-	#}
-	# picture = {
-	#	trigger = {
-	#		owner = { is_machine_empire = yes }
-	#	}
-	#	picture = GFX_evt_circuitry_modification
-	#}
 	show_sound = event_cityscape
 	location = root
 	is_triggered_only = yes
-
 	pre_triggers = {
 		has_owner = yes
 	}
-
 	trigger = {
 		owner = {
 			is_country_type = default
@@ -10714,16 +9463,11 @@ carrier_event = {
 		}
 		OR = {
 			has_modifier = EaC_labor_movements
-			# has_modifier = EaC_underground_railroad_activity
-			# has_modifier = drone_deviancy
-			# has_modifier = drone_corruption
-			# has_modifier = EaC_slave_revolts
-			# has_modifier = EaC_underground_railroad_expanded
 			has_modifier = EaC_worker_commune
 		}
 		OR = {
-			NOT = { has_carrier_flag = EaC_labor_movements_appeared } 	# Cooldown that lasts 3600 days.
-			count_owned_pop_amount = { # This should be checking that the nobody has labor ideology while living in poor conditions. Excludes slaves from count.
+			NOT = { has_carrier_flag = EaC_labor_movements_appeared }
+			count_owned_pop_amount = {
 				limit = {
 					OR = {
 						has_living_standard = { country = owner type = living_standard_dystopian_society }
@@ -10743,7 +9487,7 @@ carrier_event = {
 		pop_amount > 0
 		OR = {
 			planet_crime <= 10
-			count_owned_pop_amount = { # This should be checking that the nobody has labor ideology while living in poor conditions. Excludes slaves from count.
+			count_owned_pop_amount = {
 				limit = {
 					OR = {
 						has_living_standard = { country = owner type = living_standard_dystopian_society }
@@ -10761,7 +9505,6 @@ carrier_event = {
 			}
 		}
 	}
-
 	weight_multiplier = {
 		factor = 1
 		modifier = {
@@ -10769,8 +9512,8 @@ carrier_event = {
 			count_owned_pop_amount = {
 				limit = {
 					OR = {
-						has_job_type = enforcer		# has_job_type -  # Not Supported in Stellaris 4.0
-						has_job_type = coordinator	# has_job_type -  # Not Supported in Stellaris 4.0
+						has_job_type = enforcer
+						has_job_type = coordinator
 					}
 				}
 				count > 2
@@ -10781,8 +9524,8 @@ carrier_event = {
 			count_owned_pop_amount = {
 				limit = {
 					OR = {
-						has_job_type = enforcer		# has_job_type -  # Not Supported in Stellaris 4.0
-						has_job_type = coordinator	# has_job_type -  # Not Supported in Stellaris 4.0
+						has_job_type = enforcer
+						has_job_type = coordinator
 					}
 				}
 				count > 3
@@ -10793,57 +9536,24 @@ carrier_event = {
 			count_owned_pop_amount = {
 				limit = {
 					OR = {
-						has_job_type = enforcer		# has_job_type -  # Not Supported in Stellaris 4.0
-						has_job_type = coordinator	# has_job_type -  # Not Supported in Stellaris 4.0
+						has_job_type = enforcer
+						has_job_type = coordinator
 					}
 				}
 				count > 4
 			}
 		}
 	}
-
 	option = {
 		name = GOOD
 		if = {
 			limit = { has_modifier = EaC_labor_movements }
 			remove_modifier = EaC_labor_movements
 		}
-		# if = {
-		#	limit = { has_modifier = EaC_underground_railroad_activity }
-		#	remove_modifier = EaC_underground_railroad_activity
-		#}
-		# if = {
-		#	limit = { has_modifier = EaC_slave_revolts }
-		#	remove_modifier = EaC_slave_revolts
-		#}
-		# if = {
-		#	limit = { has_modifier = EaC_underground_railroad_expanded }
-		#	remove_modifier = EaC_underground_railroad_expanded
-		#}
 		if = {
 			limit = { has_modifier = EaC_worker_commune }
 			remove_modifier = EaC_worker_commune
 		}
-		# if = {
-		#	limit = { has_modifier = bribed_officials }
-		#	remove_modifier = bribed_officials
-		#}
-		# if = {
-		#	limit = { has_modifier = substance_abuse }
-		#	remove_modifier = substance_abuse
-		#}
-		# if = {
-		#	limit = { has_modifier = EaC_underground_railroad_smuggling }
-		#	remove_modifier = EaC_underground_railroad_smuggling
-		#}
-		# if = {
-		#	limit = { has_modifier = EaC_inspired_slave_resistance }
-		#	remove_modifier = EaC_inspired_slave_resistance
-		#}
-		# if = {
-		#	limit = { has_modifier = EaC_slave_resistance }
-		#	remove_modifier = EaC_slave_resistance
-		#}
 		if = {
 			limit = { has_modifier = EaC_labor_propaganda }
 			remove_modifier = EaC_labor_propaganda
@@ -10856,40 +9566,18 @@ carrier_event = {
 			limit = { has_modifier = EaC_worker_commune_means_of_production }
 			remove_modifier = EaC_worker_commune_means_of_production
 		}
-		# Hive Minds
-		# if = {
-		#	limit = { has_modifier = drone_deviancy }
-		#	remove_modifier = drone_deviancy
-		#}
-		# if = {
-		#	limit = { has_modifier = deviant_interference }
-		#	remove_modifier = deviant_interference
-		#}
-		# Machine Intelligences
-		# if = {
-		#	limit = { has_modifier = drone_corruption }
-		#	remove_modifier = drone_corruption
-		#}
-		# if = {
-		#	limit = { has_modifier = drone_signal_interference }
-		#	remove_modifier = drone_signal_interference
-		#}
 		hidden_effect = {
 			set_timed_carrier_flag = { flag = EaC_labor_movements_disappeared years = 10 }
 			if = {
-				limit = { has_carrier_flag = EaC_labor_movements_appeared } 	# Cooldown that lasts 3600 days should be removed
-				remove_carrier_flag = EaC_labor_movements_appeared			# This can only happen if ideology/living standards changed, which
+				limit = { has_carrier_flag = EaC_labor_movements_appeared }
+				remove_carrier_flag = EaC_labor_movements_appeared
 			}
 		}
 	}
 }
-##########################################################################################
-# Criminal Underworld Disappears (Low Crime) OR (Low Ideology) - 	Underground Railroad #
-##########################################################################################
 carrier_event = {
 	id = EaC_civic_mechanic_events.30412
 	title = EaC_civic_mechanic_events.41.name
-	# (Low Crime)#
 	desc = {
 		trigger = {
 			count_enslaved_species = { count = 1 }
@@ -10940,7 +9628,6 @@ carrier_event = {
 		}
 		text = EaC_civic_mechanic_events.41.desc.has_ideology.no_slaves
 	}
-	# (Low Ideology)#
 	desc = {
 		trigger = {
 			count_enslaved_species = { count = 1 }
@@ -10991,18 +9678,6 @@ carrier_event = {
 		}
 		text = EaC_civic_mechanic_events.41.desc.no_ideology.no_slaves
 	}
-	# desc = {
-	#	trigger = {
-	#		owner = { is_hive_empire = yes }
-	#	}
-	#	text = EaC_civic_mechanic_events.41.b.desc
-	#}
-	# desc = {
-	#	trigger = {
-	#		owner = { is_machine_empire = yes }
-	#	}
-	#	text = EaC_civic_mechanic_events.41.c.desc
-	#}
 	picture = {
 		trigger = {
 			owner = {
@@ -11011,26 +9686,12 @@ carrier_event = {
 		}
 		picture = GFX_evt_dark_alley
 	}
-	# picture = {
-	#	trigger = {
-	#		owner = { is_hive_empire = yes }
-	#	}
-	#	picture = GFX_evt_hive_mind
-	#}
-	# picture = {
-	#	trigger = {
-	#		owner = { is_machine_empire = yes }
-	#	}
-	#	picture = GFX_evt_circuitry_modification
-	#}
 	show_sound = event_cityscape
 	location = root
 	is_triggered_only = yes
-
 	pre_triggers = {
 		has_owner = yes
 	}
-
 	trigger = {
 		owner = {
 			is_country_type = default
@@ -11038,13 +9699,11 @@ carrier_event = {
 		}
 		OR = {
 			has_modifier = EaC_underground_railroad_activity
-			# has_modifier = drone_deviancy
-			# has_modifier = drone_corruption
 			has_modifier = EaC_slave_revolts
 			has_modifier = EaC_underground_railroad_expanded
 		}
 		OR = {
-			NOT = { has_carrier_flag = EaC_underground_railroad_appeared } # Cooldown
+			NOT = { has_carrier_flag = EaC_underground_railroad_appeared }
 			count_owned_pop_amount = {
 				count = 0
 				limit = {
@@ -11069,7 +9728,6 @@ carrier_event = {
 			}
 		}
 	}
-
 	weight_multiplier = {
 		factor = 1
 		modifier = {
@@ -11077,8 +9735,8 @@ carrier_event = {
 			count_owned_pop_amount = {
 				limit = {
 					OR = {
-						has_job_type = enforcer		# has_job_type -  # Not Supported in Stellaris 4.0
-						has_job_type = coordinator	# has_job_type -  # Not Supported in Stellaris 4.0
+						has_job_type = enforcer
+						has_job_type = coordinator
 					}
 				}
 				count > 2
@@ -11089,8 +9747,8 @@ carrier_event = {
 			count_owned_pop_amount = {
 				limit = {
 					OR = {
-						has_job_type = enforcer		# has_job_type -  # Not Supported in Stellaris 4.0
-						has_job_type = coordinator	# has_job_type -  # Not Supported in Stellaris 4.0
+						has_job_type = enforcer
+						has_job_type = coordinator
 					}
 				}
 				count > 3
@@ -11101,21 +9759,16 @@ carrier_event = {
 			count_owned_pop_amount = {
 				limit = {
 					OR = {
-						has_job_type = enforcer		# has_job_type -  # Not Supported in Stellaris 4.0
-						has_job_type = coordinator	# has_job_type -  # Not Supported in Stellaris 4.0
+						has_job_type = enforcer
+						has_job_type = coordinator
 					}
 				}
 				count > 4
 			}
 		}
 	}
-
 	option = {
 		name = GOOD
-		# if = {
-		#	limit = { has_modifier = EaC_labor_movements }
-		#	remove_modifier = EaC_labor_movements
-		#}
 		if = {
 			limit = { has_modifier = EaC_underground_railroad_activity }
 			remove_modifier = EaC_underground_railroad_activity
@@ -11128,18 +9781,6 @@ carrier_event = {
 			limit = { has_modifier = EaC_underground_railroad_expanded }
 			remove_modifier = EaC_underground_railroad_expanded
 		}
-		# if = {
-		#	limit = { has_modifier = EaC_worker_commune }
-		#	remove_modifier = EaC_worker_commune
-		#}
-		# if = {
-		#	limit = { has_modifier = bribed_officials }
-		#	remove_modifier = bribed_officials
-		#}
-		# if = {
-		#	limit = { has_modifier = substance_abuse }
-		#	remove_modifier = substance_abuse
-		#}
 		if = {
 			limit = { has_modifier = EaC_underground_railroad_smuggling }
 			remove_modifier = EaC_underground_railroad_smuggling
@@ -11152,53 +9793,19 @@ carrier_event = {
 			limit = { has_modifier = EaC_slave_resistance }
 			remove_modifier = EaC_slave_resistance
 		}
-		# if = {
-		#	limit = { has_modifier = EaC_labor_propaganda }
-		#	remove_modifier = EaC_labor_propaganda
-		#}
-		# if = {
-		#	limit = { has_modifier = EaC_administration_strikes }
-		#	remove_modifier = EaC_administration_strikes
-		#}
-		# if = {
-		#	limit = { has_modifier = EaC_worker_commune_means_of_production }
-		#	remove_modifier = EaC_worker_commune_means_of_production
-		#}
-		# Hive Minds
-		# if = {
-		#	limit = { has_modifier = drone_deviancy }
-		#	remove_modifier = drone_deviancy
-		#}
-		# if = {
-		#	limit = { has_modifier = deviant_interference }
-		#	remove_modifier = deviant_interference
-		#}
-		# Machine Intelligences
-		# if = {
-		#	limit = { has_modifier = drone_corruption }
-		#	remove_modifier = drone_corruption
-		#}
-		# if = {
-		#	limit = { has_modifier = drone_signal_interference }
-		#	remove_modifier = drone_signal_interference
-		#}
 		hidden_effect = {
 			set_timed_carrier_flag = { flag = EaC_underground_railroad_disappeared years = 10 }
 			if = {
-				limit = { has_carrier_flag = EaC_underground_railroad_appeared } 	# Cooldown that lasts 3600 days should be removed
-				remove_carrier_flag = EaC_underground_railroad_appeared				# This can only happen if ideology/living standards changed, which
+				limit = { has_carrier_flag = EaC_underground_railroad_appeared }
+				remove_carrier_flag = EaC_underground_railroad_appeared
 			}
 		}
 	}
 }
-
-# Crime Gatekeeper
 event = {
 	id = EaC_civic_mechanic_events.3050
 	hide_window = yes
-
 	is_triggered_only = yes
-
 	immediate = {
 		every_playable_country = {
 			limit = {
@@ -11221,14 +9828,10 @@ event = {
 		}
 	}
 }
-
-# Crime Gatekeeper (Normies)
 country_event = {
 	id = EaC_civic_mechanic_events.3051
 	hide_window = yes
-
 	is_triggered_only = yes
-
 	immediate = {
 		random_owned_planet = {
 			limit = {
@@ -11241,32 +9844,10 @@ country_event = {
 				}
 				NOR = {
 					has_carrier_flag = EaC_planet_general_strike_flag
-					# has_modifier = crime_lord_deal						# Perhaps this can be represented by a deal with unions? Possibly given by the 'Trade Union' civic?
 				}
 			}
 			random_list = {
 				300 = {}
-				# 10 = {
-				#	modifier = {
-				#		factor = 0
-				#		NOT = { has_modifier = EaC_labor_movements }
-				#	}
-				#	carrier_event = { id = crime.2 days = 1 random = 300 }	# Vanilla event was not cloned, only reflavored
-				#}
-				# 10 = {
-				#	modifier = {
-				#		factor = 0
-				#		NOT = { has_modifier = EaC_labor_movements }
-				#	}
-				#	carrier_event = { id = crime.3 days = 1 random = 300 }	# Vanilla event was not cloned, only reflavored
-				#}
-				# 10 = {
-				#	modifier = {
-				#		factor = 0
-				#		NOT = { has_modifier = EaC_labor_movements }
-				#	}
-				#	carrier_event = { id = crime.4 days = 1 random = 300 }
-				#}
 				10 = {
 					modifier = {
 						factor = 0
@@ -11295,7 +9876,7 @@ country_event = {
 					}
 					carrier_event = { id = EaC_civic_mechanic_events.3008 days = 1 random = 300 }
 				}
-				10 = { # Gang Wars
+				10 = {
 					modifier = {
 						factor = 0
 						NOT = { has_modifier = EaC_underground_railroad_activity }
@@ -11303,7 +9884,7 @@ country_event = {
 					}
 					carrier_event = { id = EaC_civic_mechanic_events.3100 days = 1 random = 300 }
 				}
-				10 = { # Center of Drug Trade
+				10 = {
 					modifier = {
 						factor = 0
 						NOT = { has_modifier = EaC_underground_railroad_activity }
@@ -11311,7 +9892,7 @@ country_event = {
 					}
 					carrier_event = { id = EaC_civic_mechanic_events.3200 days = 1 random = 300 }
 				}
-				10 = { # Mob Rule
+				10 = {
 					modifier = {
 						factor = 0
 						NOT = { has_modifier = EaC_labor_movements }
@@ -11421,10 +10002,6 @@ country_event = {
 		}
 	}
 }
-
-# Underground Railroad Events - Slave Revolt in System
-
-# Gang Wars --> Slave Revolt
 carrier_event = {
 	id = EaC_civic_mechanic_events.3100
 	title = EaC_civic_mechanic_events.100.name
@@ -11433,21 +10010,17 @@ carrier_event = {
 	show_sound = event_criminal_activity
 	location = root
 	is_triggered_only = yes
-
 	pre_triggers = {
 		has_owner = yes
 	}
-
 	trigger = {
 		has_modifier = EaC_underground_railroad_activity
 		NOT = { has_modifier = EaC_slave_revolts }
 	}
-
 	immediate = {
 		remove_modifier = EaC_underground_railroad_activity
-		add_modifier = { modifier = "EaC_slave_revolts" days = -1 } # gang_wars changed to --> EaC_slave_revolts
+		add_modifier = { modifier = "EaC_slave_revolts" days = -1 }
 	}
-
 	option = {
 		name = EaC_civic_mechanic_events.100.a
 		tooltip = {
@@ -11456,8 +10029,6 @@ carrier_event = {
 		}
 	}
 }
-
-# Gangs Ambush Enforcers
 carrier_event = {
 	id = EaC_civic_mechanic_events.3101
 	title = EaC_civic_mechanic_events.101.name
@@ -11466,30 +10037,21 @@ carrier_event = {
 	show_sound = event_ground_battle
 	location = root
 	is_triggered_only = yes
-
 	pre_triggers = {
 		has_owner = yes
 	}
-
 	trigger = {
 		has_modifier = EaC_slave_revolts
-		any_owned_pop_group = { has_job_type = enforcer }	# has_job_type -  # Not Supported in Stellaris 4.0
+		any_owned_pop_group = { has_job_type = enforcer }
 	}
-
 	immediate = {
-		# random_owned_pop_group = {
-			# limit = { has_job_type = enforcer }	# has_job_type -  # Not Supported in Stellaris 4.0
 			kill_single_pop = yes
-		#}
 	}
-
 	option = {
 		name = EaC_civic_mechanic_events.200.a
 		custom_tooltip = EaC_civic_mechanic_events.101.tooltip
 	}
 }
-
-# Gang Warfare Spreads into Space
 carrier_event = {
 	id = EaC_civic_mechanic_events.3102
 	title = EaC_civic_mechanic_events.102.name
@@ -11498,19 +10060,15 @@ carrier_event = {
 	show_sound = event_space_battle
 	location = root
 	is_triggered_only = yes
-
 	pre_triggers = {
 		has_owner = yes
 	}
-
 	trigger = {
 		owner = {
-			# has_country_flag = birth_of_piracy						# Vanilla code tieing in piracy, however this event is unrelated to piracy
-			NOT = { has_country_flag = EaC_slave_revolt_spawned }	# crime_pirates_spawned --> EaC_slave_revolt_spawned
+			NOT = { has_country_flag = EaC_slave_revolt_spawned }
 		}
 		has_modifier = EaC_slave_revolts
 	}
-
 	immediate = {
 		owner = {
 			set_timed_country_flag = { flag = EaC_slave_revolt_spawned years = 10 }
@@ -11522,14 +10080,11 @@ carrier_event = {
 			EaC_create_slave_revolt_fleet = yes
 		}
 	}
-
 	option = {
 		name = EaC_civic_mechanic_events.200.a
 		custom_tooltip = EaC_civic_mechanic_events.102.tooltip
 	}
 }
-
-# Pitched Battle
 carrier_event = {
 	id = EaC_civic_mechanic_events.3103
 	title = EaC_civic_mechanic_events.103.name
@@ -11538,18 +10093,15 @@ carrier_event = {
 	show_sound = event_ground_battle
 	location = root
 	is_triggered_only = yes
-
 	pre_triggers = {
 		has_owner = yes
 	}
-
 	trigger = {
 		has_modifier = EaC_slave_revolts
 	}
-
 	immediate = {
 		if = {
-			limit = { any_playable_country = { has_policy_flag = refugees_allowed } } # If refugees_allowed country exists
+			limit = { any_playable_country = { has_policy_flag = refugees_allowed } }
 			random_playable_country = {
 				limit = { has_policy_flag = refugees_allowed }
 				random_owned_planet = {
@@ -11557,7 +10109,6 @@ carrier_event = {
 					resettle_pop = { pop = root.random_owned_pop_group planet = this }
 					resettle_pop = { pop = root.random_owned_pop_group planet = this }
 				}
-				# An event then fires notifying the country who got the pops
 			}
 		}
 		else = {
@@ -11567,15 +10118,12 @@ carrier_event = {
 		}
 		add_planet_devastation = 15
 	}
-
 	option = {
 		name = DISCONCERTING
 		custom_tooltip = EaC_civic_mechanic_events.103.tooltip
 		tooltip = { add_planet_devastation = 15 }
 	}
 }
-
-# Traders Steer Clear
 carrier_event = {
 	id = EaC_civic_mechanic_events.3104
 	title = EaC_civic_mechanic_events.104.name
@@ -11584,15 +10132,12 @@ carrier_event = {
 	show_sound = event_criminal_activity
 	location = root
 	is_triggered_only = yes
-
 	pre_triggers = {
 		has_owner = yes
 	}
-
 	trigger = {
 		has_modifier = EaC_slave_revolts
 	}
-
 	immediate = {
 		add_modifier = { modifier = "travel_advisory" years = 10 }
 		set_timed_carrier_flag = {
@@ -11600,7 +10145,6 @@ carrier_event = {
 			years = 10
 		}
 	}
-
 	option = {
 		name = WORRYING
 		tooltip = {
@@ -11608,8 +10152,6 @@ carrier_event = {
 		}
 	}
 }
-
-# Center of Drug Trade --> Underground Railroad Expands
 carrier_event = {
 	id = EaC_civic_mechanic_events.3200
 	title = EaC_civic_mechanic_events.200.name
@@ -11618,21 +10160,17 @@ carrier_event = {
 	show_sound = event_criminal_activity
 	location = root
 	is_triggered_only = yes
-
 	pre_triggers = {
 		has_owner = yes
 	}
-
 	trigger = {
 		has_modifier = EaC_underground_railroad_activity
 		NOT = { has_modifier = EaC_underground_railroad_expanded }
 	}
-
 	immediate = {
 		remove_modifier = EaC_underground_railroad_activity
 		add_modifier = { modifier = "EaC_underground_railroad_expanded" days = -1 }
 	}
-
 	option = {
 		name = EaC_civic_mechanic_events.200.a
 		tooltip = {
@@ -11640,8 +10178,6 @@ carrier_event = {
 		}
 	}
 }
-
-# Drug Related Deaths
 carrier_event = {
 	id = EaC_civic_mechanic_events.3201
 	title = EaC_civic_mechanic_events.201.name
@@ -11650,20 +10186,16 @@ carrier_event = {
 	show_sound = event_life_support_fail
 	location = root
 	is_triggered_only = yes
-
 	pre_triggers = {
 		has_owner = yes
 	}
-
 	trigger = {
 		has_modifier = EaC_underground_railroad_expanded
 		pop_amount > 400
 	}
-
-
 	immediate = {
 		if = {
-			limit = { any_playable_country = { has_policy_flag = refugees_allowed } } # If refugees_allowed country exists
+			limit = { any_playable_country = { has_policy_flag = refugees_allowed } }
 			random_playable_country = {
 				limit = { has_policy_flag = refugees_allowed }
 				random_owned_planet = {
@@ -11672,7 +10204,6 @@ carrier_event = {
 					resettle_pop = { pop = root.random_owned_pop_group planet = this }
 					resettle_pop = { pop = root.random_owned_pop_group planet = this }
 				}
-				# An event then fires notifying the country who got the pops
 			}
 		}
 		else = {
@@ -11682,14 +10213,11 @@ carrier_event = {
 			random_owned_pop_group = { kill_single_pop = yes }
 		}
 	}
-
 	option = {
 		name = WORRYING
 		custom_tooltip = EaC_civic_mechanic_events.201.tooltip
 	}
 }
-
-# Drug Cartels Clash
 carrier_event = {
 	id = EaC_civic_mechanic_events.3202
 	title = EaC_civic_mechanic_events.202.name
@@ -11698,15 +10226,12 @@ carrier_event = {
 	show_sound = event_ground_battle
 	location = root
 	is_triggered_only = yes
-
 	pre_triggers = {
 		has_owner = yes
 	}
-
 	trigger = {
 		has_modifier = EaC_underground_railroad_expanded
 	}
-
 	immediate = {
 		add_modifier = { modifier = "EaC_slave_resistance" years = 10 }
 		set_timed_carrier_flag = {
@@ -11714,7 +10239,6 @@ carrier_event = {
 			years = 10
 		}
 	}
-
 	option = {
 		name = EaC_civic_mechanic_events.203.a
 		tooltip = {
@@ -11722,8 +10246,6 @@ carrier_event = {
 		}
 	}
 }
-
-# Drug Smuggler Crash
 carrier_event = {
 	id = EaC_civic_mechanic_events.3203
 	title = EaC_civic_mechanic_events.203.name
@@ -11732,30 +10254,24 @@ carrier_event = {
 	show_sound = event_super_explosion
 	location = root
 	is_triggered_only = yes
-
 	pre_triggers = {
 		has_owner = yes
 	}
-
 	trigger = {
 		has_modifier = EaC_underground_railroad_expanded
 	}
-
 	immediate = {
 		random_owned_pop_group = { kill_single_pop = yes }
 		random_owned_pop_group = { kill_single_pop = yes }
 		random_owned_pop_group = { kill_single_pop = yes }
 		add_planet_devastation = 15
 	}
-
 	option = {
 		name = EaC_civic_mechanic_events.203.a
 		custom_tooltip = EaC_civic_mechanic_events.103.tooltip
 		tooltip = { add_planet_devastation = 15 }
 	}
 }
-
-# Drug Trade Continues
 carrier_event = {
 	id = EaC_civic_mechanic_events.3204
 	title = EaC_civic_mechanic_events.204.name
@@ -11764,24 +10280,20 @@ carrier_event = {
 	show_sound = event_criminal_activity
 	location = root
 	is_triggered_only = yes
-
 	pre_triggers = {
 		has_owner = yes
 	}
-
 	trigger = {
 		has_modifier = EaC_underground_railroad_expanded
 		owner = {
 			has_country_resource = { type = exotic_gases amount > 10 }
 		}
 	}
-
 	immediate = {
 		owner = {
 			add_resource = { exotic_gases = -10 }
 		}
 	}
-
 	option = {
 		name = EaC_civic_mechanic_events.204.a
 		tooltip = {
@@ -11791,8 +10303,6 @@ carrier_event = {
 		}
 	}
 }
-
-# Mob Rule
 carrier_event = {
 	id = EaC_civic_mechanic_events.3300
 	title = EaC_civic_mechanic_events.300.name
@@ -11801,21 +10311,17 @@ carrier_event = {
 	show_sound = event_criminal_activity
 	location = root
 	is_triggered_only = yes
-
 	pre_triggers = {
 		has_owner = yes
 	}
-
 	trigger = {
 		has_modifier = EaC_labor_movements
 		NOT = { has_modifier = EaC_worker_commune }
 	}
-
 	immediate = {
 		remove_modifier = EaC_labor_movements
-		add_modifier = { modifier = "EaC_worker_commune" days = -1 }	# mob_rule replaced with --> EaC_worker_commune
+		add_modifier = { modifier = "EaC_worker_commune" days = -1 }
 	}
-
 	option = {
 		name = EaC_civic_mechanic_events.300.a
 		tooltip = {
@@ -11824,8 +10330,6 @@ carrier_event = {
 		}
 	}
 }
-
-# Protection Racket
 carrier_event = {
 	id = EaC_civic_mechanic_events.3301
 	title = EaC_civic_mechanic_events.301.name
@@ -11834,23 +10338,19 @@ carrier_event = {
 	show_sound = event_criminal_activity
 	location = root
 	is_triggered_only = yes
-
 	pre_triggers = {
 		has_owner = yes
 	}
-
 	trigger = {
 		has_modifier = EaC_worker_commune
 	}
-
 	immediate = {
-		add_modifier = { modifier = "EaC_labor_propaganda" years = 10 }	# protection_racket changed to --> EaC_labor_propaganda
+		add_modifier = { modifier = "EaC_labor_propaganda" years = 10 }
 		set_timed_carrier_flag = {
 			flag = EaC_planet_general_strike_flag
 			years = 10
 		}
 	}
-
 	option = {
 		name = EaC_civic_mechanic_events.301.a
 		tooltip = {
@@ -11858,8 +10358,6 @@ carrier_event = {
 		}
 	}
 }
-
-# Corrupt Administration
 carrier_event = {
 	id = EaC_civic_mechanic_events.3302
 	title = EaC_civic_mechanic_events.302.name
@@ -11868,23 +10366,19 @@ carrier_event = {
 	show_sound = event_criminal_activity
 	location = root
 	is_triggered_only = yes
-
 	pre_triggers = {
 		has_owner = yes
 	}
-
 	trigger = {
 		has_modifier = EaC_worker_commune
 	}
-
 	immediate = {
-		add_modifier = { modifier = "EaC_administration_strikes" years = 10 }		# corrupt_administration changed to --> EaC_administration_strikes
+		add_modifier = { modifier = "EaC_administration_strikes" years = 10 }
 		set_timed_carrier_flag = {
 			flag = EaC_planet_general_strike_flag
 			years = 10
 		}
 	}
-
 	option = {
 		name = EaC_civic_mechanic_events.302.a
 		tooltip = {
@@ -11892,8 +10386,6 @@ carrier_event = {
 		}
 	}
 }
-
-# Gangsters Assassinate Governor
 carrier_event = {
 	id = EaC_civic_mechanic_events.3303
 	title = EaC_civic_mechanic_events.303.name
@@ -11902,29 +10394,22 @@ carrier_event = {
 	show_sound = event_criminal_activity
 	location = root
 	is_triggered_only = yes
-
 	pre_triggers = {
 		has_owner = yes
 	}
-
 	trigger = {
 		has_modifier = EaC_worker_commune
 		exists = leader
 	}
-
 	immediate = {
 		leader = { save_event_target_as = governor_target }
-
-		owner = { set_country_flag = EaC_worker_commune_killed_governor }	# gangsters_killed_governor changed to --> EaC_worker_commune_killed_governor
+		owner = { set_country_flag = EaC_worker_commune_killed_governor }
 	}
-
 	option = {
 		name = EaC_civic_mechanic_events.303.a
 		leader = { kill_leader = { show_notification = no } }
 	}
 }
-
-# Gangsters Take Control of Trade
 carrier_event = {
 	id = EaC_civic_mechanic_events.3304
 	title = EaC_civic_mechanic_events.304.name
@@ -11933,23 +10418,19 @@ carrier_event = {
 	show_sound = event_criminal_activity
 	location = root
 	is_triggered_only = yes
-
 	pre_triggers = {
 		has_owner = yes
 	}
-
 	trigger = {
 		has_modifier = EaC_worker_commune
 	}
-
 	immediate = {
-		add_modifier = { modifier = "EaC_worker_commune_means_of_production" years = 10 }			# trade_pilfering changed to --> EaC_worker_commune_means_of_production
+		add_modifier = { modifier = "EaC_worker_commune_means_of_production" years = 10 }
 		set_timed_carrier_flag = {
 			flag = EaC_planet_general_strike_flag
 			years = 10
 		}
 	}
-
 	option = {
 		name = EaC_civic_mechanic_events.40.a
 		tooltip = {
@@ -11957,14 +10438,10 @@ carrier_event = {
 		}
 	}
 }
-
-# Criminal Branch Office Closes
 event = {
 	id = EaC_civic_mechanic_events.31000
 	hide_window = yes
-
 	is_triggered_only = yes
-
 	trigger = {
 		any_playable_country = {
 			any_owned_planet = {
@@ -11977,7 +10454,6 @@ event = {
 			}
 		}
 	}
-
 	immediate = {
 		random_list = {
 			19 = {}
@@ -12010,8 +10486,6 @@ event = {
 		}
 	}
 }
-
-# Criminal Branch Office Closes (Planet Owner)
 carrier_event = {
 	id = EaC_civic_mechanic_events.31001
 	title = EaC_civic_mechanic_events.1001.name
@@ -12019,9 +10493,7 @@ carrier_event = {
 	picture = GFX_evt_dark_alley
 	show_sound = event_criminal_activity
 	location = root
-
 	is_triggered_only = yes
-
 	trigger = {
 		planet_crime < 1
 		has_branch_office = yes
@@ -12030,14 +10502,11 @@ carrier_event = {
 			NOT = { has_country_flag = criminal_branch_closed_cooldown }
 		}
 	}
-
 	immediate = {
-		# 10 year cooldown
 		branch_office_owner = {
 			set_timed_country_flag = { flag = criminal_branch_closed_cooldown years = 10 }
 		}
 	}
-
 	option = {
 		name = EaC_civic_mechanic_events.1001.a
 		close_branch_office = yes
@@ -12049,8 +10518,6 @@ carrier_event = {
 		}
 	}
 }
-
-# Criminal Branch Office Closes (Office Owner)
 country_event = {
 	id = EaC_civic_mechanic_events.31002
 	title = EaC_civic_mechanic_events.1002.name
@@ -12058,36 +10525,26 @@ country_event = {
 	picture = GFX_evt_dark_alley
 	show_sound = event_criminal_activity
 	location = from
-
 	is_triggered_only = yes
-
 	option = {
 		name = UNFORTUNATE
 		custom_tooltip = EaC_civic_mechanic_events.1002.tooltip
 	}
 }
-
-#####################################################################################################
-
-#####################################################################################################
-# Pop Abducted
 pop_group_event = {
 	id = action.121
 	title = OK
 	desc = OK
-
 	hide_window = yes
 	is_triggered_only = yes
-
 	trigger = { 
 		from = { 
 			NOT = { 
 				has_orbital_bombardment_stance = EaC_liberate_slaves 
-				has_carrier_flag = recently_raided	#So that you will not have multiples of the same notification pending
+				has_carrier_flag = recently_raided
 			} 
 		} 
 	}
-
 	immediate = {
 		from = {
 			set_timed_carrier_flag = {
@@ -12146,112 +10603,18 @@ pop_group_event = {
 		}
 	}
 }
-
-# Last Primitive Pop Abducted (HIDDEN)
-#pop_group_event = {	Steam: No need to overwrite vanilla events if we don't change them
-#	id = action.122
-#	hide_window = yes
-#
-#	is_triggered_only = yes
-#
-#	trigger = {
-#		from = { pop_amount = 0 }
-#	}
-#
-#	immediate = {
-#		from = {
-#			if = {
-#				limit = { has_observation_outpost = yes }
-#				observation_outpost = {
-#					owner = {
-#						save_event_target_as = obsv_post_owner
-#						country_event = { id = action.123 }
-#					}
-#					dismantle = yes
-#				}
-#			}
-#		}
-#		owner = {
-#			if = {
-#				limit = {
-#					NAND = {
-#						exists = event_target:obsv_post_owner
-#						is_same_value = event_target:obsv_post_owner
-#					}
-#				}
-#				save_event_target_as = abductor
-#				country_event = { id = action.123 }
-#			}
-#		}
-#		from = {
-#			solar_system = {
-#				if = {
-#					limit = { exists = space_owner }
-#					space_owner = {
-#						if = {
-#							limit = {
-#								NOT = { is_same_value = event_target:abductor }
-#								NAND = {
-#									exists = event_target:obsv_post_owner
-#									is_same_value = event_target:obsv_post_owner
-#								}
-#							}
-#							country_event = { id = action.123 }
-#						}
-#					}
-#				}
-#			}
-#		}
-#	}
-#}
-
-# Last Primitive Pop Abducted
-#country_event = {	Steam: We don't even change this, why keep it?
-#	id = action.123
-#	title = "action.123.name"
-#	desc = "action.123.desc"
-#	picture = GFX_evt_surrender
-#	show_sound = event_screams
-#	location = fromfrom
-#
-#	is_triggered_only = yes
-#
-#	option = {
-#		trigger = {
-#			NOT = {
-#				from = {
-#					is_owned_by = root
-#				}
-#			}
-#		}
-#		name = DISCONCERTING
-#	}
-#	option = {
-#		trigger = {
-#			from = {
-#				is_owned_by = root
-#			}
-#		}
-#		name = action.123.a
-#	}
-#}
-###################################################################
-# Pop Abducted
 pop_group_event = {
 	id = EaC_civic_mechanic_events.4121
 	title = OK
 	desc = OK
-
 	hide_window = yes
 	is_triggered_only = yes
-
 	trigger = { 
 		from = { 
 			has_orbital_bombardment_stance = EaC_liberate_slaves 
-			NOT = {  has_carrier_flag = recently_raided }	#So that you will not have multiples of the same notification pending
+			NOT = {  has_carrier_flag = recently_raided }
 		} 
 	}
-
 	immediate = {
 		from = {
 			set_timed_carrier_flag = {
@@ -12310,18 +10673,13 @@ pop_group_event = {
 		}
 	}
 }
-
-# Last Primitive Pop Abducted (HIDDEN)
 pop_group_event = {
 	id = EaC_civic_mechanic_events.4122
 	hide_window = yes
-
 	is_triggered_only = yes
-
 	trigger = {
 		from = { pop_amount = 0 }
 	}
-
 	immediate = {
 		from = {
 			if = {
@@ -12368,8 +10726,6 @@ pop_group_event = {
 		}
 	}
 }
-
-# Last Primitive Pop Abducted
 country_event = {
 	id = EaC_civic_mechanic_events.4123
 	title = "EaC_civic_mechanic_events.4123.name"
@@ -12377,9 +10733,7 @@ country_event = {
 	picture = GFX_evt_surrender
 	show_sound = event_screams
 	location = fromfrom
-
 	is_triggered_only = yes
-
 	option = {
 		trigger = {
 			NOT = {
@@ -12399,19 +10753,10 @@ country_event = {
 		name = EaC_civic_mechanic_events.4123.a
 	}
 }
-
-############################
-#
-# Resort World Civilian Cruise
-#
-############################
-# Resort World Cruise enters orbit
 fleet_event = {
 	id = EaC_civic_mechanic_events.5001
 	hide_window = yes
-
 	is_triggered_only = yes
-	
 	trigger = { 
 		OR = {
 			is_ship_size = civilian_resort_colony_cruise
@@ -12423,7 +10768,6 @@ fleet_event = {
 			is_owned_by = root.owner
 		}
 	}
-
 	immediate = {
 		FROM = {
 			add_modifier = {
@@ -12438,18 +10782,13 @@ fleet_event = {
 		}
 	}
 }
-
-# Check for Systems without Resort Ships (clean-up)
 country_event = {
 	id = EaC_civic_mechanic_events.5002
 	hide_window = yes
-
 	is_triggered_only = yes
-	
 	trigger = { 
 		any_planet_within_border = { has_modifier = resort_colony_branch } 
 	}
-
 	immediate = {
 		every_system_within_border = {
 			limit = { 
@@ -12476,7 +10815,7 @@ country_event = {
 				limit = { 
 					any_system_planet = { 
 						has_modifier = resort_colony_branch 
-						has_modifier = resort_colony		#Has Both
+						has_modifier = resort_colony
 					}
 				}
 				random_system_planet = {
@@ -12515,14 +10854,10 @@ country_event = {
 		}
 	}
 }
-
-# Resort World Cruise Travels Randomly
 fleet_event = {
 	id = EaC_civic_mechanic_events.5003
 	hide_window = yes
-
 	is_triggered_only = yes
-
 	immediate = {
 		owner = {
 			random_planet_within_border = {
@@ -12546,12 +10881,6 @@ fleet_event = {
 		}
 	}
 }
-
-#####################################################
-#### Guided Sapience Stone-Age Primitive Mechanic ###
-#####################################################
-
-#Guided Sapience create pre-sapients
 carrier_event = {
 	id = cyber.7000
 	title = cyber.7000.name
@@ -12567,12 +10896,10 @@ carrier_event = {
 		NOT = { has_carrier_flag = pre_sapient_planet }
 		is_artificial = no
 	}
-	
 	immediate = { 
 		remove_carrier_flag = create_presapients_no_colonize
 		hidden_effect = { carrier_event = { id = cyber.7010 } }
 	}
-
 	option = {
 		name = cyber.7000.a
 		 ai_chance = {
@@ -12604,7 +10931,6 @@ carrier_event = {
 			}
 		}
 	}
-	
 	option = {
 		name = EaC_civic_mechanic_events.9.b
 		allow = { owner = { has_technology = tech_epigenetic_triggers } }
@@ -12629,7 +10955,7 @@ carrier_event = {
 					change_species_characteristics = {
 						sapient = yes
 						add_trait = trait_uplifted
-						add_traits_at_start_of_list = yes # optional, pushes out other traits if needed
+						add_traits_at_start_of_list = yes
 					}
 				}
 				set_pop_group_flag = presapients_guided_flag
@@ -12647,7 +10973,6 @@ carrier_event = {
 		hidden_effect = {
 			set_owner = last_created_country
 			last_created_country = { 
-				#add_tech_progress_situation = yes
 				set_pre_ftl_age_effect = { PRE_FTL_AGE = stone_age } 
 				every_owned_pop_group = {
 					limit = { 
@@ -12674,10 +10999,10 @@ carrier_event = {
 						if = { 
 							limit = { NOT = { has_modifier = origin_slavers_modifier } }
 							add_modifier = {
-								modifier = origin_slavers_modifier	#For Extra Civic Slot
+								modifier = origin_slavers_modifier
 							}
 						}
-						force_add_civic = civic_the_obelisk	#Primitive Society gets obelisk
+						force_add_civic = civic_the_obelisk
 					}
 				}
 				every_owned_pop_group = {
@@ -12687,20 +11012,15 @@ carrier_event = {
 					remove_pop_group_flag = presapients_guided_flag
 				}
 			}
-			#setup_pre_ftl_planet = yes	#Cog Note - I don't know if they should get many bonus pops. Probably just a bit like colony ship gives
 		}
 	}
 	after = {
-		#hidden_effect = {
-		#	remove_carrier_flag = create_presapients_no_colonize
-		#	carrier_event = { id = cyber.7010 }
-		#}
 		if = {
 			limit = { has_modifier = d_genesis_preserve }
 			remove_deposit = d_genesis_preserve
 		}
 		if = {
-			limit = { solar_system = { owner = { has_origin = origin_slavers } } }	#MSI places obelisks instead
+			limit = { solar_system = { owner = { has_origin = origin_slavers } } }
 			ROOT = { 
 				if = {
 					limit = { NOT = { has_modifier = PrimPlayer_the_obelisk } }
@@ -12721,14 +11041,6 @@ carrier_event = {
 		}
 	}
 }
-
-
-############################
-#
-# 
-#
-############################
-# Starting Relic Trophy (Archeology Content)
 country_event = {
 	id = EaC_civic_mechanic_events.6001
 	title = EaC_civic_mechanic_events.6001.name
@@ -12738,15 +11050,10 @@ country_event = {
 	location = ROOT.capital_scope
 	trackable = yes
 	is_triggered_only = yes
-	
 	trigger = { 
-		
 	}
-
 	immediate = {
-		
 	}
-	
 	option = {
 		name = cyber.7000.a
 		 ai_chance = {
