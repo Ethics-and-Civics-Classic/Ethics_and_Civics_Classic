@@ -1,4 +1,3 @@
-#This effect is used to predict if you are going over 10 insights or not when you gain insights because locked random lists.
 set_predictive_observation_insight = {
 	set_variable = {
 		which = observation_predictive_insight_change
@@ -91,13 +90,7 @@ set_predictive_observation_insight = {
 	}
 	clear_variable = observation_predictive_insight_change
 }
-
 add_observation_insight_effect = {
-	# Accepts the following parameters:
-	# VALUE = int, amount of observation insights gained.
-	# OUTPOST is the scope of the outpost around the planet that this insight occured on.
-	# Whenever 10 observation insights are gained, a random Observation Technology is granted.
-	# When calling this effect, you can set a country flag of physics_insight, society_insights or engineering_insights to determine the tech granted.
 	hidden_effect = {
 		set_variable = {
 			which = observation_insight_change
@@ -212,7 +205,6 @@ add_observation_insight_effect = {
 		}
 	}
 	if = {
-		# Check that you have discovered 10 insights.
 		limit = {
 			OR = {
 				check_variable = {
@@ -567,7 +559,6 @@ add_observation_insight_effect = {
 	remove_country_flag = society_insights
 	remove_country_flag = engineering_insights
 }
-
 create_MSI_effect = {
 	create_species = {
 		name = random
@@ -610,7 +601,7 @@ create_MSI_effect = {
 			ethos = {
 				ethic = ethic_xenophile
 				ethic = ethic_authoritarian
-				ethic = ethic_fanatic_capitalism # E&CC Compatibility and twist
+				ethic = ethic_fanatic_capitalism
 				ethic = ethic_industrial
 			}
 			civics = {
@@ -642,7 +633,6 @@ create_MSI_effect = {
 				every_country = {
 					limit = {
 						has_slave_origin = yes
-						#Cog Note - These origins below have not met MSI yet
 						NOR = {
 							has_civic = PrimPlayer_civic_the_obelisk
 							has_civic = civic_the_obelisk
@@ -699,7 +689,7 @@ create_MSI_effect = {
 			ethos = {
 				ethic = ethic_xenophile
 				ethic = ethic_authoritarian
-				ethic = ethic_fanatic_capitalism # E&CC Compatibility and twist
+				ethic = ethic_fanatic_capitalism
 				ethic = ethic_industrial
 			}
 			civics = {
@@ -731,7 +721,6 @@ create_MSI_effect = {
 				every_country = {
 					limit = {
 						has_slave_origin = yes
-						#Cog Note - These origins below have not met MSI yet
 						NOR = {
 							has_civic = PrimPlayer_civic_the_obelisk
 							has_civic = civic_the_obelisk
@@ -762,7 +751,6 @@ create_MSI_effect = {
 			}
 		}
 	}
-
 	create_colony = {
 		owner = event_target:MSI_country
 	}
@@ -776,7 +764,6 @@ create_MSI_effect = {
 		log = "MSI CREATED"
 	}
 }
-
 generate_slaver_bonus = {
 	set_timed_carrier_flag = {
 		flag = ignore_ai_building_limitations
@@ -800,7 +787,6 @@ generate_slaver_bonus = {
 	add_district_and_planet_size_if_needed_effect = {
 		district = district_farming
 	}
-
 	owner = {
 		set_policy = {
 			policy = slavery
@@ -808,15 +794,12 @@ generate_slaver_bonus = {
 			cooldown = no
 		}
 	}
-
 	while = {
 		limit = { pop_amount > 3600 }
 		random_owned_pop_group = {
 			kill_single_pop = yes
 		}
 	}
-
-	# Checking if there are any other pre-ftls to abduct
 	while = {
 		limit = { pop_amount < 5200 }
 		if = {
@@ -838,7 +821,6 @@ generate_slaver_bonus = {
 					is_preftl_but_not_special = yes
 				}
 				owner_species = {
-					# first species to get kidnapped becomes the species of the debt collectors
 					save_event_target_as = random_primitive_species
 					if = {
 						limit = {
@@ -849,19 +831,16 @@ generate_slaver_bonus = {
 						save_global_event_target_as = debt_collectors_species
 					}
 				}
-
 				prev.owner = {
 					set_visited = prev.capital_scope.solar_system
 				}
 			}
-
 			create_pop_group = {
 				species = event_target:random_primitive_species
 				effect = {
 					save_event_target_as = last_created_pop_group
 				}
 			}
-
 			event_target:last_created_pop_group = {
 				set_citizenship_type = {
 					type = citizenship_slavery
@@ -869,14 +848,11 @@ generate_slaver_bonus = {
 			}
 		}
 	}
-
 	while = {
 		limit = { pop_amount < 8100 }
-
 		random_country = {
 			limit = {
 				has_slave_origin = yes
-				#Cog Note - These origins below have not met MSI yet
 				NOR = {
 					has_civic = PrimPlayer_civic_the_obelisk
 					has_civic = civic_the_obelisk
@@ -887,16 +863,13 @@ generate_slaver_bonus = {
 					has_origin = origin_primitive_player_early_space_age
 				}
 			}
-
 			owner_species = {
 				save_event_target_as = random_slave_species
 			}
-
 			prev.owner = {
 				set_visited = prev.capital_scope.solar_system
 			}
 		}
-
 		create_pop_group = {
 			species = event_target:random_slave_species
 			effect = {
@@ -909,14 +882,11 @@ generate_slaver_bonus = {
 			}
 		}
 	}
-
 	owner = {
-		# Unlocks slave processing facilities
 		give_technology = {
 			message = no
 			tech = tech_neural_implants
 		}
-		# Unlocks gene clinics
 		give_technology = {
 			message = no
 			tech = tech_frontier_health
@@ -937,7 +907,6 @@ generate_slaver_bonus = {
 	add_building = building_slave_processing
 	add_building = building_precinct_house
 	add_building = building_medical_2
-
 	owner = {
 		add_resource = {
 			minerals = 2400
@@ -948,7 +917,6 @@ generate_slaver_bonus = {
 			influence = 600
 		}
 	}
-
 	owner = {
 		create_fleet = {
 			effect = {
@@ -997,7 +965,6 @@ generate_slaver_bonus = {
 		}
 	}
 }
-
 uplift_pre_ftl_with_origin_effect = {
 	random_country = {
 		limit = {
@@ -1116,9 +1083,6 @@ uplift_pre_ftl_with_origin_effect = {
 		}
 	}
 }
-
-### Fear of the Dark ###
-
 create_fear_of_the_dark_country = {
 	create_country = {
 		name = {
@@ -1134,12 +1098,11 @@ create_fear_of_the_dark_country = {
 		ethos = {
 			ethic = ethic_fanatic_xenophobe
 			ethic = ethic_egalitarian
-			ethic = ethic_socialism # E&CC Compatibility
-			ethic = ethic_green # E&CC Compatibility
+			ethic = ethic_socialism
+			ethic = ethic_green
 		}
-
 		flag = random
-		origin = "origin_fear_of_the_dark" # Should only be visible if they become spacefaring
+		origin = "origin_fear_of_the_dark"
 		type = primitive
 		effect = {
 			set_country_flag = early_space_age

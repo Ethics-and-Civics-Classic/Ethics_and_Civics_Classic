@@ -1,14 +1,4 @@
-############################
-#
-# Aquatics Events
-#
-# Written by Pierre du Plessis
-#
-############################
-
 namespace = aquatics
-
-# Happy Dragon wants to start a family with you
 country_event = {
 	id = aquatics.120
 	title = aquatics.120.diplo_name
@@ -18,11 +8,9 @@ country_event = {
 	show_sound = event_mystic_reveal
 	diplomatic = yes
 	is_triggered_only = yes
-
 	picture_event_data = {
 		room = no_video_feed_room
 	}
-
 	trigger = {
 		OR = {
 			has_origin = origin_here_be_dragons
@@ -31,22 +19,17 @@ country_event = {
 		}
 		has_country_flag = origin_dragon_not_ready
 		has_non_hostile_origin_dragon_trigger = yes
-		if = { #Finished ascension path or quite far with all the traditions
+		if = {
 			limit = {
 				OR = {
-					# Genetic Ascension
 					has_tradition = tr_genetics_finish
 					has_tradition = tr_purity_finish
 					has_tradition = tr_cloning_finish
 					has_tradition = tr_mutation_finish
-					# Cybernetic Ascension
 					has_tradition = tr_cybernetics_assimilator_finish
 					has_tradition = tr_cybernetics_finish
-					# Psionic Ascension
 					has_finished_psionic_tradition = yes
-					# Synthetic Ascension
 					has_tradition = tr_synthetics_finish
-					# Machine Ascension
 					has_tradition = tr_modularity_finish
 					has_tradition = tr_nanotech_finish
 					has_tradition = tr_virtuality_finish
@@ -56,7 +39,6 @@ country_event = {
 		}
 		else = { num_ascension_perks >= 6 }
 	}
-
 	immediate = {
 		remove_country_flag = origin_dragon_not_ready
 		random_country = {
@@ -64,7 +46,6 @@ country_event = {
 			save_event_target_as = dragon_country
 		}
 	}
-
 	option = {
 		name = aquatics.120.dialog.1
 		response_text = aquatics.120.dialog.1.response
@@ -85,11 +66,9 @@ country_event = {
 		response_text = aquatics.120.dialog.4.response
 		is_dialog_only = yes
 	}
-
-	option = { #accept, of course
+	option = {
 		name = aquatics.120.A
 		response_text = aquatics.120.A.response
-
 		event_target:dragon_country = {
 			random_controlled_fleet = {
 				hidden_effect = { clear_fleet_actions = this }
@@ -107,12 +86,10 @@ country_event = {
 			factor = 1
 		}
 	}
-
-	option = { #reject, just because
+	option = {
 		name = aquatics.120.B
 		response_text = aquatics.120.B.response
 		custom_tooltip = aquatics.120.B.tooltip
-
 		add_resource = {
 			influence = 500
 		}
@@ -128,10 +105,6 @@ country_event = {
 		}
 	}
 }
-
-# Notification that Dragon goes Vrrrawr! - vrrrawred empire
-# on_entering_system_fleet
-# from = system
 fleet_event = {
 	id = aquatics.180
 	title = aquatics.180.name
@@ -139,7 +112,6 @@ fleet_event = {
 	picture = GFX_evt_here_be_dragons
 	show_sound = event_aqu_dragon
 	is_triggered_only = yes
-
 	trigger = {
 		from = {
 			has_star_flag = here_be_dragons_system
@@ -163,14 +135,12 @@ fleet_event = {
 				}
 			}
 		}
-		fleet_power > from.starbase.fleet.trigger:fleet_power #there are some pathetic early game mobs that show up, don't really wanna fire the event for those
+		fleet_power > from.starbase.fleet.trigger:fleet_power
 		NOT = { is_ship_size = space_dragon_origin }
 	}
-
 	immediate = {
-		from = { #first time notification for owner
+		from = {
 			set_star_flag = dragon_attack@root.owner
-
 			if = {
 				limit = {
 					any_system_planet = {
@@ -206,15 +176,10 @@ fleet_event = {
 			}
 		}
 	}
-
 	option = {
 		name = BATTLESTATIONS
 	}
 }
-
-# Notification that Dragon goes Vrrrawr! - dragon empire
-# from = attacking fleet
-# fromfrom = system
 country_event = {
 	id = aquatics.185
 	title = aquatics.185.name
@@ -243,7 +208,6 @@ country_event = {
 	picture = GFX_evt_here_be_dragons
 	show_sound = event_aqu_dragon
 	is_triggered_only = yes
-
 	immediate = {
 		if = {
 			limit = {
@@ -284,7 +248,6 @@ country_event = {
 				is_gestalt = yes
 			}
 		}
-
 		if = {
 			limit = {
 				has_country_flag = landed_dragon_takeoff
@@ -297,10 +260,6 @@ country_event = {
 		}
 	}
 }
-
-
-# Dragon Material Study
-# on_tech_increased
 country_event = {
 	id = aquatics.190
 	title = aquatics.190.name
@@ -319,18 +278,17 @@ country_event = {
 	picture = GFX_evt_here_be_dragons
 	show_sound = event_aqu_dragon
 	is_triggered_only = yes
-
 	trigger = {
 		OR = {
 			has_origin = origin_here_be_dragons
 			has_civic = PrimPlayer_civic_here_be_dragons
 			has_civic = civic_here_be_dragons
 		}
-		years_passed > 12 #It should happen after the Hungry Dragon chain
+		years_passed > 12
 		NOT = { has_country_flag = dragon_materials_study }
 		if = {
-			limit = { years_passed < 50 } #upper limit in case people don't research the right techs
-			calc_true_if = { #know a bit of xenobiology
+			limit = { years_passed < 50 }
+			calc_true_if = {
 				amount >= 2
 				has_technology = tech_alien_life_studies
 				has_technology = tech_arcane_deciphering
@@ -340,9 +298,8 @@ country_event = {
 				has_technology = tech_gene_expressions
 				has_technology = tech_regenerative_hull_tissue
 			}
-			calc_true_if = { #know a bit of space materials
+			calc_true_if = {
 				amount >= 2
-	#			has_technology = tech_ship_armor_1 #starting tech
 				has_technology = tech_ship_armor_2
 				has_technology = tech_ship_armor_3
 				has_technology = tech_ship_armor_4
@@ -358,7 +315,6 @@ country_event = {
 		}
 		has_non_hostile_origin_dragon_trigger = yes
 	}
-
 	immediate = {
 		set_country_flag = dragon_materials_study
 		random_system_within_border = {
@@ -366,7 +322,6 @@ country_event = {
 			star = { save_event_target_as = dragon_star }
 		}
 	}
-
 	option = {
 		name = aquatics.190.A
 		enable_special_project = {
@@ -384,12 +339,6 @@ country_event = {
 		}
 	}
 }
-
-# This event tells the player if they entered the dragon system before establishing comms
-# on_entering_system_first_time
-# Scope = Ship
-# From = System
-# FromFrom = Country
 ship_event = {
 	id = aquatics.305
 	title = aquatics.305.name
@@ -397,7 +346,6 @@ ship_event = {
 	picture = GFX_evt_here_be_dragons
 	show_sound = event_aqu_dragon
 	is_triggered_only = yes
-
 	trigger = {
 		from = {
 			has_star_flag = here_be_dragons_system
@@ -423,23 +371,14 @@ ship_event = {
 		}
 		NOT = { is_ship_size = space_dragon_origin }
 	}
-
 	option = {
 		name = CURIOUS
 	}
 }
-
-# When you attack the dragon while you are doing the first contact story with it
-# on_fleet_combat_joined_attacker
-# This = Aggressor Fleet
-# From = Attacked Fleet
-# FromFrom = Additional Attacked Fleet (if part of ongoing combat)
-# FromFromFrom = Additional Attacked Fleet (if part of ongoing combat)
 fleet_event = {
 	id = aquatics.310
 	is_triggered_only = yes
 	hide_window = yes
-
 	trigger = {
 		from = {
 			is_ship_size = space_dragon_origin
@@ -455,7 +394,6 @@ fleet_event = {
 			}
 		}
 	}
-
 	immediate = {
 		owner = {
 			random_active_first_contact = {

@@ -1,270 +1,13 @@
-# Do not remove or rename this
-
-# Possible Variables for Buildings:
-# strategic_resource: strategic resource, deprecated, strategic resource used by the building.
-# allow: trigger to check for allowing construction of building.
-# prerequisites: Tech requirements for building.
-# empire_unique: boolean, can only build one if set to true.
-# cost: resource table, cost of building.
-# is_orbital: boolean, can only be built in orbital station.
-# modifier: modifier, deprecated, applies a modifier to planet; use planet_modifier instead.
-# planet_modifier, country_modifier, army_modifier: applies modifier to planet/country/armies
-# triggered_planet_modifier = { key (optional), potential, modifier }: applies conditional modifier to planet
-# base_buildtime: int, number of days for construction.
-# requires_pop, boolean, building will require a pop for production.
-# required_resources, resource table, required resources for production.
-# produced_resources, resource table, produced resources in production.
-# upgrades, buildings list, buildings this building can upgrade into.
-# is_listed, boolean, toggles if this building is shown in the non-upgrade buildable list.
-# planet_unique, toggles if one can build multiple of this type on a single planet.
-# ai_weight, weight for AI, default is set to one, weight set to 0 means that AI will never build it
-
 @primitive_upkeep = 1
-
-#
-# BALANCE
-# Can change the time and cost of all common buildings with these variables below
-#
-# @b0time = 120
-# @b0cost = 30
-# @b0effect = 1
-# @b0upkeep = 0.5
-#
-# @b1time = 210
-# @b1cost = 60
-# @b1effect = 2
-# @b1upkeep = 1
-#
-# @b2time = 180
-# @b2cost = 90
-# @b2effect = 3
-# @b2upkeep = 1.5
-#
-# @b3time = 180
-# @b3cost = 120
-# @b3effect = 4
-# @b3upkeep = 2
-#
-# @b4time = 180
-# @b4cost = 150
-# @b4effect = 5
-# @b4upkeep = 2.5
-#
-# @b5time = 180
-# @b5cost = 180
-# @b5effect = 8
-# @b5upkeep = 3
-#
-# @science1 = 1
-# @science2 = 2
-# @science3 = 3
-# @science4 = 4
-# @science5 = 6
-#
-# @natural_equilibrium_happiness = 0.02
-#
-##
-##	ENERGY
-##
-# building_primitive_power_plant = {
-#	can_build = yes					# Cog Note - Added for Update
-#	can_demolish = yes				# Cog Note - Added for Update
-#	can_be_ruined = no				# Cog Note - Added for Update
-#
-#	category = resource				# Cog Note - Added for Update
-#
-#	building_sets = {
-#		pre_ftl
-#	}
-#	
-#	base_buildtime = @b0time
-#	
-#	potential = {
-#		exists = owner
-#		OR = {
-#			planet = {
-#				NOT = { 
-#					is_planet_class = pc_habitat
-#					owner = { has_technology = 'tech_power_plant_2'}
-#				}
-#			}
-#			owner = {
-#				is_primitive = yes
-#				is_hive_empire = no
-#				OR = {
-#					has_country_flag = steam_age
-#					has_country_flag = machine_age
-#					has_country_flag = industrial_age
-#					has_country_flag = atomic_age
-#					has_country_flag = early_space_age
-#				}
-#			}
-#		}
-#	}
-#	
-#	planet_modifier = {
-#		pop_happiness = -0.02
-#		job_primitive_technician_add = 200
-#	}
-#	
-#	upgrades = {
-#		building_power_plant_1
-#	}
-#	
-#}
-#
-##
-##	FOOD
-##
-#
-# building_primitive_farm = {
-#	tags = { hydroponics_farm }
-#	icon = 'building_primitive_farm'
-#	can_build = yes						# Cog Note - Added for Update
-#	can_demolish = yes					# Cog Note - Added for Update
-#	can_be_ruined = no					# Cog Note - Added for Update
-#
-#	category = resource					# Cog Note - Added for Update
-#
-#	building_sets = {
-#		pre_ftl
-#	}
-#
-#	base_buildtime = @b0time
-#	
-#	show_tech_unlock_if = { is_machine_empire = no }
-#
-#	potential = {
-#		exists = owner
-#		OR = {
-#			AND = {
-#				NOT = {
-#					owner = { is_machine_empire = yes }
-#					owner = { has_technology = 'tech_industrial_farming_2' }
-#				}
-#				OR = {
-#					# has_origin = origin_primitive_player_pre_industrial_age
-#					# has_origin = origin_primitive_player_industrial_age
-#					# has_origin = origin_primitive_player_machine_age
-#					# has_origin = origin_primitive_player_atomic_age
-#					# has_origin = origin_primitive_player_early_space_age
-#					any_situation = { is_situation_type = PrimPlayer_situation } # Much more efficient trigger
-#				}
-#			}
-#			owner = {
-#				is_primitive = yes
-#				is_hive_empire = no
-#				OR = {
-#					has_country_flag = machine_age
-#					has_country_flag = industrial_age
-#					has_country_flag = atomic_age
-#					has_country_flag = early_space_age
-#				}
-#				is_lithoid_empire = no
-#			}
-#		}
-#	}
-#	
-#	destroy_trigger = {
-#		exists = owner
-#		owner = {
-#			OR = {
-#				is_primitive = no
-#				is_hive_empire = yes
-#				is_lithoid_empire = yes
-#			}
-#		}
-#	}
-#	
-#	planet_modifier = {
-#		pop_happiness = -0.01
-#		job_primitive_farmer_add = 1000
-#	}
-#		
-#
-#}
-#
-##
-##	MINERALS
-##
-#
-#
-# building_primitive_factory = {
-#	can_build = yes							# Cog Note - Added for Update
-#	can_demolish = yes						# Cog Note - Added for Update
-#	can_be_ruined = no						# Cog Note - Added for Update
-#	tags = { mining_network }
-#	icon = 'building_primitive_factory'
-#	base_buildtime = @b0time
-#	
-#	category = resource						# Cog Note - Added for Update
-#
-#	building_sets = {
-#		pre_ftl
-#	}
-#	
-#	potential = {
-#		exists = owner
-#		OR = {
-#			OR = {
-#				# has_origin = origin_primitive_player_pre_industrial_age
-#				# has_origin = origin_primitive_player_industrial_age
-#				# has_origin = origin_primitive_player_machine_age
-#				# has_origin = origin_primitive_player_atomic_age
-#				# has_origin = origin_primitive_player_early_space_age
-#				any_situation = { is_situation_type = PrimPlayer_situation } # Much more efficient trigger
-#			}
-#			owner = {
-#				is_primitive = yes
-#				is_hive_empire = no
-#				OR = {
-#					has_country_flag = steam_age
-#					has_country_flag = machine_age
-#					has_country_flag = industrial_age
-#					has_country_flag = atomic_age
-#					has_country_flag = early_space_age
-#				}
-#			}
-#		}
-#	}
-#	
-#	destroy_trigger = {
-#		exists = owner
-#		owner = {
-#			OR = {
-#				has_technology = 'tech_mineral_processing_1'
-#				is_primitive = no
-#				is_hive_empire = yes
-#			}
-#		}
-#	}
-#	
-#	planet_modifier = {
-#		pop_happiness = -0.02
-#		job_primitive_laborer_add = 200
-#	}
-#	
-#}
-##
-## BASIC SCIENCE
-##
-#
-#
-##
-## UNITY
-##
-#
 building_primitive_precinct_house = {
 	base_buildtime = @b0_time
-	icon = building_precinct_house	#Temporary Need a new icon
+	icon = building_precinct_house
 	category = government
-	
 	building_sets = {
 		government
 		urban
 		pre_ftl
 	}
-
 	allow = {
 		hidden_trigger = {
 			OR = {
@@ -276,7 +19,6 @@ building_primitive_precinct_house = {
 			}
 		}
 	}
-	
 	potential = {
 		exists = owner
 		NOT = { has_modifier = slave_colony }
@@ -297,7 +39,6 @@ building_primitive_precinct_house = {
 			}
 		}
 	}
-
 	destroy_trigger = {
 		exists = owner
 		OR = {
@@ -305,15 +46,9 @@ building_primitive_precinct_house = {
 			has_modifier = slave_colony
 		}
 	}
-	
-	#convert_to = {
-	#	building_state_academy
-	#}
-
 	planet_modifier = {
 		job_enforcer_add = 75
 	}
-
 	resources = {
 		category = planet_buildings
 		cost = {
@@ -329,40 +64,23 @@ building_primitive_precinct_house = {
 			energy = 1
 		}
 	}
-
 	prerequisites = {
 		"tech_primitive_nation_state_government"
 	}
-
-	#triggered_desc = {
-	#	text = job_enforcer_effect_desc
-	#}
-
 	show_tech_unlock_if = {
 		is_regular_empire = yes
 	}
-
-	#upgrades = {
-		#building_hall_judgment
-	#}
 }
-#
-##
-## OTHER
-##
 building_early_spaceport = {
 	can_build = yes
 	base_buildtime = 180
 	can_demolish = yes
 	can_be_ruined = no
 	planet_limit = 1
-
 	category = resource
-	
 	building_sets = {
 		pre_ftl
 	}
-
 	potential = {
 		exists = owner
 		owner = {
@@ -372,14 +90,12 @@ building_early_spaceport = {
 			is_nomadic = no
 		}
 	}
-
 	destroy_trigger = {
 		exists = owner
 		owner = {
 			num_starbases > 0
 		}
 	}
-	
 	resources = {
 		category = planet_buildings
 		upkeep = {
@@ -391,13 +107,10 @@ building_early_spaceport = {
 			minerals = @b1_minerals
 		}
 	}
-
 	custom_tooltip = "building_early_spaceport_tooltip"
-	
 	prerequisites = {
 		"tech_primitive_early_aerospace_rocket"
 	}
-	
 	upgrades = {
 		"building_early_spaceport_launch"
 	}
@@ -408,13 +121,10 @@ building_early_spaceport_launch = {
 	can_demolish = yes
 	can_be_ruined = no
 	planet_limit = 1
-
 	category = resource
-	
 	building_sets = {
 		pre_ftl
 	}
-
 	potential = {
 		exists = owner
 		owner = {
@@ -424,7 +134,6 @@ building_early_spaceport_launch = {
 			is_nomadic = no
 		}
 	}
-	
 	resources = {
 		category = planet_buildings
 		upkeep = {
@@ -435,7 +144,6 @@ building_early_spaceport_launch = {
 			minerals = @b1_minerals
 		}
 	}
-	
 	on_built = { 
 		create_fleet = {
 			name = "NAME_Pre_FTL_Chemical_Ship"
@@ -453,15 +161,14 @@ building_early_spaceport_launch = {
 		}
 		hidden_effect = { 
 			if = {
-				limit = { NOT = { owner = { has_country_flag = PrimPlayer_first_orbital_station } } } #Since early spaceports can be built several times
+				limit = { NOT = { owner = { has_country_flag = PrimPlayer_first_orbital_station } } }
 				last_created_fleet = { 
-					fleet_event = { id = random_primitive_events.3 }	#First Launch to Space!
+					fleet_event = { id = random_primitive_events.3 }
 				}
 			}
 			carrier_event = { id = random_primitive_events.31 }
 		}
 	}
-
 	custom_tooltip = "NAME_Pre_FTL_Chemical_Ship"
 }
 building_fallout_shelter = {
@@ -470,26 +177,18 @@ building_fallout_shelter = {
 	can_demolish = yes
 	can_be_ruined = no
 	planet_limit = 1
-
 	category = resource
-	
 	building_sets = {
 		pre_ftl
 	}
-
 	potential = {
 		exists = owner
 		owner = {
 			OR = {
-				# has_origin = origin_primitive_player_pre_industrial_age
-				# has_origin = origin_primitive_player_industrial_age
-				# has_origin = origin_primitive_player_machine_age
-				# has_origin = origin_primitive_player_atomic_age
-				# has_origin = origin_primitive_player_early_space_age
 				AND = {
 					OR = {	
 						has_origin = origin_post_apocalyptic
-						any_situation = { is_situation_type = PrimPlayer_situation } # Much more efficient trigger
+						any_situation = { is_situation_type = PrimPlayer_situation }
 					}
 					has_technology = tech_primitive_atomic_age_weapons
 				}
@@ -506,23 +205,16 @@ building_fallout_shelter = {
 			}
 		}
 	}
-
 	destroy_trigger = {
 		exists = owner
 		owner = {
 			NOR = {
-				# has_origin = origin_primitive_player_pre_industrial_age
-				# has_origin = origin_primitive_player_industrial_age
-				# has_origin = origin_primitive_player_machine_age
-				# has_origin = origin_primitive_player_atomic_age
-				# has_origin = origin_primitive_player_early_space_age
-				any_situation = { is_situation_type = PrimPlayer_situation } # Much more efficient trigger
+				any_situation = { is_situation_type = PrimPlayer_situation }
 				is_primitive = yes
 				has_origin = origin_post_apocalyptic
 			}
 		}
 	}
-	
 	resources = {
 		category = planet_buildings
 		upkeep = {
@@ -533,7 +225,6 @@ building_fallout_shelter = {
 			minerals = @b1_minerals
 		}
 	}
-	
 	triggered_planet_modifier = {
 		potential = {
 			exists = owner
@@ -550,7 +241,6 @@ building_fallout_shelter = {
 			planet_technician_energy_produces_add = 1
 		}
 	}
-	
 	triggered_planet_modifier = {
 		potential = {
 			exists = owner
@@ -560,28 +250,14 @@ building_fallout_shelter = {
 			planet_stability_add = 10
 		}
 	}
-
 	custom_tooltip = "building_fallout_shelter_tt"
-	
 	prerequisites = {
 		"tech_primitive_atomic_age_weapons"
 	}
-	
 	upgrades = {
 		"building_storm_resistant_production"
 	}
 }
-#
-#####################
-# Pre-FTL Buildings #
-#####################
-
-
-
-###########################
-# Primitive Age Buildings #
-###########################
-
 building_crude_huts = {
 	capital = yes
 	can_build = yes
@@ -589,87 +265,60 @@ building_crude_huts = {
 	can_demolish = yes
 	can_be_ruined = no
 	position_priority = 0
-
 	category = amenity
-	
 	building_sets = {
 		pre_ftl
 	}
-
 	potential = {
 		exists = owner
 		owner = {
 			OR = {
-				# has_origin = origin_primitive_player_pre_industrial_age
-				# has_origin = origin_primitive_player_industrial_age
-				# has_origin = origin_primitive_player_machine_age
-				# has_origin = origin_primitive_player_atomic_age
-				# has_origin = origin_primitive_player_early_space_age
 				is_primitive = yes
 			}
 			is_hive_empire = no
 			has_country_flag = stone_age
 		}
 	}
-
 	destroy_trigger = {
 		exists = owner
 		owner = {
 			OR = {
 				NOT = {
-					# has_origin = origin_primitive_player_pre_industrial_age
-					# has_origin = origin_primitive_player_industrial_age
-					# has_origin = origin_primitive_player_machine_age
-					# has_origin = origin_primitive_player_atomic_age
-					# has_origin = origin_primitive_player_early_space_age
 					is_primitive = yes
 				}
 				is_hive_empire = yes
 			}
 		}
 	}
-
 	planet_modifier = {
 		planet_amenities_add = 500
 		planet_housing_add = 1000
 		planet_crime_add = -10
 	}
-	
 	prerequisites = {
 		"tech_pre_industrial_stone_construction"
 	}
-	
 	show_tech_unlock_if = {
 		is_hive_empire = no
 	}
-
 	upgrades = {
 		"building_primitive_dwellings"
 	}
 }
-
 building_primitive_dwellings = {
 	can_build = yes
 	base_buildtime = @b1_time
 	can_demolish = yes
 	can_be_ruined = no
-
 	category = amenity
-	
 	building_sets = {
 		pre_ftl
 	}
-
 	potential = {
 		exists = owner
 		owner = {
 			is_hive_empire = no
 			OR = {
-				# has_origin = origin_primitive_player_pre_industrial_age
-				# has_origin = origin_primitive_player_industrial_age
-				# has_origin = origin_primitive_player_machine_age
-				# has_origin = origin_primitive_player_atomic_age
-				# has_origin = origin_primitive_player_early_space_age
 				NOT = { has_technology = tech_pre_industrial_steel_construction }
 				AND = {
 					OR = {
@@ -684,66 +333,45 @@ building_primitive_dwellings = {
 			}
 		}
 	}
-
 	destroy_trigger = {
 		exists = owner
 		owner = {
 			OR = {
 				NOT = {
-					# has_origin = origin_primitive_player_pre_industrial_age
-					# has_origin = origin_primitive_player_industrial_age
-					# has_origin = origin_primitive_player_machine_age
-					# has_origin = origin_primitive_player_atomic_age
-					# has_origin = origin_primitive_player_early_space_age
-					any_situation = { is_situation_type = PrimPlayer_situation } # Much more efficient trigger
+					any_situation = { is_situation_type = PrimPlayer_situation }
 					is_primitive = yes
 				}
 				is_hive_empire = yes
 			}
 		}
 	}
-
 	planet_modifier = {
 		planet_housing_add = 1000
 	}
-	
 	prerequisites = {
 		"tech_pre_industrial_stone_construction"
 	}
-	
 	show_tech_unlock_if = {
 		is_hive_empire = no
 	}
-
 	upgrades = {
 		"building_urban_dwellings"
 	}
 }
-
-################################
-# Pre-Industrial Age Buildings #
-################################
 building_heritage_museum = {
 	base_buildtime = @b1_time
 	planet_limit = 1
 	category = unity
-	
 	building_sets = {
 		pre_ftl
 		unity
 	}
-
 	potential = {
 		exists = owner
 		owner = {
 			is_gestalt = no
 			is_megacorp = no
 			OR = {
-				# has_origin = origin_primitive_player_pre_industrial_age
-				# has_origin = origin_primitive_player_industrial_age
-				# has_origin = origin_primitive_player_machine_age
-				# has_origin = origin_primitive_player_atomic_age
-				# has_origin = origin_primitive_player_early_space_age
 				NOT = { has_technology = tech_cultural_heritage }
 				AND = {
 					OR = {
@@ -761,23 +389,16 @@ building_heritage_museum = {
 			is_ai = no
 		}
 	}
-
 	destroy_trigger = {
 		exists = owner
 		owner = {
 			NOT = {
-				# has_origin = origin_primitive_player_pre_industrial_age
-				# has_origin = origin_primitive_player_industrial_age
-				# has_origin = origin_primitive_player_machine_age
-				# has_origin = origin_primitive_player_atomic_age
-				# has_origin = origin_primitive_player_early_space_age
-				any_situation = { is_situation_type = PrimPlayer_situation } # Much more efficient trigger
+				any_situation = { is_situation_type = PrimPlayer_situation }
 				is_primitive = yes
 				is_gestalt = yes
 			}
 		}
 	}
-
 	resources = {
 		category = planet_buildings
 		produces = {
@@ -789,61 +410,45 @@ building_heritage_museum = {
 			minerals = @b1_minerals
 		}
 	}
-
 	planet_modifier = {
 		planet_jobs_unity_produces_mult = 0.025
-		#job_culture_worker_add = @b1_jobs 	#Steam: No longer a valid job
 		job_bureaucrat_add = @b1_jobs
 	}
-
 	triggered_desc = {
 		text = building_autochthon_monument_effect
 	}
-
 	triggered_desc = {
 		text = job_culture_worker_effect_desc
 	}
-
 	prerequisites = {
 		"tech_primitive_historical_archives"
 	}
-
 	upgrades = {
 		building_autochthon_monument
 	}
-
 	convert_to = {
 		building_corporate_monument
 		building_hive_primitive_node
 		building_machine_primitive_node
 	}
-
 	show_tech_unlock_if = {
 		is_megacorp = no
 		is_gestalt = no
 	}
 }
-
 building_corporate_heritage_museum = {
 	base_buildtime = @b1_time
 	planet_limit = 1
 	category = unity
-	
 	building_sets = {
 		pre_ftl
 		unity
 	}
-
 	potential = {
 		exists = owner
 		owner = {
 			is_megacorp = yes
 			OR = {
-				# has_origin = origin_primitive_player_pre_industrial_age
-				# has_origin = origin_primitive_player_industrial_age
-				# has_origin = origin_primitive_player_machine_age
-				# has_origin = origin_primitive_player_atomic_age
-				# has_origin = origin_primitive_player_early_space_age
 				NOT = { has_technology = tech_cultural_heritage }
 				AND = {
 					OR = {
@@ -861,23 +466,16 @@ building_corporate_heritage_museum = {
 			is_ai = no
 		}
 	}
-
 	destroy_trigger = {
 		exists = owner
 		owner = {
 			NOT = {
-				# has_origin = origin_primitive_player_pre_industrial_age
-				# has_origin = origin_primitive_player_industrial_age
-				# has_origin = origin_primitive_player_machine_age
-				# has_origin = origin_primitive_player_atomic_age
-				# has_origin = origin_primitive_player_early_space_age
-				any_situation = { is_situation_type = PrimPlayer_situation } # Much more efficient trigger
+				any_situation = { is_situation_type = PrimPlayer_situation }
 				is_primitive = yes
 				is_megacorp = yes
 			}
 		}
 	}
-
 	resources = {
 		category = planet_buildings
 		produces = {
@@ -889,41 +487,32 @@ building_corporate_heritage_museum = {
 			minerals = @b1_minerals
 		}
 	}
-
 	planet_modifier = {
 		planet_jobs_unity_produces_mult = 0.025
-		#job_culture_worker_add = @b1_jobs 	#Steam: No longer a valid job
 		job_bureaucrat_add = @b1_jobs
 	}
-
 	triggered_desc = {
 		text = building_autochthon_monument_effect
 	}
-
 	triggered_desc = {
 		text = job_culture_worker_effect_desc
 	}
-
 	prerequisites = {
 		"tech_primitive_historical_archives"
 	}
-
 	upgrades = {
 		building_corporate_monument
 	}
-
 	convert_to = {
 		building_heritage_museum
 		building_hive_primitive_node
 		building_machine_primitive_node
 	}
-
 	show_tech_unlock_if = {
 		is_megacorp = yes
 		is_gestalt = no
 	}
 }
-
 building_stone_palace = {
 	capital = yes
 	can_build = no
@@ -931,24 +520,16 @@ building_stone_palace = {
 	can_be_ruined = no
 	can_be_disabled = no
 	position_priority = 0
-
 	category = government
-	
 	building_sets = {
 		pre_ftl
 	}
-
 	potential = {
 		exists = owner
 		owner = {
 			is_hive_empire = no
 			OR = {
-				# has_origin = origin_primitive_player_pre_industrial_age
-				# has_origin = origin_primitive_player_industrial_age
-				# has_origin = origin_primitive_player_machine_age
-				# has_origin = origin_primitive_player_atomic_age
-				# has_origin = origin_primitive_player_early_space_age
-				any_situation = { is_situation_type = PrimPlayer_situation } # Much more efficient trigger
+				any_situation = { is_situation_type = PrimPlayer_situation }
 				AND = {
 					OR = {
 						has_country_flag = bronze_age
@@ -962,25 +543,18 @@ building_stone_palace = {
 			}
 		}
 	}
-
 	destroy_trigger = {
 		exists = owner
 		owner = {
 			OR = {
 				NOT = {
-					# has_origin = origin_primitive_player_pre_industrial_age
-					# has_origin = origin_primitive_player_industrial_age
-					# has_origin = origin_primitive_player_machine_age
-					# has_origin = origin_primitive_player_atomic_age
-					# has_origin = origin_primitive_player_early_space_age
-					any_situation = { is_situation_type = PrimPlayer_situation } # Much more efficient trigger
+					any_situation = { is_situation_type = PrimPlayer_situation }
 					is_primitive = yes
 				}
 				is_hive_empire = yes
 			}
 		}
 	}
-
 	convert_to = {
 		building_hive_capital
 		building_machine_capital
@@ -989,7 +563,6 @@ building_stone_palace = {
 		building_hab_fe_capital
 		building_colony_shelter_wilderness
 	}
-
 	planet_modifier = {
 		job_primitive_noble_add = 100
 		job_primitive_warrior_add = 100
@@ -999,50 +572,37 @@ building_stone_palace = {
 		planet_amenities_add = 2500
 		planet_crime_add = -10
 	}
-	
 	prerequisites = {
 		"tech_pre_industrial_stone_construction"
 	}
-	
 	show_tech_unlock_if = {
 		is_hive_empire = no
 	}
-	
 	resources = {
 		category = planet_buildings
 		cost = {
 			minerals = @b1_minerals
 		}
 	}
-
 	upgrades = {
 		"building_primitive_capital"
 	}
 }
-
 building_primitive_factory = {
 	can_build = yes
 	base_buildtime = @b1_time
 	can_demolish = yes
 	can_be_ruined = no
-
 	category = manufacturing
-	
 	building_sets = {
 		pre_ftl
 		trade
 	}
-
 	potential = {
 		exists = owner
 		owner = {
 			is_hive_empire = no
 			OR = {
-				# has_origin = origin_primitive_player_pre_industrial_age
-				# has_origin = origin_primitive_player_industrial_age
-				# has_origin = origin_primitive_player_machine_age
-				# has_origin = origin_primitive_player_atomic_age
-				# has_origin = origin_primitive_player_early_space_age
 				NOT = { has_technology = tech_basic_industry }
 				AND = {
 					OR = {
@@ -1057,25 +617,18 @@ building_primitive_factory = {
 			}
 		}
 	}
-
 	destroy_trigger = {
 		exists = owner
 		owner = {
 			OR = {
 				NOT = {
-					# has_origin = origin_primitive_player_pre_industrial_age
-					# has_origin = origin_primitive_player_industrial_age
-					# has_origin = origin_primitive_player_machine_age
-					# has_origin = origin_primitive_player_atomic_age
-					# has_origin = origin_primitive_player_early_space_age
-					any_situation = { is_situation_type = PrimPlayer_situation } # Much more efficient trigger
+					any_situation = { is_situation_type = PrimPlayer_situation }
 					is_primitive = yes
 				}
 				is_hive_empire = yes
 			}
 		}
 	}
-
 	triggered_planet_modifier = {
 		potential = {
 			exists = owner
@@ -1085,7 +638,6 @@ building_primitive_factory = {
 		}
 		job_primitive_laborer_add = @building_static_jobs
 	}
-
 	triggered_planet_modifier = {
 		potential = {
 			exists = owner
@@ -1095,7 +647,6 @@ building_primitive_factory = {
 		}
 		job_fabricator_add = @building_static_jobs
 	}
-	
 	triggered_planet_modifier = {
 		potential = {
 			planet = {
@@ -1104,17 +655,12 @@ building_primitive_factory = {
 		}
 		pop_environment_tolerance = -0.03
 	}
-	
-	#Cog Note - No polution if planet has #To Be Determined
-	
 	prerequisites = {
 		"tech_pre_industrial_iron_construction"
 	}
-	
 	show_tech_unlock_if = {
 		is_gestalt = no
 	}
-	
 	resources = {
 		category = planet_buildings
 		cost = {
@@ -1124,57 +670,26 @@ building_primitive_factory = {
 			energy = @primitive_upkeep
 		}
 	}
-
 	upgrades = {
 		"building_factory_1"
 	}
-	
-	#triggered_desc = {
-	#	trigger = {
-	#		exists = owner
-	#		owner = {
-	#			is_gestalt = no
-	#		}
-	#	}
-	#	text =  job_primitive_laborer_effect_desc
-	#}
-
-	#triggered_desc = {
-	#	trigger = {
-	#		exists = owner
-	#		owner = {
-	#			is_hive_empire = yes
-	#		}
-	#	}
-	#	text =  job_alloy_drone_effect_desc
-	#}
 }
-
 building_primitive_offices = {
 	can_build = yes
 	base_buildtime = @b1_time
-	#planet_limit = 1
 	can_demolish = yes
 	can_be_ruined = no
-
 	category = unity
-
 	building_sets = {
 		pre_ftl
 		unity
 		trade
 	}
-
 	potential = {
 		exists = owner
 		owner = {
 			is_hive_empire = no
 			OR = {
-				# has_origin = origin_primitive_player_pre_industrial_age
-				# has_origin = origin_primitive_player_industrial_age
-				# has_origin = origin_primitive_player_machine_age
-				# has_origin = origin_primitive_player_atomic_age
-				# has_origin = origin_primitive_player_early_space_age
 				NOT = { has_technology = tech_interplanetary_commerce }
 				AND = {
 					OR = {
@@ -1189,25 +704,18 @@ building_primitive_offices = {
 			}
 		}
 	}
-
 	destroy_trigger = {
 		exists = owner
 		owner = {
 			OR = {
 				NOT = {
-					# has_origin = origin_primitive_player_pre_industrial_age
-					# has_origin = origin_primitive_player_industrial_age
-					# has_origin = origin_primitive_player_machine_age
-					# has_origin = origin_primitive_player_atomic_age
-					# has_origin = origin_primitive_player_early_space_age
-					any_situation = { is_situation_type = PrimPlayer_situation } # Much more efficient trigger
+					any_situation = { is_situation_type = PrimPlayer_situation }
 					is_primitive = yes
 				}
 				is_hive_empire = yes
 			}
 		}
 	}
-
 	triggered_planet_modifier = {
 		potential = {
 			exists = owner
@@ -1217,12 +725,10 @@ building_primitive_offices = {
 		}
 		job_primitive_administrator_add = @building_static_jobs
 	}
-	
 	inline_script = {
 		script = jobs/clerks_add
 		AMOUNT = @building_static_jobs
 	}
-	
 	resources = {
 		category = planet_buildings
 		cost = {
@@ -1232,25 +738,13 @@ building_primitive_offices = {
 			energy =@primitive_upkeep
 		}
 	}
-	
 	prerequisites = {
 		"tech_industrial_city"
 	}
-	
 	show_tech_unlock_if = {
 		is_gestalt = no
 	}
-
-	#upgrades = {
-	#	building_bureaucratic_1
-	#	building_temple
-	#}
-
-	#triggered_desc = {
-	#	text =  job_primitive_administrator_effect_desc
-	#}
 }
-
 building_primitive_research = {
 	can_build = yes
 	base_buildtime = @b1_time
@@ -1259,20 +753,13 @@ building_primitive_research = {
 	planet_limit = 1
 	category = research
 	icon = building_primitive_labs
-
 	building_sets = {
 		pre_ftl
 	}
-
 	potential = {
 		exists = owner
 		owner = {
 			OR = {
-				# has_origin = origin_primitive_player_pre_industrial_age
-				# has_origin = origin_primitive_player_industrial_age
-				# has_origin = origin_primitive_player_machine_age
-				# has_origin = origin_primitive_player_atomic_age
-				# has_origin = origin_primitive_player_early_space_age
 				NOT = { has_technology = tech_basic_science_lab_1 }
 				AND = {
 					OR = {
@@ -1287,22 +774,15 @@ building_primitive_research = {
 			}
 		}
 	}
-
 	destroy_trigger = {
 		exists = owner
 		owner = {
 			NOT = {
-				# has_origin = origin_primitive_player_pre_industrial_age
-				# has_origin = origin_primitive_player_industrial_age
-				# has_origin = origin_primitive_player_machine_age
-				# has_origin = origin_primitive_player_atomic_age
-				# has_origin = origin_primitive_player_early_space_age
-				any_situation = { is_situation_type = PrimPlayer_situation } # Much more efficient trigger
+				any_situation = { is_situation_type = PrimPlayer_situation }
 				is_primitive = yes
 			}
 		}
 	}
-
 	triggered_planet_modifier = {
 		potential = {
 			exists = owner
@@ -1363,7 +843,6 @@ building_primitive_research = {
 		}
 		job_primitive_researcher_2_add = 50
 	}
-
 	triggered_planet_modifier = {
 		potential = {
 			exists = owner
@@ -1375,7 +854,6 @@ building_primitive_research = {
 		job_calculator_biologist_add = 60
 		job_calculator_engineer_add = 60
 	}
-	
 	resources = {
 		category = planet_buildings
 		cost = {
@@ -1402,48 +880,28 @@ building_primitive_research = {
 			}
 			energy = 1
 		}
-		
 	}
-
-	#upgrades = {
-	#	building_research_lab_1
-	#}
-
 	prerequisites = {
 		"tech_primitive_universities"
 	}
-	
 	show_tech_unlock_if = {
 		is_gestalt = no
 	}
-
-	#triggered_desc = {
-	#	text =  job_primitive_researcher_2_effect_desc
-	#}
 }
-
 building_primitive_mine = {
 	can_build = yes
 	base_buildtime = @b1_time
 	can_demolish = yes
 	can_be_ruined = no
-
 	category = resource
-	
 	building_sets = {
 		pre_ftl
 	}
-
 	potential = {
 		exists = owner
 		owner = {
 			is_hive_empire = no
 			OR = {
-				# has_origin = origin_primitive_player_pre_industrial_age
-				# has_origin = origin_primitive_player_industrial_age
-				# has_origin = origin_primitive_player_machine_age
-				# has_origin = origin_primitive_player_atomic_age
-				# has_origin = origin_primitive_player_early_space_age
 				NOT = { has_technology = tech_mechanized_mining_2 }
 				AND = {
 					OR = {
@@ -1458,80 +916,55 @@ building_primitive_mine = {
 			}
 		}
 	}
-
 	destroy_trigger = {
 		exists = owner
 		owner = {
 			OR = {
 				NOT = {
-					# has_origin = origin_primitive_player_pre_industrial_age
-					# has_origin = origin_primitive_player_industrial_age
-					# has_origin = origin_primitive_player_machine_age
-					# has_origin = origin_primitive_player_atomic_age
-					# has_origin = origin_primitive_player_early_space_age
-					any_situation = { is_situation_type = PrimPlayer_situation } # Much more efficient trigger
+					any_situation = { is_situation_type = PrimPlayer_situation }
 					is_primitive = yes
 				}
 				is_hive_empire = yes
 			}
 		}
 	}
-
 	planet_modifier = {
 		job_primitive_miner_add = 200
 	}
-
 	triggered_planet_modifier = {
 		potential = {
 			exists = owner
 			owner = { is_lithoid_empire = yes }
 		}
-
 		job_primitive_miner_add = 800
 	}
-	
 	resources = {
 		category = planet_buildings
 		cost = {
 			minerals = @b1_minerals
 		}
 	}
-	
 	prerequisites = {
 		"tech_pre_industrial_iron_construction"
 	}
-	
 	show_tech_unlock_if = {
 		is_gestalt = no
 	}
-
-	# upgrades = {
-	#	building_mineral_purification_plant
-	#}
 }
-
 building_primitive_power_plant = {
 	can_build = yes
 	base_buildtime = @b1_time
 	can_demolish = yes
 	can_be_ruined = no
-
 	category = resource
-	
 	building_sets = {
 		pre_ftl
 	}
-
 	potential = {
 		exists = owner
 		owner = {
 			is_hive_empire = no
 			OR = {
-				# has_origin = origin_primitive_player_pre_industrial_age
-				# has_origin = origin_primitive_player_industrial_age
-				# has_origin = origin_primitive_player_machine_age
-				# has_origin = origin_primitive_player_atomic_age
-				# has_origin = origin_primitive_player_early_space_age
 				NOT = { has_technology = tech_power_plant_1_space_age }
 				AND = {
 					OR = {
@@ -1546,73 +979,52 @@ building_primitive_power_plant = {
 			}
 		}
 	}
-
 	destroy_trigger = {
 		exists = owner
 		owner = {
 			OR = {
 				NOT = {
-					# has_origin = origin_primitive_player_pre_industrial_age
-					# has_origin = origin_primitive_player_industrial_age
-					# has_origin = origin_primitive_player_machine_age
-					# has_origin = origin_primitive_player_atomic_age
-					# has_origin = origin_primitive_player_early_space_age
-					any_situation = { is_situation_type = PrimPlayer_situation } # Much more efficient trigger
+					any_situation = { is_situation_type = PrimPlayer_situation }
 					is_primitive = yes
 				}
 				is_hive_empire = yes
 			}
 		}
 	}
-
 	planet_modifier = {
 		job_primitive_technician_add = 200
 	}
-	
 	prerequisites = {
 		"tech_primitive_combustion_technology"
-		# 'tech_pre_industrial_iron_construction'
 	}
-	
 	resources = {
 		category = planet_buildings
 		cost = {
 			minerals = @b1_minerals
 		}
 	}
-	
 	show_tech_unlock_if = {
 		is_gestalt = no
 	}
-
 	upgrades = {
 	}
 }
-
 building_primitive_farm = {
 	can_build = yes
 	base_buildtime = @b1_time
 	can_demolish = yes
 	can_be_ruined = no
-
 	category = resource
-	
 	building_sets = {
 		pre_ftl
 		farming
 	}
-
 	potential = {
 		exists = owner
 		owner = {
 			is_hive_empire = no
 			is_lithoid_empire = no
 			OR = {
-				# has_origin = origin_primitive_player_pre_industrial_age
-				# has_origin = origin_primitive_player_industrial_age
-				# has_origin = origin_primitive_player_machine_age
-				# has_origin = origin_primitive_player_atomic_age
-				# has_origin = origin_primitive_player_early_space_age
 				NOT = { has_technology = tech_industrial_farming_2 }
 				AND = {
 					OR = {
@@ -1626,22 +1038,15 @@ building_primitive_farm = {
 			}
 		}
 	}
-
 	convert_to = {
 		building_primitive_mine
 	}
-
 	destroy_trigger = {
 		exists = owner
 		owner = {
 			OR = {
 				NOT = {
-					# has_origin = origin_primitive_player_pre_industrial_age
-					# has_origin = origin_primitive_player_industrial_age
-					# has_origin = origin_primitive_player_machine_age
-					# has_origin = origin_primitive_player_atomic_age
-					# has_origin = origin_primitive_player_early_space_age
-					any_situation = { is_situation_type = PrimPlayer_situation } # Much more efficient trigger
+					any_situation = { is_situation_type = PrimPlayer_situation }
 					is_primitive = yes
 				}
 				is_hive_empire = yes
@@ -1649,30 +1054,21 @@ building_primitive_farm = {
 			}
 		}
 	}
-
 	planet_modifier = {
 		job_primitive_farmer_add = 1000
 	}
-	
 	resources = {
 		category = planet_buildings
 		cost = {
 			minerals = @b1_minerals
 		}
 	}
-	
 	prerequisites = {
 	}
-
 	upgrades = {
 		"building_hydroponics_farm"
 	}
 }
-
-############################
-# Industrial Age Buildings #
-############################
-
 building_primitive_capital = {
 	capital = yes
 	can_build = no
@@ -1680,24 +1076,16 @@ building_primitive_capital = {
 	can_be_ruined = no
 	can_be_disabled = no
 	position_priority = 0
-
 	category = government
-	
 	building_sets = {
 		pre_ftl
 	}
-
 	potential = {
 		exists = owner
 		owner = {
 			is_hive_empire = no
 			OR = {
-				# has_origin = origin_primitive_player_pre_industrial_age
-				# has_origin = origin_primitive_player_industrial_age
-				# has_origin = origin_primitive_player_machine_age
-				# has_origin = origin_primitive_player_atomic_age
-				# has_origin = origin_primitive_player_early_space_age
-				any_situation = { is_situation_type = PrimPlayer_situation } # Much more efficient trigger
+				any_situation = { is_situation_type = PrimPlayer_situation }
 				AND = {
 					OR = {
 						has_country_flag = machine_age
@@ -1710,25 +1098,18 @@ building_primitive_capital = {
 			}
 		}
 	}
-
 	destroy_trigger = {
 		exists = owner
 		owner = {
 			OR = {
 				NOT = {
-					# has_origin = origin_primitive_player_pre_industrial_age
-					# has_origin = origin_primitive_player_industrial_age
-					# has_origin = origin_primitive_player_machine_age
-					# has_origin = origin_primitive_player_atomic_age
-					# has_origin = origin_primitive_player_early_space_age
-					any_situation = { is_situation_type = PrimPlayer_situation } # Much more efficient trigger
+					any_situation = { is_situation_type = PrimPlayer_situation }
 					is_primitive = yes
 				}
 				is_hive_empire = yes
 			}
 		}
 	}
-
 	convert_to = {
 		building_machine_capital
 		building_capital
@@ -1737,7 +1118,6 @@ building_primitive_capital = {
 		building_hab_fe_capital
 		building_capital_wilderness
 	}
-
 	triggered_planet_modifier = {
 		potential = {
 			exists = owner
@@ -1762,7 +1142,6 @@ building_primitive_capital = {
 		planet_amenities_add = 2500
 		planet_crime_add = -20
 	}
-
 	triggered_planet_modifier = {
 		potential = {
 			exists = owner
@@ -1790,7 +1169,6 @@ building_primitive_capital = {
 		planet_crime_add = -20
 		planet_max_branch_office_buildings_add = 1
 	}
-	
 	triggered_planet_modifier = {
 		potential = {
 			exists = owner
@@ -1801,7 +1179,6 @@ building_primitive_capital = {
 			job_soldier_add = 200
 		}
 	}
-	###########################################
 	triggered_planet_modifier = {
 		potential = {
 			exists = owner
@@ -1809,7 +1186,6 @@ building_primitive_capital = {
 				NOT = { has_technology = tech_basic_science_lab_1 }
 			}
 		}
-
 		job_primitive_researcher_2_add = 200
 	}
 	triggered_planet_modifier = {
@@ -1829,7 +1205,6 @@ building_primitive_capital = {
 			job_engineer_add = 30
 		}
 	}
-
 	triggered_desc = {
 		trigger = {
 			exists = owner
@@ -1843,7 +1218,6 @@ building_primitive_capital = {
 		}
 		text = job_physicist_effect_desc
 	}
-
 	triggered_desc = {
 		trigger = {
 			exists = owner
@@ -1857,7 +1231,6 @@ building_primitive_capital = {
 		}
 		text = job_biologist_effect_desc
 	}
-
 	triggered_desc = {
 		trigger = {
 			exists = owner
@@ -1871,7 +1244,6 @@ building_primitive_capital = {
 		}
 		text = job_engineer_effect_desc
 	}
-	###########################################
 	triggered_planet_modifier = {
 		potential = {
 			exists = owner
@@ -1892,15 +1264,12 @@ building_primitive_capital = {
 		}
 		planet_max_buildings_add = -3
 	}
-	
 	prerequisites = {
 		"tech_primitive_nation_state_government"
 	}
-	
 	show_tech_unlock_if = {
 		is_gestalt = no
 	}
-	
 	resources = {
 		category = planet_buildings
 		cost = {
@@ -1910,35 +1279,25 @@ building_primitive_capital = {
 			energy =@primitive_upkeep
 		}
 	}
-	
 	upgrades = {
 		"building_capital"
 	}
 }
-
 building_urban_dwellings = {
 	can_build = yes
 	base_buildtime = @b1_time
 	can_demolish = yes
 	can_be_ruined = no
 	icon = building_residence
-
 	category = amenity
-	
 	building_sets = {
 		pre_ftl
 	}
-
 	potential = {
 		exists = owner
 		owner = {
 			is_hive_empire = no
 			OR = {
-				# has_origin = origin_primitive_player_pre_industrial_age
-				# has_origin = origin_primitive_player_industrial_age
-				# has_origin = origin_primitive_player_machine_age
-				# has_origin = origin_primitive_player_atomic_age
-				# has_origin = origin_primitive_player_early_space_age
 				NOT = { has_technology = tech_space_construction }
 				AND = {
 					OR = {
@@ -1952,29 +1311,21 @@ building_urban_dwellings = {
 			}
 		}
 	}
-
 	destroy_trigger = {
 		exists = owner
 		owner = {
 			OR = {
 				NOT = {
-					# has_origin = origin_primitive_player_pre_industrial_age
-					# has_origin = origin_primitive_player_industrial_age
-					# has_origin = origin_primitive_player_machine_age
-					# has_origin = origin_primitive_player_atomic_age
-					# has_origin = origin_primitive_player_early_space_age
-					any_situation = { is_situation_type = PrimPlayer_situation } # Much more efficient trigger
+					any_situation = { is_situation_type = PrimPlayer_situation }
 					is_primitive = yes
 				}
 				is_hive_empire = yes
 			}
 		}
 	}
-
 	planet_modifier = {
 		planet_housing_add = 2400
 	}
-	
 	resources = {
 		category = planet_buildings
 		cost = {
@@ -1984,36 +1335,31 @@ building_urban_dwellings = {
 			energy =@primitive_upkeep
 		}
 	}
-	
 	prerequisites = {
 		"tech_pre_industrial_steel_construction"
 	}
-	
 	show_tech_unlock_if = {
 		is_gestalt = no
 	}
-
 	upgrades = {
 		"building_luxury_residence"
 	}
 }
-
-#Radar Dish
 building_pre_ftl_radio_telescope = {
 	base_buildtime = @b1_time
 	can_build = yes
 	base_buildtime = @b1_time
 	can_demolish = yes
 	can_be_ruined = no
-	empire_limit = { 	#optional: default is no limit
-		base = 1		#don't set base to less than 0, it will ignore it (for performance optimisation reasons)
+	empire_limit = {
+		base = 1
 	}
 	triggered_desc = {
 	 	trigger = {
 			OWNER = {
 				exists = owner
 				OR = {
-					any_situation = { is_situation_type = PrimPlayer_awareness_situation } # Much more efficient trigger
+					any_situation = { is_situation_type = PrimPlayer_awareness_situation }
 					AND = {
 						has_country_flag = early_space_age
 						is_primitive = yes
@@ -2023,29 +1369,19 @@ building_pre_ftl_radio_telescope = {
 		}
 	 	text = awareness_gain_desc
 	}
-	
 	show_tech_unlock_if = {
 		has_country_flag = PrimPlayer_start_flag
 	}
-
 	category = research
-	
 	building_sets = {
 		pre_ftl
 	}
-
 	potential = {
 		exists = owner
 		owner = {
 			OR = {
-				# has_origin = origin_primitive_player_pre_industrial_age
-				# has_origin = origin_primitive_player_industrial_age
-				# has_origin = origin_primitive_player_machine_age
-				# has_origin = origin_primitive_player_atomic_age
-				# has_origin = origin_primitive_player_early_space_age
-				#any_situation = { is_situation_type = PrimPlayer_situation } # Much more efficient trigger
-				any_situation = { is_situation_type = PrimPlayer_awareness_situation } # Allows empires with situation to build
-				has_country_flag = PrimPlayer_start_flag # Cog Note - These empires can always keep their telescopes
+				any_situation = { is_situation_type = PrimPlayer_awareness_situation }
+				has_country_flag = PrimPlayer_start_flag
 				AND = {
 					has_country_flag = early_space_age
 					is_primitive = yes
@@ -2053,24 +1389,16 @@ building_pre_ftl_radio_telescope = {
 			}
 		}
 	}
-
 	destroy_trigger = {
 		exists = owner
 		owner = {
 			NOT = {
-				# has_origin = origin_primitive_player_pre_industrial_age
-				# has_origin = origin_primitive_player_industrial_age
-				# has_origin = origin_primitive_player_machine_age
-				# has_origin = origin_primitive_player_atomic_age
-				# has_origin = origin_primitive_player_early_space_age
-				#any_situation = { is_situation_type = PrimPlayer_situation } # Much more efficient trigger
-				any_situation = { is_situation_type = PrimPlayer_awareness_situation } # Allows empires with situation to build
+				any_situation = { is_situation_type = PrimPlayer_awareness_situation }
 				is_primitive = yes
-				has_country_flag = PrimPlayer_start_flag # Cog Note - These empires can always keep their telescopes
+				has_country_flag = PrimPlayer_start_flag
 			}
 		}
 	}
-	
 	resources = {
 		category = planet_buildings
 		cost = {
@@ -2080,17 +1408,11 @@ building_pre_ftl_radio_telescope = {
 			energy =@primitive_upkeep
 		}
 	}
-	
 	country_modifier = { 
 		envoys_add = 1
 		intel_decryption_add = 0.25
 		first_contact_speed_mult = 0.05
 	}
-	###########################################
-	
-				#REGULAR
-	
-	###########################################
 	triggered_planet_modifier = {
 		potential = {
 			exists = owner
@@ -2099,7 +1421,6 @@ building_pre_ftl_radio_telescope = {
 				is_gestalt = no 
 			}
 		}
-
 		job_primitive_researcher_2_add = 200
 	}
 	triggered_planet_modifier = {
@@ -2117,7 +1438,6 @@ building_pre_ftl_radio_telescope = {
 			job_physicist_add = 30
 		}
 	}
-
 	triggered_desc = {
 		trigger = {
 			exists = owner
@@ -2131,11 +1451,6 @@ building_pre_ftl_radio_telescope = {
 		}
 		text = job_physicist_effect_desc
 	}
-	###########################################
-	
-				#HIVE
-	
-	########################################
 	triggered_planet_modifier = {
 		potential = {
 			exists = owner
@@ -2144,9 +1459,7 @@ building_pre_ftl_radio_telescope = {
 				is_hive_empire = yes 			
 			}
 		}
-
 		job_primitive_hive_brain_drone_add = 200
-
 	}
 	triggered_planet_modifier = {
 		potential = {
@@ -2158,7 +1471,6 @@ building_pre_ftl_radio_telescope = {
 		}
 		job_calculator_physicist_add = 60
 	}
-
 	triggered_desc = {
 		trigger = {
 			exists = owner
@@ -2170,11 +1482,6 @@ building_pre_ftl_radio_telescope = {
 		}
 		text = job_brain_drone_physicist_effect_desc
 	}
-	########################################
-	
-				#MACHINE
-	
-	############################################
 	triggered_planet_modifier = {
 		potential = {
 			exists = owner
@@ -2183,9 +1490,6 @@ building_pre_ftl_radio_telescope = {
 				is_machine_empire = yes 
 			}
 		}
-
-		# job_primitive_machine_calculator_add = 200	# Cog Note - This should be fixed, broke after 4.0
-
 	}
 	triggered_planet_modifier = {
 		potential = {
@@ -2197,7 +1501,6 @@ building_pre_ftl_radio_telescope = {
 		}
 		job_calculator_physicist_add = 60
 	}
-
 	triggered_desc = {
 		trigger = {
 			exists = owner
@@ -2208,17 +1511,10 @@ building_pre_ftl_radio_telescope = {
 		}
 		text = job_calculator_physicist_effect_desc
 	}
-	############################################
-	
 	prerequisites = {
 		"tech_primitive_radiowave_telescope"
 	}
 }
-
-###############################
-# Pre-FTL Hive-Mind Buildings #
-###############################
-
 building_hive_crude_huts = {
 	icon = building_crude_huts
 	capital = yes
@@ -2227,22 +1523,14 @@ building_hive_crude_huts = {
 	can_demolish = yes
 	can_be_ruined = no
 	position_priority = 0
-
 	category = amenity
-	
 	building_sets = {
 		pre_ftl
 	}
-
 	potential = {
 		exists = owner
 		owner = {
 			OR = {
-				# has_origin = origin_primitive_player_pre_industrial_age
-				# has_origin = origin_primitive_player_industrial_age
-				# has_origin = origin_primitive_player_machine_age
-				# has_origin = origin_primitive_player_atomic_age
-				# has_origin = origin_primitive_player_early_space_age
 				AND = {
 					has_country_flag = stone_age
 					is_primitive = yes
@@ -2251,30 +1539,22 @@ building_hive_crude_huts = {
 			is_hive_empire = yes
 		}
 	}
-
 	destroy_trigger = {
 		exists = owner
 		owner = {
 			OR = {
 				NOT = {
-					# has_origin = origin_primitive_player_pre_industrial_age
-					# has_origin = origin_primitive_player_industrial_age
-					# has_origin = origin_primitive_player_machine_age
-					# has_origin = origin_primitive_player_atomic_age
-					# has_origin = origin_primitive_player_early_space_age
 					is_primitive = yes
 				}
 				is_hive_empire = no
 			}
 		}
 	}
-
 	planet_modifier = {
 		planet_amenities_no_happiness_add = 500
 		planet_housing_add = 1000
 		planet_crime_no_happiness_add = -10
 	}
-	
 	resources = {
 		category = planet_buildings
 		cost = {
@@ -2284,42 +1564,30 @@ building_hive_crude_huts = {
 			energy =@primitive_upkeep
 		}
 	}
-	
 	prerequisites = {
 		"tech_pre_industrial_stone_construction"
 	}
-	
 	show_tech_unlock_if = {
 		is_hive_empire = yes
 	}
-
 	upgrades = {
 	}
 }
-
 building_hive_primitive_dwellings = {
 	icon = building_primitive_dwellings
 	can_build = yes
 	base_buildtime = @b1_time
 	can_demolish = yes
 	can_be_ruined = no
-
 	category = amenity
-	
 	building_sets = {
 		pre_ftl
 	}
-
 	potential = {
 		exists = owner
 		owner = {
 			is_hive_empire = yes
 			OR = {
-				# has_origin = origin_primitive_player_pre_industrial_age
-				# has_origin = origin_primitive_player_industrial_age
-				# has_origin = origin_primitive_player_machine_age
-				# has_origin = origin_primitive_player_atomic_age
-				# has_origin = origin_primitive_player_early_space_age
 				NOT = { has_technology = tech_pre_industrial_steel_construction }
 				AND = {
 					OR = {
@@ -2334,29 +1602,21 @@ building_hive_primitive_dwellings = {
 			}
 		}
 	}
-
 	destroy_trigger = {
 		exists = owner
 		owner = {
 			OR = {
 				NOT = {
-					# has_origin = origin_primitive_player_pre_industrial_age
-					# has_origin = origin_primitive_player_industrial_age
-					# has_origin = origin_primitive_player_machine_age
-					# has_origin = origin_primitive_player_atomic_age
-					# has_origin = origin_primitive_player_early_space_age
-					any_situation = { is_situation_type = PrimPlayer_situation } # Much more efficient trigger
+					any_situation = { is_situation_type = PrimPlayer_situation }
 					is_primitive = yes
 				}
 				is_hive_empire = no
 			}
 		}
 	}
-
 	planet_modifier = {
 		planet_housing_add = 1000
 	}
-	
 	resources = {
 		category = planet_buildings
 		cost = {
@@ -2366,19 +1626,15 @@ building_hive_primitive_dwellings = {
 			energy =@primitive_upkeep
 		}
 	}
-	
 	prerequisites = {
 		"tech_pre_industrial_iron_construction"
 	}
-	
 	show_tech_unlock_if = {
 		is_hive_empire = yes
 	}
-
 	upgrades = {
 	}
 }
-
 building_hive_stone_palace = {
 	icon = building_stone_palace
 	capital = yes
@@ -2387,24 +1643,16 @@ building_hive_stone_palace = {
 	can_demolish = yes
 	can_be_ruined = no
 	position_priority = 0
-
 	category = government
-	
 	building_sets = {
 		pre_ftl
 	}
-
 	potential = {
 		exists = owner
 		owner = {
 			is_hive_empire = yes
 			OR = {
-				# has_origin = origin_primitive_player_pre_industrial_age
-				# has_origin = origin_primitive_player_industrial_age
-				# has_origin = origin_primitive_player_machine_age
-				# has_origin = origin_primitive_player_atomic_age
-				# has_origin = origin_primitive_player_early_space_age
-				any_situation = { is_situation_type = PrimPlayer_situation } # Much more efficient trigger
+				any_situation = { is_situation_type = PrimPlayer_situation }
 				AND = {
 					OR = {
 						has_country_flag = bronze_age
@@ -2418,25 +1666,18 @@ building_hive_stone_palace = {
 			}
 		}
 	}
-
 	destroy_trigger = {
 		exists = owner
 		owner = {
 			OR = {
 				NOT = {
-					# has_origin = origin_primitive_player_pre_industrial_age
-					# has_origin = origin_primitive_player_industrial_age
-					# has_origin = origin_primitive_player_machine_age
-					# has_origin = origin_primitive_player_atomic_age
-					# has_origin = origin_primitive_player_early_space_age
-					any_situation = { is_situation_type = PrimPlayer_situation } # Much more efficient trigger
+					any_situation = { is_situation_type = PrimPlayer_situation }
 					is_primitive = yes
 				}
 				is_hive_empire = no
 			}
 		}
 	}
-
 	convert_to = {
 		building_hive_capital
 		building_machine_capital
@@ -2444,7 +1685,6 @@ building_hive_stone_palace = {
 		building_hab_capital
 		building_hab_fe_capital
 	}
-
 	planet_modifier = {
 		job_primitive_hive_synapse_drone_add = 100
 		job_primitive_hive_warrior_add = 100
@@ -2454,11 +1694,9 @@ building_hive_stone_palace = {
 		planet_amenities_no_happiness_add = 2500
 		planet_crime_no_happiness_add = -10
 	}
-	
 	prerequisites = {
 		"tech_pre_industrial_stone_construction"
 	}
-	
 	resources = {
 		category = planet_buildings
 		cost = {
@@ -2468,38 +1706,27 @@ building_hive_stone_palace = {
 			energy =@primitive_upkeep
 		}
 	}
-	
 	show_tech_unlock_if = {
 		is_hive_empire = yes
 	}
-
 	upgrades = {
 	}
 }
-
 building_hive_primitive_factory = {
 	icon = building_primitive_factory
 	can_build = yes
 	base_buildtime = @b1_time
 	can_demolish = yes
 	can_be_ruined = no
-
 	category = manufacturing
-	
 	building_sets = {
 		pre_ftl
 	}
-
 	potential = {
 		exists = owner
 		owner = {
 			is_hive_empire = yes
 			OR = {
-				# has_origin = origin_primitive_player_pre_industrial_age
-				# has_origin = origin_primitive_player_industrial_age
-				# has_origin = origin_primitive_player_machine_age
-				# has_origin = origin_primitive_player_atomic_age
-				# has_origin = origin_primitive_player_early_space_age
 				NOT = { has_technology = tech_basic_industry }
 				AND = {
 					OR = {
@@ -2514,33 +1741,24 @@ building_hive_primitive_factory = {
 			}
 		}
 	}
-
 	destroy_trigger = {
 		exists = owner
 		owner = {
 			OR = {
 				NOT = {
-					# has_origin = origin_primitive_player_pre_industrial_age
-					# has_origin = origin_primitive_player_industrial_age
-					# has_origin = origin_primitive_player_machine_age
-					# has_origin = origin_primitive_player_atomic_age
-					# has_origin = origin_primitive_player_early_space_age
-					any_situation = { is_situation_type = PrimPlayer_situation } # Much more efficient trigger
+					any_situation = { is_situation_type = PrimPlayer_situation }
 					is_primitive = yes
 				}
 				is_hive_empire = no
 			}
 		}
 	}
-
 	planet_modifier = {
 		job_primitive_hive_factory_drone_add = 200
 	}
-	
 	prerequisites = {
 		"tech_pre_industrial_iron_construction"
 	}
-	
 	resources = {
 		category = planet_buildings
 		cost = {
@@ -2550,38 +1768,27 @@ building_hive_primitive_factory = {
 			energy =@primitive_upkeep
 		}
 	}
-	
 	show_tech_unlock_if = {
 		is_hive_empire = yes
 	}
-
 	upgrades = {
 	}
 }
-
 building_hive_primitive_mine = {
 	icon = building_primitive_mine
 	can_build = yes
 	base_buildtime = @b1_time
 	can_demolish = yes
 	can_be_ruined = no
-
 	category = resource
-	
 	building_sets = {
 		pre_ftl
 	}
-
 	potential = {
 		exists = owner
 		owner = {
 			is_hive_empire = yes
 			OR = {
-				# has_origin = origin_primitive_player_pre_industrial_age
-				# has_origin = origin_primitive_player_industrial_age
-				# has_origin = origin_primitive_player_machine_age
-				# has_origin = origin_primitive_player_atomic_age
-				# has_origin = origin_primitive_player_early_space_age
 				NOT = { has_technology = tech_mechanized_mining_2 }
 				AND = {
 					OR = {
@@ -2596,42 +1803,31 @@ building_hive_primitive_mine = {
 			}
 		}
 	}
-
 	destroy_trigger = {
 		exists = owner
 		owner = {
 			OR = {
 				NOT = {
-					# has_origin = origin_primitive_player_pre_industrial_age
-					# has_origin = origin_primitive_player_industrial_age
-					# has_origin = origin_primitive_player_machine_age
-					# has_origin = origin_primitive_player_atomic_age
-					# has_origin = origin_primitive_player_early_space_age
-					any_situation = { is_situation_type = PrimPlayer_situation } # Much more efficient trigger
+					any_situation = { is_situation_type = PrimPlayer_situation }
 					is_primitive = yes
 				}
 				is_hive_empire = no
 			}
 		}
 	}
-
 	planet_modifier = {
 		job_primitive_hive_miner_add = 200
 	}
-	
 	show_tech_unlock_if = {
 		is_hive_empire = yes
 	}
-
 	triggered_planet_modifier = {
 		potential = {
 			exists = owner
 			owner = { is_lithoid_empire = yes }
 		}
-
 		job_primitive_hive_miner_add = 800
 	}
-	
 	resources = {
 		category = planet_buildings
 		cost = {
@@ -2641,38 +1837,27 @@ building_hive_primitive_mine = {
 			energy =@primitive_upkeep
 		}
 	}
-	
 	prerequisites = {
 		"tech_pre_industrial_iron_construction"
 	}
-
 	upgrades = {
 	}
 }
-
 building_hive_primitive_power_plant = {
 	icon = building_primitive_power_plant
 	can_build = yes
 	base_buildtime = @b1_time
 	can_demolish = yes
 	can_be_ruined = no
-
 	category = resource
-	
 	building_sets = {
 		pre_ftl
 	}
-
 	potential = {
 		exists = owner
 		owner = {
 			is_hive_empire = yes
 			OR = {
-				# has_origin = origin_primitive_player_pre_industrial_age
-				# has_origin = origin_primitive_player_industrial_age
-				# has_origin = origin_primitive_player_machine_age
-				# has_origin = origin_primitive_player_atomic_age
-				# has_origin = origin_primitive_player_early_space_age
 				NOT = { has_technology = tech_power_plant_1_space_age }
 				AND = {
 					OR = {
@@ -2687,34 +1872,24 @@ building_hive_primitive_power_plant = {
 			}
 		}
 	}
-
 	destroy_trigger = {
 		exists = owner
 		owner = {
 			OR = {
 				NOT = {
-					# has_origin = origin_primitive_player_pre_industrial_age
-					# has_origin = origin_primitive_player_industrial_age
-					# has_origin = origin_primitive_player_machine_age
-					# has_origin = origin_primitive_player_atomic_age
-					# has_origin = origin_primitive_player_early_space_age
-					any_situation = { is_situation_type = PrimPlayer_situation } # Much more efficient trigger
+					any_situation = { is_situation_type = PrimPlayer_situation }
 					is_primitive = yes
 				}
 				is_hive_empire = no
 			}
 		}
 	}
-
 	planet_modifier = {
 		job_primitive_hive_technician_add = 200
 	}
-	
 	prerequisites = {
 		"tech_primitive_combustion_technology"
-		# 'tech_pre_industrial_iron_construction'
 	}
-	
 	resources = {
 		category = planet_buildings
 		cost = {
@@ -2724,40 +1899,29 @@ building_hive_primitive_power_plant = {
 			energy =@primitive_upkeep
 		}
 	}
-	
 	show_tech_unlock_if = {
 		is_hive_empire = yes
 	}
-
 	upgrades = {
 	}
 }
-
 building_hive_primitive_farm = {
 	icon = building_primitive_farm
 	can_build = yes
 	base_buildtime = @b1_time
 	can_demolish = yes
 	can_be_ruined = no
-
 	category = resource
-	
 	building_sets = {
 		pre_ftl
 		farming
 	}
-
 	potential = {
 		exists = owner
 		owner = {
 			is_hive_empire = yes
 			is_lithoid_empire = no
 			OR = {
-				# has_origin = origin_primitive_player_pre_industrial_age
-				# has_origin = origin_primitive_player_industrial_age
-				# has_origin = origin_primitive_player_machine_age
-				# has_origin = origin_primitive_player_atomic_age
-				# has_origin = origin_primitive_player_early_space_age
 				NOT = { has_technology = tech_industrial_farming_2 }
 				AND = {
 					OR = {
@@ -2771,22 +1935,15 @@ building_hive_primitive_farm = {
 			}
 		}
 	}
-
 	convert_to = {
 		building_hive_primitive_mine
 	}
-
 	destroy_trigger = {
 		exists = owner
 		owner = {
 			OR = {
 				NOT = {
-					# has_origin = origin_primitive_player_pre_industrial_age
-					# has_origin = origin_primitive_player_industrial_age
-					# has_origin = origin_primitive_player_machine_age
-					# has_origin = origin_primitive_player_atomic_age
-					# has_origin = origin_primitive_player_early_space_age
-					any_situation = { is_situation_type = PrimPlayer_situation } # Much more efficient trigger
+					any_situation = { is_situation_type = PrimPlayer_situation }
 					is_primitive = yes
 				}
 				is_hive_empire = no
@@ -2794,11 +1951,9 @@ building_hive_primitive_farm = {
 			}
 		}
 	}
-
 	planet_modifier = {
 		job_primitive_hive_farmer_add = 1000
 	}
-	
 	resources = {
 		category = planet_buildings
 		cost = {
@@ -2808,15 +1963,11 @@ building_hive_primitive_farm = {
 			energy =@primitive_upkeep
 		}
 	}
-	
 	prerequisites = {
-		# 'tech_pre_industrial_steel_construction'	should always be available
 	}
-
 	upgrades = {
 	}
 }
-
 building_hive_primitive_capital = {
 	icon = building_primitive_capital
 	capital = yes
@@ -2825,24 +1976,16 @@ building_hive_primitive_capital = {
 	can_demolish = yes
 	can_be_ruined = no
 	position_priority = 0
-
 	category = government
-	
 	building_sets = {
 		pre_ftl
 	}
-
 	potential = {
 		exists = owner
 		owner = {
 			is_hive_empire = yes
 			OR = {
-				# has_origin = origin_primitive_player_pre_industrial_age
-				# has_origin = origin_primitive_player_industrial_age
-				# has_origin = origin_primitive_player_machine_age
-				# has_origin = origin_primitive_player_atomic_age
-				# has_origin = origin_primitive_player_early_space_age
-				any_situation = { is_situation_type = PrimPlayer_situation } # Much more efficient trigger
+				any_situation = { is_situation_type = PrimPlayer_situation }
 				AND = {
 					OR = {
 						has_country_flag = machine_age
@@ -2855,25 +1998,18 @@ building_hive_primitive_capital = {
 			}
 		}
 	}
-
 	destroy_trigger = {
 		exists = owner
 		owner = {
 			OR = {
 				NOT = {
-					# has_origin = origin_primitive_player_pre_industrial_age
-					# has_origin = origin_primitive_player_industrial_age
-					# has_origin = origin_primitive_player_machine_age
-					# has_origin = origin_primitive_player_atomic_age
-					# has_origin = origin_primitive_player_early_space_age
-					any_situation = { is_situation_type = PrimPlayer_situation } # Much more efficient trigger
+					any_situation = { is_situation_type = PrimPlayer_situation }
 					is_primitive = yes
 				}
 				is_hive_empire = no
 			}
 		}
 	}
-
 	convert_to = {
 		building_machine_capital
 		building_capital
@@ -2882,7 +2018,6 @@ building_hive_primitive_capital = {
 		building_hab_fe_capital
 		building_capital_wilderness
 	}
-
 	triggered_planet_modifier = {
 		potential = {
 			exists = owner
@@ -2908,7 +2043,6 @@ building_hive_primitive_capital = {
 		planet_amenities_no_happiness_add = 2500
 		planet_crime_no_happiness_add = -20
 	}
-
 	triggered_planet_modifier = {
 		potential = {
 			exists = owner
@@ -2935,7 +2069,6 @@ building_hive_primitive_capital = {
 		planet_crime_no_happiness_add = -20
 		planet_max_branch_office_buildings_add = 1
 	}
-	
 	triggered_planet_modifier = {
 		potential = {
 			exists = owner
@@ -2946,7 +2079,6 @@ building_hive_primitive_capital = {
 			job_warrior_drone_add = 200
 		}
 	}
-	########################################
 	triggered_planet_modifier = {
 		potential = {
 			exists = owner
@@ -2957,7 +2089,6 @@ building_hive_primitive_capital = {
 		}
 		job_primitive_hive_brain_drone_add = 200
 	}
-	
 	triggered_planet_modifier = {
 		potential = {
 			exists = owner
@@ -2970,7 +2101,6 @@ building_hive_primitive_capital = {
 		job_calculator_biologist_add = 60
 		job_calculator_engineer_add = 60
 	}
-
 	triggered_desc = {
 		trigger = {
 			exists = owner
@@ -2982,7 +2112,6 @@ building_hive_primitive_capital = {
 		}
 		text = job_brain_drone_physicist_effect_desc
 	}
-
 	triggered_desc = {
 		trigger = {
 			exists = owner
@@ -2994,7 +2123,6 @@ building_hive_primitive_capital = {
 		}
 		text = job_brain_drone_biologist_effect_desc
 	}
-
 	triggered_desc = {
 		trigger = {
 			exists = owner
@@ -3006,7 +2134,6 @@ building_hive_primitive_capital = {
 		}
 		text = job_brain_drone_engineer_effect_desc
 	}
-
 	triggered_desc = {
 		trigger = {
 			exists = owner
@@ -3018,7 +2145,6 @@ building_hive_primitive_capital = {
 		}
 		text = job_evosymbiont_physicist_effect_desc
 	}
-
 	triggered_desc = {
 		trigger = {
 			exists = owner
@@ -3030,7 +2156,6 @@ building_hive_primitive_capital = {
 		}
 		text = job_evosymbiont_biologist_effect_desc
 	}
-
 	triggered_desc = {
 		trigger = {
 			exists = owner
@@ -3042,28 +2167,22 @@ building_hive_primitive_capital = {
 		}
 		text = job_evosymbiont_engineer_effect_desc
 	}
-	########################################
 	triggered_planet_modifier = {
 		potential = {
 			exists = owner
 			owner = { has_civic = civic_machine_assimilator }
 		}
 		modifier = {
-			# job_primitive_replicator_add = -100		# Cog Note - This should be fixed, broke after 4.0
-			# job_primitive_maintenance_drone_add = 100	# Cog Note - This should be fixed, broke after 4.0
 		}
 	}
-
 	triggered_planet_modifier = {
 		potential = {
 			has_modifier = gestation_colony
 		}
 		modifier = {
-			# job_primitive_replicator_add = -100		# Cog Note - This should be fixed, broke after 4.0
 			job_gestation_drone_add = 200
 		}
 	}
-	
 	resources = {
 		category = planet_buildings
 		cost = {
@@ -3073,39 +2192,28 @@ building_hive_primitive_capital = {
 			energy =@primitive_upkeep
 		}
 	}
-	
 	prerequisites = {
 		"tech_pre_industrial_steel_construction"
 	}
-	
 	show_tech_unlock_if = {
 		is_hive_empire = yes
 	}
 }
-
 building_hive_urban_dwellings = {
 	icon = building_residence
 	can_build = yes
 	base_buildtime = @b1_time
 	can_demolish = yes
 	can_be_ruined = no
-
 	category = amenity
-	
 	building_sets = {
 		pre_ftl
 	}
-
 	potential = {
 		exists = owner
 		owner = {
 			is_hive_empire = yes
 			OR = {
-				# has_origin = origin_primitive_player_pre_industrial_age
-				# has_origin = origin_primitive_player_industrial_age
-				# has_origin = origin_primitive_player_machine_age
-				# has_origin = origin_primitive_player_atomic_age
-				# has_origin = origin_primitive_player_early_space_age
 				NOT = { has_technology = tech_space_construction }
 				AND = {
 					OR = {
@@ -3119,29 +2227,21 @@ building_hive_urban_dwellings = {
 			}
 		}
 	}
-
 	destroy_trigger = {
 		exists = owner
 		owner = {
 			OR = {
 				NOT = {
-					# has_origin = origin_primitive_player_pre_industrial_age
-					# has_origin = origin_primitive_player_industrial_age
-					# has_origin = origin_primitive_player_machine_age
-					# has_origin = origin_primitive_player_atomic_age
-					# has_origin = origin_primitive_player_early_space_age
-					any_situation = { is_situation_type = PrimPlayer_situation } # Much more efficient trigger
+					any_situation = { is_situation_type = PrimPlayer_situation }
 					is_primitive = yes
 				}
 				is_hive_empire = no
 			}
 		}
 	}
-
 	planet_modifier = {
 		planet_housing_add = 2400
 	}
-	
 	resources = {
 		category = planet_buildings
 		cost = {
@@ -3151,43 +2251,31 @@ building_hive_urban_dwellings = {
 			energy =@primitive_upkeep
 		}
 	}
-	
 	prerequisites = {
 		"tech_pre_industrial_steel_construction"
 	}
-	
 	show_tech_unlock_if = {
 		is_hive_empire = yes
 	}
-
 	upgrades = {
 	}
 }
-
 building_hive_primitive_node = {
 	icon = building_hive_node
 	can_build = no
 	planet_limit = 1
 	can_demolish = yes
 	can_be_ruined = no
-
 	category = unity
-
 	building_sets = {
 		pre_ftl
 		unity
 	}
-
 	potential = {
 		exists = owner
 		owner = {
 			is_hive_empire = yes
 			OR = {
-				# has_origin = origin_primitive_player_pre_industrial_age
-				# has_origin = origin_primitive_player_industrial_age
-				# has_origin = origin_primitive_player_machine_age
-				# has_origin = origin_primitive_player_atomic_age
-				# has_origin = origin_primitive_player_early_space_age
 				NOT = { has_technology = tech_hive_node }
 				AND = {
 					OR = {
@@ -3201,25 +2289,18 @@ building_hive_primitive_node = {
 			}
 		}
 	}
-
 	destroy_trigger = {
 		exists = owner
 		owner = {
 			OR = {
 				NOT = {
-					# has_origin = origin_primitive_player_pre_industrial_age
-					# has_origin = origin_primitive_player_industrial_age
-					# has_origin = origin_primitive_player_machine_age
-					# has_origin = origin_primitive_player_atomic_age
-					# has_origin = origin_primitive_player_early_space_age
-					any_situation = { is_situation_type = PrimPlayer_situation } # Much more efficient trigger
+					any_situation = { is_situation_type = PrimPlayer_situation }
 					is_primitive = yes
 				}
 				is_hive_empire = no
 			}
 		}
 	}
-
 	triggered_planet_modifier = {
 		potential = {
 			exists = owner
@@ -3229,17 +2310,14 @@ building_hive_primitive_node = {
 		}
 		job_coordinator_add = @building_static_jobs
 	}
-
 	triggered_desc = {
 		text =  job_synapse_drone_effect_desc
 	}
-	
 	convert_to = {
 		building_heritage_museum
 		building_corporate_heritage_museum
 		building_machine_primitive_node
 	}
-	
 	resources = {
 		category = planet_buildings
 		cost = {
@@ -3249,20 +2327,13 @@ building_hive_primitive_node = {
 			energy =@primitive_upkeep
 		}
 	}
-	
 	prerequisites = {
 		"tech_primitive_node"
 	}
-	
 	show_tech_unlock_if = {
 		is_hive_empire = yes
 	}
 }
-
-###############################
-# Pre-FTL Machine Buildings #
-###############################
-
 building_machine_primitive_capital = {
 	icon = building_primitive_capital
 	capital = yes
@@ -3271,24 +2342,16 @@ building_machine_primitive_capital = {
 	can_demolish = yes
 	can_be_ruined = no
 	position_priority = 0
-
 	category = government
-	
 	building_sets = {
 		pre_ftl
 	}
-
 	potential = {
 		exists = owner
 		owner = {
 			is_machine_empire = yes
 			OR = {
-				# has_origin = origin_primitive_player_pre_industrial_age
-				# has_origin = origin_primitive_player_industrial_age
-				# has_origin = origin_primitive_player_machine_age
-				# has_origin = origin_primitive_player_atomic_age
-				# has_origin = origin_primitive_player_early_space_age
-				any_situation = { is_situation_type = PrimPlayer_situation } # Much more efficient trigger
+				any_situation = { is_situation_type = PrimPlayer_situation }
 				AND = {
 					OR = {
 						has_country_flag = machine_age
@@ -3301,25 +2364,18 @@ building_machine_primitive_capital = {
 			}
 		}
 	}
-
 	destroy_trigger = {
 		exists = owner
 		owner = {
 			OR = {
 				NOT = {
-					# has_origin = origin_primitive_player_pre_industrial_age
-					# has_origin = origin_primitive_player_industrial_age
-					# has_origin = origin_primitive_player_machine_age
-					# has_origin = origin_primitive_player_atomic_age
-					# has_origin = origin_primitive_player_early_space_age
-					any_situation = { is_situation_type = PrimPlayer_situation } # Much more efficient trigger
+					any_situation = { is_situation_type = PrimPlayer_situation }
 					is_primitive = yes
 				}
 				is_machine_empire = no
 			}
 		}
 	}
-
 	convert_to = {
 		building_machine_capital
 		building_capital
@@ -3327,7 +2383,6 @@ building_machine_primitive_capital = {
 		building_hab_capital
 		building_hab_fe_capital
 	}
-
 	triggered_planet_modifier = {
 		potential = {
 			exists = owner
@@ -3346,9 +2401,6 @@ building_machine_primitive_capital = {
 				}
 			}
 		}
-		# job_primitive_replicator_add = 200			# Cog Note - This should be fixed, broke after 4.0
-		# job_primitive_patrol_drone_add = 100			# Cog Note - This should be fixed, broke after 4.0
-		# job_primitive_machine_calculator_add = 200	# Cog Note - This should be fixed, broke after 4.0
 		job_primitive_hive_maintenance_drone_add = 300
 		planet_housing_add = 1500
 		planet_amenities_no_happiness_add = 2500
@@ -3356,18 +2408,15 @@ building_machine_primitive_capital = {
 		planet_max_branch_office_buildings_add = 1
 		planet_max_buildings_add = 5
 	}
-	
 	triggered_planet_modifier = {
 		potential = {
 			exists = owner
 			owner = { has_technology = tech_primitive_space_age_weapons }
 		}
 		modifier = {
-			# job_primitive_patrol_drone_add = -100	# Cog Note - This should be fixed, broke after 4.0
 			job_patrol_drone_add = 100
 		}
 	}
-	############################################
 	triggered_planet_modifier = {
 		potential = {
 			exists = owner
@@ -3376,9 +2425,7 @@ building_machine_primitive_capital = {
 				is_machine_empire = yes 
 			}
 		}
-		# job_primitive_machine_calculator_add = 200	# Cog Note - This should be fixed, broke after 4.0
 	}
-	
 	triggered_planet_modifier = {
 		potential = {
 			exists = owner
@@ -3391,7 +2438,6 @@ building_machine_primitive_capital = {
 		job_calculator_biologist_add = 60
 		job_calculator_engineer_add = 60
 	}
-
 	triggered_desc = {
 		trigger = {
 			exists = owner
@@ -3402,7 +2448,6 @@ building_machine_primitive_capital = {
 		}
 		text = job_calculator_physicist_effect_desc
 	}
-
 	triggered_desc = {
 		trigger = {
 			exists = owner
@@ -3413,8 +2458,6 @@ building_machine_primitive_capital = {
 		}
 		text = job_calculator_biologist_effect_desc
 	}
-
-
 	triggered_desc = {
 		trigger = {
 			exists = owner
@@ -3425,39 +2468,31 @@ building_machine_primitive_capital = {
 		}
 		text = job_calculator_engineer_effect_desc
 	}
-	############################################
 	triggered_planet_modifier = {
 		potential = {
 			exists = owner
 			owner = { has_technology = tech_basic_industry }
 		}
 		modifier = {
-			# job_primitive_replicator_add = -200	# Cog Note - This should be fixed, broke after 4.0
 			job_replicator_add = 200
 		}
 	}
-
 	triggered_planet_modifier = {
 		potential = {
 			exists = owner
 			owner = { has_civic = civic_machine_assimilator }
 		}
 		modifier = {
-			# job_primitive_replicator_add = -100	# Cog Note - This should be fixed, broke after 4.0
-			# job_primitive_maintenance_drone_add = 100	# Cog Note - This should be fixed, broke after 4.0
 		}
 	}
-
 	triggered_planet_modifier = {
 		potential = {
 			has_modifier = gestation_colony
 		}
 		modifier = {
-			# job_primitive_replicator_add = -100	# Cog Note - This should be fixed, broke after 4.0
 			job_gestation_drone_add = 200
 		}
 	}
-	
 	triggered_planet_modifier = {
 		potential = {
 			exists = owner
@@ -3465,11 +2500,9 @@ building_machine_primitive_capital = {
 		}
 		planet_max_buildings_add = -3
 	}
-	
 	prerequisites = {
 		"tech_pre_industrial_steel_construction"
 	}
-	
 	resources = {
 		category = planet_buildings
 		cost = {
@@ -3479,43 +2512,21 @@ building_machine_primitive_capital = {
 			energy =@primitive_upkeep
 		}
 	}
-	
 	show_tech_unlock_if = {
 		is_machine_empire = yes
 	}
 }
-
 building_machine_primitive_assembly_plant = {
 	icon = building_robot_assembly_plant
 	base_buildtime = @b1_time
 	planet_limit = 1
-
 	category = pop_assembly
-	
 	building_sets = {
 		pre_ftl
 	}
-
 	potential = {
 		always = no
-		# exists = owner
-		# owner = {
-		#	any_situation = { is_situation_type = PrimPlayer_situation }
-		#	OR = {
-		#		is_machine_empire = yes
-		#		is_individual_machine = yes
-		#	}
-		#}
-		# NOR = { 
-		#	has_modifier = gestation_colony 
-		#	has_modifier = resort_colony
-		#}
 	}
-
-	# convert_to = {
-	#	building_robot_primitive_assembly_plant
-	#}
-
 	allow = {
 		hidden_trigger = {
 			OR = {
@@ -3529,12 +2540,11 @@ building_machine_primitive_assembly_plant = {
 			}
 		}
 	}
-
 	destroy_trigger = {
 		exists = owner
 		OR = {
 			owner = { is_robot_empire = no }
-			owner = { count_situation = { count = 0 limit = { is_situation_type = PrimPlayer_situation } } } # Much more efficient trigger 
+			owner = { count_situation = { count = 0 limit = { is_situation_type = PrimPlayer_situation } } }
 			AND = {
 				owner = { is_ai = yes }
 				free_district_slots = 0
@@ -3544,7 +2554,6 @@ building_machine_primitive_assembly_plant = {
 			}
 		}
 	}
-
 	triggered_planet_modifier = {
 		potential = {
 			exists = owner
@@ -3552,9 +2561,7 @@ building_machine_primitive_assembly_plant = {
 				is_machine_empire = yes
 			}
 		}
-		# job_primitive_replicator_add = 100	# Cog Note - This should be fixed, broke after 4.0
 	}
-
 	triggered_planet_modifier = {
 		potential = {
 			exists = owner
@@ -3562,9 +2569,7 @@ building_machine_primitive_assembly_plant = {
 				is_individual_machine = yes
 			}
 		}
-		# job_primitive_roboticist_add = 100	# Cog Note - This should be fixed, broke after 4.0
 	}
-
 	triggered_planet_modifier = {
 		potential = {
 			exists = owner
@@ -3582,7 +2587,6 @@ building_machine_primitive_assembly_plant = {
 			auto_mod_monthly_add = 2
 		}
 	}
-
 	resources = {
 		category = planet_buildings
 		cost = {
@@ -3592,19 +2596,8 @@ building_machine_primitive_assembly_plant = {
 			energy =@primitive_upkeep
 		}
 	}
-
-	# upgrades = {
-	#	building_machine_assembly_plant
-	#}
-
 	prerequisites = {
-
 	}
-	
-	# show_tech_unlock_if = {
-	#	is_machine_empire = yes
-	#}
-
 	triggered_desc = {
 		trigger = {
 			exists = owner
@@ -3614,7 +2607,6 @@ building_machine_primitive_assembly_plant = {
 		}
 		text = job_replicator_effect_desc
 	}
-
 	triggered_desc = {
 		trigger = {
 			exists = owner
@@ -3624,7 +2616,6 @@ building_machine_primitive_assembly_plant = {
 		}
 		text = job_roboticist_individual_machine_effect_desc
 	}
-	
 	resources = {
 		category = planet_buildings
 		cost = {
@@ -3635,31 +2626,22 @@ building_machine_primitive_assembly_plant = {
 		}
 	}
 }
-
 building_machine_primitive_node = {
 	icon = building_autochthon_monument
 	can_build = no
 	planet_limit = 1
 	can_demolish = yes
 	can_be_ruined = no
-
 	category = unity
-
 	building_sets = {
 		pre_ftl
 		unity
 	}
-
 	potential = {
 		exists = owner
 		owner = {
 			is_machine_empire = yes
 			OR = {
-				# has_origin = origin_primitive_player_pre_industrial_age
-				# has_origin = origin_primitive_player_industrial_age
-				# has_origin = origin_primitive_player_machine_age
-				# has_origin = origin_primitive_player_atomic_age
-				# has_origin = origin_primitive_player_early_space_age
 				NOT = { has_technology = tech_cultural_heritage }
 				AND = {
 					OR = {
@@ -3673,25 +2655,18 @@ building_machine_primitive_node = {
 			}
 		}
 	}
-
 	destroy_trigger = {
 		exists = owner
 		owner = {
 			OR = {
 				NOT = {
-					# has_origin = origin_primitive_player_pre_industrial_age
-					# has_origin = origin_primitive_player_industrial_age
-					# has_origin = origin_primitive_player_machine_age
-					# has_origin = origin_primitive_player_atomic_age
-					# has_origin = origin_primitive_player_early_space_age
-					any_situation = { is_situation_type = PrimPlayer_situation } # Much more efficient trigger
+					any_situation = { is_situation_type = PrimPlayer_situation }
 					is_primitive = yes
 				}
 				is_machine_empire = no
 			}
 		}
 	}
-
 	triggered_planet_modifier = {
 		potential = {
 			exists = owner
@@ -3701,17 +2676,14 @@ building_machine_primitive_node = {
 		}
 		job_coordinator_add = @building_static_jobs
 	}
-
 	triggered_desc = {
 		text =  job_coordinator_effect_desc
 	}
-	
 	convert_to = {
 		building_heritage_museum
 		building_corporate_heritage_museum
 		building_hive_primitive_node
 	}
-	
 	resources = {
 		category = planet_buildings
 		cost = {
@@ -3721,165 +2693,40 @@ building_machine_primitive_node = {
 			energy =@primitive_upkeep
 		}
 	}
-	
 	prerequisites = {
 		"tech_primitive_historical_archives"
 	}
-	
 	show_tech_unlock_if = {
 		is_hive_empire = yes
 	}
 }
-
-#########################
-#	 OTHER BUILDINGS	#
-#########################
-
-# building_primitive_clinic = {		# Cog Note - This is some AI shinanigans, We get gene clinics after 'Genetic Healthcare' tech... way later than primitive. Story Event Suggestion, hive mind created by understanding genes?
-#	base_buildtime = @b1_time
-#	base_cap_amount = 1
-#	can_build = yes
-#	can_demolish = yes
-#	can_be_ruined = no
-#
-#	category = amenity
-#
-#	building_sets = {
-#		pre_ftl
-#	}
-#
-#	potential = {
-#		exists = owner
-#		owner = {
-#			is_hive_empire = yes
-#			OR = {
-#				# has_origin = origin_primitive_player_pre_industrial_age
-#				# has_origin = origin_primitive_player_industrial_age
-#				# has_origin = origin_primitive_player_machine_age
-#				# has_origin = origin_primitive_player_atomic_age
-#				# has_origin = origin_primitive_player_early_space_age
-#				any_situation = { is_situation_type = PrimPlayer_situation } # Much more efficient trigger
-#				AND = {
-#					OR = {
-#						has_country_flag = machine_age
-#						has_country_flag = industrial_age
-#						has_country_flag = atomic_age
-#						has_country_flag = early_space_age
-#					}
-#					is_primitive = yes
-#				}
-#			}
-#		}
-#	}
-#
-#	destroy_trigger = {
-#		exists = owner
-#		owner = {
-#			OR = {
-#				NOT = {
-#					# has_origin = origin_primitive_player_pre_industrial_age
-#					# has_origin = origin_primitive_player_industrial_age
-#					# has_origin = origin_primitive_player_machine_age
-#					# has_origin = origin_primitive_player_atomic_age
-#					# has_origin = origin_primitive_player_early_space_age
-#					any_situation = { is_situation_type = PrimPlayer_situation } # Much more efficient trigger
-#					is_primitive = yes
-#				}
-#				is_hive_empire = no
-#			}
-#		}
-#	}
-#
-#	planet_modifier = {
-#		job_healthcare_add = 200
-#		job_primitive_researcher_add = 100
-#	}
-#
-#	resources = {
-#		category = planet_buildings
-#		cost = {
-#			minerals = @b1_minerals
-#		}
-#		upkeep = {
-#			energy =@primitive_upkeep
-#		}
-#	}
-#
-#	prerequisites = {
-#		'tech_primitive_adv_genetic_theory'
-#	}
-#	
-#	show_tech_unlock_if = {
-#		is_machine_empire = no
-#	}
-#
-#	upgrades = {
-#	}
-#
-#	convert_to = {
-#		building_clinic
-#	}
-#
-#	triggered_desc = {
-#		text = job_healthcare_effect_desc
-#	}
-#
-#	on_destroy = {
-#
-#	}
-#
-#	on_repaired = {
-#
-#	}
-#}
-
 building_solarpunk_gaiaseeder = {
 	icon = building_gaiaseeders_4
 	base_buildtime = @b1_time
 	can_build = no
 	can_demolish = yes
 	can_be_ruined = no
-
 	category = amenity
-	
 	building_sets = {
 		pre_ftl
 	}
-
 	potential = {
 		exists = owner
 		owner = {
-			# OR = {
-				# has_origin = origin_primitive_player_pre_industrial_age
-				# has_origin = origin_primitive_player_industrial_age
-				# has_origin = origin_primitive_player_machine_age
-				# has_origin = origin_primitive_player_atomic_age
-				# has_origin = origin_primitive_player_early_space_age
 				is_primitive = yes
-			#}
 		}
 	}
-
 	destroy_trigger = {
 		exists = owner
 		owner = {
-			# OR = {
 				NOT = {
-					# has_origin = origin_primitive_player_pre_industrial_age
-					# has_origin = origin_primitive_player_industrial_age
-					# has_origin = origin_primitive_player_machine_age
-					# has_origin = origin_primitive_player_atomic_age
-					# has_origin = origin_primitive_player_early_space_age
 					is_primitive = yes
 				}
-			#}
 		}
 	}
-
 	planet_modifier = {
 		job_solarpunk_anarchist_add = 1000
 	}
-
 	resources = {
 		category = planet_buildings
 		cost = {
@@ -3889,69 +2736,42 @@ building_solarpunk_gaiaseeder = {
 			energy =@primitive_upkeep
 		}
 	}
-
 	prerequisites = {
 	}
-
 	upgrades = {
 	}
-
 	on_destroy = {
-
 	}
-
 	on_repaired = {
-
 	}
 }
-
 building_solarpunk_ranger_lodge = {
 	icon = building_paradise_dome
 	base_buildtime = @b1_time
 	can_build = yes
 	can_demolish = yes
 	can_be_ruined = no
-
 	category = amenity
-	
 	building_sets = {
 		pre_ftl
 	}
-
 	potential = {
 		exists = owner
 		owner = {
-			# OR = {
-				# has_origin = origin_primitive_player_pre_industrial_age
-				# has_origin = origin_primitive_player_industrial_age
-				# has_origin = origin_primitive_player_machine_age
-				# has_origin = origin_primitive_player_atomic_age
-				# has_origin = origin_primitive_player_early_space_age
 				is_primitive = yes
-			#}
 		}
 	}
-
 	destroy_trigger = {
 		exists = owner
 		owner = {
-			# OR = {
 				NOT = {
-					# has_origin = origin_primitive_player_pre_industrial_age
-					# has_origin = origin_primitive_player_industrial_age
-					# has_origin = origin_primitive_player_machine_age
-					# has_origin = origin_primitive_player_atomic_age
-					# has_origin = origin_primitive_player_early_space_age
 					is_primitive = yes
 				}
-			#}
 		}
 	}
-
 	planet_modifier = {
 		job_solarpunk_anarchist_add = 500
 	}
-
 	resources = {
 		category = planet_buildings
 		cost = {
@@ -3961,22 +2781,15 @@ building_solarpunk_ranger_lodge = {
 			energy =@primitive_upkeep
 		}
 	}
-
 	prerequisites = {
 	}
-
 	upgrades = {
 	}
-
 	on_destroy = {
-
 	}
-
 	on_repaired = {
-
 	}
 }
-
 building_solarpunk_sapling = {
 	icon = holding_tree_of_life_sapling
 	base_buildtime = @b1_time
@@ -3984,51 +2797,35 @@ building_solarpunk_sapling = {
 	can_demolish = yes
 	can_be_ruined = no
 	planet_limit = 1
-
 	category = amenity
-	
 	building_sets = {
 		pre_ftl
 	}
-
 	potential = {
 		exists = owner
 		owner = {
 			OR = {
-				# has_origin = origin_primitive_player_pre_industrial_age
-				# has_origin = origin_primitive_player_industrial_age
-				# has_origin = origin_primitive_player_machine_age
-				# has_origin = origin_primitive_player_atomic_age
-				# has_origin = origin_primitive_player_early_space_age
-				any_situation = { is_situation_type = PrimPlayer_situation } # Much more efficient trigger
+				any_situation = { is_situation_type = PrimPlayer_situation }
 				is_primitive = yes
 			}
 		}
 	}
-
 	destroy_trigger = {
 		exists = owner
 		owner = {
 			OR = {
 				NOT = {
-					# has_origin = origin_primitive_player_pre_industrial_age
-					# has_origin = origin_primitive_player_industrial_age
-					# has_origin = origin_primitive_player_machine_age
-					# has_origin = origin_primitive_player_atomic_age
-					# has_origin = origin_primitive_player_early_space_age
-					any_situation = { is_situation_type = PrimPlayer_situation } # Much more efficient trigger
+					any_situation = { is_situation_type = PrimPlayer_situation }
 					is_primitive = yes
 				}
 			}
 		}
 	}
-
 	planet_modifier = {
 		job_solarpunk_anarchist_add = 500
 		planet_farmers_food_produces_add = 2
 		planet_housing_add = 2400
 	}
-
 	resources = {
 		category = planet_buildings
 		cost = {
@@ -4038,72 +2835,44 @@ building_solarpunk_sapling = {
 			energy =@primitive_upkeep
 		}
 	}
-
 	prerequisites = {
 		"tech_solarpunk_sapling"
 	}
-
 	upgrades = {
-		
 	}
-
 	on_destroy = {
-
 	}
-
 	on_repaired = {
-
 	}
 }
-
 building_solarpunk_organic_paradise = {
 	icon = building_paradise_dome
 	base_buildtime = @b1_time
 	can_build = yes
 	can_demolish = yes
 	can_be_ruined = no
-
 	category = amenity
-	
 	building_sets = {
 		pre_ftl
 	}
-
 	potential = {
 		exists = owner
 		owner = {
-			# OR = {
-				# has_origin = origin_primitive_player_pre_industrial_age
-				# has_origin = origin_primitive_player_industrial_age
-				# has_origin = origin_primitive_player_machine_age
-				# has_origin = origin_primitive_player_atomic_age
-				# has_origin = origin_primitive_player_early_space_age
 				is_primitive = yes
-			#}
 		}
 	}
-
 	destroy_trigger = {
 		exists = owner
 		owner = {
-			# OR = {
 				NOT = {
-					# has_origin = origin_primitive_player_pre_industrial_age
-					# has_origin = origin_primitive_player_industrial_age
-					# has_origin = origin_primitive_player_machine_age
-					# has_origin = origin_primitive_player_atomic_age
-					# has_origin = origin_primitive_player_early_space_age
 					is_primitive = yes
 				}
-			#}
 		}
 	}
-
 	planet_modifier = {
 		job_solarpunk_anarchist_add = 500
 		planet_housing_add = 2000
 	}
-
 	resources = {
 		category = planet_buildings
 		cost = {
@@ -4113,18 +2882,12 @@ building_solarpunk_organic_paradise = {
 			energy =@primitive_upkeep
 		}
 	}
-
 	prerequisites = {
 	}
-
 	upgrades = {
 	}
-
 	on_destroy = {
-
 	}
-
 	on_repaired = {
-
 	}
 }

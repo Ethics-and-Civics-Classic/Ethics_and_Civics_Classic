@@ -1,14 +1,6 @@
-#######################################
-# Pop Faction Events
-# By Maximilian Olbers & Gemma Thomson
-#######################################
-
-@RecentFactionsEventTimer = 500 # Days until this empire should be eligible for most other 'Faction Reacts' events
-@RecentCommsTimer = 3600 # 10 years, during which parties are considered to have established communications recently
-
+@RecentFactionsEventTimer = 500
+@RecentCommsTimer = 3600
 namespace = factions
-
-# A faction is formed
 pop_faction_event = {
 	id = factions.1
 	title = factions.1.title
@@ -16,7 +8,6 @@ pop_faction_event = {
 		trigger = {
 			text = factions.1.desc.start
 			text = newline
-
 			 success_text = {
 				text = factions.1.desc.bankers
 				is_pop_faction_type = bankers
@@ -78,16 +69,13 @@ pop_faction_event = {
 	picture = GFX_evt_galactic_senate
 	show_sound = event_factions
 	is_triggered_only = yes
-
 	trigger = {
 		NOT = {
 			owner = {
 				has_origin = origin_broken_shackles
-				# has_country_flag = first_faction 
 			}
 		}
 	}
-
 	option = {
 		name = OK
 		hidden_effect = {
@@ -102,32 +90,24 @@ pop_faction_event = {
 		}
 	}
 }
-
-# Killed Guardian
 country_event = {
 	id = factions.10
 	hide_window = yes
 	is_triggered_only = yes
-
 	trigger = {
 		is_country_type = default
 		from = {
 			is_guardian_country = yes
 		}
 	}
-
 	immediate = {
 		set_country_flag = killed_guardian
 	}
 }
-
-# Established comms
-# Via on_post_communications_established | this = country which established the communications; from = country communications were established with
 country_event = {
 	id = factions.11
 	hide_window = yes
 	is_triggered_only = yes
-
 	trigger = {
 		OR = {
 			is_country_type = default
@@ -144,7 +124,6 @@ country_event = {
 			is_country_type = default
 		}
 	}
-
 	immediate = {
 		set_timed_country_flag = {
 			flag = recent_comms_timed
@@ -158,32 +137,25 @@ country_event = {
 		}
 	}
 }
-
-# Invaded primitives
 country_event = {
 	id = factions.12
 	hide_window = yes
 	is_triggered_only = yes
-
 	trigger = {
 		from = { is_primitive = yes }
 		is_country_type = default
 	}
-
 	immediate = {
 		set_timed_country_flag = {
 			flag = recent_primitive_invasion
-			years = 20 # 20 years
+			years = 20
 		}
 	}
 }
-
-# Beginning war as either attacker or defender
 country_event = {
 	id = factions.13
 	hide_window = yes
 	is_triggered_only = yes
-
 	immediate = {
 		from = {
 			if = {
@@ -191,7 +163,7 @@ country_event = {
 				root = {
 					set_timed_country_flag = {
 						flag = entered_war_as_attacker
-						years = 20 # 20 years
+						years = 20
 					}
 				}
 			}
@@ -200,104 +172,26 @@ country_event = {
 				root = {
 					set_timed_country_flag = {
 						flag = entered_war_as_defender
-						years = 20 # 20 years
+						years = 20
 					}
 				}
 			}
 		}
 	}
 }
-
-# Imperialist frontier outpost demand
-# ship_event = {
-#	id = factions.220
-#	hide_window = yes
-#	is_triggered_only = yes
-#
-#	immediate = {
-#		owner = {
-#			set_timed_country_flag = {
-#				flag = imperialist_frontier_outpost_timed_flag
-#				days = 7200 # 20 years
-#			}
-#		}
-#	}
-#}
-
-# Industrialist Recent Monster Extermination
-# This = owner of fleet 1 (combatant)
-# From = owner of fleet 2 (destroyed)
-# fromfrom = fleet 1
-# fromfromfrom = fleet 2
-# country_event = {
-#	id = factions.330
-#	hide_window = yes
-#	is_triggered_only = yes
-
-#	trigger = {
-#		is_country_type = default
-#		from = {
-#			OR = {
-#				is_country_type = crystal
-#				is_country_type = drone
-#				is_amoeba_country_type = yes
-#				is_country_type = cloud
-#				is_country_type = pirate
-#				is_country_type = crystal_faction
-#				is_country_type = drone_faction
-#			}
-#		}
-#		fromfrom.solar_system = {
-#			has_star_flag = hostile_system
-
-#			count_fleet_in_system = {
-#				count < 1
-#				limit = {
-#					exists = owner
-#					owner = {
-#						OR = {
-#							is_country_type = crystal
-#							is_country_type = drone
-#							is_amoeba_country_type = yes
-#							is_country_type = cloud
-#							is_country_type = pirate
-#							is_country_type = crystal_faction
-#							is_country_type = drone_faction
-#						}
-#					}
-#				}
-#			}
-#		}
-#	}
-
-#	immediate = {
-#		set_timed_country_flag = {
-#			flag = recent_monster_extermination_timed
-#			days = 3600 # 10 years
-#		}
-#	}
-# }
-
-# Xenoist 1000
-
-# Xenoist Uplift Demand
-# Via on_uplift_completion = {}
 carrier_event = {
 	id = factions.1005
 	hide_window = yes
 	is_triggered_only = yes
-
 	immediate = {
 		owner = {
 			set_timed_country_flag = {
 				flag = recent_uplift_timed
-				years = 20 # 20 years
+				years = 20
 			}
 		}
 	}
 }
-
-# Notification event - other empire shifts ethics
 country_event = {
 	id = factions.2000
 	title = factions.2000.title
@@ -306,7 +200,6 @@ country_event = {
 		trigger = {
 			text = factions.2000.desc.start
 			text = newline
-
 			 success_text = {
 				text = factions.2000.desc.bankers
 				event_target:TargetFaction = { is_pop_faction_type = bankers }
@@ -361,12 +254,9 @@ country_event = {
 			}
 		}
 	}
-
 	picture = GFX_evt_alien_propaganda
 	show_sound = event_factions
-
 	is_triggered_only = yes
-
 	option = {
 		name = OK
 	}
