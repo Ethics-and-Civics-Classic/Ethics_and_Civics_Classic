@@ -1,0 +1,629 @@
+@base_cost = 150
+@city_cost = 250
+
+district_ark_city = {
+	base_buildtime = 600
+	exempt_from_ai_planet_specialization = yes
+
+	overlay_icon = GFX_district_government
+	gridbox = district_city
+
+	zone_slots = {
+		slot_city_government
+		slot_ark_city_01
+		slot_ark_city_02
+	}
+	
+	show_on_uncolonized = {
+		exists = from
+		from = {
+			is_nomadic = yes
+		}
+		uses_district_set = nomad
+		is_special_colony_type = no
+	}
+
+	potential = {
+		OR = {
+			NOT = { exists = owner } #this condition is needed for galaxy generation
+			uses_district_set = nomad
+		}
+		NAND = {
+			is_capital = yes
+			owner = {
+				has_menace_perk = menp_behemoth_mind_meld
+			}
+		}
+	}
+	
+	unlock = { # planet scope
+		owner? = { 
+			OR = {
+				has_technology = tech_industrial_city
+				has_technology = tech_primitive_arkship
+			}
+		}
+	}
+	
+	allow = {
+		uses_district_set = nomad
+	}
+	
+	prerequisites = {
+		"tech_industrial_city"
+	}
+
+	conversion_ratio = 1
+	convert_to = {
+		district_mindlink
+		district_city
+		district_nexus
+		district_hive
+		district_hab_housing
+		district_arcology_housing
+		district_rw_city
+		district_rw_hive
+		district_rw_nexus
+	}
+
+	resources = {
+		category = planet_districts_cities
+		cost = {
+			alloys = @city_cost
+		}
+		upkeep = {
+			energy = 2
+		}
+	}
+
+	planet_modifier = {
+		planet_housing_add = 2500
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_valid_civic = civic_agrarian_idyll
+			}
+		}
+		modifier = {
+			planet_housing_add = -200
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_active_tradition = tr_prosperity_public_works_nomads }
+		}
+		modifier = {
+			planet_housing_add = 250
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_technology = tech_housing_1
+			}
+		}
+		modifier = {
+			planet_housing_add = 100
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_technology = tech_housing_2
+				NOT = { has_valid_civic = civic_agrarian_idyll }
+			}
+		}
+		modifier = {
+			planet_housing_add = 200
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { is_tankbound_empire = yes }
+		}
+		modifier = {
+			job_production_overseer_add = 200
+		}
+	}
+	triggered_desc = {
+		trigger = {
+			exists = owner
+			owner = { is_tankbound_empire = yes }
+		}
+		text = job_production_overseer_effect_desc
+	}
+
+	inline_script = {
+		script = districts/district_triggered_name_urban
+	}
+
+	inline_script = {
+		script = districts/district_triggered_flavor_desc_urban
+	}
+
+	inline_script = {
+		script = districts/ai_urban_district_extra_weighting
+	}
+}
+
+district_ark_generator = {
+	base_buildtime = 240
+	overlay_icon = GFX_district_energy
+	gridbox = district_generator
+
+	zone_slots = {
+		slot_ark_reactor
+	}
+
+	show_on_uncolonized = {
+		uses_district_set = nomad
+	}
+
+	potential = {
+		uses_district_set = nomad
+	}
+	
+	unlock = { # planet scope
+		owner? = { 
+			OR = {
+				has_technology = tech_fission_power
+				has_technology = tech_primitive_arkship
+			}
+		}
+	}
+
+	conversion_ratio = 1
+	convert_to = {
+		district_generator
+		district_geothermal
+		district_hab_energy
+		district_nexus_1
+		district_hive_1
+		district_arcology_urban_1
+		district_rw_urban_1
+	}
+
+	resources = {
+		category = planet_districts_generator
+		cost = {
+			alloys = @base_cost
+		}
+		upkeep = {
+			energy = 1
+		}
+	}
+
+	planet_modifier = {
+		planet_housing_add = 200
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_valid_civic = civic_agrarian_idyll
+			}
+		}
+		modifier = {
+			planet_housing_add = 300
+		}
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { is_gestalt = yes }
+		}
+		modifier = {
+			planet_housing_add = 100
+		}
+	}
+
+	inline_script = {
+		script = jobs/technicians_add
+		AMOUNT = @base_rural_nomad_district_jobs
+	}
+
+	prerequisites = {
+		OR = {
+			"tech_fission_power"
+			"tech_primitive_arkship"
+		}
+	}
+
+	show_tech_unlock_if = {
+		is_nomadic = yes
+	}
+
+	ai_weight_coefficient = 0.8
+
+	triggered_flavor_desc = {
+		trigger = {
+			uses_district_set = nomad
+		}
+		text = district_ark_generator_desc
+	}
+
+	# Unique zones first
+	triggered_name = {
+		trigger = {
+			has_zone = {
+				zone = zone_ark_engine_bypass
+			}
+		}
+		text = zone_ark_engine_bypass
+	}
+
+	triggered_flavor_desc = {
+		trigger = {
+			has_zone = {
+				zone = zone_ark_engine_bypass
+			}
+		}
+		text = zone_ark_engine_bypass_desc
+	}
+
+	triggered_name = {
+		trigger = {
+			has_zone = {
+				zone = zone_ark_shield_overloader
+			}
+		}
+		text = zone_ark_shield_overloader
+	}
+
+	triggered_flavor_desc = {
+		trigger = {
+			has_zone = {
+				zone = zone_ark_shield_overloader
+			}
+		}
+		text = zone_ark_shield_overloader_desc
+	}
+
+	# Then generic
+	inline_script = {
+		script = districts/district_triggered_name_generator
+	}
+
+	inline_script = {
+		script = districts/district_triggered_flavor_desc_generator
+	}
+}
+
+district_ark_basic = {
+	base_buildtime = 240
+	gridbox = district_city
+
+	zone_slots = {
+		slot_ark_basic
+	}
+
+	show_on_uncolonized = {
+		uses_district_set = nomad
+	}
+
+	potential = {
+		uses_district_set = nomad
+	}
+	
+	unlock = { # planet scope
+		owner? = { 
+			has_technology = tech_industrial_city
+		}
+	}
+
+	conversion_ratio = 1
+	convert_to = {
+		district_farming
+		district_nexus_3
+		district_hive_3
+		district_arcology_urban_3
+		district_rw_urban_3
+	}
+
+	resources = {
+		category = planet_districts_farming
+		cost = {
+			alloys = @base_cost
+		}
+		# Anglers Civic cost effect
+		cost = {
+			trigger = {
+				AND = {
+					exists = owner
+					owner = { is_anglers_empire = yes }
+					planet = { has_climate = wet }
+				}
+			}
+			alloys =-50
+		}
+		upkeep = {
+			energy = 1
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+		}
+		modifier = {
+			planet_housing_add = 200
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_valid_civic = civic_agrarian_idyll
+			}
+		}
+		modifier = {
+			planet_housing_add = 400
+		}
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_technology = tech_housing_agrarian_idyll
+				has_valid_civic = civic_agrarian_idyll
+			}
+		}
+		modifier = {
+			planet_housing_add = 200
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { is_gestalt = yes }
+		}
+		modifier = {
+			planet_housing_add = 100
+		}
+	}
+
+	prerequisites = {
+		tech_industrial_city
+	}
+
+	show_tech_unlock_if = {
+		is_nomadic = yes
+	}
+
+	ai_weight_coefficient = 0.8
+
+	triggered_name = {
+		trigger = {
+	        uses_district_set = nomad
+		}
+		text = district_ark_basic_name
+	}
+
+	triggered_flavor_desc = {
+		trigger = {
+			uses_district_set = nomad
+		}
+		text = district_ark_basic_desc
+	}
+}
+
+district_ark_military = {
+	base_buildtime = 480	#Vanilla 240
+	overlay_icon = GFX_district_fortress
+	gridbox = district_arcology_fortress
+
+	zone_slots = {
+		slot_ark_military
+	}
+
+	show_on_uncolonized = {
+		uses_district_set = nomad
+	}
+
+	potential = {
+		uses_district_set = nomad
+		exists = owner
+		owner = {
+			NAND = {
+				has_origin = origin_forever_cruise
+				NOT = { has_country_flag = forever_cruise_over }
+			}
+		}
+	}
+	
+	unlock = { # planet scope
+		owner? = { 
+			has_technology = tech_planetary_defenses
+		}
+	}
+
+	conversion_ratio = 1
+	convert_to = {
+		district_ark_forever_cruise
+		district_mining
+		district_melting
+		district_hab_mining
+		district_nexus_2
+		district_hive_2
+		district_arcology_urban_2
+		district_rw_urban_2
+	}
+
+	resources = {
+		category = planet_districts_farming
+		cost = {
+			alloys = @base_cost
+		}
+		upkeep = {
+			energy = 1
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { is_wilderness_empire = no }
+		}
+		modifier = {
+			planet_housing_add = 200
+		}
+	}
+
+	inline_script = {
+		script = jobs/soldiers_add
+		AMOUNT = @base_rural_nomad_district_jobs
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { is_gestalt = yes }
+		}
+		modifier = {
+			planet_housing_add = 100
+		}
+	}
+	
+	prerequisites = {
+		tech_planetary_defenses
+	}
+
+	show_tech_unlock_if = {
+		is_nomadic = yes
+		NOT = {
+			has_origin = origin_forever_cruise
+		}
+	}
+
+	ai_weight_coefficient = 0.8
+
+	triggered_name = {
+		trigger = {
+			has_zone = {
+				zone = zone_ark_military_eco
+			}
+		}
+		text = zone_ark_military_eco
+	}
+
+	triggered_flavor_desc = {
+		trigger = {
+			has_zone = {
+				zone = zone_ark_military_eco
+			}
+		}
+		text = zone_ark_military_eco_desc
+	}
+
+	triggered_name = {
+		trigger = {
+			has_zone = {
+				zone = zone_ark_shipwright
+			}
+		}
+		text = zone_ark_shipwright
+	}
+
+	triggered_flavor_desc = {
+		trigger = {
+			has_zone = {
+				zone = zone_ark_shipwright
+			}
+		}
+		text = zone_ark_shipwright_desc
+	}
+
+	triggered_name = {
+		trigger = {
+			has_zone = {
+				zone = zone_ark_missile_silos
+			}
+		}
+		text = zone_ark_missile_silos
+	}
+
+	triggered_flavor_desc = {
+		trigger = {
+			has_zone = {
+				zone = zone_ark_missile_silos
+			}
+		}
+		text = zone_ark_missile_silos_desc
+	}
+
+	triggered_name = {
+		trigger = {
+			has_zone = {
+				zone = zone_ark_ammunition_lines
+			}
+		}
+		text = zone_ark_ammunition_lines
+	}
+
+	triggered_flavor_desc = {
+		trigger = {
+			has_zone = {
+				zone = zone_ark_ammunition_lines
+			}
+		}
+		text = zone_ark_ammunition_lines_desc
+	}
+
+	triggered_name = {
+		trigger = {
+			has_zone = {
+				zone = zone_ark_laser_capacitors
+			}
+		}
+		text = zone_ark_laser_capacitors
+	}
+
+	triggered_flavor_desc = {
+		trigger = {
+			has_zone = {
+				zone = zone_ark_laser_capacitors
+			}
+		}
+		text = zone_ark_laser_capacitors_desc
+	}
+
+	triggered_name = {
+		trigger = {
+			has_zone = {
+				zone = zone_ark_flight_decks
+			}
+		}
+		text = zone_ark_flight_decks
+	}
+
+	triggered_flavor_desc = {
+		trigger = {
+			has_zone = {
+				zone = zone_ark_flight_decks
+			}
+		}
+		text = zone_ark_flight_decks_desc
+	}
+
+	triggered_name = {
+		text = district_ark_military_name
+	}
+
+	triggered_flavor_desc = {
+		text = district_ark_military_flavor_desc
+	}
+}
