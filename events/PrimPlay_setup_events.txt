@@ -1763,15 +1763,18 @@ country_event = {
 			weighted_random_owned_pop_group = { kill_single_pop = yes }
 			set_carrier_flag = PrimPlayer_primitive_world
 			# clear_deposits = no
-			set_planet_size = 30
-			every_deposit = {
-				limit = {
-					OR = {
-						is_deposit_type =d_decrepit_dwellings
-						is_deposit_type =d_failing_infrastructure
+			if = { 
+				limit = { owner? = { is_nomadic = no } }
+				set_planet_size = 30
+				every_deposit = {
+					limit = {
+						OR = {
+							is_deposit_type =d_decrepit_dwellings
+							is_deposit_type =d_failing_infrastructure
+						}
 					}
+					clear_blocker = yes	# Custom planet blockers (nations) are used instead of industrial wastelands
 				}
-				clear_blocker = yes	# Custom planet blockers (nations) are used instead of industrial wastelands
 			}
 			######################
 			# Add nation blockers#
@@ -2279,6 +2282,15 @@ country_event = {
 			#last_created_fleet = { 
 			#	fleet_event = { id = random_primitive_events.1 days = 15 }	#Exploration Mission
 			#}
+		}
+		if = {
+			limit = { 
+				is_nomadic = yes
+			}
+			random_controlled_ship = {
+				limit = { is_arkship_ship = yes }
+				set_ship_flag = primitive_arkship_flag
+			}
 		}
 	}
 }

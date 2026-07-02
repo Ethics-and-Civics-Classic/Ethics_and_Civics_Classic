@@ -691,6 +691,283 @@ country_event = {
 	 #Random Through the Ages events
 ##########################################
 situation_event = {
+	id = PrimPlay_situation_event.1000
+	hide_window = yes
+	is_triggered_only = yes
+
+	trigger = { 
+		NOT = { has_situation_flag = PrimPlay_situation_event_1000_pause }
+		owner = { has_technology = tech_primitive_arkship }
+	}
+	
+	immediate = { 
+		set_situation_flag = PrimPlay_situation_event_1000_pause 
+		if = {
+			limit = { 
+				NOR = {
+					has_situation_flag = PrimPlay_situation_event_1100_pause
+					has_situation_flag = PrimPlay_situation_event_1100_cooldown
+				}
+			}
+			owner = { capital_scope = { carrier_event = { id = PrimPlay_situation_event.1100 } } }
+		}
+		random_list = {
+			1 = {
+				#Nothing
+			}
+			33 = {
+				situation_event = { id = PrimPlay_situation_event.1001 }
+				modifier = {
+					factor = 0
+					OR = { 
+						has_situation_flag = PrimPlay_situation_event_1001_finished 
+						has_situation_flag = PrimPlay_situation_event_1001_cancel
+						has_situation_flag = PrimPlay_situation_event_1001_pause
+					}
+				}
+			}
+			33 = {
+				situation_event = { id = PrimPlay_situation_event.1002 }
+				modifier = {
+					factor = 0
+					OR = { 
+						has_situation_flag = PrimPlay_situation_event_1002_finished 
+						has_situation_flag = PrimPlay_situation_event_1002_pause
+					}
+				}
+			}
+			33 = {
+				situation_event = { id = PrimPlay_situation_event.1003 }
+				modifier = {
+					factor = 0 
+					has_situation_flag = PrimPlay_situation_event_1003_pause
+				}
+			}
+		}
+	}
+
+	after = { remove_situation_flag = PrimPlay_situation_event_1000_pause }
+}
+
+carrier_event = {
+	id = PrimPlay_situation_event.1100
+	title = PrimPlay_situation_event.1100.title
+	desc = PrimPlay_situation_event.1100.desc
+	picture = GFX_evt_mysterious_signal
+	show_sound = event_activating_unknown_technology
+	is_triggered_only = yes
+	location = root
+
+	trigger = { 
+		has_situation_flag = PrimPlay_situation_event_1100_pause
+		owner = { 
+			any_controlled_ship = {
+				has_ship_flag = primitive_arkship_flag
+				has_component = EMPTY_DRIVE	#Ideally it's a damaged drive for aesthetic/immersive reasons
+			}
+		}
+	}
+	
+	immediate = { 
+		set_situation_flag = PrimPlay_situation_event_1100_pause 
+		owner = {
+			random_controlled_ship = {
+				limit = { has_ship_flag = primitive_arkship_flag }
+				set_ship_flag = PrimPlay_situation_event_1100
+			}
+		}
+	}
+	
+	option = {
+		name = PrimPlay_situation_event.1100.deactivate
+		enable_special_project = {
+			name = "ANCIENT_ARKSHIP_FTL_DEACTIVATE_PROJECT"
+			location = this
+			owner = owner
+		}
+	}
+	
+	option = {
+		name = PrimPlay_situation_event.1100.materialist
+		owner = {
+			add_resource = { influence = -50 }
+			random_controlled_ship = { 
+				limit = { has_ship_flag = PrimPlay_situation_event_1100 }
+				ship_event = { id = PrimPlay_situation_event.1102 }
+			}
+		}
+		trigger = { owner = { is_materialist = yes } }
+		allow = {
+			owner = {
+				has_country_resource = { type = influence amount >= 50 }
+			}
+		}
+	}
+	
+	option = {
+		name = PrimPlay_situation_event.1100.spiritualist
+		owner = {
+			add_resource = { influence = -50 }
+			random_controlled_ship = { 
+				limit = { has_ship_flag = PrimPlay_situation_event_1100 }
+				ship_event = { id = PrimPlay_situation_event.1102 }
+			}
+		}
+		trigger = { 
+			owner = {
+				is_spiritualist = yes
+				NOR = {
+					has_civic = civic_machine_cult
+					has_civic = civic_machine_cult_machine
+				}
+			}
+		}
+		allow = {
+			owner = {
+				has_country_resource = { type = influence amount >= 50 }
+			}
+		}
+	}
+	
+	option = {
+		name = PrimPlay_situation_event.1100.civic_machine_cult
+		owner = {
+			add_resource = { influence = 25 }
+			random_controlled_ship = { 
+				limit = { has_ship_flag = PrimPlay_situation_event_1100 }
+				ship_event = { id = PrimPlay_situation_event.1102 }
+			}
+		}
+		trigger = { 
+			owner = {
+				OR = {
+					has_civic = civic_machine_cult
+					has_civic = civic_machine_cult_machine
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = PrimPlay_situation_event.1100.activate
+		owner = {
+			add_resource = { influence = -100 }
+			random_controlled_ship = { 
+				limit = { has_ship_flag = PrimPlay_situation_event_1100 }
+				ship_event = { id = PrimPlay_situation_event.1102 }
+			}
+		}
+		trigger = { 
+			owner = {
+				is_materialist = no 
+				is_spiritualist = no
+			}
+		}
+		allow = {
+			owner = {
+				has_country_resource = { type = influence amount >= 100 }
+			}
+		}
+		owner = {
+			random_controlled_ship = {
+				limit = { has_ship_flag = primitive_arkship_flag }
+				custom_tooltip = arkship
+			}
+		}
+	}
+
+	#after = { remove_situation_flag = PrimPlay_situation_event_1100_pause }	#Removed elsewhere
+}
+
+#Shut Down FTL Drive
+carrier_event = {
+	id = PrimPlay_situation_event.1101
+	title = PrimPlay_situation_event.1101.title
+	desc = PrimPlay_situation_event.1101.desc
+	picture = GFX_evt_generator_powerup
+	show_sound = event_structural_collapse
+	is_triggered_only = yes
+	location = root
+
+	trigger = { 
+		
+	}
+	
+	immediate = { 
+		 hidden_effect = {
+			owner = { 
+				random_situation = { 
+					limit = { is_situation_type = PrimPlayer_situation } 
+					set_timed_situation_flag = {
+						flag = PrimPlay_situation_event_1100_cooldown
+						years = 2
+					}
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = PrimPlay_situation_event.1101.a
+		custom_tooltip = PrimPlay_situation_event.1101.tooltip
+	}
+
+	after = { owner = { random_situation = { limit = { is_situation_type = PrimPlayer_situation } remove_situation_flag = PrimPlay_situation_event_1100_pause } } }
+}
+
+#FTL Drive Activated
+ship_event = {
+	id = PrimPlay_situation_event.1102
+	title = PrimPlay_situation_event.1102.title
+	desc = PrimPlay_situation_event.1102.desc
+	picture = GFX_evt_arkship_in_orbit
+	show_sound = event_mystic_reveal_light
+	is_triggered_only = yes
+	#location = ship.fleet.solar_system
+	location = root
+
+	trigger = { 
+		
+	}
+	
+	immediate = {
+		solar_system = {
+			random_neighbor_system = {
+				ROOT.fleet = {
+					set_location = {
+						target = PREV
+						distance = 150
+						angle = random
+						direction = in_system
+					}
+				}
+			}
+		}
+		remove_ship_flag = PrimPlay_situation_event_1100
+	}
+	
+	option = {
+		name = PrimPlay_situation_event.1102.a
+		trigger = {
+			fleet.solar_system = {
+				any_system_planet = { is_surveyed = { who = root.owner status = no } }
+			}
+		}
+	}
+	
+	option = {
+		name = PrimPlay_situation_event.1102.b
+		trigger = {
+			fleet.solar_system = {
+				any_system_planet = { is_surveyed = { who = root.owner status = yes } }
+			}
+		}
+	}
+
+	after = { owner = { random_situation = { limit = { is_situation_type = PrimPlayer_situation } remove_situation_flag = PrimPlay_situation_event_1100_pause } } }
+}
+
+situation_event = {
 	id = PrimPlay_situation_event.1001
 	title = PrimPlay_situation_event.1001.title
 	desc = PrimPlay_situation_event.1001.desc
