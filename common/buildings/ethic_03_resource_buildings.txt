@@ -488,7 +488,6 @@ building_mine_generic = {
 	building_sets = {
 		mining
 		urban
-		ark_urban
 	}
 
 	potential = {
@@ -530,7 +529,6 @@ building_mine_generic = {
 			owner = { 
 				has_technology = tech_mechanized_mining_2 
 				is_gestalt = no
-				is_nomadic = yes
 			}
 		}
 		job_miner_add = 100
@@ -542,7 +540,6 @@ building_mine_generic = {
 			owner = { 
 				has_technology = tech_mechanized_mining_2 
 				is_gestalt = yes
-				is_nomadic = yes
 			}
 		}
 		job_mining_drone_add = 100
@@ -552,7 +549,6 @@ building_mine_generic = {
 			exists = owner
 			owner = { 
 				NOT = { has_technology = tech_mechanized_mining_2 }
-				is_nomadic = yes 
 			}
 		}
 		job_primitive_miner_add = 100
@@ -561,14 +557,31 @@ building_mine_generic = {
 	triggered_planet_modifier = {
 		potential = {
 			exists = owner
-			owner = { has_technology = tech_ship_armor_1 }
+			owner = {
+				has_technology = tech_ship_armor_1
+				is_gestalt = no
+			}
 		}
 		job_foundry_add = 100
 	}
 	triggered_planet_modifier = {
 		potential = {
 			exists = owner
-			owner = { NOT = { has_technology = tech_ship_armor_1 } }
+			owner = {
+				has_technology = tech_ship_armor_1
+				is_gestalt = yes
+			}
+		}
+		job_fabricator_add = 100
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				NOT = {
+					has_technology = tech_ship_armor_1
+				}
+			}
 		}
 		job_primitive_foundry_add = 100
 	}
@@ -613,6 +626,7 @@ building_mineral_purification_plant = {
 	
 	building_sets = {
 		mining
+		harvest
 	}
 
 	potential = {
@@ -627,7 +641,7 @@ building_mineral_purification_plant = {
 			AND = {
 				is_planet_class = pc_habitat
 				check_modifier_value = {
-					modifier = district_hab_mining_max
+					modifier = district_hab_mining_max_add
 					value > 0
 				}
 			}
@@ -666,24 +680,55 @@ building_mineral_purification_plant = {
 
 	resources = {
 		category = planet_buildings
-		cost = {
-			minerals = 200
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = volatile_motes
+			COST = 200
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
 		}
 		upkeep = {
 			energy = 2
 		}
 	}
 
-	prerequisites = {
-		tech_mineral_purification_1
+	triggered_planet_modifier = {
+		potential = {
+			owner = { is_nomadic = no }
+		}
+		planet_miners_minerals_produces_add = 0.5
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			owner = {
+				is_nomadic = yes
+				is_gestalt = no
+			}
+		}
+		job_ark_harvester_add = @building_static_jobs
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			owner = {
+				is_nomadic = yes
+				is_gestalt = yes
+			}
+		}
+		job_ark_harvester_gestalt_add = @building_static_jobs
 	}
 
 	upgrades = {
 		building_mineral_purification_hub
 	}
-	
+
+	prerequisites = {
+		tech_mineral_purification_1
+	}
+
 	ai_resource_production = {
-   		minerals = 10
+		minerals = 10
 
 		trigger = {
 			has_any_mining_zone = yes
@@ -691,7 +736,7 @@ building_mineral_purification_plant = {
 	}
 
 	ai_resource_production = {
-   		minerals = 5
+		minerals = 5
 		energy = 10
 
 		trigger = {
@@ -724,6 +769,7 @@ building_mineral_purification_hub = {
 	
 	building_sets = {
 		mining
+		harvest
 	}
 	
 	potential = {
@@ -732,6 +778,7 @@ building_mineral_purification_hub = {
 		OR = {
 			owner = { is_ai = no }
 			has_any_mining_district_or_building = yes
+			owner = { is_nomadic = yes }
 		}
 	}
 
@@ -753,18 +800,32 @@ building_mineral_purification_hub = {
 
 	resources = {
 		category = planet_buildings
+		inline_script = {
+			script = buildings/nomadic_cost_switcher_with_additional_trigger
+			TRIGGER = "has_ringworld_output_boost = no"
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = volatile_motes
+			COST = @b2_minerals
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
+		}
 		cost = {
 			trigger = {
 				has_ringworld_output_boost = no
 			}
-			minerals = @b2_minerals
 			volatile_motes = @b2_rare_cost
+		}
+		inline_script = {
+			script = buildings/nomadic_cost_switcher_with_additional_trigger
+			TRIGGER = "has_ringworld_output_boost = yes"
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = volatile_motes
+			COST = 900
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
 		}
 		cost = {
 			trigger = {
 				has_ringworld_output_boost = yes
 			}
-			minerals = 900
 			volatile_motes = 200
 		}
 		upkeep = {
@@ -785,6 +846,7 @@ building_mineral_purification_hub = {
 
 	triggered_planet_modifier = {
 		potential = {
+			owner = { is_nomadic = no }
 			NOT = { is_planet_class = pc_shattered_ring_habitable }
 		}
 		modifier = {
@@ -794,6 +856,7 @@ building_mineral_purification_hub = {
 
 	triggered_planet_modifier = {
 		potential = {
+			owner = { is_nomadic = no }
 			is_planet_class = pc_shattered_ring_habitable
 		}
 		modifier = {
@@ -804,11 +867,32 @@ building_mineral_purification_hub = {
 
 	triggered_planet_modifier = {
 		potential = {
+			owner = { is_nomadic = no }
 			has_ringworld_output_boost = yes
 		}
 		modifier = {
 			planet_miners_minerals_produces_add = 2
 		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			owner = {
+				is_nomadic = yes
+				is_gestalt = no
+			}
+		}
+		job_ark_harvester_add = @building_static_jobs_high
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			owner = {
+				is_nomadic = yes
+				is_gestalt = yes
+			}
+		}
+		job_ark_harvester_gestalt_add = @building_static_jobs_high
 	}
 
 	# inline_script = {
@@ -830,7 +914,15 @@ building_mineral_purification_hub = {
 	inline_script = {
 		script = "jobs/politician_add_EaC"
 		AMOUNT = @building_static_jobs_low
-		ADDITIONAL_TRIGGER = "NOT = { is_planet_class = pc_shattered_ring_habitable }	exists = owner	owner = { has_valid_civic = civic_mining_guilds }"
+		ADDITIONAL_TRIGGER = "
+			NOT = {
+				is_planet_class = pc_shattered_ring_habitable
+			}
+			exists = owner
+			owner = {
+				has_valid_civic = civic_mining_guilds
+			}
+		"
 	}
 	
 	planet_modifier = {
