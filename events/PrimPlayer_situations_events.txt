@@ -696,10 +696,12 @@ situation_event = {
 	is_triggered_only = yes
 
 	trigger = { 
+		NOT = { has_situation_flag = PrimPlay_situation_event_1000_pause }
 		owner = { has_technology = tech_primitive_arkship }
 	}
 	
 	immediate = { 
+		set_situation_flag = PrimPlay_situation_event_1000_pause 
 		if = {
 			limit = { 
 				NOR = {
@@ -707,21 +709,13 @@ situation_event = {
 					has_situation_flag = PrimPlay_situation_event_1100_cooldown
 				}
 			}
-			owner = { 
-				random_controlled_ship = {
-					limit = { 
-						has_ship_flag = primitive_arkship_flag 
-						has_component = EMPTY_DRIVE	#Ideally it's a damaged drive for aesthetic/immersive reasons
-					}
-					ship_event = { id = PrimPlay_situation_event.1100 }
-				}
-			}
+			owner = { capital_scope = { carrier_event = { id = PrimPlay_situation_event.1100 } } }
 		}
 		random_list = {
-			85 = {
+			1 = {
 				#Nothing
 			}
-			12 = {
+			33 = {
 				situation_event = { id = PrimPlay_situation_event.1001 }
 				modifier = {
 					factor = 0
@@ -732,18 +726,7 @@ situation_event = {
 					}
 				}
 			}
-			1 = {
-				situation_event = { id = PrimPlay_situation_event.1001 }
-				modifier = {
-					factor = 0
-					OR = { 
-						has_situation_flag = PrimPlay_situation_event_1001_finished 
-						has_situation_flag = PrimPlay_situation_event_1001_cancel
-						has_situation_flag = PrimPlay_situation_event_1001_pause
-					}
-				}
-			}
-			1 = {
+			33 = {
 				situation_event = { id = PrimPlay_situation_event.1002 }
 				modifier = {
 					factor = 0
@@ -753,7 +736,7 @@ situation_event = {
 					}
 				}
 			}
-			1 = {
+			33 = {
 				situation_event = { id = PrimPlay_situation_event.1003 }
 				modifier = {
 					factor = 0 
@@ -763,9 +746,10 @@ situation_event = {
 		}
 	}
 
+	after = { remove_situation_flag = PrimPlay_situation_event_1000_pause }
 }
 
-ship_event = {
+carrier_event = {
 	id = PrimPlay_situation_event.1100
 	title = PrimPlay_situation_event.1100.title
 	desc = PrimPlay_situation_event.1100.desc
@@ -775,51 +759,60 @@ ship_event = {
 	location = root
 
 	trigger = { 
+		has_situation_flag = PrimPlay_situation_event_1100_pause
+		owner = { 
+			any_controlled_ship = {
+				has_ship_flag = primitive_arkship_flag
+				has_component = EMPTY_DRIVE	#Ideally it's a damaged drive for aesthetic/immersive reasons
+			}
+		}
 	}
 	
 	immediate = { 
-		owner = { random_situation = { limit = { is_situation_type = PrimPlayer_situation } set_situation_flag = PrimPlay_situation_event_1100_pause } }
-		set_ship_flag = PrimPlay_situation_event_1100
+		set_situation_flag = PrimPlay_situation_event_1100_pause 
+		owner = {
+			random_controlled_ship = {
+				limit = { has_ship_flag = primitive_arkship_flag }
+				set_ship_flag = PrimPlay_situation_event_1100
+			}
+		}
 	}
 	
 	option = {
 		name = PrimPlay_situation_event.1100.deactivate
-		trigger = {
-			owner = {
-				is_materialist = no 
-				is_spiritualist = no
+		enable_special_project = {
+			name = "ANCIENT_ARKSHIP_FTL_DEACTIVATE_PROJECT"
+			location = this
+			owner = owner
+		}
+	}
+	
+	option = {
+		name = PrimPlay_situation_event.1100.materialist
+		owner = {
+			add_resource = { influence = -50 }
+			random_controlled_ship = { 
+				limit = { has_ship_flag = PrimPlay_situation_event_1100 }
+				ship_event = { id = PrimPlay_situation_event.1102 }
 			}
 		}
+		trigger = { owner = { is_materialist = yes } }
 		allow = {
 			owner = {
 				has_country_resource = { type = influence amount >= 50 }
 			}
 		}
-		owner = {
-			add_resource = { influence = -50 }
-		}
-		custom_tooltip = PrimPlay_situation_event.1101.title
-		hidden_effect = { ship_event = { id = PrimPlay_situation_event.1101 days = 30 random = 90 } }
-	}
-	
-	option = {
-		name = PrimPlay_situation_event.1100.materialist
-		trigger = { owner = { is_materialist = yes } }
-		allow = {
-			owner = {
-				has_country_resource = { type = influence amount >= 25 }
-			}
-		}
-		owner = {
-			add_resource = { influence = -25 }
-			add_resource = { unity = 100 }
-		}
-		custom_tooltip = PrimPlay_situation_event.1101.title
-		hidden_effect = { ship_event = { id = PrimPlay_situation_event.1101 days = 30 random = 90 } }
 	}
 	
 	option = {
 		name = PrimPlay_situation_event.1100.spiritualist
+		owner = {
+			add_resource = { influence = -50 }
+			random_controlled_ship = { 
+				limit = { has_ship_flag = PrimPlay_situation_event_1100 }
+				ship_event = { id = PrimPlay_situation_event.1102 }
+			}
+		}
 		trigger = { 
 			owner = {
 				is_spiritualist = yes
@@ -831,19 +824,20 @@ ship_event = {
 		}
 		allow = {
 			owner = {
-				has_country_resource = { type = influence amount >= 25 }
+				has_country_resource = { type = influence amount >= 50 }
 			}
 		}
-		owner = {
-			add_resource = { influence = -25 }
-			add_resource = { unity = 100 }
-		}
-		custom_tooltip = PrimPlay_situation_event.1101.title
-		hidden_effect = { ship_event = { id = PrimPlay_situation_event.1101 days = 30 random = 90 } }
 	}
 	
 	option = {
-		name = PrimPlay_situation_event.1100.civic_machine_cult.deactivate
+		name = PrimPlay_situation_event.1100.civic_machine_cult
+		owner = {
+			add_resource = { influence = 25 }
+			random_controlled_ship = { 
+				limit = { has_ship_flag = PrimPlay_situation_event_1100 }
+				ship_event = { id = PrimPlay_situation_event.1102 }
+			}
+		}
 		trigger = { 
 			owner = {
 				OR = {
@@ -852,48 +846,41 @@ ship_event = {
 				}
 			}
 		}
-		owner = {
-			add_resource = { unity = 100 }
-		}
-		custom_tooltip = PrimPlay_situation_event.1101.title
-		hidden_effect = { ship_event = { id = PrimPlay_situation_event.1101 days = 30 random = 90 } }
 	}
 	
 	option = {
 		name = PrimPlay_situation_event.1100.activate
-		trigger = { 
-			owner = {
-				NOR = {
-					has_civic = civic_machine_cult
-					has_civic = civic_machine_cult_machine
-				}
+		owner = {
+			add_resource = { influence = -100 }
+			random_controlled_ship = { 
+				limit = { has_ship_flag = PrimPlay_situation_event_1100 }
+				ship_event = { id = PrimPlay_situation_event.1102 }
 			}
 		}
-		ship_event = { id = PrimPlay_situation_event.1102 days = 30 }
-	}
-	
-	option = {
-		name = PrimPlay_situation_event.1100.civic_machine_cult.activate
 		trigger = { 
 			owner = {
-				OR = {
-					has_civic = civic_machine_cult
-					has_civic = civic_machine_cult_machine
-				}
+				is_materialist = no 
+				is_spiritualist = no
+			}
+		}
+		allow = {
+			owner = {
+				has_country_resource = { type = influence amount >= 100 }
 			}
 		}
 		owner = {
-			add_resource = { influence = 25 }
-			add_resource = { unity = 300 }
+			random_controlled_ship = {
+				limit = { has_ship_flag = primitive_arkship_flag }
+				custom_tooltip = arkship
+			}
 		}
-		ship_event = { id = PrimPlay_situation_event.1102 days = 30 random = 15 }
 	}
 
 	#after = { remove_situation_flag = PrimPlay_situation_event_1100_pause }	#Removed elsewhere
 }
 
 #Shut Down FTL Drive
-ship_event = {
+carrier_event = {
 	id = PrimPlay_situation_event.1101
 	title = PrimPlay_situation_event.1101.title
 	desc = PrimPlay_situation_event.1101.desc
@@ -901,22 +888,19 @@ ship_event = {
 	show_sound = event_structural_collapse
 	is_triggered_only = yes
 	location = root
-	
-	hide_window = yes	#This event feels redundant
 
 	trigger = { 
 		
 	}
 	
 	immediate = { 
-		remove_ship_flag = PrimPlay_situation_event_1100
-		hidden_effect = {
+		 hidden_effect = {
 			owner = { 
 				random_situation = { 
 					limit = { is_situation_type = PrimPlayer_situation } 
 					set_timed_situation_flag = {
 						flag = PrimPlay_situation_event_1100_cooldown
-						years = 5
+						years = 2
 					}
 				}
 			}
@@ -925,6 +909,7 @@ ship_event = {
 	
 	option = {
 		name = PrimPlay_situation_event.1101.a
+		custom_tooltip = PrimPlay_situation_event.1101.tooltip
 	}
 
 	after = { owner = { random_situation = { limit = { is_situation_type = PrimPlayer_situation } remove_situation_flag = PrimPlay_situation_event_1100_pause } } }
@@ -946,27 +931,14 @@ ship_event = {
 	}
 	
 	immediate = {
-		hidden_effect = {
-			owner = { 
-				random_situation = { 
-					limit = { is_situation_type = PrimPlayer_situation } 
-					set_timed_situation_flag = {
-						flag = PrimPlay_situation_event_1100_cooldown
-						years = 5
-					}
-				}
-			}
-		}
-		fleet = {
-			solar_system = {
-				random_neighbor_system = {
-					ROOT.fleet = {
-						set_location = {
-							target = PREV
-							distance = 150
-							angle = random
-							direction = in_system
-						}
+		solar_system = {
+			random_neighbor_system = {
+				ROOT.fleet = {
+					set_location = {
+						target = PREV
+						distance = 150
+						angle = random
+						direction = in_system
 					}
 				}
 			}
