@@ -124,6 +124,76 @@ unifier = {
 	inline_script = "jobs/automodding_priority_unity"
 }
 ###################
+# Broken Shackle Origin Job
+###################
+broken_shackles_scavenger = {
+	category = worker
+
+	swappable_data = {
+		default = {
+			building_icon = building_crude_huts
+		}
+		# Arkship Scavengers
+		swap_type = {
+			trigger = {
+				has_modifier = primitive_arkship_planet_modifier
+			}
+			name = arkship_scavenger
+			desc = arkship_scavenger
+			weight = 5
+		}
+	}
+
+	tags = { alloys research amenities }
+
+	possible_pre_triggers = {
+		has_planet = yes
+		is_sapient = yes
+	}
+
+	possible = {
+		colony? = { 
+			OR = {
+				has_deposit = d_crashed_slaver_ship 
+				has_modifier = primitive_arkship_planet_modifier
+			}
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			owner? = { NOT = { has_valid_civic = civic_dystopian_society } }
+		}
+		planet_amenities_add = 200
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	}
+
+	resources = {
+		category = planet_researchers
+		produces = {
+			alloys = 1
+			physics_research = 0.5
+			engineering_research = 0.5
+			society_research = 0.5
+		}
+		produces = {
+			trigger = {
+				exists = owner
+				has_modifier = primitive_arkship_planet_modifier
+			}
+			minor_artifacts = 0.15
+		}
+	}
+
+	inline_script = "jobs/academia_recruiter_naval_cap_add"
+
+	weight = {
+		weight = @worker_job_weight
+		mult = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
+	}
+
+}
+###################
 # Primitive Enthusiasts Exclusive Jobs
 ###################
 
@@ -1378,6 +1448,15 @@ nuclear_technician = {
 		category = planet_technician
 		produces = {
 			energy = 3		# Upped from vanilla's energy = 1
+		}
+		produces = {
+			trigger = {
+				exists = owner
+				owner = { 
+					is_nomadic = yes
+				}
+			}
+			energy = 2
 		}
 		produces = {
 			trigger = {
