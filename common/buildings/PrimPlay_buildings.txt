@@ -567,9 +567,9 @@ building_fallout_shelter = {
 		"tech_primitive_atomic_age_weapons"
 	}
 	
-	upgrades = {
-		"building_storm_resistant_production"
-	}
+	#upgrades = {
+	#	"building_storm_resistant_production"	#Cog Note - Suggested to be a standalone building
+	#}
 }
 #
 #####################
@@ -1681,6 +1681,10 @@ building_primitive_nuclear_plant = {
 		owner = {
 			has_technology = "tech_primitive_nuclear_physics"
 			has_technology = "tech_primitive_composite_material"
+			OR = {
+				is_apocalyptic_empire = yes
+				any_situation = { is_situation_type = PrimPlayer_situation }
+			}
 		}
 	}
 	
@@ -1859,22 +1863,33 @@ building_primitive_nuclear_plant = {
 			}
 			primitive_uranium = 2.5
 		}
-		upkeep = {
-			trigger = {
-				owner = { 
-					is_nomadic = yes
-					NOT = { has_technology = tech_mechanized_mining_2 }
+	}
+	
+	on_built = { 
+		if = {
+			limit = { owner = { is_nomadic = yes } }
+			if = { 
+				limit = { 
+					NOT = { has_modifier = irradiated_wasteland  }
 				}
+				add_modifier = { modifier = irradiated_wasteland }
 			}
-			minerals = 5
 		}
-		upkeep = {
-			trigger = {
-				owner = { 
-					is_nomadic = yes
+	}
+	
+	on_destroy = { 
+		if = {
+			limit = { owner = { is_nomadic = yes } }
+			if = { 
+				limit = { 
+					has_modifier = irradiated_wasteland
+					NOR = { 
+						has_building = building_primitive_nuclear_plant 
+						has_building = building_primitive_nuclear_plant_apocalyptic
+					} 
 				}
+				remove_modifier = irradiated_wasteland
 			}
-			minerals = 5
 		}
 	}
 	
@@ -2088,22 +2103,33 @@ building_primitive_nuclear_plant_apocalyptic = {
 			}
 			primitive_uranium = 2.5
 		}
-		upkeep = {
-			trigger = {
-				owner = { 
-					is_nomadic = yes
-					NOT = { has_technology = tech_mechanized_mining_2 }
+	}
+	
+	on_built = { 
+		if = {
+			limit = { owner = { is_nomadic = yes } }
+			if = { 
+				limit = { 
+					NOT = { has_modifier = irradiated_wasteland  }
 				}
+				add_modifier = { modifier = irradiated_wasteland }
 			}
-			minerals = 10
 		}
-		upkeep = {
-			trigger = {
-				owner = { 
-					is_nomadic = yes
+	}
+	
+	on_destroy = { 
+		if = {
+			limit = { owner = { is_nomadic = yes } }
+			if = { 
+				limit = { 
+					has_modifier = irradiated_wasteland
+					NOR = { 
+						has_building = building_primitive_nuclear_plant 
+						has_building = building_primitive_nuclear_plant_apocalyptic
+					} 
 				}
+				remove_modifier = irradiated_wasteland
 			}
-			minerals = 10
 		}
 	}
 	
