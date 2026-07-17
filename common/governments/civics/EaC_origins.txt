@@ -851,16 +851,27 @@ origin_heirs_of_the_khan = {
 		has_nomads_dlc = yes
 	}
 	ai_playable = { always = no }
-	#potential = {
-	#	authority = { NOT = { value = auth_corporate } }	#To be hidden if megacorp
-	#}
 	possible = {
 		is_nomadic = yes
-		authority = {
-			OR = {
-				value = auth_oligarchic
-				value = auth_dictatorial
-				value = auth_imperial
+		OR = {
+			authority = {
+				OR = {
+					value = auth_oligarchic
+					value = auth_dictatorial
+					value = auth_imperial
+				}
+			}
+			AND = {
+				text = civic_tooltip_criminal_megacorp
+				authority = {
+					value = auth_corporate
+				}
+				civics = {
+					OR = {
+						value = civic_military_dictatorship_corporate
+						value = civic_criminal_heritage
+					}
+				}
 			}
 		}
 		ethics = {
@@ -882,8 +893,8 @@ origin_heirs_of_the_khan = {
 	}
 }
 
-origin_heirs_of_the_khan_corporate = {
-	is_origin = yes
+PrimPlayer_civic_heirs_of_the_khan = {
+	#is_origin = yes
 	icon = "gfx/interface/icons/origins/origins_heirs_of_the_khan.dds"
 	picture = GFX_origin_heirs_of_the_khan
 
@@ -893,36 +904,89 @@ origin_heirs_of_the_khan_corporate = {
 		custom_start_screen
 	}
 
-	description = "origin_heirs_of_the_khan_effects"
+	description = "civic_heirs_of_the_khan_effects"
 
 	playable = {
 		has_nomads_dlc = yes
 	}
 	ai_playable = { always = no }
-	#potential = {
-	#	authority = { value = auth_corporate }	#Cog Note - Why not? We have Pirate Lord! :D
-	#}
+	potential = {
+		origin = { 
+			OR = {
+				value = origin_primitive_player_pre_industrial_age
+				value = origin_primitive_player_industrial_age
+				value = origin_primitive_player_machine_age
+				value = origin_primitive_player_atomic_age
+				value = origin_primitive_player_early_space_age
+				#value = origin_default_pre_ftl
+			}
+		}
+	}
 	possible = {
 		is_nomadic = yes
-		authority = {
-			 value = auth_corporate
+		OR = {
+			authority = {
+				OR = {
+					value = auth_oligarchic
+					value = auth_dictatorial
+					value = auth_imperial
+				}
+			}
+			AND = {
+				text = civic_tooltip_criminal_megacorp
+				authority = {
+					value = auth_corporate
+				}
+				civics = {
+					OR = {
+						value = civic_military_dictatorship_corporate
+						value = civic_criminal_heritage
+					}
+				}
+			}
 		}
 		ethics = {
 			OR = {
-				text = civic_tooltip_capitalism_or_militarist	# Modded
-				value = ethic_capitalism						# Modded
-				value = ethic_fanatic_capitalism				# Modded
-				value = ethic_fanatic_militarist
+				text = civic_tooltip_militarist
 				value = ethic_militarist
+				value = ethic_fanatic_militarist
 			}
 		}
 		civics = {
-			OR = {
-				value = civic_military_dictatorship_corporate
-				value = civic_criminal_heritage
-				#value = civic_crusader_spirit_corporate	#Cog Note - Probably best if you need to be a "criminal" megacorp
-				#value = civic_void_reavers					#Cog Note - Probably best if you need to be a "criminal" megacorp
-			}
+			NOT = { value = PrimPlayer_civic_barbaric_despoilers_khan }
+		}
+	}
+
+	modifier = {
+		ship_windup_mult = -0.3
+		ship_base_speed_mult = 0.3
+	}
+
+	random_weight = {
+		base = 1
+	}
+}
+
+civic_heirs_of_the_khan = {
+	#is_origin = yes
+	icon = "gfx/interface/icons/origins/origins_heirs_of_the_khan.dds"
+	picture = GFX_origin_heirs_of_the_khan
+
+	non_colonizable_planet_class_neighbor = yes
+
+	flags = {
+		custom_start_screen
+	}
+
+	description = "civic_heirs_of_the_khan_effects"
+
+	playable = {
+		has_nomads_dlc = yes
+	}
+	ai_playable = { always = no }
+	potential = {
+		civics = {
+			value = civic_heirs_of_the_khan # Added via event - this trigger prevents the civic from being picked by others
 		}
 	}
 
