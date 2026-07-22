@@ -291,10 +291,7 @@ carrier_event = {
 		}
 		if = {
 			limit = { owner = { is_nomadic = yes } }
-			random_galaxy_planet = {
-				limit = {
-					is_same_value = root.owner.capital_scope
-				}
+			owner.capital_scope = {
 				#change_pc = pc_relic	#Should be a relic world but this should be investigated further
 				create_archaeological_site = clone_army_digsite
 			}
@@ -324,10 +321,7 @@ carrier_event = {
 		}
 		if = {
 			limit = { owner = { is_nomadic = yes } }
-			random_galaxy_planet = {
-				limit = {
-					is_same_value = root.owner.capital_scope
-				}
+			owner.capital_scope = {
 				#change_pc = pc_relic	#Should be a relic world but this should be investigated further
 				create_archaeological_site = clone_army_digsite
 			}
@@ -1059,7 +1053,7 @@ country_event = {
 				}
 				remove_trait = leader_trait_clone_army_commander
 				give_trait_no_notify_ignore_autocracy_restriction = {
-					trait = leader_trait_clone_army_full_commander
+					TRAIT = leader_trait_clone_army_full_commander
 				}
 			}
 		}
@@ -1101,11 +1095,11 @@ country_event = {
 				}
 				remove_trait = leader_trait_clone_army_commander
 				give_trait_no_notify_ignore_autocracy_restriction = {
-					trait = leader_trait_clone_army_full_commander
+					TRAIT = leader_trait_clone_army_full_commander
 				}
-				#give_trait_no_notify_ignore_autocracy_restriction = {
-				#	trait = leader_trait_ruler_precursor_great_khan
-				#}
+				give_trait_no_notify_ignore_autocracy_restriction = {
+					TRAIT = leader_trait_ruler_precursor_great_khan
+				}
 			}
 			every_pool_leader = {
 				limit = {
@@ -1113,40 +1107,10 @@ country_event = {
 				}
 				remove_trait = leader_trait_clone_army_commander
 				give_trait_no_notify_ignore_autocracy_restriction = {
-					trait = leader_trait_clone_army_full_commander
+					TRAIT = leader_trait_clone_army_full_commander
 				}
-				#give_trait_no_notify_ignore_autocracy_restriction = {
-				#	trait = leader_trait_ruler_precursor_great_khan
-				#}
-			}
-		}
-	}
-	after = {
-		root = {
-			if = {
-				limit = {
-					OR = {
-						has_civic = civic_barbaric_despoilers
-						has_civic = civic_barbaric_despoilers_corporate
-						has_civic = PrimPlayer_civic_barbaric_despoilers_khan
-						has_civic = civic_barbaric_despoilers_khan
-					}
-				}
-				every_owned_leader = {
-					limit = {
-						species = { has_trait = trait_clone_soldier_infertile_full_potential }
-					}
-					give_trait_no_notify_ignore_autocracy_restriction = {
-						trait = leader_trait_ruler_precursor_great_khan
-					}
-				}
-				every_pool_leader = {
-					limit = {
-						species = { has_trait = trait_clone_soldier_infertile_full_potential }
-					}
-					give_trait_no_notify_ignore_autocracy_restriction = {
-						trait = leader_trait_ruler_precursor_great_khan
-					}
+				give_trait_no_notify_ignore_autocracy_restriction = {
+					TRAIT = leader_trait_ruler_precursor_great_khan
 				}
 			}
 		}
@@ -1174,110 +1138,60 @@ country_event = {
 	immediate = {
 		if = {
 			limit = {
-				OR = {
-					has_civic = civic_barbaric_despoilers
-					has_civic = civic_barbaric_despoilers_corporate
-				    has_civic = PrimPlayer_civic_barbaric_despoilers_khan
-					has_civic = civic_barbaric_despoilers_khan
-				}
+				from.species = { has_trait = trait_clone_soldier_fertile }
 			}
-			if = {
-				limit = {
-					from.species = { has_trait = trait_clone_soldier_fertile }
-				}
-				from = {
-					if = {
-						limit = {
-							leader_class = commander
-						}
-						give_trait_no_notify_ignore_autocracy_restriction = {
-							trait = leader_trait_clone_army_fertile_commander
-						}
+			from = {
+				if = {
+					limit = {
+						leader_class = commander
 					}
-				}
-			}
-			else_if = {
-				limit = {
-					from.species = { has_trait = trait_clone_soldier_infertile_full_potential }
-				}
-				from = {
-					if = {
-						limit = {
-							leader_class = commander
-						}
-						give_trait_no_notify_ignore_autocracy_restriction = {
-							trait = leader_trait_clone_army_full_commander
-						}
-						give_trait_no_notify_ignore_autocracy_restriction = {
-							trait = leader_trait_ruler_precursor_great_khan
-						}
-					}
-					else = { 
-						give_trait_no_notify_ignore_autocracy_restriction = {
-							trait = leader_trait_ruler_precursor_great_khan
-						}
-					}
-				}
-			}
-			else_if = {
-				limit = {
-					from.species = { has_trait = trait_clone_soldier_infertile }
-				}
-				from = {
-					if = {
-						limit = {
-							leader_class = commander
-						}
-						give_trait_no_notify_ignore_autocracy_restriction = {
-							trait = leader_trait_clone_army_commander
-						}
+					give_trait_no_notify_ignore_autocracy_restriction = {
+						TRAIT = leader_trait_clone_army_fertile_commander
 					}
 				}
 			}
 		}
-		else = {
-			if = {
-				limit = {
-					from.species = { has_trait = trait_clone_soldier_fertile }
+		else_if = {
+			limit = {
+				from.species = { has_trait = trait_clone_soldier_infertile_full_potential }
+			}
+			from = {
+				if = {
+					limit = {
+						leader_class = commander
+					}
+					give_trait_no_notify_ignore_autocracy_restriction = {
+						TRAIT = leader_trait_clone_army_full_commander
+					}
 				}
-				from = {
-					if = {
-						limit = {
-							leader_class = commander
+				if = {
+					limit = {
+						owner = {
+							OR = {
+								has_civic = civic_barbaric_despoilers
+								has_civic = civic_barbaric_despoilers_corporate
+								has_civic = PrimPlayer_civic_barbaric_despoilers_khan
+								has_civic = civic_barbaric_despoilers_khan
+							}
 						}
-						give_trait_no_notify_ignore_autocracy_restriction = {
-							trait = leader_trait_clone_army_fertile_commander
-						}
+					}
+					give_trait_no_notify_ignore_autocracy_restriction = {
+						TRAIT = leader_trait_ruler_precursor_great_khan
 					}
 				}
 			}
-			else_if = {
-				limit = {
-					from.species = { has_trait = trait_clone_soldier_infertile_full_potential }
-				}
-				from = {
-					if = {
-						limit = {
-							leader_class = commander
-						}
-						give_trait_no_notify_ignore_autocracy_restriction = {
-							trait = leader_trait_clone_army_full_commander
-						}
-					}
-				}
+		}
+		else_if = {
+			limit = {
+				from.species = { has_trait = trait_clone_soldier_infertile }
 			}
-			else_if = {
-				limit = {
-					from.species = { has_trait = trait_clone_soldier_infertile }
-				}
-				from = {
-					if = {
-						limit = {
-							leader_class = commander
-						}
-						give_trait_no_notify_ignore_autocracy_restriction = {
-							trait = leader_trait_clone_army_commander
-						}
+			from = {
+				if = {
+					limit = {
+						leader_class = commander
+					}
+					give_trait_no_notify_ignore_autocracy_restriction = {
+						TRAIT = leader_trait_clone_army_commander
 					}
 				}
 			}
