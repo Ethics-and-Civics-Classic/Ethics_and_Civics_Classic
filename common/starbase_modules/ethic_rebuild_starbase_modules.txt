@@ -410,3 +410,164 @@ waystation_treasure_vault = {
 		weight = 100 #use same weight here - ai weighting is done in starbase_types.txt
 	}
 }
+
+shipyard = {
+	icon = "GFX_starbase_shipyard"
+	section = "ASSEMBLYYARD_STARBASE_SECTION"
+	construction_days = 180
+	category = sm_naval_support_cat
+	initial = yes
+
+	potential = {
+		is_normal_starbase = yes
+		#Cog Note - helps people understand why they can't build it if this is commented out
+		#solar_system = {				
+		#	count_starbase_modules = {
+		#		type = beastport
+		#		count < 1
+		#		include_being_constructed = yes
+		#	}
+		#}
+	}
+	
+	
+	possible = {
+		solar_system = {
+			count_starbase_modules = {
+				type = beastport
+				count < 1
+				include_being_constructed = yes
+			}
+		}
+	}
+
+	abort_construction_trigger = {
+		has_starbase_module = beastport
+	}
+
+	resources = {
+		category = starbase_modules
+		cost = {
+			alloys = 50
+		}
+
+		upkeep = {
+			energy = 1
+		}
+	}
+
+	station_modifier = {
+		starbase_shipyard_capacity_add = 1
+	}
+	triggered_station_modifier = {
+		potential = { has_starbase_building = irassian_naval_yards }
+		starbase_shipyard_capacity_add = 1
+	}
+
+	on_finished = {
+		set_ship_construction_type = starbase_shipyard
+	}
+	on_destroyed = {
+		if = {
+			limit = { NOT = { has_starbase_module = shipyard } }
+			set_ship_construction_type = none
+		}
+	}
+
+	ai_weight = {
+		inline_script = {
+			script = starbase_modules/ship_construction_ai_weight
+			MODULE = shipyard
+		}
+		modifier = {
+			factor = 0
+			owner = {
+				uses_fauna_ship_sizes = yes
+			}
+		}
+	}
+}
+
+beastport = {
+	icon = "GFX_starbase_beastport"
+	section = "ASSEMBLYYARD_STARBASE_SECTION"
+	construction_days = 180
+	category = sm_naval_support_cat
+
+	potential = {
+		exists = owner
+		owner = {
+			OR = {
+				has_technology = tech_alien_cloning
+				is_beastmasters_empire = yes
+			}
+		}
+		is_normal_starbase = yes
+		#Cog Note - helps people understand why they can't build it if this is commented out
+		#solar_system = {				
+		#	count_starbase_modules = {
+		#		type = shipyard
+		#		count < 1
+		#		include_being_constructed = yes
+		#	}
+		#}
+	}
+
+	possible = {
+		solar_system = {
+			count_starbase_modules = {
+				type = shipyard
+				count < 1
+				include_being_constructed = yes
+			}
+		}
+	}
+
+	abort_construction_trigger = {
+		has_starbase_module = shipyard
+	}
+
+	resources = {
+		category = starbase_modules
+		cost = {
+			alloys = 50
+		}
+
+		upkeep = {
+			energy = 1
+		}
+	}
+
+	station_modifier = {
+		custom_tooltip = sm_beastport_capacity_add_tt
+		show_only_custom_tooltip = yes
+		starbase_shipyard_capacity_add = 1
+	}
+
+	country_modifier = {
+		country_vivarium_max_capacity_add = 25
+	}
+
+	on_finished = {
+		set_ship_construction_type = starbase_beastport
+	}
+	on_destroyed = {
+		if = {
+			limit = { NOT = { has_starbase_module = beastport } }
+			set_ship_construction_type = none
+		}
+	}
+
+	ai_weight = {
+		inline_script = {
+			script = starbase_modules/ship_construction_ai_weight
+			MODULE = beastport
+		}
+		modifier = {
+			factor = 0
+			owner = {
+				uses_fauna_ship_sizes = no
+			}
+		}
+	}
+}
