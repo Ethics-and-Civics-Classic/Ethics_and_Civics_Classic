@@ -3710,6 +3710,22 @@ fleet_event = {
 	is_triggered_only = yes
 
 	desc = {
+		trigger = { 
+			owner = { 
+				NOR = { 
+					has_civic = civic_criminal_heritage 
+					has_civic = civic_military_dictatorship_corporate
+				}
+				OR = {
+					has_origin = origin_heirs_of_the_khan
+					has_civic = PrimPlayer_civic_heirs_of_the_khan 
+					has_civic = civic_heirs_of_the_khan 
+				}
+			} 
+		}
+		text = "EaC_civic_mechanic_events.2.desc"
+	}
+	desc = {
 		trigger = { owner = { has_civic = civic_military_dictatorship_corporate } }
 		text = "EaC_civic_mechanic_events.2.desc"
 	}
@@ -3749,20 +3765,114 @@ fleet_event = {
 	immediate = {
 		set_event_locked = yes
 	}
+	
+	option = {
+		name = DEAL
+		#custom_tooltip = "enclave.2.a.tooltip"
+		custom_tooltip = "EaC_civic_mechanic_events.2.a.tooltip"
+		trigger = {
+			owner = {
+				OR = {
+					has_origin = origin_heirs_of_the_khan
+					has_civic = PrimPlayer_civic_heirs_of_the_khan 
+					has_civic = civic_heirs_of_the_khan 
+				}
+				NOR = { 
+					has_civic = civic_criminal_heritage 
+					has_civic = civic_military_dictatorship_corporate
+				} 
+			}
+		}
+		allow = {
+			is_merc_enclave_founding_allowed = yes
+			owner = {
+				if = {
+					limit = {
+						country_uses_bio_ships = yes
+					}
+					resource_stockpile_compare = { resource = food value >= 1500 }
+				}
+				else = {
+				resource_stockpile_compare = { resource = energy value >= 1500 }
+				}
+				resource_stockpile_compare = { resource = alloys value >= 2000 }
+				resource_stockpile_compare = { resource = influence value >= 100 }
+			}
+		}
+		owner = {
+			if = {
+				limit = {
+					country_uses_bio_ships = yes
+				}
+				add_resource = {
+					food = -1500
+				}
+			}
+			else = {
+			add_resource = {
+				energy = -1500
+				}
+			}
+			add_resource = {
+				alloys = -2000
+				influence = -100
+			}
+		}
+
+		hidden_effect = {
+			owner = {
+				set_country_flag = tutorial_met_mercenary_enclave
+				set_country_flag = formed_mercenaries
+			}
+			fleet_event = { id = EaC_civic_mechanic_events.21 }
+		}
+
+		ai_chance = {
+			factor = 10
+			modifier = {
+				factor = 0
+				owner = {
+					has_ethic = ethic_fanatic_pacifist
+				}
+			}
+			modifier = {
+				factor = 0.1
+				owner = {
+					has_ethic = ethic_pacifist
+				}
+			}
+			modifier = {
+				factor = 5
+				owner = {
+					has_ethic = ethic_militarist
+				}
+			}
+			modifier = {
+				factor = 10
+				owner = {
+					has_ethic = ethic_fanatic_militarist
+				}
+			}
+			modifier = {
+				factor = 5
+				owner = {
+					is_megacorp = yes
+				}
+			}
+		}
+	}
 
 	option = {
 		name = DEAL
 		custom_tooltip = "enclave.2.a.tooltip"
 		trigger = {
 			owner = {
-				if = {
-					limit = { has_civic = civic_criminal_heritage }
-					NOR = {
-						has_valid_civic = civic_crusader_spirit_corporate
-						has_valid_civic = civic_void_reavers
-					}
+				has_civic = civic_criminal_heritage
+				NOR = {
+					has_valid_civic = civic_crusader_spirit_corporate
+					has_valid_civic = civic_void_reavers
+					has_valid_civic = civic_military_dictatorship_corporate
 				}
-				else = { NOT = { has_valid_civic = civic_military_dictatorship_corporate } }
 			}
 		}
 		allow = {
@@ -3847,7 +3957,11 @@ fleet_event = {
 	option = {
 		name = EaC_civic_mechanic_events.2.a
 		custom_tooltip = "EaC_civic_mechanic_events.2.a.vassal.tooltip"
-		trigger = { owner = { has_civic = civic_military_dictatorship_corporate } }
+		trigger = { 
+			owner = { 
+				has_civic = civic_military_dictatorship_corporate 
+			} 
+		}
 		allow = {
 			is_merc_enclave_founding_allowed = yes
 			owner = {
@@ -5589,9 +5703,12 @@ country_event = {
 		name = EaC_civic_mechanic_events.205.h
 		custom_tooltip = mercenary_tt_patron
 		trigger = {
-			NOT = {
+			NOR = {
 				has_civic = civic_military_dictatorship_corporate
 				has_civic = civic_criminal_heritage
+				has_origin = origin_heirs_of_the_khan
+				has_civic = PrimPlayer_civic_heirs_of_the_khan 
+				has_civic = civic_heirs_of_the_khan 
 			}
 			NOR = {
 				is_hostile = event_target:mercenary_enclave_country
@@ -5616,6 +5733,41 @@ country_event = {
 			country_event = { id = EaC_civic_mechanic_events.280 }
 		}
 	}
+	
+	# Heir to the Khan
+	option = {
+		name = EaC_civic_mechanic_events.205.h
+		custom_tooltip = mercenary_tt_patron
+		trigger = {
+			OR = {
+				has_origin = origin_heirs_of_the_khan
+				has_civic = PrimPlayer_civic_heirs_of_the_khan 
+				has_civic = civic_heirs_of_the_khan 
+			}
+			NOR = {
+				is_hostile = event_target:mercenary_enclave_country
+				# is_homicidal = yes
+			}
+			OR = {
+				AND = {
+					exists = event_target:mercenary_patron
+					event_target:mercenary_patron = {
+						is_same_empire = root
+					}
+				}
+				AND = {
+					exists = event_target:mercenary_nomad_patron
+						event_target:mercenary_nomad_patron = {
+						is_same_empire = root
+					}
+				}
+			}
+		}
+		hidden_effect = {
+			country_event = { id = EaC_civic_mechanic_events.280 }
+		}
+	}
+	
 	# Is Pirate Lord
 	option = {
 		name = EaC_civic_mechanic_events.205.j

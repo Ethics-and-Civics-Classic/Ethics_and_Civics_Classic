@@ -1,6 +1,91 @@
 # If you add a new utility module, also add it to common/inline_scripts/arkship/ai_design.txt
 # and update the weights for all arkship starbase types in common/starbase_types/00_starbase_types.txt
 
+arkship_grand_archive = {
+	icon = "GFX_arkship_grand_archive"
+	section = "ARKSHIP_LIVING_SPACE_MODULE"
+	construction_days = 1800
+	starbase_type = arkship
+	category = sm_utility_cat
+
+	empire_limit = {
+		base = 1
+	}
+
+	potential = {
+		owner? = {
+			has_technology = tech_galactic_archivism
+			has_grand_archive = no
+		}
+		OR = {
+			is_arkship_starbase = yes
+			is_ship_size = orbital_ring_tier_0
+		}
+	}
+
+	show_in_tech = "tech_galactic_archivism"
+
+	show_tech_unlock_if = {
+		OR = {
+			is_nomadic = yes
+			has_origin = origin_primitive_player_early_space_age
+		}
+	}
+
+	cannot_fit_on_slots = { spinal_mount_1 }
+
+	resources = {
+		category = starbase_arkship_upgrades
+		cost = {
+			alloys = @arkship_cost_alloys_500
+			volatile_motes = @arkship_cost_strategic_100
+		}
+
+		upkeep = {
+			energy = @arkship_upkeep_energy_10
+		}
+	}
+
+	country_modifier = {
+		country_vivarium_max_capacity_add = @grand_archive_vivarium_capacity
+	}
+
+	on_finished = {
+		owner = {
+			if = {
+				limit = { has_country_flag = grand_archive_destroyed }
+				remove_country_flag = grand_archive_destroyed
+			}
+			set_country_flag = has_arkship_grand_archive_module
+			country_event = { id = grand_archive.4120 }
+			country_event = { id = grand_archive.4199 }
+			if = {
+				limit = { has_origin = origin_treasure_hunters }
+				country_event = {
+					id = grand_archive.8090
+					scopes = { from = prev.solar_system }
+				}
+			}
+		}
+	}
+	on_destroyed = {
+		owner = {
+			remove_country_flag = ga_destroyed_contains_space_fauna
+			if = {
+				limit = { num_vivarium_slots > 0 }
+				set_country_flag = ga_destroyed_contains_space_fauna
+				release_all_vivarium_fauna = { LOCATION = prev.solar_system }
+			}
+			set_country_flag = grand_archive_destroyed
+			remove_country_flag = has_arkship_grand_archive_module
+		}
+	}
+
+	ai_weight = {
+		weight = 100 #use same weight here - ai weighting is done in starbase_types.txt
+	}
+}
+
 arkship_docking_bay = {
 	icon = "GFX_arkship_docking_bay"
 	section = "ARKSHIP_FACTORY_MODULE"

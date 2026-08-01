@@ -183,22 +183,10 @@ civic_dystopian_society = {
 	}
 	potential = {
 		ethics = { NOT = { value = ethic_gestalt_consciousness } }
-		authority = { NOT = { value = auth_corporate } }
+		#authority = { NOT = { value = auth_corporate } }	#Criminal Megacorps are allowed
 		civics = { NOT = { value = civic_civil_education } }
 	}
 	possible = {
-		ethics = {
-			OR = {
-				value = ethic_fanatic_authoritarian
-				value = ethic_fanatic_capitalism
-			}
-			NOR = {
-				text = civic_tooltip_not_egalitarian
-				value = ethic_egalitarian
-				value = ethic_fanatic_egalitarian
-			}
-			NOT = { value = ethic_socialism }
-		}
 		civics = {
 			NOR = {
 				value = civic_pleasure_seekers
@@ -206,6 +194,34 @@ civic_dystopian_society = {
 				value = civic_warrior_culture
 				value = civic_agrarian_idyll
 				value = civic_environmentalist
+			}
+		}
+		ethics = {
+			NOR = {
+				text = civic_tooltip_not_egalitarian
+				value = ethic_egalitarian
+				value = ethic_fanatic_egalitarian
+			}
+			NOT = { value = ethic_socialism }
+		}
+		OR = {
+			ethics = {
+				OR = {
+					value = ethic_fanatic_authoritarian
+					value = ethic_fanatic_capitalism
+				}
+			}
+			AND = {
+				text = civic_tooltip_criminal_megacorp
+				authority = {
+					value = auth_corporate
+				}
+				civics = {
+					OR = {
+						value = civic_military_dictatorship_corporate
+						value = civic_criminal_heritage
+					}
+				}
 			}
 		}
 	}
@@ -984,7 +1000,6 @@ civic_inwards_perfection = {
 			NOR = {
 				value = origin_common_ground
 				value = origin_hegemon
-				value = origin_fear_of_the_dark
 			}
 		}
 		civics = {
@@ -1005,6 +1020,10 @@ civic_inwards_perfection = {
 				value = civic_hive_sovereign_guardianship
 				value = civic_machine_sovereign_guardianship
 			}
+		}
+		OR = {
+			origin = { NOT = { value = origin_fear_of_the_dark } }
+			country_type = { value = primitive }
 		}
 	}
 	random_weight = { base = 1000 }
@@ -9820,7 +9839,7 @@ civic_void_reavers = {
 		civics = {
 			NOR = {
 				value = civic_fanatic_purifiers
-				value = civic_barbaric_despoilers
+				#value = civic_barbaric_despoilers	#Cog Note - Why is this blocked?
 				value = civic_scorched_earth
 			}
 		}
@@ -9850,10 +9869,34 @@ civic_void_reavers = {
 	swap_type = {
 		trigger = {
 			has_first_contact_dlc = yes
+			has_overlord_dlc = no
 		}
 		description = civic_tooltip_void_reavers_effects
 		modifier = {
 			ship_cloaking_strength_add = 1
+		}
+	}
+	swap_type = {
+		trigger = {
+			has_overlord_dlc = yes
+			has_first_contact_dlc = no
+		}
+		description = "civic_tooltip_void_reavers_effects"
+		modifier = {
+			country_enclave_capacity_add = 1
+			add_attunement_the_cradle_of_souls = @civic_attunement1
+		}
+	}
+	swap_type = {
+		trigger = {
+			has_overlord_dlc = yes
+			has_first_contact_dlc = yes
+		}
+		description = "civic_tooltip_void_reavers_effects"
+		modifier = {
+			ship_cloaking_strength_add = 1
+			country_enclave_capacity_add = 1
+			add_attunement_the_cradle_of_souls = @civic_attunement1
 		}
 	}
 }
