@@ -4,6 +4,7 @@
 #
 ###############################
 namespace = origin
+namespace = nations
 
 ##################
 # Fear of the Dark
@@ -2100,10 +2101,21 @@ event = { #fotd Midgame
 
 	trigger = {
 		any_playable_country = {
-			any_planet_within_border = {
-				has_carrier_flag = fotd_seperatist_planet@prev
-				owner = {
-					has_country_flag = fotd_seperatist_country@prevprev
+			not = { has_country_flag = fotd_Midgame_flag }
+			OR = {
+				any_planet_within_border = {
+					has_carrier_flag = fotd_seperatist_planet@prev
+					owner = {
+						has_country_flag = fotd_seperatist_country@prevprev
+					}
+				}
+				capital_scope.solar_system = {
+					any_system_planet = {
+						has_carrier_flag = fotd_seperatist_planet@prevprevprev
+						owner = {
+							has_country_flag = fotd_seperatist_country@prevprevprevprev
+						}
+					}
 				}
 			}
 		}
@@ -2112,13 +2124,25 @@ event = { #fotd Midgame
 	immediate = {
 		every_playable_country = {
 			limit = {
-				any_planet_within_border = {
-					has_carrier_flag = fotd_seperatist_planet@prev
-					owner = {
-						has_country_flag = fotd_seperatist_country@prevprev
+				not = { has_country_flag = fotd_Midgame_flag }
+				OR = {
+					any_planet_within_border = {
+						has_carrier_flag = fotd_seperatist_planet@prev
+						owner = {
+							has_country_flag = fotd_seperatist_country@prevprev
+						}
+					}
+					capital_scope.solar_system = {
+						any_system_planet = {
+							has_carrier_flag = fotd_seperatist_planet@prevprevprev
+							owner = {
+								has_country_flag = fotd_seperatist_country@prevprevprevprev
+							}
+						}
 					}
 				}
 			}
+			set_country_flag = fotd_Midgame_flag
 			country_event = { id = origin.6145 days = 25 }
 		}
 	}
@@ -2135,11 +2159,24 @@ country_event = { # Mid game special project
 	is_triggered_only = yes
 
 	immediate = {
-		random_planet_within_border = {
-			limit = {
-				has_carrier_flag = fotd_seperatist_planet@root
+		if = {
+			limit = { has_technology = tech_starbase_1 }
+			random_planet_within_border = {
+				limit = {
+					has_carrier_flag = fotd_seperatist_planet@root
+				}
+				solar_system = {
+					random_system_planet = {
+						limit = {
+							has_carrier_flag = divider_flag
+						}
+						save_event_target_as = fotd_divider
+					}
+				}
 			}
-			solar_system = {
+		}
+		else = {
+			root.capital_scope.solar_system = {
 				random_system_planet = {
 					limit = {
 						has_carrier_flag = divider_flag
@@ -2155,6 +2192,9 @@ country_event = { # Mid game special project
 		enable_special_project = {
 			name = "FOTD_CONFIRM_FINDINGS"
 			location = event_target:fotd_divider
+		}
+		event_target:fotd_divider = {
+			set_name = NAME_Divider
 		}
 	}
 }
@@ -2177,14 +2217,28 @@ country_event = { # We have found them
 		}
 		hidden_effect = {
 			owner = {
-				random_system_within_border = {
-					spawn_system = {
-						min_distance = 5
-						max_distance = 20
-						max_jumps = 1
-						initializer = "hunter_of_the_dark_system"
+				if = { 
+					limit = { has_technology = tech_starbase_1 }
+					random_system_within_border = {
+						spawn_system = {
+							min_distance = 5
+							max_distance = 20
+							max_jumps = 1
+							initializer = "hunter_of_the_dark_system"
+						}
+						add_extra_hyperlane_to_spawned_system_effect = yes
 					}
-					add_extra_hyperlane_to_spawned_system_effect = yes
+				}
+				else = {
+					capital_scope.solar_system = {
+						spawn_system = {
+							min_distance = 5
+							max_distance = 20
+							max_jumps = 1
+							initializer = "hunter_of_the_dark_system"
+						}
+						add_extra_hyperlane_to_spawned_system_effect = yes
+					}
 				}
 				last_created_system = {
 					set_star_flag = hunter_system@root
@@ -2336,6 +2390,7 @@ ship_event = { # Scanning hunter planet
 	option = {# Everything needs to die
 		name = origin.6160.a
 		custom_tooltip = origin.6160.a.tooltip
+		custom_tooltip = nations.11220.option.nuclear_strike_launched
 		owner = {
 			add_modifier = { modifier = fotd_settled_differences }
 			give_specimen = { key = last_fragment_fevor }
@@ -2663,21 +2718,44 @@ situation_event = {
 
 	immediate = {
 		target = {
-			destroy_colony = yes
-			change_pc = pc_shattered
-			clear_deposits = yes
-			add_deposit = d_alloys_10
-		}
-		owner = {
-			random_planet_within_border = {
-				limit = {
-					has_carrier_flag = fotd_seperatist_planet@root.owner
-					owner = {
-						has_country_flag = fotd_seperatist_country@root.owner
+			if = { 
+				limit = { 
+					has_deposit = d_PrimPlayer_nation_deposit 
+					any_country = {
+						OR = { is_country_type = PrimPlayer_ethic_fanatic_nation is_country_type = PrimPlayer_ethic_fanatic_nation_nomadic }
+						has_communications = root.owner
 					}
 				}
-				set_owner = root
-				set_capital = yes
+				root.owner = { set_country_flag = PrimPlayer_exploding_planet }
+			}
+		}
+		owner = {
+			if = { 
+				limit = { has_technology = has_technology = tech_starbase_1 }
+				random_planet_within_border = {
+					limit = {
+						has_carrier_flag = fotd_seperatist_planet@root.owner
+						owner = {
+							has_country_flag = fotd_seperatist_country@root.owner
+						}
+					}
+					set_owner = root
+					set_capital = yes
+				}
+			}
+			else = {
+				capital_scope.solar_system = {
+					random_system_planet = {
+						limit = {
+							has_carrier_flag = fotd_seperatist_planet@root.owner
+							owner = {
+								has_country_flag = fotd_seperatist_country@root.owner
+							}
+						}
+						set_owner = root
+						set_capital = yes
+					}
+				}
 			}
 			end_event_chain = fotd_chain
 		}
@@ -2687,6 +2765,28 @@ situation_event = {
 	}
 	option = {
 		name = DEVASTATING
+		if = {
+			limit = { 
+				owner = { has_country_flag = PrimPlayer_exploding_planet }
+			}
+			every_country = {
+				limit = {
+					OR = { is_country_type = PrimPlayer_ethic_fanatic_nation is_country_type = PrimPlayer_ethic_fanatic_nation_nomadic }
+					has_communications = root.owner
+				}
+				destroy_country = yes
+			}
+			owner = { country_event = { id = nations.6 days = 30 } } #Unify World Situation
+		}
+	}
+	
+	after = {
+		target = {
+			destroy_colony = yes
+			change_pc = pc_shattered
+			clear_deposits = yes
+			add_deposit = d_alloys_10
+		}
 	}
 }
 
@@ -3329,16 +3429,48 @@ event = {
 					has_origin = origin_fear_of_the_dark
 					has_country_flag = origin_fear_of_the_dark
 				}
-				any_pre_ftl_within_border = {
-					has_country_flag = fotd_seperatist_country@prev
+				if = { 
+					limit = { has_technology = has_technology = tech_starbase_1 }
+					any_pre_ftl_within_border = {
+						has_country_flag = fotd_seperatist_country@prev
+					}
+				}
+				else = {
+					capital_scope.solar_system = {
+						any_country = { 
+							is_primitive = yes
+							has_country_flag = fotd_seperatist_country@prevprevprev
+						}
+					}
 				}
 			}
-			random_pre_ftl_within_border = {
-				limit = {
-					has_country_flag = fotd_seperatist_country@prev
+			save_event_target_as = fotd_seperatist_country_target@root
+			if = { 
+				limit = { has_technology = has_technology = tech_starbase_1 }
+				random_pre_ftl_within_border = {
+					limit = {
+						has_country_flag = fotd_seperatist_country@prev
+					}
+					country_event = { id = origin.6250 random = 200 scopes = { from = prev } }
+					country_event = { id = origin.6253 scopes = { from = prev } }
 				}
-				country_event = { id = origin.6250 random = 200 scopes = { from = prev } }
-				country_event = { id = origin.6253 scopes = { from = prev } }
+			}
+			else = {
+				capital_scope.solar_system = {
+					random_system_planet = {
+						limit = { 
+							exists = owner
+							owner = {
+								is_primitive = yes
+								has_country_flag = fotd_seperatist_country@prevprevprevprev
+							}
+						}
+						owner = {
+							country_event = { id = origin.6250 random = 200 scopes = { from = prevprevprevprev } }
+							country_event = { id = origin.6253 scopes = { from = prevprevprevprev } }
+						}
+					}
+				}
 			}
 		}
 	}

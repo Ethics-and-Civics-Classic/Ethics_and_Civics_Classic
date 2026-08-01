@@ -478,18 +478,6 @@ situation_event = {
 	}
 	
 	option = {
-		name = origin_fear_of_the_dark
-		trigger = { 
-			owner = { 
-				has_country_flag = origin_fear_of_the_dark_adopted
-				has_overlord_dlc = yes
-			}
-		}
-		hidden_effect = { owner = { set_origin = origin_fear_of_the_dark } }
-		custom_tooltip = PrimPlay_situation_event.1.origin_fear_of_the_dark
-	}
-	
-	option = {
 		name = origin_default_nomads
 		trigger = { owner = { is_nomadic = yes } }
 		hidden_effect = { owner = { set_origin = origin_default_nomads } }
@@ -750,6 +738,7 @@ situation_event = {
 		}
 		if = {
 			limit = { 
+				is_nomadic = no #Arkship storm? I have no idea if this would work...
 				has_cosmic_storms_dlc = yes
 				owner.capital_scope.solar_system = { is_inside_storm = yes }
 				NOR = {
@@ -1106,7 +1095,6 @@ situation_event = {
 		}
 		owner = { 
 			has_technology = tech_primitive_radiowave_telescope 
-			is_nomadic = no #Arkship storm? I have no idea if this would work...
 		}
 	}
 	
@@ -1499,15 +1487,21 @@ country_event = {
 	title = PrimPlay_situation_event.3.title
 	desc = {
 		trigger = {
-			owner = {
-				NOT = {
-					is_eager_explorer_empire = no
-					has_origin = origin_payback
-					has_origin = origin_broken_shackles
-				}
+			NOR = {
+				has_country_flag = PrimPlayer_exploding_planet
+				is_eager_explorer_empire = no
+				has_origin = origin_payback
+				has_origin = origin_broken_shackles
 			}
 		}
 		text = "PrimPlay_situation_event.3.desc"
+	}
+	desc = {
+		trigger = { 
+			has_country_flag = origin_fear_of_the_dark
+			has_country_flag = PrimPlayer_exploding_planet
+		}
+		text = "PrimPlay_situation_event.3.origin_fear_of_the_dark.desc"
 	}
 	# desc = {
 	#	trigger = { owner = { has_civic = civic_eager_explorers } }
@@ -1526,11 +1520,11 @@ country_event = {
 	#	text = "PrimPlay_situation_event.3.civic_hive_stargazers_effects.desc"
 	#}
 	desc = {
-		trigger = { owner = { has_origin = origin_payback } }
+		trigger = { has_origin = origin_payback }
 		text = "PrimPlay_situation_event.3.payback.desc"
 	}
 	desc = {
-		trigger = { owner = { has_origin = origin_broken_shackles } }
+		trigger = { has_origin = origin_broken_shackles }
 		text = "PrimPlay_situation_event.3.broken_shackles.desc"
 	}
 	picture = GFX_evt_city_planet
@@ -1542,17 +1536,27 @@ country_event = {
 	option = {
 		name = PrimPlay_situation_event.3.into_the_unknown
 		trigger = {
-			owner = {
-				NOR = {
-					has_origin = origin_payback
-					has_origin = origin_broken_shackles
-					capital_scope = { is_planet_class = pc_nuked }
-				}
-				# is_eager_explorer_empire = no
+			NOR = {
+				has_country_flag = origin_fear_of_the_dark
+				has_country_flag = PrimPlayer_exploding_planet
+				has_origin = origin_payback
+				has_origin = origin_broken_shackles
+				capital_scope = { is_planet_class = pc_nuked }
 			}
+			# is_eager_explorer_empire = no
 		}
 		start_situation = { type = PrimPlayer_unified_planet_situation target = this }
 		random_situation = { limit = { is_situation_type = PrimPlayer_unified_planet_situation } set_situation_approach = into_the_unknown }
+	}
+	
+	option = {
+		name = PrimPlay_situation_event.3.origin_fear_of_the_dark
+		trigger = {
+			has_country_flag = origin_fear_of_the_dark
+			has_country_flag = PrimPlayer_exploding_planet
+		}
+		start_situation = { type = PrimPlayer_unified_planet_situation target = this }
+		random_situation = { limit = { is_situation_type = PrimPlayer_unified_planet_situation } set_situation_approach = PrimPlayer_fear_of_the_dark_approach }
 	}
 
 	# option = {
