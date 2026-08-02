@@ -626,16 +626,16 @@ building_pirate_haven_2 = {
 		mult = value:branch_office_value_for_buildings
 	}
 
-	planet_modifier = {
-		planet_crime_add = 25				#Higher crime for balance
-		job_soldier_add = 100				#Cog Note - Why not have both?
-		job_bureaucrat_add = 100			#Cog Note - Why not have All?
-		job_politician_add = 100			#Cog Note - This is on your own planet, so it wouldn't be offworld
-		army_starting_experience_add = 100
-		planet_civilians_unity_produces_add = 0.5	#Cog Note - They share stories, don't they? That's unity :P
-		planet_civilians_consumer_goods_upkeep_add = 0.25
-	}
-	
+    planet_modifier = {
+        planet_crime_add = 10
+        job_soldier_per_pop = 0.03				#Cog Note - Why not have both? # Sage Note - This feels like just 100 extra soldiers doesn't have enough long-term 'oomph' for a unique building.
+		job_bureaucrat_add = 100			#Cog Note - Why not have All?	# Sage Note - Because worker co-ops don't have politicians, silly.
+		#job_politician_add = 100			#Cog Note - This is on your own planet, so it wouldn't be offworld
+        army_starting_experience_add = 100
+        planet_civilians_unity_produces_add = 0.5
+        planet_civilians_consumer_goods_upkeep_add = 0.25
+    }
+
 	#triggered_planet_modifier = {
 	#	potential = {
 	#		exists = owner
@@ -667,7 +667,23 @@ building_pirate_haven_2 = {
 	#		job_gladiator_add = 100	#maybe this is not the building for this job...
 	#	}
 	#}
-	
+
+	triggered_planet_modifier = {
+        potential = {
+            exists = owner
+            owner = { NOT = { has_valid_civic = civic_worker_coop } }
+        }
+        job_politician_add = 100		# Pirate Commandante trigger
+    }
+    triggered_planet_modifier = {
+        potential = {
+            exists = owner
+            owner = { has_valid_civic = civic_worker_coop }
+        }
+        job_enforcer_add = 100			# Pirate Enforcer / Combat Instructor trigger
+        job_bureaucrat_add = 100		# Steward Captain trigger
+    }
+
 	triggered_planet_modifier = {
 		potential = {
 			always = yes
@@ -698,7 +714,17 @@ building_pirate_haven_2 = {
 		planet_jobs_trade_produces_mult = @trade_value_from_jobs
 		mult = value:num_jobs_with_tag|TAG|soldier|
 	}
-	
+	    
+	triggered_planet_modifier = {
+        potential = {
+            owner = {
+                is_worker_coop_empire = yes
+            }
+        }
+        planet_jobs_trade_produces_mult = @trade_value_from_jobs
+        mult = value:num_jobs_with_tag|TAG|bureaucrat|				# Union pirates gotta have that mult. -- Sage
+    }
+    
 	#Trader Jobs from civics
 	triggered_country_modifier = {
 		potential = {
