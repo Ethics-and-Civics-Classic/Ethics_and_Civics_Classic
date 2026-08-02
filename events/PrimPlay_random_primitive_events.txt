@@ -1342,6 +1342,7 @@ ship_event = {
 				}
 				remove_carrier_flag = PrimPlayer_asteroid_N01_6_3942_junkyard
 			}
+			owner = { country_event = { id = story.5 days = 15 } }
 		}
 		FROM = {
 			add_deposit = d_minerals_3
@@ -1365,6 +1366,7 @@ ship_event = {
 				}
 				remove_carrier_flag = PrimPlayer_asteroid_N01_6_3942_ore_freighter
 			}
+			owner = { country_event = { id = story.5 days = 15 } }
 		}
 		FROM = {
 			add_modifier = {
@@ -1396,6 +1398,7 @@ ship_event = {
 				}
 				remove_carrier_flag = PrimPlayer_asteroid_K63_4_1078
 			}
+			owner = { country_event = { id = story.5 days = 15 } }
 		}
 		FROM = {
 			add_modifier = {
@@ -1427,7 +1430,7 @@ ship_event = {
 				}
 				remove_carrier_flag = PrimPlayer_asteroid_TBR_733
 			}
-			owner = { country_event = { id = story.2 days = 30 } }
+			owner = { country_event = { id = story.2 days = 15 } }
 		}
 		FROM = {
 			add_modifier = {
@@ -1452,7 +1455,6 @@ ship_event = {
 				limit = { has_origin = origin_evolutionary_predators }
 				give_evolutionary_predator_situation_progress_and_dna = { AMOUNT = small TYPE = lithoid }
 			}
-			country_event = { id = story.5 days = 30 } 
 		}
 	}
 	
@@ -1479,7 +1481,7 @@ ship_event = {
 				}
 				remove_carrier_flag = PrimPlayer_asteroid_TBR_733
 			}
-			owner = { country_event = { id = story.2 days = 30 } }
+			owner = { country_event = { id = story.2 days = 15 } }
 		}
 		FROM = {
 			add_deposit = d_society_6
@@ -3029,15 +3031,20 @@ country_event = {
 			create_country = {
 				name = random
 				species = event_target:subterranean_species@ROOT
-				type = default
+				type = primitive
 				auto_delete = yes
 				origin = origin_subterranean
 				ethos = {
+					ethic = ethic_fanatic_industrial
 					ethic = ethic_fanatic_militarist
-					ethic = ethic_authoritarian
+					ethic = ethic_xenophobe
 				}
 				authority = random
-				civics = random
+				civics = { 
+					civic = civic_mining_guilds
+					civic = civic_relentless_industrialists
+					civic = civic_corporate_scavengers
+				}
 				flag = {
 					icon = {
 						category = "zoological"
@@ -3064,6 +3071,28 @@ country_event = {
 				establish_communications_no_message = event_target:subterranean_former_planet_owner@ROOT
 				save_event_target_as = subterranean_empire@root
 				owner_species = { save_event_target_as = subterranean_species@root }
+				set_country_type = primitive
+				set_country_flag = PrimPlayer_ethic_fanatic_nation_colony@root	#To avoid flag changing
+				set_pre_ftl_age_effect = { PRE_FTL_AGE = early_space_age }
+				add_awareness = 100
+				set_country_flag = first_contact_completed@root
+				root = { set_country_flag = first_contact_completed@prev }
+				every_situation = { 
+					limit = { is_situation_type = pre_ftl_tech_progress_situation } 
+					set_situation_progress = 0
+				}
+				set_faction_hostility = { target = root set_hostile = yes set_neutral = no set_friendly = no }
+				if = {
+					limit = { has_civic = civic_increasing_urbanization }
+					force_remove_civic = civic_increasing_urbanization
+					force_add_civic = civic_relentless_industrialists
+				}
+				if = {
+					limit = { has_civic = civic_atmospheric_pollution }
+					force_remove_civic = civic_atmospheric_pollution
+					force_add_civic = civic_mining_guilds
+				}
+				force_add_civic = civic_corporate_scavengers
 			}
 		}
 		from = { destroy_country = yes }
@@ -3101,13 +3130,18 @@ country_event = {
 				species = event_target:subterranean_species@ROOT
 				type = "defense_army"
 			}
-			# flip starbase
-			solar_system = {
-				if = {
-					limit = { exists = starbase }
-					starbase = { set_owner = event_target:subterranean_empire@ROOT }
-				}
-			}
+			add_building = building_primitive_mine
+			add_building = building_coordinated_fulfillment_center_2
+			add_building = building_primitive_factory
+			add_building = building_primitive_factory
+			add_building = building_primitive_power_plant
+			# flip starbase	#Cog Note - Switched to primitives to give the player time before scenario where system flips
+			#solar_system = {
+			#	if = {
+			#		limit = { exists = starbase }
+			#		starbase = { set_owner = event_target:subterranean_empire@ROOT }
+			#	}
+			#}
 		}
 	}
 
