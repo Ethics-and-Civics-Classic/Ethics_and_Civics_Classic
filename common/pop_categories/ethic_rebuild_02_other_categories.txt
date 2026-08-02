@@ -1,22 +1,17 @@
 slave_unemployment = {
+	is_unemployment_job = yes
 	rank = 2
 	change_job_threshold = 0.1
 
+ #	custom_demotion_loc = "" # empty to use default loc that doesn't show demotion
+ #	custom_demotion_icon = "" # empty to show no icon
+ #	custom_promotion_loc = "" # empty to use default loc that doesn't show demotion
+ #	custom_promotion_icon = "" # empty to show no icon
+	
+	display_category = worker
+
 	weight = {
 		weight = 0
-	}
-	
-	custom_demotion_loc = "" # empty to use default loc that doesn't show demotion
-	custom_demotion_icon = "" # empty to show no icon
-	custom_promotion_loc = "" # empty to use default loc that doesn't show demotion
-	custom_promotion_icon = "" # empty to show no icon
-
-	display_category = slave			# unpaid workers
-	
-	pop_group_modifier = {
-		pop_political_power = -0.75
-		pop_housing_usage_base = 0.75
-		pop_amenities_usage_base = 0.75
 	}
 
 	# scope: pop to be resettled
@@ -24,66 +19,42 @@ slave_unemployment = {
 		always = yes
 	}
 
-	resettlement_cost = {
-		energy = 50
-	}
+	inline_script = "pop_categories/resettlement_costs_low"
 
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = { has_civic = civic_dystopian_society }
-		}
-		planet_crime_add = 1
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner = {
-				has_councilor = { COUNCILOR = "councilor_indentured_assets" } 
-			}
-		}
-
-		planet_jobs_trade_produces_add = @councilor_indentured_assets_trade_value
-		mult = value:councilor_level|TYPE|councilor_indentured_assets|
-	}
-	triggered_planet_modifier = {
-		potential = {
-			owner = {
-				has_councilor = { COUNCILOR = "councilor_slave_race" } 
-			}
-		}
-
-	}
-		
 	# Triggered Modifiers	
 	inline_script = "pop_categories/social_classes_triggered_modifiers"
 	inline_script = "pop_categories/social_classes_triggered_modifiers_no_happiness"
 
 	pop_group_modifier = {
-		pop_political_power = -0.75
 		pop_housing_usage_base = 0.75
 		pop_amenities_usage_base = 0.75
 	}
-	
-	resources = {
-		category = pop_category_slave
 
-		upkeep = {
-			trigger = {
-				owner = { has_councilor = { COUNCILOR = "councilor_slave_race" } } # Replace with counciler of choice
-			}
-			energy = 0.1
-			mult = value:councilor_level|TYPE|councilor_slave_race|
-		}
-		# Resource Production
+	resources = {
+		category = pop_category_workers
+
 		produces = {
 			trigger = {
-				owner = {
-					has_councilor = { COUNCILOR = "councilor_indentured_assets" }
-				}
+				owner = { has_councilor = { COUNCILOR = "councilor_indentured_assets" } }
 			}
 			trade = @councilor_indentured_assets_trade_value
 			mult = value:councilor_level|TYPE|councilor_indentured_assets|
+		}
+
+		produces = {
+			trigger = {
+				owner = { has_councilor = { COUNCILOR = "councilor_slave_race" } } 
+			}
+			society_research = @councilor_slave_race_society_value
+			mult = value:councilor_level|TYPE|councilor_slave_race|
+		}
+
+		upkeep = {
+			trigger = {
+				owner = { has_councilor = { COUNCILOR = "councilor_slave_race" } } 
+			}
+			energy = @councilor_slave_race_energy_value
+			mult = value:councilor_level|TYPE|councilor_slave_race|
 		}
 
 		produces = {
@@ -95,121 +66,19 @@ slave_unemployment = {
 			exotic_gases = @gaseous_fauna_exotic_gases_production
 		}
 		
-		produces = {
-			trigger = {
-				owner = { has_councilor = { COUNCILOR = "councilor_slave_race" } } # Replace with counciler of choice
-			}
-			society_research = 0.2
-			# pop_cat_slave_happiness = -0.5	# Unexpected Token?
-			mult = value:councilor_level|TYPE|councilor_slave_race|
-		}
-	}
-}
-
-slave_unemployment2 = {
-	rank = 5
-	change_job_threshold = 0.1
-
-	weight = {
-		weight = 0
-	}
-	
-	custom_demotion_loc = "" # empty to use default loc that doesn't show demotion
-	custom_demotion_icon = "" # empty to show no icon
-	custom_promotion_loc = "" # empty to use default loc that doesn't show demotion
-	custom_promotion_icon = "" # empty to show no icon
-
-	display_category = slave			# unpaid workers
-
-	# scope: pop to be resettled
-	allow_resettlement = {
-		always = yes
-	}
-
-	resettlement_cost = {
-		energy = 50
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = { has_civic = civic_dystopian_society }
-		}
-		planet_crime_add = 1
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner = {
-				has_councilor = { COUNCILOR = "councilor_indentured_assets" } 
-			}
-		}
-
-		planet_jobs_trade_produces_add = @councilor_indentured_assets_trade_value
-		mult = value:councilor_level|TYPE|councilor_indentured_assets|
-	}
-	triggered_planet_modifier = {
-		potential = {
-			owner = {
-				has_councilor = { COUNCILOR = "councilor_slave_race" } 
-			}
-		}
-
-	}
-	
-	# Triggered Modifiers
-	inline_script = "pop_categories/social_classes_triggered_modifiers"
-	inline_script = "pop_categories/social_classes_triggered_modifiers_no_happiness"
-
-	pop_group_modifier = {
-		pop_political_power = -0.75
-		pop_housing_usage_base = 0.75
-		pop_amenities_usage_base = 0.75
-	}
-	
-	resources = {
-		category = pop_category_slave
-
-		upkeep = {
-			trigger = {
-				owner = { has_councilor = { COUNCILOR = "councilor_slave_race" } } # Replace with counciler of choice
-			}
-			energy = 0.1
-			mult = value:councilor_level|TYPE|councilor_slave_race|
-		}
-		# Resource Production
-		produces = {
-			trigger = {
-				owner = {
-					has_councilor = { COUNCILOR = "councilor_indentured_assets" }
-				}
-			}
-			trade = @councilor_indentured_assets_trade_value
-			mult = value:councilor_level|TYPE|councilor_indentured_assets|
-		}
-
-		produces = {
-			trigger = {
-				planet = {
-					has_modifier = pm_gaseous_fauna
-				}
-			}
-			exotic_gases = @gaseous_fauna_exotic_gases_production
-		}
-		
-		produces = {
-			trigger = {
-				owner = { has_councilor = { COUNCILOR = "councilor_slave_race" } } # Replace with counciler of choice
-			}
-			society_research = 0.2
-			# pop_cat_slave_happiness = -0.5	# Unexpected Token?
-			mult = value:councilor_level|TYPE|councilor_slave_race|
-		}
+ #		produces = {
+ #			trigger = {
+ #				owner = { has_councilor = { COUNCILOR = "councilor_slave_race" } } # Replace with counciler of choice
+ #			}
+ #			society_research = 0.2
+ #			# pop_cat_slave_happiness = -0.5	# Unexpected Token?
+ #	 		mult = value:councilor_level|TYPE|councilor_slave_race|
+ #		}
 	}
 }
 
 criminal = {
-	rank = 2
+	rank = 1
 	change_job_threshold = 2
 
 	triggered_planet_modifier = {
