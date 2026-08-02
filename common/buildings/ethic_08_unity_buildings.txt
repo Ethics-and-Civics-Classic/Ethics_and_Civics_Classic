@@ -688,6 +688,7 @@ building_organic_sanctuary = {
 			OR = {
 				has_valid_civic = civic_machine_servitor
 				has_valid_civic = civic_machine_cult_machine
+				is_hospitality_servitor_empire = no
 			}
 		}
 	}
@@ -729,7 +730,7 @@ building_organic_sanctuary = {
 			}
 		}
 	}
-
+	
 	convert_to = {
 		building_luxury_residence
 		building_communal_housing
@@ -737,8 +738,12 @@ building_organic_sanctuary = {
 
 	resources = {
 		category = planet_buildings
-		cost = {
-			minerals = @b1_minerals
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = rare_crystals
+			COST = @b1_minerals
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
 		}
 		upkeep = {
 			energy = @b1_upkeep
@@ -842,6 +847,7 @@ building_organic_paradise = {
 			OR = {
 				has_valid_civic = civic_machine_servitor
 				has_valid_civic = civic_machine_cult_machine
+				is_hospitality_servitor_empire = no
 			}
 		}
 	}
@@ -861,6 +867,13 @@ building_organic_paradise = {
 
 	resources = {
 		category = planet_buildings
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = rare_crystals
+			COST = @b2_minerals
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
+		}
 		cost = {
 			minerals = @b2_minerals
 			exotic_gases = @b2_rare_cost
@@ -941,6 +954,107 @@ building_organic_paradise = {
 				value >= 100
 				type = produces
 			}
+		}
+	}
+}
+
+building_trophy_vault = {
+	base_buildtime = @b2_time
+	planet_limit = 1
+	category = unity
+	icon = building_autocurating_vault
+
+	building_sets = {
+		unity
+	}
+
+	potential = {
+		exists = owner
+		is_special_colony_type = no
+		owner = {
+			OR = {
+				has_valid_civic = civic_machine_servitor
+				has_valid_civic = civic_machine_cult_machine
+			}
+		}
+	}
+
+	allow = {
+	}
+
+	destroy_trigger = {
+		exists = owner
+		OR = {
+			has_modifier = slave_colony
+			owner = {
+				NOR = {
+					has_valid_civic = civic_machine_servitor
+					has_valid_civic = civic_machine_cult_machine
+				}
+			}
+		}
+	}
+
+	convert_to = {
+		building_autocurating_vault
+		building_citadel_of_faith
+		building_alpha_hub
+		building_corporate_vault
+	}
+
+	resources = {
+		category = planet_buildings
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = rare_crystals
+			COST = @b2_minerals
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
+		}
+		cost = {
+			rare_crystals = @b2_rare_cost
+		}
+		upkeep = {
+			energy = @b2_upkeep
+			rare_crystals = @b2_rare_upkeep
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			owner? = {
+				OR = {
+					NOT = { has_origin = origin_forever_cruise }
+					has_country_flag = forever_cruise_over
+				}
+			}
+		}
+		planet_bio_trophies_unity_produces_add = 0.5
+		planet_bio_trophies_consumer_goods_upkeep_add = 0.5
+		pop_cat_bio_trophy_happiness = 0.10
+	}
+
+	# Forever Cruise servitors house their Bio-Trophies as cruise passengers, so boost that category instead
+	triggered_planet_modifier = {
+		potential = {
+			owner? = {
+				has_origin = origin_forever_cruise
+				NOT = { has_country_flag = forever_cruise_over }
+			}
+		}
+		planet_cruise_passengers_unity_produces_add = 0.5
+		planet_cruise_passengers_consumer_goods_upkeep_add = 0.5
+		pop_cat_cruise_passenger_happiness = 0.10
+	}
+
+	prerequisites = {
+		"tech_autocurating_vault"
+	}
+
+	show_tech_unlock_if = {
+		OR = {
+			has_valid_civic = civic_machine_servitor
+			has_valid_civic = civic_machine_cult_machine
 		}
 	}
 }
