@@ -736,18 +736,6 @@ situation_event = {
 				}
 			}
 		}
-		if = {
-			limit = { 
-				is_nomadic = no #Arkship storm? I have no idea if this would work...
-				has_cosmic_storms_dlc = yes
-				owner.capital_scope.solar_system = { is_inside_storm = yes }
-				NOR = {
-					has_situation_flag = PrimPlay_situation_event_1002_finished 
-					has_situation_flag = PrimPlay_situation_event_1002_pause
-				}
-			}
-			situation_event = { id = PrimPlay_situation_event.1002 }
-		}
 		random_list = {
 			83 = {
 				#Nothing
@@ -763,11 +751,24 @@ situation_event = {
 					}
 				}
 			}
+			12 = {
+				situation_event = { id = PrimPlay_situation_event.1002 } #Storm Chaser Origin if you have experienced a storm
+				modifier = {
+					factor = 0
+					OR = { 
+						has_situation_flag = PrimPlay_situation_event_1002_finished 
+						has_situation_flag = PrimPlay_situation_event_1002_pause
+					}
+				}
+			}
 			10 = {
 				situation_event = { id = PrimPlay_situation_event.1003 }
 				modifier = {
 					factor = 0 
-					has_situation_flag = PrimPlay_situation_event_1003_pause
+					OR = { 
+						has_situation_flag = PrimPlay_situation_event_1003_finished 
+						has_situation_flag = PrimPlay_situation_event_1003_pause
+					}
 				}
 			}
 		}
@@ -1085,11 +1086,14 @@ situation_event = {
 	picture = GFX_evt_astral_rift_psionic_stranger_2
 	show_sound = event_space_cloud
 	is_triggered_only = yes
-
-	trigger = { 
-		has_cosmic_storms_dlc = yes
+	
+	immediate = { set_situation_flag = PrimPlay_situation_event_1002_pause }
+	
+	trigger = {
+		#has_cosmic_storms_dlc = yes	#Storms only exist if you have DLC...
 		owner.capital_scope.solar_system = { is_inside_storm = yes }
-		NOR = { 
+		owner = { is_nomadic = no } #Arkship storm? I have no idea if this would work...
+		NOR = {
 			has_situation_flag = PrimPlay_situation_event_1002_finished 
 			has_situation_flag = PrimPlay_situation_event_1002_pause
 		}
@@ -1097,8 +1101,6 @@ situation_event = {
 			has_technology = tech_primitive_radiowave_telescope 
 		}
 	}
-	
-	immediate = { set_situation_flag = PrimPlay_situation_event_1002_pause }
 
 	option = {
 		name = PrimPlay_situation_event.1002.fund
@@ -1198,14 +1200,16 @@ situation_event = {
 	
 	trigger = {
 		has_grand_archive_dlc = yes
-		NOT = { has_situation_flag = PrimPlay_situation_event_1002_finished }
+		NOR = { 
+			has_situation_flag = PrimPlay_situation_event_1003_finished 
+			has_situation_flag = PrimPlay_situation_event_1003_pause
+		}
 		OWNER = {
 			NOT = { has_technology = tech_gravity_wells }
 			has_technology = tech_primitive_quantum_mechanics_theory
 			has_technology = tech_proto_thrusters_1
 			has_encountered_any_fauna = yes
 		}
-		NOT = { has_situation_flag = PrimPlay_situation_event_1003_pause }
 	}
 	
 	immediate = { set_situation_flag = PrimPlay_situation_event_1003_pause }
@@ -1221,12 +1225,12 @@ situation_event = {
 			add_resource = { influence = -100 }
 			add_research_option = tech_gravity_wells
 		}
-		set_situation_flag = PrimPlay_situation_event_1002_finished
+		set_situation_flag = PrimPlay_situation_event_1003_finished
 	}
 	
 	option = {
 		name = "PrimPlay_situation_event.1003.cancel"	
-		set_situation_flag = PrimPlay_situation_event_1002_finished
+		set_situation_flag = PrimPlay_situation_event_1003_finished
 	}
 	
 	after = { remove_situation_flag = PrimPlay_situation_event_1003_pause }
