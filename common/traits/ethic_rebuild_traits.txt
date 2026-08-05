@@ -107,7 +107,7 @@ trait_latent_psionic_machine = {
 		enforcer_jobs_bonus_workforce_mult = 0.05
 	}
 	slave_cost = {
-		energy = 1500
+		trade = 1500
 	}
 	assembly_score = {
 		modifier = {
@@ -125,13 +125,14 @@ trait_latent_psionic_machine = {
 	}
 }
 
-trait_zombie = {
-	cost = 0
-	# potential_crossbreeding_chance = 0			# No Longer Used in Stellaris 4.0
-	opposites = { "trait_nerve_stapled" }
+trait_symbiotic = {
+	cost = 2
+	# potential_crossbreeding_chance = 0.33			# No Longer Used in Stellaris 4.0
+	opposites = { "trait_symbiotic_host" "trait_solitary" "trait_weak" "trait_hollow_bones" "trait_intelligent" "trait_erudite" "trait_natural_engineers" "trait_natural_physicists" "trait_natural_sociologists" "trait_cranial_hypertrophy" "trait_cranial_megatrophy" "trait_incubator" "trait_pyroclastic" "trait_slow_breeders" "trait_rapid_breeders" "trait_fertile" "trait_plantoid_budding" "trait_lithoid_budding" "trait_rapid_breeders_lithoid" "trait_humanoid_existential_iteroparity" "trait_humanoid_psychological_infertility" "trait_egg_laying" "trait_wilderness" "trait_vat_grown" }
+	sorting_priority = 20
+
 	initial = no
 	randomized = no
-	advanced_trait = no
 	species_potential_add = {
 		always = no
 	}
@@ -141,94 +142,162 @@ trait_zombie = {
 	species_possible_merge_add = {
 		always = no
 	}
-	infertile = yes
-	tags = { organic negative upkeep pop_output blocks_leaders }
-	allowed_archetypes = { BIOLOGICAL LITHOID }
-	modifier = {
-		pop_bonus_workforce_mult = -0.25
-		planet_pops_upkeep_mult = -1
-		pop_amenities_usage_base = 0.5
-	}
 
-	triggered_pop_group_modifier = {
-		potential = {
-			OR = {
-				is_pop_category = ruler
-				is_specialist_category = yes
-			}
-		}
-		pop_demotion_time_mult = -10.0
-	}
-
-	icon = "gfx/interface/icons/traits/trait_zombie.dds"
-	custom_tooltip = TRAIT_ZOMBIE_EFFECT
-	slave_cost = {
-		energy = 500
-	}
-}
-
-trait_symbiotic = {
-	cost = 1
-	# potential_crossbreeding_chance = 0.33			# No Longer Used in Stellaris 4.0
-	opposites = {
-		"trait_intelligent"
-		"trait_erudite"
-		"trait_natural_engineers"
-		"trait_natural_physicists"
-		"trait_natural_sociologists"
-	}
-	initial = no
-	randomized = no
-	species_potential_add = { always = no }
 	icon = "gfx/interface/icons/traits/trait_symbiotic.dds"
 	allowed_archetypes = { BIOLOGICAL LITHOID }
+	tags = { organic positive pop_output pop_growth army leader drawbacks special }
+	ai_weight = {
+		weight = 0
+	}
 
 	custom_tooltip = TRAIT_SYMBIOTIC_EFFECT
 	modifier = {
-		pop_happiness = 0.1
 		leader_skill_levels = -1
-		species_leader_exp_gain = -0.15
+		leader_lifespan_add = -20
+
+		worker_and_simple_drone_cat_bonus_workforce_mult = 0.1
+		researcher_jobs_bonus_workforce_mult = -0.10
+		trader_jobs_bonus_workforce_mult = -0.10
+		soldier_jobs_bonus_workforce_mult = 0.05
+
+		army_damage_mult = 0.10
+		army_defense_damage_mult = 0.20
+	}
+
+	triggered_planet_pop_group_modifier_for_species = {
+		potential = {
+			exists = planet
+			planet = {
+				num_symbiotic_host >= 10 
+			}
+		}
+		divide_over_pop_groups = no
+		logistic_growth_mult = 0.01		# If we have pollinators, we'll reproduce.
+		mult = planet.value:counter_symbiotic_host
+	}
+	slave_cost = {
+		trade = 1000
+	}
+}
+
+trait_symbiotic_host = {
+	cost = 2
+	opposites = { "trait_solitary" "trait_symbiotic" "trait_strong" "trait_very_strong" "trait_resilient" "trait_reavers" "trait_incubator" "trait_pyroclastic" "trait_slow_breeders" "trait_rapid_breeders" "trait_fertile" "trait_plantoid_budding" "trait_lithoid_budding" "trait_rapid_breeders_lithoid" "trait_humanoid_existential_iteroparity" "trait_humanoid_psychological_infertility" "trait_egg_laying" "trait_wilderness" "trait_vat_grown" }
+	sorting_priority = 20
+
+	initial = no
+	randomized = no
+	species_potential_add = {
+		always = no
+	}
+	species_possible_remove = {
+		always = no
+	}
+	species_possible_merge_add = {
+		always = no
+	}
+
+	icon = "gfx/interface/icons/traits/trait_symbiotic.dds"
+	allowed_archetypes = { BIOLOGICAL LITHOID }
+	tags = { organic positive pop_growth pop_output army happiness leader drawbacks special }
+	ai_weight = {
+		weight = 0
+	}
+
+	custom_tooltip = TRAIT_SYMBIOTIC_HOST_EFFECT
+	modifier = {
+		leader_lifespan_add = 25
+		species_leader_exp_gain = 0.1
+
+		logistic_growth_mult = -0.1
+		bonus_pop_growth_mult = -0.1
+
+		worker_and_simple_drone_cat_bonus_workforce_mult = -0.1
+		specialist_and_complex_drone_cat_bonus_workforce_mult = 0.1
+		pop_cat_ruler_bonus_workforce_mult = 0.15
+
+		army_damage_mult = -0.10
+		army_defense_damage_mult = -0.2
+	}
+	triggered_planet_pop_group_modifier_for_species = {
+		potential = {
+			exists = planet
+			planet = {
+				num_symbiotic >= 10
+			}
+		}
+		modifier = {
+			pop_happiness = 0.00001		# Yay, flowers!
+			mult = planet.value:counter_symbiotic
+		}
+	}
+	triggered_planet_pop_group_modifier_for_species = {
+		potential = {
+			exists = planet
+			planet = {
+				num_symbiotic < 10
+			}
+		}
+		modifier = {
+			pop_happiness = -0.5		# No flowers, we riot.
+			pop_amenities_usage_organic_mult = 0.5
+		}
+	}
+	slave_cost = {
+		trade = 500
+	}
+	assembly_score = {
+		modifier = {
+			add = -2
+			from = { free_amenities <= 10 }		# This is the primary species, they should still be able to settle worlds without flowers... but they won't be happy about it.
+		}
 	}
 }
 
 trait_slave_gene = {
-	cost = 0
-	# potential_crossbreeding_chance = 0.33				# No Longer Used in Stellaris 4.0
-	opposites = {
-		"trait_intelligent"
-		"trait_erudite"
-		"trait_natural_engineers"
-		"trait_natural_physicists"
-		"trait_natural_sociologists"
-	}
+	cost = 1
+	opposites = { "trait_intelligent" "trait_erudite" "trait_natural_engineers" "trait_natural_physicists" "trait_natural_sociologists" "trait_cranial_hypertrophy" "trait_cranial_megatrophy" }
 	initial = no
 	randomized = no
+
 	species_potential_add = {
-		hidden_trigger = { exists = from }
-		from = { has_civic = civic_slave_race }
-	}
-	species_possible_remove = {
-		hidden_trigger = { exists = from }
-		from = {
-			OR = {
-				has_tradition = tr_genetics_resequencing
-				has_civic = civic_slave_race
+		hidden_trigger = {
+			exists = from
+			from = {
+				has_valid_civic = civic_slave_race
 			}
 		}
+	}
+	species_possible_remove = {
+		hidden_trigger = {
+			NOT = { has_civic = civic_symbiotic_race }
+		}
+		can_remove_beneficial_genetic_traits = yes
 	}
 	species_possible_merge_remove = {
 		always = yes
 	}
+	species_possible_merge_add = {
+		always = no
+	}
+
 	icon = "gfx/interface/icons/traits/trait_slave_gene.dds"
 	allowed_archetypes = { BIOLOGICAL LITHOID }
-
+	tags = { organic positive production leader blocks_leaders drawbacks special }
 	custom_tooltip = TRAIT_SLAVE_GENE_EFFECT
+
 	modifier = {
-		planet_jobs_worker_produces_mult = 0.10
-		army_damage_mult = 0.30
-		army_health = 0.3
-		army_collateral_damage_mult = 0.15
+		worker_and_simple_drone_cat_bonus_workforce_mult = 0.025
+		army_damage_mult = 0.05
+		army_health = 0.1
 		logistic_growth_mult = -0.15
+	}
+	slave_cost = {
+		trade = 500
+	}
+
+	ai_weight = {
+		weight = 0
 	}
 }
 

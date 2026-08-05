@@ -816,4 +816,55 @@ generate_civic_secondary_pops = {
 			species = last_created_species
 		}
 	}
+	# Forever Cruise: set citizenship, living standard & preference; spawn Pops
+	if = {
+		limit = {
+			owner = { has_origin = origin_forever_cruise }
+		}
+		if = {
+			limit = {
+				owner = { 
+					OR = {
+						has_valid_civic = civic_machine_servitor 
+						has_valid_civic = civic_machine_cult_machine 
+					}
+				}
+			}
+			# Pops were already spawned by the Rogue Servitor block above; only re-tag here.
+			last_created_species = {
+				set_citizenship_type = {
+					country = prev.owner
+					type = citizenship_organic_trophy
+				}
+				set_species_flag = cruise_founding_passenger
+				save_global_event_target_as = cruise_passenger_species@prev.owner
+			}
+		}
+		else = {
+			last_created_species = {
+				set_citizenship_type = {
+					country = prev.owner
+					type = citizenship_cruise_passenger
+				}
+				set_living_standard = {
+					country = prev.owner
+					type = living_standard_cruise_passenger
+				}
+				set_population_controls = {
+					country = prev.owner
+					type = population_control_no
+					cooldown = no
+				}
+				set_species_flag = cruise_founding_passenger
+				save_global_event_target_as = cruise_passenger_species@prev.owner
+			}
+			while = {
+				count = @civilians_counter
+				create_pop_group = {
+					size = @civilians_gamestart
+					species = last_created_species
+				}
+			}
+		}
+	}
 }
