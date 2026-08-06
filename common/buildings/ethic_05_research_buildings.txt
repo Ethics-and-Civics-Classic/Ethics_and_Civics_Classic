@@ -318,3 +318,146 @@ building_institute = {
 		AMOUNT = 10
 	}
 }
+
+building_nomad_conservatory = {
+	icon = holding_park_ranger_lodge
+	planet_limit = 1
+	base_buildtime = @b1_time
+
+	category = research
+
+	building_sets = {
+		research
+		society
+	}
+
+	potential = {
+		NOT = {	has_modifier = slave_colony	}
+		owner? = {
+			is_regular_empire = yes
+			is_nomadic = yes
+			is_green = yes
+		}
+	}
+
+	allow = {
+		custom_tooltip = {
+			fail_text = no_free_district_for_ranger_lodge
+			planet = {
+				num_free_districts = {
+					type = any
+					value > 0
+				}
+			}
+		}
+	}
+
+	destroy_trigger = {
+		owner? = {
+			OR = {
+				owner = { is_regular_empire = no }
+				has_modifier = slave_colony
+				is_nomadic = no
+				is_green = no
+			}
+		}
+	}
+
+	ai_resource_production = {
+		unity = 1.0
+		mult = value:natural_blocker_count
+	}
+
+	ai_resource_production = {
+		unity = 0.5
+		trigger = { owner_has_resolution = { RES = resolution_ecology_integrated_gardens } }
+		mult = value:natural_blocker_count
+	}
+
+	ai_resource_production = {
+		unity = 0.5
+		trigger = { owner_has_resolution = { RES = resolution_ecology_environmental_control_board } }
+		mult = value:natural_blocker_count
+	}
+
+	ai_resource_production = {
+		unity = 0.5
+		trigger = { owner_has_resolution = { RES = resolution_ecology_paradise_initiative } }
+		mult = value:natural_blocker_count
+	}
+
+	planet_modifier = {
+		job_biologist_add = 100 # 100 Rangers no matter what
+		deposit_blockers_natural_unity_produces_add = 1.0
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			always = yes
+		}
+		job_biologist_add = 100 # +100 Rangers per natural blocker
+		mult = value:natural_blocker_count
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			owner_has_resolution = { RES = resolution_ecology_paradise_initiative }
+		}
+		job_biologist_add = 100 # +100 Rangers per natural blocker if GalCom approves
+		mult = value:natural_blocker_count
+	}
+
+
+	triggered_planet_modifier = {
+		potential = { owner_has_resolution = { RES = resolution_ecology_integrated_gardens } }
+		deposit_blockers_natural_unity_produces_add = 0.5
+	}
+
+	triggered_planet_modifier = {
+		potential = { owner_has_resolution = { RES = resolution_ecology_environmental_control_board } }
+		deposit_blockers_natural_unity_produces_add = 1.0
+	}
+
+	triggered_planet_modifier = {
+		potential = { owner_has_resolution = { RES = resolution_ecology_paradise_initiative } }
+		deposit_blockers_natural_unity_produces_add = 1.5
+	}
+
+	resources = {
+		category = planet_buildings
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = exotic_gases
+			COST = @b1_minerals
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
+		}
+		upkeep = {
+			energy = @b1_upkeep
+		}
+	}
+
+	triggered_desc = {
+		text = biologist_is_ark_gardener_tt
+	}
+
+	on_built = {
+		planet = {
+			add_blocker = { type = d_ark_nature_preserve_blocker }
+		}
+	}
+
+	on_destroy = {
+		planet = {
+			if = {
+				limit = { has_deposit = d_ark_nature_preserve_blocker }
+				every_deposit = {
+					limit = {
+						is_deposit_type = d_ark_nature_preserve_blocker
+					}
+					remove_deposit = yes
+				}
+			}
+		}
+	}
+}
