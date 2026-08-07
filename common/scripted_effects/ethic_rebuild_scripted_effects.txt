@@ -1005,48 +1005,167 @@ set_merchant_government_effect = {
 # Council Agenda effects
 # scope = planet | owner = country
 # Added by Sage 08/06/2026
-add_environmental_steward_agenda = {
-	if = { 
-		owner? = root
-		count_owned_planet = { # Is this world one with a preservable natural environment?
-			limit = {
-				NOR = {
-					is_planet_class = pc_city
-					is_planet_class = pc_hive
-					is_planet_class = pc_machine
-					is_planet_class = pc_relic
-					is_planet_class = pc_nuked
-					is_planet_class = pc_volcanic
-					is_planet_class = pc_toxic
-					is_artificial = yes
+
+#add_environmental_steward_agenda = {
+ #	owner? = root
+ #	count_owned_planet = { # Count our worlds with nice environemnts.
+ #		limit = {
+ #			NOR = {
+ #				is_planet_class = pc_city
+ #				is_planet_class = pc_hive
+ #				is_planet_class = pc_machine
+ #				is_planet_class = pc_relic
+ #				is_planet_class = pc_nuked
+ #				is_planet_class = pc_volcanic
+ #				is_planet_class = pc_toxic
+ #				is_artificial = yes
+ #			}
+ #		}
+ #	}
+ #	if = { # Building small? Then we're just going to target the capital.
+ #		count < 3
+ #		random_owned_planet = {
+ #			limit = {
+ #				is_capital = yes
+ #			}
+ #		}
+ #		if = { # First, check to see if we have industrial waste lying around, and clean it up.
+ #			every_deposit = {
+ #				limit = {
+ #					is_deposit_type = d_failing_infrastructure
+ #				}
+ #				remove_deposit = yes
+ #			}
+ #		}
+ #		else_if = { # No industrial waste? Then let's add a natural blocker if there's room.
+ #			limit = {
+ #				num_uncleared_blockers <= 2
+ #				num_free_districts = { type = any value > 3 }
+ #			}
+ #			add_random_natural_blocker = yes
+ #		}
+ #		else_if = { # No more room? Then let's give it a shiny blue ribbon.
+ #			limit = { NOT = { has_modifier = natural_beauty } }
+ #			add_modifier = { modifier = natural_beauty }
+ #		}
+ #		else = { # Well, damn, alright then, your biologists are just gonna be real happy for about two years.
+ #			limit = { is_colony = yes }
+ #			add_modifier = { modifier = environmental_steward_agenda_boost days = 720 }
+ #		}
+ #	}
+ #	else_if = { # Got more than three worlds? Proceed.
+ #		while = { # We're going to pick 3 random worlds.
+ #			count = 3
+ #			random_owned_planet = {
+ #				if = { # First, check to see if we have industrial waste lying around, and clean it up.
+ #					every_deposit = {
+ #						limit = {
+ #							is_deposit_type = d_failing_infrastructure
+ #						}
+ #						remove_deposit = yes
+ #					}
+ #				}
+ #				else_if = { # No industrial waste? Then let's add a natural blocker if there's room.
+ #					limit = {
+ #						num_uncleared_blockers <= 2
+ #						num_free_districts = { type = any value > 3 }
+ #					}
+ #					add_random_natural_blocker = yes
+ #				}
+ #				else_if = { # No more room? Then let's give it a shiny blue ribbon.
+ #					limit = { NOT = { has_modifier = natural_beauty } }
+ #					add_modifier = { modifier = natural_beauty }
+ #				}
+ #				else = { # Well, damn, alright then, your biologists are just gonna be real happy for about two years.
+ #					limit = { is_colony = yes }
+ #					add_modifier = { modifier = environmental_steward_agenda_boost days = 720 }
+ #				}
+ #			}
+ #		}
+ #	}
+ #}
+ 
+
+ add_environmental_steward_agenda = {
+	owner? = root
+	export_trigger_value_to_variable = {
+		trigger = {
+			count_owned_planet = { # Count our worlds with nice environemnts.
+				limit = {
+					NOR = {
+						is_planet_class = pc_city
+						is_planet_class = pc_hive
+						is_planet_class = pc_machine
+						is_planet_class = pc_relic
+						is_planet_class = pc_nuked
+						is_planet_class = pc_volcanic
+						is_planet_class = pc_toxic
+						is_artificial = yes
+					}
 				}
 			}
 		}
-		while = { # We're going to pick 3 random worlds.
-			count = 3
+		variable = candidate_planets
+	}
+	switch = {
+		trigger = candidate_planets
+		2 >= { 
 			random_owned_planet = {
-				if = { # First, check to see if we have industrial waste lying around, and clean it up.
-					every_deposit = {
-						limit = {
-							is_deposit_type = d_failing_infrastructure
-						}
-						remove_deposit = yes
-					}
+				limit = {
+					is_capital = yes
 				}
-				else_if = { # No industrial waste? Then let's add a natural blocker if there's room.
+			}
+			if = { # First, check to see if we have industrial waste lying around, and clean it up.
+				every_deposit = {
 					limit = {
-						num_uncleared_blockers <= 2
-						num_free_districts = { type = any value > 3 }
+						is_deposit_type = d_failing_infrastructure
 					}
-					add_random_natural_blocker = yes
+					remove_deposit = yes
 				}
-				else_if = { # No more room? Then let's give it a shiny blue ribbon.
-					limit = { NOT = { has_modifier = natural_beauty } }
-					add_modifier = { modifier = natural_beauty }
+			}
+			else_if = { # No industrial waste? Then let's add a natural blocker if there's room.
+				limit = {
+					num_uncleared_blockers <= 2
+					num_free_districts = { type = any value > 3 }
 				}
-				else_if = { # Well, damn, alright then, your biologists are just gonna be real happy for about two years.
-					limit = { is_colony = yes }
-					add_modifier = { modifier = environmental_steward_agenda_boost days = 720 }
+				add_random_natural_blocker = yes
+			}
+			else_if = { # No more room? Then let's give it a shiny blue ribbon.
+				limit = { NOT = { has_modifier = natural_beauty } }
+				add_modifier = { modifier = natural_beauty }
+			}
+			else = { # Well, damn, alright then, your biologists are just gonna be real happy for about two years.
+				limit = { is_colony = yes }
+				add_modifier = { modifier = environmental_steward_agenda_boost days = 720 }
+			} 
+		}
+		3 <= { 
+			while = { # We're going to pick 3 random worlds.
+				count = 3
+				random_owned_planet = {
+					if = { # First, check to see if we have industrial waste lying around, and clean it up.
+						every_deposit = {
+							limit = {
+								is_deposit_type = d_failing_infrastructure
+							}
+							remove_deposit = yes
+						}
+					}
+					else_if = { # No industrial waste? Then let's add a natural blocker if there's room.
+						limit = {
+							num_uncleared_blockers <= 2
+							num_free_districts = { type = any value > 3 }
+						}
+						add_random_natural_blocker = yes
+					}
+					else_if = { # No more room? Then let's give it a shiny blue ribbon.
+						limit = { NOT = { has_modifier = natural_beauty } }
+						add_modifier = { modifier = natural_beauty }
+					}
+					else = { # Well, damn, alright then, your biologists are just gonna be real happy for about two years.
+						limit = { is_colony = yes }
+						add_modifier = { modifier = environmental_steward_agenda_boost days = 720 }
+					}
 				}
 			}
 		}
