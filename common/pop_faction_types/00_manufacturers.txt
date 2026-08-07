@@ -155,7 +155,7 @@ manufacturers = {
         FLAG = galactic_community_resolution_passed_industry
     }
 
-	demand = {
+	demand = { # POLITICAL_PLURALISM
 		title = "POLITICAL_PLURALISM"
 		unfulfilled_title = "POLITICAL_PLURALISM"
 		desc = "POLITICAL_PLURALISM_DESC"
@@ -176,7 +176,7 @@ manufacturers = {
 		}
 	}
 	
-	demand = {
+	demand = { # ECO_ASCENSION_1
 		title = "ECO_ASCENSION_1"
 		unfulfilled_title = "ECO_NO_ASCENSION_1"
 		desc = "ECO_ASCENSION_1_DESC"
@@ -199,7 +199,7 @@ manufacturers = {
 		}
 	}
 
-	demand = {
+	demand = { # CONSUMER_MARKETS
 		title = "CONSUMER_MARKETS"
 		unfulfilled_title = "CONSUMER_MARKETS"
 		desc = "CONSUMER_MARKETS_DESC"
@@ -219,7 +219,7 @@ manufacturers = {
 		}
 	}
 	
-	demand = {
+	demand = { # INDUSTRIAL_INFRASTRUCTURE
 		title = "INDUSTRIAL_INFRASTRUCTURE"
 		unfulfilled_title = "NO_INDUSTRIAL_INFRASTRUCTURE"
 		desc = "INDUSTRIAL_INFRASTRUCTURE_DESC"
@@ -246,7 +246,7 @@ manufacturers = {
 		}
 	}
 
-	demand = {
+	demand = { # MINERALS_ACCUMULATION
 		title = "MINERALS_ACCUMULATION_1"
 		unfulfilled_title = "NO_MINERALS_ACCUMULATION_1"
 		desc = "MINERALS_ACCUMULATION_1_DESC"
@@ -257,6 +257,7 @@ manufacturers = {
 		potential = { # TODO get a reasonable trigger for counting colonies?
 			exists = owner
 			owner = {
+				is_nomadic = no
 				any_owned_planet = {
 					NOT = { is_same_value = root.capital_scope }
 					root = {
@@ -278,7 +279,7 @@ manufacturers = {
 		}
 	}
 
-	demand = {
+	demand = { # OWN_RICH_WORLD
 		title = "OWN_RICH_WORLD"
 		unfulfilled_title = "NO_OWN_RICH_WORLD"
 		desc = "OWN_RICH_WORLD_DESC"
@@ -287,6 +288,9 @@ manufacturers = {
 
 		potential = {
 			exists = owner
+			owner = {
+				is_nomadic = no
+			}
 		}
 
 		trigger = {
@@ -302,7 +306,7 @@ manufacturers = {
 		}
 	}
 	
-	demand = {
+	demand = { # OWN_ANCIENT_TECH
 		title = "OWN_ANCIENT_TECH"
 		unfulfilled_title = "NO_OWN_ANCIENT_TECH"
 		desc = "OWN_ANCIENT_TECH_DESC"
@@ -311,6 +315,9 @@ manufacturers = {
 
 		potential = {
 			exists = owner
+			owner = {
+				is_nomadic = no
+			}
 		}
 
 		trigger = {
@@ -327,7 +334,7 @@ manufacturers = {
 		}
 	}
 
-	demand = {
+	demand = { # INDUSTRY_ASCENSION_1
 		title = "INDUSTRY_ASCENSION_1"
 		unfulfilled_title = "NO_INDUSTRY_ASCENSION_1"
 		desc = "INDUSTRY_ASCENSION_1_DESC"
@@ -353,7 +360,7 @@ manufacturers = {
 		}
 	}
 	
-	demand = {
+	demand = { # INDUSTRY_ASCENSION_2
 		title = "INDUSTRY_ASCENSION_2"
 		unfulfilled_title = "NO_INDUSTRY_ASCENSION_2"
 		desc = "INDUSTRY_ASCENSION_2_DESC"
@@ -375,16 +382,292 @@ manufacturers = {
 		}
 	}
 
-	# Global Faction Demands.
+	demand = { # RESOURCE_ACCUMULATION
+		title = "RESOURCE_ACCUMULATION"
+		unfulfilled_title = "LOW_RESOURCE_ACCUMULATION"
+		desc = "RESOURCE_ACCUMULATION_DESC"
+
+		fulfilled_effect = 10
+		unfulfilled_effect = -0.001
+
+		potential = {
+			exists = owner
+			owner = {
+				is_nomadic = yes
+			}
+		}
+
+		trigger = {
+			owner = {
+				has_country_flag = operation_reserves_high
+			}
+		}
+	}
+
+    demand = { # "SEEK_INDUSTRIAL_MONUMENTS"
+		title = "SEEK_INDUSTRIAL_MONUMENTS"
+		unfulfilled_title = "NO_SEEK_INDUSTRIAL_MONUMENTS"
+		desc = "SEEK_INDUSTRIAL_MONUMENTS_DESC"
+
+		unfulfilled_effect = -5
+		fulfilled_effect = 0.001
+
+		potential = {
+			exists = owner
+			owner = {
+				is_nomadic = yes
+				has_ascension_perk = ap_wanderlust
+				# You have the objective...
+				AND = {
+					check_variable = {
+						which = galactic_landmark_system_seen
+						value = 0 
+					}
+					check_variable = { 
+						which = ancient_wonders_system_seen
+						value = 0 
+					}
+				}
+				# ... and haven't started yet.
+			}
+		}
+
+        trigger = {
+			always = no
+        }
+    }
+
+    demand = { # "SEEK_INDUSTRIAL_MONUMENTS2"
+		title = "SEEK_INDUSTRIAL_MONUMENTS"
+		unfulfilled_title = "NO_SEEK_INDUSTRIAL_MONUMENTS"
+		desc = "SEEK_INDUSTRIAL_MONUMENTS_DESC"
+
+		fulfilled_effect = 10
+		unfulfilled_effect = -0.001
+
+		potential = {
+			exists = owner
+			owner = {
+				is_nomadic = yes
+				has_ascension_perk = ap_wanderlust
+				# You've seen more than one system...
+				OR = {
+					check_variable = {
+						which = galactic_landmark_system_seen
+						value >= 1 
+					}
+					check_variable = { 
+						which = ancient_wonders_system_seen
+						value >= 1 
+					}
+				}
+				# ...but you aren't done yet.
+				NOR = {
+					has_country_flag = galactic_landmark_completed 
+					has_country_flag = ancient_wonders_completed
+					has_country_flag = nomad_exploration_complete
+				}
+			}
+		}
+
+        trigger = {
+			owner = {
+				OR = {
+					limit = {
+						check_variable_arithmetic = {
+							which = value:galactic_landmark_system_ratio
+							multiply = 1
+							value <= 1
+						}
+					}
+					limit = {
+						check_variable_arithmetic = {
+							which = value:ancient_wonders_system_ratio
+							multiply = 1
+							value <= 1
+						}
+					}
+				}
+			}
+        }
+    }
+
+    demand = { # "SEEK_INDUSTRIAL_MONUMENTS3"
+		title = "SEEK_INDUSTRIAL_MONUMENTS"
+		unfulfilled_title = "NO_SEEK_INDUSTRIAL_MONUMENTS"
+		desc = "SEEK_INDUSTRIAL_MONUMENTS_DESC"
+
+		fulfilled_effect = 15
+		unfulfilled_effect = -0.001
+
+		potential = {
+			exists = owner
+			owner = {
+				is_nomadic = yes
+				has_ascension_perk = ap_wanderlust
+				# You've either seen almost everything...
+				OR = {
+					AND = {
+						limit = {
+							check_variable_arithmetic = {
+								which = value:galactic_landmark_system_ratio
+								multiply = 1
+								value <= 1
+							}
+						}
+						has_country_flag = ancient_wonders_completed
+					}
+					AND = {
+						limit = {
+							check_variable_arithmetic = {
+								which = value:ancient_wonders_system_ratio
+								multiply = 1
+								value >= 1
+							}
+						}
+						has_country_flag = galactic_landmark_completed
+					}
+					# ... or you already have.
+					has_country_flag = nomad_exploration_complete
+				}
+			}
+		}
+
+        trigger = {
+			owner = {
+				OR = {
+					AND = {
+						has_country_flag = galactic_landmark_completed 
+						has_country_flag = ancient_wonders_completed
+					}
+					has_country_flag = nomad_exploration_complete
+				}
+			}
+        }
+    }
+
+	demand = { # "NO_STRIP_MINING"
+		title = "NO_STRIP_MINING"
+		unfulfilled_title = "MANUFACTURERS_NO_STRIP_MINING"
+		desc = "MANUFACTURERS_NO_STRIP_MINING_DESC"
+
+		unfulfilled_effect = -5
+		fulfilled_effect = 10
+
+		potential = {
+			exists = owner
+			owner = {
+                is_nomadic = yes
+			}
+		}
+
+		trigger = {
+			exists = owner
+			owner = {
+				has_country_flag = recently_stripmined_planet
+			}
+		}
+	}
+	
+    demand = { # "NO_STELLAR_IGNITION"
+    	title = "NO_STELLAR_IGNITION"
+		unfulfilled_title = "MANUFACTURERS_NO_STELLAR_IGNITION"
+		desc = "MANUFACTURERS_NO_STELLAR_IGNITION_DESC"
+
+		unfulfilled_effect = -5
+		fulfilled_effect = 50
+
+        potential = {
+            exists = owner
+            owner = {
+			    has_technology = tech_arkship_stellar_igniter
+		
+            }
+        }
+
+		trigger = {
+			exists = owner
+			owner = {
+				has_country_flag = recent_stellar_ignition_planet
+			}
+		}
+    }
+
+    demand = { # "NO_REPROCESS_PLANET"
+		title = "NO_REPROCESS_PLANET"
+		unfulfilled_title = "MANUFACTURERS_NO_REPROCESS_PLANET"
+		desc = "MANUFACTURERS_NO_REPROCESS_PLANET_DESC"
+
+		unfulfilled_effect = -5
+		fulfilled_effect = 20
+
+		potential = {
+			exists = owner
+			owner = {
+                is_nomadic = yes
+                has_technology = tech_arkship_planetary_refinery
+			}
+		}
+
+		trigger = {
+			exists = owner
+			owner = {
+				has_country_flag = recently_reprocessed_planet
+			}
+		}
+    }
+
+	demand = { # Unplugged: Cyberize (Machine Cult Exempt)
+		title = IMPERIALIST_UNPLUGGED_CYBERIZE
+		unfulfilled_title = IMPERIALIST_UNPLUGGED_NOT_CYBERIZE
+		desc = IMPERIALIST_UNPLUGGED_CYBERIZE_DESC
+
+		unfulfilled_effect = -10
+		fulfilled_effect = 5
+
+		potential = {
+			exists = owner
+			owner = {
+				has_origin = origin_unplugged
+				NOT = { has_civic = civic_machine_cult }
+				any_situation = {
+					is_situation_type = situation_unplugged_identity
+				}
+			}
+		}
+
+		trigger = {
+			owner = {
+				any_situation = {
+					is_situation_type = situation_unplugged_identity
+					OR = {
+						AND = { # safely in the Cyberize stage
+							current_stage = unplugged_identity_stage_3
+							situation_monthly_progress > 0
+						}
+						AND = { # trending towards Cyberization and our Approach is aligned
+							situation_monthly_progress > 0.05
+							OR = {
+								current_situation_approach = situation_unplugged_identity_discourage_change
+								current_situation_approach = situation_unplugged_identity_embrace_opinion
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	# Faction Demands for Ruler and Council positions.
 	inline_script = {
-		script = "paragon/global_faction_demands"
+		script = "pop_faction_types/global_faction_demands"
 		ETHIC = ethic_industrial
 		ETHIC_FANATIC = ethic_fanatic_industrial
 		ETHIC_OPPOSED = ethic_green
-	} 
-	
+	}
+
 	on_create = {
-		pop_faction_event = { id = factions.1 }
+		pop_faction_event = { id = factions.0 }
 	}
 
 	on_destroy = {
@@ -406,21 +689,21 @@ manufacturers = {
 		embrace_faction = {
 			title = "EMBRACE_FACTION"
 			description = "EMBRACE_FACTION_DESC"
-			
+
 			cost = {
 				unity = 5000
 			}
-			
+
 			potential = {
 				exists = owner
 				owner = {
 					OR = {
 						is_subject = no
-						count_agreement = { count = 0 limit = { agreement_preset = preset_dominion } }
+						NOT = { any_agreement = { agreement_preset = preset_dominion } }
 					}
 				}
 			}
-			
+
 			valid = {
 				custom_tooltip = {
 					fail_text = EMBRACE_FACTION_COOLDOWN
@@ -430,19 +713,20 @@ manufacturers = {
 				}
 				support > 0.20
 				parameter:empire = {
-					NOT = { has_ethic = "ethic_fanatic_industrial" }
+					is_fanatic_industrial = no
 				}
 			}
 
 			effect = {
-				add_modifier = { modifier = embraced_faction years = 10 }
+				add_modifier = { modifier = embraced_faction days = 3600 }
+				owner = { set_country_flag = has_embraced_faction }
 				parameter:empire = {
 					shift_ethic = ethic_industrial
 					hidden_effect = {
-						add_modifier = { modifier = embraced_faction_timer years = 10 }
+						add_modifier = { modifier = embraced_faction_timer days = 3600 }
 						every_pop_faction = {
 							limit = { NOT = { is_same_value = root } }
-							add_modifier = { modifier = embraced_another_faction years = 10 }
+							add_modifier = { modifier = embraced_another_faction days = 3600 }
 						}
 					}
 				}
@@ -452,7 +736,7 @@ manufacturers = {
 						every_relation = {
 							limit = {
 								is_ai = no
-								is_country_type = default			
+								is_country_type = default
 								has_communications = prev
 								has_intel_level = {
 									who = prev
@@ -465,7 +749,7 @@ manufacturers = {
 					}
 				}
 			}
-			
+
 			ai_weight = {
 				base = 1
 				modifier = {
@@ -474,6 +758,10 @@ manufacturers = {
 					owner = {
 						has_ethic = ethic_industrial
 					}
+				}
+				modifier = {
+					factor = 0
+					owner = { has_valid_civic = civic_fanatic_purifiers }
 				}
 				modifier = {
 					factor = 0
@@ -488,23 +776,24 @@ manufacturers = {
 		promote_faction = {
 			title = "PROMOTE_FACTION"
 			description = "PROMOTE_FACTION_DESC"
-			
+
 			potential = {
 				exists = owner
-				parameter:empire = { 
-					NOR = { 
+				parameter:empire = {
+					NOR = {
 						has_modifier = suppressed_industrial
-						has_modifier = promoted_industrial 
+						has_modifier = promoted_industrial
 					}
 				}
 			}
 
 			effect = {
+				owner = { set_country_flag = has_promoted_faction }
 				parameter:empire = {
 					add_modifier = { modifier = promoted_industrial days = -1 }
 				}
 			}
-			
+
 			ai_weight = {
 				base = 0
 			}
@@ -512,12 +801,10 @@ manufacturers = {
 		cancel_promote_faction = {
 			title = "CANCEL_PROMOTE_FACTION"
 			description = "CANCEL_PROMOTE_FACTION_DESC"
-			
+
 			potential = {
 				exists = owner
-				parameter:empire = { 
-					has_modifier = promoted_industrial
-				}
+				parameter:empire = { has_modifier = promoted_industrial }
 			}
 
 			effect = {
@@ -525,7 +812,7 @@ manufacturers = {
 					remove_modifier = promoted_industrial
 				}
 			}
-			
+
 			ai_weight = {
 				base = 0
 			}
@@ -533,13 +820,13 @@ manufacturers = {
 		suppress_faction = {
 			title = "SUPPRESS_FACTION"
 			description = "SUPPRESS_FACTION_DESC"
-			
+
 			potential = {
 				exists = owner
-				parameter:empire = { 
-					NOR = { 
+				parameter:empire = {
+					NOR = {
 						has_modifier = suppressed_industrial
-						has_modifier = promoted_industrial 
+						has_modifier = promoted_industrial
 					}
 				}
 			}
@@ -550,7 +837,7 @@ manufacturers = {
 					add_modifier = { modifier = suppressed_industrial days = -1 }
 				}
 			}
-			
+
 			ai_weight = {
 				base = 0
 			}
@@ -558,12 +845,10 @@ manufacturers = {
 		cancel_suppress_faction = {
 			title = "CANCEL_SUPPRESS_FACTION"
 			description = "CANCEL_SUPPRESS_FACTION_DESC"
-			
+
 			potential = {
 				exists = owner
-				parameter:empire = { 
-					has_modifier = suppressed_industrial
-				}
+				parameter:empire = { has_modifier = suppressed_industrial }
 			}
 
 			effect = {
@@ -572,7 +857,7 @@ manufacturers = {
 					remove_modifier = suppressed_industrial
 				}
 			}
-			
+
 			ai_weight = {
 				base = 0
 			}
@@ -587,12 +872,11 @@ manufacturers = {
 				owner = {
 					is_oligarchic_authority = yes
 					has_country_flag = cyber_collectivist
-					NOT = { has_edict = civic_crowdsourcing_edict }
-					#NOR = {
-					#	has_civic = civic_anarchy_utopia
-					#	has_civic = civic_crowdsourcing
-					#	has_civic = civic_corporate_crowdsourcing
-					#}
+					NOR = {
+						has_valid_civic = civic_anarchy_utopia
+						has_valid_civic = civic_crowdsourcing
+						has_valid_civic = civic_corporate_crowdsourcing
+					}
 				}
 				is_faction_extorted = no
 			}
@@ -616,12 +900,11 @@ manufacturers = {
 				owner = {
 					is_oligarchic_authority = yes
 					has_country_flag = cyber_collectivist
-					has_edict = civic_crowdsourcing_edict
-					#OR = {
-					#	has_civic = civic_anarchy_utopia
-					#	has_civic = civic_crowdsourcing
-					#	has_civic = civic_corporate_crowdsourcing
-					#}
+					OR = {
+						has_valid_civic = civic_anarchy_utopia
+						has_valid_civic = civic_crowdsourcing
+						has_valid_civic = civic_corporate_crowdsourcing
+					}
 				}
 				is_faction_extorted = no
 			}
