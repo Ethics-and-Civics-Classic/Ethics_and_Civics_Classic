@@ -135,6 +135,7 @@ prosperity = {
 	can_join_faction = {
 		is_shackled_robot = no
 		can_think = yes
+		is_interlink_cyborg_pop = no
 	}
 
 	attraction = {
@@ -184,7 +185,20 @@ prosperity = {
 			is_event_leader = yes
 		}
 	}
-	demand = {
+	
+	# DEMAND: Faction Outraged (by a GalCom Resolution)
+	inline_script = {
+		script = pop_faction_types/demand_faction_outraged
+		FLAG = galcom_resolution_passed_anti_prosperity
+	}
+
+	# DEMAND: Faction Pleased (by a GalCom Resolution)
+	inline_script = {
+		script = pop_faction_types/demand_faction_pleased
+		FLAG = galcom_resolution_passed_pro_prosperity
+	}
+
+	demand = { # "POLITICAL_PLURALISM"
 		title = "POLITICAL_PLURALISM"
 		unfulfilled_title = "POLITICAL_PLURALISM"
 		desc = "POLITICAL_PLURALISM_DESC"
@@ -205,19 +219,7 @@ prosperity = {
 		}
 	}
 	
-	# DEMAND: Faction Outraged (by a GalCom Resolution)
-	inline_script = {
-		script = pop_faction_types/demand_faction_outraged
-		FLAG = galcom_resolution_passed_anti_prosperity
-	}
-
-	# DEMAND: Faction Pleased (by a GalCom Resolution)
-	inline_script = {
-		script = pop_faction_types/demand_faction_pleased
-		FLAG = galcom_resolution_passed_pro_prosperity
-	}
-
-	demand = {
+	demand = { # "PROSPERITY_LIQUIDITY"
 		title = "PROSPERITY_LIQUIDITY"
 		unfulfilled_title = "PROSPERITY_NO_LIQUIDITY"
 		desc = "PROSPERITY_LIQUIDITY_DESC"
@@ -237,7 +239,7 @@ prosperity = {
 		}
 	}
 
-	demand = {
+	demand = { # "PROSPERITY_PHILOSOPHY"
 		title = "PROSPERITY_PHILOSOPHY"
 		unfulfilled_title = "PROSPERITY_NO_PHILOSOPHY"
 		desc = "PROSPERITY_PHILOSOPHY_DESC"
@@ -263,7 +265,7 @@ prosperity = {
 		}
 	}
 
-	demand = {
+	demand = { # "PROSPERITY_PEACE"
 		title = "PROSPERITY_PEACE"
 		unfulfilled_title = "PROSPERITY_NO_PEACE"
 		desc = "PROSPERITY_PEACE_DESC"
@@ -282,7 +284,7 @@ prosperity = {
 		}
 	}
 
-	demand = {
+	demand = { # "PROSPERITY_NOT_AGGRESSOR"
 		title = "PROSPERITY_NOT_AGGRESSOR"
 		unfulfilled_title = "PROSPERITY_AGGRESSOR"
 		desc = "PROSPERITY_NOT_AGGRESSOR_DESC"
@@ -307,7 +309,7 @@ prosperity = {
 		}
 	}
 
-	demand = {
+	demand = { # "PROSPERITY_PEACEFUL_APPLICATIONS"
 		title = "PROSPERITY_PEACEFUL_APPLICATIONS"
 		unfulfilled_title = "PROSPERITY_NO_PEACEFUL_APPLICATIONS"
 		desc = "PROSPERITY_PEACEFUL_APPLICATIONS_DESC"
@@ -341,7 +343,7 @@ prosperity = {
 		}
 	}
 
-	demand = {
+	demand = { # "PROSPERITY_MILITARY_APPLICATIONS"
 		title = "PROSPERITY_MILITARY_APPLICATIONS"
 		unfulfilled_title = "PROSPERITY_NO_MILITARY_APPLICATIONS"
 		desc = "PROSPERITY_MILITARY_APPLICATIONS_DESC"
@@ -373,7 +375,7 @@ prosperity = {
 		}
 	}
 
-	demand = {
+	demand = { # "PEACEFUL_ECONOMY"
 		title = "PEACEFUL_ECONOMY"
 		unfulfilled_title = "PEACEFUL_ECONOMY"
 		desc = "PEACEFUL_ECONOMY_DESC"
@@ -384,7 +386,7 @@ prosperity = {
 		potential = { 
 			exists = owner
 			owner = {
-				NOR = { has_policy_flag = economic_policy_civilian }
+				NOT = { has_policy_flag = economic_policy_civilian }
 			}
 		}
 
@@ -395,7 +397,7 @@ prosperity = {
 		}
 	}
 
-	demand = {
+	demand = { # "MERCANTILE_DIPLO_STANCE"
 		title = "MERCANTILE_DIPLO_STANCE"
 		unfulfilled_title = "MERCANTILE_DIPLO_STANCE"
 		desc = "MERCANTILE_DIPLO_STANCE_DESC"
@@ -419,7 +421,7 @@ prosperity = {
 		}
 	}
 
-	demand = {
+	demand = { # PROSPERITY_FEDERATION
 		title = PROSPERITY_FEDERATION
 		unfulfilled_title = PROSPERITY_FEDERATION_NOT_MILITARIST
 		desc = PROSPERITY_FEDERATION_DESC
@@ -442,7 +444,7 @@ prosperity = {
 		}
 	}
 
-	demand = {
+	demand = { # "AGGRESSIVE_DIPLO_STANCE"
 		title = "AGGRESSIVE_DIPLO_STANCE"
 		unfulfilled_title = "AGGRESSIVE_DIPLO_STANCE"
 		desc = "AGGRESSIVE_DIPLO_STANCE_DESC"
@@ -472,16 +474,57 @@ prosperity = {
 		}
 	}
 
+	demand = { # Unplugged: De-Cyberize
+		title = PROSPERITY_UNPLUGGED_DECYBERIZE
+		unfulfilled_title = PROSPERITY_UNPLUGGED_NOT_DECYBERIZE
+		desc = PROSPERITY_UNPLUGGED_DECYBERIZE_DESC
+
+		unfulfilled_effect = -10
+		fulfilled_effect = 5
+
+		potential = {
+			exists = owner
+			owner = {
+				has_origin = origin_unplugged
+				NOT = { has_civic = civic_machine_cult }
+				any_situation = {
+					is_situation_type = situation_unplugged_identity
+				}
+			}
+		}
+
+		trigger = {
+			owner = {
+				any_situation = {
+					is_situation_type = situation_unplugged_identity
+					OR = {
+						AND = { # safely in the De-Cyberize stage
+							current_stage = unplugged_identity_stage_1
+							situation_monthly_progress < 0
+						}
+						AND = { # trending towards De-Cyberization and our Approach is aligned
+							situation_monthly_progress < 0.05
+							OR = {
+								current_situation_approach = situation_unplugged_identity_discourage_change
+								current_situation_approach = situation_unplugged_identity_embrace_opinion
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
 	# Faction Demands for Ruler and Council positions.
 	inline_script = {
-		script = "paragon/global_faction_demands"
+		script = "pop_faction_types/global_faction_demands"
 		ETHIC = ethic_pacifist
 		ETHIC_FANATIC = ethic_fanatic_pacifist
 		ETHIC_OPPOSED = ethic_militarist
 	}
 
 	on_create = {
-		pop_faction_event = { id = factions.1 }
+		pop_faction_event = { id = factions.0 }
 	}
 
 	on_destroy = {
@@ -513,7 +556,7 @@ prosperity = {
 				owner = {
 					OR = {
 						is_subject = no
-						count_agreement = { count = 0 limit = { agreement_preset = preset_dominion } }
+						NOT = { any_agreement = { agreement_preset = preset_dominion } }
 					}
 				}
 			}
@@ -532,14 +575,15 @@ prosperity = {
 			}
 
 			effect = {
-				add_modifier = { modifier = embraced_faction years = 10 }
+				add_modifier = { modifier = embraced_faction days = 3600 }
+				owner = { set_country_flag = has_embraced_faction }
 				parameter:empire = {
 					shift_ethic = ethic_pacifist
 					hidden_effect = {
-						add_modifier = { modifier = embraced_faction_timer years = 10 }
+						add_modifier = { modifier = embraced_faction_timer days = 3600 }
 						every_pop_faction = {
 							limit = { NOT = { is_same_value = root } }
-							add_modifier = { modifier = embraced_another_faction years = 10 }
+							add_modifier = { modifier = embraced_another_faction days = 3600 }
 						}
 					}
 				}
@@ -601,6 +645,7 @@ prosperity = {
 			}
 
 			effect = {
+				owner = { set_country_flag = has_promoted_faction }
 				parameter:empire = {
 					add_modifier = { modifier = promoted_pacifist days = -1 }
 				}
