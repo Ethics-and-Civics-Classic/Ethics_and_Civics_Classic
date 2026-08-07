@@ -110,6 +110,7 @@ technologist = {
 	can_join_faction = {
 		is_shackled_robot = no
 		can_think = yes
+		is_interlink_cyborg_pop = no
 	}
 
 	attraction = {
@@ -148,7 +149,40 @@ technologist = {
 		}
 	}
 
-	demand = {
+	# DEMAND: Faction Outraged (by a GalCom Resolution)
+	inline_script = {
+		script = pop_faction_types/demand_faction_outraged
+		FLAG = galcom_resolution_passed_anti_technologist
+	}
+
+	# DEMAND: Faction Pleased (by a GalCom Resolution)
+	inline_script = {
+		script = pop_faction_types/demand_faction_pleased
+		FLAG = galcom_resolution_passed_pro_technologist
+	}
+
+	demand = { # "POLITICAL_PLURALISM"
+		title = "POLITICAL_PLURALISM"
+		unfulfilled_title = "POLITICAL_PLURALISM"
+		desc = "POLITICAL_PLURALISM_DESC"
+
+		fulfilled_effect = 10
+
+		potential = {
+			exists = owner
+			owner = {
+				has_valid_civic = civic_parliamentary_system
+			}
+		}
+
+		trigger = {
+			owner = {
+				has_valid_civic = civic_parliamentary_system
+			}
+		}
+	}
+
+	demand = { # "TECHNOLOGIST_ROBOTS_ALLOWED"
 		title = "TECHNOLOGIST_ROBOTS_ALLOWED"
 		unfulfilled_title = "TECHNOLOGIST_ROBOTS_BANNED"
 		desc = "TECHNOLOGIST_ROBOTS_ALLOWED_DESC"
@@ -170,40 +204,7 @@ technologist = {
 		}
 	}
 
-	demand = {
-		title = "POLITICAL_PLURALISM"
-		unfulfilled_title = "POLITICAL_PLURALISM"
-		desc = "POLITICAL_PLURALISM_DESC"
-
-		fulfilled_effect = 10
-
-		potential = {
-			exists = owner
-			owner = {
-				has_valid_civic = civic_parliamentary_system
-			}
-		}
-
-		trigger = {
-			owner = {
-				has_valid_civic = civic_parliamentary_system
-			}
-		}
-	}
-
-	# DEMAND: Faction Outraged (by a GalCom Resolution)
-	inline_script = {
-		script = pop_faction_types/demand_faction_outraged
-		FLAG = galcom_resolution_passed_anti_technologist
-	}
-
-	# DEMAND: Faction Pleased (by a GalCom Resolution)
-	inline_script = {
-		script = pop_faction_types/demand_faction_pleased
-		FLAG = galcom_resolution_passed_pro_technologist
-	}
-
-	demand = {
+	demand = { # "ACADEMIC_PRIVILEGES"
 		title = "ACADEMIC_PRIVILEGES"
 		unfulfilled_title = "ACADEMIC_PRIVILEGES"
 		desc = "ACADEMIC_PRIVILEGES_DESC"
@@ -226,7 +227,7 @@ technologist = {
 		}
 	}
 
-	demand = {
+	demand = { # "GENETIC_SUPERIORITY"
 		title = "GENETIC_SUPERIORITY"
 		unfulfilled_title = "NO_GENETIC_SUPERIORITY"
 		desc = "GENETIC_SUPERIORITY_DESC"
@@ -241,12 +242,12 @@ technologist = {
 
 		trigger = {
 			owner = {
-					has_genetic_ascension = yes
+				has_genetic_ascension = yes
 			}
 		}
 	}
 
-	demand = {
+	demand = { # "TECHNOLOGIST_TECH_LEAP"
 		title = "TECHNOLOGIST_TECH_LEAP"
 		unfulfilled_title = "TECHNOLOGIST_TECH_LAG"
 		desc = "TECHNOLOGIST_TECH_LEAP_DESC"
@@ -298,7 +299,7 @@ technologist = {
 		}
 	}
 
-	demand = {
+	demand = { # "TECHNOLOGIST_RESEARCH_TREATIES"
 		title = "TECHNOLOGIST_RESEARCH_TREATIES"
 		unfulfilled_title = "TECHNOLOGIST_FEW_RESEARCH_TREATIES"
 		desc = "TECHNOLOGIST_RESEARCH_TREATIES_DESC"
@@ -325,7 +326,7 @@ technologist = {
 					}
 					num_research_agreements > 2
 					any_relation = {
-						is_primitive = yes
+						is_country_type = primitive
 						OR = {
 							is_under_open_technological_enlightenment = prev
 							is_under_stratified_technological_enlightenment = prev
@@ -336,7 +337,7 @@ technologist = {
 		}
 	}
 
-	demand = {
+	demand = { # "TECHNOLOGIST_NO_SYNTH_ENVY"
 		title = "TECHNOLOGIST_NO_SYNTH_ENVY"
 		unfulfilled_title = "TECHNOLOGIST_SYNTH_ENVY"
 		desc = "TECHNOLOGIST_NO_SYNTH_ENVY_DESC"
@@ -345,10 +346,11 @@ technologist = {
 		fulfilled_effect = 0.001
 
 		potential = {
-			years_passed >= 50 # otherwise, just a penalty for meeting Mechanists early
+			years_passed >= 50 #otherwise, just a penalty for meeting Mechanists early
 			exists = owner
 			owner = {
-				NOR = { has_ascension_perk = ap_synthetic_evolution is_individual_machine = yes }
+				NOT = { has_ascension_perk = ap_synthetic_evolution }
+				is_individual_machine = no
 				any_relation = {
 					has_communications = root.owner
 					root.owner = {
@@ -381,15 +383,7 @@ technologist = {
 		}
 	}
 
-	# Faction Demands for Ruler and Council positions.
-	inline_script = {
-		script = "paragon/global_faction_demands"
-		ETHIC = ethic_materialist
-		ETHIC_FANATIC = ethic_fanatic_materialist
-		ETHIC_OPPOSED = ethic_spiritualist
-	} 
-
-	demand = {
+	demand = { # "TECHNOLOGIST_SECRET_KNOWLEDGE"
 		title = "TECHNOLOGIST_SECRET_KNOWLEDGE"
 		unfulfilled_title = "TECHNOLOGIST_NO_SECRET_KNOWLEDGE"
 		desc = "TECHNOLOGIST_SECRET_KNOWLEDGE_DESC"
@@ -417,7 +411,7 @@ technologist = {
 		}
 	}
 
-	demand = {
+	demand = { # TECHNOLOGIST_FEDERATION
 		title = TECHNOLOGIST_FEDERATION
 		unfulfilled_title = TECHNOLOGIST_FEDERATION_NOT_RESEARCH
 		desc = TECHNOLOGIST_FEDERATION_DESC
@@ -435,7 +429,7 @@ technologist = {
 		}
 	}
 
-	demand = {
+	demand = { # "TECHNOLOGIST_ARCANA"
 		title = "TECHNOLOGIST_ARCANA"
 		unfulfilled_title = "TECHNOLOGIST_NO_ARCANA"
 		desc = "TECHNOLOGIST_ARCANA_DESC"
@@ -463,7 +457,7 @@ technologist = {
 		}
 	}
 
-	demand = {
+	demand = { # "TECHNOLOGIST_PRECURSOR_SECRETS"
 		title = "TECHNOLOGIST_PRECURSOR_SECRETS"
 		unfulfilled_title = "TECHNOLOGIST_NO_PRECURSOR_SECRETS"
 		desc = "TECHNOLOGIST_PRECURSOR_SECRETS_DESC"
@@ -472,7 +466,7 @@ technologist = {
 		unfulfilled_effect = -0.001
 
 		potential = {
-			has_ancrel = yes
+			host_has_dlc = "Ancient Relics Story Pack"
 			exists = owner
 			owner = {
 				OR = {
@@ -483,6 +477,8 @@ technologist = {
 					has_country_flag = league_world_found
 					has_country_flag = last_baol_system
 					has_country_flag = last_zroni_system
+					has_country_flag = tempest_invocator_found
+					has_country_flag = weather_manipulator_found
 				}
 			}
 		}
@@ -494,7 +490,51 @@ technologist = {
 		}
 	}
 
-	demand = {
+	demand = { # "TECHNOLOGIST_NO_RESTRICTIONS"
+		title = "TECHNOLOGIST_NO_RESTRICTIONS"
+		unfulfilled_title = "TECHNOLOGIST_RESTRICTIONS"
+		desc = "TECHNOLOGIST_RESTRICTIONS_DESC"
+
+		fulfilled_effect = 5
+		unfulfilled_effect = -0.001
+
+		potential = {
+			owner = {
+				NOT = { has_policy_flag = research_restriction_dangerous_encouraged }
+			}
+		}
+
+		trigger = {
+			exists = owner
+			owner = {
+				has_policy_flag = research_restriction_no_restriction
+			}
+		}
+	}
+
+	demand = { # "TECHNOLOGIST_REFACTORED_RESTRICTIONS"
+		title = "TECHNOLOGIST_REFACTORED_RESTRICTIONS"
+		unfulfilled_title = "TECHNOLOGIST_RESTRICTIONS"
+		desc = "TECHNOLOGIST_RESTRICTIONS_DESC"
+
+		fulfilled_effect = 10
+		unfulfilled_effect = -0.001
+
+		potential = {
+			owner = {
+				has_policy_flag = research_restriction_dangerous_encouraged
+			}
+		}
+
+		trigger = {
+			exists = owner
+			owner = {
+				has_policy_flag = research_restriction_dangerous_encouraged
+			}
+		}
+	}
+
+	demand = { # "COOPERATIVE_DIPLO_STANCE"
 		title = "COOPERATIVE_DIPLO_STANCE"
 		unfulfilled_title = "COOPERATIVE_DIPLO_STANCE"
 		desc = "COOPERATIVE_DIPLO_STANCE_DESC"
@@ -516,6 +556,55 @@ technologist = {
 				has_policy_flag = diplo_stance_cooperative
 			}
 		}
+	}
+
+	demand = { # Unplugged: Cyberize
+		title = TECHNOLOGIST_UNPLUGGED_CYBERIZE
+		unfulfilled_title = TECHNOLOGIST_UNPLUGGED_NOT_CYBERIZE
+		desc = TECHNOLOGIST_UNPLUGGED_CYBERIZE_DESC
+
+		unfulfilled_effect = -20
+		fulfilled_effect = 10
+
+		potential = {
+			exists = owner
+			owner = {
+				has_origin = origin_unplugged
+				NOT = { has_civic = civic_machine_cult }
+				any_situation = {
+					is_situation_type = situation_unplugged_identity
+				}
+			}
+		}
+
+		trigger = {
+			owner = {
+				any_situation = {
+					is_situation_type = situation_unplugged_identity
+					OR = {
+						AND = { # safely in the Cyberize stage
+							current_stage = unplugged_identity_stage_3
+							situation_monthly_progress > 0
+						}
+						AND = { # trending towards Cyberization and our Approach is aligned
+							situation_monthly_progress > 0.05
+							OR = {
+								current_situation_approach = situation_unplugged_identity_discourage_change
+								current_situation_approach = situation_unplugged_identity_embrace_opinion
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	# Faction Demands for Ruler and Council positions.
+	inline_script = {
+		script = "pop_faction_types/global_faction_demands"
+		ETHIC = ethic_materialist
+		ETHIC_FANATIC = ethic_fanatic_materialist
+		ETHIC_OPPOSED = ethic_spiritualist
 	}
 
 	on_create = {
@@ -551,7 +640,7 @@ technologist = {
 				owner = {
 					OR = {
 						is_subject = no
-						count_agreement = { count = 0 limit = { agreement_preset = preset_dominion } }
+						NOT = { any_agreement = { agreement_preset = preset_dominion } }
 					}
 				}
 			}
@@ -570,14 +659,15 @@ technologist = {
 			}
 
 			effect = {
-				add_modifier = { modifier = embraced_faction years = 10 }
+				add_modifier = { modifier = embraced_faction days = 3600 }
+				owner = { set_country_flag = has_embraced_faction }
 				parameter:empire = {
 					shift_ethic = ethic_materialist
 					hidden_effect = {
-						add_modifier = { modifier = embraced_faction_timer years = 10 }
+						add_modifier = { modifier = embraced_faction_timer days = 3600 }
 						every_pop_faction = {
 							limit = { NOT = { is_same_value = root } }
-							add_modifier = { modifier = embraced_another_faction years = 10 }
+							add_modifier = { modifier = embraced_another_faction days = 3600 }
 						}
 					}
 				}
@@ -639,6 +729,7 @@ technologist = {
 			}
 
 			effect = {
+				owner = { set_country_flag = has_promoted_faction }
 				parameter:empire = {
 					add_modifier = { modifier = promoted_materialist days = -1 }
 				}
@@ -754,7 +845,7 @@ technologist = {
 				owner = {
 					is_oligarchic_authority = yes
 					has_country_flag = cyber_collectivist
-					OR = {
+					NOR = {
 						has_valid_civic = civic_anarchy_utopia
 						has_valid_civic = civic_crowdsourcing
 						has_valid_civic = civic_corporate_crowdsourcing
