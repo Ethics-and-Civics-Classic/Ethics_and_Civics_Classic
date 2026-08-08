@@ -277,6 +277,7 @@ country_event = {
 	immediate = {
 		FROM = { country_event = { id = nations.11200 } }
 		FROM = { remove_country_flag = PrimPlayer_ethic_fanatic_authoritarian_nation_chain_event }
+		FROM = { remove_country_flag = PrimPlayer_ethic_fanatic_authoritarian_nation_chain_event }
 	}
 }
 
@@ -1467,7 +1468,6 @@ country_event = {
 				}
 			}
 		}
-		NOT = { has_country_flag = PrimPlayer_ethic_fanatic_nation_incident_event }
 	}
 
 	immediate = {
@@ -1476,10 +1476,7 @@ country_event = {
 			flag = PrimPlayer_ethic_fanatic_nation_chain_event
 			days = 360
 		}
-		set_timed_country_flag = {
-			flag = PrimPlayer_ethic_fanatic_nation_incident_event
-			days = 1440
-		}
+
 	}
 
 	option = {
@@ -1520,7 +1517,7 @@ country_event = {
 			limit = { has_deposit = d_PrimPlayer_nation_deposit }
 			every_owned_pop_group = {
 				add_modifier = {
-					modifier = "PrimPlayer_angry_population"
+					modifier = "pop_angry_subterranean"
 					days = 3600
 				}
 			}
@@ -1545,7 +1542,6 @@ country_event = {
 	is_triggered_only = yes
 	
 	trigger = {
-		NOT = { has_country_flag = PrimPlayer_ethic_fanatic_nation_famine_event }
 		years_passed > 11	#This is a rough one to get early
 	}
 
@@ -1554,10 +1550,6 @@ country_event = {
 		set_timed_country_flag = {
 			flag = PrimPlayer_ethic_fanatic_nation_chain_event
 			days = 360
-		}
-		set_timed_country_flag = {
-			flag = PrimPlayer_ethic_fanatic_nation_famine_event
-			days = 2520
 		}
 	}
 
@@ -1601,7 +1593,7 @@ country_event = {
 		text = "nations.11270.desc"
 	}
 	picture = GFX_evt_spymaster
-	show_sound = event_celebration
+	show_sound = event_pre_ftl_civilization
 	location = ROOT
 	#event_chain = PrimPlayer_ethic_fanatic_authoritarian_nation_chain
 	is_triggered_only = yes
@@ -1621,16 +1613,6 @@ country_event = {
 	option = {
 		name = nations.11270.a
 		add_tech_progress = { tech = tech_decryption_1 progress = 0.12 }
-		add_tech_progress = { tech = tech_penal_colonies progress = 0.03 }
-		give_technology = { tech = tech_centralized_state message = yes }
-	}
-	
-	option = {
-		name = nations.11270.b
-		add_tech_progress = { tech = tech_decryption_1 progress = 0.12 }
-		add_tech_progress = { tech = tech_penal_colonies progress = 0.03 }
-		give_technology = { tech = tech_centralized_state message = yes }
-		set_policy = { policy = bureaucracy option = centralized_state cooldown = yes }
 	}
 	
 }
@@ -1649,7 +1631,6 @@ country_event = {
 	is_triggered_only = yes
 
 	trigger = {
-		NOT = { has_country_flag = PrimPlayer_ethic_fanatic_nation_refugees_event }
 	}
 
 	immediate = {
@@ -1657,10 +1638,6 @@ country_event = {
 		set_timed_country_flag = {
 			flag = PrimPlayer_ethic_fanatic_nation_chain_event
 			days = 360
-		}
-		set_timed_country_flag = {
-			flag = PrimPlayer_ethic_fanatic_nation_refugees_event
-			days = 1440
 		}
 	}
 
@@ -1901,7 +1878,6 @@ country_event = {
 	is_triggered_only = yes
 
 	trigger = {
-		always = no #Disabled until story/desc is added
 		any_owned_colony = { has_deposit = d_PrimPlayer_nation_deposit }
 	}
 
@@ -1914,16 +1890,12 @@ country_event = {
 	}
 
 	option = {
-		name = nations.11273.a	
-		add_favor = {
-			target = FROM
-			value = 1
-		}
+		name = nations.11273.a
 		random_owned_planet = { 
 			limit = { has_deposit = d_PrimPlayer_nation_deposit }
 			every_owned_pop_group = {
 				add_modifier = {
-					modifier = "PrimPlayer_angry_population"
+					modifier = "pop_angry_subterranean"
 					days = 3600
 				}
 			}
@@ -1994,7 +1966,7 @@ country_event = {
 		}
 		owner = {
 			add_modifier = {
-				modifier = PrimPlayer_tech_transaction
+				modifier = subterranean_tech_transaction
 				days = 3600
 			}
 		}
@@ -2080,15 +2052,14 @@ country_event = {
 
 	picture_event_data = {
 		portrait = FROM
-		planet_background = FROM
+		planet_background = root.capital_scope
 		graphical_culture = FROM
-		city_level = FROM
+		city_level = root.capital_scope
 		room = FROM
 	}
 	location = root.capital_scope
 	
 	trigger = {
-		FROM.FROM = { has_situation_flag = nations_11270_flag }	#Cog note - So people get their gift before missing out!
 		if = {
 			limit = { is_authoritarian = yes }
 			FROM = { opinion_level = { who = root level >= good } }
@@ -2108,46 +2079,46 @@ country_event = {
 
 	# Merge Nations Event Chain - Fanatic Similarity
 	option = {
-		name = "nations.11277.merge.fanatic"
+		name = "nations.11205.merge.fanatic"
 		#custom_tooltip = "nations.12205.merge.fanatic.tooltip"
 		trigger = { has_ethic = ethic_fanatic_authoritarian }
 		#allow = { FROM = { opinion = { who = root value >= 150 } } }
 		allow = { FROM = { opinion_level = { who = root level >= good } } }
 		FROM = { destroy_country = yes } #Placeholder effect. Ideally we have a situation to play this through
-		capital_scope = { set_carrier_flag = PrimPlayer_authoritarian_union_situation_complete }
+		capital_scope = { set_carrier_flag = PrimPlayer_egalitarian_union_situation_complete }
 		custom_tooltip = "nations_improve_relations_tooltip"
 		#hidden_effect = {
-		#	start_situation = { type = PrimPlayer_ethic_authoritarian_union_situation target = root }
+		#	start_situation = { type = PrimPlayer_ethic_egalitarian_union_situation target = root }
 		#}
 	}
 
 	# Merge Nations Event Chain - Normal Similarity
 	option = {
-		name = "nations.11277.merge.normal"
+		name = "nations.11205.merge.normal"
 		#custom_tooltip = "nations.12205.merge.normal.tooltip"
 		trigger = { has_ethic = ethic_authoritarian }
 		allow = { FROM = { opinion_level = { who = root level >= good } } }
 		FROM = { destroy_country = yes } #Placeholder effect. Ideally we have a situation to play this through
-		capital_scope = { set_carrier_flag = PrimPlayer_authoritarian_union_situation_complete }
+		capital_scope = { set_carrier_flag = PrimPlayer_egalitarian_union_situation_complete }
 		custom_tooltip = "nations_improve_relations_tooltip"
 		#hidden_effect = {
-		#	start_situation = { type = PrimPlayer_ethic_authoritarian_union_situation target = root }
+		#	start_situation = { type = PrimPlayer_ethic_egalitarian_union_situation target = root }
 		#}
 	}
 	
 	# Merge Nations Event Chain - Different
 	option = {
-		name = "nations.11277.merge.different"
+		name = "nations.11205.merge.different"
 		#custom_tooltip = "nations.12205.merge.different.tooltip"
 		trigger = { 
 			is_authoritarian = no
 		}
 		allow = { FROM = { opinion_level = { who = root level >= excellent } } }
 		FROM = { destroy_country = yes } #Placeholder effect. Ideally we have a situation to play this through
-		capital_scope = { set_carrier_flag = PrimPlayer_authoritarian_union_situation_complete }
+		capital_scope = { set_carrier_flag = PrimPlayer_egalitarian_union_situation_complete }
 		custom_tooltip = "nations_improve_relations_tooltip"
 		#hidden_effect = {
-		#	start_situation = { type = PrimPlayer_ethic_authoritarian_union_situation target = root }
+		#	start_situation = { type = PrimPlayer_ethic_egalitarian_union_situation target = root }
 		#}
 	}
 	
@@ -2171,6 +2142,13 @@ country_event = {
 
 	immediate = {
 		FROM = { country_event = { id = nations.12200 } }
+		FROM = { remove_country_flag = PrimPlayer_ethic_fanatic_egalitarian_nation_chain_event }
+		FROM = {
+			set_timed_country_flag = {
+				flag = PrimPlayer_ethic_fanatic_nation_chain_event
+				days = 360
+			}
+		}
 		FROM = { remove_country_flag = PrimPlayer_ethic_fanatic_egalitarian_nation_chain_event }
 		FROM = {
 			set_timed_country_flag = {
@@ -4163,6 +4141,13 @@ country_event = {
 
 	immediate = {
 		FROM = { country_event = { id = nations.13200 } }
+		FROM = { remove_country_flag = PrimPlayer_ethic_fanatic_xenophobe_nation_chain_event }
+		FROM = {
+			set_timed_country_flag = {
+				flag = PrimPlayer_ethic_fanatic_nation_chain_event
+				days = 360
+			}
+		}
 		FROM = { remove_country_flag = PrimPlayer_ethic_fanatic_xenophobe_nation_chain_event }
 		FROM = {
 			set_timed_country_flag = {
@@ -6254,6 +6239,13 @@ country_event = {
 				days = 360
 			}
 		}
+		FROM = { remove_country_flag = PrimPlayer_ethic_fanatic_xenophile_nation_chain_event }
+		FROM = {
+			set_timed_country_flag = {
+				flag = PrimPlayer_ethic_fanatic_nation_chain_event
+				days = 360
+			}
+		}
 	}
 }
 
@@ -8174,6 +8166,13 @@ country_event = {
 				days = 360
 			}
 		}
+		FROM = { remove_country_flag = PrimPlayer_ethic_fanatic_militarist_nation_chain_event }
+		FROM = {
+			set_timed_country_flag = {
+				flag = PrimPlayer_ethic_fanatic_nation_chain_event
+				days = 360
+			}
+		}
 	}
 }
 
@@ -10081,6 +10080,13 @@ country_event = {
 				days = 360
 			}
 		}
+		FROM = { remove_country_flag = PrimPlayer_ethic_fanatic_pacifist_nation_chain_event }
+		FROM = {
+			set_timed_country_flag = {
+				flag = PrimPlayer_ethic_fanatic_nation_chain_event
+				days = 360
+			}
+		}
 	}
 }
 
@@ -11974,6 +11980,13 @@ country_event = {
 
 	immediate = {
 		FROM = { country_event = { id = nations.17200 } }
+		FROM = { remove_country_flag = PrimPlayer_ethic_fanatic_spiritualist_nation_chain_event }
+		FROM = {
+			set_timed_country_flag = {
+				flag = PrimPlayer_ethic_fanatic_nation_chain_event
+				days = 360
+			}
+		}
 		FROM = { remove_country_flag = PrimPlayer_ethic_fanatic_spiritualist_nation_chain_event }
 		FROM = {
 			set_timed_country_flag = {
@@ -13900,6 +13913,13 @@ country_event = {
 
 	immediate = {
 		FROM = { country_event = { id = nations.18200 } }
+		FROM = { remove_country_flag = PrimPlayer_ethic_fanatic_materialist_nation_chain_event }
+		FROM = {
+			set_timed_country_flag = {
+				flag = PrimPlayer_ethic_fanatic_nation_chain_event
+				days = 360
+			}
+		}
 		FROM = { remove_country_flag = PrimPlayer_ethic_fanatic_materialist_nation_chain_event }
 		FROM = {
 			set_timed_country_flag = {
@@ -15861,6 +15881,13 @@ country_event = {
 				days = 360
 			}
 		}
+		FROM = { remove_country_flag = PrimPlayer_ethic_fanatic_green_nation_chain_event }
+		FROM = {
+			set_timed_country_flag = {
+				flag = PrimPlayer_ethic_fanatic_nation_chain_event
+				days = 360
+			}
+		}
 	}
 }
 
@@ -17754,6 +17781,13 @@ country_event = {
 
 	immediate = {
 		FROM = { country_event = { id = nations.20200 } }
+		FROM = { remove_country_flag = PrimPlayer_ethic_fanatic_industrial_nation_chain_event }
+		FROM = {
+			set_timed_country_flag = {
+				flag = PrimPlayer_ethic_fanatic_nation_chain_event
+				days = 360
+			}
+		}
 		FROM = { remove_country_flag = PrimPlayer_ethic_fanatic_industrial_nation_chain_event }
 		FROM = {
 			set_timed_country_flag = {
@@ -19679,6 +19713,13 @@ country_event = {
 				days = 360
 			}
 		}
+		FROM = { remove_country_flag = PrimPlayer_ethic_fanatic_socialism_nation_chain_event }
+		FROM = {
+			set_timed_country_flag = {
+				flag = PrimPlayer_ethic_fanatic_nation_chain_event
+				days = 360
+			}
+		}
 	}
 }
 
@@ -21579,6 +21620,13 @@ country_event = {
 				days = 360
 			}
 		}
+		FROM = { remove_country_flag = PrimPlayer_ethic_fanatic_capitalism_nation_chain_event }
+		FROM = {
+			set_timed_country_flag = {
+				flag = PrimPlayer_ethic_fanatic_nation_chain_event
+				days = 360
+			}
+		}
 	}
 }
 
@@ -22460,6 +22508,10 @@ country_event = {
 				has_country_flag = ethic_fanatic_capitalism_nation@root
 				root.capital_scope = { NOT = { has_branch_office = Prev } }
 			}
+		}
+		custom_tooltip = ethic_fanatic_authoritarian_nation_pleased
+		hidden_effect = {
+			FROM = { add_opinion_modifier = { modifier = PrimPlayer_opinion_flavors_up who = ROOT } }
 		}
 		custom_tooltip = ethic_fanatic_authoritarian_nation_pleased
 		hidden_effect = {
