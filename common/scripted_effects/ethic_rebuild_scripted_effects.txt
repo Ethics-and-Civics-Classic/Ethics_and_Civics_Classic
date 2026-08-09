@@ -1003,151 +1003,24 @@ set_merchant_government_effect = {
 ############
 ############
 # Council Agenda effects
-# scope = planet | owner = country
 # Added by Sage 08/06/2026
-
-#add_environmental_steward_agenda = {
- #	owner? = root
- #	count_owned_planet = { # Count our worlds with nice environemnts.
- #		limit = {
- #			NOR = {
- #				is_planet_class = pc_city
- #				is_planet_class = pc_hive
- #				is_planet_class = pc_machine
- #				is_planet_class = pc_relic
- #				is_planet_class = pc_nuked
- #				is_planet_class = pc_volcanic
- #				is_planet_class = pc_toxic
- #				is_artificial = yes
- #			}
- #		}
- #	}
- #	if = { # Building small? Then we're just going to target the capital.
- #		count < 3
- #		random_owned_planet = {
- #			limit = {
- #				is_capital = yes
- #			}
- #		}
- #		if = { # First, check to see if we have industrial waste lying around, and clean it up.
- #			every_deposit = {
- #				limit = {
- #					is_deposit_type = d_failing_infrastructure
- #				}
- #				remove_deposit = yes
- #			}
- #		}
- #		else_if = { # No industrial waste? Then let's add a natural blocker if there's room.
- #			limit = {
- #				num_uncleared_blockers <= 2
- #				num_free_districts = { type = any value > 3 }
- #			}
- #			add_random_natural_blocker = yes
- #		}
- #		else_if = { # No more room? Then let's give it a shiny blue ribbon.
- #			limit = { NOT = { has_modifier = natural_beauty } }
- #			add_modifier = { modifier = natural_beauty }
- #		}
- #		else = { # Well, damn, alright then, your biologists are just gonna be real happy for about two years.
- #			limit = { is_colony = yes }
- #			add_modifier = { modifier = environmental_steward_agenda_boost days = 720 }
- #		}
- #	}
- #	else_if = { # Got more than three worlds? Proceed.
- #		while = { # We're going to pick 3 random worlds.
- #			count = 3
- #			random_owned_planet = {
- #				if = { # First, check to see if we have industrial waste lying around, and clean it up.
- #					every_deposit = {
- #						limit = {
- #							is_deposit_type = d_failing_infrastructure
- #						}
- #						remove_deposit = yes
- #					}
- #				}
- #				else_if = { # No industrial waste? Then let's add a natural blocker if there's room.
- #					limit = {
- #						num_uncleared_blockers <= 2
- #						num_free_districts = { type = any value > 3 }
- #					}
- #					add_random_natural_blocker = yes
- #				}
- #				else_if = { # No more room? Then let's give it a shiny blue ribbon.
- #					limit = { NOT = { has_modifier = natural_beauty } }
- #					add_modifier = { modifier = natural_beauty }
- #				}
- #				else = { # Well, damn, alright then, your biologists are just gonna be real happy for about two years.
- #					limit = { is_colony = yes }
- #					add_modifier = { modifier = environmental_steward_agenda_boost days = 720 }
- #				}
- #			}
- #		}
- #	}
- #}
- 
-
-
-# Agenda Finisher Effect Script
-environmental_steward_blocker_effect = {												
-	if = { 																				# This is supposed to run inside a condition that already checks for a planet, so we can skip that.
-		every_deposit = {																# First, check to see if we have industrial waste lying around, and clean it up.
-			limit = {
-				is_deposit_type = d_failing_infrastructure								# Do we have any nasty jerks polluting our planet?
-			}
-			remove_deposit = yes														# Congrats, the EPA just shut your ass down.
-		}
-	}
-	else_if = { 																		# No industrial waste? Then let's add a natural blocker if there's room.
-		limit = {
-			num_uncleared_blockers <= 2													# Fewer than two uncleared blockers...
-			num_free_districts = { type = any value > 3 }								# ... and more than three districts?
-		}
-		add_random_natural_blocker = yes												# Let's plant trees!
-	}
-	else_if = { 																		# No more room? Then let's give it a shiny blue ribbon.
-		limit = { NOT = { has_modifier = natural_beauty } }								# Has it already won the planetary beauty pageant? If not,
-		add_modifier = { modifier = natural_beauty }									# Then give the beauty queen her tiara.
-	}
-	else = { 																			# Already done all of the above?
-		limit = { is_colony = yes }														# Well, damn, alright. If it's a colony,
-		add_modifier = { modifier = environmental_steward_agenda_boost days = 720 }		# Your biologists are just gonna be in a good mood for two years.
-	} 
-}
 
 # Environmental Steward Finisher
 add_environmental_steward_agenda = {
-	owner? = root												# First of all, are these worlds ours? We're not planting the whole galaxy here!
-	export_trigger_value_to_variable = { 						# We need to know how many worlds are eligible, and use that number later.
-		trigger = count_owned_planet							# Count our worlds...
-		parameters = {											# (Just the nice ones)
-			limit = {
-				NOR = {
-					is_planet_class = pc_city
-					is_planet_class = pc_hive
-					is_planet_class = pc_machine
-					is_planet_class = pc_relic
-					is_planet_class = pc_nuked
-					is_planet_class = pc_volcanic
-					is_planet_class = pc_toxic
-					is_artificial = yes
-				}
+	exists = owner
+	owner = {
+		if = {
+			num_owned_colonies <= 3
+			random_owned_planet = {
+				limit = { is_capital = yes }
+				environmental_steward_blocker_effect = yes
 			}
 		}
-		variable = candidate_planets							# And now we know how many candidate planets.
-	}
-	random_owned_planet = {
-		switch = {												# Which one do we pick?
-			trigger = candidate_planets
-			2 <= { 												# 2 or fewer?
-				limit = {
-					is_capital = yes 							# We're just going to pick the capital.
-				}
-				environmental_steward_blocker_effect = yes		# And run the effect.
-			}
-			3 >= {												# 3 or more?
-				while = {										# We're going to pick 3 random worlds.
-					count = 3
-					limit = {									# Make sure they're eligible.
+		else = {
+			while = {
+				count = 3
+				random_owned_planet = {
+					limit = {
 						NOR = {
 							is_planet_class = pc_city
 							is_planet_class = pc_hive
@@ -1159,91 +1032,120 @@ add_environmental_steward_agenda = {
 							is_artificial = yes
 						}
 					}
-					environmental_steward_blocker_effect = yes	# And run the effect.
+					environmental_steward_blocker_effect = yes
 				}
 			}
 		}
 	}
 }
 
-# Quarterly Budget Review Finisher
-add_quarterly_budget_review_agenda = {
-	if = {																		# So, you wanna be a gazillionaire?					
-		limit = {																# You could have been Batman. But noooo, you wanted to be Lex Luthor.
-			is_megacorp = yes
-		}
-		add_resource = {														# Your little office interns are afraid of getting fired, so they work overtime.
-			trade = @agenda_a_higher_purpose_unity								# Wow, look at all those profits. 50 trade...
-			mult = value:country_assigned_traders								# ... per employee. Number go brr.
-		}
-		random_list = {															# But you downsized the company anyway. Bastard.
-			3 = {																# People's housing might start to decay if they can't repair it.
-				random_owned_planet = {
-					limit = {
-						is_colony = yes											# Is it one of your colonized worlds?
-					}
-					if = {
-						limit = {
-							num_free_districts = { type = any value >= 1 }		# Do these people have a place to pitch their tents?
-						}
-						add_blocker = { type = d_decrepit_dwellings }			# Then they park there. This is your fault, btw.
-					}
-				}
-			}
-			4 = {																# Desperate people turn to crime.
-				country_event = {
-					id = crime.51
-					days = 1
-					random = 30
-				}
-			}
-			3 = {																# Really desperate people turn to piracy.
-				country_event = {
-					id = pirate.5
-					days = 1
-					random = 30
-				}
-			}
+# Agenda Finisher Effect Script
+# scope = planet | owner = country
+environmental_steward_blocker_effect = {												
+	if = {
+		every_deposit = {
+			limit = { is_deposit_type = d_failing_infrastructure }
+			clear_blocker = yes
 		}
 	}
-	else_if = {																	# So, you wanna be a decaying liberal state?
-		limit = {																# By all means, be a decaying liberal state.
-			is_megacorp = no
+	else_if = {
+		limit = {
+			num_free_districts = { type = any value > 3 }
 		}
-		random_owned_planet = {													# You concentrate power in your capital...
+		add_random_natural_blocker = yes
+	}
+	else_if = { 
+		limit = { NOT = { has_modifier = natural_beauty } }
+		add_modifier = { modifier = natural_beauty }
+	}
+	else = {
+		add_modifier = { modifier = environmental_steward_agenda_boost days = 720 }
+	} 
+}
+
+# Quarterly Budget Review Finisher
+add_quarterly_budget_review_agenda = {
+	exists = owner 
+	owner = {
+		if = {
 			limit = {
-				is_capital = yes
+				is_megacorp = yes
 			}
-			modifier = {														# ... and your senators and representatives give themselves a little kickback.
-				pop_cat_ruler_bonus_workforce_mult = 0.03
+			add_resource = {
+				trade = @agenda_a_higher_purpose_unity
+				mult = value:country_assigned_traders
+			}
+			random_list = {
+				3 = {
+					random_owned_planet = {
+						if = {
+							limit = {
+								num_free_districts = { type = any value >= 1 }
+							}
+							add_blocker = {
+								type = d_decrepit_dwellings
+							}			
+						}
+						else = {
+							add_modifier = { modifier = EaC_labor_movements days = 720 }
+						}
+					}
+				}
+				4 = {
+					country_event = {
+						id = crime.51
+						days = 1
+						random = 30
+					}
+				}
+				3 = {
+					country_event = {
+						id = pirate.5
+						days = 1
+						random = 30
+					}
+				}
 			}
 		}
-		random_list = {															# But obviously, there are consequences for that kind of policy.
-			6 = {																# Without social safety nets, people on welfare become unhoused.
-				random_owned_planet = {
-					limit = {
-						is_colony = yes											# Your world, your fault.
-					}
-					if = {
+		else = {
+			random_owned_planet = {
+				limit = {
+					is_capital = yes
+				}
+				add_modifier = { modifier = quarterly_budget_review_agenda_boost days = 720 }
+			}
+			random_list = {
+				6 = {
+					random_owned_planet = {
 						limit = {
-							num_free_districts = { type = any value >= 1 }		# Do they have somewhere to park their hovercar for the night?
+							is_colony = yes
 						}
-						add_blocker = { type = d_decrepit_dwellings }			# They park there. Until the cops ticket them. Pigs.
+						if = {
+							limit = {
+								num_free_districts = { type = any value >= 1 }
+							}
+							add_blocker = {
+								type = d_decrepit_dwellings 
+							}			
+						}
+						else = {
+							add_modifier = { modifier = EaC_labor_movements days = 720 }
+						}
 					}
 				}
-			}
-			2 = {																# Maybe they turn to crime. On-world...
-				country_event = {
-					id = crime.51
-					days = 1
-					random = 30
+				2 = {
+					country_event = {
+						id = crime.51
+						days = 1
+						random = 30
+					}
 				}
-			}
-			2 = {																# ... or off-world.
-				country_event = {
-					id = pirate.5
-					days = 1
-					random = 30
+				2 = {
+					country_event = {
+						id = pirate.5
+						days = 1
+						random = 30
+					}
 				}
 			}
 		}
