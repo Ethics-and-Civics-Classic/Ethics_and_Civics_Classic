@@ -1,0 +1,315 @@
+namespace = paragon
+
+###########################
+### ASTROCREATOR AZARYN ###
+###########################
+
+# On_five_year_pulse_country
+# Chance to start Azaryn chain
+country_event = {
+	id = paragon.200
+	hide_window = yes
+	is_triggered_only = yes
+
+	trigger = {
+		has_paragon_dlc = yes
+		NOT = { exists = event_target:azaryn_leader }
+		NOT = { has_country_flag = azaryn_chain_started }
+		has_country_flag = first_contact_protocol_event_happened
+		is_ai = no
+		is_militarist = no
+		is_industrial = no
+		is_gestalt = no
+	}
+
+	immediate = {
+		random_list = {
+			99 = {} # Do nothing
+			1 = { owner = { country_event = { id = paragon.202 days = 1 random = 900 } } }
+		}
+	}
+}
+
+# Dead comms 1
+country_event = {
+	id = paragon.202
+	title = "paragon.202.name"
+	desc = "paragon.202.desc"
+	show_sound = event_conversation
+	is_triggered_only = yes
+	fire_only_once = yes
+	diplomatic_title = BLANK_STRING
+
+	trigger = {
+		has_paragon_dlc = yes
+		NOT = { exists = event_target:azaryn_leader }
+		has_country_flag = first_contact_protocol_event_happened
+		is_ai = no
+		is_militarist = no
+		is_industrial = no
+		is_gestalt = no
+	}
+
+	diplomatic = yes
+
+	picture_event_data = {
+		room = paragon_azaryn_room
+	}
+
+	immediate = {
+		set_country_flag = azaryn_chain_started
+	}
+
+	option = {
+		name = paragon.202.a # Hello?
+		response_text = paragon.202.a.response
+		is_dialog_only = yes
+	}
+	option = {
+		name = paragon.202.b # Odd. Terminate the comms.
+	}
+
+	after = {
+		hidden_effect = { country_event = { id = paragon.204 days = 120 random = 90 } }
+	}
+}
+
+# [...]
+# Azaryn: HIRE/DISMISS
+country_event = {
+	id = paragon.228
+	title = "paragon.228.name"
+	# Worst: -2, -1, 0
+	# Mid: 1, 2, 3
+	# Best: 4, 5, 6
+	desc = {
+		trigger = {
+			check_variable = {
+				which = variable_azaryn_score
+				value > 3
+			}
+		}
+		text = paragon.228.desc_best
+	}
+	desc = {
+		trigger = {
+			check_variable = {
+				which = variable_azaryn_score
+				value < 4
+			}
+		}
+		text = paragon.228.desc_mid
+	}
+	desc = {
+		trigger = {
+			check_variable = {
+				which = variable_azaryn_score
+				value < 1
+			}
+		}
+		text = paragon.228.desc_worst
+	}
+	show_sound = par_event_azaryn
+	location = fromfrom
+	is_triggered_only = yes
+
+	trigger = {
+		has_paragon_dlc = yes
+		NOT = { exists = event_target:azaryn_leader }
+	}
+
+	event_window_type = leader_recruit
+	picture_event_data = {
+		portrait = event_target:azaryn_leader
+		room = paragon_azaryn_room
+	}
+	picture = GFX_leader_recruitment_bg_legendary_azaryn
+
+	immediate = {
+		hidden_effect = {
+			create_country = {
+				name = "NAME_Unknown"
+				type = global_event
+				auto_delete = yes
+				flag = {
+					icon = {
+						category = "special"
+						file = "unknown.dds"
+					}
+					background = {
+						category = "backgrounds"
+						file = "00_solid.dds"
+					}
+					colors = {
+						"red"
+						"red"
+						"null"
+						"null"
+					}
+				}
+				effect = {
+					save_event_target_as = azaryn_country
+				}
+			}
+			event_target:azaryn_country = {
+				create_species = {
+					name = "NAME_Unknown"
+					class = PARAGON
+					portrait = paragon_azaryn_3_buds
+					namelist = "PRT1"
+					traits = {
+						trait = trait_quick_learners
+						trait = trait_talented
+						trait = trait_docile
+						trait = trait_weak
+						trait = trait_plantoid_budding
+					}
+					effect = {
+						save_event_target_as = azaryn_species
+					}
+				}
+				create_leader = {
+					species = event_target:azaryn_species
+					event_leader = yes
+					class = scientist
+					tier = leader_tier_legendary
+					name = "NAME_Astrocreator_Azaryn"
+					skill = 7
+					randomize_traits = no
+					skip_background_generation = yes
+					background_ethic = ethic_green
+					custom_catch_phrase = sadtoid_catch_phrase
+					custom_description = astrocreator_azaryn_backstory
+					can_manually_change_location = no
+					traits = {
+						1 = leader_trait_legendary_terraformation_nucleus_3_buds
+						2 = leader_trait_xeno_cataloger
+						3 = leader_trait_educator
+						4 = leader_trait_spark_of_genius
+						5 = subclass_scientist_scholar
+					}
+					gender = female
+					set_age = 229
+					immortal = yes
+					effect = {
+						save_global_event_target_as = azaryn_leader
+						set_leader_flag = azaryn
+						set_owner = root
+						exile_leader_as = azaryn_leader
+					}
+				}
+			}
+		}
+	}
+
+	option = { # What exactly is astrocreation?
+		trigger = {
+			NOT = { has_country_flag = flag_azaryn_what_is_astrocreation }
+		}
+		name = paragon.228.a
+		is_dialog_only = yes
+		response_text = paragon.228.a.response
+	}
+	option = { # What exactly is astrocreation?
+		trigger = {
+			has_country_flag = flag_azaryn_what_is_astrocreation
+		}
+		name = paragon.228.a
+		is_dialog_only = yes
+		response_text = paragon_astrocreation_is
+	}
+
+	option = { # What are those things on your back?
+		name = paragon.228.c
+		response_text = paragon.228.c.response
+		is_dialog_only = yes
+	}
+	option = { # What is that buzzing, tiny drone of yours?
+		name = paragon.228.d
+		response_text = paragon.228.d.response
+		is_dialog_only = yes
+	}
+
+	option = { # HIRE
+		name = HIRE
+		tag = hire_leader
+		custom_tooltip = paragon.228.b.custom_tooltip # Azaryn joins
+		sound = par_azaryn_hire
+
+		hidden_effect = {
+			if = {
+				limit = {
+					is_variable_set = paragon_memory_vault
+				}
+				change_variable = {
+					which = paragon_memory_vault
+					value = 1
+				}
+			}
+			clone_leader = {
+				target = event_target:azaryn_leader
+				tier = leader_tier_legendary
+			}
+			last_created_leader = {
+				save_global_event_target_as = azaryn_leader
+				set_leader_flag = immune_to_negative_traits
+				set_leader_flag = azaryn
+			}
+			event_target:azaryn_leader = {
+				set_variable = {
+					which = azaryn_nuclei_variable
+					value = 3
+				}
+			}
+
+			create_fleet = {
+				name = "NAME_Azaryn_Dome"
+				settings = {
+					can_upgrade = no
+					can_change_composition = no
+					can_change_leader = no
+					can_disband = no
+					spawn_debris = no
+				}
+				effect = {
+					set_owner = root.owner
+					create_ship_design = {
+						design = NAME_Azaryn_Dome
+					}
+					create_ship = {
+						design = last_created_design
+						name = "NAME_Azaryn_Dome"
+						prefix = no
+						upgradable = no
+						effect = {
+							set_ship_flag = is_azaryn_ship
+							save_global_event_target_as = azaryn_ship
+							set_ship_flag = special_science_ship
+						}
+					}
+					set_fleet_stance = evasive
+					set_location = root.capital_scope
+					assign_leader = event_target:azaryn_leader
+				}
+			}
+			country_event = { id = paragon.230 } # Azaryn sets a course for your capital world
+		}
+	}
+
+	option = { # DISMISS
+		sound = par_azaryn_dismiss
+		name = DISMISS
+		tag = dismiss_leader
+		hidden_effect = {
+			event_target:azaryn_leader = {
+				kill_leader = { show_notification = no }
+			}
+		}
+	}
+
+	after = {
+		hidden_effect = {
+			remove_country_flag = flag_azaryn_what_is_astrocreation
+		}
+	}
+}
