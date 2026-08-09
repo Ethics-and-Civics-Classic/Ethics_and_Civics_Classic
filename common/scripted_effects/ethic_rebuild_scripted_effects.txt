@@ -1113,12 +1113,13 @@ environmental_steward_blocker_effect = {
 		add_modifier = { modifier = environmental_steward_agenda_boost days = 720 }		# Your biologists are just gonna be in a good mood for two years.
 	} 
 }
+
 # Environmental Steward Finisher
 add_environmental_steward_agenda = {
-	owner? = root														# First of all, are these worlds ours? We're not planting the whole galaxy here!
-	export_trigger_value_to_variable = {								# We need to know how many worlds are eligible.
-		trigger = count_owned_planet									# Count our worlds...
-		parameters = { 													# (Just the nice ones)
+	owner? = root												# First of all, are these worlds ours? We're not planting the whole galaxy here!
+	export_trigger_value_to_variable = { 						# We need to know how many worlds are eligible, and use that number later.
+		trigger = count_owned_planet							# Count our worlds...
+		parameters = {											# (Just the nice ones)
 			limit = {
 				NOR = {
 					is_planet_class = pc_city
@@ -1132,23 +1133,21 @@ add_environmental_steward_agenda = {
 				}
 			}
 		}
-		variable = candidate_planets									# And now we know how many candidate planets.
+		variable = candidate_planets							# And now we know how many candidate planets.
 	}
-	switch = {															# Which one do we pick?
-		trigger = candidate_planets
-		2 <= { 															# 2 or fewer?
-			random_owned_planet = { 									# We're just going to pick the capital.
+	random_owned_planet = {
+		switch = {												# Which one do we pick?
+			trigger = candidate_planets
+			2 <= { 												# 2 or fewer?
 				limit = {
-					is_capital = yes
+					is_capital = yes 							# We're just going to pick the capital.
 				}
-				environmental_steward_blocker_effect = yes				# And run the effect.
+				environmental_steward_blocker_effect = yes		# And run the effect.
 			}
-		}
-		3 >= { 															# 3 or more?
-			while = { 													# We're going to pick 3 random worlds.
-				count = 3
-				random_owned_planet = {
-					limit = { 											# Make sure they're eligible.
+			3 >= {												# 3 or more?
+				while = {										# We're going to pick 3 random worlds.
+					count = 3
+					limit = {									# Make sure they're eligible.
 						NOR = {
 							is_planet_class = pc_city
 							is_planet_class = pc_hive
@@ -1160,12 +1159,13 @@ add_environmental_steward_agenda = {
 							is_artificial = yes
 						}
 					}
-					environmental_steward_blocker_effect = yes			# And run the effect.
+					environmental_steward_blocker_effect = yes	# And run the effect.
 				}
 			}
 		}
 	}
 }
+
 # Quarterly Budget Review Finisher
 add_quarterly_budget_review_agenda = {
 	if = {																		# So, you wanna be a gazillionaire?					
