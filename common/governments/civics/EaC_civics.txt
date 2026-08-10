@@ -1250,6 +1250,174 @@ civic_warrior_culture = {
 	}
 }
 
+civic_sovereign_guardianship = {
+	playable = { has_astral_planes_dlc = yes }
+	ai_playable = { has_astral_planes_dlc = yes }
+	description = "civic_sovereign_guardianship_effects"
+	potential = {
+		ethics = {
+			NOT = {
+				value = ethic_gestalt_consciousness
+			}
+		}
+		authority = {
+			NOT = { value = auth_corporate }
+		}
+	}
+	possible = {
+		is_nomadic = no
+		origin = {
+			NOR = {
+				value = origin_fear_of_the_dark
+				value = origin_payback
+				value = origin_broken_shackles
+			}
+		}
+		civics = {
+			NOR = {
+				value = civic_corporate_sovereign_guardianship
+				value = civic_inwards_perfection
+				value = civic_reanimated_armies
+				value = civic_fanatic_purifiers
+				value = civic_scorched_earth
+			}
+			NOR = {
+				# Or low tech starts
+				text = civic_tooltip_not_eager_explorers
+				value = civic_eager_explorers
+				value = civic_privatized_exploration
+				value = civic_hive_stargazers
+				value = civic_machine_exploration_protocol
+			}
+		}
+		OR = {
+			ethics = {
+				OR = {
+					text = civic_tooltip_militarist
+					value = ethic_militarist
+					value = ethic_fanatic_militarist
+				}
+			}
+			civics = { value = civic_warrior_culture }	#Pacifist Warriors could use this civic
+		}
+	}
+	alternate_civic_version = civic_corporate_sovereign_guardianship
+	modification = {
+		add = {
+			hidden_trigger = {
+				has_civic = civic_corporate_sovereign_guardianship
+			}
+		}
+		remove = {
+			always = no
+		}
+	}
+
+	modifier = {
+		empire_size_colonies_mult = 0.75
+		empire_size_branch_office_mult = 1
+		empire_size_systems_mult = 1.50
+		empire_size_pops_mult = -0.25
+		empire_size_districts_mult = -0.50
+		diplo_weight_mult = 0.2
+
+		planet_soldiers_unity_produces_add = @sovereign_guardianship_soldier_unity
+		add_attunement_the_cradle_of_souls = @civic_attunement1
+	}
+
+	random_weight = {
+		base = @civic_rare_random_weight
+	}
+	ai_weight = {
+		base = @civic_rare_random_weight
+	}
+}
+
+civic_corporate_sovereign_guardianship = {
+	playable = { has_astral_planes_dlc = yes }
+	ai_playable = { has_astral_planes_dlc = yes }
+	description = "civic_corporate_sovereign_guardianship_effects"
+	potential = {
+		ethics = {
+			NOT = {
+				value = ethic_gestalt_consciousness
+			}
+		}
+		OR = {
+			authority = {
+				value = auth_corporate
+			}
+			civics = {
+				value = civic_galactic_sovereign_megacorp
+			}
+		}
+	}
+	alternate_civic_version = civic_sovereign_guardianship
+	modification = {
+		add = {
+			hidden_trigger = {
+				has_civic = civic_sovereign_guardianship
+			}
+		}
+		remove = {
+			always = no
+		}
+	}
+	possible = {
+		is_nomadic = no
+		origin = {
+			NOR = {
+				value = origin_fear_of_the_dark
+				value = origin_payback
+				value = origin_broken_shackles
+			}
+		}
+		civics = {
+			NOR = {
+				value = civic_sovereign_guardianship
+				value = civic_inwards_perfection
+				value = civic_fanatic_purifiers
+			}
+			NOR = {
+				text = civic_tooltip_not_eager_explorers
+				value = civic_eager_explorers
+				value = civic_privatized_exploration
+				value = civic_hive_stargazers
+				value = civic_machine_exploration_protocol
+			}
+		}
+		OR = {
+			ethics = {
+				OR = {
+					text = civic_tooltip_militarist
+					value = ethic_militarist
+					value = ethic_fanatic_militarist
+				}
+			}
+			civics = { value = civic_warrior_culture }	#Pacifist Warriors could use this civic
+		}
+	}
+
+	modifier = {
+		empire_size_colonies_mult = 0.75
+		empire_size_branch_office_mult = 1
+		empire_size_systems_mult = 1.50
+		empire_size_pops_mult = -0.25
+		empire_size_districts_mult = -0.50
+		diplo_weight_mult = 0.2
+
+		planet_soldiers_unity_produces_add = @sovereign_guardianship_soldier_unity
+		add_attunement_the_cradle_of_souls = @civic_attunement1
+	}
+
+	random_weight = {
+		base = @civic_rare_random_weight
+	}
+	ai_weight = {
+		base = @civic_rare_random_weight
+	}
+}
+
 # Free Haven Influence from faction for different species
 civic_free_haven = {
 	description = "civic_tooltip_free_haven_effects"
@@ -5594,7 +5762,10 @@ civic_military_dictatorship = {
 
 	random_weight = { base = @civic_default_random_weight }
 	modifier = {
-		max_rivalries = 2
+		max_rivalries = 3
+		diplo_weight_rivals_mult = 0.05
+		rivalries_influence_produces_mult = 0.10
+		country_vassal_naval_capacity_contribution_mult = 0.05	# Modded
 		# ship_piracy_suppression_add = 5	# No Longer Used in Stellaris 4.0
 		country_starbase_influence_cost_mult = -0.15
 		category_statecraft_research_speed_mult = -0.5
@@ -5602,9 +5773,31 @@ civic_military_dictatorship = {
 	swap_type = {
 		trigger = {
 			has_overlord_dlc = yes
+			has_shroud_dlc = no
 		}
 		description = "civic_tooltip_military_dictatorship_effects"
 		modifier = {
+			country_enclave_capacity_add = 1
+		}
+	}	
+	swap_type = {
+		trigger = {
+			has_overlord_dlc = no
+			has_shroud_dlc = yes
+		}
+		description = "civic_tooltip_military_dictatorship_effects_shroud"
+		modifier = {
+			proxy_war_cost_mult = -0.10
+		}
+	}
+	swap_type = {
+		trigger = {
+			has_overlord_dlc = yes
+			has_shroud_dlc = yes
+		}
+		description = "civic_tooltip_military_dictatorship_effects_shroud"
+		modifier = {
+			proxy_war_cost_mult = -0.10
 			country_enclave_capacity_add = 1
 		}
 	}
