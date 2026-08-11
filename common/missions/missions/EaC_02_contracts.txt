@@ -289,3 +289,186 @@ contract_planetary_pilgrimage_5 = {
 		}
 	}
 }
+
+# Nomad Environmentalist Contracts
+## Xenogeology Study
+contract_conservation_study_1 = {
+	inline_script = {
+		script = contracts/ConservationStudy
+		CATEGORY = conservation_study_special
+		VARIANT = 1
+		STUDY = default
+		PICTURE = GFX_evt_alien_nature
+	}
+
+	on_success = {
+		if = {
+			limit = {
+				exists = root
+			}
+			conservation_study_scaling_reward_effect = {
+				UNITY = 1000
+				RESOURCE = rare_crystals
+				RESOURCE_AMOUNT = 100
+			}
+		}
+		#bonus_conservation_study_effect = yes
+	}
+
+	on_cancel = {
+		if = {
+			limit = { has_event_chain = contract_conservation_study_1_chain }
+		}
+		if = {
+			limit = {
+				has_special_project = CONTRACT_conservation_study_1_PROJECT
+			}
+			abort_special_project = {
+				type = CONTRACT_conservation_study_1_PROJECT
+			}
+		}
+	}
+}
+
+# Xenobiology Study
+contract_conservation_study_2 = {
+	inline_script = {
+		script = contracts/ConservationStudy
+		CATEGORY = conservation_study_special
+		VARIANT = 2
+		STUDY = wildlife
+		PICTURE = GFX_evt_alien_wildlife
+	}
+
+	on_success = {
+		if = {
+			limit = {
+				exists = root
+			}
+			conservation_study_scaling_reward_effect = {
+				UNITY = 1000
+				RESOURCE = exotic_gases
+				RESOURCE_AMOUNT = 500
+			}
+		}
+		#bonus_conservation_study_effect = yes
+	}
+
+	on_cancel = {
+		if = {
+			limit = { has_event_chain = contract_conservation_study_2_chain }
+			aborted_passenger_contract_effect = yes
+		}
+		if = {
+			limit = {
+				has_special_project = CONTRACT_conservation_study_2_PROJECT
+			}
+			abort_special_project = {
+				type = CONTRACT_conservation_study_2_PROJECT
+			}
+		}
+	}
+}
+
+# Space Fauna Study
+contract_conservation_study_3 = {
+	category = conservation_study_special
+	desc = "contract_conservation_study_3_desc"
+	lore_issued = "contract_conservation_study_3_lore_issued"
+	lore_completed = "contract_conservation_study_3_lore_completed"
+	lore_failed = "contract_conservation_study_3_lore_failed"
+	event_chain = contract_conservation_study_3_chain
+	icon = gfx/interface/icons/situation_log/situation_log_quest.dds
+	picture = $PICTURE$
+	location = yes
+	time_to_accept = @contract_time_base
+
+	possible_operator = {
+		custom_tooltip = {
+			fail_text = already_doing_same_contract
+			NOT = {
+				has_event_chain = contract_conservation_study_3_chain
+			}
+		}
+		contract_target_system_reachable = {
+			SYSTEM = from
+		}
+	}
+
+	potential_issuer = {
+		always = no
+	}
+
+	abort_trigger = {
+		NAND = {
+			has_event_chain = contract_conservation_study_3_chain
+			contract_target_system_reachable = {
+				SYSTEM = fromfrom
+			}
+		}
+	}
+
+	counter = {
+		contract_progress_counter = {
+			max = 1
+		}
+	}
+
+	on_issue = {
+		fromfrom = {
+			set_star_flag = conservation_study_contract_issued@root
+		}
+	}
+
+	on_accept = {
+		begin_event_chain = {
+			event_chain = contract_conservation_study_3_chain
+			target = ROOT
+		}
+		fromfrom = {
+			limit = {
+				is_conservation_site_space_fauna = yes
+			}
+		}
+		enable_special_project = {
+			name = "CONTRACT_conservation_study_3_PROJECT"
+			location = fromfrom
+			owner = root
+		}
+	}
+
+	on_stop = {
+		end_event_chain = contract_conservation_study_3_chain
+		fromfrom = {
+			remove_star_flag = conservation_study_contract_issued@root
+		}
+	}
+
+	on_success = {
+		if = {
+			limit = {
+				exists = root
+			}
+			conservation_study_scaling_reward_effect = {
+				UNITY = 1000
+				RESOURCE = physics_research
+				RESOURCE_AMOUNT = 500
+			}
+		}
+	}
+
+	on_cancel = {
+		if = {
+			limit = { has_event_chain = contract_conservation_study_3_chain }
+
+		}
+		if = {
+			limit = {
+				has_special_project = CONTRACT_conservation_study_3_PROJECT
+			}
+			abort_special_project = {
+				type = CONTRACT_conservation_study_3_PROJECT
+			}
+		}
+	}
+}
