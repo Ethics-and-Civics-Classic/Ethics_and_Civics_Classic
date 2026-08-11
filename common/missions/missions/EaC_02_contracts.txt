@@ -1,0 +1,291 @@
+# CONTRACTS
+
+# Contracts that should trigger contract events will need to fire nomads.6000 from somewhere. Consider Special Projects, or other events normally used to track mission progress.
+
+# For reference (defined in 10_scripted_variables_nomads):
+#
+# @contract_time_short = 900
+# @contract_time_base = 1800
+# @contract_time_long = 2700
+#
+# @opinion_contract_small = 50
+# @opinion_contract_regular = 100
+# @opinion_contract_large = 150
+#
+# @opinion_failed_contract_small = -75
+# @opinion_failed_contract_regular = -125
+# @opinion_failed_contract_large = -175
+
+### Keepers of Harmony Contracts
+
+## Default Pilgrimage
+contract_planetary_pilgrimage_1 = {
+	inline_script = {
+		script = contracts/PlanetaryPilgrimage
+		CATEGORY = planetary_pilgrimage_special
+		VARIANT = 1
+		WORSHIP = default
+		PICTURE = GFX_evt_alien_nature
+	}
+
+	on_success = {
+		if = {
+			limit = {
+				exists = root
+			}
+			planetary_pilgrimage_scaling_reward_effect = {
+				UNITY = 1000
+				RESOURCE = rare_crystals
+				RESOURCE_AMOUNT = 100
+			}
+			hidden_effect = {
+				country_event = { id = EaC_civiC_mechanic_events.5006 days = 1 }
+			}
+		}
+	}
+
+	on_cancel = {
+		if = {
+			limit = { has_event_chain = contract_planetary_pilgrimage_1_chain }
+		}
+		if = {
+			limit = {
+				has_special_project = CONTRACT_planetary_pilgrimage_1_PROJECT
+			}
+			abort_special_project = {
+				type = CONTRACT_planetary_pilgrimage_1_PROJECT
+			}
+		}
+	}
+}
+
+# Presapient Pilgrimage
+contract_planetary_pilgrimage_2 = {
+	inline_script = {
+		script = contracts/PlanetaryPilgrimage
+		CATEGORY = planetary_pilgrimage_special
+		VARIANT = 2
+		WORSHIP = presapient
+		PICTURE = GFX_evt_friendly_enlightenment
+	}
+
+	on_success = {
+		if = {
+			limit = {
+				exists = root
+			}
+			planetary_pilgrimage_scaling_reward_effect = {
+				UNITY = 1000
+				RESOURCE = society_research
+				RESOURCE_AMOUNT = 500
+			}
+			hidden_effect = {
+				country_event = { id = EaC_civiC_mechanic_events.5006 days = 1 }
+			}
+		}
+	}
+
+	on_cancel = {
+		if = {
+			limit = { has_event_chain = contract_planetary_pilgrimage_2_chain }
+		}
+		if = {
+			limit = {
+				has_special_project = CONTRACT_planetary_pilgrimage_2_PROJECT
+			}
+			abort_special_project = {
+				type = CONTRACT_planetary_pilgrimage_2_PROJECT
+			}
+		}
+	}
+}
+
+# Holy World Pilgrimage
+contract_planetary_pilgrimage_3 = {
+	inline_script = {
+		script = contracts/PlanetaryPilgrimage
+		CATEGORY = planetary_pilgrimage_special
+		VARIANT = 3
+		WORSHIP = holy_world
+		PICTURE = GFX_evt_arkship_life
+	}
+
+	on_success = {
+		if = {
+			limit = {
+				exists = root
+			}
+			planetary_pilgrimage_scaling_reward_effect = {
+				UNITY = 1000
+				RESOURCE = sr_zro
+				RESOURCE_AMOUNT = 100
+			}
+			hidden_effect = {
+				country_event = { id = EaC_civiC_mechanic_events.5006 days = 1 }
+			}
+		}
+	}
+
+	on_cancel = {
+		if = {
+			limit = { has_event_chain = contract_planetary_pilgrimage_3_chain }
+			aborted_passenger_contract_effect = yes
+		}
+		if = {
+			limit = {
+				has_special_project = CONTRACT_planetary_pilgrimage_3_PROJECT
+			}
+			abort_special_project = {
+				type = CONTRACT_planetary_pilgrimage_3_PROJECT
+			}
+		}
+	}
+}
+
+# Unique Lifeforms Pilgrimage
+contract_planetary_pilgrimage_4 = {
+	inline_script = {
+		script = contracts/PlanetaryPilgrimage
+		CATEGORY = planetary_pilgrimage_special
+		VARIANT = 4
+		WORSHIP = wildlife
+		PICTURE = GFX_evt_alien_wildlife
+	}
+
+	on_success = {
+		if = {
+			limit = {
+				exists = root
+			}
+			planetary_pilgrimage_scaling_reward_effect = {
+				UNITY = 1000
+				RESOURCE = society_research
+				RESOURCE_AMOUNT = 500
+			}
+			hidden_effect = {
+				country_event = { id = EaC_civiC_mechanic_events.5006 days = 1 }
+			}
+		}
+	}
+
+	on_cancel = {
+		if = {
+			limit = { has_event_chain = contract_planetary_pilgrimage_4_chain }
+			aborted_passenger_contract_effect = yes
+		}
+		if = {
+			limit = {
+				has_special_project = CONTRACT_planetary_pilgrimage_4_PROJECT
+			}
+			abort_special_project = {
+				type = CONTRACT_planetary_pilgrimage_4_PROJECT
+			}
+		}
+	}
+}
+
+# Space Fauna Home System Pilgrimage
+contract_planetary_pilgrimage_5 = {
+	category = planetary_pilgrimage_special
+	desc = "contract_planetary_pilgrimage_5_desc"
+	lore_issued = "contract_planetary_pilgrimage_5_lore_issued"
+	lore_completed = "contract_planetary_pilgrimage_5_lore_completed"
+	lore_failed = "contract_planetary_pilgrimage_5_lore_failed"
+	event_chain = contract_planetary_pilgrimage_5_chain
+	icon = gfx/interface/icons/situation_log/situation_log_quest.dds
+	picture = $PICTURE$
+	location = yes
+	time_to_accept = @contract_time_base
+
+	possible_operator = {
+		custom_tooltip = {
+			fail_text = already_doing_same_contract
+			NOT = {
+				has_event_chain = contract_planetary_pilgrimage_5_chain
+			}
+		}
+		contract_target_system_reachable = {
+			SYSTEM = from
+		}
+	}
+
+	potential_issuer = {
+		always = no
+	}
+
+	abort_trigger = {
+		NAND = {
+			has_event_chain = contract_planetary_pilgrimage_5_chain
+			contract_target_system_reachable = {
+				SYSTEM = fromfrom
+			}
+		}
+	}
+
+	counter = {
+		contract_progress_counter = {
+			max = 1
+		}
+	}
+
+	on_issue = {
+		fromfrom = {
+			set_star_flag = planetary_pilgrimage_contract_issued@root
+		}
+	}
+
+	on_accept = {
+		begin_event_chain = {
+			event_chain = contract_planetary_pilgrimage_5_chain
+			target = ROOT
+		}
+		fromfrom = {
+			limit = {
+				is_pilgrimage_site_space_fauna = yes
+			}
+		}
+		enable_special_project = {
+			name = "CONTRACT_planetary_pilgrimage_5_PROJECT"
+			location = fromfrom
+			owner = root
+		}
+	}
+
+	on_stop = {
+		end_event_chain = contract_planetary_pilgrimage_5_chain
+		fromfrom = {
+			remove_star_flag = planetary_pilgrimage_contract_issued@root
+		}
+	}
+
+	on_success = {
+		if = {
+			limit = {
+				exists = root
+			}
+			planetary_pilgrimage_scaling_reward_effect = {
+				UNITY = 1000
+				RESOURCE = physics_research
+				RESOURCE_AMOUNT = 500
+			}
+			hidden_effect = {
+				country_event = { id = EaC_civiC_mechanic_events.5006 days = 1 }
+			}
+		}
+	}
+
+	on_cancel = {
+		if = {
+			limit = { has_event_chain = contract_planetary_pilgrimage_5_chain }
+
+		}
+		if = {
+			limit = {
+				has_special_project = CONTRACT_planetary_pilgrimage_5_PROJECT
+			}
+			abort_special_project = {
+				type = CONTRACT_planetary_pilgrimage_5_PROJECT
+			}
+		}
+	}
+}
