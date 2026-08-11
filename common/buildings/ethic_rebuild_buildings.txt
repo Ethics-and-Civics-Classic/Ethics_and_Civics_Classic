@@ -1048,33 +1048,44 @@ building_national_park_nomad = {
 	}
 
 	potential = {
-		exists = owner
-		AND = {
-			NOT = { has_modifier = slave_colony }
-			owner = { has_valid_civic = civic_naturalism }
-			owner = {
-				AND = {
-					is_regular_empire = yes
-					is_nomadic = yes
-				}
+		is_planet_class = pc_ark
+		NOT = { has_modifier = slave_colony }
+		owner? = {
+			has_valid_civic = civic_naturalism
+			AND = {
+				is_regular_empire = yes
+				is_nomadic = yes
 			}
 		}
+		NOT = { has_building = building_nature_sanctuary_nomad }
 	}
 
 	allow = {
-		has_deposit = { type = d_ark_nature_preserve_blocker }
+		planet = {
+			num_free_districts = {
+				type = any
+				value > 0
+			}
+		}
 	}
 
 	destroy_trigger = {
 		exists = owner
 		OR = {
 			has_modifier = slave_colony
-			NOT = {
-				has_deposit = d_ark_nature_preserve_blocker
+			owner = { 
+				NOR = { 
+					is_green = yes
+					has_valid_civic = civic_naturalism 
+					is_regular_empire = yes
+				} 
 			}
-			owner = { NOT = { has_valid_civic = civic_naturalism } }
-			owner = { is_regular_empire = no }
 		}
+	}
+
+	convert_to = {
+		building_nomad_conservatory
+		building_nature_sanctuary_nomad
 	}
 
 	triggered_planet_modifier = {
@@ -1087,6 +1098,66 @@ building_national_park_nomad = {
 		modifier = {
 			job_naturalist_per_pop = 0.06
 		}
+	}
+
+	ai_resource_production = {
+		unity = 1.0
+		mult = value:natural_blocker_count
+	}
+
+	ai_resource_production = {
+		unity = 0.5
+		trigger = { owner_has_resolution = { RES = resolution_ecology_integrated_gardens } }
+		mult = value:natural_blocker_count
+	}
+
+	ai_resource_production = {
+		unity = 0.5
+		trigger = { owner_has_resolution = { RES = resolution_ecology_environmental_control_board } }
+		mult = value:natural_blocker_count
+	}
+
+	ai_resource_production = {
+		unity = 0.5
+		trigger = { owner_has_resolution = { RES = resolution_ecology_paradise_initiative } }
+		mult = value:natural_blocker_count
+	}
+
+	planet_modifier = {
+		job_biologist_add = 100 # 100 Gardeners no matter what
+		deposit_blockers_natural_unity_produces_add = 1.0
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			always = yes
+		}
+		job_biologist_add = 100 # +100 Gardeners per natural blocker
+		mult = value:natural_blocker_count
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			owner_has_resolution = { RES = resolution_ecology_paradise_initiative }
+		}
+		job_biologist_add = 100 # +100 Gardeners per natural blocker if GalCom approves
+		mult = value:natural_blocker_count
+	}
+
+
+	triggered_planet_modifier = {
+		potential = { owner_has_resolution = { RES = resolution_ecology_integrated_gardens } }
+		deposit_blockers_natural_unity_produces_add = 0.5
+	}
+
+	triggered_planet_modifier = {
+		potential = { owner_has_resolution = { RES = resolution_ecology_environmental_control_board } }
+		deposit_blockers_natural_unity_produces_add = 1.0
+	}
+
+	triggered_planet_modifier = {
+		potential = { owner_has_resolution = { RES = resolution_ecology_paradise_initiative } }
+		deposit_blockers_natural_unity_produces_add = 1.5
 	}
 
 	resources = {
@@ -1111,13 +1182,38 @@ building_national_park_nomad = {
 		}
 	}
 
-	#triggered_desc = {
-	#	trigger = {
-	#		exists = owner
-	#		owner = { is_regular_empire = yes }
-	#	}
-	#	text = job_naturalist_effect_desc
-	#}
+	triggered_desc = {
+		text = biologist_is_ark_gardener_tt
+	}
+
+	on_built = {
+		planet = {
+			add_blocker = { type = d_ark_nature_preserve_blocker }
+		}
+	}
+
+	on_destroy = {
+		planet = {
+			if = {
+				limit = { 
+					has_deposit = d_ark_nature_preserve_blocker 
+				}
+				every_deposit = {
+					limit = {
+						is_deposit_type = d_ark_nature_preserve_blocker
+					}
+					remove_deposit = yes
+				}
+			}
+		}
+	}
+	ai_weight = {
+		weight = 100 # If you're a nomadic green empire, this had better be the first thing you build on an arkship, or else you're kinda SOL for ethic and civic perks.
+		modifier = {
+			factor = 10
+			is_fanatic_pacifist = yes
+		}
+	}
 }
 
 # Climate Control Hab
@@ -1713,7 +1809,7 @@ building_nature_sanctuary = {
 	#}
 }
 
-# Nature Sanctuary
+# Garden Sanctuary
 building_nature_sanctuary_nomad = {
 	base_buildtime = @b3_time
 	planet_limit = 1
@@ -1728,37 +1824,103 @@ building_nature_sanctuary_nomad = {
 	}
 
 	potential = {
-		exists = owner
-		AND = {
-			NOT = { has_modifier = slave_colony }
-			owner = { 
-				is_regular_empire = yes 
+		is_planet_class = pc_ark
+		NOT = { has_modifier = slave_colony }
+		owner? = {
+			has_valid_civic = civic_keepers_harmony 
+			AND = {
+				is_regular_empire = yes
 				is_nomadic = yes
 			}
-			owner = { has_valid_civic = civic_keepers_harmony }
 		}
+		NOT = { has_building = building_national_park_nomad }
 	}
 
 	allow = {
-		has_deposit = { type = d_ark_nature_preserve_blocker }
+		planet = {
+			num_free_districts = {
+				type = any
+				value > 0
+			}
+		}
 	}
 
 	destroy_trigger = {
 		exists = owner
 		OR = {
 			has_modifier = slave_colony
-			NOT = {
-				has_deposit = d_ark_nature_preserve_blocker
+			owner = { 
+				NOR = { 
+					is_green = yes
+					has_valid_civic = civic_keepers_harmony
+					is_regular_empire = yes
+				} 
 			}
-			owner = { NOT = { has_valid_civic = civic_keepers_harmony } }
 		}
 	}
 
 	convert_to = {
-		building_temple
-		building_bureaucratic_1
-		building_hive_node
-		building_uplink_node
+		building_nomad_conservatory
+		building_national_park_nomad
+	}
+
+	ai_resource_production = {
+		unity = 1.0
+		mult = value:natural_blocker_count
+	}
+
+	ai_resource_production = {
+		unity = 0.5
+		trigger = { owner_has_resolution = { RES = resolution_ecology_integrated_gardens } }
+		mult = value:natural_blocker_count
+	}
+
+	ai_resource_production = {
+		unity = 0.5
+		trigger = { owner_has_resolution = { RES = resolution_ecology_environmental_control_board } }
+		mult = value:natural_blocker_count
+	}
+
+	ai_resource_production = {
+		unity = 0.5
+		trigger = { owner_has_resolution = { RES = resolution_ecology_paradise_initiative } }
+		mult = value:natural_blocker_count
+	}
+
+	planet_modifier = {
+		job_biologist_add = 100 # 100 Gardeners no matter what
+		deposit_blockers_natural_unity_produces_add = 1.0
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			always = yes
+		}
+		job_biologist_add = 100 # +100 Gardeners per natural blocker
+		mult = value:natural_blocker_count
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			owner_has_resolution = { RES = resolution_ecology_paradise_initiative }
+		}
+		job_biologist_add = 100 # +100 Gardeners per natural blocker if GalCom approves
+		mult = value:natural_blocker_count
+	}
+
+	triggered_planet_modifier = {
+		potential = { owner_has_resolution = { RES = resolution_ecology_integrated_gardens } }
+		deposit_blockers_natural_unity_produces_add = 0.5
+	}
+
+	triggered_planet_modifier = {
+		potential = { owner_has_resolution = { RES = resolution_ecology_environmental_control_board } }
+		deposit_blockers_natural_unity_produces_add = 1.0
+	}
+
+	triggered_planet_modifier = {
+		potential = { owner_has_resolution = { RES = resolution_ecology_paradise_initiative } }
+		deposit_blockers_natural_unity_produces_add = 1.5
 	}
 
 	triggered_planet_modifier = {
@@ -1781,6 +1943,16 @@ building_nature_sanctuary_nomad = {
 		}
 	}
 
+	triggered_desc = {
+		text = biologist_is_ark_gardener_tt
+	}
+
+	on_built = {
+		planet = {
+			add_blocker = { type = d_ark_nature_preserve_blocker }
+		}
+	}
+
 	resources = {
 		category = planet_buildings
 		inline_script = {
@@ -1792,6 +1964,28 @@ building_nature_sanctuary_nomad = {
 		}
 		upkeep = {
 			food = @b3_upkeep
+		}
+	}
+	on_destroy = {
+		planet = {
+			if = {
+				limit = { 
+					has_deposit = d_ark_nature_preserve_blocker 
+				}
+				every_deposit = {
+					limit = {
+						is_deposit_type = d_ark_nature_preserve_blocker
+					}
+					remove_deposit = yes
+				}
+			}
+		}
+	}
+	ai_weight = {
+		weight = 100 # If you're a nomadic green empire, this had better be the first thing you build on an arkship, or else you're kinda SOL for ethic and civic perks.
+		modifier = {
+			factor = 10
+			is_fanatic_spiritualist = yes
 		}
 	}
 }
@@ -3043,6 +3237,10 @@ building_nomad_conservatory = {
 			is_country_type = default
 			is_nomadic = yes
 			is_green = yes
+			NOR = { 
+				has_civic = civic_keepers_harmony 
+				has_civic = civic_naturalism
+			}
 		}
 	}
 
@@ -3056,14 +3254,22 @@ building_nomad_conservatory = {
 	}
 
 	destroy_trigger = {
-		owner? = {
-			OR = {
-				owner = { 
-					is_green = no
+		exists = owner
+		OR = {
+			owner = { 
+				is_green = no
+				OR = { 
+					has_civic = civic_keepers_harmony 
+					has_civic = civic_naturalism
 				}
-				has_modifier = slave_colony
 			}
+			has_modifier = slave_colony
 		}
+	}
+
+	convert_to = {
+		building_nature_sanctuary_nomad
+		building_national_park_nomad
 	}
 
 	ai_resource_production = {

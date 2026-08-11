@@ -552,7 +552,6 @@ has_ecc_symbio_gene = {	has_trait = trait_symbiotic }
 is_ecc_direct_democracy = { has_authority = auth_direct_democratic }
 
 # Green Nomad Triggers
-
 is_pilgrimage_site_default = {
 	AND = {
 		is_habitable_planet = yes
@@ -624,15 +623,21 @@ is_pilgrimage_site_space_fauna = {
 				has_global_flag = tiyanki_extinct 
 				has_global_flag = tiyanki_gravekeepers_killed
 			}
-			root = { has_country_flag = tiyanki_encountered } 
+			root = { 
+				has_country_flag = tiyanki_encountered 
+				has_country_flag = tiyanki_graveyard_survey
+			} 
 		}
-		AND = { 
+		AND = {
 			has_star_flag = tiyanki_spawn_system
 			NOR = { 
 				has_global_flag = tiyanki_extinct 
 				has_global_flag = tiyanki_home_cleared
 			}
-			root = { has_country_flag = tiyanki_encountered } 
+			root = { 
+				has_country_flag = tiyanki_encountered 
+				has_country_flag = tiyanki_survey
+			} 
 		}
 		AND = {
 			has_star_flag = elderly_tiyanki_system
@@ -644,11 +649,198 @@ is_pilgrimage_site_space_fauna = {
 		}
 		AND = {
 			has_star_flag = crystal_home_system
-			root = { has_country_flag = pacified_crystals }
+			if = {
+				limit = {
+					any_fleet_in_system = {
+						is_ship_size = crystal_station_large
+					}
+				}
+			}
+			root = { 
+				has_country_flag = pacified_crystals 
+				has_country_flag = found_crystal_construct
+			}
 		}
 		AND = {
 			has_star_flag = amoeba_home_system
-			root = { has_country_flag = pacified_amoebas }
+			if = {
+				limit = {
+					any_fleet_in_system = {
+						is_amoeba_country_type = yes
+					}
+				}
+			}
+			root = { 
+				has_country_flag = pacified_amoebas 
+				has_country_flag = found_amoeba_home_system
+			}
+		}
+	}
+}
+
+is_conservation_site_default = {
+	OR = {
+		NOT = { exists = space_owner }
+
+		AND = {
+			prev.owner = { 
+				is_unfriendly = no
+				has_communications = ROOT
+			}
+			root = { has_research_agreement = prev }
+		}
+	}
+	AND = {
+		is_habitable_planet = yes
+		NOR = {
+			is_planet_class = pc_volcanic
+			is_planet_class = pc_toxic
+			is_planet_class = pc_hive
+			is_planet_class = pc_machine
+			is_artificial = yes
+			is_urban_planet = yes
+		}
+	}
+}
+
+is_conservation_site_wildlife = {
+	OR = {
+		NOT = { exists = space_owner }
+
+		AND = {
+			prev.owner = { 
+				is_unfriendly = no
+				has_communications = ROOT
+			}
+			root = { has_research_agreement = prev }
+		}
+	}
+	OR = {
+		prev.owner = { 
+			OR = {
+				has_origin = origin_primal_calling 
+				has_origin = fruitful
+				is_guided_sapience_empire = yes
+				is_green = yes
+				is_xenophile = yes
+			}
+		}
+
+		has_carrier_flag = pre_sapient_planet
+
+		every_deposit = {
+			limit = { is_deposit_type = d_titanic_life_blocker }
+		}
+		every_deposit = {
+			limit = { is_deposit_type = d_migrating_forests }
+		}
+		every_deposit = {
+			limit = { is_deposit_type = d_migrating_forests_reserve }
+		}
+		every_deposit = {
+			limit = { is_deposit_type = d_wandering_forests }
+		}
+		every_deposit = {
+			limit = { is_deposit_type = d_house_turtle }
+		}
+		every_deposit = {
+			limit = { is_deposit_type = d_living_snow_reserve }
+		}
+		every_deposit = {
+			limit = { is_deposit_type = d_landed_dragon }
+		}
+		every_deposit = {
+			limit = { is_deposit_type = d_alien_pets }
+		}
+		every_deposit = {
+			limit = { is_deposit_type = d_dangerous_wildlife_blocker }
+		}
+		every_deposit = {
+			limit = { is_deposit_type = d_savage_wildlands }
+		}
+	}
+}
+
+is_conservation_site_space_fauna = {
+	OR = {
+		NOT = { exists = space_owner }
+
+		AND = {
+			prev.owner = { 
+				is_unfriendly = no
+				has_communications = ROOT
+			}
+			root = { has_research_agreement = prev }
+		}
+	}
+	OR = {
+		AND = {
+			has_star_flag = tiyanki_graveyard_system
+			NOR = { 
+				has_global_flag = tiyanki_extinct 
+				has_global_flag = tiyanki_gravekeepers_killed
+			}
+			root = { 
+				has_country_flag = tiyanki_encountered 
+				has_country_flag = tiyanki_graveyard_survey
+			} 
+		}
+		AND = {
+			has_star_flag = tiyanki_spawn_system
+			NOR = { 
+				has_global_flag = tiyanki_extinct 
+				has_global_flag = tiyanki_home_cleared
+			}
+			root = { 
+				has_country_flag = tiyanki_encountered 
+				has_country_flag = tiyanki_survey
+			} 
+		}
+		AND = {
+			has_star_flag = elderly_tiyanki_system
+			NOR = {	
+				has_global_flag = tiyanki_extinct 
+				has_global_flag = tiyanki_matriarch_killed
+			}
+			root = {  has_country_flag = encountered_elderly_tiyanki }
+		}
+		AND = {
+			has_star_flag = crystal_home_system
+			any_fleet_in_system = {
+				is_ship_size = crystal_station_large
+			}
+			root = { 
+				has_country_flag = pacified_crystals 
+				has_country_flag = found_crystal_construct
+			}
+		}
+		AND = {
+			has_star_flag = amoeba_home_system
+			any_fleet_in_system = {
+				owner = {
+					is_amoeba_country_type = yes
+				}
+			}
+			root = { 
+				has_country_flag = pacified_amoebas 
+				has_country_flag = found_amoeba_home_system
+			}
+		}
+		AND = {
+			has_star_flag = voidworms_system
+			NOT = {
+				any_fleet_in_system = {
+					owner = {
+						is_voidworms_hostile_country_type = yes
+					}
+				}
+			}
+			root = {
+				has_country_flag = voidworms_encountered 
+				OR = { 
+					has_technology = tech_voidworm_immunity
+				}
+			}
 		}
 	}
 }

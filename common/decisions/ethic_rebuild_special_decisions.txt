@@ -985,6 +985,74 @@ decision_end_witch_hunt = {
 	}
 }
 
+# Environmental Steward Agenda Finisher Decision
+decision_enact_environmental_steward_agenda = {
+	important = yes
+	owned_planets_only = yes
+	sound = event_administrative_work
+	icon = wilderness_planet_expand
+
+	enactment_time = 180
+
+	resources = {
+		category = decisions
+		cost = {
+		}
+	}
+
+	potential = {
+		owner = {
+			is_regular_empire = yes
+			has_country_flag = environmental_stewards_agenda_ready
+		}
+	}
+
+	allow = {
+		NOR = {
+			is_planet_class = pc_city
+			is_planet_class = pc_hive
+			is_planet_class = pc_machine
+			is_planet_class = pc_relic
+			is_planet_class = pc_nuked
+			is_planet_class = pc_volcanic
+			is_planet_class = pc_toxic
+			is_artificial = yes
+		}
+	}
+
+	effect = {
+		hidden_effect = { 
+			owner = { remove_country_flag = environmental_stewards_agenda_ready }
+			add_environmental_steward_agenda = yes 
+		}
+	}
+
+	ai_weight = {
+		weight = 1
+		modifier = { # If it literally will not benefit, the AI should not do it.
+			factor = 0
+			OR = {
+				AND = {
+					NOT = { has_designation = col_research }
+					has_modifier = natural_beauty
+				}
+				has_modifier = environmental_steward_agenda_boost
+			}
+		}
+		modifier = { # AI should only be applying this to worlds where it's useful
+			factor = 0
+			NOR = { 
+				has_designation = col_capital
+				has_designation = col_resort
+				has_designation = col_pleasure
+				has_designation = col_bureau
+				has_designation = col_bureau_spiritualist
+				has_designation = col_research
+			}
+		}
+	}
+}
+
 decision_create_dangerous_wildlife_blocker = {
 	icon = decision_create_dangerous_wildlife
 	owned_planets_only = yes
