@@ -1081,10 +1081,11 @@ building_national_park = {
 		exists = owner
 		AND = {
 			NOT = { has_modifier = slave_colony }
+			owner = { has_valid_civic = civic_naturalism }
 			owner = {
 				AND = {
 					is_regular_empire = yes
-					has_valid_civic = civic_naturalism
+					is_nomadic = no
 				}
 			}
 		}
@@ -1286,6 +1287,92 @@ building_national_park = {
 			}
 			unity = 2
 			society_research = 1
+		}
+	}
+
+	#triggered_desc = {
+	#	trigger = {
+	#		exists = owner
+	#		owner = { is_regular_empire = yes }
+	#	}
+	#	text = job_naturalist_effect_desc
+	#}
+}
+
+# Arkship Eco-park
+building_national_park_nomad = {
+	base_buildtime = @b3_time
+	planet_limit = 1
+
+	category = trade
+
+	building_sets = {
+		government
+		research
+		resort
+	}
+
+	potential = {
+		exists = owner
+		AND = {
+			NOT = { has_modifier = slave_colony }
+			owner = { has_valid_civic = civic_naturalism }
+			owner = {
+				AND = {
+					is_regular_empire = yes
+					is_nomadic = yes
+				}
+			}
+		}
+	}
+
+	allow = {
+		has_deposit = { type = d_ark_nature_preserve_blocker }
+	}
+
+	destroy_trigger = {
+		exists = owner
+		OR = {
+			has_modifier = slave_colony
+			NOT = {
+				has_deposit = d_ark_nature_preserve_blocker
+			}
+			owner = { NOT = { has_valid_civic = civic_naturalism } }
+			owner = { is_regular_empire = no }
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			owner? = { 
+				is_regular_empire = yes 
+				is_nomadic = yes
+			}
+		}
+		modifier = {
+			job_naturalist_per_pop = 0.06
+		}
+	}
+
+	resources = {
+		category = planet_buildings
+		
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = exotic_gases
+			COST = @b3_minerals
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
+		}
+		upkeep = {
+			energy = @b3_upkeep
+		}
+		produces = {
+			trigger = {
+				fromfrom.planet = { has_deposit = d_ark_nature_preserve_blocker }
+			}
+			unity = 4
+			society_research = 1.5 # 2 3.11
 		}
 	}
 
@@ -1626,7 +1713,10 @@ building_nature_sanctuary = {
 		exists = owner
 		AND = {
 			NOT = { has_modifier = slave_colony }
-			owner = { is_regular_empire = yes }
+			owner = { 
+				is_regular_empire = yes 
+				is_nomadic = no
+			}
 			owner = { has_valid_civic = civic_keepers_harmony }
 		}
 	}
@@ -1654,6 +1744,13 @@ building_nature_sanctuary = {
 			}
 			owner = { NOT = { has_valid_civic = civic_keepers_harmony } }
 		}
+	}
+
+	convert_to = {
+		building_temple
+		building_bureaucratic_1
+		building_hive_node
+		building_uplink_node
 	}
 
 	allow = {
@@ -1879,6 +1976,89 @@ building_nature_sanctuary = {
 	#	}
 	#	text = job_druid_effect_desc
 	#}
+}
+
+# Nature Sanctuary
+building_nature_sanctuary_nomad = {
+	base_buildtime = @b3_time
+	planet_limit = 1
+
+	category = unity
+
+	building_sets = {
+		government
+		research
+		resort
+		unity
+	}
+
+	potential = {
+		exists = owner
+		AND = {
+			NOT = { has_modifier = slave_colony }
+			owner = { 
+				is_regular_empire = yes 
+				is_nomadic = yes
+			}
+			owner = { has_valid_civic = civic_keepers_harmony }
+		}
+	}
+
+	allow = {
+		has_deposit = { type = d_ark_nature_preserve_blocker }
+	}
+
+	destroy_trigger = {
+		exists = owner
+		OR = {
+			has_modifier = slave_colony
+			NOT = {
+				has_deposit = d_ark_nature_preserve_blocker
+			}
+			owner = { NOT = { has_valid_civic = civic_keepers_harmony } }
+		}
+	}
+
+	convert_to = {
+		building_temple
+		building_bureaucratic_1
+		building_hive_node
+		building_uplink_node
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			owner? = { is_regular_empire = yes }
+		}
+		modifier = {
+			job_bureaucrat_add = 100
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			has_deposit = d_ark_nature_preserve_blocker
+		}
+		modifier = {
+			planet_jobs_unity_produces_mult = 0.10
+			pop_citizen_happiness = 0.10
+			pop_ethic_green_attraction_mult = 0.10
+		}
+	}
+
+	resources = {
+		category = planet_buildings
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = rare_crystals
+			COST = @b1_minerals
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
+		}
+		upkeep = {
+			food = @b3_upkeep
+		}
+	}
 }
 
 # Interstellar Military Coordination Center
@@ -2224,7 +2404,10 @@ building_ecotourism_center = {
 		exists = owner
 		AND = {
 			NOT = { has_modifier = slave_colony }
-			owner = { is_regular_empire = yes }
+			owner = { 
+				is_regular_empire = yes 
+				is_nomadic = no
+			}
 			OR = {
 				owner = { has_valid_civic = civic_natural_capitalism }
 				owner = { has_valid_civic = civic_natural_capitalism_corporate }
@@ -2942,6 +3125,7 @@ building_thermal_borehole = {
 		}
 	}
 }
+
 building_thermal_borehole_2 = {
 	icon = building_thermal_borehole  # no borehole 2 icon
 	base_buildtime = 600
