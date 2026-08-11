@@ -13105,3 +13105,186 @@ country_event = {
 		}
 	}
 }
+
+
+#########################################################
+#### Keepers of Harmony Planetary Pilgrimage Mechanic ###
+#########################################################
+
+
+# Keepers of Harmony contract generation delayer
+# Fired by: on_yearly_pulse_country
+country_event = {
+	id = EaC_civic_mechanic_events.5004
+	hide_window = yes
+	is_triggered_only = yes
+
+	trigger = {
+		is_nomadic = yes
+		is_regular_empire = yes
+		has_valid_civic = civic_keepers_harmony
+	}
+
+	immediate = {
+		if = {
+			has_country_resource = { type = unity amount < 20000 }
+			country_event = { id = EaC_civic_mechanic_events.5005 days = 15 random = 160 }
+			country_event = { id = EaC_civic_mechanic_events.5005 days = 180 random = 160 }
+		}
+		else = {
+			country_event = { id = EaC_civic_mechanic_events.5005 days = 15 random = 340 }
+		}
+	}
+}
+
+# Keepers of Harmony contracts.
+# Fired by: EaC_civic_mechanic_events.5004
+# this = country
+country_event = {
+	id = EaC_civic_mechanic_events.5005
+	hide_window = yes
+	is_triggered_only = yes
+
+	trigger = {
+		is_nomadic = yes
+		is_regular_empire = yes
+		has_valid_civic = civic_keepers_harmony
+		count_issued_contracts < 3
+	}
+
+	immediate = {
+		save_event_target_as = nomad_country
+		set_variable = { which = planetary_pilgrimage_attempts value = 0 }
+		while = {
+			limit = {
+				NOT = { has_country_flag = planetary_pilgrimage_issued }
+				check_variable = { which = planetary_pilgrimage_attempts value < 5 }
+			}
+			change_variable = { which = planetary_pilgrimage_attempts value = 1 }
+			reroll_random = yes
+			random_list = {
+				# Default Pilgrimage
+				20 = {
+					modifier = {
+						factor = 0
+						NOR = {
+							has_surveyed_class = pc_desert
+							has_surveyed_class = pc_tropical
+							has_surveyed_class = pc_arid
+							has_surveyed_class = pc_continental
+							has_surveyed_class = pc_ocean
+							has_surveyed_class = pc_tundra
+							has_surveyed_class = pc_arctic
+							has_surveyed_class = pc_alpine
+							has_surveyed_class = pc_savannah
+						}
+					}
+					inline_script = {
+						script = events/nomads_planetary_pilgrimage_event
+						VARIANT = 1
+					}
+				}
+				# Presapient Pilgrimage
+				20 = {
+					modifier = {
+						factor = 0
+						NOR = {
+							has_country_flag = found_presapients
+							AND = {
+								every_playable_country = {
+									limit = { is_guided_sapience_empire = yes }
+								}
+								has_communications = ROOT
+							}
+						}
+					}
+					inline_script = {
+						script = events/nomads_planetary_pilgrimage_event
+						VARIANT = 2
+					}
+				}
+				# Holy World Pilgrimage
+				20 = {
+					modifier = {
+						factor = 0
+						NOR = {
+							any_relation = {
+								has_communications = root
+								OR = {
+									is_fallen_empire_spiritualist = yes
+									has_ascension_perk = ap_consecrated_worlds
+								}
+							}
+							has_country_flag = encountered_holy_world
+							has_origin = origin_scion
+							has_civic = civic_scion_spiritualist
+							has_civic = PrimPlayer_civic_scion_spiritualist
+						}
+					}
+					inline_script = {
+						script = events/nomads_planetary_pilgrimage_event
+						VARIANT = 3
+					}
+				}
+				# Unique Lifeforms Pilgrimage
+				20 = {
+					modifier = {
+						factor = 0
+						NOR = {
+							every_playable_country = {
+								limit = { NOT = { has_country_flag = turtle_world_spawned } }
+							}
+							has_global_flag = migrating_forests_global
+						}
+					}
+					inline_script = {
+						script = events/nomads_planetary_pilgrimage_event
+						VARIANT = 4
+					}
+				}
+				# Space Fauna Home System Pilgrimage
+				20 = {
+					# Not found fauna home system
+					modifier = {
+						factor = 0
+						NOR = { 
+							has_encountered_tiyanki = yes 
+							has_encountered_space_amoeba = yes
+							has_encountered_crystalline_entity = yes
+						}
+					}
+					inline_script = {
+						script = events/nomads_planetary_pilgrimage_event
+						VARIANT = 5
+					}
+				}
+			}
+		}
+		remove_country_flag = planetary_pilgrimage_issued
+		remove_country_flag = planetary_pilgrimage_failed
+	}
+}
+
+country_event = {
+	id = EaC_civic_mechanic_events.5006
+	hide_window = yes
+	is_triggered_only = yes
+
+	immediate = {
+		if = {
+			limit = {
+				is_variable_set = planetary_pilgrimage_completed
+			}
+			change_variable = {
+				which = planetary_pilgrimage_completed
+				value = 1
+			}
+		}
+        else = {
+          set_variable = {
+            which = planetary_pilgrimage_completed
+            value = 1
+          }
+       }
+	}
+}
