@@ -96,13 +96,55 @@ arkship_migration_effect = {
 						has_citizenship_type = { type = citizenship_organic_trophy country = prev }
 					}
 				}
-				set_citizenship_type = {
-					type = citizenship_organic_trophy
-					country = prev
+				if = {
+					limit = {
+						NOR = {
+							has_trait = trait_mechanical
+							has_trait = trait_machine_unit
+						}
+					}
+					set_citizenship_type = {
+						type = citizenship_organic_trophy
+						country = prev
+					}
+					set_living_standard = {
+						type = living_standard_organic_trophy
+						country = prev
+					}
 				}
-				set_living_standard = {
-					type = living_standard_organic_trophy
-					country = prev
+				else = {
+					set_citizenship_type = {
+						type = citizenship_cruise_crew
+						country = prev
+					}
+				}
+			}
+		}
+	}
+}
+
+planetary_pilgrimage_scaling_reward_effect = {
+	if = {
+		limit = {
+			is_variable_set = planetary_pilgrimage_completed
+		}
+		root = {
+			if = {
+				limit = { has_country_flag = contract_downtime_taken }
+				add_resource = {
+					unity = $UNITY$
+					mult = value:contract_bonus_value_penalized
+				}
+				hidden_effect = { country_event = { id = nomads.6998 days = 1 } }
+			}
+			else = {
+				add_resource = {
+					unity = $UNITY$
+					mult = value:contract_bonus_value
+				}
+				add_resource = {
+					$RESOURCE$ = $RESOURCE_AMOUNT$
+					mult = value:contract_bonus_value
 				}
 			}
 		}

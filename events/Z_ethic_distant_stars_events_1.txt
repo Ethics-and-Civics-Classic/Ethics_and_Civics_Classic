@@ -564,3 +564,125 @@ country_event = { # Create Full Ratling Empire # Root = Global Event Country
 		set_country_flag = spawned_ratling_country
 	}
 }
+
+country_event = { #Death of the Matriarch
+	id = distar.212
+	title = "distar.212.name"
+	desc = "distar.212.desc"
+	picture = GFX_evt_ancient_tiyanki
+	show_sound = event_space_whale
+	location = event_target:dead_matriarch
+
+	is_triggered_only = yes
+
+	trigger = {
+		exists = event_target:elderly_tiyanki_fleet
+		FromFromFrom.fleet = {
+			is_same_value = event_target:elderly_tiyanki_fleet
+		}
+	}
+
+	immediate = {
+		set_country_flag = tiyanki_killed # Achievement flag
+		create_ambient_object = {
+			type = "elderly_tiyanki_dead_object"
+			location = fromfromfrom
+			effect = {
+				save_event_target_as = dead_matriarch
+			}
+		}
+		every_playable_country = {
+			limit = {
+				has_event_chain = curator_poi_chain
+				fromfrom.solar_system = {
+					is_point_of_interest = {
+						id = curator_poi_tiyanki
+						event_chain = curator_poi_chain
+						owner = prev
+					}
+				}
+			}
+			remove_point_of_interest = curator_poi_tiyanki
+			end_curator_chain = yes
+		}
+		set_global_flag = tiyanki_matriarch_killed
+	}
+
+	option = {
+		name = "distar.212.a"
+		trigger = { NOT = { has_valid_civic = civic_memorialist } }
+		hidden_effect = {
+			if = {
+				limit = { is_country_type = default }
+				country_event = { id = distar.213 }
+				country_event = { id = galcom.110 days = 60 }
+			}
+		}
+	}
+
+	option = {
+		name = UNDERSTOOD
+		trigger = { has_valid_civic = civic_memorialist }
+		hidden_effect = {
+			if = {
+				limit = { is_country_type = default }
+				country_event = { id = distar.213 }
+				country_event = { id = galcom.110 days = 60 }
+			}
+		}
+	}
+
+	option = {
+		name = galactic_features.385.reanimated
+
+		trigger = {
+			is_reanimator = yes
+		}
+
+		event_target:dead_matriarch = {
+			enable_special_project = {
+				name = "REANIMATE_TIYANKI_MATRIARCH"
+				location = this
+				owner = root.owner
+			}
+		}
+
+		hidden_effect = {
+			country_event = { id = distar.213 }
+			country_event = { id = galcom.110 days = 60 }
+		}
+	}
+
+	option = {
+		name = distar.212.b
+		trigger = {
+			can_harvest_dna = yes
+		}
+		set_country_flag = harvested_tiyanki_dna
+		custom_tooltip = distar.212.b.tooltip
+		hidden_effect = {
+			if = {
+				limit = { is_country_type = default }
+				country_event = { id = distar.213 }
+				country_event = { id = galcom.110 days = 60 }
+			}
+		}
+	}
+	after = {
+		if = {
+			limit = {
+				is_robot_empire = no
+				num_owned_planets > 0
+			}
+			generate_parade_city = yes
+			start_situation = {
+				type = leviathan_celebration_opportunity
+				target = event_target:parade_city
+				effect = {
+					set_situation_flag = celebration_tiyanki_matriarch
+					set_situation_flag = standard_unity_reward
+				}
+			}
+		}
+	}
+}
