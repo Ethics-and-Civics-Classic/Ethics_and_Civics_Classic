@@ -835,6 +835,17 @@ enforcer = {
 			condition_string = BATTLE_THRALL_JOB_TRIGGER
 			weight = 10
 		}
+        swap_type = {
+            trigger = {
+                enforcer_is_pirate_combat_instructor = yes
+            }
+            name = pirate_combat_instructor
+            desc = pirate_combat_instructor
+            icon = educator
+            building_icon = building_state_academy
+            condition_string = BATTLE_THRALL_JOB_TRIGGER
+            weight = 35
+        }
 		swap_type = {
 			trigger = {
 				OWNER = { has_edict = negotiate_with_crime_lords_edict }
@@ -886,6 +897,24 @@ enforcer = {
 			#building_icon = building_state_academy
 			condition_string = BATTLE_THRALL_JOB_TRIGGER
 			weight = 20
+		}
+		swap_type = {
+			trigger = {
+				enforcer_is_educator_trigger = no
+				OWNER = { 
+					OR = {
+						has_origin = origin_heirs_of_the_khan
+						has_valid_civic = PrimPlayer_civic_heirs_of_the_khan
+						has_valid_civic = civic_heirs_of_the_khan
+					}
+				}
+			}
+			name = heirs_of_the_khan_enforcer
+			desc = heirs_of_the_khan_enforcer
+			#icon = pirate_lord_enforcer
+			building_icon = building_precinct_house
+			condition_string = BATTLE_THRALL_JOB_TRIGGER
+			weight = 25
 		}
 		swap_type = {
 			trigger = {
@@ -1036,7 +1065,14 @@ enforcer = {
 		planet_defense_armies_add = 1
 		pop_government_ethic_attraction = 0.1
 	}
-	
+
+    triggered_planet_modifier = {
+        potential = {
+            enforcer_is_pirate_combat_instructor = yes		# Pirate Combat Instructor benefit
+        }
+        army_starting_experience_add = 100
+    }
+    
 	inline_script = "jobs/job_enforcer_additional_modifiers"
 
 	triggered_planet_modifier = {	#Modded
@@ -1109,6 +1145,13 @@ enforcer = {
 			factor = 2
 			has_trait = trait_lithoid
 		}
+        modifier = {
+            factor = 1.5
+             OR = {
+                has_trait = trait_robot_integrated_weaponry
+                has_trait = trait_cyborg_integrated_weaponry
+            }
+        }
 	}
 	
 	# Description
@@ -1129,6 +1172,13 @@ enforcer = {
 	#	}
 	#	text = job_mob_boss_enforcer_effect_desc
 	#}
+    triggered_desc = {
+        trigger = {
+            exists = owner
+            enforcer_is_pirate_combat_instructor_trigger = yes
+        }
+        text = job_pirate_combat_instructor_effect_desc
+    }
 	
 	
 	
@@ -1424,6 +1474,7 @@ entertainer = {
 			battle_thrall_job_check_trigger = yes
 			OR = {
 				has_ethic = ethic_militarist
+				has_ethic = ethic_pacifist
 				owner = { is_individual_machine = yes }
 				owner = { is_gestalt = yes }
 			}
@@ -1436,6 +1487,7 @@ entertainer = {
 			battle_thrall_job_check_trigger = yes
 			OR = {
 				has_ethic = ethic_militarist
+				has_ethic = ethic_pacifist
 				owner = { is_individual_machine = yes }
 				owner = { is_gestalt = yes }
 			}
@@ -1770,7 +1822,7 @@ bureaucrat = {
 			condition_string = SPECIALIST_JOB_TRIGGER
 			weight = 35
 		}
-			swap_type = {
+		swap_type = {
 			trigger = {
 				bureaucrat_is_fire_dancer = yes
 			}
@@ -1957,6 +2009,17 @@ bureaucrat = {
 			building_icon = building_pirate_haven
 			weight = 700
 		}
+        swap_type = {
+            trigger = {
+                bureaucrat_is_steward_pirate = yes		# Steward Captain trigger
+            }
+            name = steward_pirate
+            desc = steward_pirate_desc
+            icon = pirate_quartermaster
+            building_icon = building_pirate_haven
+            condition_string = SPECIALIST_JOB_TRIGGER
+            weight = 800
+        }
 		swap_type = {
 			trigger = {
 				bureaucrat_is_sacred_path_specialist = yes
@@ -2229,6 +2292,8 @@ bureaucrat = {
 						has_deposit = d_wandering_forests			# Modded
 						has_deposit = d_migrating_forest_reserve	# Modded
 						has_deposit = d_migrating_forests			# Modded
+						has_deposit = d_house_turtle				# Modded
+						has_deposit = d_living_snow_reserve			# Modded
 						has_deposit = d_alien_pets_deposit			# Modded
 						has_deposit = d_savage_wildlands			# Modded
 					}
@@ -2243,7 +2308,7 @@ bureaucrat = {
 				bureaucrat_is_culture_worker = yes
 				planet = {
 					OR = {
-						has_deposit = d_massive_glacier				# Modded
+						has_deposit = d_massive_glacier 			# Modded
 						has_deposit = d_noxious_swamp				# Modded
 						has_deposit = d_quicksand_basin				# Modded
 						has_deposit = d_deep_sinkhole				# Modded
@@ -2256,6 +2321,8 @@ bureaucrat = {
 						has_deposit = d_wandering_forests			# Modded
 						has_deposit = d_migrating_forest_reserve	# Modded
 						has_deposit = d_migrating_forests			# Modded
+						has_deposit = d_house_turtle				# Modded
+						has_deposit = d_living_snow_reserve			# Modded
 						has_deposit = d_alien_pets_deposit			# Modded
 						has_deposit = d_savage_wildlands			# Modded
 					}
@@ -2268,21 +2335,23 @@ bureaucrat = {
 				bureaucrat_is_druid = yes
 				planet = {
 					NOR = {
-						has_deposit = d_massive_glacier
-						has_deposit = d_noxious_swamp
-						has_deposit = d_quicksand_basin
-						has_deposit = d_deep_sinkhole
-						has_deposit = d_toxic_kelp
-						has_deposit = d_dense_jungle
-						has_deposit = d_active_volcano
-						has_deposit = d_mountain_range
-						has_deposit = d_dangerous_wildlife_blocker
-						has_deposit = d_titanic_life_blocker
-						has_deposit = d_wandering_forests
-						has_deposit = d_migrating_forest_reserve
-						has_deposit = d_migrating_forests
-						has_deposit = d_alien_pets_deposit
-						has_deposit = d_savage_wildlands
+						has_deposit = d_massive_glacier 			# Modded
+						has_deposit = d_noxious_swamp				# Modded
+						has_deposit = d_quicksand_basin				# Modded
+						has_deposit = d_deep_sinkhole				# Modded
+						has_deposit = d_toxic_kelp					# Modded
+						has_deposit = d_dense_jungle				# Modded
+						has_deposit = d_active_volcano				# Modded
+						has_deposit = d_mountain_range				# Modded
+						has_deposit = d_dangerous_wildlife_blocker	# Modded
+						has_deposit = d_titanic_life_blocker		# Modded
+						has_deposit = d_wandering_forests			# Modded
+						has_deposit = d_migrating_forest_reserve	# Modded
+						has_deposit = d_migrating_forests			# Modded
+						has_deposit = d_house_turtle				# Modded
+						has_deposit = d_living_snow_reserve			# Modded
+						has_deposit = d_alien_pets_deposit			# Modded
+						has_deposit = d_savage_wildlands			# Modded
 					}
 				}
 			}
@@ -2293,21 +2362,23 @@ bureaucrat = {
 				bureaucrat_is_druid = yes
 				planet = {
 					OR = {
-						has_deposit = d_massive_glacier
-						has_deposit = d_noxious_swamp
-						has_deposit = d_quicksand_basin
-						has_deposit = d_deep_sinkhole
-						has_deposit = d_toxic_kelp
-						has_deposit = d_dense_jungle
-						has_deposit = d_active_volcano
-						has_deposit = d_mountain_range
-						has_deposit = d_dangerous_wildlife_blocker
-						has_deposit = d_titanic_life_blocker
-						has_deposit = d_wandering_forests
-						has_deposit = d_migrating_forest_reserve
-						has_deposit = d_migrating_forests
-						has_deposit = d_alien_pets_deposit
-						has_deposit = d_savage_wildlands
+						has_deposit = d_massive_glacier 			# Modded
+						has_deposit = d_noxious_swamp				# Modded
+						has_deposit = d_quicksand_basin				# Modded
+						has_deposit = d_deep_sinkhole				# Modded
+						has_deposit = d_toxic_kelp					# Modded
+						has_deposit = d_dense_jungle				# Modded
+						has_deposit = d_active_volcano				# Modded
+						has_deposit = d_mountain_range				# Modded
+						has_deposit = d_dangerous_wildlife_blocker	# Modded
+						has_deposit = d_titanic_life_blocker		# Modded
+						has_deposit = d_wandering_forests			# Modded
+						has_deposit = d_migrating_forest_reserve	# Modded
+						has_deposit = d_migrating_forests			# Modded
+						has_deposit = d_house_turtle				# Modded
+						has_deposit = d_living_snow_reserve			# Modded
+						has_deposit = d_alien_pets_deposit			# Modded
+						has_deposit = d_savage_wildlands			# Modded
 					}
 				}
 			}
@@ -2617,7 +2688,7 @@ bureaucrat = {
 	triggered_planet_modifier = {
 		potential = {
 			bureaucrat_is_sacred_path_specialist = yes
-			owner? = { has_modifier = deeply_devoted_2 }
+			owner = { has_modifier = deeply_devoted_2 }
 		}
 		ship_speed_mult = 0.025
 	}
@@ -2662,7 +2733,26 @@ bureaucrat = {
 		planet_housing_mult = 0.005
 		pop_government_ethic_attraction = -0.015
 	}
-	
+	    
+	# Steward Captain
+    triggered_planet_modifier = {
+        potential = {
+            bureaucrat_is_steward_pirate = yes
+        }
+        planet_stability_add = 0.25
+        planet_orbital_bombardment_damage = -0.012
+    }
+    triggered_planet_modifier = {
+        potential = {
+            bureaucrat_is_steward_pirate = yes
+            has_councilor = {
+                COUNCILOR = councilor_worker_coop
+            }
+        }
+        planet_stability_add = 0.25
+        mult = value:scripted_modifier_councilor_level_mult|MODIFIER|pop_job_stability_mult|TYPE|councilor_worker_coop|
+    }
+
 	#Druid
 	triggered_planet_modifier = {
 		potential = {
@@ -2670,21 +2760,23 @@ bureaucrat = {
 			bureaucrat_is_druid = yes
 			planet = {
 				OR = {
-					has_deposit = d_massive_glacier
-					has_deposit = d_noxious_swamp
-					has_deposit = d_quicksand_basin
-					has_deposit = d_deep_sinkhole
-					has_deposit = d_toxic_kelp
-					has_deposit = d_dense_jungle
-					has_deposit = d_active_volcano
-					has_deposit = d_mountain_range
-					has_deposit = d_dangerous_wildlife_blocker
-					has_deposit = d_titanic_life_blocker
-					has_deposit = d_wandering_forests
-					has_deposit = d_migrating_forest_reserve
-					has_deposit = d_migrating_forests
-					has_deposit = d_alien_pets_deposit
-					has_deposit = d_savage_wildlands
+					has_deposit = d_massive_glacier 			# Modded
+					has_deposit = d_noxious_swamp				# Modded
+					has_deposit = d_quicksand_basin				# Modded
+					has_deposit = d_deep_sinkhole				# Modded
+					has_deposit = d_toxic_kelp					# Modded
+					has_deposit = d_dense_jungle				# Modded
+					has_deposit = d_active_volcano				# Modded
+					has_deposit = d_mountain_range				# Modded
+					has_deposit = d_dangerous_wildlife_blocker	# Modded
+					has_deposit = d_titanic_life_blocker		# Modded
+					has_deposit = d_wandering_forests			# Modded
+					has_deposit = d_migrating_forest_reserve	# Modded
+					has_deposit = d_migrating_forests			# Modded
+					has_deposit = d_house_turtle				# Modded
+					has_deposit = d_living_snow_reserve			# Modded
+					has_deposit = d_alien_pets_deposit			# Modded
+					has_deposit = d_savage_wildlands			# Modded
 				}
 			}
 		}

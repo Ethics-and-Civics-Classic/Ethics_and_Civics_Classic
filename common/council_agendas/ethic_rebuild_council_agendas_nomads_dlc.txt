@@ -1,0 +1,458 @@
+agenda_arkship_engineering_civilian = {
+	agenda_cost = @nomadic_agenda_cost
+	agenda_cooldown = @nomadic_agenda_cooldown
+
+	potential = {
+		is_nomadic = yes
+		has_country_flag = starting_civilian_arkship
+		has_technology = tech_starbase_2
+		NAND = {
+			has_technology = tech_arkship_construction
+			has_technology = tech_arkship_tier_2
+			has_technology = tech_science_arkship
+			has_technology = tech_military_arkship
+			has_technology = tech_arkship_tier_3
+		}
+	}
+
+	modifier = {
+		custom_tooltip = agenda_arkship_engineering_civilian_modifier_tt
+		show_only_custom_tooltip = yes
+		# Scientific buff - Survey Speed (all arkship types)
+		shipsize_civilian_arkship_tier_1_science_survey_speed = @arkship_agenda_mult
+		shipsize_civilian_arkship_tier_2_science_survey_speed = @arkship_agenda_mult
+		shipsize_civilian_arkship_tier_3_science_survey_speed = @arkship_agenda_mult
+		shipsize_science_arkship_tier_1_science_survey_speed = @arkship_agenda_mult
+		shipsize_science_arkship_tier_2_science_survey_speed = @arkship_agenda_mult
+		shipsize_science_arkship_tier_3_science_survey_speed = @arkship_agenda_mult
+		shipsize_military_arkship_tier_1_science_survey_speed = @arkship_agenda_mult
+		shipsize_military_arkship_tier_2_science_survey_speed = @arkship_agenda_mult
+		shipsize_military_arkship_tier_3_science_survey_speed = @arkship_agenda_mult
+		# Military buff - Evasion (all arkship types)
+		shipsize_civilian_arkship_tier_1_evasion_add = @arkship_agenda_static
+		shipsize_civilian_arkship_tier_2_evasion_add = @arkship_agenda_static
+		shipsize_civilian_arkship_tier_3_evasion_add = @arkship_agenda_static
+		shipsize_science_arkship_tier_1_evasion_add = @arkship_agenda_static
+		shipsize_science_arkship_tier_2_evasion_add = @arkship_agenda_static
+		shipsize_science_arkship_tier_3_evasion_add = @arkship_agenda_static
+		shipsize_military_arkship_tier_1_evasion_add = @arkship_agenda_static
+		shipsize_military_arkship_tier_2_evasion_add = @arkship_agenda_static
+		shipsize_military_arkship_tier_3_evasion_add = @arkship_agenda_static
+	}
+
+	effect = {
+		if = { 
+			limit = { NOT = { has_technology = tech_starbase_2 } }
+			add_resource = { unity = 1000 }
+		}
+		else_if = {
+			limit = { NOT = { has_technology = tech_arkship_construction } }
+			add_tech_progress = {
+				tech = tech_arkship_construction
+				progress = @agenda_award_tech_progress_low
+			}
+		}
+		else_if = {
+			limit = { NOT = { has_technology = tech_arkship_tier_2 } }
+			add_tech_progress = {
+				tech = tech_arkship_tier_2
+				progress = @agenda_award_tech_progress_low
+			}
+		}
+		else_if = {
+			limit = {
+				NAND = {
+					has_technology = tech_science_arkship
+					has_technology = tech_military_arkship
+				}
+			}
+			if = {
+				limit = {
+					has_country_flag = arkship_engineering_focus_science
+					NOT = { has_technology = tech_science_arkship }
+				}
+				add_tech_progress = {
+					tech = tech_science_arkship
+					progress = @agenda_award_tech_progress_low
+				}
+			}
+			else_if = {
+				limit = {
+					has_country_flag = arkship_engineering_focus_military
+					NOT = { has_technology = tech_military_arkship }
+				}
+				add_tech_progress = {
+					tech = tech_military_arkship
+					progress = @agenda_award_tech_progress_low
+				}
+			}
+			else_if = {
+				limit = { has_technology = tech_science_arkship }
+				remove_country_flag = arkship_engineering_focus_science
+				add_tech_progress = {
+					tech = tech_military_arkship
+					progress = @agenda_award_tech_progress_low
+				}
+			}
+			else_if = {
+				limit = { has_technology = tech_military_arkship }
+				remove_country_flag = arkship_engineering_focus_military
+				add_tech_progress = {
+					tech = tech_science_arkship
+					progress = @agenda_award_tech_progress_low
+				}
+			}
+			else = {
+				random_list = {
+					1 = {
+						set_country_flag = arkship_engineering_focus_science
+						add_tech_progress = {
+							tech = tech_science_arkship
+							progress = @agenda_award_tech_progress_low
+						}
+					}
+					1 = {
+						set_country_flag = arkship_engineering_focus_military
+						add_tech_progress = {
+							tech = tech_military_arkship
+							progress = @agenda_award_tech_progress_low
+						}
+					}
+				}
+			}
+		}
+		else_if = {
+			limit = { NOT = { has_technology = tech_arkship_tier_3 } }
+			add_tech_progress = {
+				tech = tech_arkship_tier_3
+				progress = @agenda_award_tech_progress_low
+			}
+		}
+	}
+
+	ai_weight = {
+		base = @nomadic_agenda_weight
+		modifier = {
+			factor = 0
+			NOT = { has_technology = tech_starbase_2 }
+		}
+		# Strongly prefer until we can build more Arkships
+		modifier = {
+			factor = 3
+			NOT = { has_technology = tech_arkship_construction }
+		}
+		modifier = {
+			factor = 2
+			count_owned_fleet = {
+				limit = { is_arkship_fleet = yes }
+				count < 3
+			}
+		}
+	}
+}
+
+agenda_arkship_engineering_science = {
+	agenda_cost = @nomadic_agenda_cost
+	agenda_cooldown = @nomadic_agenda_cooldown
+
+	potential = {
+		is_nomadic = yes
+		has_country_flag = starting_science_arkship
+		has_technology = tech_starbase_2
+		NAND = {
+			has_technology = tech_arkship_construction
+			has_technology = tech_arkship_tier_2
+			has_technology = tech_civilian_arkship
+			has_technology = tech_military_arkship
+			has_technology = tech_arkship_tier_3
+		}
+	}
+
+	modifier = {
+		custom_tooltip = agenda_arkship_engineering_science_modifier_tt
+		show_only_custom_tooltip = yes
+		# Civilian buff - Sublight Speed (all arkship types)
+		shipsize_civilian_arkship_tier_1_speed_mult = @arkship_agenda_mult
+		shipsize_civilian_arkship_tier_2_speed_mult = @arkship_agenda_mult
+		shipsize_civilian_arkship_tier_3_speed_mult = @arkship_agenda_mult
+		shipsize_science_arkship_tier_1_speed_mult = @arkship_agenda_mult
+		shipsize_science_arkship_tier_2_speed_mult = @arkship_agenda_mult
+		shipsize_science_arkship_tier_3_speed_mult = @arkship_agenda_mult
+		shipsize_military_arkship_tier_1_speed_mult = @arkship_agenda_mult
+		shipsize_military_arkship_tier_2_speed_mult = @arkship_agenda_mult
+		shipsize_military_arkship_tier_3_speed_mult = @arkship_agenda_mult
+		# Military buff - Evasion (all arkship types)
+		shipsize_civilian_arkship_tier_1_evasion_add = @arkship_agenda_static
+		shipsize_civilian_arkship_tier_2_evasion_add = @arkship_agenda_static
+		shipsize_civilian_arkship_tier_3_evasion_add = @arkship_agenda_static
+		shipsize_science_arkship_tier_1_evasion_add = @arkship_agenda_static
+		shipsize_science_arkship_tier_2_evasion_add = @arkship_agenda_static
+		shipsize_science_arkship_tier_3_evasion_add = @arkship_agenda_static
+		shipsize_military_arkship_tier_1_evasion_add = @arkship_agenda_static
+		shipsize_military_arkship_tier_2_evasion_add = @arkship_agenda_static
+		shipsize_military_arkship_tier_3_evasion_add = @arkship_agenda_static
+	}
+
+	effect = {
+		if = { 
+			limit = { NOT = { has_technology = tech_starbase_2 } }
+			add_resource = { unity = 1000 }
+		}
+		else_if = {
+			limit = { NOT = { has_technology = tech_arkship_construction } }
+			add_tech_progress = {
+				tech = tech_arkship_construction
+				progress = @agenda_award_tech_progress_low
+			}
+		}
+		else_if = {
+			limit = { NOT = { has_technology = tech_arkship_tier_2 } }
+			add_tech_progress = {
+				tech = tech_arkship_tier_2
+				progress = @agenda_award_tech_progress_low
+			}
+		}
+		else_if = {
+			limit = {
+				NAND = {
+					has_technology = tech_civilian_arkship
+					has_technology = tech_military_arkship
+				}
+			}
+			if = {
+				limit = {
+					has_country_flag = arkship_engineering_focus_civilian
+					NOT = { has_technology = tech_civilian_arkship }
+				}
+				add_tech_progress = {
+					tech = tech_civilian_arkship
+					progress = @agenda_award_tech_progress_low
+				}
+			}
+			else_if = {
+				limit = {
+					has_country_flag = arkship_engineering_focus_military
+					NOT = { has_technology = tech_military_arkship }
+				}
+				add_tech_progress = {
+					tech = tech_military_arkship
+					progress = @agenda_award_tech_progress_low
+				}
+			}
+			else_if = {
+				limit = { has_technology = tech_civilian_arkship }
+				remove_country_flag = arkship_engineering_focus_civilian
+				add_tech_progress = {
+					tech = tech_military_arkship
+					progress = @agenda_award_tech_progress_low
+				}
+			}
+			else_if = {
+				limit = { has_technology = tech_military_arkship }
+				remove_country_flag = arkship_engineering_focus_military
+				add_tech_progress = {
+					tech = tech_civilian_arkship
+					progress = @agenda_award_tech_progress_low
+				}
+			}
+			else = {
+				random_list = {
+					1 = {
+						set_country_flag = arkship_engineering_focus_civilian
+						add_tech_progress = {
+							tech = tech_civilian_arkship
+							progress = @agenda_award_tech_progress_low
+						}
+					}
+					1 = {
+						set_country_flag = arkship_engineering_focus_military
+						add_tech_progress = {
+							tech = tech_military_arkship
+							progress = @agenda_award_tech_progress_low
+						}
+					}
+				}
+			}
+		}
+		else_if = {
+			limit = { NOT = { has_technology = tech_arkship_tier_3 } }
+			add_tech_progress = {
+				tech = tech_arkship_tier_3
+				progress = @agenda_award_tech_progress_low
+			}
+		}
+	}
+
+	ai_weight = {
+		base = @nomadic_agenda_weight
+		modifier = {
+			factor = 0
+			NOT = { has_technology = tech_starbase_2 }
+		}
+		# Strongly prefer until we can build more Arkships
+		modifier = {
+			factor = 3
+			NOT = { has_technology = tech_arkship_construction }
+		}
+		modifier = {
+			factor = 2
+			count_owned_fleet = {
+				limit = { is_arkship_fleet = yes }
+				count < 3
+			}
+		}
+	}
+}
+
+agenda_arkship_engineering_military = {
+	agenda_cost = @nomadic_agenda_cost
+	agenda_cooldown = @nomadic_agenda_cooldown
+
+	potential = {
+		is_nomadic = yes
+		has_country_flag = starting_military_arkship
+		has_technology = tech_starbase_2
+		NAND = {
+			has_technology = tech_arkship_construction
+			has_technology = tech_arkship_tier_2
+			has_technology = tech_civilian_arkship
+			has_technology = tech_science_arkship
+			has_technology = tech_arkship_tier_3
+		}
+	}
+
+	modifier = {
+		custom_tooltip = agenda_arkship_engineering_military_modifier_tt
+		show_only_custom_tooltip = yes
+		# Civilian buff - Sublight Speed (all arkship types)
+		shipsize_civilian_arkship_tier_1_speed_mult = @arkship_agenda_mult
+		shipsize_civilian_arkship_tier_2_speed_mult = @arkship_agenda_mult
+		shipsize_civilian_arkship_tier_3_speed_mult = @arkship_agenda_mult
+		shipsize_science_arkship_tier_1_speed_mult = @arkship_agenda_mult
+		shipsize_science_arkship_tier_2_speed_mult = @arkship_agenda_mult
+		shipsize_science_arkship_tier_3_speed_mult = @arkship_agenda_mult
+		shipsize_military_arkship_tier_1_speed_mult = @arkship_agenda_mult
+		shipsize_military_arkship_tier_2_speed_mult = @arkship_agenda_mult
+		shipsize_military_arkship_tier_3_speed_mult = @arkship_agenda_mult
+		# Scientific buff - Survey Speed (all arkship types)
+		shipsize_civilian_arkship_tier_1_science_survey_speed = @arkship_agenda_mult
+		shipsize_civilian_arkship_tier_2_science_survey_speed = @arkship_agenda_mult
+		shipsize_civilian_arkship_tier_3_science_survey_speed = @arkship_agenda_mult
+		shipsize_science_arkship_tier_1_science_survey_speed = @arkship_agenda_mult
+		shipsize_science_arkship_tier_2_science_survey_speed = @arkship_agenda_mult
+		shipsize_science_arkship_tier_3_science_survey_speed = @arkship_agenda_mult
+		shipsize_military_arkship_tier_1_science_survey_speed = @arkship_agenda_mult
+		shipsize_military_arkship_tier_2_science_survey_speed = @arkship_agenda_mult
+		shipsize_military_arkship_tier_3_science_survey_speed = @arkship_agenda_mult
+	}
+
+	effect = {
+		if = { 
+			limit = { NOT = { has_technology = tech_starbase_2 } }
+			add_resource = { unity = 1000 }
+		}
+		else_if = {
+			limit = { NOT = { has_technology = tech_arkship_construction } }
+			add_tech_progress = {
+				tech = tech_arkship_construction
+				progress = @agenda_award_tech_progress_low
+			}
+		}
+		else_if = {
+			limit = { NOT = { has_technology = tech_arkship_tier_2 } }
+			add_tech_progress = {
+				tech = tech_arkship_tier_2
+				progress = @agenda_award_tech_progress_low
+			}
+		}
+		else_if = {
+			limit = {
+				NAND = {
+					has_technology = tech_civilian_arkship
+					has_technology = tech_science_arkship
+				}
+			}
+			if = {
+				limit = {
+					has_country_flag = arkship_engineering_focus_civilian
+					NOT = { has_technology = tech_civilian_arkship }
+				}
+				add_tech_progress = {
+					tech = tech_civilian_arkship
+					progress = @agenda_award_tech_progress_low
+				}
+			}
+			else_if = {
+				limit = {
+					has_country_flag = arkship_engineering_focus_science
+					NOT = { has_technology = tech_science_arkship }
+				}
+				add_tech_progress = {
+					tech = tech_science_arkship
+					progress = @agenda_award_tech_progress_low
+				}
+			}
+			else_if = {
+				limit = { has_technology = tech_civilian_arkship }
+				remove_country_flag = arkship_engineering_focus_civilian
+				add_tech_progress = {
+					tech = tech_science_arkship
+					progress = @agenda_award_tech_progress_low
+				}
+			}
+			else_if = {
+				limit = { has_technology = tech_science_arkship }
+				remove_country_flag = arkship_engineering_focus_science
+				add_tech_progress = {
+					tech = tech_civilian_arkship
+					progress = @agenda_award_tech_progress_low
+				}
+			}
+			else = {
+				random_list = {
+					1 = {
+						set_country_flag = arkship_engineering_focus_civilian
+						add_tech_progress = {
+							tech = tech_civilian_arkship
+							progress = @agenda_award_tech_progress_low
+						}
+					}
+					1 = {
+						set_country_flag = arkship_engineering_focus_science
+						add_tech_progress = {
+							tech = tech_science_arkship
+							progress = @agenda_award_tech_progress_low
+						}
+					}
+				}
+			}
+		}
+		else_if = {
+			limit = { NOT = { has_technology = tech_arkship_tier_3 } }
+			add_tech_progress = {
+				tech = tech_arkship_tier_3
+				progress = @agenda_award_tech_progress_low
+			}
+		}
+	}
+
+	ai_weight = {
+		base = @nomadic_agenda_weight
+		modifier = {
+			factor = 0
+			NOT = { has_technology = tech_starbase_2 }
+		}
+		# Strongly prefer until we can build more Arkships
+		modifier = {
+			factor = 3
+			NOT = { has_technology = tech_arkship_construction }
+		}
+		modifier = {
+			factor = 2
+			count_owned_fleet = {
+				limit = { is_arkship_fleet = yes }
+				count < 3
+			}
+		}
+	}
+}

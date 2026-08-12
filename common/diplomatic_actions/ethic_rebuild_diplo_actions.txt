@@ -1,3 +1,37 @@
+
+# Start a proxy war, usable by regular, fallen & awakened empires
+action_start_proxy_war = {
+	icon = "GFX_diplomacy_status_war"
+	requires_actor_independence = no
+	requires_recipient_independence = no
+	auto_accepted = yes
+	action_type = neutral
+
+	potential = {
+		hidden_trigger = {
+			has_shroud_dlc = yes
+			OR = {
+				has_tradition = tr_subterfuge_finish
+				is_secret_societies_empire = yes
+				has_valid_civic = civic_military_dictatorship
+			}
+		}
+	}
+
+	possible = {
+		custom_tooltip = {
+			fail_text = "NO_RELATION_CAN_DECLARE_WAR"
+			any_relation = {
+				has_communications = from
+			}
+		}
+		custom_tooltip = {
+			fail_text = "PROXY_WAR_ON_COOLDOWN"
+			NOT = { has_country_flag = proxy_war_cooldown }
+		}
+	}
+}
+
 # Turns another empire into a subject peacefully.
 # Intricacies of this relationship, including subject type, are determined by terms of the Agreement between Overlord and subject.
 action_demand_subjugation = {
@@ -256,7 +290,7 @@ action_demand_subjugation = {
 			}
 			OR = {
 				has_origin = origin_heirs_of_the_khan
-				has_origin = origin_heirs_of_the_khan_corporate
+				has_origin = civic_heirs_of_the_khan
 			}
 			desc = RIGHTFUL_KHAN
 		}
@@ -524,7 +558,7 @@ action_ask_to_become_subjugated = {
 			}
 			OR = {
 				has_origin = origin_heirs_of_the_khan
-				has_origin = origin_heirs_of_the_khan_corporate
+				has_origin = civic_heirs_of_the_khan
 			}
 			desc = RIGHTFUL_KHAN
 		}
@@ -643,7 +677,8 @@ action_improve_relation = {
 						current_awareness_level = full
 						observation_owner_is_actor = yes
 					}
-					is_country_type = PrimPlayer_ethic_fanatic_nation
+					is_country_type = PrimPlayer_ethic_fanatic_nation 
+					is_country_type = PrimPlayer_ethic_fanatic_nation_nomadic
 					is_country_type = exiled
 				}
 			}
@@ -758,7 +793,8 @@ action_build_spy_network = {
 						is_primitive = yes
 						observation_owner_is_actor = yes
 					}
-					is_country_type = PrimPlayer_ethic_fanatic_nation
+					is_country_type = PrimPlayer_ethic_fanatic_nation 
+					is_country_type = PrimPlayer_ethic_fanatic_nation_nomadic
 					AND = {
 						is_galactic_emperor = yes
 						has_country_flag = fallen_empire_hive_control
@@ -788,7 +824,7 @@ action_build_spy_network = {
 					from = { is_primitive = yes }
 					NOT = { has_policy_flag = interference_not_allowed }
 				}
-				from = { is_country_type = PrimPlayer_ethic_fanatic_nation }
+				from = { OR = { is_country_type = PrimPlayer_ethic_fanatic_nation is_country_type = PrimPlayer_ethic_fanatic_nation_nomadic } }
 			}
 		}
 		custom_tooltip = {
@@ -833,7 +869,8 @@ action_manage_spy_network = {
 						is_primitive = yes
 						observation_owner_is_actor = yes
 					}
-					is_country_type = PrimPlayer_ethic_fanatic_nation
+					is_country_type = PrimPlayer_ethic_fanatic_nation 
+					is_country_type = PrimPlayer_ethic_fanatic_nation_nomadic
 					AND = {
 						is_galactic_emperor = yes
 						has_country_flag = fallen_empire_hive_control
@@ -855,7 +892,7 @@ action_manage_spy_network = {
 					from = { is_primitive = yes }
 					NOT = { has_policy_flag = interference_not_allowed }
 				}
-				from = { is_country_type = PrimPlayer_ethic_fanatic_nation }
+				from = { OR = { is_country_type = PrimPlayer_ethic_fanatic_nation is_country_type = PrimPlayer_ethic_fanatic_nation_nomadic } }
 			}
 		}
 		custom_tooltip = {
@@ -905,7 +942,8 @@ action_harm_relation = {
 						current_awareness_level = full
 						observation_owner_is_actor = yes
 					}
-					is_country_type = PrimPlayer_ethic_fanatic_nation
+					is_country_type = PrimPlayer_ethic_fanatic_nation 
+					is_country_type = PrimPlayer_ethic_fanatic_nation_nomadic
 					is_country_type = exiled
 				}
 			}
@@ -918,6 +956,7 @@ action_harm_relation = {
 			OR = {
 				NOT = { from = { any_situation = { is_situation_type = PrimPlayer_awareness_situation } } }
 				is_country_type = PrimPlayer_ethic_fanatic_nation	#We want to allow 'Nations' to trade
+				is_country_type = PrimPlayer_ethic_fanatic_nation_nomadic
 			}
 		}
 		custom_tooltip = {
@@ -1148,7 +1187,7 @@ action_form_commercial_pact = {
 			fail_text = requires_20_trust_or_good
 			OR = {
 				from = {
-					is_country_type = PrimPlayer_ethic_fanatic_nation
+					OR = { is_country_type = PrimPlayer_ethic_fanatic_nation is_country_type = PrimPlayer_ethic_fanatic_nation_nomadic }
 				}
 				opinion_level = {
 					who = from
@@ -1176,7 +1215,7 @@ action_form_commercial_pact = {
 		if = {
 			limit = { 
 				from = {
-					is_country_type = PrimPlayer_ethic_fanatic_nation
+					OR = { is_country_type = PrimPlayer_ethic_fanatic_nation is_country_type = PrimPlayer_ethic_fanatic_nation_nomadic }
 				}
 			}
 			always = yes
@@ -1209,13 +1248,13 @@ action_form_commercial_pact = {
 		modifier = {
 			add = 150
 			has_policy_flag = diplo_stance_mercantile
-			is_country_type = PrimPlayer_ethic_fanatic_nation
+			OR = { is_country_type = PrimPlayer_ethic_fanatic_nation is_country_type = PrimPlayer_ethic_fanatic_nation_nomadic }
 			desc = diplo_stance_mercantile
 		}
 		modifier = {
 			add = 100
 			has_policy_flag = diplo_stance_cooperative
-			is_country_type = PrimPlayer_ethic_fanatic_nation
+			OR = { is_country_type = PrimPlayer_ethic_fanatic_nation is_country_type = PrimPlayer_ethic_fanatic_nation_nomadic }
 			desc = diplo_stance_cooperative
 		}
 	}
@@ -1539,7 +1578,7 @@ action_make_rival = {
 				
 				#
 				AND = {
-					is_country_type = PrimPlayer_ethic_fanatic_nation
+					OR = { is_country_type = PrimPlayer_ethic_fanatic_nation is_country_type = PrimPlayer_ethic_fanatic_nation_nomadic }
 					OR = {
 						from = { opinion = { who = root level <= terrible } }
 						opinion = { who = from level level <= terrible }
@@ -1577,7 +1616,7 @@ action_make_rival = {
 		modifier = {
 			factor = 1000
 			exists = from
-			is_country_type = PrimPlayer_ethic_fanatic_nation
+			OR = { is_country_type = PrimPlayer_ethic_fanatic_nation is_country_type = PrimPlayer_ethic_fanatic_nation_nomadic }
 			OR = {
 				from = { opinion = { who = root level <= terrible } }
 				opinion = { who = from level level <= terrible }
