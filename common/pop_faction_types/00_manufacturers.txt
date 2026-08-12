@@ -93,6 +93,7 @@ manufacturers = {
 
 	is_potential = {
 		is_faction_allowed = yes
+		is_nomadic = no
 	}
 
 	parameters = {
@@ -111,13 +112,12 @@ manufacturers = {
 
 	can_join_faction = {
 		is_shackled_robot = no
-		has_culture_shock = no
 		can_think = yes
-		is_industrial = yes
+		is_interlink_cyborg_pop = no
 	}
-	
+
 	attraction = {
-		base = 150
+		base = 100
 		
 		modifier = {
 			factor = 1.25
@@ -257,7 +257,6 @@ manufacturers = {
 		potential = { # TODO get a reasonable trigger for counting colonies?
 			exists = owner
 			owner = {
-				is_nomadic = no
 				any_owned_planet = {
 					NOT = { is_same_value = root.capital_scope }
 					root = {
@@ -288,9 +287,6 @@ manufacturers = {
 
 		potential = {
 			exists = owner
-			owner = {
-				is_nomadic = no
-			}
 		}
 
 		trigger = {
@@ -315,9 +311,6 @@ manufacturers = {
 
 		potential = {
 			exists = owner
-			owner = {
-				is_nomadic = no
-			}
 		}
 
 		trigger = {
@@ -392,9 +385,6 @@ manufacturers = {
 
 		potential = {
 			exists = owner
-			owner = {
-				is_nomadic = yes
-			}
 		}
 
 		trigger = {
@@ -403,219 +393,6 @@ manufacturers = {
 			}
 		}
 	}
-
-    demand = { # "SEEK_INDUSTRIAL_MONUMENTS"
-		title = "SEEK_INDUSTRIAL_MONUMENTS"
-		unfulfilled_title = "NO_SEEK_INDUSTRIAL_MONUMENTS"
-		desc = "SEEK_INDUSTRIAL_MONUMENTS_DESC"
-
-		unfulfilled_effect = -5
-		fulfilled_effect = 0.001
-
-		potential = {
-			exists = owner
-			owner = {
-				is_nomadic = yes
-				has_ascension_perk = ap_wanderlust
-				# You have the objective...
-				AND = {
-					check_variable = {
-						which = galactic_landmark_system_seen
-						value = 0 
-					}
-					check_variable = { 
-						which = ancient_wonders_system_seen
-						value = 0 
-					}
-				}
-				# ... and haven't started yet.
-			}
-		}
-
-        trigger = {
-			always = no
-        }
-    }
-
-    demand = { # "SEEK_INDUSTRIAL_MONUMENTS2"
-		title = "SEEK_INDUSTRIAL_MONUMENTS"
-		unfulfilled_title = "NO_SEEK_INDUSTRIAL_MONUMENTS"
-		desc = "SEEK_INDUSTRIAL_MONUMENTS_DESC"
-
-		fulfilled_effect = 10
-		unfulfilled_effect = -0.001
-
-		potential = {
-			exists = owner
-			owner = {
-				is_nomadic = yes
-				has_ascension_perk = ap_wanderlust
-				# You've seen more than one system...
-				OR = {
-					check_variable = {
-						which = galactic_landmark_system_seen
-						value >= 1 
-					}
-					check_variable = { 
-						which = ancient_wonders_system_seen
-						value >= 1 
-					}
-				}
-				# ...but you aren't done yet.
-				NOR = {
-					has_country_flag = galactic_landmark_completed 
-					has_country_flag = ancient_wonders_completed
-					has_country_flag = nomad_exploration_complete
-				}
-			}
-		}
-
-        trigger = {
-			owner = {
-				OR = {
-					limit = {
-						check_variable_arithmetic = {
-							which = value:galactic_landmark_system_ratio
-							multiply = 1
-							value <= 1
-						}
-					}
-					limit = {
-						check_variable_arithmetic = {
-							which = value:ancient_wonders_system_ratio
-							multiply = 1
-							value <= 1
-						}
-					}
-				}
-			}
-        }
-    }
-
-    demand = { # "SEEK_INDUSTRIAL_MONUMENTS3"
-		title = "SEEK_INDUSTRIAL_MONUMENTS"
-		unfulfilled_title = "NO_SEEK_INDUSTRIAL_MONUMENTS"
-		desc = "SEEK_INDUSTRIAL_MONUMENTS_DESC"
-
-		fulfilled_effect = 15
-		unfulfilled_effect = -0.001
-
-		potential = {
-			exists = owner
-			owner = {
-				is_nomadic = yes
-				has_ascension_perk = ap_wanderlust
-				# You've either seen almost everything...
-				OR = {
-					AND = {
-						limit = {
-							check_variable_arithmetic = {
-								which = value:galactic_landmark_system_ratio
-								multiply = 1
-								value <= 1
-							}
-						}
-						has_country_flag = ancient_wonders_completed
-					}
-					AND = {
-						limit = {
-							check_variable_arithmetic = {
-								which = value:ancient_wonders_system_ratio
-								multiply = 1
-								value >= 1
-							}
-						}
-						has_country_flag = galactic_landmark_completed
-					}
-					# ... or you already have.
-					has_country_flag = nomad_exploration_complete
-				}
-			}
-		}
-
-        trigger = {
-			owner = {
-				OR = {
-					AND = {
-						has_country_flag = galactic_landmark_completed 
-						has_country_flag = ancient_wonders_completed
-					}
-					has_country_flag = nomad_exploration_complete
-				}
-			}
-        }
-    }
-
-	demand = { # "NO_STRIP_MINING"
-		title = "NO_STRIP_MINING"
-		unfulfilled_title = "MANUFACTURERS_NO_STRIP_MINING"
-		desc = "MANUFACTURERS_NO_STRIP_MINING_DESC"
-
-		unfulfilled_effect = -5
-		fulfilled_effect = 10
-
-		potential = {
-			exists = owner
-			owner = {
-                is_nomadic = yes
-			}
-		}
-
-		trigger = {
-			exists = owner
-			owner = {
-				has_country_flag = recently_stripmined_planet
-			}
-		}
-	}
-	
-    demand = { # "NO_STELLAR_IGNITION"
-    	title = "NO_STELLAR_IGNITION"
-		unfulfilled_title = "MANUFACTURERS_NO_STELLAR_IGNITION"
-		desc = "MANUFACTURERS_NO_STELLAR_IGNITION_DESC"
-
-		unfulfilled_effect = -5
-		fulfilled_effect = 50
-
-        potential = {
-            exists = owner
-            owner = {
-			    has_technology = tech_arkship_stellar_igniter
-		
-            }
-        }
-
-		trigger = {
-			exists = owner
-			owner = {
-				has_country_flag = recent_stellar_ignition_planet
-			}
-		}
-    }
-
-    demand = { # "NO_REPROCESS_PLANET"
-		title = "NO_REPROCESS_PLANET"
-		unfulfilled_title = "MANUFACTURERS_NO_REPROCESS_PLANET"
-		desc = "MANUFACTURERS_NO_REPROCESS_PLANET_DESC"
-
-		unfulfilled_effect = -5
-		fulfilled_effect = 20
-
-		potential = {
-			exists = owner
-			owner = {
-                is_nomadic = yes
-                has_technology = tech_arkship_planetary_refinery
-			}
-		}
-
-		trigger = {
-			exists = owner
-			owner = {
-				has_country_flag = recently_reprocessed_planet
-			}
-		}
-    }
 
 	demand = { # Unplugged: Cyberize (Machine Cult Exempt)
 		title = IMPERIALIST_UNPLUGGED_CYBERIZE
@@ -667,7 +444,7 @@ manufacturers = {
 	}
 
 	on_create = {
-		pop_faction_event = { id = factions.0 }
+		pop_faction_event = { id = factions.1 }
 	}
 
 	on_destroy = {
