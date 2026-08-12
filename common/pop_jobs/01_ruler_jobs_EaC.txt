@@ -30,15 +30,6 @@ politician = {
 			desc = job_head_researcher_desc
 			weight = 5
 		}
-		swap_type = {
-			trigger = {
-				politician_is_noble = yes
-			}
-			name = noble
-			icon = noble
-			desc = job_noble_desc
-			weight = 10
-		}
 		swap_type = {	# Enriad - Elite Merchants are Moguls
 			trigger = {
 				politician_is_merchant = yes
@@ -65,6 +56,15 @@ politician = {
 			icon = high_priest
 			desc = job_high_priest_desc
 			weight = 10
+		}
+		swap_type = {
+			trigger = {
+				politician_is_noble = yes
+			}
+			name = noble
+			icon = noble
+			desc = job_noble_desc
+			weight = 20
 		}
 		swap_type = {
 			trigger = {
@@ -173,7 +173,7 @@ politician = {
 			name = noble_researcher
 			icon = noble
 			desc = job_noble_researcher_desc
-			weight = 20
+			weight = 21
 		}
 		swap_type = {
 			trigger = {
@@ -183,7 +183,7 @@ politician = {
 			name = sacred_noble
 			icon = noble
 			desc = job_sacred_noble_desc
-			weight = 20
+			weight = 21
 		}
 		swap_type = {
 			trigger = {
@@ -193,7 +193,7 @@ politician = {
 			name = noble_merchant
 			icon = noble
 			desc = job_noble_merchant_desc
-			weight = 20
+			weight = 21
 		}
 		swap_type = {
 			trigger = {
@@ -203,7 +203,7 @@ politician = {
 			name = noble_supervisor
 			icon = noble
 			desc = job_noble_supervisor_desc
-			weight = 20
+			weight = 22
 		}
 		swap_type = {
 			trigger = {
@@ -213,7 +213,7 @@ politician = {
 			name = noble_commandante
 			icon = noble
 			desc = job_noble_commandante_desc
-			weight = 20
+			weight = 23
 		}
 		swap_type = {
 			trigger = {
@@ -223,7 +223,7 @@ politician = {
 			name = noble_commandante_pirate
 			icon = noble
 			desc = job_noble_commandante_pirate_desc
-			weight = 20
+			weight = 23
 		}
 		swap_type = {
 			trigger = {
@@ -232,7 +232,7 @@ politician = {
 			name = augmentation_merchant
 			icon = augmentor
 			desc = job_augmentation_merchant_desc
-			weight = 20
+			weight = 24
 		}
 		swap_type = {
 			trigger = {
@@ -241,7 +241,7 @@ politician = {
 			name = superstitious_beliefs_high_priest
 			desc = superstitious_beliefs_high_priest
 			icon = superstitious_beliefs_priest
-			weight = 20
+			weight = 25
 		}
 		swap_type = {
 			trigger = {
@@ -250,6 +250,15 @@ politician = {
 			name = superstitious_beliefs_high_priest_corporate
 			desc = superstitious_beliefs_high_priest_corporate
 			icon = superstitious_beliefs_priest
+			weight = 25
+		}
+		swap_type = {
+			trigger = {
+				politician_is_visionary = yes
+			}
+			name = visionary
+			desc = visionary
+			icon = executive
 			weight = 20
 		}
 		swap_type = {
@@ -271,6 +280,15 @@ politician = {
 			desc = job_technophant_desc
 			weight = 30
 		}
+		swap_type = {
+			trigger = {
+				politician_is_sacred_path_elite = yes
+			}
+			name = sacred_path_elite
+			desc = job_sacred_path_elite_desc
+			icon = sacred_path_elite
+			weight = 50
+		}
 	}
 	
 	tags = { unity amenities }
@@ -287,6 +305,7 @@ politician = {
 				politician_is_pyrocrat = yes
 				politician_is_ashbroker = yes
 				politician_is_blazing_harbinger = yes
+				politician_is_sacred_path_elite = yes
 			}
 		}
 		tags = { psionic_aura }
@@ -387,6 +406,16 @@ politician = {
 						politician_is_high_priest = yes
 						politician_is_fire_oracle = yes
 					}
+				}
+			}
+			unity = 2
+		}
+		# High Pilgrim
+		produces = {
+			trigger = {
+				exists = planet
+				planet = {
+					politician_is_sacred_path_elite = yes
 				}
 			}
 			unity = 2
@@ -561,6 +590,15 @@ politician = {
 		}
  		pop_ethic_spiritualist_attraction_mult = 0.10
 	}
+	## Sacred Path - First Light Guidance
+	triggered_planet_modifier = {
+		potential = {
+			politician_is_sacred_path_elite = yes
+			owner? = { has_modifier = first_light_guidance }
+		}
+		planet_stability_add = 0.25
+	}
+
 	#Commander		# Enriad - All bonuses halved to match previous version numbers
 	triggered_country_modifier = {
 		potential = {
@@ -695,18 +733,18 @@ politician = {
 		planet_amenities_add = 500												# Modded
 		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|	# Modded
 	}
-	triggered_country_modifier = {
-		potential = {
-			exists = owner														# Modded
-			owner = {
-				OR = {
-					has_valid_civic = civic_harmonious_hierarchy				# Modded
-					has_valid_civic = civic_harmonious_hierarchy_corporate		# Modded
-				}
-			}
-		}
-		empire_size_pops_mult = -0.001											# Modded
-	}
+#	triggered_country_modifier = {												# Too small a mult, even with hundreds of nobles on a planet. Changing to a civic mult instead. -- Sage
+#		potential = {
+#			exists = owner														# Modded
+#			owner = {
+#				OR = {
+#					has_valid_civic = civic_harmonious_hierarchy				# Modded
+#					has_valid_civic = civic_harmonious_hierarchy_corporate		# Modded
+#				}
+#			}
+#		}
+#		empire_size_pops_mult = -0.001											# Modded
+#	}
 
 	##Machine Cult
 	triggered_planet_modifier = {
@@ -854,6 +892,24 @@ dystopian_enforcer = {
 			#building_icon = building_state_academy
 			condition_string = BATTLE_THRALL_JOB_TRIGGER
 			weight = 20
+		}
+		swap_type = {
+			trigger = {
+				enforcer_is_educator_trigger = no
+				OWNER = { 
+					OR = {
+						has_origin = origin_heirs_of_the_khan
+						has_valid_civic = PrimPlayer_civic_heirs_of_the_khan
+						has_valid_civic = civic_heirs_of_the_khan
+					}
+				}
+			}
+			name = heirs_of_the_khan_enforcer
+			desc = heirs_of_the_khan_enforcer
+			#icon = pirate_lord_enforcer
+			building_icon = building_precinct_house
+			condition_string = BATTLE_THRALL_JOB_TRIGGER
+			weight = 25
 		}
 		swap_type = {
 			trigger = {

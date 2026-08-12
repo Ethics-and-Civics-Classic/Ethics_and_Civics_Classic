@@ -1,0 +1,780 @@
+
+### Forever Cruise - Passenger Satisfaction - Machine Cult additions
+situation_passenger_satisfaction = {
+	picture = GFX_evt_forever_cruise
+	complete_icon_frame = GFX_situation_outcome_frame_red
+	complete_icon = GFX_situation_outcome_revolt
+	fail_icon_frame = GFX_situation_outcome_frame_red
+	fail_icon = GFX_situation_outcome_planet_negative
+
+	category = neutral
+	progress_direction = bidirectional
+	permanent = yes
+	situation_log_category = empire_concerns
+
+	initial_progress = 500
+
+	abort_trigger = {
+		OR = {
+			NOT = { exists = owner }
+			owner = {
+				NOT = { has_origin = origin_forever_cruise }
+			}
+		}
+	}
+
+	on_fail = {
+		custom_tooltip = "situation_passenger_satisfaction_planetfall_outcome"
+		# This is a permanent situation that is destroyed by the Planetfall event
+		hidden_effect = {
+			# This is here just to silence the error log
+		}
+	}
+
+	on_progress_complete = {
+		custom_tooltip = "situation_passenger_satisfaction_mutiny_outcome"
+		# This is a permanent situation that is destroyed by the Mutiny event
+		hidden_effect = {
+			# This is here just to silence the error log
+		}
+	}
+
+	stages = {
+		situation_passenger_satisfaction_stage_planetfall = {
+			end = 1
+			on_first_enter = {
+				set_situation_approach = situation_passenger_satisfaction_balanced
+				set_situation_locked = yes
+				situation_event = { id = nomads.1005 }
+			}
+			modifier = {
+				# Passenger Effects
+				pop_cat_cruise_passenger_happiness = -0.75
+				pop_cat_cruise_passenger_unemployment_happiness = -0.75
+			}
+		}
+		situation_passenger_satisfaction_stage_incensed = {
+			icon = GFX_situation_stage_passenger
+			icon_background = GFX_situation_stage_frame_orange
+			end = 100
+			on_first_enter = {
+				situation_event = { id = nomads.1050 }
+			}
+			triggered_modifier = {
+				potential = {
+					# Crew Approach
+					current_situation_approach = situation_passenger_satisfaction_crew
+				}
+				# Crew Effects
+				specialist_and_complex_drone_cat_bonus_workforce_mult = 0.10
+				# Passenger Effects
+				pop_cat_cruise_passenger_happiness = -0.67
+				pop_cat_cruise_passenger_unemployment_happiness = -0.67
+			}
+			triggered_modifier = {
+				potential = {
+					# Neutral Approach
+					current_situation_approach = situation_passenger_satisfaction_balanced
+				}
+				# Crew Effects
+				specialist_and_complex_drone_cat_bonus_workforce_mult = 0.075
+				# Passenger Effects
+				pop_cat_cruise_passenger_happiness = -0.50
+				pop_cat_cruise_passenger_unemployment_happiness = -0.50
+			}
+			triggered_modifier = {
+				potential = {
+					# Passenger Approach
+					current_situation_approach = situation_passenger_satisfaction_passenger
+				}
+				# Crew Effects
+				specialist_and_complex_drone_cat_bonus_workforce_mult = 0.05
+				# Passenger Effects
+				pop_cat_cruise_passenger_happiness = -0.10
+				pop_cat_cruise_passenger_unemployment_happiness = -0.10
+			}
+		}
+		situation_passenger_satisfaction_stage_bored = {
+			icon = GFX_situation_stage_passenger
+			icon_background = GFX_situation_stage_frame_yellow
+			end = 300
+			on_first_enter = {
+				situation_event = { id = nomads.1100 }
+			}
+			triggered_modifier = {
+				potential = {
+					# Crew Approach
+					current_situation_approach = situation_passenger_satisfaction_crew
+				}
+				# Crew Effects
+				specialist_and_complex_drone_cat_bonus_workforce_mult = 0.075
+				# Passenger Effects
+				pop_cat_cruise_passenger_happiness = -0.33
+				pop_cat_cruise_passenger_unemployment_happiness = -0.33
+			}
+			triggered_modifier = {
+				potential = {
+					# Neutral Approach
+					current_situation_approach = situation_passenger_satisfaction_balanced
+				}
+				# Crew Effects
+				specialist_and_complex_drone_cat_bonus_workforce_mult = 0.05
+				# Passenger Effects
+				pop_cat_cruise_passenger_happiness = -0.25
+				pop_cat_cruise_passenger_unemployment_happiness = -0.25
+			}
+			triggered_modifier = {
+				potential = {
+					# Passenger Approach
+					current_situation_approach = situation_passenger_satisfaction_passenger
+				}
+				# Crew Effects
+				specialist_and_complex_drone_cat_bonus_workforce_mult = 0.025
+				# Passenger Effects
+				pop_cat_cruise_passenger_happiness = -0.10
+				pop_cat_cruise_passenger_unemployment_happiness = -0.10
+			}
+		}
+		situation_passenger_satisfaction_stage_steady = {
+			icon = GFX_situation_stage_balanced
+			icon_background = GFX_situation_stage_frame_green
+			end = 700
+			on_first_enter = {
+				set_variable = {
+					which = passenger_satisfaction_index
+					value = 0
+				}
+				situation_event = { id = nomads.1150 }
+			}
+			# Variable negative (drifting towards Planetfall)
+			triggered_modifier = {
+				potential = {
+					# Strict Itineraries Approach
+					current_situation_approach = situation_passenger_satisfaction_crew
+					check_variable = {
+						which = passenger_satisfaction_index
+						value < 0
+					}
+				}
+				# Crew Effects
+				specialist_and_complex_drone_cat_bonus_workforce_mult = 0.02
+				# Passenger Effects
+				pop_cat_cruise_passenger_happiness = -0.10
+				pop_cat_cruise_passenger_unemployment_happiness = -0.10
+			}
+			# Regular Empire Effects
+			triggered_modifier = {
+				potential = {
+					# Deckside Carnivals Approach
+					current_situation_approach = situation_passenger_satisfaction_passenger
+					check_variable = {
+						which = passenger_satisfaction_index
+						value < 0
+					}
+					owner? = {
+						is_gestalt = no
+					}
+				}
+				# Crew Effects
+				pop_citizen_happiness = -0.10
+				# Passenger Effects
+				pop_cat_cruise_passenger_political_power = 1
+				pop_cat_cruise_passenger_unemployment_political_power = 1
+			}
+			# Gestalt Empire Effects
+			triggered_modifier = {
+				potential = {
+					# Deckside Carnivals Approach
+					current_situation_approach = situation_passenger_satisfaction_passenger
+					check_variable = {
+						which = passenger_satisfaction_index
+						value < 0
+					}
+					owner? = {
+						is_gestalt = yes
+					}
+				}
+				# Crew Effects
+				planet_stability_add = -5
+				# Passenger Effects
+				pop_cat_cruise_passenger_happiness = 0.02
+				pop_cat_cruise_passenger_unemployment_happiness = 0.02
+			}
+			# Variable positive (drifting towards Mutiny)
+			triggered_modifier = {
+				potential = {
+					# Strict Itineraries Approach
+					current_situation_approach = situation_passenger_satisfaction_crew
+					check_variable = {
+						which = passenger_satisfaction_index
+						value > 0
+					}
+				}
+				# Crew Effects
+				specialist_and_complex_drone_cat_bonus_workforce_mult = 0.01
+				# Passenger Effects
+				pop_cat_cruise_passenger_happiness = -0.05
+				pop_cat_cruise_passenger_unemployment_happiness = -0.05
+			}
+			# Regular Empire Effects
+			triggered_modifier = {
+				potential = {
+					# Deckside Carnivals Approach
+					current_situation_approach = situation_passenger_satisfaction_passenger
+					check_variable = {
+						which = passenger_satisfaction_index
+						value > 0
+					}
+					owner? = {
+						is_gestalt = no
+					}
+				}
+				# Crew Effects
+				pop_citizen_happiness = -0.20
+				# Passenger Effects
+				pop_cat_cruise_passenger_political_power = 2
+				pop_cat_cruise_passenger_unemployment_political_power = 2
+			}
+			# Gestalt Empire Effects
+			triggered_modifier = {
+				potential = {
+					# Deckside Carnivals Approach
+					current_situation_approach = situation_passenger_satisfaction_passenger
+					check_variable = {
+						which = passenger_satisfaction_index
+						value > 0
+					}
+					owner? = {
+						is_gestalt = yes
+					}
+				}
+				# Crew Effects
+				planet_stability_add = -10
+				# Passenger Effects
+				pop_cat_cruise_passenger_happiness = 0.04
+				pop_cat_cruise_passenger_unemployment_happiness = 0.04
+			}
+		}
+		situation_passenger_satisfaction_stage_overworked = {
+			icon = GFX_situation_stage_crew
+			icon_background = GFX_situation_stage_frame_yellow
+			end = 900
+			on_first_enter = {
+				situation_event = { id = nomads.1200 }
+			}
+			# Regular Empire Effects
+			triggered_modifier = {
+				potential = {
+					# Crew Approach
+					current_situation_approach = situation_passenger_satisfaction_crew
+					owner? = {
+						is_gestalt = no
+					}
+				}
+				# Crew Effects
+				pop_citizen_happiness = -0.25
+				# Passenger Effects
+				pop_cat_cruise_passenger_political_power = 1
+				pop_cat_cruise_passenger_unemployment_political_power = 1
+			}
+			triggered_modifier = {
+				potential = {
+					# Neutral Approach
+					current_situation_approach = situation_passenger_satisfaction_balanced
+					owner? = {
+						is_gestalt = no
+					}
+				}
+				# Crew Effects
+				pop_citizen_happiness = -0.33
+				# Passenger Effects
+				pop_cat_cruise_passenger_political_power = 2.5
+				pop_cat_cruise_passenger_unemployment_political_power = 2.5
+			}
+			triggered_modifier = {
+				potential = {
+					# Passenger Approach
+					current_situation_approach = situation_passenger_satisfaction_passenger
+					owner? = {
+						is_gestalt = no
+					}
+				}
+				# Crew Effects
+				pop_citizen_happiness = -0.50
+				# Passenger Effects
+				pop_cat_cruise_passenger_political_power = 5
+				pop_cat_cruise_passenger_unemployment_political_power = 5
+			}
+			# Gestalt Empire Effects
+			triggered_modifier = {
+				potential = {
+					# Crew Approach
+					current_situation_approach = situation_passenger_satisfaction_crew
+					owner? = {
+						is_gestalt = yes
+					}
+				}
+				# Crew Effects
+				planet_stability_add = -10
+				# Passenger Effects
+				pop_cat_cruise_passenger_happiness = 0.02
+				pop_cat_cruise_passenger_unemployment_happiness = 0.02
+			}
+			triggered_modifier = {
+				potential = {
+					# Neutral Approach
+					current_situation_approach = situation_passenger_satisfaction_balanced
+					owner? = {
+						is_gestalt = yes
+					}
+				}
+				# Crew Effects
+				planet_stability_add = -25
+				# Passenger Effects
+				pop_cat_cruise_passenger_happiness = 0.05
+				pop_cat_cruise_passenger_unemployment_happiness = 0.05
+			}
+			triggered_modifier = {
+				potential = {
+					# Passenger Approach
+					current_situation_approach = situation_passenger_satisfaction_passenger
+					owner? = {
+						is_gestalt = yes
+					}
+				}
+				# Crew Effects
+				planet_stability_add = -33
+				# Passenger Effects
+				pop_cat_cruise_passenger_happiness = 0.10
+				pop_cat_cruise_passenger_unemployment_happiness = 0.10
+			}
+		}
+		situation_passenger_satisfaction_stage_stressed = {
+			icon = GFX_situation_stage_crew
+			icon_background = GFX_situation_stage_frame_orange
+			end = 999
+			on_first_enter = {
+				situation_event = { id = nomads.1250 }
+			}
+			# Regular Empire Effects
+			triggered_modifier = {
+				potential = {
+					# Crew Approach
+					current_situation_approach = situation_passenger_satisfaction_crew
+					owner? = {
+						is_gestalt = no
+					}
+				}
+				# Crew Effects
+				pop_citizen_happiness = -0.33
+				# Passenger Effects
+				pop_cat_cruise_passenger_political_power = 2.5
+				pop_cat_cruise_passenger_unemployment_political_power = 2.5
+			}
+			triggered_modifier = {
+				potential = {
+					# Neutral Approach
+					current_situation_approach = situation_passenger_satisfaction_balanced
+					owner? = {
+						is_gestalt = no
+					}
+				}
+				# Crew Effects
+				pop_citizen_happiness = -0.50
+				# Passenger Effects
+				pop_cat_cruise_passenger_political_power = 5
+				pop_cat_cruise_passenger_unemployment_political_power = 5
+			}
+			triggered_modifier = {
+				potential = {
+					# Passenger Approach
+					current_situation_approach = situation_passenger_satisfaction_passenger
+					owner? = {
+						is_gestalt = no
+					}
+				}
+				# Crew Effects
+				pop_citizen_happiness = -0.67
+				# Passenger Effects
+				pop_cat_cruise_passenger_political_power = 10
+				pop_cat_cruise_passenger_unemployment_political_power = 10
+			}
+			# Gestalt Empire Effects
+			triggered_modifier = {
+				potential = {
+					# Crew Approach
+					current_situation_approach = situation_passenger_satisfaction_crew
+					owner? = {
+						is_gestalt = yes
+					}
+				}
+				# Crew Effects
+				planet_stability_add = -25
+				# Passenger Effects
+				pop_cat_cruise_passenger_happiness = 0.05
+				pop_cat_cruise_passenger_unemployment_happiness = 0.05
+			}
+			triggered_modifier = {
+				potential = {
+					# Neutral Approach
+					current_situation_approach = situation_passenger_satisfaction_balanced
+					owner? = {
+						is_gestalt = yes
+					}
+				}
+				# Crew Effects
+				planet_stability_add = -33
+				# Passenger Effects
+				pop_cat_cruise_passenger_happiness = 0.10
+				pop_cat_cruise_passenger_unemployment_happiness = 0.10
+			}
+			triggered_modifier = {
+				potential = {
+					# Passenger Approach
+					current_situation_approach = situation_passenger_satisfaction_passenger
+					owner? = {
+						is_gestalt = yes
+					}
+				}
+				# Crew Effects
+				planet_stability_add = -50
+				# Passenger Effects
+				pop_cat_cruise_passenger_happiness = 0.25
+				pop_cat_cruise_passenger_unemployment_happiness = 0.25
+			}
+		}
+		situation_passenger_satisfaction_stage_mutiny = {
+			end = 1000
+			on_first_enter = {
+				set_situation_approach = situation_passenger_satisfaction_balanced
+				set_situation_locked = yes
+				situation_event = { id = nomads.1025 }
+			}
+			triggered_modifier = {
+				potential = {
+					owner? = {
+						is_gestalt = no
+					}
+				}
+				# Crew Effects
+				pop_citizen_happiness = -0.75
+			}
+			triggered_modifier = {
+				potential = {
+					owner? = {
+						is_gestalt = yes
+					}
+				}
+				# Crew Effects
+				planet_stability_add = -67
+			}
+		}
+	}
+	approach = {
+		name = situation_passenger_satisfaction_crew
+		icon = GFX_situation_approach_balance_sheet
+		icon_background = GFX_situation_approach_bg_yellow
+		allow = {
+			custom_tooltip = {
+				fail_text = "situation_passenger_satisfaction_planetfall"
+				owner? = {
+					NOT = {	has_country_flag = forever_cruise_planetfall }
+				}
+			}
+			custom_tooltip = {
+				fail_text = "situation_passenger_satisfaction_mutiny"
+				owner? = {
+					NOT = {	has_country_flag = forever_cruise_mutiny }
+				}
+			}
+		}
+		on_select = {
+			custom_tooltip = "situation_passenger_satisfaction_crew_approach_tt"
+		}
+		custom_tooltip_with_modifiers = "situation_passenger_satisfaction_crew_approach_tt"
+		ai_weight = {
+			base = 0
+		}
+	}
+	approach = {
+		name = situation_passenger_satisfaction_balanced
+		icon = GFX_situation_approach_handshake
+		icon_background = GFX_situation_approach_bg_green
+		allow = {
+			custom_tooltip = {
+				fail_text = "situation_passenger_satisfaction_planetfall"
+				owner? = {
+					NOT = {	has_country_flag = forever_cruise_planetfall }
+				}
+			}
+			custom_tooltip = {
+				fail_text = "situation_passenger_satisfaction_mutiny"
+				owner? = {
+					NOT = {	has_country_flag = forever_cruise_mutiny }
+				}
+			}
+		}
+		on_select = {
+			custom_tooltip = "situation_passenger_satisfaction_balanced_approach_tt"
+		}
+		default = yes
+		ai_weight = {
+			base = 10
+		}
+	}
+	approach = {
+		name = situation_passenger_satisfaction_passenger
+		icon = GFX_situation_approach_amenities
+		icon_background = GFX_situation_approach_bg_yellow
+		allow = {
+			custom_tooltip = {
+				fail_text = "situation_passenger_satisfaction_planetfall"
+				owner? = {
+					NOT = {	has_country_flag = forever_cruise_planetfall }
+				}
+			}
+			custom_tooltip = {
+				fail_text = "situation_passenger_satisfaction_mutiny"
+				owner? = {
+					NOT = {	has_country_flag = forever_cruise_mutiny }
+				}
+			}
+		}
+		on_select = {
+			custom_tooltip = "situation_passenger_satisfaction_passenger_approach_tt"
+		}
+		custom_tooltip_with_modifiers = "situation_passenger_satisfaction_passenger_approach_tt"
+		ai_weight = {
+			base = 0
+		}
+	}
+	on_monthly = {
+		events = {
+			nomads.1055	# Check Planetfall demands
+			nomads.1255	# Check Mutiny demands
+		}
+	}
+	monthly_progress = {
+		base = 0
+		# Modifiers are defined in tooltip order, most important first
+		modifier = {
+			add = 0.5
+			desc = "situation_passenger_satisfaction_bio_trophy_needs"
+			owner = { 
+				OR = {
+					is_hospitality_servitor_empire = yes 
+					is_hospitality_machine_cult_machine_empire = yes
+				}
+			}
+		}
+		modifier = {
+			add = value:count_cruise_passengers
+			desc = "count_cruise_passengers"
+		}
+		modifier = {
+			add = value:count_cruise_passengers_unemployment
+			desc = "count_cruise_passengers_unemployment"
+			owner = { 
+				OR = {
+					is_hospitality_servitor_empire = no 
+					is_hospitality_machine_cult_machine_empire = no
+				}
+			}
+		}
+		modifier = {
+			add = value:count_cruise_passengers_unemployment
+			desc = "count_cruise_passengers_neglected_bio_trophies"
+			owner = {
+				OR = {
+					is_hospitality_servitor_empire = yes 
+					is_hospitality_machine_cult_machine_empire = yes
+				}}
+		}
+		modifier = {
+			mult = 0.5
+			desc = "situation_passenger_satisfaction_passenger"
+			check_variable = {
+				which = passenger_satisfaction_index
+				value < 0
+			}
+			NOR = {
+				has_situation_flag = satisfaction_passengers_grace_period
+				has_situation_flag = satisfaction_crew_grace_period
+			}
+			current_situation_approach = situation_passenger_satisfaction_passenger
+		}
+		modifier = {
+			mult = 0.5
+			desc = "situation_passenger_satisfaction_crew"
+			check_variable = {
+				which = passenger_satisfaction_index
+				value > 0
+			}
+			NOR = {
+				has_situation_flag = satisfaction_passengers_grace_period
+				has_situation_flag = satisfaction_crew_grace_period
+			}
+			current_situation_approach = situation_passenger_satisfaction_crew
+		}
+		modifier = {
+			mult = 0.5
+			desc = "situation_passenger_satisfaction_stage_steady"
+			NOR = {
+				has_situation_flag = satisfaction_passengers_grace_period
+				has_situation_flag = satisfaction_crew_grace_period
+			}
+			current_stage = situation_passenger_satisfaction_stage_steady
+		}
+		modifier = {
+			mult = value:passenger_unity_satisfaction_mult
+			desc = "building_forever_cruise_passenger_unity_situation_slowdown"
+			check_variable = {
+				which = passenger_satisfaction_index
+				value < 0
+			}
+			OR = {
+				current_stage = situation_passenger_satisfaction_stage_steady
+				current_stage = situation_passenger_satisfaction_stage_bored
+				current_stage = situation_passenger_satisfaction_stage_incensed
+			}
+			NOR = {
+				has_situation_flag = satisfaction_passengers_grace_period
+				has_situation_flag = satisfaction_crew_grace_period
+			}
+			owner = {
+				any_owned_colony = {
+					has_active_building = building_forever_cruise_passenger_unity
+				}
+			}
+		}
+		modifier = {
+			mult = value:crew_industry_satisfaction_mult
+			desc = "building_forever_cruise_crew_industry_situation_slowdown"
+			check_variable = {
+				which = passenger_satisfaction_index
+				value > 0
+			}
+			OR = {
+				current_stage = situation_passenger_satisfaction_stage_steady
+				current_stage = situation_passenger_satisfaction_stage_overworked
+				current_stage = situation_passenger_satisfaction_stage_stressed
+			}
+			NOR = {
+				has_situation_flag = satisfaction_passengers_grace_period
+				has_situation_flag = satisfaction_crew_grace_period
+			}
+			owner = {
+				any_owned_colony = {
+					has_active_building = building_forever_cruise_crew_industry
+				}
+			}
+		}
+		modifier = {
+			mult = 0
+			desc = "satisfaction_passengers_grace_period"
+			has_situation_flag = satisfaction_passengers_grace_period
+		}
+		modifier = {
+			mult = 0
+			desc = "satisfaction_crew_grace_period"
+			has_situation_flag = satisfaction_crew_grace_period
+		}
+		modifier = {
+			mult = 2.0
+			desc = "FE_DIFFICULTY"
+			is_difficulty = 6
+		}
+		modifier = {
+			mult = 1.75
+			desc = "FE_DIFFICULTY"
+			is_difficulty = 5
+		}
+		modifier = {
+			mult = 1.5
+			desc = "FE_DIFFICULTY"
+			is_difficulty = 4
+		}
+		modifier = {
+			mult = 1.25
+			desc = "FE_DIFFICULTY"
+			is_difficulty = 3
+		}
+		modifier = {
+			mult = 1
+			desc = "FE_DIFFICULTY"
+			is_difficulty = 2
+		}
+		modifier = {
+			mult = 0.5
+			desc = "FE_DIFFICULTY"
+			is_difficulty = 1
+		}
+		modifier = {
+			mult = 0.25
+			desc = "FE_DIFFICULTY"
+			is_difficulty = 0
+		}
+		modifier = {
+			mult = 0
+			desc = "situation_passenger_satisfaction_planetfall"
+			owner = {
+				has_country_flag = forever_cruise_planetfall
+			}
+		}
+		modifier = {
+			mult = 0
+			desc = "situation_passenger_satisfaction_mutiny"
+			owner = {
+				has_country_flag = forever_cruise_mutiny
+			}
+		}
+	}
+	triggered_modifier = {
+		potential = {
+			owner = { has_country_flag = deferred_maintenance }
+		}
+		planet_structures_upkeep_mult = 0.25
+	}
+	triggered_modifier = {
+		potential = {
+			owner = { has_country_flag = passenger_entertainment_programs }
+		}
+		pop_category_cruise_passenger_consumer_goods_upkeep_add = 0.25
+	}
+	triggered_modifier = {
+		potential = {
+			owner = { has_country_flag = double_crew_shifts }
+		}
+		arkship_action_speed = -0.25
+	}
+	triggered_modifier = {
+		potential = {
+			owner = { has_country_flag = mandatory_crew_rest }
+		}
+		specialist_and_complex_drone_cat_bonus_workforce_mult = -0.10
+	}
+	triggered_modifier = {
+		potential = {
+			owner = { has_country_flag = scaled_back_passenger_programs }
+		}
+		planet_cruise_passengers_unity_produces_mult = -0.50
+	}
+	triggered_modifier = {
+		potential = {
+			owner = { has_country_flag = empowered_crew_leaders }
+		}
+		leaders_upkeep_mult = 0.5
+	}
+	triggered_blocked_desc = {
+		trigger = {
+			owner = { has_country_flag = forever_cruise_planetfall }
+		}
+		text = "situation_passenger_satisfaction_blocked_planetfall"
+	}
+	triggered_blocked_desc = {
+		trigger = {
+			owner = { has_country_flag = forever_cruise_mutiny }
+		}
+		text = "situation_passenger_satisfaction_blocked_mutiny"
+	}
+}

@@ -179,6 +179,12 @@ country_event = {
 					ethic_fanatic_nation_setup_effect = yes
 				}
 			}
+			#if = {
+			#	limit = { ROOT = { is_nomadic = yes } }
+			#	last_created_country = {
+			#		
+			#	}
+			#}
 		}
 		if = {
 			limit = {
@@ -291,6 +297,12 @@ country_event = {
 					ethic_fanatic_nation_setup_effect = yes
 				}
 			}
+			#if = {
+			#	limit = { ROOT = { is_nomadic = yes } }
+			#	last_created_country = {
+			#		
+			#	}
+			#}
 		}
 		if = {
 			limit = {
@@ -365,6 +377,12 @@ country_event = {
 				set_country_flag = ethic_fanatic_xenophobe_nation@root
 				ethic_fanatic_nation_setup_effect = yes
 			}
+			#if = {
+			#	limit = { ROOT = { is_nomadic = yes } }
+			#	last_created_country = {
+			#		
+			#	}
+			#}
 		}
 		if = {
 			limit = {
@@ -473,6 +491,12 @@ country_event = {
 					ethic_fanatic_nation_setup_effect = yes
 				}
 			}
+			#if = {
+			#	limit = { ROOT = { is_nomadic = yes } }
+			#	last_created_country = {
+			#		
+			#	}
+			#}
 		}
 		if = {
 			limit = {
@@ -580,6 +604,12 @@ country_event = {
 					ethic_fanatic_nation_setup_effect = yes
 				}
 			}
+			#if = {
+			#	limit = { ROOT = { is_nomadic = yes } }
+			#	last_created_country = {
+			#		
+			#	}
+			#}
 		}
 		if = {
 			limit = {
@@ -654,6 +684,12 @@ country_event = {
 				set_country_flag = ethic_fanatic_pacifist_nation@root
 				ethic_fanatic_nation_setup_effect = yes
 			}
+			#if = {
+			#	limit = { ROOT = { is_nomadic = yes } }
+			#	last_created_country = {
+			#		
+			#	}
+			#}
 		}
 		if = {
 			limit = {
@@ -766,6 +802,12 @@ country_event = {
 					ethic_fanatic_nation_setup_effect = yes
 				}
 			}
+			#if = {
+			#	limit = { ROOT = { is_nomadic = yes } }
+			#	last_created_country = {
+			#		
+			#	}
+			#}
 		}
 		if = {
 			limit = {
@@ -839,6 +881,12 @@ country_event = {
 				set_country_flag = ethic_fanatic_materialist_nation@root
 				ethic_fanatic_nation_setup_effect = yes
 			}
+			#if = {
+			#	limit = { ROOT = { is_nomadic = yes } }
+			#	last_created_country = {
+			#		
+			#	}
+			#}
 		}
 		if = {
 			limit = {
@@ -937,6 +985,12 @@ country_event = {
 					ethic_fanatic_nation_setup_effect = yes
 				}
 			}
+			#if = {
+			#	limit = { ROOT = { is_nomadic = yes } }
+			#	last_created_country = {
+			#		
+			#	}
+			#}
 		}
 		if = {
 			limit = {
@@ -1049,6 +1103,12 @@ country_event = {
 					ethic_fanatic_nation_setup_effect = yes
 				}
 			}
+			#if = {
+			#	limit = { ROOT = { is_nomadic = yes } }
+			#	last_created_country = {
+			#		
+			#	}
+			#}
 		}
 		if = {
 			limit = {
@@ -1150,6 +1210,12 @@ country_event = {
 					ethic_fanatic_nation_setup_effect = yes
 				}
 			}
+			#if = {
+			#	limit = { ROOT = { is_nomadic = yes } }
+			#	last_created_country = {
+			#		
+			#	}
+			#}
 		}
 		if = {
 			limit = {
@@ -1236,6 +1302,14 @@ country_event = {
 						remove_invalid_civics = no
 					}
 					if = {
+						limit = { 
+							has_paragon_dlc = yes
+							has_civic = PrimPlayer_civic_nation_state 
+						}
+						force_remove_civic = PrimPlayer_civic_nation_state
+						force_add_civic = civic_private_healthcare_corporate
+					}
+					if = {
 						limit = { has_civic = PrimPlayer_civic_feudalism }
 						force_remove_civic = PrimPlayer_civic_feudalism
 						force_add_civic = PrimPlayer_civic_capitalism
@@ -1257,6 +1331,12 @@ country_event = {
 					ethic_fanatic_nation_setup_effect = yes
 				}
 			}
+			#if = {
+			#	limit = { ROOT = { is_nomadic = yes } }
+			#	last_created_country = {
+			#		
+			#	}
+			#}
 		}
 		
 		#####################################################################
@@ -1278,15 +1358,28 @@ country_event = {
 		#
 		#
 		start_situation = { type = PrimPlayer_situation target = this }
+		### Awareness ###
 		if = {
 			limit = { 
-				NOR = {
-					has_civic = PrimPlayer_civic_scion_materialist
-					has_civic = PrimPlayer_civic_scion_spiritualist
-					has_civic = civic_scion_materialist
-					has_civic = civic_scion_spiritualist
+				OR = {
+					has_civic = PrimPlayer_civic_scion_materialist		#Scions are aware of Interstellar Life
+					has_civic = PrimPlayer_civic_scion_spiritualist		#Scions are aware of Interstellar Life
+					has_civic = civic_scion_materialist					#Scions are aware of Interstellar Life
+					has_civic = civic_scion_spiritualist				#Scions are aware of Interstellar Life
 				}
 			}
+			every_country = { 
+				limit = { 
+					OR = {
+						is_country_type = PrimPlayer_ethic_fanatic_nation
+						is_country_type = PrimPlayer_ethic_fanatic_nation_nomadic
+					}
+					has_communications = root
+				}
+				set_awareness = 100
+			}
+		}
+		else = { 
 			start_situation = { type = PrimPlayer_awareness_situation target = this }
 		}
 		############################# Engineering Tech#############################
@@ -1592,65 +1685,82 @@ country_event = {
 		#							CAPITAL World							#
 		#####################################################################
 		capital_scope.solar_system = {
-			### Runaway Greenhouse Effect
-			random_system_planet = {
-				limit = {
-					is_planet_class = pc_toxic 
-					planet_size > 11
+			if = { 
+				limit = { root = { is_nomadic = no } }
+				### Runaway Greenhouse Effect
+				random_system_planet = {
+					limit = {
+						is_planet_class = pc_toxic 
+						planet_size > 11
+					}
+					set_carrier_flag = anomaly_685_flag					#Allows for anomaly.685	Runaway Greenhouse Effect
 				}
-				set_carrier_flag = anomaly_685_flag					#Allows for anomaly.685	Runaway Greenhouse Effect
-			}
-			random_system_planet = {
-				limit = {
-					is_planet_class = pc_gas_giant 
+				random_system_planet = {
+					limit = {
+						is_planet_class = pc_gas_giant 
+					}
+					set_carrier_flag = space_critter_feeding_ground		#Allows for Space Critter attraction & (after being coded) fruitful partnership
 				}
-				set_carrier_flag = space_critter_feeding_ground		#Allows for Space Critter attraction & (after being coded) fruitful partnership
-			}
-			#Spawn pc_asteroid
-			spawn_planet = {
-				class = pc_asteroid
-				#location = solar_system.star
-				location = solar_system
-				orbit_location = yes
-				orbit_distance_offset = 180
-				orbit_angle_offset = 5
-				size = 2
-				init_effect = { 
-					set_name = "N01-6-3942" 
-					random_list = {
-						90 = { 
-							set_carrier_flag = PrimPlayer_asteroid_N01_6_3942_junkyard	#Allows for anomaly.30	Junkyard
-						}
-						10 = { 
-							set_carrier_flag = PrimPlayer_asteroid_N01_6_3942_ore_freighter	#Allows for anomaly.65	Crashed Ore Freighter ;/(Asteroid Base)
+				#Spawn pc_asteroid
+				spawn_planet = {
+					class = pc_asteroid
+					#location = solar_system.star
+					location = solar_system
+					orbit_location = yes
+					orbit_distance_offset = 180
+					orbit_angle_offset = 5
+					size = 2
+					init_effect = { 
+						set_name = "N01-6-3942" 
+						random_list = {
+							75 = { 
+								set_carrier_flag = PrimPlayer_asteroid_N01_6_3942_junkyard	#Allows for anomaly.30	Junkyard
+							}
+							25 = { 
+								set_carrier_flag = PrimPlayer_asteroid_N01_6_3942_ore_freighter	#Allows for anomaly.65	Crashed Ore Freighter ;/(Asteroid Base)
+							}
 						}
 					}
 				}
-			}
-			spawn_planet = {
-				class = pc_asteroid
-				#location = solar_system.star
-				location = solar_system
-				orbit_location = yes
-				orbit_distance_offset = 180
-				orbit_angle_offset = 120
-				size = 2
-				init_effect = { 
-					set_name = "TBR-733" 
-					set_carrier_flag = PrimPlayer_asteroid_TBR_733		#Allows for anomaly.10	Astroid Life
+				spawn_planet = {
+					class = pc_ice_asteroid
+					#location = solar_system.star
+					location = solar_system
+					orbit_location = yes
+					orbit_distance_offset = 180
+					orbit_angle_offset = 120
+					size = 2
+					init_effect = { 
+						set_name = "TBR-733" 
+						set_carrier_flag = PrimPlayer_asteroid_TBR_733		#Allows for anomaly.10	Astroid Life
+					}
 				}
-			}
-			spawn_planet = {
-				class = pc_asteroid
-				#location = solar_system.star
-				location = solar_system
-				orbit_location = yes
-				orbit_distance_offset = 180
-				orbit_angle_offset = 300
-				size = 2
-				init_effect = { 
-					set_name = "K63-4-1078" 
-					set_carrier_flag = PrimPlayer_asteroid_K63_4_1078	#Allows for anomaly.25 Derelict Shipyard
+				spawn_planet = {
+					class = pc_asteroid
+					#location = solar_system.star
+					location = solar_system
+					orbit_location = yes
+					orbit_distance_offset = 180
+					orbit_angle_offset = 300
+					size = 2
+					init_effect = { 
+						set_name = "K63-4-1078" 
+						set_carrier_flag = PrimPlayer_asteroid_K63_4_1078	#Allows for anomaly.25 Derelict Shipyard
+					}
+				}
+				spawn_planet = {
+					class = pc_broken
+					#location = solar_system.star
+					location = solar_system
+					orbit_location = yes
+					orbit_distance_offset = 100
+					orbit_angle_offset = 90
+					size = 16
+					init_effect = { 
+						set_name = "Shattered Hope"
+						set_ring = yes
+						set_carrier_flag = divider_flag	#Allows for Fear of the Dark origin
+					}
 				}
 			}
 			every_system_planet = {
@@ -1669,8 +1779,13 @@ country_event = {
 					is_planet_class = pc_ocean 
 					owner = { is_anglers_empire = yes }	
 				}
-				set_planet_entity = {
-					entity = "ocean_paradise_planet_01_entity"
+				owner = {
+					random_owned_planet = {
+						limit = { is_capital = yes }
+						set_planet_entity = {
+							entity = "ocean_paradise_planet_01_entity"
+						}
+					}
 				}
 				create_ocean_paradise_planet = yes
 			}
@@ -1691,15 +1806,25 @@ country_event = {
 			weighted_random_owned_pop_group = { kill_single_pop = yes }
 			set_carrier_flag = PrimPlayer_primitive_world
 			# clear_deposits = no
-			set_planet_size = 30
-			every_deposit = {
-				limit = {
-					OR = {
-						is_deposit_type =d_decrepit_dwellings
-						is_deposit_type =d_failing_infrastructure
+			if = { 
+				limit = { owner? = { is_nomadic = no } }
+				set_planet_size = 30
+				every_deposit = {
+					limit = {
+						OR = {
+							is_deposit_type =d_decrepit_dwellings
+							is_deposit_type =d_failing_infrastructure
+						}
 					}
+					clear_blocker = yes	# Custom planet blockers (nations) are used instead of industrial wastelands
 				}
-				clear_blocker = yes	# Custom planet blockers (nations) are used instead of industrial wastelands
+			}
+			else = {
+				set_planet_size = 12
+				add_modifier = {
+					modifier = primitive_arkship_planet_modifier
+				}
+				owner = { add_research_option = tech_archaeostudies }
 			}
 			######################
 			# Add nation blockers#
@@ -1892,19 +2017,22 @@ country_event = {
 			if = {
 				limit = { owner = { has_origin = origin_primitive_player_industrial_age } }
 				if = {
-					limit = { owner = { is_regular_empire = yes } }
-					add_district = district_city
-					add_district = district_mining
-				}
-				else_if = {
-					limit = { owner = { is_hive_empire = yes } }
-					add_district = district_hive
-					add_district = district_mining
-				}
-				else_if = {
-					limit = { owner = { is_machine_empire = yes } }
-					add_district = district_nexus
-					add_district = district_mining
+					limit = { owner = { is_nomadic = no } }
+					if = {
+						limit = { owner = { is_regular_empire = yes } }
+						add_district = district_city
+						add_district = district_mining
+					}
+					else_if = {
+						limit = { owner = { is_hive_empire = yes } }
+						add_district = district_hive
+						add_district = district_mining
+					}
+					else_if = {
+						limit = { owner = { is_machine_empire = yes } }
+						add_district = district_nexus
+						add_district = district_mining
+					}
 				}
 			}
 			if = {
@@ -1917,22 +2045,25 @@ country_event = {
 					} 
 				}
 				if = {
-					limit = { owner = { is_regular_empire = yes } }
-					add_district = district_city
-					add_district = district_generator
-					add_district = district_mining
-				}
-				else_if = {
-					limit = { owner = { is_hive_empire = yes } }
-					add_district = district_hive
-					add_district = district_generator
-					add_district = district_mining
-				}
-				else_if = {
-					limit = { owner = { is_machine_empire = yes } }
-					add_district = district_nexus
-					add_district = district_generator
-					add_district = district_mining
+					limit = { owner = { is_nomadic = no } }
+					if = {
+						limit = { owner = { is_regular_empire = yes } }
+						add_district = district_city
+						add_district = district_generator
+						add_district = district_mining
+					}
+					else_if = {
+						limit = { owner = { is_hive_empire = yes } }
+						add_district = district_hive
+						add_district = district_generator
+						add_district = district_mining
+					}
+					else_if = {
+						limit = { owner = { is_machine_empire = yes } }
+						add_district = district_nexus
+						add_district = district_generator
+						add_district = district_mining
+					}
 				}
 			}
 			if = {
@@ -1945,25 +2076,31 @@ country_event = {
 					} 
 				}
 				if = {
-					limit = { owner = { is_regular_empire = yes } }
-					add_district = district_city
-					add_district = district_generator
-					add_district = district_mining
-					add_district = district_mining
+					limit = { owner = { is_nomadic = no } }
+					if = {
+						limit = { owner = { is_regular_empire = yes } }
+						add_district = district_city
+						add_district = district_generator
+						add_district = district_mining
+						add_district = district_mining
+					}
+					else_if = {
+						limit = { owner = { is_hive_empire = yes } }
+						add_district = district_hive
+						add_district = district_generator
+						add_district = district_mining
+						add_district = district_mining
+					}
+					else_if = {
+						limit = { owner = { is_machine_empire = yes } }
+						add_district = district_nexus
+						add_district = district_generator
+						add_district = district_mining
+						add_district = district_mining
+					}
 				}
-				else_if = {
-					limit = { owner = { is_hive_empire = yes } }
-					add_district = district_hive
-					add_district = district_generator
-					add_district = district_mining
-					add_district = district_mining
-				}
-				else_if = {
-					limit = { owner = { is_machine_empire = yes } }
-					add_district = district_nexus
-					add_district = district_generator
-					add_district = district_mining
-					add_district = district_mining
+				else = {
+					add_district = district_ark_generator
 				}
 			}
 			if = {
@@ -1985,7 +2122,17 @@ country_event = {
 				}
 			}
 			else = {
-				add_district = district_farming
+				if = {
+					limit = { owner = { is_nomadic = yes } }
+					add_district = district_ark_basic
+					add_zone = {
+						district = district_ark_basic
+						zone = zone_ark_food
+						zone_slot = ark_basic
+						replace = yes
+					}
+				}
+				else = { add_district = district_farming }
 			}
 			### Building Set Up###
 			remove_all_buildings = yes
@@ -1996,16 +2143,129 @@ country_event = {
 				add_building = building_primitive_dwellings
 				add_building = building_primitive_mine
 				add_building = building_primitive_power_plant
+				if = {
+					limit = { owner = { is_nomadic = yes } }
+					add_building = building_hydroponics_farm
+				}
+				else = { add_building = building_primitive_farm }
 			}
 			else_if = {
 				limit = { owner = { has_origin = origin_primitive_player_industrial_age } }
 				add_building = building_primitive_capital
 				add_building = building_primitive_power_plant
-				add_building = building_primitive_factory
+				if = {
+					limit = { owner = { is_nomadic = yes } }
+					add_building = {
+						#district = district_city
+						zone = zone_ark_industrial
+						building = building_primitive_factory
+					}
+				}
+				else = { 
+					add_building = {
+						#district = district_city
+						zone = zone_trade
+						building = building_primitive_factory
+					}
+				}
+			}
+			else_if = {
+				limit = { owner = { has_origin = origin_primitive_player_atomic_age } }
+				if = {
+					limit = { owner = { is_nomadic = yes } }
+					add_building = {
+						#district = district_city
+						zone = zone_ark_industrial
+						building = building_primitive_factory
+					}
+				}
+				else = { 
+					add_building = {
+						#district = district_city
+						zone = zone_trade
+						building = building_primitive_factory
+					}
+				}
 			}
 			else = {
 				add_building = building_primitive_capital
-				add_building = building_primitive_factory
+				if = {
+					limit = { owner = { is_nomadic = yes } }
+					if = {
+						limit = { owner = { is_regular_empire = yes } }
+						add_building = {
+							#district = district_city
+							zone = zone_ark_industrial
+							building = building_primitive_factory
+						}
+						add_building = {
+							#district = district_city
+							zone = zone_ark_research_unity
+							building = building_primitive_nuclear_plant_apocalyptic
+						}
+						if = { 
+							limit = { 
+								NOT = { has_modifier = irradiated_wasteland  }
+							}
+							add_modifier = { modifier = irradiated_wasteland }
+							add_building = building_fallout_shelter
+						}
+					}
+					else_if = { 
+						limit = {
+							owner? = {
+								is_hive_empire = yes
+								is_wilderness_empire = no
+							}
+						}
+						add_building = {
+							#district = district_city
+							zone = zone_ark_research_unity_gestalt
+							building = building_primitive_nuclear_plant_apocalyptic
+						}
+					}
+					else_if = {
+						limit = {
+							owner? = { is_machine_empire = yes }
+						}
+						add_building = building_primitive_factory 
+						add_building = {
+							#district = district_city
+							zone = zone_ark_research_unity_gestalt
+							building = building_primitive_nuclear_plant_apocalyptic
+						}
+					}
+				}
+				else = {
+					if = { 
+						limit = {
+							owner = {
+								is_hive_empire = yes
+								is_wilderness_empire = no
+							}
+						}
+						add_building = building_primitive_nuclear_plant_apocalyptic 
+					}
+					else_if = {
+						limit = {
+							owner = { is_machine_empire = yes }
+						}
+						add_building = building_primitive_factory 
+						add_building = building_primitive_nuclear_plant_apocalyptic 
+					}
+					else = { 
+						add_building = {
+							#district = district_city
+							zone = zone_trade
+							building = building_primitive_factory
+						}
+						add_building = {
+							#district = district_city
+							zone = zone_urban
+							building = building_primitive_nuclear_plant_apocalyptic
+						}
+					}
+				}
 			}
 			if = {
 				limit = { 
@@ -2016,24 +2276,35 @@ country_event = {
 						}
 					}
 				}
-				add_district = district_farming	
-				add_district = district_farming
-				add_district = district_farming
-				add_district = district_farming
-				add_building = {
-					#district = district_city
-					zone = zone_urban
-					building = building_clone_army_clone_vat
+				if = {
+					limit = { owner = { is_nomadic = no } }
+					add_district = district_farming	
+					add_district = district_farming
+					add_district = district_farming
+					add_district = district_farming
+					add_building = building_clone_army_clone_vat
+					add_building = building_clone_army_clone_vat
+					add_building = {
+						#district = district_city
+						zone = zone_trade
+						building = building_primitive_factory
+					}
 				}
-				add_building = {
-					#district = district_city
-					zone = zone_urban
-					building = building_clone_army_clone_vat
-				}
-				add_building = {
-					#district = district_city
-					zone = zone_trade
-					building = building_primitive_factory
+				else = {
+					add_district = district_ark_military
+					add_building = building_clone_army_clone_vat
+					add_building = building_clone_army_clone_vat
+					add_district = district_ark_basic
+					add_building = {
+						#district = district_city
+						zone = zone_ark_food
+						building = building_hydroponics_farm
+					}
+					add_building = {
+						#district = district_city
+						zone = zone_ark_industrial
+						building = building_primitive_factory
+					}
 				}
 			}
 			if = {
@@ -2042,7 +2313,21 @@ country_event = {
 						has_technology = tech_primitive_universities
 					}
 				}
-				add_building = building_primitive_research
+				if = {
+					limit = { owner = { is_nomadic = yes } }
+					add_building = {
+						#district = district_city
+						zone = zone_ark_research_unity
+						building = building_primitive_research
+					}
+				}
+				else = { 
+					add_building = {
+						#district = district_city
+						zone = zone_urban
+						building = building_primitive_research
+					}
+				}
 			}
 			if = {
 				limit = {
@@ -2067,7 +2352,21 @@ country_event = {
 							}
 						}
 					}
-					add_building = building_autochthon_monument
+					if = {
+						limit = { owner = { is_nomadic = yes } }
+						add_building = {
+							#district = district_city
+							zone = zone_ark_research_unity
+							building = building_autochthon_monument
+						}
+					}
+					else = { 
+						add_building = {
+							#district = district_city
+							zone = zone_urban
+							building = building_autochthon_monument
+						}
+					}
 				}
 				else_if = {
 					limit = {
@@ -2078,7 +2377,21 @@ country_event = {
 							}
 						}
 					}
-					add_building = building_corporate_monument
+					if = {
+						limit = { owner = { is_nomadic = yes } }
+						add_building = {
+							#district = district_city
+							zone = zone_ark_research_unity
+							building = building_corporate_monument
+						}
+					}
+					else = { 
+						add_building = {
+							#district = district_city
+							zone = zone_urban
+							building = building_corporate_monument
+						}
+					}
 				}
 			}
 			if = {
@@ -2097,7 +2410,21 @@ country_event = {
 							}
 						}
 					}
-					add_building = building_heritage_museum
+					if = {
+						limit = { owner = { is_nomadic = yes } }
+						add_building = {
+							#district = district_city
+							zone = zone_ark_research_unity
+							building = building_heritage_museum
+						}
+					}
+					else = { 
+						add_building = {
+							#district = district_city
+							zone = zone_urban
+							building = building_heritage_museum
+						}
+					}
 				}
 				else_if = {
 					limit = {
@@ -2108,7 +2435,21 @@ country_event = {
 							}
 						}
 					}
-					add_building = building_corporate_heritage_museum
+					if = {
+						limit = { owner = { is_nomadic = yes } }
+						add_building = {
+							#district = district_city
+							zone = zone_ark_research_unity
+							building = building_corporate_heritage_museum
+						}
+					}
+					else = { 
+						add_building = {
+							#district = district_city
+							zone = zone_urban
+							building = building_corporate_heritage_museum
+						}
+					}
 				}
 			}
 			# if = {# Hive Node
@@ -2138,7 +2479,10 @@ country_event = {
 
 		}
 		if = {
-			limit = { has_origin = origin_primitive_player_early_space_age }
+			limit = { 
+				has_origin = origin_primitive_player_early_space_age 
+				is_nomadic = no
+			}
 			if = {
 				limit = { always = no }	#Back-up if orbital station requires Overlord DLC
 				create_fleet = {
@@ -2193,6 +2537,15 @@ country_event = {
 			#	fleet_event = { id = random_primitive_events.1 days = 15 }	#Exploration Mission
 			#}
 		}
+		if = {
+			limit = { 
+				is_nomadic = yes
+			}
+			random_controlled_ship = {
+				limit = { is_arkship_ship = yes }
+				set_ship_flag = primitive_arkship_flag
+			}
+		}
 	}
 }
 
@@ -2209,7 +2562,7 @@ country_event = {
 
 	trigger = {
 		is_ai = no
-		from.target = { is_country_type = PrimPlayer_ethic_fanatic_nation }
+		from.target = { OR = { is_country_type = PrimPlayer_ethic_fanatic_nation is_country_type = PrimPlayer_ethic_fanatic_nation_nomadic } }
 		from = {
 			if = {
 				limit ={ TARGET = { has_ethic = ethic_fanatic_authoritarian } }

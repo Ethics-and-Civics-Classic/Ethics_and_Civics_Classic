@@ -1,6 +1,6 @@
 namespace = PrimPlay_situation_event
 namespace = ethic_civic_classic_flag
-
+namespace = nations
 
 ##########################
 # Interstellar Awareness #
@@ -98,7 +98,13 @@ country_event = {
 					is_xenophile = yes
 				}
 			}
-			capital_scope = { has_branch_office = no }
+			capital_scope = {
+				if = { 
+					limit = { has_branch_office = yes }
+					hidden_trigger = { branch_office_owner = { has_country_flag = ethic_fanatic_capitalism_nation@root } }
+				}
+				else = { has_branch_office = no }
+			}
 		}
 		if = {
 			limit = { has_ethic = ethic_fanatic_authoritarian }
@@ -472,6 +478,13 @@ situation_event = {
 	}
 	
 	option = {
+		name = origin_default_nomads
+		trigger = { owner = { is_nomadic = yes } }
+		hidden_effect = { owner = { set_origin = origin_default_nomads } }
+		custom_tooltip = PrimPlay_situation_event.1.origin_default_nomads
+	}
+	
+	option = {
 		name = origin_default
 		hidden_effect = { owner = { set_origin = origin_default } }
 		custom_tooltip = PrimPlay_situation_event.1.origin_default
@@ -535,6 +548,11 @@ situation_event = {
 						limit = { has_civic = PrimPlayer_civic_barbaric_despoilers_khan }
 						force_remove_civic = PrimPlayer_civic_barbaric_despoilers_khan
 						force_add_civic = civic_barbaric_despoilers_khan  
+					}
+					if = {
+						limit = { has_civic = PrimPlayer_civic_heirs_of_the_khan }
+						force_remove_civic = PrimPlayer_civic_heirs_of_the_khan
+						force_add_civic = civic_heirs_of_the_khan  
 					}
 				} 
 			}
@@ -691,6 +709,303 @@ country_event = {
 	 #Random Through the Ages events
 ##########################################
 situation_event = {
+	id = PrimPlay_situation_event.1000
+	hide_window = yes
+	is_triggered_only = yes
+
+	trigger = { 
+		
+	}
+	
+	immediate = { 
+		if = {
+			limit = { 
+				owner = { has_technology = tech_primitive_arkship }
+				NOR = {
+					has_situation_flag = PrimPlay_situation_event_1100_pause
+					has_situation_flag = PrimPlay_situation_event_1100_cooldown
+				}
+			}
+			owner = { 
+				random_controlled_ship = {
+					limit = { 
+						has_ship_flag = primitive_arkship_flag 
+						has_component = EMPTY_DRIVE	#Ideally it's a damaged drive for aesthetic/immersive reasons
+					}
+					ship_event = { id = PrimPlay_situation_event.1100 }
+				}
+			}
+		}
+		if = {
+			limit = { 
+				is_nomadic = no #Arkship storm? I have no idea if this would work...
+				has_cosmic_storms_dlc = yes
+				owner.capital_scope.solar_system = { is_inside_storm = yes }
+				NOR = {
+					has_situation_flag = PrimPlay_situation_event_1002_finished 
+					has_situation_flag = PrimPlay_situation_event_1002_pause
+				}
+			}
+			situation_event = { id = PrimPlay_situation_event.1002 }
+		}
+		random_list = {
+			83 = {
+				#Nothing
+			}
+			12 = {
+				situation_event = { id = PrimPlay_situation_event.1001 }
+				modifier = {
+					factor = 0
+					OR = { 
+						has_situation_flag = PrimPlay_situation_event_1001_finished 
+						has_situation_flag = PrimPlay_situation_event_1001_cancel
+						has_situation_flag = PrimPlay_situation_event_1001_pause
+					}
+				}
+			}
+			10 = {
+				situation_event = { id = PrimPlay_situation_event.1003 }
+				modifier = {
+					factor = 0 
+					has_situation_flag = PrimPlay_situation_event_1003_pause
+				}
+			}
+		}
+	}
+
+}
+
+ship_event = {
+	id = PrimPlay_situation_event.1100
+	title = PrimPlay_situation_event.1100.title
+	desc = PrimPlay_situation_event.1100.desc
+	picture = GFX_evt_mysterious_signal
+	show_sound = event_activating_unknown_technology
+	is_triggered_only = yes
+	location = root
+
+	trigger = { 
+	}
+	
+	immediate = { 
+		owner = { random_situation = { limit = { is_situation_type = PrimPlayer_situation } set_situation_flag = PrimPlay_situation_event_1100_pause } }
+		set_ship_flag = PrimPlay_situation_event_1100
+	}
+	
+	option = {
+		name = PrimPlay_situation_event.1100.deactivate
+		trigger = {
+			owner = {
+				is_materialist = no 
+				is_spiritualist = no
+			}
+		}
+		allow = {
+			owner = {
+				has_country_resource = { type = influence amount >= 50 }
+			}
+		}
+		owner = {
+			add_resource = { influence = -50 }
+		}
+		custom_tooltip = PrimPlay_situation_event.1101.title
+		hidden_effect = { ship_event = { id = PrimPlay_situation_event.1101 days = 30 random = 90 } }
+	}
+	
+	option = {
+		name = PrimPlay_situation_event.1100.materialist
+		trigger = { owner = { is_materialist = yes } }
+		allow = {
+			owner = {
+				has_country_resource = { type = influence amount >= 25 }
+			}
+		}
+		owner = {
+			add_resource = { influence = -25 }
+			add_resource = { unity = 100 }
+		}
+		custom_tooltip = PrimPlay_situation_event.1101.title
+		hidden_effect = { ship_event = { id = PrimPlay_situation_event.1101 days = 30 random = 90 } }
+	}
+	
+	option = {
+		name = PrimPlay_situation_event.1100.spiritualist
+		trigger = { 
+			owner = {
+				is_spiritualist = yes
+				NOR = {
+					has_civic = civic_machine_cult
+					has_civic = civic_machine_cult_machine
+				}
+			}
+		}
+		allow = {
+			owner = {
+				has_country_resource = { type = influence amount >= 25 }
+			}
+		}
+		owner = {
+			add_resource = { influence = -25 }
+			add_resource = { unity = 100 }
+		}
+		custom_tooltip = PrimPlay_situation_event.1101.title
+		hidden_effect = { ship_event = { id = PrimPlay_situation_event.1101 days = 30 random = 90 } }
+	}
+	
+	option = {
+		name = PrimPlay_situation_event.1100.civic_machine_cult.deactivate
+		trigger = { 
+			owner = {
+				OR = {
+					has_civic = civic_machine_cult
+					has_civic = civic_machine_cult_machine
+				}
+			}
+		}
+		owner = {
+			add_resource = { unity = 100 }
+		}
+		custom_tooltip = PrimPlay_situation_event.1101.title
+		hidden_effect = { ship_event = { id = PrimPlay_situation_event.1101 days = 30 random = 90 } }
+	}
+	
+	option = {
+		name = PrimPlay_situation_event.1100.activate
+		trigger = { 
+			owner = {
+				NOR = {
+					has_civic = civic_machine_cult
+					has_civic = civic_machine_cult_machine
+				}
+			}
+		}
+		ship_event = { id = PrimPlay_situation_event.1102 days = 30 }
+	}
+	
+	option = {
+		name = PrimPlay_situation_event.1100.civic_machine_cult.activate
+		trigger = { 
+			owner = {
+				OR = {
+					has_civic = civic_machine_cult
+					has_civic = civic_machine_cult_machine
+				}
+			}
+		}
+		owner = {
+			add_resource = { influence = 25 }
+			add_resource = { unity = 300 }
+		}
+		ship_event = { id = PrimPlay_situation_event.1102 days = 30 random = 15 }
+	}
+
+	#after = { remove_situation_flag = PrimPlay_situation_event_1100_pause }	#Removed elsewhere
+}
+
+#Shut Down FTL Drive
+ship_event = {
+	id = PrimPlay_situation_event.1101
+	title = PrimPlay_situation_event.1101.title
+	desc = PrimPlay_situation_event.1101.desc
+	picture = GFX_evt_generator_powerup
+	show_sound = event_structural_collapse
+	is_triggered_only = yes
+	location = root
+	
+	hide_window = yes	#This event feels redundant
+
+	trigger = { 
+		
+	}
+	
+	immediate = { 
+		remove_ship_flag = PrimPlay_situation_event_1100
+		hidden_effect = {
+			owner = { 
+				random_situation = { 
+					limit = { is_situation_type = PrimPlayer_situation } 
+					set_timed_situation_flag = {
+						flag = PrimPlay_situation_event_1100_cooldown
+						years = 5
+					}
+				}
+			}
+		}
+	}
+	
+	#option = {
+	#	name = PrimPlay_situation_event.1101.a
+	#}
+
+	after = { owner = { random_situation = { limit = { is_situation_type = PrimPlayer_situation } remove_situation_flag = PrimPlay_situation_event_1100_pause } } }
+}
+
+#FTL Drive Activated
+ship_event = {
+	id = PrimPlay_situation_event.1102
+	title = PrimPlay_situation_event.1102.title
+	desc = PrimPlay_situation_event.1102.desc
+	picture = GFX_evt_arkship_in_orbit
+	show_sound = event_mystic_reveal_light
+	is_triggered_only = yes
+	#location = ship.fleet.solar_system
+	location = root
+
+	trigger = { 
+		
+	}
+	
+	immediate = {
+		hidden_effect = {
+			owner = { 
+				random_situation = { 
+					limit = { is_situation_type = PrimPlayer_situation } 
+					set_timed_situation_flag = {
+						flag = PrimPlay_situation_event_1100_cooldown
+						years = 5
+					}
+				}
+			}
+		}
+		fleet = {
+			solar_system = {
+				random_neighbor_system = {
+					ROOT.fleet = {
+						set_location = {
+							target = PREV
+							distance = 150
+							angle = random
+							direction = in_system
+						}
+					}
+				}
+			}
+		}
+		remove_ship_flag = PrimPlay_situation_event_1100
+	}
+	
+	option = {
+		name = PrimPlay_situation_event.1102.a
+		trigger = {
+			fleet.solar_system = {
+				any_system_planet = { is_surveyed = { who = root.owner status = no } }
+			}
+		}
+	}
+	
+	option = {
+		name = PrimPlay_situation_event.1102.b
+		trigger = {
+			fleet.solar_system = {
+				any_system_planet = { is_surveyed = { who = root.owner status = yes } }
+			}
+		}
+	}
+
+	after = { owner = { random_situation = { limit = { is_situation_type = PrimPlayer_situation } remove_situation_flag = PrimPlay_situation_event_1100_pause } } }
+}
+
+situation_event = {
 	id = PrimPlay_situation_event.1001
 	title = PrimPlay_situation_event.1001.title
 	desc = PrimPlay_situation_event.1001.desc
@@ -749,6 +1064,7 @@ situation_event = {
 					has_ethic = ethic_fanatic_pacifist
 					NOT = { has_ethic = ethic_fanatic_pacifist }
 				}
+				is_nomadic = no
 			}
 		}
 		set_situation_flag = PrimPlay_situation_event_1001_finished
@@ -777,7 +1093,9 @@ situation_event = {
 			has_situation_flag = PrimPlay_situation_event_1002_finished 
 			has_situation_flag = PrimPlay_situation_event_1002_pause
 		}
-		owner = { has_technology = tech_primitive_radiowave_telescope }
+		owner = { 
+			has_technology = tech_primitive_radiowave_telescope 
+		}
 	}
 	
 	immediate = { set_situation_flag = PrimPlay_situation_event_1002_pause }
@@ -792,8 +1110,8 @@ situation_event = {
 			capital_scope = {
 				enable_special_project = {
 					name = "STORM_CHASER_CAPSULE_PROJECT"
-					location = this
-					owner = PREV.PREV
+					location = root.owner.capital_scope
+					owner = root.owner
 				}
 				if = {
 					limit = { NOT = { has_modifier = irradiated_wasteland } }	#Might conflict with tomb world
@@ -817,13 +1135,13 @@ situation_event = {
 			capital_scope = {
 				enable_special_project = {
 					name = "STORM_CHASER_CAPSULE_PROJECT"
-					location = this
-					owner = PREV.PREV
+					location = root.owner.capital_scope
+					owner = root.owner
 				}
 				enable_special_project = {
 					name = "STORM_CHASER_CAPSULE_PROJECT_CANCEL"
-					location = this
-					owner = PREV.PREV
+					location = root.owner.capital_scope
+					owner = root.owner
 				}
 				if = {
 					limit = { NOT = { has_modifier = irradiated_wasteland } }	#Might conflict with tomb world
@@ -849,8 +1167,8 @@ situation_event = {
 			capital_scope = {
 				enable_special_project = {
 					name = "STORM_CHASER_CAPSULE_PROJECT_CANCEL"
-					location = this
-					owner = PREV.PREV
+					location = root.owner.capital_scope
+					owner = root.owner
 				}
 				if = {
 					limit = { NOT = { has_modifier = irradiated_wasteland } }	#Might conflict with tomb world
@@ -1169,15 +1487,21 @@ country_event = {
 	title = PrimPlay_situation_event.3.title
 	desc = {
 		trigger = {
-			owner = {
-				NOT = {
-					is_eager_explorer_empire = no
-					has_origin = origin_payback
-					has_origin = origin_broken_shackles
-				}
+			NOR = {
+				has_country_flag = PrimPlayer_exploding_planet
+				is_eager_explorer_empire = no
+				has_origin = origin_payback
+				has_origin = origin_broken_shackles
 			}
 		}
 		text = "PrimPlay_situation_event.3.desc"
+	}
+	desc = {
+		trigger = { 
+			has_country_flag = origin_fear_of_the_dark
+			has_country_flag = PrimPlayer_exploding_planet
+		}
+		text = "PrimPlay_situation_event.3.origin_fear_of_the_dark.desc"
 	}
 	# desc = {
 	#	trigger = { owner = { has_civic = civic_eager_explorers } }
@@ -1196,11 +1520,11 @@ country_event = {
 	#	text = "PrimPlay_situation_event.3.civic_hive_stargazers_effects.desc"
 	#}
 	desc = {
-		trigger = { owner = { has_origin = origin_payback } }
+		trigger = { has_origin = origin_payback }
 		text = "PrimPlay_situation_event.3.payback.desc"
 	}
 	desc = {
-		trigger = { owner = { has_origin = origin_broken_shackles } }
+		trigger = { has_origin = origin_broken_shackles }
 		text = "PrimPlay_situation_event.3.broken_shackles.desc"
 	}
 	picture = GFX_evt_city_planet
@@ -1212,17 +1536,27 @@ country_event = {
 	option = {
 		name = PrimPlay_situation_event.3.into_the_unknown
 		trigger = {
-			owner = {
-				NOR = {
-					has_origin = origin_payback
-					has_origin = origin_broken_shackles
-					capital_scope = { is_planet_class = pc_nuked }
-				}
-				# is_eager_explorer_empire = no
+			NOR = {
+				has_country_flag = origin_fear_of_the_dark
+				has_country_flag = PrimPlayer_exploding_planet
+				has_origin = origin_payback
+				has_origin = origin_broken_shackles
+				capital_scope = { is_planet_class = pc_nuked }
 			}
+			# is_eager_explorer_empire = no
 		}
 		start_situation = { type = PrimPlayer_unified_planet_situation target = this }
 		random_situation = { limit = { is_situation_type = PrimPlayer_unified_planet_situation } set_situation_approach = into_the_unknown }
+	}
+	
+	option = {
+		name = PrimPlay_situation_event.3.origin_fear_of_the_dark
+		trigger = {
+			has_country_flag = origin_fear_of_the_dark
+			has_country_flag = PrimPlayer_exploding_planet
+		}
+		start_situation = { type = PrimPlayer_unified_planet_situation target = this }
+		random_situation = { limit = { is_situation_type = PrimPlayer_unified_planet_situation } set_situation_approach = PrimPlayer_fear_of_the_dark_approach }
 	}
 
 	# option = {

@@ -16,7 +16,7 @@ can_nomad_settle = {
 			NOR = {
 				has_origin = origin_sacred_path
 				has_origin = origin_heirs_of_the_khan
-				has_origin = origin_heirs_of_the_khan_corporate
+				has_origin = civic_heirs_of_the_khan
 				AND = {
 					has_origin = origin_forever_cruise
 					NOT = {
@@ -36,7 +36,7 @@ can_nomad_settle = {
 						has_origin = origin_forever_cruise
 						has_origin = origin_sacred_path
 						has_origin = origin_heirs_of_the_khan
-						has_origin = origin_heirs_of_the_khan_corporate
+						has_origin = civic_heirs_of_the_khan
 					}
 				}
 			}
@@ -296,7 +296,7 @@ should_force_decline_species = {
 									has_origin = origin_clone_army							# Can't have Vats.
 									has_civic = PrimPlayer_civic_barbaric_despoilers_khan	# Can't have Vats.
 									has_civic = civic_barbaric_despoilers_khan				# Can't have Vats.
-								}					
+								}
 								has_country_flag = clone_army_fertility_unlocked			# Can't have Vats anymore.
 								NOT = { owner_main_species = { is_same_species = root } }	# Our Vats can't build this species.
 							}
@@ -350,6 +350,7 @@ is_valid_rival = {
 				}
 				is_country_type = mirrored_country # Mirrored Empire doesn't have relative power but we want to be rivals anyway
 				is_country_type = PrimPlayer_ethic_fanatic_nation # Primitive Nations always has a pathetic relative power but we want to have rivals anyway
+				is_country_type = PrimPlayer_ethic_fanatic_nation_nomadic
 			}
 		}
 	}
@@ -503,18 +504,18 @@ can_build_branch_office_on_colony = {
 		if = {
 			limit = {
 				root = { is_worker_coop_empire = yes }
-				OWNER = { 
+				OWNER = {
 					is_primitive = no
 					OR = {
-						has_policy_flag = slavery_allowed 
+						has_policy_flag = slavery_allowed
 						any_owned_pop_group = {
 							has_living_standard = { type = living_standard_stratified }
 						}
 					}
 				}
 			}
-			OWNER = { 
-				has_country_flag = EaC_operation_complete_establish_underground_railroad@root 
+			OWNER = {
+				has_country_flag = EaC_operation_complete_establish_underground_railroad@root
 			}
 		}
 	}
@@ -562,9 +563,9 @@ can_build_branch_office_on_colony = {
 				AND = {
 					root = { is_worker_coop_empire = yes }
 					#this = { any_owned_pop_group = { is_enslaved = yes } }
-					OWNER = { 
+					OWNER = {
 						OR = {
-							has_policy_flag = slavery_allowed 
+							has_policy_flag = slavery_allowed
 							any_owned_pop_group = {
 								has_living_standard = { type = living_standard_stratified }
 							}
@@ -708,14 +709,14 @@ can_build_branch_office_on_colony = {
 		NOT = { is_planet_class = pc_cosmogenesis_world }
 	}
 	#OR = {
-		custom_tooltip = {
-			fail_text = NO_BRANCH_OFFICE_ON_SELF
-			owner = { NOT = { is_same_value = root } }
-		}
-		#AND = {
-		#	has_modifier = resort_colony_branch
-		#	owner = { is_same_value = root }
-		#}
+	custom_tooltip = {
+		fail_text = NO_BRANCH_OFFICE_ON_SELF
+		owner = { NOT = { is_same_value = root } }
+	}
+	#AND = {
+	#	has_modifier = resort_colony_branch
+	#	owner = { is_same_value = root }
+	#}
 	#}
 }
 
@@ -749,6 +750,8 @@ can_orbitable_repair_ships = {
 				has_starbase_size = juggernaut
 				has_starbase_size = enclave_mercenary_station
 				has_starbase_size = enclave_pirate_mercenary_station
+				is_arkship_starbase = yes
+				has_starbase_module = waystation_repair_bay
 			}
 			fleet = {
 				is_disabled = no
@@ -786,7 +789,7 @@ can_fill_ruler_job = {
 	else = {
 		custom_tooltip = RULER_JOB_TRIGGER
 		hidden_trigger = {
-			is_gestalt = no
+			NOT = { has_ethic = ethic_gestalt_consciousness }
 			exists = owner
 			is_enslaved = no
 			is_being_purged = no
@@ -828,93 +831,105 @@ can_fill_ruler_job = {
 	}
 }
 
-# Root = current planet
-# This = pop_group
-# Purge, Sapience, Migration Controls policy (ignored by Gestalts and Synths), and target habitability are checked in code.
-# can_pop_group_auto_migrate = {
-# 	hidden_trigger = { # This is always true where this tooltip is called
-# 		OR = {
-# 			AND = {
-# 			is_enslaved = no
-# 				OR = {
-# 					is_unemployed = yes
-# 					is_pop_category = civilian
-# 					is_pop_category = maintenance_drone 
-# 					is_shackled_robot = yes
-# 				}
-# 			}
-# 			AND = {
-# 				is_enslaved = yes
-# 				OR = {
-# 					planet = {
-# 						OR = { 
-# 					 		has_active_building = building_slave_processing
-# 							AND = {
-# 								exists = orbital_defence.starbase
-# 								orbital_defence.starbase = { has_starbase_building = ring_slave_processing_facility }
-# 							}
-# 						}	
-# 					}
-# 					solar_system = {
-# 						count_starbase_buildings = {
-# 							type = transit_hub
-# 							count >= 1
-# 							include_being_constructed = no
-# 						}
-# 					}
-# 				}
-# 			}
-# 		}
-# 	}
-# 	custom_tooltip = {
-# 		fail_text = AUTO_MIGRATE_SLAVE_PROCESSING
-# 		OR = {
-# 			is_enslaved = no
-# 			AND = {
-# 				is_enslaved = yes
-# 				OR = {
-# 					planet = {
-# 						OR = { 
-# 					 		has_active_building = building_slave_processing
-# 							AND = {
-# 								exists = orbital_defence.starbase
-# 								orbital_defence.starbase = { has_starbase_building = ring_slave_processing_facility }
-# 							}
-# 						}	
-# 					}
-# 					solar_system = {
-# 						count_starbase_buildings = {
-# 							type = transit_hub
-# 							count >= 1
-# 							include_being_constructed = no
-# 						}
-# 					}
-# 				}
-# 			}
-# 		}
-# 	}
-# 	custom_tooltip = {
-# 		fail_text = AUTO_MIGRATE_ASSIMILATED
-# 		is_being_assimilated = no
-# 	}
-# 	custom_tooltip = {
-# 		fail_text = AUTO_MIGRATE_ROOTED
-# 		NOT = { has_trait = trait_rooted }
-# 	}
-# 	custom_tooltip = {
-# 		fail_text = AUTO_MIGRATE_VIRTUALITY
-# 		OR = {
-# 			has_virtual_species_trait = no
-# 			AND = {
-# 				has_virtual_species_trait = yes
-# 				exists = owner
-# 				owner = {
-# 					OR = {
-# 						is_individual_machine = no
-# 						is_machine_empire = no
-# 					}
-# 				}
-# 			}
-# 		}
-# 	}
-# }
+can_colonize_with_species = {
+	has_colonization_control = {
+		type = colonization_control_no
+		country = root
+	}
+	OR = {
+		NOT = { has_trait = trait_self_modified }
+		is_same_species = root
+	}
+	NOR = {
+		has_trait = trait_pathogenic_genes
+		has_trait = trait_limited_cybernetic
+		has_trait = trait_symbiotic
+	}
+	if = {
+		limit = {
+			OR = {
+				is_sapient = no
+				has_trait = trait_zombie
+			}
+		}
+		custom_tooltip = {
+			always = no
+		}
+	}
+	else_if = {
+		limit = { has_trait = trait_hive_mind }
+		root = { is_hive_empire = yes }
+	}
+	else = {
+		always = yes
+	}
+}
+
+can_species_procreate = {
+	is_sapient = yes
+	NOR = {
+		has_trait = trait_machine_unit
+		has_trait = trait_mechanical
+		has_trait = trait_limited_cybernetic
+	}
+	NAND = {
+		root = { has_modifier = slave_colony }
+		NOT = { has_citizenship_type = { type = citizenship_slavery country = root.owner } }
+	}
+	NOR = {
+		has_citizenship_type = {
+			type = citizenship_protected_drone
+			country = root.owner
+		}
+		has_citizenship_type = {
+			type = citizenship_symbiotic_drone
+			country = root.owner
+		}
+		has_citizenship_type = {
+			type = citizenship_exploited_drone
+			country = root.owner
+		}
+	}
+	NOT = { has_species_flag = nivlac_no_procreation }
+	if = {
+		limit = {
+			has_trait = trait_necrophage
+		}
+		NOT = {
+			root = {
+				OR = {
+					has_active_building = building_necrophage_elevation_chamber
+					has_active_building = building_necrophage_house_of_apotheosis
+				}
+			}
+		}
+	}
+	if = {
+		limit = {
+			has_trait = trait_symbiotic
+		}
+		exists = planet
+		planet = {
+			NOT = {
+				any_owned_pop_group = { has_trait = trait_symbiotic_host }
+			}
+		}
+	}
+}
+
+#This = colony
+has_enough_pops_for_symbiotic_species_on_colony = {
+	owner = { has_civic = civic_symbiotic_race }
+	if = {
+		limit = {
+			has_carrier_flag = symbiotic_alert_timer
+		}
+		count_owned_species = {
+			count = 0
+			limit = { has_trait = trait_symbiotic_host }
+		}
+	}
+	else = {
+		NOT = { any_owned_pop_group = { has_trait = trait_symbiotic_host } }
+	}
+}

@@ -140,103 +140,10 @@ generate_start_pops = {
 				species = owner_main_species
 			}
 		}
-		# every_owned_pop_group = {
-		#	limit = {
-		#		has_job_type = miner	# has_job_type -  # Not Supported in Stellaris 4.0
-		#		is_robotic_species = yes
-		#	}
-		#	modify_species = {
-		#		species = this
-		#		add_trait = trait_robot_power_drills
-		#		add_trait = trait_robot_bulky
-		#		add_trait = trait_robot_high_maintenance
-		#		add_traits_at_start_of_list = yes
-		#	}
-		#}
-		# every_owned_pop_group = {
-		#	limit = {
-		#		has_job_type = farmer	# has_job_type -  # Not Supported in Stellaris 4.0
-		#		is_robotic_species = yes
-		#	}
-		#	modify_species = {
-		#		species = this
-		#		add_trait = trait_robot_harvesters
-		#		add_trait = trait_robot_bulky
-		#		add_trait = trait_robot_high_maintenance
-		#		add_traits_at_start_of_list = yes
-		#	}
-		#}
-		# every_owned_pop_group = {
-		#	limit = {
-		#		has_job_type = technician	# has_job_type -  # Not Supported in Stellaris 4.0
-		#		is_robotic_species = yes
-		#	}
-		#	modify_species = {
-		#		species = this
-		#		add_trait = trait_robot_superconductive
-		#		add_trait = trait_robot_bulky
-		#		add_trait = trait_robot_high_maintenance
-		#		add_traits_at_start_of_list = yes
-		#	}
-		#}
-
-		# add_building = building_robot_assembly_plant		# No Longer Used in Stellaris 4.0
-		# add_district_and_planet_size_if_needed_effect = {	# No Longer Used in Stellaris 4.0
-		#	district = district_generator					# No Longer Used in Stellaris 4.0
-		#}
-		# while = {
-		#	limit = { pop_amount < 2700 }	# No Longer Used in Stellaris 4.0
-		#	create_pop = {
-		#		species = owner_main_species
-		#		ethos = random
-		#	}
-		#}
+		
 	}
 
-	# (Non-Purging) Necrophage: add Buildings & Districts # No Longer Used in Stellaris 4.0
-	# if = {
-	#	limit = {
-	#		owner = {
-	#			has_origin = origin_necrophage
-	#			NOR = { # Purges them instead
-	#				has_civic = civic_fanatic_purifiers
-	#				has_civic = civic_hive_devouring_swarm
-	#			}
-	#		}
-	#	}
-	#	if = {
-	#		limit = {
-	#			owner = { has_valid_civic = civic_agrarian_idyll } # Needs an extra building slot
-	#		}
-	#		add_district_and_planet_size_if_needed_effect = {
-	#			district = district_city
-	#		}
-	#	}
-	#
-	#	add_building = building_necrophage_elevation_chamber
-	#}
 
-	# Necrophage + Devouring Swarm: spawn Buildings	# No Longer Used in Stellaris 4.0
-	# if = {
-	#	limit = {
-	#		owner = {
-	#			has_origin = origin_necrophage
-	#			has_valid_civic = civic_hive_devouring_swarm # Purges them instead
-	#			is_lithoid_empire = no
-	#		}
-	#	}
-	#	add_building = building_spawning_pool
-	#}
-	# if = {
-	#	limit = {
-	#		owner = {
-	#			has_origin = origin_necrophage
-	#			has_valid_civic = civic_hive_devouring_swarm
-	#			is_lithoid_empire = yes
-	#		}
-	#	}
-	#	add_district_and_planet_size_if_needed_effect = { district = district_mining }
-	#}
 
 	# Clone Army: spawn Buildings	
 	if = {
@@ -420,6 +327,17 @@ generate_start_pops = {
 		}
 		while = {
 			limit = { pop_amount < 2000 }
+			create_pop_group = {
+				species = owner_main_species
+			}
+		}
+	}
+	if = {
+		limit = {
+			owner = { has_origin = origin_cosmic_dawn }
+		}
+		while = {
+			limit = { pop_amount < 2200 }
 			create_pop_group = {
 				species = owner_main_species
 			}
@@ -672,6 +590,17 @@ generate_start_pops = {
 			}
 		}
 	}
+
+	#Deep Sleep
+	if = {
+		limit = {
+			owner = { is_deep_sleep_country = yes }
+		}
+		create_pop_group = {
+			size = 3000
+			species = owner_main_species
+		}
+	}
 }
 
 generate_civic_secondary_pops = {
@@ -901,7 +830,6 @@ generate_civic_secondary_pops = {
 			species = last_created_species
 		}
 	}
-
 	# Forever Cruise: set citizenship, living standard & preference; spawn Pops
 	if = {
 		limit = {
@@ -909,7 +837,12 @@ generate_civic_secondary_pops = {
 		}
 		if = {
 			limit = {
-				owner = { has_valid_civic = civic_machine_servitor }
+				owner = { 
+					OR = {
+						has_valid_civic = civic_machine_servitor 
+						has_valid_civic = civic_machine_cult_machine 
+					}
+				}
 			}
 			# Pops were already spawned by the Rogue Servitor block above; only re-tag here.
 			last_created_species = {
@@ -927,19 +860,17 @@ generate_civic_secondary_pops = {
 					country = prev.owner
 					type = citizenship_cruise_passenger
 				}
+				set_living_standard = {
+					country = prev.owner
+					type = living_standard_cruise_passenger
+				}
+				set_population_controls = {
+					country = prev.owner
+					type = population_control_no
+					cooldown = no
+				}
 				set_species_flag = cruise_founding_passenger
 				save_global_event_target_as = cruise_passenger_species@prev.owner
-			}
-			owner = {
-				every_owned_species = {
-					limit = {
-						has_species_flag = cruise_founding_passenger
-					}
-					set_living_standard = {
-						country = prev
-						type = living_standard_cruise_passenger
-					}
-				}
 			}
 			while = {
 				count = @civilians_counter

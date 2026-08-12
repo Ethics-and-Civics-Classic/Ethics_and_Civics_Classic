@@ -902,10 +902,18 @@ ship_event = {
 	desc = {
 		trigger = { 
 			FROM = { 
-				has_carrier_flag = PrimPlayer_asteroid_N01_6_3942
+				has_carrier_flag = PrimPlayer_asteroid_N01_6_3942_junkyard
 			}
 		}
 		text = "anomaly.30.desc"
+	}
+	desc = {
+		trigger = { 
+			FROM = { 
+				has_carrier_flag = PrimPlayer_asteroid_N01_6_3942_ore_freighter
+			}
+		}
+		text = "anomaly.65.desc"
 	}
 	desc = {
 		trigger = { 
@@ -922,6 +930,23 @@ ship_event = {
 			}
 		}
 		text = "anomaly.10.desc"
+	}
+	#desc = {
+	#	trigger = { 
+	#		FROM = { 
+	#			is_planet_class = pc_broken 
+	#			NOT = { has_carrier_flag = divider_flag }
+	#		}
+	#	}
+	#	text = ""
+	#}
+	desc = {
+		trigger = { 
+			FROM = { 
+				has_carrier_flag = divider_flag
+			}
+		}
+		text = "anomaly.600.desc"
 	}
 	desc = {
 		trigger = { 
@@ -1272,11 +1297,11 @@ ship_event = {
 		trigger = { 
 			FROM = { 
 				is_planet_class = pc_asteroid 
-				NOR = { 
-					has_carrier_flag = PrimPlayer_asteroid_N01_6_3942
-					has_carrier_flag = PrimPlayer_asteroid_TBR_733 
-					has_carrier_flag = PrimPlayer_asteroid_K63_4_1078
-				}
+				#NOR = { 
+				#	has_carrier_flag = PrimPlayer_asteroid_N01_6_3942
+				#	has_carrier_flag = PrimPlayer_asteroid_TBR_733 
+				#	has_carrier_flag = PrimPlayer_asteroid_K63_4_1078
+				#}
 			} 
 		}
 		owner = {
@@ -1285,6 +1310,10 @@ ship_event = {
 				value = @tier1researchreward
 				min = @tier1researchmin
 				max = @tier1researchmax
+			}
+			add_resource = {
+				minerals = 1000
+				alloys = 200
 			}
 		}
 	}
@@ -1298,6 +1327,10 @@ ship_event = {
 				modifier = "junkyard"
 				days = -1
 			}
+			if = { 
+				limit = { has_ancrel = yes }
+				create_archaeological_site = site_robot_debris
+			}
 		}
 		hidden_effect = {
 			from = {
@@ -1309,7 +1342,6 @@ ship_event = {
 				}
 				remove_carrier_flag = PrimPlayer_asteroid_N01_6_3942_junkyard
 			}
-			owner = { country_event = { id = story.5 days = 30 } }
 		}
 		FROM = {
 			add_deposit = d_minerals_3
@@ -1333,7 +1365,6 @@ ship_event = {
 				}
 				remove_carrier_flag = PrimPlayer_asteroid_N01_6_3942_ore_freighter
 			}
-			owner = { country_event = { id = story.5 days = 30 } }
 		}
 		FROM = {
 			add_modifier = {
@@ -1355,12 +1386,6 @@ ship_event = {
 		trigger = {
 			FROM = { has_carrier_flag = PrimPlayer_asteroid_K63_4_1078 }
 		}
-		FROM = {
-			add_modifier = {
-				modifier = "derelict_shipyard"
-				days = -1
-			}
-		}
 		hidden_effect = {
 			FROM = {
 				if = {
@@ -1371,9 +1396,11 @@ ship_event = {
 				}
 				remove_carrier_flag = PrimPlayer_asteroid_K63_4_1078
 			}
-			owner = { 
-				
-				country_event = { id = story.5 days = 30 } 
+		}
+		FROM = {
+			add_modifier = {
+				modifier = "derelict_shipyard"
+				days = -1
 			}
 		}
 		FROM = {
@@ -1390,12 +1417,6 @@ ship_event = {
 				is_lithoid_empire = no
 			}
 		}
-		FROM = {
-			add_modifier = {
-				modifier = "asteroid_life"
-				days = -1
-			}
-		}
 		hidden_effect = {
 			FROM = {
 				if = {
@@ -1407,6 +1428,12 @@ ship_event = {
 				remove_carrier_flag = PrimPlayer_asteroid_TBR_733
 			}
 			owner = { country_event = { id = story.2 days = 30 } }
+		}
+		FROM = {
+			add_modifier = {
+				modifier = "asteroid_life"
+				days = -1
+			}
 		}
 		FROM = {
 			add_deposit = d_society_3
@@ -1425,6 +1452,7 @@ ship_event = {
 				limit = { has_origin = origin_evolutionary_predators }
 				give_evolutionary_predator_situation_progress_and_dna = { AMOUNT = small TYPE = lithoid }
 			}
+			country_event = { id = story.5 days = 30 } 
 		}
 	}
 	
@@ -1441,13 +1469,6 @@ ship_event = {
 			text = IS_LITHOID_EMPIRE_ICON_TIP
 		}
 		name = anomaly.10.b
-		FROM = {
-			add_deposit = d_society_6
-			add_modifier = {
-				modifier = "asteroid_life"
-				days = -1
-			}
-		}
 		hidden_effect = {
 			from = {
 				if = {
@@ -1459,6 +1480,13 @@ ship_event = {
 				remove_carrier_flag = PrimPlayer_asteroid_TBR_733
 			}
 			owner = { country_event = { id = story.2 days = 30 } }
+		}
+		FROM = {
+			add_deposit = d_society_6
+			add_modifier = {
+				modifier = "asteroid_life"
+				days = -1
+			}
 		}
 		owner = {
 			#if = {
@@ -1473,6 +1501,35 @@ ship_event = {
 			if = {
 				limit = { has_origin = origin_evolutionary_predators }
 				give_evolutionary_predator_situation_progress_and_dna = { AMOUNT = small TYPE = lithoid }
+			}
+		}
+	}
+	
+	#Fear of the Dark's Broken Planet
+	option = {
+		trigger = {
+			FROM = {
+				has_carrier_flag = divider_flag
+				#is_planet_class = pc_broken 
+			}
+		}
+		name = random_primitive_events.2.option.divider_flag
+		hidden_effect = {
+			from = {
+				if = {
+					limit = {
+						NOT = { has_deposit_for = shipclass_mining_station }
+					}
+					clear_deposits = yes
+				}
+			}
+		}
+		FROM = {
+			add_deposit = d_minerals_3
+			add_deposit = d_alloys_5
+			add_modifier = {
+				modifier = "asteroid_collision"
+				days = -1
 			}
 		}
 	}
@@ -1502,6 +1559,7 @@ ship_event = {
 				has_carrier_flag = space_critter_feeding_ground
 			} 
 		}
+		owner = { add_resource = { influence = -100 } }
 		from = { 
 			enable_special_project = {
 				name = "SPACE_CRITTER_FEEDING_GROUND_PROJECT"	#Upgrades to gas giant to space_critter_feeding_ground
@@ -1804,18 +1862,24 @@ country_event = {
 	title = "random_primitive_events.212.title"
 	is_triggered_only = yes
 	location = from
-	picture = GFX_evt_continental_planet
+	picture = GFX_evt_continental
 	show_sound = event_celebration
 	
 	desc = {
 		text = "random_primitive_events.212.desc"
 	}
 	
+	immediate = {
+		from = { 
+			change_pc = pc_continental 
+			reroll_deposits = yes
+		}
+	}
+	
 	option = {
 		name = "random_primitive_events.212.a"	
 		from = { 
 			remove_modifier = terraforming_candidate
-			change_pc = pc_continental
 			create_colony = {
 				owner = ROOT
 				#ethos = random
@@ -1825,7 +1889,6 @@ country_event = {
 					size = 100
 					species = root.owner_main_species
 				}
-				reroll_deposits = yes
 			}
 		}
 	}
@@ -1834,12 +1897,11 @@ country_event = {
 		name = "random_primitive_events.212.b"	
 		from = { 
 			remove_modifier = terraforming_candidate
-			change_pc = pc_continental
 		}
 		random_country = {
 			limit = {  
 				has_communications = root
-				is_country_type = PrimPlayer_ethic_fanatic_nation
+				OR = { is_country_type = PrimPlayer_ethic_fanatic_nation is_country_type = PrimPlayer_ethic_fanatic_nation_nomadic }
 			}
 			add_opinion_modifier = {
 				who = root
@@ -1856,11 +1918,19 @@ country_event = {
 				root = { set_country_flag = first_contact_completed@prev }
 				every_situation = { 
 					limit = { is_situation_type = pre_ftl_tech_progress_situation } 
-					set_situation_progress = 0
+					#set_situation_progress = 0
+					set_situation_locked = yes
 				}
 				copy_techs_from = {
 					target = root
 					#except = { }
+				}
+				set_faction_hostility = { target = root set_hostile = no set_neutral = no set_friendly = yes }
+				ROOT = {
+					add_intel = {
+						amount = 100
+						who = PREV
+					}
 				}
 				from = {
 					create_colony = {
@@ -1873,7 +1943,6 @@ country_event = {
 					set_carrier_flag = PrimPlayer_ethic_fanatic_nation_colony@root
 					#add_building = building_colony_shelter
 					carrier_event = { id = random_primitive_events.215 days = 360 }
-					reroll_deposits = yes
 				}
 				create_fleet = {
 					name = "NAME_Pre_FTL_Chemical_Ship"
@@ -1973,6 +2042,7 @@ country_event = {
 				flag = recent_comms_timed
 				days = 3600
 			}
+			country_event = { id = random_primitive_events.219 days = 180 scopes = { from = from } }
 		}
 	}
 }
@@ -1994,18 +2064,24 @@ country_event = {
 	title = "random_primitive_events.214.title"
 	is_triggered_only = yes
 	location = from
-	picture = GFX_evt_ocean_planet
+	picture = GFX_evt_ocean
 	show_sound = event_celebration
 	
 	desc = {
 		text = "random_primitive_events.214.desc"
 	}
 	
+	immediate = {
+		from = { 
+			change_pc = pc_ocean 
+			reroll_deposits = yes
+		}
+	}
+	
 	option = {
 		name = "random_primitive_events.214.a"	
 		from = { 
 			remove_modifier = terraforming_candidate
-			change_pc = pc_ocean
 			create_colony = {
 				owner = ROOT
 				#ethos = random
@@ -2015,7 +2091,6 @@ country_event = {
 					size = 100
 					species = root.owner_main_species
 				}
-				reroll_deposits = yes
 			}
 		}
 	}
@@ -2024,12 +2099,11 @@ country_event = {
 		name = "random_primitive_events.212.b"	
 		from = { 
 			remove_modifier = terraforming_candidate
-			change_pc = pc_ocean
 		}
 		random_country = {
 			limit = {  
 				has_communications = root
-				is_country_type = PrimPlayer_ethic_fanatic_nation
+				OR = { is_country_type = PrimPlayer_ethic_fanatic_nation is_country_type = PrimPlayer_ethic_fanatic_nation_nomadic }
 			}
 			add_opinion_modifier = {
 				who = root
@@ -2046,11 +2120,19 @@ country_event = {
 				root = { set_country_flag = first_contact_completed@prev }
 				every_situation = { 
 					limit = { is_situation_type = pre_ftl_tech_progress_situation } 
-					set_situation_progress = 0
+					#set_situation_progress = 0
+					set_situation_locked = yes
 				}
 				copy_techs_from = {
 					target = root
 					#except = { }
+				}
+				set_faction_hostility = { target = root set_hostile = no set_neutral = no set_friendly = yes }
+				ROOT = {
+					add_intel = {
+						amount = 100
+						who = PREV
+					}
 				}
 				from = {
 					create_colony = {
@@ -2063,7 +2145,6 @@ country_event = {
 					set_carrier_flag = PrimPlayer_ethic_fanatic_nation_colony@root
 					#add_building = building_colony_shelter
 					carrier_event = { id = random_primitive_events.215 days = 360 }
-					reroll_deposits = yes
 				}
 				create_fleet = {
 					name = "NAME_Pre_FTL_Chemical_Ship"
@@ -2163,6 +2244,7 @@ country_event = {
 				flag = recent_comms_timed
 				days = 3600
 			}
+			country_event = { id = random_primitive_events.219 days = 180 scopes = { from = from } }
 		}
 	}
 }
@@ -2207,18 +2289,25 @@ country_event = {
 	title = "random_primitive_events.217.title"
 	is_triggered_only = yes
 	location = from
-	picture = GFX_evt_ocean_planet
+	picture = GFX_evt_continental
 	show_sound = event_celebration
 	
 	desc = {
 		text = "random_primitive_events.217.desc"
 	}
 	
+	immediate = {
+		from = { 
+			change_pc = pc_continental 
+			reroll_deposits = yes
+		}
+	}
+	
 	option = {
 		name = "random_primitive_events.217.a"	
 		from = { 
 			remove_modifier = toxic_terraforming_candidate
-			change_pc = pc_continental
+			set_carrier_flag = toxic_terraforming_candidate
 			create_colony = {
 				owner = ROOT
 				#ethos = random
@@ -2228,7 +2317,6 @@ country_event = {
 					size = 100
 					species = root.owner_main_species
 				}
-				reroll_deposits = yes
 			}
 		}
 		hidden_effect = { country_event = { id = random_primitive_events.218 days = 180 scopes = { from = from } } }
@@ -2238,12 +2326,11 @@ country_event = {
 		name = "random_primitive_events.217.b"	
 		from = { 
 			remove_modifier = toxic_terraforming_candidate
-			change_pc = pc_continental
 		}
 		random_country = {
 			limit = {  
 				has_communications = root
-				is_country_type = PrimPlayer_ethic_fanatic_nation
+				OR = { is_country_type = PrimPlayer_ethic_fanatic_nation is_country_type = PrimPlayer_ethic_fanatic_nation_nomadic }
 			}
 			add_opinion_modifier = {
 				who = root
@@ -2260,11 +2347,19 @@ country_event = {
 				root = { set_country_flag = first_contact_completed@prev }
 				every_situation = { 
 					limit = { is_situation_type = pre_ftl_tech_progress_situation } 
-					set_situation_progress = 0
+					#set_situation_progress = 0
+					set_situation_locked = yes
 				}
 				copy_techs_from = {
 					target = root
 					#except = { }
+				}
+				set_faction_hostility = { target = root set_hostile = no set_neutral = no set_friendly = yes }
+				ROOT = {
+					add_intel = {
+						amount = 100
+						who = PREV
+					}
 				}
 				from = {
 					create_colony = {
@@ -2277,7 +2372,6 @@ country_event = {
 					set_carrier_flag = PrimPlayer_ethic_fanatic_nation_colony@root
 					#add_building = building_colony_shelter
 					carrier_event = { id = random_primitive_events.215 days = 360 }
-					reroll_deposits = yes
 				}
 				create_fleet = {
 					name = "NAME_Pre_FTL_Chemical_Ship"
@@ -2377,6 +2471,94 @@ country_event = {
 				flag = recent_comms_timed
 				days = 3600
 			}
+			country_event = { id = random_primitive_events.219 days = 180 scopes = { from = from } }
+		}
+	}
+}
+################################
+#Fear of the Dark Civilization #
+################################
+#FROM = Planet
+#ROOT = Country
+country_event = {
+	id = random_primitive_events.219
+	title = "random_primitive_events.219.title"
+	is_triggered_only = yes
+	location = from
+	picture = GFX_evt_fear_of_the_dark
+	show_sound = event_planetary_riot
+	desc = {
+		text = "random_primitive_events.219.desc"
+	}
+	
+	trigger = {
+		NOT = { has_country_flag = origin_fear_of_the_dark }
+	}
+	
+	option = {
+		name = "random_primitive_events.219.discourage"
+		add_resource = { influence = -100 }
+		from.solar_system = {
+			every_system_planet = { 
+				limit = { is_colony = yes }
+				add_modifier = {
+					modifier = PrimPlayer_isolationist_primitivist_movement
+					years = 10
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = "random_primitive_events.219.exodus"
+		hidden_effect = {
+			set_country_flag = origin_fear_of_the_dark
+			country_event = { id = origin.6140 days = 18000 }	#50 years until fotd_Midgame_flag	#Cog Note - this serves as a back-up event trigger-source if colony is established past mid-crises year pulse on_action
+		}
+		from.owner = { 
+			custom_tooltip = random_primitive_events.219.exodus.tooltip
+			#random_situation = { 
+			#	limit = { is_situation_type = pre_ftl_tech_progress_situation } 
+			#	set_situation_locked = no
+			#}
+			set_origin = origin_fear_of_the_dark
+			hidden_effect = { 
+				clear_ethos = yes
+				country_add_ethic = ethic_fanatic_xenophobe
+				country_add_ethic = ethic_pacifist
+				country_add_ethic = ethic_socialism
+				country_add_ethic = ethic_egalitarian
+			}
+			force_remove_civic = civic_increasing_urbanization
+			force_add_civic = civic_inwards_perfection
+			force_add_civic = civic_primitive_enthusiasts 
+			hidden_effect = {
+				if = {
+					limit = { NOT = { has_country_flag = early_space_age } }
+					set_country_flag = early_space_age
+				}
+				set_country_flag = fotd_seperatist_country@root
+				set_country_flag = fotd_seperatist_country
+				start_situation = {
+					type = situation_fotd_terraforming
+					target = prev
+				}
+				set_country_flag = tech_frozen
+				add_awareness = 100
+			}
+		}
+		hidden_effect = {
+			from = {
+				set_carrier_flag = haven_flag
+				save_global_event_target_as = fotd_seperatist_planet@root
+				set_carrier_flag = fotd_seperatist_planet@root
+				if = {
+					limit = {
+						has_carrier_flag = planet_mars
+					}
+					set_mars_entity = yes
+				}
+			}
 		}
 	}
 }
@@ -2390,7 +2572,7 @@ country_event = {
 	title = "random_primitive_events.218.title"
 	is_triggered_only = yes
 	location = from
-	picture = GFX_evt_ocean_planet
+	picture = GFX_evt_mining_operations
 	show_sound = event_celebration
 	desc = {
 		text = "random_primitive_events.218.desc"
@@ -2614,6 +2796,12 @@ country_event = {
 	option = {
 		trigger = {
 			is_subterranean_empire = no
+			OR = {
+				is_xenophile = yes
+				is_pacifist = yes
+				is_socialism = yes
+				always = yes
+			}
 		}
 		name = random_primitive_events.253.b
 		response_text = "random_primitive_events.253.b.response"
@@ -2635,6 +2823,12 @@ country_event = {
 	option = {
 		trigger = {
 			is_subterranean_empire = yes
+			OR = {
+				is_xenophile = yes
+				is_pacifist = yes
+				is_socialism = yes
+				always = yes
+			}
 		}
 		name = random_primitive_events.253.b
 		response_text = "random_primitive_events.253.b.response.subterranean"
@@ -2656,6 +2850,13 @@ country_event = {
 	option = {
 		name = random_primitive_events.253.c
 		response_text = random_primitive_events.253.c.response
+		trigger = {
+			OR = {
+				is_xenophobe = yes
+				is_authoritarian = yes
+				always = yes
+			}
+		}
 		hidden_effect = {
 			FROM = {
 				carrier_event = { id = random_primitive_events.254 days = 35 random = 40 }

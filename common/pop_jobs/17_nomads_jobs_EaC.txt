@@ -1,0 +1,274 @@
+
+# Forever Cruise Jobs - Hospitality Machine Cult additions
+cruise_passenger = {
+	category = cruise_passenger
+	can_be_automated = no
+
+	swappable_data = {
+		default = {
+			building_icon = building_organic_sanctuary
+		}
+		swap_type = {
+			trigger = {
+				owner? = { 
+					OR = {
+						is_hospitality_servitor_empire = yes 
+						is_hospitality_machine_cult_machine_empire = yes
+					}
+				}
+			}
+			name = cruise_passenger_bio_trophy
+			building_icon = building_organic_sanctuary
+		}
+	}
+	tags = { unity cruise_passenger }
+
+	possible_pre_triggers = {
+		is_sapient = yes
+	}
+
+	possible = {
+		owner = { has_origin = origin_forever_cruise }
+		OR = {
+			has_living_standard = { type = living_standard_cruise_passenger country = owner }
+			has_living_standard = { type = living_standard_organic_trophy country = owner }
+		}
+	}
+
+	resources = {
+		category = planet_cruise_passengers
+		produces = {
+			unity = 2
+		}
+		upkeep = {
+			trigger = {
+				owner? = { 
+					OR = {
+						is_hospitality_servitor_empire = no 
+						is_hospitality_machine_cult_machine_empire = no
+					} 
+				}
+			}
+			consumer_goods = 1.5
+		}
+		upkeep = {
+			trigger = {
+				owner? = { 
+					OR = {
+						is_hospitality_servitor_empire = yes 
+						is_hospitality_machine_cult_machine_empire = yes
+					} 
+				}
+			}
+			consumer_goods = 1
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			owner? = { is_gestalt = no }
+		}
+		pop_cat_specialist_bonus_workforce_mult = 0.01
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			owner? = { is_gestalt = yes }
+		}
+		pop_cat_complex_drone_bonus_workforce_mult = 0.01
+	}
+
+	# Hospitality Servitors pamper their Bio-Trophy Passengers, granting an additional Complex Drone Job Efficiency bonus on top of the base Gestalt amount.
+	triggered_planet_modifier = {
+		potential = {
+			owner? = { is_hospitality_servitor_empire = yes }
+		}
+		pop_cat_complex_drone_bonus_workforce_mult = 0.01
+	}
+	triggered_planet_modifier = {
+		potential = {
+			owner? = { 
+				is_hospitality_machine_cult_machine_empire = yes 
+			}
+		}
+		pop_cat_specialist_bonus_workforce_mult = 0.01
+	}
+
+	weight = {
+		weight = 9999
+	}
+
+	inline_script = "jobs/automodding_priority_charisma"
+}
+
+cruise_passenger_unemployment = {
+	category = cruise_passenger_unemployment
+	count_as_available_for_ai = yes
+
+	swappable_data = {
+		default = {
+			building_icon = building_residence
+		}
+		swap_type = {
+			trigger = {
+				owner? = { 
+					OR = {
+						is_hospitality_servitor_empire = yes 
+						is_hospitality_machine_cult_machine_empire = yes
+					}
+				}
+			}
+			name = cruise_passenger_unemployment_bio_trophy
+			building_icon = building_organic_sanctuary
+		}
+	}
+	tags = { unity cruise_passenger_unemployment }
+
+	possible_pre_triggers = {
+		has_owner = yes
+		is_enslaved = no
+		is_being_purged = no
+		is_being_assimilated = no
+		is_sapient = yes
+	}
+
+	possible = {
+		owner = { has_origin = origin_forever_cruise }
+		OR = {
+			has_citizenship_type = { type = citizenship_cruise_passenger country = owner }
+			has_citizenship_type = { type = citizenship_organic_trophy country = owner }
+		}
+	}
+
+	resources = {
+		category = planet_cruise_passengers
+		produces = {
+			trigger = {
+				owner? = { 
+					is_hospitality_servitor_empire = no 
+					is_hospitality_machine_cult_machine_empire = no
+				}
+			}
+			unity = 0.5
+		}
+		upkeep = {
+			consumer_goods = 0.33
+		}
+	}
+
+	weight = {
+		weight = 0
+	}
+	is_capped_by_modifier = no
+	can_set_priority = no
+	contributes_to_diplo_weight = no
+
+	inline_script = "jobs/automodding_priority_charisma"
+}
+
+arkship_migration_effect = {
+	event_target:migrating_planet = {
+		set_timed_carrier_flag = {
+			flag = migration_happened_planet
+			years = 5
+		}
+		owner = {
+			create_message = {
+				type = MESSAGE_NOMAD_MIGRATION_HOST
+				localization = MESSAGE_NOMAD_MIGRATION_HOST_DESC
+				days = 30
+				target = root
+				variable = {
+					type = name
+					localization = COUNTRY
+					scope = root
+				}
+				variable = {
+					type = name
+					localization = PLANET
+					scope = event_target:migrating_planet
+				}
+				variable = {
+					type = name
+					localization = ARKSHIP
+					scope = event_target:migrating_arkship
+				}
+			}
+		}
+		random_owned_pop_group = {
+			resettle_pop_group = {
+				POP_GROUP = this
+				PLANET = event_target:migrating_arkship
+				AMOUNT = value:compare_resettle_attraction|ORIGIN|event_target:migrating_planet|DEST|event_target:migrating_arkship|
+			}
+		}
+	}
+	event_target:migrating_arkship = {
+		random_owned_pop_group = {
+			resettle_pop_group = {
+				POP_GROUP = this
+				PLANET = event_target:migrating_planet
+				AMOUNT = value:compare_resettle_attraction|ORIGIN|event_target:migrating_arkship|DEST|event_target:migrating_planet|
+			}
+		}
+	}
+	# Forever Cruise: set new migrant species to passenger citizenship
+	if = {
+		limit = {
+			event_target:migrating_arkship.owner = {
+				has_origin = origin_forever_cruise
+				NOT = { has_country_flag = forever_cruise_over }
+				is_hospitality_servitor_empire = no
+			}
+		}
+		event_target:migrating_arkship.owner = {
+			every_owned_species = {
+				limit = {
+					NOR = {
+						is_same_species = prev
+						has_citizenship_type = { type = citizenship_cruise_crew country = prev }
+						has_citizenship_type = { type = citizenship_cruise_passenger country = prev }
+					}
+				}
+				set_citizenship_type = {
+					type = citizenship_cruise_passenger
+					country = prev
+				}
+				set_living_standard = {
+					type = living_standard_cruise_passenger
+					country = prev
+				}
+			}
+		}
+	}
+	# Hospitality Servitor: set new migrant species to organic trophy
+	else_if = {
+		limit = {
+			event_target:migrating_arkship.owner = {
+				OR = {
+					is_hospitality_servitor_empire = yes
+					is_hospitality_machine_cult_machine_empire = yes
+				}
+			}
+		}
+		event_target:migrating_arkship.owner = {
+			every_owned_species = {
+				limit = {
+					NOR = {
+						is_same_species = prev
+						has_citizenship_type = { type = citizenship_cruise_crew country = prev }
+						has_citizenship_type = { type = citizenship_organic_trophy country = prev }
+					}
+				}
+				set_citizenship_type = {
+					type = citizenship_organic_trophy
+					country = prev
+				}
+				set_living_standard = {
+					type = living_standard_organic_trophy
+					country = prev
+				}
+			}
+		}
+	}
+}

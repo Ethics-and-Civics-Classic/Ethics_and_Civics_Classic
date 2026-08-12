@@ -183,22 +183,10 @@ civic_dystopian_society = {
 	}
 	potential = {
 		ethics = { NOT = { value = ethic_gestalt_consciousness } }
-		authority = { NOT = { value = auth_corporate } }
+		#authority = { NOT = { value = auth_corporate } }	#Criminal Megacorps are allowed
 		civics = { NOT = { value = civic_civil_education } }
 	}
 	possible = {
-		ethics = {
-			OR = {
-				value = ethic_fanatic_authoritarian
-				value = ethic_fanatic_capitalism
-			}
-			NOR = {
-				text = civic_tooltip_not_egalitarian
-				value = ethic_egalitarian
-				value = ethic_fanatic_egalitarian
-			}
-			NOT = { value = ethic_socialism }
-		}
 		civics = {
 			NOR = {
 				value = civic_pleasure_seekers
@@ -206,6 +194,34 @@ civic_dystopian_society = {
 				value = civic_warrior_culture
 				value = civic_agrarian_idyll
 				value = civic_environmentalist
+			}
+		}
+		ethics = {
+			NOR = {
+				text = civic_tooltip_not_egalitarian
+				value = ethic_egalitarian
+				value = ethic_fanatic_egalitarian
+			}
+			NOT = { value = ethic_socialism }
+		}
+		OR = {
+			ethics = {
+				OR = {
+					value = ethic_fanatic_authoritarian
+					value = ethic_fanatic_capitalism
+				}
+			}
+			AND = {
+				text = civic_tooltip_criminal_megacorp
+				authority = {
+					value = auth_corporate
+				}
+				civics = {
+					OR = {
+						value = civic_military_dictatorship_corporate
+						value = civic_criminal_heritage
+					}
+				}
 			}
 		}
 	}
@@ -230,7 +246,7 @@ civic_dystopian_society = {
 		hide_modifiers = yes
 	}
 
-	
+
 }
 
 civic_imperial_cult = {
@@ -340,10 +356,15 @@ civic_beacon_of_liberty = {
 				value = civic_barbaric_despoilers			 # Due to Slavery
 				value = civic_barbaric_despoilers_corporate	 # Due to Slavery
 				value = PrimPlayer_civic_barbaric_despoilers_khan # Due to Slavery
+				value = PrimPlayer_civic_heirs_of_the_khan	# Due to Slavery
+				value = civic_heirs_of_the_khan	# Due to Slavery
 				value = civic_barbaric_despoilers_khan # Due to Slavery
 				value = civic_divine_order				# Due to Slavery
 				value = civic_indentured_assets			# Due to Slavery
 			}
+		}
+		origin = {
+			NOT = { value = origin_heirs_of_the_khan }
 		}
 	}
 	random_weight = { base = @civic_default_random_weight }
@@ -376,6 +397,9 @@ civic_beacon_of_liberty = {
 		}
 	}
 	modifier = {
+		#country_unity_produces_mult = 0.10				# Removed Vanilla Code
+		#empire_size_pops_mult = -0.10					# Removed Vanilla Code
+		refugee_attraction = 0.25
 		num_tech_alternatives_add = 1					# Modded
 		country_starbase_influence_cost_mult = -0.33	# Modded
 		planet_resettlement_unemployed_mult = 1			# Modded
@@ -385,9 +409,10 @@ civic_beacon_of_liberty = {
 		pop_ethic_authoritarian_attraction_mult = -0.2	# Modded
 		pop_ethic_socialism_attraction_mult = -0.3		# Modded
 		country_unity_produces_mult = 0.15				# Modded - Vanilla has this as positive, is this a typo?
-		# empire_size_pops_mult = -0.15					# Removed Vanilla Code
 	}
 	swap_type = {
+		description = "civic_beacon_of_liberty_desc_effect"
+		negative_description = "civic_beacon_of_liberty_desc_negative_effect"
 		trigger = {
 			has_biogenesis_dlc = yes
 		}
@@ -627,7 +652,7 @@ civic_meritocracy = {
 		trigger = {
 			has_paragon_dlc = yes
 		}
-		
+
 		modifier = {
 			leader_trait_selection_options_add = 1
 		}
@@ -908,7 +933,12 @@ civic_slaver_guilds = {
 				value = civic_barbaric_despoilers_corporate			# Modded
 				value = PrimPlayer_civic_barbaric_despoilers_khan		# Modded
 				value = civic_barbaric_despoilers_khan
+				value = PrimPlayer_civic_heirs_of_the_khan	# Due to Slavery
+				value = civic_heirs_of_the_khan	# Due to Slavery
 			}
+		}
+		origin = {
+			NOT = { value = origin_heirs_of_the_khan }	# Due to Slavery
 		}
 	}
 	random_weight = { base = @civic_default_random_weight }
@@ -939,8 +969,8 @@ civic_slaver_guilds = {
 		}
 	}
 	modifier = {
-		pop_cat_slave_bonus_workforce_mult = 0.10
-		country_pop_enslaved_mult = 0.35
+		pop_slave_bonus_workforce_mult = 0.10
+		refugee_attraction = -0.25
 		add_attunement_the_instrument_of_desire = @civic_attunement1
 	}
 	description = "civic_slaver_guilds_effects"
@@ -972,7 +1002,6 @@ civic_inwards_perfection = {
 			NOR = {
 				value = origin_common_ground
 				value = origin_hegemon
-				value = origin_fear_of_the_dark
 			}
 		}
 		civics = {
@@ -993,6 +1022,10 @@ civic_inwards_perfection = {
 				value = civic_hive_sovereign_guardianship
 				value = civic_machine_sovereign_guardianship
 			}
+		}
+		OR = {
+			origin = { NOT = { value = origin_fear_of_the_dark } }
+			country_type = { value = primitive }
 		}
 	}
 	random_weight = { base = 1000 }
@@ -1029,32 +1062,25 @@ civic_inwards_perfection = {
 		}
 	}
 	modifier = {
+		# country_unity_produces_mult = 0.20		# Removed Vanilla Code
+		# founder_species_growth_mult  = 0.10		# Removed Vanilla Code
+		country_edict_fund_add = 50	
+		# pop_citizen_happiness = 0.05				# Removed Vanilla Code
+		refugee_attraction = -0.50
+		# envoys_add = -1							# Removed Vanilla Code
+		intel_encryption_add = 1
+		intel_decryption_add = -1
 		planet_jobs_produces_mult = 0.05			# Modded
-		country_edict_fund_add = 20					# Modded
 		planet_colony_development_speed_mult = 0.2	# Modded
 		shipclass_starbase_damage_mult = 0.25		# Modded
 		planet_orbital_bombardment_damage = -0.25	# Modded
-		defensive_war_influence_gain_add = 0.5		# Modded
 		diplomacy_upkeep_mult = 0.33				# Modded
-		intel_encryption_add = 1
-		intel_decryption_add = -1
-		# logistic_growth_mult = 0.15					# Modded	# No Longer Used in Stellaris 4.0
-		# country_unity_produces_mult = 0.20			# Removed Vanilla Code
-		# pop_citizen_happiness = 0.05				# Removed Vanilla Code
-		# envoys_add = -1							# Removed Vanilla Code
 	}
 	swap_type = {
 		trigger = {
-			# OR = {
-				# AND = {
-				#	is_scope_valid = no
-				#	local_human_species_class = MACHINE		# No Longer Used in Stellaris 4.0
-				#}
-				# AND = {
-					is_scope_valid = yes
-					is_individual_machine = yes
-				#}
-			#}
+			is_scope_valid = yes
+			exists = founder_species
+			is_individual_machine = yes
 		}
 		modifier = {
 			# logistic_growth_mult = -0.15	# No Longer Used in Stellaris 4.0
@@ -1221,23 +1247,17 @@ civic_free_haven = {
 		}
 	}
 	modifier = {
-		planet_resettlement_unemployed_mult = 0.15
 		planet_resettlement_unemployed_destination_mult = 1.0
 		pop_cat_worker_happiness = 0.05
+		refugee_attraction = 0.50
 		add_attunement_the_cradle_of_souls = @civic_attunement1
 	}
 	swap_type = {
 		trigger = {
-			# OR = {
-				# AND = {
-				#	is_scope_valid = no
-				#	local_human_species_class = MACHINE		# No Longer Used in Stellaris 4.0
-				#}
-				# AND = {
-					is_scope_valid = yes
-					is_individual_machine = yes
-				#}
-			#}
+			is_scope_valid = yes
+			exists = founder_species
+			is_individual_machine = yes
+
 		}
 		modifier = {
 			pop_happiness = 0.05
@@ -1692,7 +1712,7 @@ civic_nationalistic_zeal = {
 		is_nomadic = no
 		ethics = {
 			OR = {
-				text = civic_tooltip_militarist	
+				text = civic_tooltip_militarist
 				value = ethic_militarist
 				value = ethic_fanatic_militarist
 			}
@@ -1705,9 +1725,9 @@ civic_nationalistic_zeal = {
 			#}
 			NOT = { value = ethic_fanatic_xenophile	}			# Modded
 		}
-		civics = { 
-			NOR = { 
-				value = civic_xeno_militarist 
+		civics = {
+			NOR = {
+				value = civic_xeno_militarist
 				value = civic_feudal_realm
 				value = civic_franchising
 			}
@@ -1746,6 +1766,10 @@ civic_nationalistic_zeal = {
 		}
 	}
 	modifier = {
+		country_war_exhaustion_mult = -0.2
+		#country_claim_influence_cost_mult = -0.15
+		diplo_weight_rivals_mult = 0.05
+		country_claim_influence_cost_mult = 0.20				# Modded
 		country_starbase_capacity_add = 5						# Modded
 		country_claim_influence_cost_mult = -0.1				# Modded
 		country_subject_acceptance_add = 50						# Modded
@@ -1753,9 +1777,8 @@ civic_nationalistic_zeal = {
 		country_occupation_armies_add = 5						# Modded
 		subject_tribute_mult = 0.25								# Modded
 		country_border_friction_mult = 0.33						# Modded
-		add_attunement_the_eater_of_worlds = @civic_attunement1
-		country_war_exhaustion_mult = -0.2						# Reinstated Vanilla Code 	#Cog Note - Is this balanced? Not sure why it was removed or maybe never added
-		diplo_weight_rivals_mult = 0.05						# Reinstated Vanilla Code 	#Cog Note - Is this balanced? Not sure why it was removed or maybe never added
+		refugee_attraction = -0.50								# Modded
+		add_attunement_the_eater_of_worlds = @civic_attunement1					
 	}
 }
 #Feudal Society
@@ -1771,7 +1794,7 @@ civic_feudal_realm = {
 				value = auth_corporate	#Megacorp version needs a government like Pirate Lord that is monarch flavored - Neo Feudalism
 			}
 		}
-		ethics = { 
+		ethics = {
 			OR = {
 				text = civic_tooltip_authoritarian
 				value = ethic_authoritarian
@@ -1784,10 +1807,10 @@ civic_feudal_realm = {
 			}
 		}
 		civics = { NOT = {  } }
-		civics = { 
-			NOR = { 
+		civics = {
+			NOR = {
 				value = civic_shared_burden
-				value = civic_nationalistic_zeal 
+				value = civic_nationalistic_zeal
 				value = civic_franchising
 			}
 		}
@@ -1879,10 +1902,13 @@ civic_aristocratic_elite = {
 				value = civic_genetic_aristocracy				#
 				value = civic_harmonious_hierarchy				# Modded
 				# value = civic_harmonious_hierarchy_corporate	# Modded
+				value = PrimPlayer_civic_heirs_of_the_khan	# Due to Slavery
+				value = civic_heirs_of_the_khan	# Due to Slavery
 			}
 		}
 		origin = {
-			NOT = {
+			NOR = { 
+				value = origin_heirs_of_the_khan
 				value = origin_unplugged
 			}
 		}
@@ -1974,10 +2000,13 @@ civic_aristocratic_elite_corporate = {
 				value = civic_genetic_aristocracy				#
 				# value = civic_harmonious_hierarchy			# Modded
 				value = civic_harmonious_hierarchy_corporate	# Modded
+				value = PrimPlayer_civic_heirs_of_the_khan	# Due to Slavery
+				value = civic_heirs_of_the_khan	# Due to Slavery
 			}
 		}
 		origin = {
-			NOT = {
+			NOR = { 
+				value = origin_heirs_of_the_khan
 				value = origin_unplugged
 			}
 		}
@@ -2061,7 +2090,7 @@ civic_twisted_experimenters_corporate = {
 	}
 }
 
-# Syndicalism, Communism Socialistic Ideals 
+# Syndicalism, Communism Socialistic Ideals
 civic_shared_burden = {
 	description = "civic_tooltip_shared_burden_effects"
 	negative_description = "civic_tooltip_shared_burden_negative_effects"
@@ -2096,6 +2125,7 @@ civic_shared_burden = {
 		}
 	}
 	modifier = {
+		# planet_stability_add = 5					# Removed Vanilla Code
 		job_labour_hero_per_pop = 0.08				# Modded
 		pop_cat_worker_happiness = 0.05				# Modded
 		planet_jobs_worker_produces_mult = 0.15		# Modded
@@ -2103,8 +2133,6 @@ civic_shared_burden = {
 		pop_cat_worker_political_power = 2			# Modded
 		pop_ethic_socialism_attraction_mult = 0.1	# Modded
 		add_attunement_the_composer_of_strands = @civic_attunement1
-		# planet_stability_add = 5					# Removed Vanilla Code
-		# pop_unemployment_demotion_time_mult = -0.45				# Removed Vanilla Code
 	}
 	random_weight = { base = @civic_default_random_weight } # base = @civic_rare_random_weight # Should be fairly rare
 	ai_weight = {
@@ -2235,11 +2263,11 @@ civic_barbaric_despoilers = {
 	potential = {
 		ethics = { NOT = { value = ethic_gestalt_consciousness } }
 		authority = { NOT = { value = auth_corporate } }
-		civics = { 
-			NOR = { 
+		civics = {
+			NOR = {
 				value = PrimPlayer_civic_barbaric_despoilers_khan
-				value = civic_barbaric_despoilers_khan				
-			} 
+				value = civic_barbaric_despoilers_khan
+			}
 		}
 		origin = { NOT = { value = origin_slavers } }
 	}
@@ -2298,8 +2326,8 @@ civic_barbaric_despoilers = {
 	description = "civic_tooltip_barbaric_despoilers_effects"
 	negative_description = "civic_tooltip_barbaric_despoilers_negatives"
 	modifier = {
-		pop_cat_slave_bonus_workforce_mult = 0.10
-		country_pop_enslaved_mult = 0.10
+		pop_slave_bonus_workforce_mult = 0.10
+		refugee_attraction = -0.10
 		add_attunement_the_eater_of_worlds = @civic_attunement1
 	}
 	swap_type = {
@@ -2563,7 +2591,7 @@ civic_pleasure_seekers = {
 			NOT = {
 				value = civic_warrior_culture
 				value = civic_shared_burden
-				value = civic_slaver_guilds # Would enslave hedonists
+				#value = civic_slaver_guilds # Would enslave hedonists #Was this Fixed? Commenting condition
 				value = civic_corporate_hedonism
 				value = civic_dystopian_society
 			}
@@ -2610,18 +2638,10 @@ civic_pleasure_seekers = {
 	}
 	swap_type = {
 		description = "civic_tooltip_pleasure_seekers_effects_machines"
-
 		trigger = {
-			# OR = {
-				# AND = {
-				#	is_scope_valid = no
-				#	local_human_species_class = MACHINE
-				#}
-				# AND = {
-					is_scope_valid = yes
-					is_individual_machine = yes
-				#}
-			#}
+			is_scope_valid = yes
+			exists = founder_species
+			is_individual_machine = yes
 		}
 	}
 	modifier = {
@@ -2640,24 +2660,23 @@ civic_idyllic_bloom = {
 		authority = { NOT = { value = auth_corporate } }
 	}
 	possible = {
+		is_nomadic = no
 		OR = {
+			text = "civic_tooltip_idyllic_bloom_species_or_ethic"
 			species_class = {
 				OR = {
 					value = FUN
 					value = PLANT
-					#value = BIOGENESIS	#Not a real species
 				}
 			}
-			ethics = { value = ethic_fanatic_green } # Modded 
+			ethics = {
+				value = ethic_fanatic_green
+			} # Modded
 		}
 		origin = {
 			NOR = {
 				value = origin_void_dwellers
-			}
-			NOR = {
-				text = civic_tooltip_not_origin_non_standard_habitability_preference	# Modded
-				value = origin_life_seeded												# Modded
-				value = origin_shattered_ring											# Modded
+				value = origin_shattered_ring
 			}
 		}
 		civics = {
@@ -2666,6 +2685,13 @@ civic_idyllic_bloom = {
 				value = civic_relentless_industrialists
 				value = civic_relentless_industrialists_machine_cult	# Modded
 				value = civic_corporate_relentless_industrialists
+			}
+			NOR = {
+				text = civic_tooltip_not_world_forgers
+				value = civic_world_forgers
+				value = civic_hive_world_forgers
+				value = civic_machine_world_forgers
+				value = civic_corporate_world_forgers
 			}
 		}
 	}
@@ -2785,12 +2811,12 @@ civic_anglers = {
 	swap_type = {
 		trigger = {
 			OR = {
-				has_origin = origin_primitive_player_pre_industrial_age 
-				has_origin = origin_primitive_player_industrial_age 
-				has_origin = origin_primitive_player_machine_age 
-				has_origin = origin_primitive_player_atomic_age	
+				has_origin = origin_primitive_player_pre_industrial_age
+				has_origin = origin_primitive_player_industrial_age
+				has_origin = origin_primitive_player_machine_age
+				has_origin = origin_primitive_player_atomic_age
 				has_origin = origin_primitive_player_early_space_age
-			} 
+			}
 		}
 		description = "civic_tooltip_anglers_effects_PrimPlayer"
 		negative_description = "civic_tooltip_anglers_negative_effects"
@@ -2948,7 +2974,6 @@ civic_relentless_industrialists = {
 				value = civic_corporate_relentless_industrialists
 				value = civic_naturalism							# Modded
 				value = civic_keepers_harmony						# Modded
-				value = civic_environmentalist						# Modded
 				value = civic_natural_capitalism					# Modded
 				value = civic_natural_capitalism_corporate			# Modded
 				value = civic_terraforming							# Modded
@@ -3144,7 +3169,6 @@ civic_relentless_industrialists_machine_cult = {
 				value = civic_corporate_relentless_industrialists
 				value = civic_naturalism
 				value = civic_keepers_harmony
-				value = civic_environmentalist
 				value = civic_natural_capitalism
 				value = civic_natural_capitalism_corporate			# Modded
 				value = civic_terraforming
@@ -3197,10 +3221,10 @@ civic_anarchy_utopia = {
 	potential = {
 		ethics = { NOT = { value = ethic_gestalt_consciousness } }
 	}
-	
+
 	possible = {
-		ethics = { 
-			value = ethic_fanatic_egalitarian 
+		ethics = {
+			value = ethic_fanatic_egalitarian
 			OR = {
 				text = civic_tooltip_xenophile
 				value = ethic_xenophile
@@ -3238,17 +3262,19 @@ civic_anarchy_utopia = {
 		planet_resettlement_unemployed_mult = 0.15
 		planet_resettlement_unemployed_destination_mult = 1.0
 		pop_citizen_happiness = 0.10
+		refugee_attraction = 0.10
 		empire_size_mult = -0.1
 		pop_ethic_egalitarian_attraction_mult = 0.35
 		pop_government_ethic_attraction = -0.35
 		country_base_influence_produces_mult = -0.15
 		country_claim_influence_cost_mult = 0.50
 		pop_cat_ruler_political_power = -1
+		add_attunement_the_cradle_of_souls = @civic_attunement1
 	}
-	
+
 }
 
-# Anarchist Ideals 
+# Anarchist Ideals
 # Anarchy Ideals : §YForced Resettlement§!, §YPopulation Control§! are not allowed
 civic_anarchy_ideals = {
 	description = "civic_anarchy_ideals_effects"
@@ -3257,10 +3283,10 @@ civic_anarchy_ideals = {
 	potential = {
 		ethics = { NOT = { value = ethic_gestalt_consciousness } }
 	}
-	
+
 	possible = {
-		ethics = { 
-			value = ethic_fanatic_egalitarian 
+		ethics = {
+			value = ethic_fanatic_egalitarian
 		}
 		authority = {
 			OR = {
@@ -3286,6 +3312,7 @@ civic_anarchy_ideals = {
 		empire_size_mult = -0.2
 		country_base_influence_produces_mult = -0.15
 		pop_cat_ruler_political_power = -1
+		add_attunement_the_cradle_of_souls = @civic_attunement1
 	}
 }
 
@@ -3345,6 +3372,7 @@ civic_idealistic_foundation = {
 	}
 	modifier = {
 		pop_citizen_happiness = 0.10
+		refugee_attraction = 0.10
 		add_attunement_the_cradle_of_souls = @civic_attunement1
 	}
 }
@@ -3762,11 +3790,11 @@ civic_state_monopoly = {
 
 	modifier = {
 		job_politician_per_pop = 0.04					# Enriad - mogul are politician
-		pop_cat_slave_bonus_workforce_mult = 0.1
+		pop_slave_bonus_workforce_mult = 0.1
 		slave_market_cost_mult = -0.25
 		pop_cat_ruler_political_power = 2
 		pop_cat_worker_political_power = -0.25
-		country_pop_enslaved_mult = 0.25
+		refugee_attraction = -0.25
 		pop_cat_worker_happiness = -0.05
 		planet_crime_mult = 0.15
 	}
@@ -4443,8 +4471,8 @@ civic_xeno_militarist = {
 civic_star_settlers = {
 	description = "civic_tooltip_star_settlers_effects"
 	negative_description = "civic_tooltip_star_settlers_negative_effects"
-	potential = { 
-		ethics = { NOT = { value = ethic_gestalt_consciousness } } 
+	potential = {
+		ethics = { NOT = { value = ethic_gestalt_consciousness } }
 	}
 	possible = {
 		is_nomadic = no	#This civic doesn't really -function- as a nomad
@@ -4463,7 +4491,7 @@ civic_star_settlers = {
 			#NOR = {
 			#	text = origin_tooltip_not_heirs_of_the_khan
 			#	value = origin_heirs_of_the_khan
-			#	value = origin_heirs_of_the_khan_corporate
+			#	value = civic_heirs_of_the_khan
 			#}
 			NOR = {
 				text = origin_tooltip_atleast_early_space_age
@@ -4564,21 +4592,23 @@ civic_symbiotic_race = {
 				value = ethic_xenophile
 				value = ethic_fanatic_xenophile
 			}
-			OR = {
-				text = civic_tooltip_materialist
-				value = ethic_materialist
-				value = ethic_fanatic_materialist
-			}
+			#OR = {
+			#	text = civic_tooltip_materialist
+			#	value = ethic_materialist
+			#	value = ethic_fanatic_materialist
+			#}
 		}
 		civics = {
 			NOR = {
 				value = civic_fanatic_purifiers
-				value = civic_agrarian_idyll
-				value = civic_shared_burden
+				#value = civic_agrarian_idyll
+				#value = civic_shared_burden
 				value = civic_slaver_guilds
 				value = civic_barbaric_despoilers			 # Due to Slavery
 				value = civic_barbaric_despoilers_corporate	 # Due to Slavery
 				value = PrimPlayer_civic_barbaric_despoilers_khan # Due to Slavery
+				value = PrimPlayer_civic_heirs_of_the_khan	# Due to Slavery
+				value = civic_heirs_of_the_khan	# Due to Slavery
 				value = civic_barbaric_despoilers_khan
 				value = civic_divine_order
 				value = civic_slave_race
@@ -4590,6 +4620,7 @@ civic_symbiotic_race = {
 				value = origin_void_dwellers
 				value = origin_mechanists
 				value = origin_clone_army
+				value = origin_heirs_of_the_khan	# Due to Slavery
 			}
 			NOR = {
 				text = origin_tooltip_atleast_early_space_age
@@ -4610,6 +4641,9 @@ civic_symbiotic_race = {
 		BIOLOGICAL_species_trait_picks_add = 1
 	}
 
+	traits = {
+		trait = trait_symbiotic_host
+	}
 	has_secondary_species = {
 		title = civic_symbiotic_race_secondary_species
 		traits = {
@@ -4691,8 +4725,8 @@ civic_slave_race = {
 civic_exploration = {
 	description = "civic_tooltip_exploration_effects"
 	negative_description = "civic_tooltip_exploration_negative_effects"
-	potential = { 
-		ethics = { NOT = { value = ethic_gestalt_consciousness } } 
+	potential = {
+		ethics = { NOT = { value = ethic_gestalt_consciousness } }
 	}
 	possible = {
 		is_nomadic = no
@@ -4886,8 +4920,8 @@ civic_defenders_faith = {
 
 # Harmonious Hierarchy - no slaves, nobles +unity/stability/amenities
 civic_harmonious_hierarchy = {
-	description = "civic_tooltip_harmonious_heirarchy_effects"
-	negative_description = "civic_tooltip_harmonious_heirarchy_negative_effects"
+	description = "civic_tooltip_harmonious_hierarchy_effects"
+	negative_description = "civic_tooltip_harmonious_hierarchy_negative_effects"
 	potential = {
 		ethics = { NOT = { value = ethic_gestalt_consciousness } }
 		authority = { NOT = { value = auth_corporate } }
@@ -4937,15 +4971,21 @@ civic_harmonious_hierarchy = {
 				value = civic_worker_coop
 			}
 		}
+		origin = {
+			NOT = { value = origin_heirs_of_the_khan }	# Due to Slavery
+		}
 		authority = { NOR = { value = auth_direct_democratic } }
 	}
 	random_weight = { base = @civic_default_random_weight }
+	modifier = {
+		empire_size_pops_mult = -0.05
+	}
 }
 
 # Harmony Between Classes - no slaves, nobles +unity/stability/amenities
 civic_harmonious_hierarchy_corporate = {
-	description = "civic_tooltip_harmonious_heirarchy_corporate_effects"
-	negative_description = "civic_tooltip_harmonious_heirarchy_corporate_negative_effects"
+	description = "civic_tooltip_harmonious_hierarchy_corporate_effects"
+	negative_description = "civic_tooltip_harmonious_hierarchy_corporate_negative_effects"
 	potential = {
 		ethics = { NOT = { value = ethic_gestalt_consciousness } }
 		authority = { value = auth_corporate }
@@ -4995,8 +5035,14 @@ civic_harmonious_hierarchy_corporate = {
 				value = civic_worker_coop
 			}
 		}
+		origin = {
+			NOT = { value = origin_heirs_of_the_khan	} # Due to Slavery
+		}
 	}
 	random_weight = { base = @civic_default_random_weight }
+	modifier = {
+		empire_size_pops_mult = -0.05
+	}
 }
 
 # Genetic Aristocracy
@@ -5191,10 +5237,9 @@ civic_divine_order = {
 		pop_cat_ruler_happiness = 0.1
 		pop_cat_ruler_political_power = 1
 		planet_jobs_worker_produces_mult = 0.05
-		pop_cat_slave_bonus_workforce_mult = 0.15
+		pop_slave_bonus_workforce_mult = 0.15
 		slave_market_cost_mult = -0.15
-		country_pop_enslaved_mult = 0.4
-		pop_unemployment_demotion_time_mult = 1
+		refugee_attraction = -0.25
 		country_leader_pool_size = -1
 	}
 }
@@ -5259,17 +5304,21 @@ civic_welfare_state = {
 				value = civic_barbaric_despoilers_corporate	 # Due to Slavery
 				value = PrimPlayer_civic_barbaric_despoilers_khan # Due to Slavery
 				value = civic_barbaric_despoilers_khan
+				value = PrimPlayer_civic_heirs_of_the_khan	# Due to Slavery
+				value = civic_heirs_of_the_khan	# Due to Slavery
 				value = civic_shared_burden
 				value = civic_beacon_of_liberty
 				value = civic_private_healthcare_corporate
 			}
+		}
+		origin = {
+			NOT = { value = origin_heirs_of_the_khan }	# Due to Slavery
 		}
 	}
 	random_weight = { base = @civic_default_random_weight }
 	modifier = {
 		country_society_tech_research_speed = 0.05
 		founder_species_growth_mult = 0.15
-		pop_unemployment_demotion_time_mult = -0.5
 		leaders_upkeep_mult = -0.2
 		planet_pops_unemployed_consumer_goods_upkeep_add = 1
 		planet_districts_cities_upkeep_mult = 0.1
@@ -5382,11 +5431,18 @@ civic_machine_cult_machine = {
 	traits = {
 		trait = trait_robot_latent_psionic
 	}
-	
+
 	has_secondary_species = {
 		title = civic_machine_cult_machine_secondary_species
 		traits = {
 			trait = trait_machine_cult_cybernetic
+		}
+	}
+	swap_type = {
+		name = civic_machine_cult_machine_forever_cruise
+		description = civic_tooltip_machine_cult_machine_forever_cruise_effects
+		trigger = {
+			is_hospitality_machine_cult_machine_empire = yes
 		}
 	}
 }
@@ -5931,8 +5987,8 @@ civic_globalism_corporate = {
 # Homogeneous Collectivism | Formerly called Tribalism
 civic_in_perfect = {
 	description = "civic_tooltip_in_perfect_effects"
-	potential = { 
-		ethics = { NOT = { value = ethic_gestalt_consciousness } } 
+	potential = {
+		ethics = { NOT = { value = ethic_gestalt_consciousness } }
 	}
 	possible = {
 		ethics = {
@@ -6076,7 +6132,7 @@ civic_franchising = {
 	potential = {
 		ethics = { NOT = { value = ethic_gestalt_consciousness } }
 		#OR = {
-		#	authority = { 
+		#	authority = {
 		#		OR = {
 		#			value = auth_corporate 	#Perhaps any non-democracy can do this?
 		#			value = auth_oligarchic
@@ -6086,9 +6142,9 @@ civic_franchising = {
 		#}
 	}
 	possible = {
-		authority = { 
+		authority = {
 			NOR = {
-				value = auth_direct_democratic	
+				value = auth_direct_democratic
 				value = auth_democratic
 			}
 		}
@@ -6107,9 +6163,9 @@ civic_franchising = {
 			#	value = ethic_fanatic_pacifist
 			#}
 		}
-		civics = { 
-			NOR = { 
-				value = civic_nationalistic_zeal 
+		civics = {
+			NOR = {
+				value = civic_nationalistic_zeal
 				value = civic_feudal_realm
 			}
 		}
@@ -6772,15 +6828,20 @@ civic_indentured_assets = {
 				value = civic_barbaric_despoilers_corporate	 # Due to Slavery
 				value = PrimPlayer_civic_barbaric_despoilers_khan # Due to Slavery
 				value = civic_barbaric_despoilers_khan
+				value = PrimPlayer_civic_heirs_of_the_khan	# Due to Slavery
+				value = civic_heirs_of_the_khan	# Due to Slavery
 				value = civic_pleasure_seekers
 				value = civic_labour_unions
 			}
 		}
+		origin = { 
+			NOT = { value = origin_heirs_of_the_khan	} # Due to Slavery
+		}
 	}
 	modifier = {
-		pop_cat_slave_bonus_workforce_mult = 0.10
-		pop_cat_slave_happiness = 0.10
-		country_pop_enslaved_mult = 0.35
+		pop_slave_bonus_workforce_mult = 0.10
+		pop_slave_happiness = 0.10
+		refugee_attraction = -0.25
 		add_attunement_the_instrument_of_desire = @civic_attunement1
 	}
 }
@@ -6833,8 +6894,8 @@ civic_brand_loyalty = {
 		trigger = {
 			exists = this
 			OR = {
-				has_ethic = ethic_authoritarian	
-				has_ethic = ethic_fanatic_authoritarian		
+				has_ethic = ethic_authoritarian
+				has_ethic = ethic_fanatic_authoritarian
 			}
 		}
 	}
@@ -7121,12 +7182,12 @@ civic_corporate_anglers = {
 	swap_type = {
 		trigger = {
 			OR = {
-				has_origin = origin_primitive_player_pre_industrial_age 
-				has_origin = origin_primitive_player_industrial_age 
-				has_origin = origin_primitive_player_machine_age 
-				has_origin = origin_primitive_player_atomic_age	
+				has_origin = origin_primitive_player_pre_industrial_age
+				has_origin = origin_primitive_player_industrial_age
+				has_origin = origin_primitive_player_machine_age
+				has_origin = origin_primitive_player_atomic_age
 				has_origin = origin_primitive_player_early_space_age
-			} 
+			}
 		}
 		description = "civic_tooltip_anglers_effects_PrimPlayer"
 		negative_description = "civic_tooltip_anglers_negative_effects"
@@ -7171,12 +7232,12 @@ civic_corporate_machine_anglers = {
 	swap_type = {
 		trigger = {
 			OR = {
-				has_origin = origin_primitive_player_pre_industrial_age 
-				has_origin = origin_primitive_player_industrial_age 
-				has_origin = origin_primitive_player_machine_age 
-				has_origin = origin_primitive_player_atomic_age	
+				has_origin = origin_primitive_player_pre_industrial_age
+				has_origin = origin_primitive_player_industrial_age
+				has_origin = origin_primitive_player_machine_age
+				has_origin = origin_primitive_player_atomic_age
 				has_origin = origin_primitive_player_early_space_age
-			} 
+			}
 		}
 		description = "civic_tooltip_machine_anglers_effects_PrimPlayer"
 		negative_description = "civic_tooltip_machine_anglers_negative_effects"
@@ -7264,11 +7325,11 @@ civic_permanent_employment = {
 				value = origin_evolutionary_predators
 			}
 		}
-		civics = { 
-			NOR = { 
+		civics = {
+			NOR = {
 				value = PrimPlayer_civic_barbaric_despoilers_khan 	#Due to origin_clone_army
 				value = civic_barbaric_despoilers_khan				#Due to origin_clone_army
-			} 
+			}
 		}
 		species_archetype = { NOT = { value = MACHINE } }
 	}
@@ -8018,8 +8079,8 @@ civic_military_dictatorship_corporate = {
 				value = civic_stratocracy
 			}
 		}
-		origin = { 
-			NOT = { value = origin_treasure_hunters }	#Cog Note - They are default Treasure Hunters origin now 
+		origin = {
+			NOT = { value = origin_treasure_hunters }	#Cog Note - They are default Treasure Hunters origin now
 		}
 	}
 
@@ -8123,7 +8184,7 @@ civic_military_dictatorship_corporate = {
 		}
 		description = "civic_military_dictatorship_corporate_treasure_effect"
 		modifier = {
-			
+
 		}
 		flags = { custom_start_screen first_alien_life Story1 Story5 }
 	}
@@ -8208,7 +8269,7 @@ civic_barbaric_despoilers_corporate = {
 	negative_description = "civic_tooltip_barbaric_despoilers_negatives"
 	modifier = {
 		country_subject_power_penalty_mult = -0.05
-		pop_cat_slave_bonus_workforce_mult = 0.10
+		pop_slave_bonus_workforce_mult = 0.10
 		country_pop_enslaved_mult = 0.10
 		add_attunement_the_eater_of_worlds = @civic_attunement1
 	}
@@ -8250,7 +8311,6 @@ PrimPlayer_civic_barbaric_despoilers_khan = {
 		species_archetype = { NOT = { value = MACHINE } }
 	}
 	possible = {
-		is_nomadic = no
 		ethics = {
 			OR = {
 				text = civic_tooltip_militarist
@@ -8290,6 +8350,7 @@ PrimPlayer_civic_barbaric_despoilers_khan = {
 				value = PrimPlayer_civic_scion_spiritualist
 				value = civic_scion_materialist
 				value = civic_scion_spiritualist
+				value = PrimPlayer_civic_heirs_of_the_khan
 			}
 		}
 		origin = {
@@ -8320,7 +8381,7 @@ PrimPlayer_civic_barbaric_despoilers_khan = {
 	negative_description = "civic_tooltip_barbaric_despoilers_negatives"
 	modifier = {
 		country_subject_power_penalty_mult = -0.05
-		pop_cat_slave_bonus_workforce_mult = 0.10
+		pop_slave_bonus_workforce_mult = 0.10
 		country_pop_enslaved_mult = 0.10
 		add_attunement_the_eater_of_worlds = @civic_attunement1
 	}
@@ -8373,7 +8434,6 @@ civic_barbaric_despoilers_khan = {
 		}
 	}
 	possible = {
-		is_nomadic = no
 		ethics = {
 			OR = {
 				text = civic_tooltip_militarist
@@ -8444,7 +8504,7 @@ civic_barbaric_despoilers_khan = {
 	negative_description = "civic_tooltip_barbaric_despoilers_negatives"
 	modifier = {
 		country_subject_power_penalty_mult = -0.05
-		pop_cat_slave_bonus_workforce_mult = 0.10
+		pop_slave_bonus_workforce_mult = 0.10
 		country_pop_enslaved_mult = 0.10
 		add_attunement_the_eater_of_worlds = @civic_attunement1
 	}
@@ -8516,7 +8576,7 @@ civic_crusader_spirit = {
 				value = civic_scorched_earth
 				value = civic_beacon_of_liberty
 				value = civic_crusader_spirit_corporate
-				value = civic_void_reavers 
+				value = civic_void_reavers
 			}
 		}
 	}
@@ -8781,7 +8841,6 @@ civic_worker_coop = {
 	}
 	modifier = {
 		election_term_years_mult = -0.50
-		pop_unemployment_demotion_time_mult = -0.66
 		pop_ethic_egalitarian_attraction_mult = 0.5
 		add_attunement_the_cradle_of_souls = @civic_attunement1
 	}
@@ -9117,14 +9176,14 @@ civic_astrometeorology = {
 }
 
 #Now the Industrialist Version
-civic_astrometeorology_megacorp = {	
+civic_astrometeorology_megacorp = {
 	playable = {
 		has_cosmic_storms_dlc = yes
 	}
 	ai_playable = {
 		has_cosmic_storms_dlc = yes
 	}
-	potential = { 
+	potential = {
 		ethics = { NOT = { value = ethic_gestalt_consciousness } }
 	}
 	possible = {
@@ -9791,7 +9850,7 @@ civic_void_reavers = {
 				value = ethic_fanatic_xenophile
 			}
 			NOR = {
-				text = civic_tooltip_pacifist
+				text = civic_tooltip_not_pacifist
 				value = ethic_pacifist
 				value = ethic_fanatic_pacifist
 			}
@@ -9799,7 +9858,7 @@ civic_void_reavers = {
 		civics = {
 			NOR = {
 				value = civic_fanatic_purifiers
-				value = civic_barbaric_despoilers
+				#value = civic_barbaric_despoilers	#Cog Note - Why is this blocked?
 				value = civic_scorched_earth
 			}
 		}
@@ -9829,10 +9888,34 @@ civic_void_reavers = {
 	swap_type = {
 		trigger = {
 			has_first_contact_dlc = yes
+			has_overlord_dlc = no
 		}
 		description = civic_tooltip_void_reavers_effects
 		modifier = {
 			ship_cloaking_strength_add = 1
+		}
+	}
+	swap_type = {
+		trigger = {
+			has_overlord_dlc = yes
+			has_first_contact_dlc = no
+		}
+		description = "civic_tooltip_void_reavers_effects"
+		modifier = {
+			country_enclave_capacity_add = 1
+			add_attunement_the_cradle_of_souls = @civic_attunement1
+		}
+	}
+	swap_type = {
+		trigger = {
+			has_overlord_dlc = yes
+			has_first_contact_dlc = yes
+		}
+		description = "civic_tooltip_void_reavers_effects"
+		modifier = {
+			ship_cloaking_strength_add = 1
+			country_enclave_capacity_add = 1
+			add_attunement_the_cradle_of_souls = @civic_attunement1
 		}
 	}
 }
