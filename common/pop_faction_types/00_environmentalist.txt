@@ -10,10 +10,6 @@ environmentalists = {
 	unique = yes
 	support_multiplier = 1
 	
-	is_potential = {
-		is_faction_allowed = yes
-	}
-	
 	resources = {
 		category = pop_factions
 		produces = {
@@ -94,6 +90,11 @@ environmentalists = {
 		}
 	}
 	
+	is_potential = {
+		is_faction_allowed = yes
+		is_nomadic = no
+	}
+	
 	parameters = {
 		empire = {
 			type = country
@@ -110,13 +111,12 @@ environmentalists = {
 
 	can_join_faction = {
 		is_shackled_robot = no
-		has_culture_shock = no
 		can_think = yes
-		is_green = yes
+		is_interlink_cyborg_pop = no
 	}
 	
 	attraction = {
-		base = 150
+		base = 100
 		
 		modifier = {
 			factor = 1.25
@@ -251,7 +251,6 @@ environmentalists = {
 		potential = {
 			exists = owner
 			owner = {
-                is_nomadic = no
 				has_surveyed_class = pc_nuked
 				NOR = {
 					is_apocalyptic_empire = yes
@@ -286,7 +285,6 @@ environmentalists = {
 		potential = {
 			exists = owner
 			owner = {
-                is_nomadic = no
 				has_surveyed_class = pc_gaia
 				has_ascension_perk = ap_consecrated_worlds
 			}
@@ -319,7 +317,6 @@ environmentalists = {
 		potential = {
 			exists = owner
 			owner = {
-                is_nomadic = no
 				OR = {
 					has_surveyed_class = pc_gaia
 					has_ascension_perk = ap_world_shaper
@@ -346,7 +343,6 @@ environmentalists = {
 		potential = {
 			exists = owner
 			owner = {
-                is_nomadic = no
 				has_technology = tech_mountain_range
 				has_technology = tech_volcano
 				has_technology = tech_dangerous_wildlife
@@ -385,9 +381,6 @@ environmentalists = {
 
 		potential = {
 			exists = owner
-			owner = {
-                is_nomadic = no
-			}
 		}
 
 		trigger = {
@@ -414,9 +407,6 @@ environmentalists = {
 
 		potential = {
 			exists = owner
-			owner = {
-                is_nomadic = no
-			}
 		}
 
 		trigger = {
@@ -444,9 +434,6 @@ environmentalists = {
 
 		potential = {
 			exists = owner
-			owner = {
-                is_nomadic = no
-			}
 		}
 
 		trigger = {
@@ -472,9 +459,6 @@ environmentalists = {
 
 		potential = {
 			exists = owner
-			owner = {
-				is_nomadic = no
-			}
 		}
 
 		trigger = {
@@ -501,7 +485,6 @@ environmentalists = {
 		potential = {
 			exists = owner
 			owner = {
-                is_nomadic = no
 				has_technology = tech_climate_restoration
 			}
 		}
@@ -512,288 +495,7 @@ environmentalists = {
 			}
 		}
 	}
-
-    demand = { # "SEEK_NATURAL_WONDERS"
-		title = "SEEK_NATURAL_WONDERS"
-		unfulfilled_title = "NO_SEEK_NATURAL_WONDERS"
-		desc = "SEEK_NATURAL_WONDERS_DESC"
-
-		unfulfilled_effect = -5
-		fulfilled_effect = 0.001
-
-		potential = {
-			exists = owner
-			owner = {
-				is_nomadic = yes
-				has_ascension_perk = ap_wanderlust
-				# You have the objective...
-				AND = {
-					check_variable = {
-						which = natural_spectacle_system_seen
-						value = 0 
-					}
-					check_variable = { 
-						which = space_ecology_system_seen
-						value = 0 
-					}
-				}
-				# ... and haven't started yet.
-			}
-		}
-
-        trigger = {
-			always = no
-        }
-    }
-
-    demand = { # "SEEK_NATURAL_WONDERS2"
-		title = "SEEK_NATURAL_WONDERS"
-		unfulfilled_title = "NO_SEEK_NATURAL_WONDERS"
-		desc = "SEEK_NATURAL_WONDERS_DESC"
-
-		fulfilled_effect = 10
-		unfulfilled_effect = -0.001
-
-		potential = {
-			exists = owner
-			owner = {
-				is_nomadic = yes
-				has_ascension_perk = ap_wanderlust
-				# You've seen more than one system...
-				OR = {
-					check_variable = {
-						which = natural_spectacle_system_seen
-						value >= 1 
-					}
-					check_variable = { 
-						which = space_ecology_system_seen
-						value >= 1 
-					}
-				}
-				# ...but you aren't done yet.
-				NOR = {
-					has_country_flag = natural_spectacle_completed 
-					has_country_flag = space_ecology_completed
-					has_country_flag = nomad_exploration_complete
-				}
-			}
-		}
-
-        trigger = {
-			owner = {
-				OR = {
-					limit = {
-						check_variable_arithmetic = {
-							which = value:natural_spectacle_system_ratio
-							multiply = 1
-							value <= 1
-						}
-					}
-					limit = {
-						check_variable_arithmetic = {
-							which = value:space_ecology_system_ratio
-							multiply = 1
-							value <= 1
-						}
-					}
-				}
-			}
-        }
-    }
-
-    demand = { # "SEEK_NATURAL_WONDERS3"
-		title = "SEEK_NATURAL_WONDERS"
-		unfulfilled_title = "NO_SEEK_NATURAL_WONDERS"
-		desc = "SEEK_NATURAL_WONDERS_DESC"
-
-		fulfilled_effect = 15
-		unfulfilled_effect = -0.001
-
-		potential = {
-			exists = owner
-			owner = {
-				is_nomadic = yes
-				has_ascension_perk = ap_wanderlust
-				# You've either seen almost everything...
-				OR = {
-					AND = {
-						limit = {
-							check_variable_arithmetic = {
-								which = value:natural_spectacle_system_ratio
-								multiply = 1
-								value <= 1
-							}
-						}
-						has_country_flag = space_ecology_completed
-					}
-					AND = {
-						limit = {
-							check_variable_arithmetic = {
-								which = value:space_ecology_system_ratio
-								multiply = 1
-								value >= 1
-							}
-						}
-						has_country_flag = natural_spectacle_completed
-					}
-					# ... or you already have.
-					has_country_flag = nomad_exploration_complete
-				}
-			}
-		}
-
-        trigger = {
-			owner = {
-				OR = {
-					AND = {
-						has_country_flag = natural_spectacle_completed 
-						has_country_flag = space_ecology_completed
-					}
-					has_country_flag = nomad_exploration_complete
-				}
-			}
-        }
-    }
-
-	demand = { # "WAYSTATION_IN_GAIA_SYSTEM"
-		title = "WAYSTATION_IN_GAIA_SYSTEM"
-		unfulfilled_title = "WAYSTATION_IN_GAIA_SYSTEM"
-		desc = "WAYSTATION_IN_GAIA_SYSTEM_DESC"
-
-		fulfilled_effect = 10
-		unfulfilled_effect = -0.001
-
-		potential = {
-			exists = owner
-			owner = {
-                is_nomadic = yes
-				has_surveyed_class = pc_gaia
-			}
-		}
-
-		trigger = {
-			owner = {
-				any_owned_nonprimary_starbase = {
-					is_waystation_starbase = yes
-					solar_system? = {
-						any_system_planet = {
-							is_planet_class = pc_gaia
-						}
-					}
-				}
-			}
-		}
-	}
 	
-	demand = {  # "UNIQUE_LIFEFORMS_2"
-		title = "UNIQUE_LIFEFORMS"
-		unfulfilled_title = "NO_UNIQUE_LIFEFORMS"
-		desc = "UNIQUE_LIFEFORMS_2_DESC"
-
-		fulfilled_effect = 15
-
-		potential = {
-			exists = owner
-			owner = {
-				is_nomadic = yes
-				OR = {
-					has_encountered_any_fauna = yes
-					has_origin = origin_primal_calling
-					has_origin = origin_fruitful
-				}
-			}
-		}
-
-		trigger = {
-			owner = {
-				any_owned_nonprimary_starbase = {
-					is_waystation_starbase = yes
-					solar_system? = {
-						OR = {
-							has_star_flag = tiyanki_graveyard_system
-							has_star_flag = tiyanki_spawn_system
-							has_star_flag = tiyanki_home_system
-							has_star_flag = amoeba_home_system
-							has_star_flag = crystal_home_system
-							has_star_flag = crystal_sphere_system
-						}
-					}
-				}
-			}
-		}
-	}
-
-	demand = { # "NO_STRIP_MINING"
-		title = "NO_STRIP_MINING"
-		unfulfilled_title = "ENVIRONMENTALISTS_NO_STRIP_MINING"
-		desc = "ENVIRONMENTALISTS_NO_STRIP_MINING_DESC"
-
-		unfulfilled_effect = 5
-		fulfilled_effect = -10
-
-		potential = {
-			exists = owner
-			owner = {
-                is_nomadic = yes
-			}
-		}
-
-		trigger = {
-			exists = owner
-			owner = {
-				has_country_flag = recently_stripmined_planet
-			}
-		}
-	}
-	
-    demand = { # "NO_STELLAR_IGNITION"
-    	title = "NO_STELLAR_IGNITION"
-		unfulfilled_title = "ENVIRONMENTALISTS_NO_STELLAR_IGNITION"
-		desc = "ENVIRONMENTALISTS_NO_STELLAR_IGNITION_DESC"
-
-		unfulfilled_effect = 5
-		fulfilled_effect = -50
-
-        potential = {
-            exists = owner
-            owner = {
-			    has_technology = tech_arkship_stellar_igniter
-		
-            }
-        }
-
-		trigger = {
-			exists = owner
-			owner = {
-				has_country_flag = recent_stellar_ignition
-			}
-		}
-    }
-
-    demand = { # "NO_REPROCESS_PLANET"
-		title = "NO_REPROCESS_PLANET"
-		unfulfilled_title = "ENVIRONMENTALISTS_NO_REPROCESS_PLANET"
-		desc = "ENVIRONMENTALISTS_NO_REPROCESS_PLANET_DESC"
-
-		unfulfilled_effect = 5
-		fulfilled_effect = -20
-
-		potential = {
-			exists = owner
-			owner = {
-                is_nomadic = yes
-                has_technology = tech_arkship_planetary_refinery
-			}
-		}
-
-		trigger = {
-			exists = owner
-			owner = {
-				has_country_flag = recently_reprocessed_planet
-			}
-		}
-    }
-
 	demand = { # Unplugged: De-Cyberize (Machine Cult Exempt)
 		title = TRADITIONALIST_UNPLUGGED_DECYBERIZE
 		unfulfilled_title = TRADITIONALIST_UNPLUGGED_NOT_DECYBERIZE
@@ -844,7 +546,7 @@ environmentalists = {
 	}
 
 	on_create = {
-		pop_faction_event = { id = factions.0 }
+		pop_faction_event = { id = factions.1 }
 	}
 
 	on_destroy = {
