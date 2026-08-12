@@ -986,7 +986,7 @@ decision_end_witch_hunt = {
 }
 
 # Environmental Steward Agenda Finisher Decision
-decision_enact_environmental_steward_agenda = {
+decision_enact_environmental_stewards_agenda = {
 	important = yes
 	owned_planets_only = yes
 	sound = event_administrative_work
@@ -1023,7 +1023,7 @@ decision_enact_environmental_steward_agenda = {
 	effect = {
 		hidden_effect = { 
 			owner = { remove_country_flag = environmental_stewards_agenda_ready }
-			add_environmental_steward_agenda = yes 
+			add_environmental_stewards_agenda = yes 
 		}
 	}
 
@@ -1036,7 +1036,7 @@ decision_enact_environmental_steward_agenda = {
 					NOT = { has_designation = col_research }
 					has_modifier = natural_beauty
 				}
-				has_modifier = environmental_steward_agenda_boost
+				has_modifier = environmental_stewards_agenda_boost
 			}
 		}
 		modifier = { # AI should only be applying this to worlds where it's useful
@@ -1465,7 +1465,8 @@ decision_planet_voice = {
 	resources = {
 		category = decisions
 		cost = {
-			unity = 250
+			unity = 1500
+			sr_zro = 300
 		}
 	}
 
@@ -1494,6 +1495,11 @@ decision_planet_voice = {
 				has_modifier = "hazardous_weather"
 				has_modifier = "damaged_ecology"
 				has_modifier = "wasteland_radiation"  # lush
+				every_deposit = {
+					limit = {
+						is_deposit_type = d_failing_infrastructure	# Random natural blocker
+					}
+				}
 			}
 		}
 	}
@@ -1574,7 +1580,7 @@ decision_expand_biotope = {
 		}
 	}
 	ai_weight = {
-		weight = 10
+		weight = 50
 		modifier = {
 			factor = 1.5
 			owner = {
@@ -1596,15 +1602,30 @@ decision_expand_biotope = {
 			}
 		}
 		modifier = {
+			factor = 5
+			owner = {
+				free_housing >= 300
+				num_free_districts = {
+					type = any
+					value > 5
+				}
+			}
+		}
+		modifier = {
 			factor = 0 #cannot afford
 			owner = {
-				resource_stockpile_compare = {
-					resource = exotic_gases
-					value < @b3_minerals
-					mult = 0.3
+				OR = {
+					resource_stockpile_compare = {
+						resource = exotic_gases
+						value < @b3_minerals
+						mult = 0.3
+					}
+					num_free_districts = {
+						type = any
+						value < 5
+					}
 				}
 			}
 		}
 	}
 }
-

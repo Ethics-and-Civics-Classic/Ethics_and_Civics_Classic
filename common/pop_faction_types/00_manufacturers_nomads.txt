@@ -1,12 +1,12 @@
 ##############################
-# Totalitarian Faction
+# Industrialist Manufacturers Faction
 ##############################
 
-totalitarian = {
+manufacturers_nomads = {
 	election_header = "GFX_faction_header_yellow"
-	guiding_ethic = ethic_authoritarian
-	visual_ethic = "totalitarian_visual_ethic"
-
+	guiding_ethic = ethic_industrial
+	visual_ethic = "manufacturers_visual_ethic"
+	
 	unique = yes
 	support_multiplier = 1
 
@@ -44,8 +44,8 @@ totalitarian = {
 					NOT = { has_civic = civic_anarchy_utopia }
 				}
 			}
-			society_research = @faction_major_output
-			engineering_research = @faction_minor_output
+			engineering_research = @faction_major_output
+			physics_research = @faction_minor_output
 			mult = @crowdsourcing_multiplier
 		}
 		#Anarchy Ideals
@@ -56,8 +56,8 @@ totalitarian = {
 					has_civic = civic_anarchy_utopia
 				}
 			}
-			society_research = @faction_major_output
-			engineering_research = @faction_minor_output
+			engineering_research = @faction_major_output
+			physics_research = @faction_minor_output
 			mult = @crowdsourcing_anarchy_multiplier
 		}
 	}
@@ -82,16 +82,18 @@ totalitarian = {
 			trigger = {
 				owner = {
 					has_edict = civic_crowdsourcing_edict
+					NOT = { has_civic = civic_anarchy_utopia }
 				}
 			}
-			society_research = @faction_major_output
-			engineering_research = @faction_minor_output
-			mult = @faction_extortion_crowdsourcing_ratio	#Cog Note - # Because they have no unity income split, they get 100% of what crowdsourcing gets, instead of splitting 50%/50%
+			engineering_research = @faction_major_output
+			physics_research = @faction_minor_output
+			mult = @faction_extortion_crowdsourcing_ratio		#Cog Note - # Because they have no unity income split, they get 100% of what crowdsourcing gets, instead of splitting 50%/50%
 		}
 	}
 
 	is_potential = {
 		is_faction_allowed = yes
+		is_nomadic = yes
 	}
 
 	parameters = {
@@ -115,8 +117,8 @@ totalitarian = {
 	}
 
 	attraction = {
-		base = 150
-
+		base = 100
+		
 		modifier = {
 			factor = 1.25
 			exists = from
@@ -125,7 +127,7 @@ totalitarian = {
 				leader = { is_ruler = yes }
 			}
 		}
-
+		
 		modifier = {
 			factor = 0.75
 			exists = from
@@ -133,34 +135,25 @@ totalitarian = {
 				NOT = { exists = leader }
 			}
 		}
-
-		# Should really check for citizenship instead
-		modifier = {
-			factor = 0.25
-			NOT = { is_same_species = owner_species }
-		}
 	}
-
+	
 	leader = {
 		base = 100
-
 		modifier = {
 			factor = 0.0
 			is_event_leader = yes
 		}
 	}
 
-	# DEMAND: Faction Outraged (by a GalCom Resolution)
-	inline_script = {
-		script = pop_faction_types/demand_faction_outraged
-		FLAG = galcom_resolution_passed_anti_totalitarian
-	}
+    inline_script = {
+        script = pop_faction_types/demand_faction_outraged
+        FLAG = galactic_community_resolution_passed_ecology
+    }
 
-	# DEMAND: Faction Pleased (by a GalCom Resolution)
-	inline_script = {
-		script = pop_faction_types/demand_faction_pleased
-		FLAG = galcom_resolution_passed_pro_totalitarian
-	}
+    inline_script = {
+        script = pop_faction_types/demand_faction_pleased
+        FLAG = galactic_community_resolution_passed_industry
+    }
 
 	demand = { # POLITICAL_PLURALISM
 		title = "POLITICAL_PLURALISM"
@@ -183,52 +176,108 @@ totalitarian = {
 		}
 	}
 
-	demand = { # TOTALITARIAN_PERSONALITY_CULT
-		title = "TOTALITARIAN_PERSONALITY_CULT"
-		unfulfilled_title = "TOTALITARIAN_NO_PERSONALITY_CULT"
-		desc = "TOTALITARIAN_PERSONALITY_CULT_DESC"
+	demand = { # CONSUMER_MARKETS
+		title = "CONSUMER_MARKETS"
+		unfulfilled_title = "CONSUMER_MARKETS"
+		desc = "CONSUMER_MARKETS_DESC"
 
-		fulfilled_effect = 5
+		fulfilled_effect = 10
 
 		potential = {
-			exists = owner
+			exists = owner			
 		}
 
 		trigger = {
-				owner = {
-					OR = {
-					has_valid_civic = civic_military_dictatorship
-					has_valid_civic = civic_military_dictatorship_corporate
-					has_valid_civic = civic_imperial_cult
-					has_valid_civic = civic_philosopher_king
+			owner = {
+				OR = {
+					has_policy_flag = trade_conversion_consumer_goods
+				}
+			}
+		}
+	}
+	
+	demand = { # INDUSTRIAL_INFRASTRUCTURE
+		title = "INDUSTRIAL_INFRASTRUCTURE"
+		unfulfilled_title = "NO_INDUSTRIAL_INFRASTRUCTURE"
+		desc = "INDUSTRIAL_INFRASTRUCTURE_DESC"
+		
+		unfulfilled_effect = -5
+		fulfilled_effect = 10
+		
+		potential = {
+			exists = owner
+			owner = {
+				OR = {
+					has_technology = tech_global_production_strategy
+				}
+			}
+		}
+		
+		trigger = {
+			owner = { 
+				any_owned_planet = {
+					has_building = "building_system_capital"
+					has_building = "building_ministry_production"
 				}
 			}
 		}
 	}
 
-	demand = { # TOTALITARIAN_CASTE
-		title = "TOTALITARIAN_CASTE"
-		unfulfilled_title = "TOTALITARIAN_NO_CASTE"
-		desc = "TOTALITARIAN_CASTE_DESC"
+	demand = { # INDUSTRY_ASCENSION_1
+		title = "INDUSTRY_ASCENSION_1"
+		unfulfilled_title = "NO_INDUSTRY_ASCENSION_1"
+		desc = "INDUSTRY_ASCENSION_1_DESC"
 
 		fulfilled_effect = 10
 
 		potential = {
 			exists = owner
-			owner = { OR = { has_valid_civic = civic_divine_order } }
+			owner = {
+				years_passed > 20
+				has_technology = tech_mega_engineering
+			}
 		}
 
 		trigger = {
-				owner = { has_valid_civic = civic_divine_order }
+			owner = {
+				OR = {
+					has_ascension_perk = ap_galactic_wonders_utopia
+					has_ascension_perk = ap_galactic_wonders_megacorp
+					has_ascension_perk = ap_galactic_wonders_utopia_and_megacorp
+				}
+			}
+		}
+	}
+	
+	demand = { # INDUSTRY_ASCENSION_2
+		title = "INDUSTRY_ASCENSION_2"
+		unfulfilled_title = "NO_INDUSTRY_ASCENSION_2"
+		desc = "INDUSTRY_ASCENSION_2_DESC"
+
+		fulfilled_effect = 10
+
+		potential = {
+			exists = owner
+			owner = {
+				years_passed > 50
+				has_technology = tech_mega_engineering
+			}
+		}
+
+		trigger = {
+			owner = {
+				has_ascension_perk = ap_master_builders
+			}
 		}
 	}
 
-	demand = { # TOTALITARIAN_POLICE_CONTROL
-		title = "TOTALITARIAN_POLICE_CONTROL"
-		unfulfilled_title = "TOTALITARIAN_NO_POLICE_CONTROL"
-		desc = "TOTALITARIAN_POLICE_CONTROL_DESC"
+	demand = { # RESOURCE_ACCUMULATION
+		title = "RESOURCE_ACCUMULATION"
+		unfulfilled_title = "LOW_RESOURCE_ACCUMULATION"
+		desc = "RESOURCE_ACCUMULATION_DESC"
 
-		fulfilled_effect = 5
+		fulfilled_effect = 10
+		unfulfilled_effect = -0.001
 
 		potential = {
 			exists = owner
@@ -236,290 +285,224 @@ totalitarian = {
 
 		trigger = {
 			owner = {
-				OR = {
-					has_valid_civic = civic_police_state
-					has_valid_civic = civic_cyber_dictatorship
-					has_civic = civic_military_dictatorship_corporate
-				}
+				has_country_flag = operation_reserves_high
 			}
 		}
 	}
 
-	demand = { # CENTRALIZED_STATE
-		title = "CENTRALIZED_STATE"
-		unfulfilled_title = "NO_CENTRALIZED STATE"
-		desc = "CENTRALIZED_STATE_DESC"
+    demand = { # "SEEK_INDUSTRIAL_MONUMENTS"
+		title = "SEEK_INDUSTRIAL_MONUMENTS"
+		unfulfilled_title = "NO_SEEK_INDUSTRIAL_MONUMENTS"
+		desc = "SEEK_INDUSTRIAL_MONUMENTS_DESC"
+
+		unfulfilled_effect = -5
+		fulfilled_effect = 0.001
+
+		potential = {
+			exists = owner
+			owner = {
+				has_ascension_perk = ap_wanderlust
+				# You have the objective...
+				AND = {
+					check_variable = {
+						which = galactic_landmark_system_seen
+						value = 0 
+					}
+					check_variable = { 
+						which = ancient_wonders_system_seen
+						value = 0 
+					}
+				}
+				# ... and haven't started yet.
+			}
+		}
+
+        trigger = {
+			always = no
+        }
+    }
+
+    demand = { # "SEEK_INDUSTRIAL_MONUMENTS2"
+		title = "SEEK_INDUSTRIAL_MONUMENTS"
+		unfulfilled_title = "NO_SEEK_INDUSTRIAL_MONUMENTS"
+		desc = "SEEK_INDUSTRIAL_MONUMENTS_DESC"
+
+		fulfilled_effect = 10
+		unfulfilled_effect = -0.001
+
+		potential = {
+			exists = owner
+			owner = {
+				has_ascension_perk = ap_wanderlust
+				# You've seen more than one system...
+				OR = {
+					check_variable = {
+						which = galactic_landmark_system_seen
+						value >= 1 
+					}
+					check_variable = { 
+						which = ancient_wonders_system_seen
+						value >= 1 
+					}
+				}
+				# ...but you aren't done yet.
+				NOR = {
+					has_country_flag = galactic_landmark_completed 
+					has_country_flag = ancient_wonders_completed
+					has_country_flag = nomad_exploration_complete
+				}
+			}
+		}
+
+        trigger = {
+			owner = {
+				OR = {
+					limit = {
+						check_variable_arithmetic = {
+							which = value:galactic_landmark_system_ratio
+							multiply = 1
+							value <= 1
+						}
+					}
+					limit = {
+						check_variable_arithmetic = {
+							which = value:ancient_wonders_system_ratio
+							multiply = 1
+							value <= 1
+						}
+					}
+				}
+			}
+        }
+    }
+
+    demand = { # "SEEK_INDUSTRIAL_MONUMENTS3"
+		title = "SEEK_INDUSTRIAL_MONUMENTS"
+		unfulfilled_title = "NO_SEEK_INDUSTRIAL_MONUMENTS"
+		desc = "SEEK_INDUSTRIAL_MONUMENTS_DESC"
 
 		fulfilled_effect = 15
-		unfulfilled_effect = -5
-
-		potential = {
-			exists = owner
-			owner = {
-				OR = {
-					has_technology = tech_centralized_state
-				}
-			}
-		}
-
-		trigger = {
-			owner = {
-				OR = {
-					has_policy_flag = centralized_state
-				}
-			}
-		}
-	}
-
-	demand = { # TOTALITARIAN_AUTOCRACY
-		title = "TOTALITARIAN_AUTOCRACY"
-		unfulfilled_title = "TOTALITARIAN_NO_AUTOCRACY"
-		desc = "TOTALITARIAN_AUTOCRACY_DESC"
-
-		fulfilled_effect = 10
 		unfulfilled_effect = -0.001
 
 		potential = {
 			exists = owner
 			owner = {
-				NOR = {
-					is_democratic_authority = no
-					has_civic = civic_military_dictatorship_corporate
-				}
-			}
-		}
-
-		trigger = {
-			owner = {
+				has_ascension_perk = ap_wanderlust
+				# You've either seen almost everything...
 				OR = {
-					is_imperial_authority = yes
-					is_dictatorial_authority = yes
-					has_civic = civic_military_dictatorship_corporate
-				}
-			}
-		}
-	}
-
-	demand = { # TOTALITARIAN_DEMOCRACY
-		title = "TOTALITARIAN_DEMOCRACY"
-		unfulfilled_title = "TOTALITARIAN_NO_DEMOCRACY"
-		desc = "TOTALITARIAN_DEMOCRACY_DESC"
-
-		unfulfilled_effect = -25
-		fulfilled_effect = 0.001
-
-		potential = {
-			exists = owner
-			owner = {
-				NOR = {
-					is_imperial_authority = yes
-					is_dictatorial_authority = yes
-					has_civic = civic_military_dictatorship_corporate
-				}
-			}
-		}
-
-		trigger = {
-			owner = {
-				NOR = {
-					is_democratic_authority = yes
-					has_authority = auth_direct_democratic
-					has_civic = civic_military_dictatorship_corporate
-				}
-			}
-		}
-	}
-
-	demand = { # "TOTALITARIAN_STRATIFICATION"
-		title = "TOTALITARIAN_STRATIFICATION"
-		unfulfilled_title = "TOTALITARIAN_NO_STRATIFICATION"
-		desc = "TOTALITARIAN_STRATIFICATION_DESC"
-
-		fulfilled_effect = 10
-		unfulfilled_effect = -20
-
-		potential = {
-			exists = owner
-			owner = {
-				is_socialism = no
-			}
-		}
-
-		trigger = {
-			owner = {
-				OR = {
-					NOT = {
-						any_owned_species = {
-							NOR = {
-								has_living_standard = { type = living_standard_dystopian_society country = prev }
-								has_living_standard = { type = living_standard_stratified country = prev }
-								has_living_standard = { type = living_standard_academic_privilege country = prev }
+					AND = {
+						limit = {
+							check_variable_arithmetic = {
+								which = value:galactic_landmark_system_ratio
+								multiply = 1
+								value <= 1
 							}
 						}
+						has_country_flag = ancient_wonders_completed
 					}
-					any_owned_species = {
-						OR = {
-							has_citizenship_type = { type = citizenship_slavery country = prev }
-							has_citizenship_type = { type = citizenship_purge country = prev }
-							has_citizenship_type = { type = citizenship_robot_servitude country = prev }
+					AND = {
+						limit = {
+							check_variable_arithmetic = {
+								which = value:ancient_wonders_system_ratio
+								multiply = 1
+								value >= 1
+							}
 						}
+						has_country_flag = galactic_landmark_completed
 					}
-					has_civic = civic_slaver_guilds
-					has_origin = origin_heirs_of_the_khan
-					has_valid_civic = PrimPlayer_civic_heirs_of_the_khan	# Due to Slavery
-					has_valid_civic = civic_heirs_of_the_khan	# Due to Slavery
-					has_civic = civic_barbaric_despoilers			 # Cog Note - This civic is an upgrade of Slaver Guilds
-					has_civic = civic_barbaric_despoilers_corporate	 # Cog Note - This civic is an upgrade of Slaver Guilds
-					has_civic = PrimPlayer_civic_barbaric_despoilers_khan # Cog Note - This civic is an upgrade of Slaver Guilds
-					has_civic = civic_barbaric_despoilers_khan 		 # Cog Note - This civic is an upgrade of Slaver Guilds
+					# ... or you already have.
+					has_country_flag = nomad_exploration_complete
 				}
 			}
 		}
-	}
 
-	demand = { # "TOTALITARIAN_ELITISM"
-		title = "TOTALITARIAN_ELITISM"
-		unfulfilled_title = "TOTALITARIAN_NO_ELITISM"
-		desc = "TOTALITARIAN_ELITISM_DESC"
+        trigger = {
+			owner = {
+				OR = {
+					AND = {
+						has_country_flag = galactic_landmark_completed 
+						has_country_flag = ancient_wonders_completed
+					}
+					has_country_flag = nomad_exploration_complete
+				}
+			}
+        }
+    }
 
-		fulfilled_effect = 5
+	demand = { # "NO_STRIP_MINING"
+		title = "NO_STRIP_MINING"
+		unfulfilled_title = "MANUFACTURERS_NO_STRIP_MINING"
+		desc = "MANUFACTURERS_NO_STRIP_MINING_DESC"
+
 		unfulfilled_effect = -5
-
-		potential = {
-			exists = owner
-			owner = {
-				OR = {
-					has_technology = tech_selected_lineages
-					has_technology = tech_capacity_boosters
-				}
-			}
-		}
-
-		trigger = {
-			owner = {
-				OR = {
-					has_policy_flag = leader_enhancement_selected_lineages
-					has_policy_flag = leader_enhancement_capacity_boosters
-				}
-			}
-		}
-	}
-
-	demand = { # "TOTALITARIAN_EXTRANATIONAL_AUTHORITY"
-		title = "TOTALITARIAN_EXTRANATIONAL_AUTHORITY"
-		unfulfilled_title = "TOTALITARIAN_NO_EXTRANATIONAL_AUTHORITY"
-		desc = "TOTALITARIAN_EXTRANATIONAL_AUTHORITY_DESC"
-
 		fulfilled_effect = 10
-		unfulfilled_effect = -0.001
+
+		potential = {
+			exists = owner
+		}
+
+		trigger = {
+			exists = owner
+			owner = {
+				has_country_flag = recently_stripmined_planet
+			}
+		}
+	}
+	
+    demand = { # "NO_STELLAR_IGNITION"
+    	title = "NO_STELLAR_IGNITION"
+		unfulfilled_title = "MANUFACTURERS_NO_STELLAR_IGNITION"
+		desc = "MANUFACTURERS_NO_STELLAR_IGNITION_DESC"
+
+		unfulfilled_effect = -5
+		fulfilled_effect = 50
+
+        potential = {
+            exists = owner
+            owner = {
+			    has_technology = tech_arkship_stellar_igniter
+		
+            }
+        }
+
+		trigger = {
+			exists = owner
+			owner = {
+				has_country_flag = recent_stellar_ignition_planet
+			}
+		}
+    }
+
+    demand = { # "NO_REPROCESS_PLANET"
+		title = "NO_REPROCESS_PLANET"
+		unfulfilled_title = "MANUFACTURERS_NO_REPROCESS_PLANET"
+		desc = "MANUFACTURERS_NO_REPROCESS_PLANET_DESC"
+
+		unfulfilled_effect = -5
+		fulfilled_effect = 20
 
 		potential = {
 			exists = owner
 			owner = {
-				num_communications > 2
+                has_technology = tech_arkship_planetary_refinery
 			}
 		}
 
 		trigger = {
+			exists = owner
 			owner = {
-				is_overlord = yes
+				has_country_flag = recently_reprocessed_planet
 			}
 		}
-	}
+    }
 
-	demand = { # "TOTALITARIAN_UNDERLING"
-		title = "TOTALITARIAN_UNDERLING"
-		unfulfilled_title = "TOTALITARIAN_NOT_UNDERLING"
-		desc = "TOTALITARIAN_UNDERLING_DESC"
+	demand = { # Unplugged: Cyberize (Machine Cult Exempt)
+		title = IMPERIALIST_UNPLUGGED_CYBERIZE
+		unfulfilled_title = IMPERIALIST_UNPLUGGED_NOT_CYBERIZE
+		desc = IMPERIALIST_UNPLUGGED_CYBERIZE_DESC
 
 		unfulfilled_effect = -10
-		fulfilled_effect = 0.001
-
-		potential = {
-			exists = owner
-			owner = {
-				is_subject = yes
-			}
-		}
-
-		trigger = {
-			owner = {
-				is_subject = no
-			}
-		}
-	}
-
-	demand = { # "TOTALITARIAN_BENEVOLENT_SUBJUGATION_POLICY"
-		title = "TOTALITARIAN_BENEVOLENT_SUBJUGATION_POLICY"
-		unfulfilled_title = "TOTALITARIAN_NO_BENEVOLENT_SUBJUGATION_POLICY"
-		desc = "TOTALITARIAN_BENEVOLENT_SUBJUGATION_POLICY_DESC"
-
-		unfulfilled_effect = -10
-		fulfilled_effect = 0.001
-
-		potential = {
-			exists = owner
-			owner = {
-				is_subject = no
-				has_policy_flag = benevolent_terms
-			}
-		}
-
-		trigger = {
-			owner = {
-				NOT = { has_policy_flag = benevolent_terms }
-			}
-		}
-	}
-
-	demand = { # "TOTALITARIAN_OPPRESSIVE_SUBJUGATION_POLICY"
-		title = "TOTALITARIAN_OPPRESSIVE_SUBJUGATION_POLICY"
-		unfulfilled_title = "TOTALITARIAN_ADOPT_OPPRESSIVE_SUBJUGATION_POLICY"
-		desc = "TOTALITARIAN_OPPRESSIVE_SUBJUGATION_POLICY_DESC"
-
-		fulfilled_effect = 10
-		unfulfilled_effect = -0.001
-
-		potential = {
-			exists = owner
-			owner = {
-				is_subject = no
-				NOT = { has_policy_flag = benevolent_terms }
-			}
-		}
-
-		trigger = {
-			owner = {
-				has_policy_flag = oppressive_terms
-			}
-		}
-	}
-
-	demand = { # TOTALITARIAN_FEDERATION
-		title = TOTALITARIAN_FEDERATION
-		unfulfilled_title = TOTALITARIAN_FEDERATION_NOT_HEGEMONY
-		desc = TOTALITARIAN_FEDERATION_DESC
-
 		fulfilled_effect = 5
-		unfulfilled_effect = -0.001
-
-		potential = {
-			exists = owner.federation
-			has_federations_dlc = yes
-		}
-
-		trigger = {
-			owner.federation = { has_federation_type = hegemony_federation }
-		}
-	}
-
-	demand = { # Unplugged: Status Quo
-		title = TOTALITARIAN_UNPLUGGED_STATUS_QUO
-		unfulfilled_title = TOTALITARIAN_UNPLUGGED_NOT_STATUS_QUO
-		desc = TOTALITARIAN_UNPLUGGED_STATUS_QUO_DESC
-
-		unfulfilled_effect = -20
-		fulfilled_effect = 0.001
 
 		potential = {
 			exists = owner
@@ -536,8 +519,19 @@ totalitarian = {
 			owner = {
 				any_situation = {
 					is_situation_type = situation_unplugged_identity
-					current_stage = stage_2
-					current_situation_approach = situation_unplugged_identity_discourage_change
+					OR = {
+						AND = { # safely in the Cyberize stage
+							current_stage = unplugged_identity_stage_3
+							situation_monthly_progress > 0
+						}
+						AND = { # trending towards Cyberization and our Approach is aligned
+							situation_monthly_progress > 0.05
+							OR = {
+								current_situation_approach = situation_unplugged_identity_discourage_change
+								current_situation_approach = situation_unplugged_identity_embrace_opinion
+							}
+						}
+					}
 				}
 			}
 		}
@@ -546,9 +540,9 @@ totalitarian = {
 	# Faction Demands for Ruler and Council positions.
 	inline_script = {
 		script = "pop_faction_types/global_faction_demands"
-		ETHIC = ethic_authoritarian
-		ETHIC_FANATIC = ethic_fanatic_authoritarian
-		ETHIC_OPPOSED = ethic_egalitarian
+		ETHIC = ethic_industrial
+		ETHIC_FANATIC = ethic_fanatic_industrial
+		ETHIC_OPPOSED = ethic_green
 	}
 
 	on_create = {
@@ -558,18 +552,18 @@ totalitarian = {
 	on_destroy = {
 		if = {
 			limit = {
-				has_modifier = promoted_authoritarian
+				has_modifier = promoted_industrial
 			}
-			remove_modifier = promoted_authoritarian
+			remove_modifier = promoted_industrial
 		}
 		if = {
 			limit = {
-				has_modifier = suppressed_authoritarian
+				has_modifier = suppressed_industrial
 			}
-			remove_modifier = suppressed_authoritarian
+			remove_modifier = suppressed_industrial
 		}
 	}
-
+	
 	actions = {
 		embrace_faction = {
 			title = "EMBRACE_FACTION"
@@ -598,7 +592,7 @@ totalitarian = {
 				}
 				support > 0.20
 				parameter:empire = {
-					NOT = { has_ethic = "ethic_fanatic_authoritarian" }
+					is_fanatic_industrial = no
 				}
 			}
 
@@ -606,7 +600,7 @@ totalitarian = {
 				add_modifier = { modifier = embraced_faction days = 3600 }
 				owner = { set_country_flag = has_embraced_faction }
 				parameter:empire = {
-					shift_ethic = ethic_authoritarian
+					shift_ethic = ethic_industrial
 					hidden_effect = {
 						add_modifier = { modifier = embraced_faction_timer days = 3600 }
 						every_pop_faction = {
@@ -641,7 +635,7 @@ totalitarian = {
 					factor = 0
 					support < 0.50
 					owner = {
-						has_ethic = ethic_authoritarian
+						has_ethic = ethic_industrial
 					}
 				}
 				modifier = {
@@ -666,8 +660,8 @@ totalitarian = {
 				exists = owner
 				parameter:empire = {
 					NOR = {
-						has_modifier = suppressed_authoritarian
-						has_modifier = promoted_authoritarian
+						has_modifier = suppressed_industrial
+						has_modifier = promoted_industrial
 					}
 				}
 			}
@@ -675,7 +669,7 @@ totalitarian = {
 			effect = {
 				owner = { set_country_flag = has_promoted_faction }
 				parameter:empire = {
-					add_modifier = { modifier = promoted_authoritarian days = -1 }
+					add_modifier = { modifier = promoted_industrial days = -1 }
 				}
 			}
 
@@ -689,14 +683,12 @@ totalitarian = {
 
 			potential = {
 				exists = owner
-				parameter:empire = {
-					has_modifier = promoted_authoritarian
-				}
+				parameter:empire = { has_modifier = promoted_industrial }
 			}
 
 			effect = {
 				parameter:empire = {
-					remove_modifier = promoted_authoritarian
+					remove_modifier = promoted_industrial
 				}
 			}
 
@@ -712,8 +704,8 @@ totalitarian = {
 				exists = owner
 				parameter:empire = {
 					NOR = {
-						has_modifier = suppressed_authoritarian
-						has_modifier = promoted_authoritarian
+						has_modifier = suppressed_industrial
+						has_modifier = promoted_industrial
 					}
 				}
 			}
@@ -721,7 +713,7 @@ totalitarian = {
 			effect = {
 				add_modifier = { modifier = suppressed_faction days = -1 }
 				parameter:empire = {
-					add_modifier = { modifier = suppressed_authoritarian days = -1 }
+					add_modifier = { modifier = suppressed_industrial days = -1 }
 				}
 			}
 
@@ -735,15 +727,13 @@ totalitarian = {
 
 			potential = {
 				exists = owner
-				parameter:empire = {
-					has_modifier = suppressed_authoritarian
-				}
+				parameter:empire = { has_modifier = suppressed_industrial }
 			}
 
 			effect = {
 				remove_modifier = suppressed_faction
 				parameter:empire = {
-					remove_modifier = suppressed_authoritarian
+					remove_modifier = suppressed_industrial
 				}
 			}
 
@@ -772,7 +762,7 @@ totalitarian = {
 
 			effect = {
 				set_faction_extorted = yes
-				custom_tooltip = engineering_research_extortion_tt
+				custom_tooltip = physics_research_extortion_tt
 				custom_tooltip = ONLY_ONE_EXTORTED_FACTION_TT
 			}
 
