@@ -57,8 +57,12 @@ building_commercial_zone = {
 
 	resources = {
 		category = planet_buildings
-		cost = {
-			minerals = @b1_minerals
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = rare_crystals
+			COST = @b1_minerals
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
 		}
 		upkeep = {
 			energy = @b1_upkeep
@@ -85,19 +89,6 @@ building_commercial_zone = {
 			job_trader_add = -100
 		}
 	}
-
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = {
-				has_active_tradition = tr_mercantile_commercial_enterprise
-			}
-		}
-		modifier = {
-			job_trader_add = 100
-		}
-	}
-
 	#triggered_desc = {
 	#	text = job_clerk_effect_desc # NO CLERKS
 	#}
@@ -154,7 +145,6 @@ building_commercial_megaplex = {
 			has_modifier = slave_colony
 			has_modifier = penal_colony
 		}
-		#has_building = building_commercial_zone
 	}
 
 	destroy_trigger = {
@@ -165,10 +155,10 @@ building_commercial_megaplex = {
 			has_modifier = penal_colony
 		}
 	}
-	
+
 	allow = {
 	}
-	
+
 	inline_script = {
 		script = jobs/trader_add
 		AMOUNT = @building_static_jobs
@@ -176,8 +166,14 @@ building_commercial_megaplex = {
 
 	resources = {
 		category = planet_buildings
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = rare_crystals
+			COST = @b2_minerals
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
+		}
 		cost = {
-			minerals = @b2_minerals
 			rare_crystals = @b2_rare_cost
 		}
 		upkeep = {
@@ -203,18 +199,6 @@ building_commercial_megaplex = {
 		job_entrepreneur_add = 100
 		planet_traders_upkeep_mult = -0.20
 	#	job_trader_add = 200 #Handeled by Inline Script
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = {
-				has_active_tradition = tr_mercantile_commercial_enterprise
-			}
-		}
-		modifier = {
-			job_trader_add = 200
-		}
 	}
 
 	#triggered_desc = {
@@ -300,19 +284,9 @@ building_galactic_stock_exchange = {
 
 	allow = {
 		has_major_upgraded_capital = yes
-		#if = {
-		#	limit = {
-		#		exists = orbital_defence
-		#	}
-		#	orbital_defence = {
-		#		exists = starbase
-		#		starbase = {
-		#			NOR = {
-		#				has_starbase_building = ring_galactic_stock_exchange
-		#				is_starbase_building_building = ring_galactic_stock_exchange
-		#			}
-		#		}
-		#	}
+		#orbital_ring_and_arkship_equivalent_absent = {
+		#	RING = ring_galactic_stock_exchange
+		#	ARKSHIP = arkship_galactic_stock_exchange
 		#}
 	}
 
@@ -326,15 +300,25 @@ building_galactic_stock_exchange = {
 		}
 	}
 
-
 	planet_modifier = {
 		#job_politician_add = 100						# Enriad - mogul are politician, moved to next inline_script
 		pop_trader_bonus_workforce_mult = 0.15
 	}
-	inline_script = {
-		script = "jobs/politician_add"
-		AMOUNT = @building_static_jobs_low
+
+	country_modifier = {
+		country_trade_fee = -0.05
 	}
+	
+	inline_script = {
+		script = jobs/trader_add
+		AMOUNT = @building_static_jobs
+	}
+
+	#inline_script = {
+	#	script = "jobs/politician_add_from_civic"
+	#	AMOUNT = @building_static_jobs
+	#	CIVIC = civic_merchant_guilds
+	#}
 
 	triggered_planet_modifier = {
 		potential = {
@@ -351,25 +335,17 @@ building_galactic_stock_exchange = {
 			planet_jobs_trade_produces_mult = 0.10
 		}
 	}
-	# inline_script = {					# Enriad - only one politician_add inline script for one building
-	# 	script = "jobs/politician_add_EaC"
-	# 	AMOUNT = @building_static_jobs_low
-	# 	ADDITIONAL_TRIGGER = "exists = owner	owner = { OR = { has_civic = civic_merchant_guilds	has_civic = civic_state_monopoly }	}"
-	# }
-
-	country_modifier = {
-		country_trade_fee = -0.05
-	}
-	
-	inline_script = {
-		script = jobs/trader_add
-		AMOUNT = @building_static_jobs
-	}
 
 	resources = {
 		category = planet_buildings
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = rare_crystals
+			COST = @b2_minerals
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
+		}
 		cost = {
-			minerals = @b2_minerals
 			rare_crystals = @b2_rare_cost
 		}
 		upkeep = {
@@ -382,71 +358,7 @@ building_galactic_stock_exchange = {
 		"tech_galactic_markets"
 	}
 
-	# triggered_desc = {		# Enriad - Marked for deletion, moved to inline_scripts "jobs/politician_add" and "jobs/politician_add_EaC"
-	# 	text = job_mogul_effect_desc
-	# }
-	#triggered_desc = {
-	#	text = job_merchant_effect_desc
-	#}
-
 	ai_resource_production = {
-		energy = 5
-		trigger = {
-			solar_system = {
-				# has_system_trade_value >= 50	# No Longer Used in Stellaris 4.0
-			}
-		}
-	}
-
-	ai_resource_production = {
-		energy = 3
-		trigger = {
-			solar_system = {
-				# has_system_trade_value >= 80	# No Longer Used in Stellaris 4.0
-			}
-		}
-	}
-}
-
-building_maintenance_depot = {
-	base_buildtime = 240
-
-	category = trade
-
-	building_sets = {
-		urban
-		trade
-	}
-
-	potential = {
-		owner = { is_gestalt = yes }
-		owner = { is_wilderness_empire = no }
-	}
-
-	destroy_trigger = {
-		exists = owner
-		OR = {
-			owner = { is_gestalt = no }
-			owner = { is_wilderness_empire = yes }
-		}
-	}
-
-	convert_to = {
-		building_commercial_zone
-	}
-
-	inline_script = {
-		script = jobs/trader_add
-		AMOUNT = @building_static_jobs
-	}
-
-	resources = {
-		category = planet_buildings
-		cost = {
-			minerals = @b1_minerals
-		}
-		upkeep = {
-			energy = 2
-		}
+		trade = 10
 	}
 }

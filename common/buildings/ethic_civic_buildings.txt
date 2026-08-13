@@ -122,12 +122,15 @@ building_colosseum = {
 			job_gladiator_per_pop = 0.01
 		}
 	}
-
+	
 	resources = {
-		category = planet_buildings
-		cost = {
-			minerals = 500
-			alloys = 50
+		category = planet_branch_office_buildings
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = alloys
+			COST = @b3_minerals
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
 		}
 		upkeep = {
 			energy = 2
@@ -223,9 +226,13 @@ building_posthumous_employment_center = {
 	}
 
 	resources = {
-		category = planet_buildings
-		cost = {
-			minerals = @b1_minerals
+		category = planet_branch_office_buildings
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = alloys
+			COST = @b1_minerals
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
 		}
 		upkeep = {
 			energy = @b1_upkeep
@@ -294,9 +301,9 @@ building_paragon_memory_vaults = {
 			has_upgraded_capital = yes
 			hidden_trigger = {
 				OR = {
-					has_building =building_primitive_capital
-					has_building =building_machine_primitive_capital
-					has_building =building_hive_primitive_capital
+					has_building = building_primitive_capital
+					has_building = building_machine_primitive_capital
+					has_building = building_hive_primitive_capital
 
 				}
 			}
@@ -321,8 +328,12 @@ building_paragon_memory_vaults = {
 
 	resources = {
 		category = planet_buildings
-		cost = {
-			minerals = @b2_minerals
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = alloys
+			COST = @b2_minerals
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
 		}
 
 		cost = {
@@ -356,30 +367,27 @@ building_paragon_memory_vaults = {
 				planet = { is_variable_set = paragon_memory_vault }
 			}
 			trade = 10
-		}
-		produces = {
-			trigger = {
-				exists = owner
-				owner = { has_civic = civic_memory_vault_corporate }
-				planet = { is_variable_set = paragon_memory_vault }
-			}
-			trade = 10
 			multiplier = planet.paragon_memory_vault
 		}
 		upkeep = {
 			energy = @b2_upkeep
 		}
+		upkeep = {
+			trigger = {
+				exists = owner
+				owner = { has_civic = civic_memory_vault_corporate }
+				owner = { is_variable_set = paragon_memory_vault }
+			}
+			energy = @b2_upkeep
+			multiplier = owner.paragon_memory_vault
+		}
 	}
 
 	triggered_country_modifier = {
 		potential = {
 			exists = owner
 			owner = {
-				OR = {
-					has_civic = civic_memory_vault
-					has_civic = civic_memory_vault_machine
-					has_civic = civic_memory_vault_hive
-				}
+				is_memory_vault_empire = yes
 			}
 		}
 		species_leader_exp_gain = 0.01
@@ -388,24 +396,38 @@ building_paragon_memory_vaults = {
 		potential = {
 			exists = owner
 			owner = {
-				OR = {
-					has_civic = civic_memory_vault
-					has_civic = civic_memory_vault_machine
-					has_civic = civic_memory_vault_hive
-				}
+				is_memory_vault_empire = yes
+				is_variable_set = paragon_memory_vault
 			}
-			planet = { is_variable_set = paragon_memory_vault }
 		}
 		species_leader_exp_gain = 0.01
 		mult = planet.paragon_memory_vault
 	}
 
+	triggered_country_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_memory_vault_empire = yes
+			}
+		}
+		country_unity_produces_mult = 0.01
+	}
+	triggered_country_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_memory_vault_empire = yes
+				is_variable_set = paragon_memory_vault
+			}
+		}
+		country_unity_produces_mult = 0.01
+		mult = owner.paragon_memory_vault
+	}
+
 	inline_script = {
 		script = buildings/on_all_wilderness_buildings_districts
 	}
-	#triggered_desc = {
-	#	text = EaC_civic_mechanic_events.103.building.modifier_tooltip_warning
-	#}
 
 	on_built = {
 		set_variable = {
