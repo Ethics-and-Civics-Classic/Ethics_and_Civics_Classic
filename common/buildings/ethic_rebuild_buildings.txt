@@ -1,3 +1,12 @@
+
+@traders_from_civic = 200
+@crime_floor_from_legal_crime = 5
+@trade_value_from_jobs = 0.01
+
+@high_trade_from_jobs = 0.15
+@med_trade_from_jobs = 0.10
+@low_trade_from_jobs = 0.05
+
 building_xeno_zoo = {
 	base_buildtime = @b1_time
 	planet_limit = 1
@@ -438,8 +447,12 @@ building_clone_army_clone_vat = {
 
 	resources = {
 		category = planet_buildings_clone_vats
-		cost = {
-			minerals = @b2_minerals
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = alloys
+			COST = @b2_minerals
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
 		}
 		upkeep = {
 			energy = @b2_upkeep
@@ -563,8 +576,12 @@ building_factory_angler_1 = {
 
 	resources = {
 		category = planet_buildings
-		cost = {
-			minerals = @b1_minerals
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = alloys
+			COST = @b1_minerals
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
 		}
 		upkeep = {
 			energy = @b1_upkeep
@@ -679,8 +696,14 @@ building_factory_angler_2 = {
 
 	resources = {
 		category = planet_buildings
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = alloys
+			COST = @b2_minerals
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
+		}
 		cost = {
-			minerals = @b2_minerals
 			rare_crystals = @b3_rare_cost
 		}
 		upkeep = {
@@ -796,18 +819,23 @@ building_factory_angler_3 = {
 
 	resources = {
 		category = planet_buildings
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = alloys
+			COST = @b4_minerals
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
+		}
 		cost = {
 			trigger = {
 				has_ringworld_output_boost = no
 			}
-			minerals = @b3_minerals
 			rare_crystals = @b4_rare_cost
 		}
 		cost = {
 			trigger = {
 				has_ringworld_output_boost = yes
 			}
-			minerals = 1500
 			rare_crystals = 600
 		}
 		upkeep = {
@@ -877,10 +905,7 @@ building_pirate_haven_2 = {
 	
 	potential = {
 		owner = {
-			OR = { 
-				has_valid_civic = civic_crusader_spirit_corporate 
-				has_valid_civic = civic_void_reavers 
-			}
+			is_pirate_empire = yes
 		}
 	}
 
@@ -954,8 +979,7 @@ building_pirate_haven_2 = {
 		potential = {
 			always = yes
 		}
-		planet_jobs_trade_produces_mult = @trade_value_from_jobs
-		mult = value:num_jobs_with_tag|TAG|soldier|
+		planet_soldiers_trade_produces_add = @med_trade_from_jobs
 	}
 	
 	triggered_planet_modifier = {
@@ -964,8 +988,7 @@ building_pirate_haven_2 = {
 				has_valid_civic = civic_private_military_companies
 			}
 		}
-		planet_jobs_trade_produces_mult = @trade_value_from_jobs
-		mult = value:num_jobs_with_tag|TAG|soldier|
+		planet_soldiers_trade_produces_add = @med_trade_from_jobs
 	}
 
 	triggered_planet_modifier = {
@@ -977,8 +1000,7 @@ building_pirate_haven_2 = {
 				}
 			}
 		}
-		planet_jobs_trade_produces_mult = @trade_value_from_jobs
-		mult = value:num_jobs_with_tag|TAG|soldier|
+		planet_soldiers_trade_produces_add = @med_trade_from_jobs
 	}
 	    
 	triggered_planet_modifier = {
@@ -987,8 +1009,7 @@ building_pirate_haven_2 = {
                 is_worker_coop_empire = yes
             }
         }
-        planet_jobs_trade_produces_mult = @trade_value_from_jobs
-        mult = value:num_jobs_with_tag|TAG|bureaucrat|				# Union pirates gotta have that mult. -- Sage
+		planet_bureaucrats_trade_produces_add = @med_trade_from_jobs				# Union pirates gotta have that mult. -- Sage
     }
     
 	#Trader Jobs from civics
@@ -1016,13 +1037,16 @@ building_pirate_haven_2 = {
 	custom_tooltip = trade_value_from_soldiers_and_enforcers_and_criminal
 
 	resources = {
-		category = planet_buildings
+		category = planet_branch_office_buildings
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = alloys
+			COST = @b1_minerals
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
+		}
 		cost = {
 			influence = 20
-			minerals = 500
-		}
-		upkeep = {
-			energy = 10
 		}
 	}
 	
@@ -1030,32 +1054,29 @@ building_pirate_haven_2 = {
 		potential = {
 			owner = {
 				OR = {
-					has_civic= civic_ruthless_competition			# Due to Slavery
 					has_valid_civic = civic_slaver_guilds
+					has_valid_civic = civic_indentured_assets				# Due to Slavery
+					has_valid_civic = civic_divine_order
+					has_valid_civic = civic_ruthless_competition			# Due to Slavery
 					has_origin = origin_heirs_of_the_khan
 					has_valid_civic = PrimPlayer_civic_heirs_of_the_khan	# Due to Slavery
 					has_valid_civic = civic_heirs_of_the_khan	# Due to Slavery
-					has_civic= civic_indentured_assets				# Due to Slavery
-					has_civic= civic_barbaric_despoilers			# Cog Note - This civic is an upgrade of Slaver Guilds
-					has_civic= civic_barbaric_despoilers_corporate	# Cog Note - This civic is an upgrade of Slaver Guilds
-					has_civic= PrimPlayer_civic_barbaric_despoilers_khan	# Cog Note - This civic is an upgrade of Slaver Guilds
-					has_civic= civic_barbaric_despoilers_khan				# Cog Note - This civic is an upgrade of Slaver Guilds
-					has_civic= civic_private_militaries			# Private Military Civic
-					has_civic= civic_private_military_companies	# Private Military Civic
+					has_valid_civic = civic_barbaric_despoilers			# Cog Note - This civic is an upgrade of Slaver Guilds
+					has_valid_civic = civic_barbaric_despoilers_corporate	# Cog Note - This civic is an upgrade of Slaver Guilds
+					has_valid_civic = PrimPlayer_civic_barbaric_despoilers_khan	# Cog Note - This civic is an upgrade of Slaver Guilds
+					has_valid_civic = civic_barbaric_despoilers_khan				# Cog Note - This civic is an upgrade of Slaver Guilds
+					has_valid_civic = civic_private_militaries			# Private Military Civic
+					has_valid_civic = civic_private_military_companies	# Private Military Civic
 				}
 			}
 		}
-		planet_jobs_trade_produces_mult = @trade_value_from_jobs
-		mult = value:num_jobs_with_tag|TAG|crime| #benefits from enforcers, criminals, slaves, livestock and purged pops
+		planet_criminals_trade_produces_add = @high_trade_from_jobs #benefits from enforcers, criminals, slaves, livestock and purged pops
 	}
 	
 	destroy_trigger = {
 		exists = owner
 		owner = { 
-			NOR = { 
-				has_valid_civic = civic_crusader_spirit_corporate 
-				has_valid_civic = civic_void_reavers 
-			}
+			is_pirate_empire = no
 		}
 	}
 
@@ -1123,9 +1144,9 @@ building_national_park = {
 			has_upgraded_capital = yes
 			hidden_trigger = {
 				OR = {
-					has_building =building_primitive_capital
-					has_building =building_machine_primitive_capital
-					has_building =building_hive_primitive_capital
+					has_building = building_primitive_capital
+					has_building = building_machine_primitive_capital
+					has_building = building_hive_primitive_capital
 
 				}
 			}
@@ -1163,8 +1184,12 @@ building_national_park = {
 
 	resources = {
 		category = planet_buildings
-		cost = {
-			minerals = @b3_minerals
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = exotic_gases
+			COST = @b3_minerals
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
 		}
 		upkeep = {
 			energy = @b3_upkeep
@@ -1674,8 +1699,12 @@ building_tribal_council = {
 
 	resources = {
 		category = planet_buildings
-		cost = {
-			minerals = @b3_minerals
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = rare_crystals
+			COST = @b3_minerals
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
 		}
 		upkeep = {
 			energy = @b2_upkeep
@@ -1782,8 +1811,13 @@ building_tribal_palace = {
 
 	resources = {
 		category = planet_buildings
-		cost = {
-			minerals = @b4_minerals
+		
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = rare_crystals
+			COST = @b4_minerals
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
 		}
 		upkeep = {
 			energy = @b3_upkeep
@@ -2083,8 +2117,13 @@ building_nature_sanctuary = {
 
 	resources = {
 		category = planet_buildings
-		cost = {
-			minerals = @b1_minerals
+		
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = rare_crystals
+			COST = @b1_minerals
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
 		}
 		upkeep = {
 			food = 12
@@ -2351,8 +2390,13 @@ building_galactic_navy_academy = {
 
 	resources = {
 		category = planet_buildings
-		cost = {
-			minerals = @b3_minerals
+		
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = volatile_motes
+			COST = @b3_minerals
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
 		}
 		upkeep = {
 			energy = @b3_upkeep
@@ -2433,8 +2477,13 @@ building_galactic_temple = {
 
 	resources = {
 		category = planet_buildings
-		cost = {
-			minerals = @b3_minerals
+		
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = rare_crystals
+			COST = @b3_minerals
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
 		}
 		upkeep = {
 			energy = @b3_upkeep
@@ -2518,8 +2567,12 @@ building_galactic_trade_center = {
 
 	resources = {
 		category = planet_buildings
-		cost = {
-			minerals = @b3_minerals
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = rare_crystals
+			COST = @b3_minerals
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
 		}
 		upkeep = {
 			energy = @b3_upkeep
@@ -2599,8 +2652,13 @@ building_pangalactic_forum = {
 
 	resources = {
 		category = planet_buildings
-		cost = {
-			minerals = @b3_minerals
+		
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = rare_crystals
+			COST = @b3_minerals
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
 		}
 		upkeep = {
 			energy = @b3_upkeep
@@ -2884,8 +2942,13 @@ building_ecotourism_center = {
 
 	resources = {
 		category = planet_buildings
-		cost = {
-			minerals = @b2_minerals
+		
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = exotic_gases
+			COST = @b2_minerals
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
 		}
 		upkeep = {
 			energy = @b2_upkeep
@@ -2975,8 +3038,12 @@ building_deep_space_scanner = {
 
 	resources = {
 		category = planet_buildings
-		cost = {
-			minerals = @b3_minerals
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = rare_crystals
+			COST = @b2_minerals
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
 		}
 		upkeep = {
 			energy = @b2_upkeep
@@ -3115,8 +3182,12 @@ building_symbol_purity = {
 
 	resources = {
 		category = planet_buildings
-		cost = {
-			minerals = @b3_minerals
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = volatile_motes
+			COST = @b3_minerals
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
 		}
 		upkeep = {
 			energy = 4
@@ -3180,8 +3251,13 @@ building_colossal_monument = {
 
 	resources = {
 		category = planet_buildings
-		cost = {
-			minerals = @b4_minerals
+		
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = alloys
+			COST = @b4_minerals
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
 		}
 		produces = {
 			unity = 7
@@ -3216,8 +3292,13 @@ building_biofuel_plant = {
 
 	resources = {
 		category = planet_buildings
-		cost = {
-			minerals = 500
+		
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = exotic_gases
+			COST = 500
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
 		}
 	}
 
@@ -3311,8 +3392,14 @@ building_thermal_borehole = {
 
 	resources = {
 		category = planet_buildings
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = volatile_motes
+			COST = @b2_minerals
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
+		}
 		cost = {
-			minerals = 300
 			alloys = 200
 		}
 	}
@@ -3408,8 +3495,14 @@ building_thermal_borehole_2 = {
 
 	resources = {
 		category = planet_buildings
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = volatile_motes
+			COST = @b3_minerals
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
+		}
 		cost = {
-			minerals = 300
 			alloys = 200
 		}
 	}
@@ -3510,8 +3603,12 @@ building_mecha_monastery = {
 
 	resources = {
 		category = planet_buildings
-		cost = {
-			minerals = 500
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = rare_crystals
+			COST = @b3_minerals
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
 		}
 		upkeep = {
 			energy = 3
