@@ -1,6 +1,9 @@
+##################
+# Spiritualists
+##################
+
 building_temple = {
 	base_buildtime = @b1_time
-
 	exempt_from_ai_planet_specialization = no
 
 	category = unity
@@ -11,12 +14,18 @@ building_temple = {
 
 	potential = {
 		exists = owner
-		NOT = { has_modifier = slave_colony }
 		owner = {
 			OR = {
 				is_spiritualist = yes
 				has_make_spiritualist_perk = yes
 			}
+		}
+		NOT = { has_modifier = slave_colony }
+		OR = {
+			has_carrier_flag = ignore_ai_building_limitations
+			owner = { is_ai = no }
+			# AI is allowed to build up to two of these.
+			num_buildings = { type = building_temple value < 2 }
 		}
 	}
 	
@@ -26,14 +35,17 @@ building_temple = {
 	destroy_trigger = {
 		exists = owner
 		OR = {
-			has_modifier = slave_colony
 			AND = {
 				owner = { is_spiritualist = no }
 				owner = { has_make_spiritualist_perk = no}
 			}
+			has_modifier = slave_colony
 		}
 	}
-	
+
+	allow = {
+	}
+
 	ai_weight_coefficient = 0
 
 	convert_to = {
@@ -44,8 +56,12 @@ building_temple = {
 
 	resources = {
 		category = planet_buildings
-		cost = {
-			minerals = @b1_minerals
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = rare_crystals
+			COST = @b1_minerals
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
 		}
 		upkeep = {
 			energy = @b1_upkeep
@@ -53,41 +69,14 @@ building_temple = {
 	}
 
 	planet_modifier = {
-		# pop_ethic_spiritualist_attraction_mult = 0.05	# Added to priest job
+		pop_ethic_spiritualist_attraction_mult = 0.05
 	}
 
 	inline_script = {
 		script = jobs/priests_add			# Enriad - gives bureaucrats and their reskins in 4.0
 		AMOUNT = @building_static_jobs
 	}
-	
-	# triggered_planet_modifier = {
-	# 	potential = {
-	# 		exists = owner
-	# 		owner = { 
-	# 			has_civic = civic_defenders_faith 
-	# 			is_megacorp = no
-	# 		}
-	# 	}
-	# 	modifier = {
-	# 		job_priests_add = -100		# Enriad - Priests are bureaucrats in 4.0
-	# 		job_templar_add = 100		# Enriad - Templars are soldiers in 4.0
-	# 	}
-	# }
-	# triggered_planet_modifier = {
-	# 	potential = {
-	# 		exists = owner
-	# 		owner = { 
-	# 			has_civic = civic_defenders_faith 
-	# 			is_megacorp = yes
-	# 		}
-	# 	}
-	# 	modifier = {
-	# 		job_preacher_add = -100		# Enriad - Preachers are bureaucrats in 4.0
-	# 		job_templar_add = 100		# Enriad - Templars are soldiers in 4.0
-	# 	}
-	# }
-	
+
 	triggered_planet_modifier = {
 		potential = {
 			exists = owner
@@ -118,20 +107,6 @@ building_temple = {
 			job_primitive_priest_2_add = 100
 		}
 	}
-	
-	# triggered_desc = {			# Enriad - Templars moved to be a reskin of Soldiers
-	# 	trigger = {
-	# 	exists = owner
-	# 		owner = {
-	# 			has_civic = civic_defenders_faith
-	# 		}
-	# 	}
-	# 	text = job_templar_effect_desc
-	# }
-
-	#upgrades = {
-	#	building_holotemple	#Now you build each building
-	#}
 
 	prerequisites = {
 		"tech_cultural_heritage"
@@ -167,9 +142,8 @@ building_holotemple = {
 			}
 		}
 	}
-	
+
 	allow = {
-		has_upgraded_capital = yes
 	}
 
 	destroy_trigger = {
@@ -191,8 +165,14 @@ building_holotemple = {
 
 	resources = {
 		category = planet_buildings
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = rare_crystals
+			COST = @b2_minerals
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
+		}
 		cost = {
-			minerals = @b2_minerals
 			rare_crystals = @b2_rare_cost
 		}
 		upkeep = {
@@ -203,38 +183,8 @@ building_holotemple = {
 
 	planet_modifier = {
 		pop_ethic_spiritualist_attraction_mult = 0.10	# Cog Note - No jobs exist for this building, so this modifier is OK
-		planet_bureaucrats_upkeep_mult = -0.20
+		planet_bureaucrats_upkeep_mult = -0.10
 	}
-	
-	#inline_script = {						# Enriad - marked for deletion
-	#	script = jobs/priests_add			# Now holotemple is standalone and this is complimentary
-	#	AMOUNT = @b2_jobs
-	#}
-
-	# triggered_planet_modifier = {			# Enriad - Holotemple is standalone and have no need to do that, marked for deletion
-	# 	potential = {
-	# 		exists = owner
-	# 		owner = { has_civic = civic_defenders_faith }
-	# 	}
-	# 	modifier = {
-	# 		job_bureaucrat_add = -200
-	# 		job_templar_add = 200
-	# 	}
-	# }
-
-	# triggered_desc = {					# Enriad - Templars moved to be a reskin of Soldiers, marked for deletion
-	# 	trigger = {
-	# 		exists = owner
-	# 		owner = {
-	# 			has_civic = civic_defenders_faith
-	# 		}
-	# 	}
-	# 	text = job_templar_effect_desc
-	# }
-
-	#upgrades = {							# Enriad - marked for deletion
-	#	building_sacred_nexus				# Now you build each building
-	#}
 
 	prerequisites = {
 		"tech_holographic_rituals"
@@ -262,27 +212,26 @@ building_sacred_nexus = {
 
 	potential = {
 		exists = owner
-		NOT = { has_modifier = slave_colony }
 		owner = {
 			OR = {
 				is_spiritualist = yes
 				has_make_spiritualist_perk = yes
 			}
 		}
+		NOT = { has_modifier = slave_colony }
 	}
 
 	allow = {
-		has_major_upgraded_capital = yes
 	}
 
 	destroy_trigger = {
 		exists = owner
 		OR = {
-			has_modifier = slave_colony
 			AND = {
 				owner = { is_spiritualist = no }
 				owner = { has_make_spiritualist_perk = no}
 			}
+			has_modifier = slave_colony
 		}
 	}
 
@@ -294,8 +243,14 @@ building_sacred_nexus = {
 
 	resources = {
 		category = planet_buildings
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = rare_crystals
+			COST = @b3_minerals
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
+		}
 		cost = {
-			minerals = @b3_minerals
 			rare_crystals = @b3_rare_cost
 		}
 		upkeep = {
@@ -305,16 +260,9 @@ building_sacred_nexus = {
 	}
 
 	planet_modifier = {
-		# pop_ethic_spiritualist_attraction_mult = 0.15	# Added to priest job
-		pop_bureaucrat_bonus_workforce_mult = 0.15
+		pop_ethic_spiritualist_attraction_mult = 0.15
+		pop_bureaucrat_bonus_workforce_mult = 0.10
 	}
-
-	#inline_script = {
-	#	script = jobs/priests_add	#Now temple is standalone and this is complimentary
-	#	AMOUNT = @b3_jobs
-	#}
-
-	# inline_script = buildings/job_high_priest_variants_add_saintly_hierarchy		# Enriad - original messed up code, fixed in next line
 
 	triggered_planet_modifier = {
 		potential = {
@@ -328,38 +276,6 @@ building_sacred_nexus = {
 		}
 		job_politician_add = 100
 	}
-	
-	# triggered_planet_modifier = {
-	# 	potential = {
-	# 		exists = owner
-	# 		owner = { has_civic = civic_defenders_faith }
-	# 	}
-	# 	modifier = {
-	# 		job_bureaucrat_add = -300				# Enriad - Priests are bureaucrats in 4.0
-	# 		job_templar_add = 300					# Enriad - Templars are soldiers in 4.0
-	# 	}
-	# }
-
-	#triggered_desc = {
-	#	text = job_priest_effect_desc
-	#}
-	
-	# triggered_planet_modifier = {
-	# 	potential = {
-	# 		exists = owner
-	# 		owner = {
-	# 			OR = {
-	# 				has_civic = civic_imperial_cult
-	# 				has_civic = civic_divine_council
-	# 				has_civic = civic_spiritual_democracy
-	# 				has_civic = civic_exalted_priesthood
-	# 			}
-	# 		}
-	# 	}
-	# 	modifier = {
-	# 		job_politician_add = 100		# Enriad - high_priest are politician in 4.0, moved to next inline_script
-	# 	}
-	# }
 
 	inline_script = {
 		script = "jobs/politician_add_EaC"
@@ -367,31 +283,6 @@ building_sacred_nexus = {
 		ADDITIONAL_TRIGGER = "exists = owner owner = { OR = { has_valid_civic = civic_imperial_cult		has_valid_civic = civic_divine_council		has_valid_civic = civic_spiritual_democracy		has_valid_civic = civic_exalted_priesthood	}	}"
 	}
 	
-	# triggered_desc = {						# Enriad - Templars moved to be a reskin of Soldiers, marked for deletion
-	# 	trigger = {
-	# 		exists = owner
-	# 		owner = {
-	# 			has_civic = civic_defenders_faith
-	# 		}
-	# 	}
-	# 	text = job_templar_effect_desc
-	# }
-
-	# triggered_desc = {
-	# 	trigger = {
-	# 		exists = owner
-	# 		owner = {
-	# 			OR = {
-	# 				has_civic = civic_imperial_cult
-	# 				has_civic = civic_divine_council
-	# 				has_civic = civic_spiritual_democracy
-	# 				has_civic = civic_exalted_priesthood
-	# 			}
-	# 		}
-	# 	}
-	# 	text = job_high_priest_effect_desc
-	# }
-
 	prerequisites = {
 		"tech_consecration_fields"
 	}
@@ -669,398 +560,6 @@ building_citadel_of_faith = {
 	#	text = job_priest_effect_desc
 	#}
 }
-
-# Servitors
-building_organic_sanctuary = {
-	base_buildtime = @b1_time
-
-	category = unity
-
-	building_sets = {
-		bio_trophy
-		urban
-		unity
-	}
-
-	potential = {
-		exists = owner
-		owner = {
-			OR = {
-				has_valid_civic = civic_machine_servitor
-				has_valid_civic = civic_machine_cult_machine
-			}
-			is_hospitality_servitor_empire = no
-			is_hospitality_machine_cult_machine_empire = no
-		}
-	}
-
-	destroy_trigger = {
-		exists = owner
-		OR = {
-			owner = {
-				NOR = { 
-					owner = { has_valid_civic = civic_machine_servitor }
-					owner = { has_valid_civic = civic_machine_cult_machine }
-				}
-			}
-			AND = {
-				owner = { is_ai = yes }
-				count_owned_pop_amount = {
-					limit = {
-						has_citizenship_type = {
-							type = citizenship_organic_trophy
-							country = owner
-						}
-					}
-					count <= 2000
-				}
-				num_buildings = { type = building_organic_sanctuary value > 3 }
-			}
-			AND = {
-				owner = { is_ai = yes }
-				count_owned_pop_amount = {
-					limit = {
-						has_citizenship_type = {
-							type = citizenship_organic_trophy
-							country = owner
-						}
-					}
-					count <= 4000
-				}
-				num_buildings = { type = building_organic_paradise value > 5 }
-			}
-		}
-	}
-	
-	convert_to = {
-		building_luxury_residence
-		building_communal_housing
-	}
-
-	resources = {
-		category = planet_buildings
-		inline_script = {
-			script = buildings/nomadic_cost_switcher
-			REGULAR_RESOURCE = minerals
-			NOMADIC_RESOURCE = rare_crystals
-			COST = @b1_minerals
-			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
-		}
-		upkeep = {
-			energy = @b1_upkeep
-		}
-	}
-
-	planet_modifier = {
-		job_bio_trophy_add = 1500
-	}
-
-	upgrades = {
-		"building_organic_paradise"
-	}
-
-	# We need to cheat here and tell AI that this will probably give some complex output since AI can not evaluate what this building does without the pops which it cant get without the building - chicken and egg
-	ai_resource_production = {
-		unity = 10
-		physics_research = 10
-		alloys = 5
-
-		trigger = {
-			NOT = { has_building = building_organic_sanctuary }
-		}
-	}
-
-	ai_weight_coefficient = 1.2
-
-	# Here we try to adress the second issue that the AI cant evaluate the pop job output of the bio trophy given the happiness trigger that was put inplace to guard against players exploiting bio trophies
-
-	#science
-	ai_resource_production = {
-		unity = 10
-		physics_research = 10
-
-		trigger = {
-			any_owned_pop_group = {
-				is_pop_category = bio_trophy_unemployment
-			}
-
-			planet_resource_compare = {
-				resource = physics_research
-				value >= 100
-				type = produces
-			}
-		}
-	}
-
-	#alloys
-	ai_resource_production = {
-		unity = 10
-		alloys = 10
-
-		trigger = {
-			any_owned_pop_group = {
-				is_pop_category = bio_trophy_unemployment
-			}
-
-			planet_resource_compare = {
-				resource = alloys
-				value >= 100
-				type = produces
-			}
-		}
-	}
-
-	#cgs
-	ai_resource_production = {
-		unity = 10
-		consumer_goods = 10
-
-		trigger = {
-			any_owned_pop_group = {
-				is_pop_category = bio_trophy_unemployment
-			}
-
-			planet_resource_compare = {
-				resource = consumer_goods
-				value >= 100
-				type = produces
-			}
-		}
-	}
-}
-
-building_organic_paradise = {
-	base_buildtime = @b2_time
-	can_build = no
-	icon = building_paradise_dome
-
-	category = unity
-
-	building_sets = {
-		bio_trophy
-		urban
-		unity
-	}
-
-	potential = {
-		exists = owner
-		owner = {
-			OR = {
-				has_valid_civic = civic_machine_servitor
-				has_valid_civic = civic_machine_cult_machine
-			}
-			is_hospitality_servitor_empire = no
-			is_hospitality_machine_cult_machine_empire = no
-		}
-	}
-
-	destroy_trigger = {
-		exists = owner
-		NOR = { 
-			owner = { has_valid_civic = civic_machine_servitor } 
-			owner = { has_valid_civic = civic_machine_cult_machine } 
-		}
-	}
-
-	convert_to = {
-		building_paradise_dome
-		building_communal_housing_large
-	}
-
-	resources = {
-		category = planet_buildings
-		inline_script = {
-			script = buildings/nomadic_cost_switcher
-			REGULAR_RESOURCE = minerals
-			NOMADIC_RESOURCE = rare_crystals
-			COST = @b2_minerals
-			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
-		}
-		cost = {
-			minerals = @b2_minerals
-			exotic_gases = @b2_rare_cost
-		}
-		upkeep = {
-			energy = @b2_upkeep
-			exotic_gases = @b2_rare_upkeep
-		}
-	}
-
-	planet_modifier = {
-		job_bio_trophy_add = 3000
-	}
-
-	prerequisites = { "tech_paradise_dome" }
-
-	show_tech_unlock_if = {
-		owner = { 
-			OR = {
-				has_valid_civic = civic_machine_servitor 
-				has_valid_civic = civic_machine_cult_machine
-			}
-		}
-	}
-
-	ai_weight_coefficient = 1.2
-
-	# Here we try to adress the second issue that the AI cant evaluate the pop job output of the bio trophy given the happiness trigger that was put inplace to guard against players exploiting bio trophies
-
-	#science
-	ai_resource_production = {
-		unity = 20
-		physics_research = 20
-
-		trigger = {
-			any_owned_pop_group = {
-				is_pop_category = bio_trophy_unemployment
-			}
-
-			planet_resource_compare = {
-				resource = physics_research
-				value >= 100
-				type = produces
-			}
-		}
-	}
-
-	#alloys
-	ai_resource_production = {
-		unity = 20
-		alloys = 20
-
-		trigger = {
-			any_owned_pop_group = {
-				is_pop_category = bio_trophy_unemployment
-			}
-
-			planet_resource_compare = {
-				resource = alloys
-				value >= 100
-				type = produces
-			}
-		}
-	}
-
-	#cgs
-	ai_resource_production = {
-		unity = 20
-		consumer_goods = 20
-
-		trigger = {
-			any_owned_pop_group = {
-				is_pop_category = bio_trophy_unemployment
-			}
-
-			planet_resource_compare = {
-				resource = consumer_goods
-				value >= 100
-				type = produces
-			}
-		}
-	}
-}
-
-building_trophy_vault = {
-	base_buildtime = @b2_time
-	planet_limit = 1
-	category = unity
-	icon = building_autocurating_vault
-
-	building_sets = {
-		unity
-	}
-
-	potential = {
-		exists = owner
-		is_special_colony_type = no
-		owner = {
-			OR = {
-				has_valid_civic = civic_machine_servitor
-				has_valid_civic = civic_machine_cult_machine
-			}
-		}
-	}
-
-	allow = {
-	}
-
-	destroy_trigger = {
-		exists = owner
-		OR = {
-			has_modifier = slave_colony
-			owner = {
-				NOR = {
-					has_valid_civic = civic_machine_servitor
-					has_valid_civic = civic_machine_cult_machine
-				}
-			}
-		}
-	}
-
-	convert_to = {
-		building_autocurating_vault
-		building_citadel_of_faith
-		building_alpha_hub
-		building_corporate_vault
-	}
-
-	resources = {
-		category = planet_buildings
-		inline_script = {
-			script = buildings/nomadic_cost_switcher
-			REGULAR_RESOURCE = minerals
-			NOMADIC_RESOURCE = rare_crystals
-			COST = @b2_minerals
-			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
-		}
-		cost = {
-			rare_crystals = @b2_rare_cost
-		}
-		upkeep = {
-			energy = @b2_upkeep
-			rare_crystals = @b2_rare_upkeep
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = {
-				OR = {
-					NOT = { has_origin = origin_forever_cruise }
-					has_country_flag = forever_cruise_over
-				}
-			}
-		}
-		planet_bio_trophies_unity_produces_add = 0.5
-		planet_bio_trophies_consumer_goods_upkeep_add = 0.5
-		pop_cat_bio_trophy_happiness = 0.10
-	}
-
-	# Forever Cruise servitors house their Bio-Trophies as cruise passengers, so boost that category instead
-	triggered_planet_modifier = {
-		potential = {
-			owner? = {
-				has_origin = origin_forever_cruise
-				NOT = { has_country_flag = forever_cruise_over }
-			}
-		}
-		planet_cruise_passengers_unity_produces_add = 0.5
-		planet_cruise_passengers_consumer_goods_upkeep_add = 0.5
-		pop_cat_cruise_passenger_happiness = 0.10
-	}
-
-	prerequisites = {
-		"tech_autocurating_vault"
-	}
-
-	show_tech_unlock_if = {
-		OR = {
-			has_valid_civic = civic_machine_servitor
-			has_valid_civic = civic_machine_cult_machine
-		}
-	}
-}
-
 
 ##################
 # Memorialists
@@ -1497,5 +996,395 @@ building_galactic_memorial_3 = {
 
 	ai_resource_production = {
 		unity = 20
+	}
+}
+
+# Servitors
+building_organic_sanctuary = {
+	base_buildtime = @b1_time
+
+	category = unity
+
+	building_sets = {
+		bio_trophy
+		urban
+		unity
+	}
+
+	potential = {
+		exists = owner
+		owner = {
+			OR = {
+				has_valid_civic = civic_machine_servitor
+				has_valid_civic = civic_machine_cult_machine
+			}
+			is_hospitality_servitor_empire = no
+			is_hospitality_machine_cult_machine_empire = no
+		}
+	}
+
+	destroy_trigger = {
+		exists = owner
+		OR = {
+			owner = {
+				NOR = { 
+					owner = { has_valid_civic = civic_machine_servitor }
+					owner = { has_valid_civic = civic_machine_cult_machine }
+				}
+			}
+			AND = {
+				owner = { is_ai = yes }
+				count_owned_pop_amount = {
+					limit = {
+						has_citizenship_type = {
+							type = citizenship_organic_trophy
+							country = owner
+						}
+					}
+					count <= 2000
+				}
+				num_buildings = { type = building_organic_sanctuary value > 3 }
+			}
+			AND = {
+				owner = { is_ai = yes }
+				count_owned_pop_amount = {
+					limit = {
+						has_citizenship_type = {
+							type = citizenship_organic_trophy
+							country = owner
+						}
+					}
+					count <= 4000
+				}
+				num_buildings = { type = building_organic_paradise value > 5 }
+			}
+		}
+	}
+	
+	convert_to = {
+		building_luxury_residence
+		building_communal_housing
+	}
+
+	resources = {
+		category = planet_buildings
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = rare_crystals
+			COST = @b1_minerals
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
+		}
+		upkeep = {
+			energy = @b1_upkeep
+		}
+	}
+
+	planet_modifier = {
+		job_bio_trophy_add = 1500
+	}
+
+	upgrades = {
+		"building_organic_paradise"
+	}
+
+	# We need to cheat here and tell AI that this will probably give some complex output since AI can not evaluate what this building does without the pops which it cant get without the building - chicken and egg
+	ai_resource_production = {
+		unity = 10
+		physics_research = 10
+		alloys = 5
+
+		trigger = {
+			NOT = { has_building = building_organic_sanctuary }
+		}
+	}
+
+	ai_weight_coefficient = 1.2
+
+	# Here we try to adress the second issue that the AI cant evaluate the pop job output of the bio trophy given the happiness trigger that was put inplace to guard against players exploiting bio trophies
+
+	#science
+	ai_resource_production = {
+		unity = 10
+		physics_research = 10
+
+		trigger = {
+			any_owned_pop_group = {
+				is_pop_category = bio_trophy_unemployment
+			}
+
+			planet_resource_compare = {
+				resource = physics_research
+				value >= 100
+				type = produces
+			}
+		}
+	}
+
+	#alloys
+	ai_resource_production = {
+		unity = 10
+		alloys = 10
+
+		trigger = {
+			any_owned_pop_group = {
+				is_pop_category = bio_trophy_unemployment
+			}
+
+			planet_resource_compare = {
+				resource = alloys
+				value >= 100
+				type = produces
+			}
+		}
+	}
+
+	#cgs
+	ai_resource_production = {
+		unity = 10
+		consumer_goods = 10
+
+		trigger = {
+			any_owned_pop_group = {
+				is_pop_category = bio_trophy_unemployment
+			}
+
+			planet_resource_compare = {
+				resource = consumer_goods
+				value >= 100
+				type = produces
+			}
+		}
+	}
+}
+
+building_organic_paradise = {
+	base_buildtime = @b2_time
+	can_build = no
+	icon = building_paradise_dome
+
+	category = unity
+
+	building_sets = {
+		bio_trophy
+		urban
+		unity
+	}
+
+	potential = {
+		exists = owner
+		owner = {
+			OR = {
+				has_valid_civic = civic_machine_servitor
+				has_valid_civic = civic_machine_cult_machine
+			}
+			is_hospitality_servitor_empire = no
+			is_hospitality_machine_cult_machine_empire = no
+		}
+	}
+
+	destroy_trigger = {
+		exists = owner
+		NOR = { 
+			owner = { has_valid_civic = civic_machine_servitor } 
+			owner = { has_valid_civic = civic_machine_cult_machine } 
+		}
+	}
+
+	convert_to = {
+		building_paradise_dome
+		building_communal_housing_large
+	}
+
+	resources = {
+		category = planet_buildings
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = rare_crystals
+			COST = @b2_minerals
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
+		}
+		cost = {
+			exotic_gases = @b2_rare_cost
+		}
+		upkeep = {
+			energy = @b2_upkeep
+			exotic_gases = @b2_rare_upkeep
+		}
+	}
+
+	planet_modifier = {
+		job_bio_trophy_add = 3000
+	}
+
+	prerequisites = { "tech_paradise_dome" }
+
+	show_tech_unlock_if = {
+		owner = { 
+			OR = {
+				has_valid_civic = civic_machine_servitor 
+				has_valid_civic = civic_machine_cult_machine
+			}
+		}
+	}
+
+	ai_weight_coefficient = 1.2
+
+	# Here we try to adress the second issue that the AI cant evaluate the pop job output of the bio trophy given the happiness trigger that was put inplace to guard against players exploiting bio trophies
+
+	#science
+	ai_resource_production = {
+		unity = 20
+		physics_research = 20
+
+		trigger = {
+			any_owned_pop_group = {
+				is_pop_category = bio_trophy_unemployment
+			}
+
+			planet_resource_compare = {
+				resource = physics_research
+				value >= 100
+				type = produces
+			}
+		}
+	}
+
+	#alloys
+	ai_resource_production = {
+		unity = 20
+		alloys = 20
+
+		trigger = {
+			any_owned_pop_group = {
+				is_pop_category = bio_trophy_unemployment
+			}
+
+			planet_resource_compare = {
+				resource = alloys
+				value >= 100
+				type = produces
+			}
+		}
+	}
+
+	#cgs
+	ai_resource_production = {
+		unity = 20
+		consumer_goods = 20
+
+		trigger = {
+			any_owned_pop_group = {
+				is_pop_category = bio_trophy_unemployment
+			}
+
+			planet_resource_compare = {
+				resource = consumer_goods
+				value >= 100
+				type = produces
+			}
+		}
+	}
+}
+
+building_trophy_vault = {
+	base_buildtime = @b2_time
+	planet_limit = 1
+	category = unity
+	icon = building_autocurating_vault
+
+	building_sets = {
+		unity
+	}
+
+	potential = {
+		exists = owner
+		is_special_colony_type = no
+		owner = {
+			OR = {
+				has_valid_civic = civic_machine_servitor
+				has_valid_civic = civic_machine_cult_machine
+			}
+		}
+	}
+
+	allow = {
+	}
+
+	destroy_trigger = {
+		exists = owner
+		OR = {
+			has_modifier = slave_colony
+			owner = {
+				NOR = {
+					has_valid_civic = civic_machine_servitor
+					has_valid_civic = civic_machine_cult_machine
+				}
+			}
+		}
+	}
+
+	convert_to = {
+		building_autocurating_vault
+		building_citadel_of_faith
+		building_alpha_hub
+		building_corporate_vault
+	}
+
+	resources = {
+		category = planet_buildings
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = rare_crystals
+			COST = @b2_minerals
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
+		}
+		cost = {
+			rare_crystals = @b2_rare_cost
+		}
+		upkeep = {
+			energy = @b2_upkeep
+			rare_crystals = @b2_rare_upkeep
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			owner? = {
+				OR = {
+					NOT = { has_origin = origin_forever_cruise }
+					has_country_flag = forever_cruise_over
+				}
+			}
+		}
+		planet_bio_trophies_unity_produces_add = 0.5
+		planet_bio_trophies_consumer_goods_upkeep_add = 0.5
+		pop_cat_bio_trophy_happiness = 0.10
+	}
+
+	# Forever Cruise servitors house their Bio-Trophies as cruise passengers, so boost that category instead
+	triggered_planet_modifier = {
+		potential = {
+			owner? = {
+				has_origin = origin_forever_cruise
+				NOT = { has_country_flag = forever_cruise_over }
+			}
+		}
+		planet_cruise_passengers_unity_produces_add = 0.5
+		planet_cruise_passengers_consumer_goods_upkeep_add = 0.5
+		pop_cat_cruise_passenger_happiness = 0.10
+	}
+
+	prerequisites = {
+		"tech_autocurating_vault"
+	}
+
+	show_tech_unlock_if = {
+		OR = {
+			has_valid_civic = civic_machine_servitor
+			has_valid_civic = civic_machine_cult_machine
+		}
 	}
 }
