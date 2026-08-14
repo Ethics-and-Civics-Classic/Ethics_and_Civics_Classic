@@ -246,198 +246,6 @@ environmentalists_nomads = {
 		}
 	}
 
-	demand = { # "EXPANSIVE_GARDENS"
-		title = "EXPANSIVE_GARDENS"
-		unfulfilled_title = "EXPAND_GARDENS"
-		desc = "EXPANSIVE_GARDENS_DESC"
-
-		fulfilled_effect = 10
-		unfulfilled_effect = -0.001
-
-		potential = {
-			exists = owner
-		}
-
-		trigger = {
-			owner = {
-				every_owned_planet = {
-					count_deposits = {
-						type = d_ark_nature_preserve_blocker
-						count < 3
-					}
-				}
-			}
-		}
-	}
-
-	demand = { # "NO_MEGASTRUCTURES"
-    	title = "NO_MEGASTRUCTURES"
-		unfulfilled_title = "ENVIRONMENTALISTS_NO_MEGASTRUCTURES"
-		desc = "ENVIRONMENTALISTS_NO_MEGASTRUCTURES_DESC"
-
-		unfulfilled_effect = 5
-		fulfilled_effect = -10
-
-        potential = {
-            exists = owner
-            owner = {
-				OR = {
-			   		has_technology = tech_dyson_swarm
-					has_technology = tech_arc_furnace
-					has_technology = tech_dyson_sphere
-					has_technology = tech_mega_engineering
-					can_build_megastructures = yes
-				}
-            }
-        }
-
-		trigger = {
-			exists = owner
-			owner = {
-				industrial_megastructures_in_habitable_systems = yes
-			}
-		}
-	}
-
-    demand = { # "SEEK_NATURAL_WONDERS"
-		title = "SEEK_NATURAL_WONDERS"
-		unfulfilled_title = "NO_SEEK_NATURAL_WONDERS"
-		desc = "SEEK_NATURAL_WONDERS_DESC"
-
-		unfulfilled_effect = -5
-		fulfilled_effect = 0.001
-
-		potential = {
-			exists = owner
-			owner = {
-				has_ascension_perk = ap_wanderlust
-				# You have the objective...
-				AND = {
-					check_variable = {
-						which = natural_spectacle_system_seen
-						value = 0 
-					}
-					check_variable = { 
-						which = space_ecology_system_seen
-						value = 0 
-					}
-				}
-				# ... and haven't started yet.
-			}
-		}
-
-        trigger = {
-			always = no
-        }
-    }
-
-    demand = { # "SEEK_NATURAL_WONDERS2"
-		title = "SEEK_NATURAL_WONDERS"
-		unfulfilled_title = "NO_SEEK_NATURAL_WONDERS"
-		desc = "SEEK_NATURAL_WONDERS_DESC"
-
-		fulfilled_effect = 10
-		unfulfilled_effect = -0.001
-
-		potential = {
-			exists = owner
-			owner = {
-				has_ascension_perk = ap_wanderlust
-				# You've seen more than one system...
-				OR = {
-					check_variable = {
-						which = natural_spectacle_system_seen
-						value >= 1 
-					}
-					check_variable = { 
-						which = space_ecology_system_seen
-						value >= 1 
-					}
-				}
-				# ...but you aren't done yet.
-				NOR = {
-					has_country_flag = natural_spectacle_completed 
-					has_country_flag = space_ecology_completed
-					has_country_flag = nomad_exploration_complete
-				}
-			}
-		}
-
-        trigger = {
-			owner = {
-				OR = {
-					limit = {
-						check_variable_arithmetic = {
-							which = value:natural_spectacle_system_ratio
-							multiply = 1
-							value <= 1
-						}
-					}
-					limit = {
-						check_variable_arithmetic = {
-							which = value:space_ecology_system_ratio
-							multiply = 1
-							value <= 1
-						}
-					}
-				}
-			}
-        }
-    }
-
-    demand = { # "SEEK_NATURAL_WONDERS3"
-		title = "SEEK_NATURAL_WONDERS"
-		unfulfilled_title = "NO_SEEK_NATURAL_WONDERS"
-		desc = "SEEK_NATURAL_WONDERS_DESC"
-
-		fulfilled_effect = 15
-		unfulfilled_effect = -0.001
-
-		potential = {
-			exists = owner
-			owner = {
-				has_ascension_perk = ap_wanderlust
-				# You've either seen almost everything...
-				OR = {
-					AND = {
-						limit = {
-							check_variable_arithmetic = {
-								which = value:natural_spectacle_system_ratio
-								multiply = 1
-								value <= 1
-							}
-						}
-						has_country_flag = space_ecology_completed
-					}
-					AND = {
-						limit = {
-							check_variable_arithmetic = {
-								which = value:space_ecology_system_ratio
-								multiply = 1
-								value >= 1
-							}
-						}
-						has_country_flag = natural_spectacle_completed
-					}
-					# ... or you already have.
-					has_country_flag = nomad_exploration_complete
-				}
-			}
-		}
-
-        trigger = {
-			owner = {
-				OR = {
-					AND = {
-						has_country_flag = natural_spectacle_completed 
-						has_country_flag = space_ecology_completed
-					}
-					has_country_flag = nomad_exploration_complete
-				}
-			}
-        }
-    }
-
 	demand = { # "WAYSTATION_IN_GAIA_SYSTEM"
 		title = "WAYSTATION_IN_GAIA_SYSTEM"
 		unfulfilled_title = "WAYSTATION_IN_GAIA_SYSTEM"
@@ -489,10 +297,10 @@ environmentalists_nomads = {
 						OR = {
 							has_star_flag = tiyanki_graveyard_system
 							has_star_flag = tiyanki_spawn_system
-							has_star_flag = tiyanki_home_system
+							has_star_flag = elderly_tiyanki_system
 							has_star_flag = amoeba_home_system
 							has_star_flag = crystal_home_system
-							has_star_flag = crystal_sphere_system
+							has_star_flag = voidworms_system
 						}
 					}
 				}
@@ -505,27 +313,27 @@ environmentalists_nomads = {
 		unfulfilled_title = "ENVIRONMENTALISTS_NO_STRIP_MINING"
 		desc = "ENVIRONMENTALISTS_NO_STRIP_MINING_DESC"
 
-		unfulfilled_effect = 5
-		fulfilled_effect = -10
+		unfulfilled_effect = -10
+		fulfilled_effect = 5
 
 		potential = {
+            exists = owner
 		}
 
 		trigger = {
-			exists = owner
 			owner = {
-				has_country_flag = recently_stripmined_planet
+				NOT = { has_country_flag = recently_stripmined_planet }
 			}
 		}
 	}
-	
+
     demand = { # "NO_STELLAR_IGNITION"
     	title = "NO_STELLAR_IGNITION"
 		unfulfilled_title = "ENVIRONMENTALISTS_NO_STELLAR_IGNITION"
 		desc = "ENVIRONMENTALISTS_NO_STELLAR_IGNITION_DESC"
 
-		unfulfilled_effect = 5
-		fulfilled_effect = -50
+		unfulfilled_effect = -50
+		fulfilled_effect = 5
 
         potential = {
             exists = owner
@@ -536,9 +344,8 @@ environmentalists_nomads = {
         }
 
 		trigger = {
-			exists = owner
 			owner = {
-				has_country_flag = recent_stellar_ignition
+				NOT = { has_country_flag = recent_stellar_ignition }
 			}
 		}
     }
@@ -548,8 +355,8 @@ environmentalists_nomads = {
 		unfulfilled_title = "ENVIRONMENTALISTS_NO_REPROCESS_PLANET"
 		desc = "ENVIRONMENTALISTS_NO_REPROCESS_PLANET_DESC"
 
-		unfulfilled_effect = 5
-		fulfilled_effect = -20
+		unfulfilled_effect = -20
+		fulfilled_effect = 5
 
 		potential = {
 			exists = owner
@@ -559,9 +366,8 @@ environmentalists_nomads = {
 		}
 
 		trigger = {
-			exists = owner
 			owner = {
-				has_country_flag = recently_reprocessed_planet
+				NOT = { has_country_flag = recently_reprocessed_planet }
 			}
 		}
     }
