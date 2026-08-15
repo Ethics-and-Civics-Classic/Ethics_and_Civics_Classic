@@ -917,6 +917,21 @@ situation_event = {
 				}
 			}
 		}
+		else_if = {
+			limit = {
+				NOT = {
+					any_country = {
+						OR = { is_country_type = PrimPlayer_ethic_fanatic_nation is_country_type = PrimPlayer_ethic_fanatic_nation_nomadic }	#Cog Note - For optimization of triggers
+						has_communications = root.owner
+					}
+				}
+				NOR = { 
+					has_situation_flag = PrimPlay_situation_event_1004_finished 
+					has_situation_flag = PrimPlay_situation_event_1004_pause
+				}
+			}
+			situation_event = { id = PrimPlay_situation_event.1004 }
+		}
 	}
 
 }
@@ -1379,6 +1394,156 @@ situation_event = {
 	}
 	
 	after = { remove_situation_flag = PrimPlay_situation_event_1003_pause }
+}
+
+situation_event = {
+	id = PrimPlay_situation_event.1004
+	title = "PrimPlay_situation_event.1004.title"
+	is_triggered_only = yes
+	#location = from
+	picture = GFX_evt_gravity_snare
+	show_sound = event_space_amoeba
+	
+	desc = {
+		text = "PrimPlay_situation_event.1004.desc"
+	}
+	
+	trigger = {
+		#NOR = { 
+		#	has_situation_flag = PrimPlay_situation_event_1004_finished 	#Already Checked where it's called
+		#	has_situation_flag = PrimPlay_situation_event_1004_pause
+		#}
+		OWNER = {
+			NOR = {
+				any_situation = { is_situation_type = PrimPlayer_unified_planet_situation }
+				has_technology = tech_primitive_unified_planet
+				has_country_flag = PrimPlayer_unified_planet_situation_event_flag
+			}
+			capital_scope = {
+				has_deposit = d_PrimPlayer_nation_deposit
+				OR = {
+					is_planet_class = pc_nuked
+					AND = {
+						NOT = { has_deposit = d_ethic_fanatic_authoritarian_nation_blocker }
+						NOT = { has_deposit = d_ethic_fanatic_egalitarian_nation_blocker }
+						NOT = { has_deposit = d_ethic_fanatic_xenophobe_nation_blocker }
+						NOT = { has_deposit = d_ethic_fanatic_xenophile_nation_blocker }
+						NOT = { has_deposit = d_ethic_fanatic_militarist_nation_blocker }
+						NOT = { has_deposit = d_ethic_fanatic_pacifist_nation_blocker }
+						NOT = { has_deposit = d_ethic_fanatic_spiritualist_nation_blocker }
+						NOT = { has_deposit = d_ethic_fanatic_materialist_nation_blocker }
+						NOT = { has_deposit = d_ethic_fanatic_green_nation_blocker }
+						NOT = { has_deposit = d_ethic_fanatic_industrial_nation_blocker }
+						NOT = { has_deposit = d_ethic_fanatic_socialism_nation_blocker }
+						NOT = { has_deposit = d_ethic_fanatic_capitalism_nation_blocker }
+					}
+				}
+			}
+		}
+	}
+	
+	immediate = { set_situation_flag = PrimPlay_situation_event_1004_pause }
+	
+	option = {
+		name = "PrimPlay_situation_event.1004.unite"	
+		allow = {
+			owner = {
+				NOR = {
+					any_situation = { is_situation_type = PrimPlayer_unified_planet_situation }
+					has_technology = tech_primitive_unified_planet
+					has_country_flag = PrimPlayer_unified_planet_situation_event_flag
+				}
+			}
+		}
+		hidden_effect = { 
+			owner = { set_country_flag = PrimPlayer_unified_planet_situation_event_flag }
+			if = {
+				limit = { 
+					has_deposit = d_ethic_fanatic_authoritarian_nation_blocker
+				}
+				remove_deposit = d_ethic_fanatic_authoritarian_nation_blocker
+			}
+			if = {
+				limit = { 
+					has_deposit = d_ethic_fanatic_egalitarian_nation_blocker
+				}
+				remove_deposit = d_ethic_fanatic_egalitarian_nation_blocker
+			}
+			if = {
+				limit = { 
+					has_deposit = d_ethic_fanatic_xenophobe_nation_blocker
+				}
+				remove_deposit = d_ethic_fanatic_xenophobe_nation_blocker
+			}
+			if = {
+				limit = { 
+					has_deposit = d_ethic_fanatic_xenophile_nation_blocker
+				}
+				remove_deposit = d_ethic_fanatic_xenophile_nation_blocker
+			}
+			if = {
+				limit = { 
+					has_deposit = d_ethic_fanatic_militarist_nation_blocker
+				}
+				remove_deposit = d_ethic_fanatic_militarist_nation_blocker
+			}
+			if = {
+				limit = { 
+					has_deposit = d_ethic_fanatic_pacifist_nation_blocker
+				}
+				remove_deposit = d_ethic_fanatic_pacifist_nation_blocker
+			}
+			if = {
+				limit = { 
+					has_deposit = d_ethic_fanatic_spiritualist_nation_blocker
+				}
+				remove_deposit = d_ethic_fanatic_spiritualist_nation_blocker
+			}
+			if = {
+				limit = { 
+					has_deposit = d_ethic_fanatic_materialist_nation_blocker
+				}
+				remove_deposit = d_ethic_fanatic_materialist_nation_blocker
+			}
+			if = {
+				limit = { 
+					has_deposit = d_ethic_fanatic_green_nation_blocker
+				}
+				remove_deposit = d_ethic_fanatic_green_nation_blocker
+			}
+			if = {
+				limit = { 
+					has_deposit = d_ethic_fanatic_industrial_nation_blocker
+				}
+				remove_deposit = d_ethic_fanatic_industrial_nation_blocker
+			}
+			if = {
+				limit = { 
+					has_deposit = d_ethic_fanatic_socialism_nation_blocker
+				}
+				remove_deposit = d_ethic_fanatic_socialism_nation_blocker
+			}
+			if = {
+				limit = { 
+					has_deposit = d_ethic_fanatic_capitalism_nation_blocker
+				}
+				remove_deposit = d_ethic_fanatic_capitalism_nation_blocker
+			}
+		}
+		owner.capital_scope = { owner = { country_event = { id = PrimPlay_situation_event.3 } } }
+		OWNER = {
+			give_technology = { tech = tech_federation_code message = yes }
+			custom_tooltip = PrimPlayer_situation_add_progress_tooltip
+		}
+		set_situation_flag = PrimPlay_situation_event_1004_finished
+	}
+	
+	option = {
+		name = "PrimPlay_situation_event.1004.hold"	
+		set_situation_flag = PrimPlay_situation_event_1004_finished
+	}
+	
+	after = { remove_situation_flag = PrimPlay_situation_event_1004_pause }
 }
 
 ######################
