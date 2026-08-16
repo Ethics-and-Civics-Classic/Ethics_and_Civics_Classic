@@ -272,281 +272,6 @@ building_xeno_zoo = {
 	}
 }
 
-
-@traders_from_civic = 200
-@crime_floor_from_legal_crime = 5
-@trade_value_from_jobs = 0.01
-
-@high_trade_from_jobs = 0.15
-@med_trade_from_jobs = 0.10
-@low_trade_from_jobs = 0.05
-
-building_xeno_zoo = {
-	base_buildtime = @b1_time
-	planet_limit = 1
-	category = research
-
-	building_sets = {
-		urban
-		research
-		society
-		zoo
-	}
-
-	potential = {
-		exists = owner
-		owner = {
-			is_regular_empire = yes
-			is_guided_sapience_empire = no
-		}
-		#colony = {	#Conflicts with planet owners that don't own the system
-			OR = {
-				has_modifier = resort_colony
-				OR = {
-					has_deposit = d_alien_pets_deposit
-					has_deposit = d_avian_reserve
-					AND = {
-						exists = owner
-						owner = { has_policy_flag = pre_sapients_protect }
-						any_owned_pop_group = {
-							is_sapient = no
-						}
-					}
-					AND = {
-						exists = owner
-						any_owned_pop_group = {
-							has_citizenship_type = {
-								type = citizenship_protected_drone
-								country = owner
-							}
-						}
-					}
-					any_owned_pop_group = {
-						is_livestock = yes
-					}
-					AND = {
-						exists = owner
-						any_owned_pop_group = {
-							has_trait = trait_nascent_stage
-						}
-					}
-				}
-			}
-		#}
-	}
-
-	destroy_trigger = {
-		OR = {
-			AND = {
-				exists = owner
-				owner = {
-					OR = {
-						is_regular_empire = no
-						is_guided_sapience_empire = yes
-					}
-				}
-			}
-			planet = {
-				NOR = {
-					has_modifier = resort_colony
-					has_deposit = d_alien_pets_deposit
-					has_deposit = d_avian_reserve
-					AND = {
-						exists = owner
-						owner = { has_policy_flag = pre_sapients_protect }
-						any_owned_pop_group = {
-							is_sapient = no
-						}
-					}
-					AND = {
-						exists = owner
-						any_owned_pop_group = {
-							has_citizenship_type = {
-								type = citizenship_protected_drone
-								country = owner
-							}
-						}
-					}
-					any_owned_pop_group = {
-						is_livestock = yes
-					}
-					AND = {
-						exists = owner
-						any_owned_pop_group = {
-							has_trait = trait_nascent_stage
-						}
-					}
-				}
-			}
-		}
-	}
-
-	resources = {
-		category = planet_buildings
-		inline_script = {
-			script = buildings/nomadic_cost_switcher
-			REGULAR_RESOURCE = minerals
-			NOMADIC_RESOURCE = exotic_gases
-			COST = @b1_minerals
-			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
-		}
-		upkeep = {
-			energy = @b1_upkeep
-		}
-	}
-
-	inline_script = {
-		script = jobs/biologists_add
-		AMOUNT = @building_static_jobs
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			has_modifier = resort_colony
-		}
-		modifier = {
-			job_biologist_add = @building_static_jobs
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			OR = {
-				any_owned_pop_group = {
-					is_livestock = yes
-					is_lithoid = no
-				}
-				any_owned_pop_group = {
-					has_citizenship_type = {
-						type = citizenship_protected_drone
-						country = owner
-					}
-				}
-			}
-			owner = {
-				NOT = { has_valid_civic = civic_warrior_culture }
-			}
-		}
-		modifier = {
-			job_livestock_zoo_animal_add = 300
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			planet = {
-				any_owned_pop_group = {
-					is_livestock = yes
-					is_lithoid = yes
-				}
-			}
-			exists = owner
-			owner = {
-				NOT = { has_valid_civic = civic_warrior_culture }
-			}
-		}
-		modifier = {
-			job_livestock_zoo_animal_lithoid_add = 300
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			OR = {
-				any_owned_pop_group = {
-					is_livestock = yes
-					is_lithoid = no
-				}
-				any_owned_pop_group = {
-					has_citizenship_type = {
-						type = citizenship_protected_drone
-						country = owner
-					}
-				}
-			}
-			owner = {
-				has_valid_civic = civic_warrior_culture
-			}
-		}
-		modifier = {
-			job_livestock_zoo_beast_add = 300
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			planet = {
-				any_owned_pop_group = {
-					is_livestock = no
-					is_lithoid = yes
-				}
-			}
-			exists = owner
-			owner = {
-				has_valid_civic = civic_warrior_culture
-			}
-		}
-		modifier = {
-			job_livestock_zoo_beast_lithoid_add = 300
-		}
-	}
-
-	triggered_desc = {
-		trigger = {
-			exists = owner
-			owner = {
-				NOT = { has_valid_civic = civic_warrior_culture }
-			}
-		}
-		text = pre_sapient_job_xeno_zoo_animal_tt
-	}
-
-	triggered_desc = {
-		trigger = {
-			exists = owner
-			owner = {
-				has_valid_civic = civic_warrior_culture
-			}
-		}
-		text = pre_sapient_job_xeno_zoo_beast_tt
-	}
-
-	triggered_desc = {
-		text = biologist_is_xeno_zoo_keeper_tt
-	}
-
-	triggered_desc = {
-		text = NEW_LINE
-	}
-
-	triggered_desc = {
-		trigger = {
-			exists = owner
-			owner = {
-				NOT = { has_valid_civic = civic_warrior_culture }
-			}
-		}
-		text = job_xeno_zoo_animal_effect_desc
-	}
-
-	triggered_desc = {
-		trigger = {
-			exists = owner
-			owner = {
-				has_valid_civic = civic_warrior_culture
-			}
-		}
-		text = job_xeno_zoo_beast_effect_desc
-	}
-
-	prerequisites = {
-		"tech_alien_life_studies"
-	}
-}
-
 building_clone_army_clone_vat = {
 	icon = building_ancient_relics
 	base_buildtime = 90
@@ -727,12 +452,6 @@ building_clone_army_clone_vat = {
 			NOMADIC_RESOURCE = alloys
 			COST = @b2_minerals
 			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
-		inline_script = {
-			script = buildings/nomadic_cost_switcher
-			REGULAR_RESOURCE = minerals
-			NOMADIC_RESOURCE = alloys
-			COST = @b2_minerals
-			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
 		}
 		upkeep = {
 			energy = @b2_upkeep
@@ -862,12 +581,6 @@ building_factory_angler_1 = {
 			NOMADIC_RESOURCE = alloys
 			COST = @b1_minerals
 			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
-		inline_script = {
-			script = buildings/nomadic_cost_switcher
-			REGULAR_RESOURCE = minerals
-			NOMADIC_RESOURCE = alloys
-			COST = @b1_minerals
-			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
 		}
 		upkeep = {
 			energy = @b1_upkeep
@@ -982,13 +695,6 @@ building_factory_angler_2 = {
 
 	resources = {
 		category = planet_buildings
-		inline_script = {
-			script = buildings/nomadic_cost_switcher
-			REGULAR_RESOURCE = minerals
-			NOMADIC_RESOURCE = alloys
-			COST = @b2_minerals
-			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
-		}
 		inline_script = {
 			script = buildings/nomadic_cost_switcher
 			REGULAR_RESOURCE = minerals
@@ -1119,13 +825,6 @@ building_factory_angler_3 = {
 			COST = @b4_minerals
 			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
 		}
-		inline_script = {
-			script = buildings/nomadic_cost_switcher
-			REGULAR_RESOURCE = minerals
-			NOMADIC_RESOURCE = alloys
-			COST = @b4_minerals
-			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
-		}
 		cost = {
 			trigger = {
 				has_ringworld_output_boost = no
@@ -1206,7 +905,6 @@ building_pirate_haven_2 = {
 	potential = {
 		owner = {
 			is_pirate_empire = yes
-			is_pirate_empire = yes
 		}
 	}
 
@@ -1281,7 +979,6 @@ building_pirate_haven_2 = {
 			always = yes
 		}
 		planet_soldiers_trade_produces_add = @med_trade_from_jobs
-		planet_soldiers_trade_produces_add = @med_trade_from_jobs
 	}
 	
 	triggered_planet_modifier = {
@@ -1290,7 +987,6 @@ building_pirate_haven_2 = {
 				has_valid_civic = civic_private_military_companies
 			}
 		}
-		planet_soldiers_trade_produces_add = @med_trade_from_jobs
 		planet_soldiers_trade_produces_add = @med_trade_from_jobs
 	}
 
@@ -1304,7 +1000,6 @@ building_pirate_haven_2 = {
 			}
 		}
 		planet_soldiers_trade_produces_add = @med_trade_from_jobs
-		planet_soldiers_trade_produces_add = @med_trade_from_jobs
 	}
 	    
 	triggered_planet_modifier = {
@@ -1313,7 +1008,6 @@ building_pirate_haven_2 = {
                 is_worker_coop_empire = yes
             }
         }
-		planet_bureaucrats_trade_produces_add = @med_trade_from_jobs				# Union pirates gotta have that mult. -- Sage
 		planet_bureaucrats_trade_produces_add = @med_trade_from_jobs				# Union pirates gotta have that mult. -- Sage
     }
     
@@ -1350,14 +1044,6 @@ building_pirate_haven_2 = {
 			COST = @b1_minerals
 			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
 		}
-		category = planet_branch_office_buildings
-		inline_script = {
-			script = buildings/nomadic_cost_switcher
-			REGULAR_RESOURCE = minerals
-			NOMADIC_RESOURCE = alloys
-			COST = @b1_minerals
-			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
-		}
 		cost = {
 			influence = 20
 		}
@@ -1371,18 +1057,9 @@ building_pirate_haven_2 = {
 					has_valid_civic = civic_indentured_assets				# Due to Slavery
 					has_valid_civic = civic_divine_order
 					has_valid_civic = civic_ruthless_competition			# Due to Slavery
-					has_valid_civic = civic_indentured_assets				# Due to Slavery
-					has_valid_civic = civic_divine_order
-					has_valid_civic = civic_ruthless_competition			# Due to Slavery
 					has_origin = origin_heirs_of_the_khan
 					has_valid_civic = PrimPlayer_civic_heirs_of_the_khan	# Due to Slavery
 					has_valid_civic = civic_heirs_of_the_khan	# Due to Slavery
-					has_valid_civic = civic_barbaric_despoilers			# Cog Note - This civic is an upgrade of Slaver Guilds
-					has_valid_civic = civic_barbaric_despoilers_corporate	# Cog Note - This civic is an upgrade of Slaver Guilds
-					has_valid_civic = PrimPlayer_civic_barbaric_despoilers_khan	# Cog Note - This civic is an upgrade of Slaver Guilds
-					has_valid_civic = civic_barbaric_despoilers_khan				# Cog Note - This civic is an upgrade of Slaver Guilds
-					has_valid_civic = civic_private_militaries			# Private Military Civic
-					has_valid_civic = civic_private_military_companies	# Private Military Civic
 					has_valid_civic = civic_barbaric_despoilers			# Cog Note - This civic is an upgrade of Slaver Guilds
 					has_valid_civic = civic_barbaric_despoilers_corporate	# Cog Note - This civic is an upgrade of Slaver Guilds
 					has_valid_civic = PrimPlayer_civic_barbaric_despoilers_khan	# Cog Note - This civic is an upgrade of Slaver Guilds
@@ -1393,13 +1070,11 @@ building_pirate_haven_2 = {
 			}
 		}
 		planet_criminals_trade_produces_add = @high_trade_from_jobs #benefits from enforcers, criminals, slaves, livestock and purged pops
-		planet_criminals_trade_produces_add = @high_trade_from_jobs #benefits from enforcers, criminals, slaves, livestock and purged pops
 	}
 	
 	destroy_trigger = {
 		exists = owner
 		owner = { 
-			is_pirate_empire = no
 			is_pirate_empire = no
 		}
 	}
@@ -1427,11 +1102,9 @@ building_national_park = {
 		AND = {
 			NOT = { has_modifier = slave_colony }
 			owner = { has_valid_civic = civic_naturalism }
-			owner = { has_valid_civic = civic_naturalism }
 			owner = {
 				AND = {
 					is_regular_empire = yes
-					is_nomadic = no
 					is_nomadic = no
 				}
 			}
@@ -1456,8 +1129,6 @@ building_national_park = {
 				has_deposit = d_titanic_life_blocker
 				has_deposit = d_house_turtle
 				has_deposit = d_living_snow_reserve
-				has_deposit = d_house_turtle
-				has_deposit = d_living_snow_reserve
 				has_deposit = d_wandering_forests
 				has_deposit = d_migrating_forest_reserve
 				has_deposit = d_migrating_forests
@@ -1472,9 +1143,6 @@ building_national_park = {
 			has_upgraded_capital = yes
 			hidden_trigger = {
 				OR = {
-					has_building = building_primitive_capital
-					has_building = building_machine_primitive_capital
-					has_building = building_hive_primitive_capital
 					has_building = building_primitive_capital
 					has_building = building_machine_primitive_capital
 					has_building = building_hive_primitive_capital
@@ -1493,8 +1161,6 @@ building_national_park = {
 			has_deposit = d_mountain_range
 			has_deposit = d_dangerous_wildlife_blocker
 			has_deposit = d_titanic_life_blocker
-			has_deposit = d_house_turtle
-			has_deposit = d_living_snow_reserve
 			has_deposit = d_house_turtle
 			has_deposit = d_living_snow_reserve
 			has_deposit = d_wandering_forests
@@ -1517,12 +1183,6 @@ building_national_park = {
 
 	resources = {
 		category = planet_buildings
-		inline_script = {
-			script = buildings/nomadic_cost_switcher
-			REGULAR_RESOURCE = minerals
-			NOMADIC_RESOURCE = exotic_gases
-			COST = @b3_minerals
-			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
 		inline_script = {
 			script = buildings/nomadic_cost_switcher
 			REGULAR_RESOURCE = minerals
@@ -1574,20 +1234,6 @@ building_national_park = {
 			}
 			unity = 4
 			society_research = 1.5 # 2 3.11
-		}
-		produces = {
-			trigger = {
-				fromfrom.planet = { has_deposit = d_house_turtle }
-			}
-			unity = 4
-			society_research = 1.5
-		}
-		produces = {
-			trigger = {
-				fromfrom.planet = { has_deposit = d_living_snow_reserve }
-			}
-			unity = 4
-			society_research = 1.5
 		}
 		produces = {
 			trigger = {
@@ -1675,188 +1321,6 @@ building_national_park = {
 	#	}
 	#	text = job_naturalist_effect_desc
 	#}
-}
-
-# Arkship Eco-park
-building_national_park_nomad = {
-	base_buildtime = @b3_time
-	planet_limit = 1
-
-	category = trade
-
-	building_sets = {
-		government
-		research
-		unity
-		resort
-	}
-
-	potential = {
-		is_planet_class = pc_ark
-		NOT = { has_modifier = slave_colony }
-		owner? = {
-			has_valid_civic = civic_naturalism
-			AND = {
-				is_regular_empire = yes
-				is_nomadic = yes
-			}
-		}
-		NOT = { has_building = building_nature_sanctuary_nomad }
-	}
-
-	allow = {
-		planet = {
-			num_free_districts = {
-				type = any
-				value > 0
-			}
-		}
-	}
-
-	destroy_trigger = {
-		exists = owner
-		OR = {
-			has_modifier = slave_colony
-			owner = { 
-				NOR = { 
-					is_green = yes
-					has_valid_civic = civic_naturalism 
-					is_regular_empire = yes
-				} 
-			}
-		}
-	}
-
-	convert_to = {
-		building_nomad_conservatory
-		building_nature_sanctuary_nomad
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { 
-				is_regular_empire = yes 
-				is_nomadic = yes
-			}
-		}
-		modifier = {
-			job_naturalist_per_pop = 0.06
-		}
-	}
-
-	ai_resource_production = {
-		unity = 1.0
-		mult = value:natural_blocker_count
-	}
-
-	ai_resource_production = {
-		unity = 0.5
-		trigger = { owner_has_resolution = { RES = resolution_ecology_integrated_gardens } }
-		mult = value:natural_blocker_count
-	}
-
-	ai_resource_production = {
-		unity = 0.5
-		trigger = { owner_has_resolution = { RES = resolution_ecology_environmental_control_board } }
-		mult = value:natural_blocker_count
-	}
-
-	ai_resource_production = {
-		unity = 0.5
-		trigger = { owner_has_resolution = { RES = resolution_ecology_paradise_initiative } }
-		mult = value:natural_blocker_count
-	}
-
-	planet_modifier = {
-		job_biologist_add = 100 # 100 Gardeners no matter what
-		deposit_blockers_natural_unity_produces_add = 1.0
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			always = yes
-		}
-		job_biologist_add = 100 # +100 Gardeners per natural blocker
-		mult = value:natural_blocker_count
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner_has_resolution = { RES = resolution_ecology_paradise_initiative }
-		}
-		job_biologist_add = 100 # +100 Gardeners per natural blocker if GalCom approves
-		mult = value:natural_blocker_count
-	}
-
-	triggered_planet_modifier = {
-		potential = { owner_has_resolution = { RES = resolution_ecology_integrated_gardens } }
-		deposit_blockers_natural_unity_produces_add = 0.5
-	}
-
-	triggered_planet_modifier = {
-		potential = { owner_has_resolution = { RES = resolution_ecology_environmental_control_board } }
-		deposit_blockers_natural_unity_produces_add = 1.0
-	}
-
-	triggered_planet_modifier = {
-		potential = { owner_has_resolution = { RES = resolution_ecology_paradise_initiative } }
-		deposit_blockers_natural_unity_produces_add = 1.5
-	}
-
-	resources = {
-		category = planet_buildings
-		
-		inline_script = {
-			script = buildings/nomadic_cost_switcher
-			REGULAR_RESOURCE = minerals
-			NOMADIC_RESOURCE = exotic_gases
-			COST = @b3_minerals
-			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
-		}
-		upkeep = {
-			energy = @b3_upkeep
-		}
-		produces = {
-			trigger = {
-				fromfrom.planet = { has_deposit = d_ark_nature_preserve_blocker }
-			}
-			unity = 4
-			society_research = 1.5 # 2 3.11
-		}
-	}
-
-	triggered_desc = {
-		text = biologist_is_ark_gardener_tt
-	}
-
-	on_built = {
-		planet = {
-			add_blocker = { type = d_ark_nature_preserve_blocker }
-		}
-	}
-
-	on_destroy = {
-		planet = {
-			if = {
-				limit = { 
-					has_deposit = d_ark_nature_preserve_blocker 
-				}
-				every_deposit = {
-					limit = {
-						is_deposit_type = d_ark_nature_preserve_blocker
-					}
-					remove_deposit = yes
-				}
-			}
-		}
-	}
-	ai_weight = {
-		weight = 100 # If you're a nomadic green empire, this had better be the first thing you build on an arkship, or else you're kinda SOL for ethic and civic perks.
-		modifier = {
-			factor = 10
-			is_fanatic_pacifist = yes
-		}
-	}
 }
 
 # Arkship Eco-park
@@ -2240,12 +1704,6 @@ building_tribal_council = {
 			NOMADIC_RESOURCE = rare_crystals
 			COST = @b3_minerals
 			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
-		inline_script = {
-			script = buildings/nomadic_cost_switcher
-			REGULAR_RESOURCE = minerals
-			NOMADIC_RESOURCE = rare_crystals
-			COST = @b3_minerals
-			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
 		}
 		upkeep = {
 			energy = @b2_upkeep
@@ -2359,13 +1817,6 @@ building_tribal_palace = {
 			NOMADIC_RESOURCE = rare_crystals
 			COST = @b4_minerals
 			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
-		
-		inline_script = {
-			script = buildings/nomadic_cost_switcher
-			REGULAR_RESOURCE = minerals
-			NOMADIC_RESOURCE = rare_crystals
-			COST = @b4_minerals
-			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
 		}
 		upkeep = {
 			energy = @b3_upkeep
@@ -2395,10 +1846,6 @@ building_nature_sanctuary = {
 				is_regular_empire = yes 
 				is_nomadic = no
 			}
-			owner = { 
-				is_regular_empire = yes 
-				is_nomadic = no
-			}
 			owner = { has_valid_civic = civic_keepers_harmony }
 		}
 	}
@@ -2420,8 +1867,6 @@ building_nature_sanctuary = {
 				has_deposit = d_titanic_life_blocker
 				has_deposit = d_house_turtle
 				has_deposit = d_living_snow_reserve
-				has_deposit = d_house_turtle
-				has_deposit = d_living_snow_reserve
 				has_deposit = d_wandering_forests
 				has_deposit = d_migrating_forest_reserve
 				has_deposit = d_migrating_forests
@@ -2439,21 +1884,11 @@ building_nature_sanctuary = {
 		building_uplink_node
 	}
 
-	convert_to = {
-		building_temple
-		building_bureaucratic_1
-		building_hive_node
-		building_uplink_node
-	}
-
 	allow = {
 		OR = {
 			has_upgraded_capital = yes
 			hidden_trigger = {
 				OR = {
-					has_building = building_primitive_capital
-					has_building = building_machine_primitive_capital
-					has_building = building_hive_primitive_capital
 					has_building = building_primitive_capital
 					has_building = building_machine_primitive_capital
 					has_building = building_hive_primitive_capital
@@ -2472,8 +1907,6 @@ building_nature_sanctuary = {
 			has_deposit = d_mountain_range
 			has_deposit = d_dangerous_wildlife_blocker
 			has_deposit = d_titanic_life_blocker
-			has_deposit = d_house_turtle
-			has_deposit = d_living_snow_reserve
 			has_deposit = d_house_turtle
 			has_deposit = d_living_snow_reserve
 			has_deposit = d_wandering_forests
@@ -2584,28 +2017,6 @@ building_nature_sanctuary = {
 
 	triggered_planet_modifier = {
 		potential = {
-			has_deposit = d_house_turtle
-		}
-		modifier = {
-			planet_jobs_unity_produces_mult = 0.05
-			pop_citizen_happiness = 0.03
-			pop_ethic_green_attraction_mult = 0.05
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			has_deposit = d_living_snow_reserve
-		}
-		modifier = {
-			planet_jobs_unity_produces_mult = 0.05
-			pop_citizen_happiness = 0.03
-			pop_ethic_green_attraction_mult = 0.05
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
 			has_deposit = d_dangerous_wildlife_blocker
 		}
 		modifier = {
@@ -2712,13 +2123,6 @@ building_nature_sanctuary = {
 			NOMADIC_RESOURCE = rare_crystals
 			COST = @b1_minerals
 			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
-		
-		inline_script = {
-			script = buildings/nomadic_cost_switcher
-			REGULAR_RESOURCE = minerals
-			NOMADIC_RESOURCE = rare_crystals
-			COST = @b1_minerals
-			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
 		}
 		upkeep = {
 			food = 12
@@ -2732,187 +2136,6 @@ building_nature_sanctuary = {
 	#	}
 	#	text = job_druid_effect_desc
 	#}
-}
-
-# Garden Sanctuary
-building_nature_sanctuary_nomad = {
-	base_buildtime = @b3_time
-	planet_limit = 1
-
-	category = unity
-
-	building_sets = {
-		government
-		research
-		resort
-		unity
-	}
-
-	potential = {
-		is_planet_class = pc_ark
-		NOT = { has_modifier = slave_colony }
-		owner? = {
-			has_valid_civic = civic_keepers_harmony 
-			AND = {
-				is_regular_empire = yes
-				is_nomadic = yes
-			}
-		}
-		NOT = { has_building = building_national_park_nomad }
-	}
-
-	allow = {
-		planet = {
-			num_free_districts = {
-				type = any
-				value > 0
-			}
-		}
-	}
-
-	destroy_trigger = {
-		exists = owner
-		OR = {
-			has_modifier = slave_colony
-			owner = { 
-				NOR = { 
-					is_green = yes
-					has_valid_civic = civic_keepers_harmony
-					is_regular_empire = yes
-				} 
-			}
-		}
-	}
-
-	convert_to = {
-		building_nomad_conservatory
-		building_national_park_nomad
-	}
-
-	ai_resource_production = {
-		unity = 1.0
-		mult = value:natural_blocker_count
-	}
-
-	ai_resource_production = {
-		unity = 0.5
-		trigger = { owner_has_resolution = { RES = resolution_ecology_integrated_gardens } }
-		mult = value:natural_blocker_count
-	}
-
-	ai_resource_production = {
-		unity = 0.5
-		trigger = { owner_has_resolution = { RES = resolution_ecology_environmental_control_board } }
-		mult = value:natural_blocker_count
-	}
-
-	ai_resource_production = {
-		unity = 0.5
-		trigger = { owner_has_resolution = { RES = resolution_ecology_paradise_initiative } }
-		mult = value:natural_blocker_count
-	}
-
-	planet_modifier = {
-		job_biologist_add = 100 # 100 Gardeners no matter what
-		deposit_blockers_natural_unity_produces_add = 1.0
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			always = yes
-		}
-		job_biologist_add = 100 # +100 Gardeners per natural blocker
-		mult = value:natural_blocker_count
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner_has_resolution = { RES = resolution_ecology_paradise_initiative }
-		}
-		job_biologist_add = 100 # +100 Gardeners per natural blocker if GalCom approves
-		mult = value:natural_blocker_count
-	}
-
-	triggered_planet_modifier = {
-		potential = { owner_has_resolution = { RES = resolution_ecology_integrated_gardens } }
-		deposit_blockers_natural_unity_produces_add = 0.5
-	}
-
-	triggered_planet_modifier = {
-		potential = { owner_has_resolution = { RES = resolution_ecology_environmental_control_board } }
-		deposit_blockers_natural_unity_produces_add = 1.0
-	}
-
-	triggered_planet_modifier = {
-		potential = { owner_has_resolution = { RES = resolution_ecology_paradise_initiative } }
-		deposit_blockers_natural_unity_produces_add = 1.5
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { is_regular_empire = yes }
-		}
-		modifier = {
-			job_bureaucrat_add = 100
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			has_deposit = d_ark_nature_preserve_blocker
-		}
-		modifier = {
-			planet_jobs_unity_produces_mult = 0.10
-			pop_citizen_happiness = 0.10
-			pop_ethic_green_attraction_mult = 0.10
-		}
-	}
-
-	triggered_desc = {
-		text = biologist_is_ark_gardener_tt
-	}
-
-	on_built = {
-		planet = {
-			add_blocker = { type = d_ark_nature_preserve_blocker }
-		}
-	}
-
-	resources = {
-		category = planet_buildings
-		inline_script = {
-			script = buildings/nomadic_cost_switcher
-			REGULAR_RESOURCE = minerals
-			NOMADIC_RESOURCE = rare_crystals
-			COST = @b1_minerals
-			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
-		}
-		upkeep = {
-			food = @b3_upkeep
-		}
-	}
-	on_destroy = {
-		planet = {
-			if = {
-				limit = { 
-					has_deposit = d_ark_nature_preserve_blocker 
-				}
-				every_deposit = {
-					limit = {
-						is_deposit_type = d_ark_nature_preserve_blocker
-					}
-					remove_deposit = yes
-				}
-			}
-		}
-	}
-	ai_weight = {
-		weight = 100 # If you're a nomadic green empire, this had better be the first thing you build on an arkship, or else you're kinda SOL for ethic and civic perks.
-		modifier = {
-			factor = 10
-			is_fanatic_spiritualist = yes
-		}
-	}
 }
 
 # Garden Sanctuary
@@ -3173,13 +2396,6 @@ building_galactic_navy_academy = {
 			NOMADIC_RESOURCE = volatile_motes
 			COST = @b3_minerals
 			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
-		
-		inline_script = {
-			script = buildings/nomadic_cost_switcher
-			REGULAR_RESOURCE = minerals
-			NOMADIC_RESOURCE = volatile_motes
-			COST = @b3_minerals
-			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
 		}
 		upkeep = {
 			energy = @b3_upkeep
@@ -3260,13 +2476,6 @@ building_galactic_temple = {
 
 	resources = {
 		category = planet_buildings
-		
-		inline_script = {
-			script = buildings/nomadic_cost_switcher
-			REGULAR_RESOURCE = minerals
-			NOMADIC_RESOURCE = rare_crystals
-			COST = @b3_minerals
-			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
 		
 		inline_script = {
 			script = buildings/nomadic_cost_switcher
@@ -3363,12 +2572,6 @@ building_galactic_trade_center = {
 			NOMADIC_RESOURCE = rare_crystals
 			COST = @b3_minerals
 			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
-		inline_script = {
-			script = buildings/nomadic_cost_switcher
-			REGULAR_RESOURCE = minerals
-			NOMADIC_RESOURCE = rare_crystals
-			COST = @b3_minerals
-			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
 		}
 		upkeep = {
 			energy = @b3_upkeep
@@ -3455,13 +2658,6 @@ building_pangalactic_forum = {
 			NOMADIC_RESOURCE = rare_crystals
 			COST = @b3_minerals
 			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
-		
-		inline_script = {
-			script = buildings/nomadic_cost_switcher
-			REGULAR_RESOURCE = minerals
-			NOMADIC_RESOURCE = rare_crystals
-			COST = @b3_minerals
-			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
 		}
 		upkeep = {
 			energy = @b3_upkeep
@@ -3489,10 +2685,6 @@ building_ecotourism_center = {
 				is_regular_empire = yes 
 				is_nomadic = no
 			}
-			owner = { 
-				is_regular_empire = yes 
-				is_nomadic = no
-			}
 			OR = {
 				owner = { has_valid_civic = civic_natural_capitalism }
 				owner = { has_valid_civic = civic_natural_capitalism_corporate }
@@ -3515,8 +2707,6 @@ building_ecotourism_center = {
 				has_deposit = d_mountain_range
 				has_deposit = d_dangerous_wildlife_blocker
 				has_deposit = d_titanic_life_blocker
-				has_deposit = d_house_turtle
-				has_deposit = d_living_snow_reserve
 				has_deposit = d_house_turtle
 				has_deposit = d_living_snow_reserve
 				has_deposit = d_wandering_forests
@@ -3557,8 +2747,6 @@ building_ecotourism_center = {
 			has_deposit = d_mountain_range
 			has_deposit = d_dangerous_wildlife_blocker
 			has_deposit = d_titanic_life_blocker
-			has_deposit = d_house_turtle
-			has_deposit = d_living_snow_reserve
 			has_deposit = d_house_turtle
 			has_deposit = d_living_snow_reserve
 			has_deposit = d_wandering_forests
@@ -3633,27 +2821,6 @@ building_ecotourism_center = {
 	triggered_planet_modifier = {
 		potential = {
 			has_deposit = d_titanic_life_blocker
-		}
-		modifier = {
-			planet_jobs_trade_produces_mult = 0.15
-			planet_amenities_add = 700
-		}
-	}
-
-
-	triggered_planet_modifier = {
-		potential = {
-			has_deposit = d_house_turtle
-		}
-		modifier = {
-			planet_jobs_trade_produces_mult = 0.15
-			planet_amenities_add = 700
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			has_deposit = d_living_snow_reserve
 		}
 		modifier = {
 			planet_jobs_trade_produces_mult = 0.15
@@ -3781,13 +2948,6 @@ building_ecotourism_center = {
 			NOMADIC_RESOURCE = exotic_gases
 			COST = @b2_minerals
 			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
-		
-		inline_script = {
-			script = buildings/nomadic_cost_switcher
-			REGULAR_RESOURCE = minerals
-			NOMADIC_RESOURCE = exotic_gases
-			COST = @b2_minerals
-			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
 		}
 		upkeep = {
 			energy = @b2_upkeep
@@ -3877,12 +3037,6 @@ building_deep_space_scanner = {
 
 	resources = {
 		category = planet_buildings
-		inline_script = {
-			script = buildings/nomadic_cost_switcher
-			REGULAR_RESOURCE = minerals
-			NOMADIC_RESOURCE = rare_crystals
-			COST = @b2_minerals
-			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
 		inline_script = {
 			script = buildings/nomadic_cost_switcher
 			REGULAR_RESOURCE = minerals
@@ -4033,12 +3187,6 @@ building_symbol_purity = {
 			NOMADIC_RESOURCE = volatile_motes
 			COST = @b3_minerals
 			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
-		inline_script = {
-			script = buildings/nomadic_cost_switcher
-			REGULAR_RESOURCE = minerals
-			NOMADIC_RESOURCE = volatile_motes
-			COST = @b3_minerals
-			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
 		}
 		upkeep = {
 			energy = 4
@@ -4046,7 +3194,6 @@ building_symbol_purity = {
 	}
 }
 
-building_colossal_monument = {
 building_colossal_monument = {
 	base_buildtime = @b4_time
 	planet_limit = 1
@@ -4110,13 +3257,6 @@ building_colossal_monument = {
 			NOMADIC_RESOURCE = alloys
 			COST = @b4_minerals
 			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
-		
-		inline_script = {
-			script = buildings/nomadic_cost_switcher
-			REGULAR_RESOURCE = minerals
-			NOMADIC_RESOURCE = alloys
-			COST = @b4_minerals
-			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
 		}
 		produces = {
 			unity = 7
@@ -4151,13 +3291,6 @@ building_biofuel_plant = {
 
 	resources = {
 		category = planet_buildings
-		
-		inline_script = {
-			script = buildings/nomadic_cost_switcher
-			REGULAR_RESOURCE = minerals
-			NOMADIC_RESOURCE = exotic_gases
-			COST = 500
-			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
 		
 		inline_script = {
 			script = buildings/nomadic_cost_switcher
@@ -4265,13 +3398,6 @@ building_thermal_borehole = {
 			COST = @b2_minerals
 			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
 		}
-		inline_script = {
-			script = buildings/nomadic_cost_switcher
-			REGULAR_RESOURCE = minerals
-			NOMADIC_RESOURCE = volatile_motes
-			COST = @b2_minerals
-			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
-		}
 		cost = {
 			alloys = 200
 		}
@@ -4331,7 +3457,6 @@ building_thermal_borehole = {
 	}
 }
 
-
 building_thermal_borehole_2 = {
 	icon = building_thermal_borehole  # no borehole 2 icon
 	base_buildtime = 600
@@ -4369,13 +3494,6 @@ building_thermal_borehole_2 = {
 
 	resources = {
 		category = planet_buildings
-		inline_script = {
-			script = buildings/nomadic_cost_switcher
-			REGULAR_RESOURCE = minerals
-			NOMADIC_RESOURCE = volatile_motes
-			COST = @b3_minerals
-			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
-		}
 		inline_script = {
 			script = buildings/nomadic_cost_switcher
 			REGULAR_RESOURCE = minerals
@@ -4490,12 +3608,6 @@ building_mecha_monastery = {
 			NOMADIC_RESOURCE = rare_crystals
 			COST = @b3_minerals
 			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
-		inline_script = {
-			script = buildings/nomadic_cost_switcher
-			REGULAR_RESOURCE = minerals
-			NOMADIC_RESOURCE = rare_crystals
-			COST = @b3_minerals
-			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
 		}
 		upkeep = {
 			energy = 3
@@ -4512,165 +3624,6 @@ building_mecha_monastery = {
 			factor = 0
 			free_jobs > 0
 		}
-	}
-}
-
-building_nomad_conservatory = {
-	icon = holding_park_ranger_lodge
-	planet_limit = 1
-	base_buildtime = @b1_time
-
-	category = research
-
-	building_sets = {
-		unity
-		research
-		society
-		government
-		urban
-	}
-
-	potential = {
-		is_planet_class = pc_ark
-		NOT = {	has_modifier = slave_colony	}
-		owner? = {
-			is_country_type = default
-			is_nomadic = yes
-			is_green = yes
-			NOR = { 
-				has_civic = civic_keepers_harmony 
-				has_civic = civic_naturalism
-			}
-		}
-	}
-
-	allow = {
-		planet = {
-			num_free_districts = {
-				type = any
-				value > 0
-			}
-		}
-	}
-
-	destroy_trigger = {
-		exists = owner
-		OR = {
-			owner = { 
-				is_green = no
-				OR = { 
-					has_civic = civic_keepers_harmony 
-					has_civic = civic_naturalism
-				}
-			}
-			has_modifier = slave_colony
-		}
-	}
-
-	convert_to = {
-		building_nature_sanctuary_nomad
-		building_national_park_nomad
-	}
-
-	ai_resource_production = {
-		unity = 1.0
-		mult = value:natural_blocker_count
-	}
-
-	ai_resource_production = {
-		unity = 0.5
-		trigger = { owner_has_resolution = { RES = resolution_ecology_integrated_gardens } }
-		mult = value:natural_blocker_count
-	}
-
-	ai_resource_production = {
-		unity = 0.5
-		trigger = { owner_has_resolution = { RES = resolution_ecology_environmental_control_board } }
-		mult = value:natural_blocker_count
-	}
-
-	ai_resource_production = {
-		unity = 0.5
-		trigger = { owner_has_resolution = { RES = resolution_ecology_paradise_initiative } }
-		mult = value:natural_blocker_count
-	}
-
-	planet_modifier = {
-		job_biologist_add = 100 # 100 Gardeners no matter what
-		deposit_blockers_natural_unity_produces_add = 1.0
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			always = yes
-		}
-		job_biologist_add = 100 # +100 Gardeners per natural blocker
-		mult = value:natural_blocker_count
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner_has_resolution = { RES = resolution_ecology_paradise_initiative }
-		}
-		job_biologist_add = 100 # +100 Gardeners per natural blocker if GalCom approves
-		mult = value:natural_blocker_count
-	}
-
-
-	triggered_planet_modifier = {
-		potential = { owner_has_resolution = { RES = resolution_ecology_integrated_gardens } }
-		deposit_blockers_natural_unity_produces_add = 0.5
-	}
-
-	triggered_planet_modifier = {
-		potential = { owner_has_resolution = { RES = resolution_ecology_environmental_control_board } }
-		deposit_blockers_natural_unity_produces_add = 1.0
-	}
-
-	triggered_planet_modifier = {
-		potential = { owner_has_resolution = { RES = resolution_ecology_paradise_initiative } }
-		deposit_blockers_natural_unity_produces_add = 1.5
-	}
-
-	resources = {
-		category = planet_buildings
-		inline_script = {
-			script = buildings/nomadic_cost_switcher
-			REGULAR_RESOURCE = minerals
-			NOMADIC_RESOURCE = exotic_gases
-			COST = @b1_minerals
-			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
-		}
-		upkeep = {
-			energy = @b1_upkeep
-		}
-	}
-
-	triggered_desc = {
-		text = biologist_is_ark_gardener_tt
-	}
-
-	on_built = {
-		planet = {
-			add_blocker = { type = d_ark_nature_preserve_blocker }
-		}
-	}
-
-	on_destroy = {
-		planet = {
-			if = {
-				limit = { has_deposit = d_ark_nature_preserve_blocker }
-				every_deposit = {
-					limit = {
-						is_deposit_type = d_ark_nature_preserve_blocker
-					}
-					remove_deposit = yes
-				}
-			}
-		}
-	}
-	ai_weight = {
-		weight = 1000 # If you're a nomadic green empire, this had better be the first thing you build on an arkship, or else you're kinda SOL for ethic and civic perks.
 	}
 }
 
