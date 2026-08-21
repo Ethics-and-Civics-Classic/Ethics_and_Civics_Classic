@@ -456,15 +456,15 @@ civilian = {
 		hidden_trigger = { exists = owner }
 		owner = {
 			is_gestalt = no
-			}
-			NOT = {
-			has_citizenship_type = {
-				type = citizenship_cruise_passenger
-				country = owner
-			}
 			NOR = {
 				is_primitive = yes
 				any_situation = { is_situation_type = PrimPlayer_situation } # Much more efficient trigger
+			}
+		}
+		NOT = {
+			has_citizenship_type = {
+				type = citizenship_cruise_passenger
+				country = owner
 			}
 		}
 		OR = {
@@ -475,7 +475,7 @@ civilian = {
 			}
 			has_virtual_species_trait = no
 		}
-		planet = { NOT = { is_planet_class = pc_cosmogenesis_world }  }
+		colony? = { NOT = { is_planet_class = pc_cosmogenesis_world }  }
 	}
 
 	swappable_data = {
@@ -486,21 +486,21 @@ civilian = {
 		swap_type = {
 			trigger = {
 				exists = owner
-				has_modifier = resort_colony
+				OR = {
+					has_modifier = resort_colony 
+					has_modifier = resort_colony_branch
+				}
 			}
-			name = tourist
-			desc = tourist_desc
-			icon = trader
+			name = tourist				#previously, fe_hedonist_tourist
+			desc = tourist_desc       	#Cog Note - discover vanilla added this after us, previously #fe_hedonist_tourist
+			icon = fe_hedonist_tourist
 			building_icon = building_amusement_megaplex
 			weight = 6
-		}		
+		}
 		# Hedonists
 		swap_type = {
 			trigger = {
-				exists = owner
-				owner = {
-					is_pleasure_seeker_empire = yes
-				}
+				owner? = { is_pleasure_seeker_empire = yes }
 			}
 			name = fe_hedonist
 			desc = fe_hedonist
@@ -508,6 +508,7 @@ civilian = {
 			building_icon = building_holo_theatres
 			weight = 5
 		}
+		# Spiritual Seekers
 		swap_type = {
 			trigger = {
 				exists = owner
@@ -521,6 +522,7 @@ civilian = {
 			building_icon = building_psi_corps
 			weight = 5
 		}
+		# Hedonist Seekers
 		swap_type = {
 			trigger = {
 				exists = owner
@@ -535,22 +537,16 @@ civilian = {
 			building_icon = building_holo_theatres
 			weight = 10
 		}
-		# Tourists
+		# Sacred Path
 		swap_type = {
 			trigger = {
-				exists = owner
-				planet = { 
-					OR = {
-						has_modifier = resort_colony 
-						has_modifier = resort_colony_branch
-					}
-				}
+				civilian_is_sacred_path_civilian = yes
 			}
-			name = tourist				#previously, fe_hedonist_tourist
-			desc = tourist_desc       	#Cog Note - discover vanilla added this after us, previously #fe_hedonist_tourist
-			icon = fe_hedonist_tourist
-			building_icon = building_amusement_megaplex
-			weight = 20
+			name = sacred_path_civilian
+			desc = job_sacred_path_civilian_desc
+			icon = sacred_path_civilian
+			building_icon = building_temple
+			weight = 10
 		}
 		# Transcendent Tourists
 		swap_type = {
@@ -582,25 +578,14 @@ civilian = {
 			building_icon = building_primitive_farm
 			weight = 50
 		}
-		# Sacred Path
-		swap_type = {
-			trigger = {
-				civilian_is_sacred_path_civilian = yes
-			}
-			name = sacred_path_civilian
-			desc = job_sacred_path_civilian_desc
-			icon = sacred_path_civilian
-			building_icon = building_temple
-			weight = 10
-		}
 	}
-
 
 	resources = {
 		category = planet_civilians
 		produces = {
 			trade = 1
 		}
+		# Primitive Enthusiasts
 		produces = {
 			trigger = {
 				exists = owner
@@ -608,6 +593,7 @@ civilian = {
 			}
 			food = 1
 		}
+		# Tourists
 		produces = {
 			trigger = {
 				exists = owner
@@ -615,8 +601,6 @@ civilian = {
 			}
 			trade = 1
 		}
-		inline_script = "jobs/ethic_job_resources"
-
 		# Spiritual Seekers
 		produces = {
 			trigger = {
@@ -630,6 +614,8 @@ civilian = {
 			physics_research = 0.5
 			engineering_research = 0.25
 		}
+		inline_script = "jobs/ethic_job_resources"
+		
 		upkeep = {
 			trigger = {
 				exists = owner
@@ -641,66 +627,17 @@ civilian = {
 		}
 	}
 	
+	# Hedonists
 	triggered_planet_modifier = {
 		potential = {
-			exists = owner
-			owner = {
-				is_pleasure_seeker_empire = yes
-				is_individual_machine = no
-			}
-		}
-		modifier = {
-			logistic_growth_mult = 0.01
-		}
-	}
-	
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = { has_tradition = tr_mercantile_trickle_up_economics }
-			owner = { is_pleasure_seeker_empire = no }
-			planet = { 
-				NOR = {
-					has_modifier = resort_colony 
-					has_modifier = resort_colony_branch
-				}
-			}
-		}
-		planet_amenities_add = 100
-		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
-	}
-
-	# NOT Hedonists & Resort World
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = { is_pleasure_seeker_empire = no }
-			planet = { 
-				NOR = {
-					has_modifier = resort_colony 
-					has_modifier = resort_colony_branch
+			owner? = {
+				is_pleasure_seeker_empire = no
+				NOT = {
+					has_valid_civic = civic_dystopian_society
 				}
 			}
 		}
 		planet_amenities_add = 50
-		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
-	}
-	# Resort World
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			planet = { has_modifier = resort_colony }
-		}
-		planet_amenities_add = -100
-		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
-	}
-	# Resort World Branch
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			planet = { has_modifier = resort_colony_branch }
-		}
-		planet_amenities_add = -50
 		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
 	}
 
@@ -714,7 +651,6 @@ civilian = {
 		}
 		planet_crime_add = -1
     }
-
 	triggered_country_modifier = {
 		potential = {
 			exists = owner
@@ -725,6 +661,7 @@ civilian = {
 		country_edict_fund_add = 1.25
 	}
 
+	# Paragon Origin
 	triggered_country_modifier = {
 		potential = {
 			exists = owner
@@ -733,6 +670,7 @@ civilian = {
 		country_edict_fund_add = 1
 	}
 
+	# Computation Core
 	triggered_planet_modifier = {
 		potential = {
 			exists = owner
@@ -743,7 +681,6 @@ civilian = {
 		foundry_jobs_bonus_workforce_mult = 0.005
 		artisan_jobs_bonus_workforce_mult = 0.005
 	}
-
 	triggered_planet_modifier = {
 		potential = {
 			exists = owner
@@ -753,7 +690,6 @@ civilian = {
 		}
 		bureaucrat_jobs_bonus_workforce_mult = 0.005
 	}
-
 	triggered_planet_modifier = {
 		potential = {
 			exists = owner
