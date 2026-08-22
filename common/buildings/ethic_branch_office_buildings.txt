@@ -3958,7 +3958,10 @@ building_pirate_haven = {
 		potential = {
 			exists = owner
 			branch_office_owner = { 
-				NOT = { has_valid_civic = civic_worker_coop }
+				NOR = { 
+					has_valid_civic = civic_worker_coop 
+					is_anarchist = yes
+				}
 			}
 			job_commandante_pirate_offworld_add = 100
 		}
@@ -3968,7 +3971,10 @@ building_pirate_haven = {
 		potential = {
 			exists = owner
 			branch_office_owner = {
-				has_valid_civic = civic_worker_coop
+				OR = {
+					has_valid_civic = civic_worker_coop
+					is_anarchist = yes
+				}
 			}
 			job_steward_pirate_offworld_add = 100
 			job_soldier_add = 100
@@ -3980,7 +3986,10 @@ building_pirate_haven = {
 			exists = owner
 			owner = {
 				is_pirate_empire = yes
-				is_worker_coop_empire = no
+				AND = {
+					is_anarchist = no
+					is_worker_coop_empire = no
+				}
 			}
 		}
 		modifier = {
@@ -3994,7 +4003,10 @@ building_pirate_haven = {
 			exists = owner
 			owner = {
 				is_pirate_empire = yes
-				is_worker_coop_empire = yes
+				OR = {
+					is_anarchist = yes
+					is_worker_coop_empire = yes
+				}
 			}
 		}
 		modifier = {
@@ -4869,6 +4881,7 @@ building_smuggling_rings = {
 			owner = {
 				is_pirate_empire = yes
 				is_worker_coop_empire = no
+				is_anarchist = no
 			}
 		}
 		modifier = {
@@ -4882,7 +4895,10 @@ building_smuggling_rings = {
 			exists = owner
 			owner = {
 				is_pirate_empire = yes
-				is_worker_coop_empire = yes
+				OR = {
+					is_worker_coop_empire = yes
+					is_anarchist = yes
+				}
 			}
 		}
 		modifier = {
@@ -5913,16 +5929,16 @@ building_xeno_tourism_agency = {
 		planet_resettlement_unemployed_destination_mult = 0.25
 	}
 
-	planet_modifier = {
-		job_entertainer_add = 100
+	inline_script = {
+		script = jobs/entertainers_add
+		AMOUNT = @building_static_jobs_low
 	}
 
 	triggered_planet_modifier = {
 		potential = {
 			always = yes
 		}
-		planet_jobs_trade_produces_mult = @trade_value_from_jobs
-		mult = value:num_pops_in_strata|STRATA|worker|
+		planet_entertainers_trade_produces_add = @med_trade_from_jobs
 	}
 
 	triggered_planet_modifier = {
@@ -5931,8 +5947,7 @@ building_xeno_tourism_agency = {
 				has_civic = civic_worker_coop
 			}
 		}
-		planet_jobs_trade_produces_mult = @trade_value_from_jobs
-		mult = value:num_pops_in_strata|STRATA|worker|
+		planet_entertainers_trade_produces_add = @med_trade_from_jobs
 	}
 
 	triggered_planet_modifier = { 
@@ -5941,8 +5956,7 @@ building_xeno_tourism_agency = {
 				has_civic = civic_meritocracy
 			}
 		}
-		planet_jobs_trade_produces_mult = @trade_value_from_jobs
-		mult = value:num_pops_in_strata|STRATA|worker|
+		planet_entertainers_trade_produces_add = @med_trade_from_jobs
 	}
 
 	triggered_planet_modifier = {
@@ -5951,8 +5965,7 @@ building_xeno_tourism_agency = {
 				has_civic = civic_welfare_state
 			}
 		}
-		planet_jobs_trade_produces_mult = @trade_value_from_jobs
-		mult = value:num_pops_in_strata|STRATA|worker|
+		planet_entertainers_trade_produces_add = @med_trade_from_jobs
 	}
 	triggered_planet_modifier = { 
 		potential = {
@@ -5960,8 +5973,7 @@ building_xeno_tourism_agency = {
 				has_civic = civic_corporate_dimensional_worship
 			}
 		}
-		planet_jobs_trade_produces_mult = @trade_value_from_jobs
-		mult = value:num_pops_in_strata|STRATA|worker|
+		planet_entertainers_trade_produces_add = @med_trade_from_jobs
 	}
 
 	triggered_planet_modifier = {
@@ -5970,8 +5982,7 @@ building_xeno_tourism_agency = {
 				has_civic = civic_death_cult_corporate
 			}
 		}
-		planet_jobs_trade_produces_mult = @trade_value_from_jobs
-		mult = value:num_pops_in_strata|STRATA|worker|
+		planet_entertainers_trade_produces_add = @med_trade_from_jobs
 	}
 	triggered_planet_modifier = {
 		potential = {
@@ -5979,8 +5990,7 @@ building_xeno_tourism_agency = {
 				has_civic = civic_star_settlers
 			}
 		}
-		planet_jobs_trade_produces_mult = @trade_value_from_jobs
-		mult = value:num_pops_in_strata|STRATA|worker|
+		planet_entertainers_trade_produces_add = @med_trade_from_jobs
 	}
 	triggered_planet_modifier = { 
 		potential = {
@@ -5988,8 +5998,7 @@ building_xeno_tourism_agency = {
 				has_civic = civic_free_haven
 			}
 		}
-		planet_jobs_trade_produces_mult = @trade_value_from_jobs
-		mult = value:num_pops_in_strata|STRATA|worker|
+		planet_entertainers_trade_produces_add = @med_trade_from_jobs
 	}
 
 	triggered_planet_modifier = {
@@ -5998,8 +6007,7 @@ building_xeno_tourism_agency = {
 				has_civic = civic_symbiotic_race
 			}
 		}
-		planet_jobs_trade_produces_mult = @trade_value_from_jobs
-		mult = value:num_pops_in_strata|STRATA|worker|
+		planet_entertainers_trade_produces_add = @med_trade_from_jobs
 	}
 	
 	#Crims cause crime even with deal
@@ -6086,9 +6094,15 @@ building_xeno_tourism_agency = {
 
 	resources = {
 		category = planet_branch_office_buildings
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = alloys
+			COST = 1000
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
+		}
 		cost = {
 			influence = 25
-			minerals = 1000
 			rare_crystals = @b2_rare_cost
 		}
 		cost = {

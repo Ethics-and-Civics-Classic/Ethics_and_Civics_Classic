@@ -1,0 +1,302 @@
+# If you add a new colony building, also add it to common/inline_scripts/arkship/ai_design.txt
+# and update the weights for all arkship starbase types in common/starbase_types/06_arkship_starbase_types.txt
+
+# Adds weight for Merchant Guild / State Monopolies -- Sage
+arkship_galactic_stock_exchange = {
+	icon = "GFX_orbitalring_galactic_stock_exchange"
+	starbase_type = arkship
+	construction_days = 360
+	category = sm_colony_cat
+
+	starbase_limit = {
+		base = 1
+	}
+
+	potential = {
+		is_arkship_starbase = yes
+		owner? = {
+			has_technology = tech_galactic_markets
+		}
+		colony? = {
+			NOR = {
+				has_modifier = resort_colony
+				has_modifier = slave_colony
+			}
+		}
+	}
+
+	possible = {
+		colony? = {
+			NOR = {
+				has_building_construction = building_galactic_stock_exchange
+				has_building = building_galactic_stock_exchange
+			}
+		}
+	}
+
+	abort_trigger = {
+		OR = {
+			owner? = {
+				is_regular_empire = no
+			}
+			colony? = {
+				OR = {
+					has_modifier = slave_colony
+					has_modifier = resort_colony
+				}
+			}
+		}
+	}
+
+	destroy_trigger = {
+		OR = {
+			owner? = {
+				is_regular_empire = no
+			}
+			colony? = {
+				OR = {
+					has_modifier = slave_colony
+					has_modifier = resort_colony
+				}
+			}
+		}
+	}
+
+	show_in_tech = "tech_galactic_markets"
+
+	show_tech_unlock_if = {
+		is_nomadic = yes
+		is_regular_empire = yes
+	}
+
+	resources = {
+		category = starbase_arkship_upgrades
+		cost = {
+			alloys = @arkship_cost_alloys_200
+			rare_crystals = @arkship_cost_strategic_300
+		}
+		upkeep = {
+			energy = @arkship_upkeep_energy_5
+			rare_crystals = @arkship_upkeep_strategic_2
+		}
+	}
+
+	planet_modifier = {
+		job_trader_add = @building_static_jobs_high
+		planet_jobs_trade_produces_mult = 0.10
+	}
+
+	ai_weight = {
+		weight = 100
+		modifier = {
+			add = 1000
+			OR = {
+				has_valid_civic = civic_merchant_guilds
+				has_valid_civic = civic_state_monopoly
+			}
+		}
+	}
+}
+
+# Prevents Anarchist empires from accidentally getting Politicians. -- Sage
+arkship_embassy_complex = {
+	icon = "GFX_orbitalring_embassy_complex"
+	starbase_type = arkship
+	construction_days = 360
+	category = sm_colony_cat
+
+	starbase_limit = {
+		base = 1
+	}
+
+	potential = {
+		is_arkship_starbase = yes
+		owner? = {
+			has_technology = tech_xeno_relations
+			is_regular_empire = yes
+		}
+		colony? = {
+			is_capital = yes
+			NOR = {
+				has_modifier = resort_colony
+				has_modifier = slave_colony
+			}
+		}
+	}
+
+	possible = {
+		colony? = {
+			NOR = {
+				has_building_construction = building_embassy
+				has_building = building_embassy
+				has_building_construction = building_grand_embassy
+				has_building = building_grand_embassy
+			}
+		}
+	}
+
+	abort_trigger = {
+		OR = {
+			owner? = {
+				is_regular_empire = no
+			}
+			colony? = { is_capital = no }
+		}
+	}
+
+	destroy_trigger = {
+		OR = {
+			owner? = {
+				is_regular_empire = no
+			}
+			colony? = { is_capital = no }
+		}
+	}
+
+	show_in_tech = "tech_xeno_relations"
+
+	show_tech_unlock_if = {
+		is_nomadic = yes
+		is_regular_empire = yes
+	}
+
+	resources = {
+		category = starbase_arkship_upgrades
+		cost = {
+			alloys = @arkship_cost_alloys_200
+			rare_crystals = @arkship_cost_strategic_300
+		}
+		upkeep = {
+			energy = @arkship_upkeep_energy_5
+			rare_crystals = @arkship_upkeep_strategic_2
+		}
+	}
+
+	country_modifier = {
+		envoys_add = 2
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			owner? = {
+				is_gestalt = no
+				is_anarchist = no # Modded
+				is_worker_coop_empire = no
+			}
+		}
+		job_politician_add = @building_static_jobs_low
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			owner? = {
+				OR = {
+					is_worker_coop_empire = yes
+					is_anarchist = yes  # Modded
+				}
+			}
+		}
+		job_bureaucrat_add = @building_static_jobs_low
+		mult = 1.5
+	}
+
+	ai_weight = {
+		weight = 100
+	}
+}
+
+# Adds Corporate Aristocratic Elite -- Sage
+arkship_noble_estates = {
+	icon = "GFX_orbitalring_noble_estates"
+	starbase_type = arkship
+	construction_days = 360
+	category = sm_colony_cat
+
+	starbase_limit = {
+		base = 1
+	}
+
+	potential = {
+		is_arkship_starbase = yes
+		owner? = {
+			has_valid_civic = civic_aristocratic_elite
+		}
+		colony? = {
+			NOT = {
+				has_modifier = slave_colony
+			}
+		}
+	}
+
+	possible = {
+		colony? = {
+			NOR = {
+				has_building_construction = building_noble_estates
+				has_building = building_noble_estates
+			}
+		}
+	}
+
+	abort_trigger = {
+		owner? = {
+			NOR = {
+				has_civic = civic_aristocratic_elite
+				has_civic = civic_aristocratic_elite_corporate 	# Modded
+			}
+		}
+	}
+
+	destroy_trigger = {
+		owner? = {
+			NOR = {
+				has_civic = civic_aristocratic_elite
+				has_civic = civic_aristocratic_elite_corporate 	# Modded
+			}
+		}
+	}
+
+
+	resources = {
+		category = starbase_arkship_upgrades
+		cost = {
+			alloys = @arkship_cost_alloys_200
+			exotic_gases = @arkship_cost_strategic_300
+		}
+		upkeep = {
+			energy = @arkship_upkeep_energy_5
+			exotic_gases = @arkship_upkeep_strategic_2
+		}
+	}
+
+	planet_modifier = {
+		planet_housing_add = 200
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			owner? = {
+				is_anarchist = no		# Don't ask me how this is possible, I'm assuming it's just a catchme. -- Sage
+				is_worker_coop_empire = no
+				is_gestalt = no
+			}
+		}
+		job_politician_add = @building_static_jobs
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			owner? = {
+				OR = {
+					is_worker_coop_empire = yes
+					is_anarchist = yes
+				}
+			}
+		}
+		job_bureaucrat_add = @building_static_jobs
+		mult = 1.5
+	}
+
+	ai_weight = {
+		weight = 100
+	}
+}
