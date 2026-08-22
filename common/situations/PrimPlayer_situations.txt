@@ -924,6 +924,196 @@ PrimPlayer_awareness_situation = {
 		}
 	}
 }
+###################################
+# Uranium Situation
+###################################
+
+situation_primitive_uranium_deficit = {
+	picture = GFX_evt_deficit
+	category = negative
+	fail_icon = GFX_situation_outcome_meh
+	fail_icon_frame = GFX_situation_outcome_frame_green
+	complete_icon = GFX_situation_outcome_bankrupcy
+	complete_icon_frame = GFX_situation_outcome_frame_red
+	situation_log_category = urgent_matters
+
+	#potential = {
+	#	
+	#}
+
+	on_start = {
+		set_situation_flag = deficit_situation
+		owner = {
+			country_event = { id = advisor.20 days = 10 random = 20 }
+			save_event_target_as = kaleidoscope_new_owner
+			country_event = { id = timeline.19 } # Timeline Deficit
+		}
+		random_playable_country = {
+			limit = {
+				has_country_flag = gave_kaleidoscope_to@owner
+			}
+			country_event = { id = situation.2025 days = 10 random = 20 }
+		}
+	}
+	on_abort = {
+		owner = {
+			add_resource = {
+				primitive_uranium = @bailout_basic_base_amount
+				mult = value:bailout_scaling_factor
+			}
+		}
+	}
+
+	initial_progress = 15
+	on_monthly = {
+		random_events = {
+			80 = 0
+			20 = origin.4170	# Payback | MSI helping you
+		}
+	}
+
+	stages = {
+		deficit_first = {
+			icon = GFX_situation_stage_1
+			icon_background = GFX_situation_stage_frame_red
+			end = 25
+			modifier = {
+				planet_nuclear_technician_energy_produces_mult = -0.25
+				diplo_weight_economy_mult = -0.05
+				army_damage_mult = -0.05
+				army_morale = -0.05
+				ship_weapon_damage = -0.05
+			}
+		}
+		deficit_second = {
+			icon = GFX_situation_stage_2
+			icon_background = GFX_situation_stage_frame_red
+			end = 50
+			modifier = {
+				planet_nuclear_technician_energy_produces_mult = -0.50
+				diplo_weight_economy_mult = -0.10
+				army_damage_mult = -0.10
+				army_morale = -0.10
+				ship_weapon_damage = -0.10
+			}
+		}
+		deficit_third = {
+			icon = GFX_situation_stage_3
+			icon_background = GFX_situation_stage_frame_red
+			end = 75
+			modifier = {
+				planet_nuclear_technician_energy_produces_mult = -0.75
+				diplo_weight_economy_mult = -0.15
+				army_damage_mult = -0.15
+				army_morale = -0.15
+				ship_weapon_damage = -0.15
+			}
+		}
+		deficit_fourth = {
+			icon = GFX_situation_stage_4
+			icon_background = GFX_situation_stage_frame_red
+			end = 100
+			on_first_enter = {
+				situation_event = { id = PrimPlay_situation_event.4100 }
+			}
+			modifier = {
+				planet_nuclear_technician_energy_produces_mult = -1.00
+				diplo_weight_economy_mult = -0.20
+				army_damage_mult = -0.20
+				army_morale = -0.20
+				ship_weapon_damage = -0.20
+			}
+		}
+	}
+
+	on_progress_complete = {
+		country_defaulted_in_situation_tooltip = yes
+		hidden_effect = {
+			situation_event = { id = PrimPlay_situation_event.4110 }
+		}
+	}
+	on_fail = {
+		custom_tooltip = deficit_situation_finish_tooltip
+		hidden_effect = { destroy_situation = this }
+	}
+	monthly_progress = {
+		base = 0
+		modifier = {
+			#add = value:deficit_situation_progress_value|RESOURCE|primitive_uranium|
+			add = 0.5
+			desc = string_expenditures_greater_than_income_primitive_uranium
+			owner = { has_actual_deficit = { RESOURCE = primitive_uranium } }
+		}
+		modifier = {
+			subtract = 0.5
+			desc = string_not_in_deficit_primitive_uranium
+			owner = {
+				resource_income_compare = {
+					resource = primitive_uranium
+					value >= 0
+				}
+			}
+		}
+		modifier = {
+			subtract = 0.5
+			desc = string_resource_reserves_primitive_uranium
+			owner = {
+				has_negative_income_with_stockpile = { RESOURCE = primitive_uranium }
+			}
+		}
+		modifier = {
+			desc = civilian_difficulty
+			mult = 0.1
+			situation_monthly_progress > 0
+			is_difficulty = 0
+			owner = {
+				is_ai = no
+			}
+		}
+		modifier = {
+			desc = cadet_difficulty
+			mult = 0.5
+			situation_monthly_progress > 0
+			is_difficulty = 1
+			owner = {
+				is_ai = no
+			}
+		}
+	}
+	approach = {
+		name = deficit_approach_do_nothing
+		icon = GFX_situation_approach_this_is_fine
+		icon_background = GFX_situation_approach_bg_yellow
+		default = yes
+		on_select = {
+			custom_tooltip = deficit_approach_do_nothing_tooltip
+		}
+		ai_weight = {
+			base = 1
+		}
+	}
+	approach = {
+		name = deficit_approach_cut_science_investment
+		icon = GFX_situation_approach_research
+		icon_background = GFX_situation_approach_bg_red
+		modifier = {
+			planet_researchers_produces_mult = -0.5
+			planet_buildings_primitive_uranium_upkeep_mult = -0.2
+		}
+
+		ai_weight = {
+			base = 0
+			modifier = {
+				add = 2
+				current_stage = deficit_third
+			}
+			modifier = {
+				add = 2
+				current_stage = deficit_fourth
+			}
+		}
+	}
+}
 
 ###################################
 # Terraform Situation

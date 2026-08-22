@@ -2204,8 +2204,121 @@ carrier_event = {
 	}
 }
 
+############################################
+# Uranium Deficit  - START of Situation Event
+############################################
+
+#Energy Deficit
+
+situation_event = {
+	id = PrimPlay_situation_event.4100
+	title = PrimPlay_situation_event.4100.name
+	desc = {
+		text = PrimPlay_situation_event.4100.desc
+		trigger = { owner = { is_gestalt = no } }
+	}
+	desc = {
+		text = PrimPlay_situation_event.4100.desc.gestalt
+		trigger = { owner = { is_gestalt = yes } }
+	}
+	picture = GFX_evt_deficit
+	show_sound = event_bad_omen
+	is_triggered_only = yes
+	situation = this
+
+	abort_trigger = {
+		situation_progress >= 100
+	}
+
+	immediate = {
+		owner = {
+			ordered_pop_faction = {
+				limit = {
+					is_owner_ethic_pop_faction = yes
+					NOT = { has_modifier = faction_loan_taken }
+				}
+				order_by = trigger:pop_amount
+				position = 0
+				save_event_target_as = ruler_pop_faction
+			}
+			ordered_owned_planet = {
+				limit = {
+					is_capital = no
+					NOT = {
+						is_planet_class = pc_cosmogenesis_world
+					}
+				}
+				order_by = trigger:pop_amount
+				position = 0
+				save_event_target_as = looted_planet
+			}
+			if = {
+				limit = {
+					NOT = { exists = event_target:looted_planet }
+				}
+				capital_scope = {
+					save_event_target_as = looted_planet
+				}
+			}
+		}
+	}
+
+	option = {
+		name = PrimPlay_situation_event.4100.a
+		trigger = { 
+			owner = {
+				is_gestalt = no
+			}
+		}
+	}
+	
+	option = {
+		name = PrimPlay_situation_event.4100.gestalt
+		trigger = { 
+			owner = {
+				is_gestalt = yes
+			}
+		}
+	}
+}
 
 
+situation_event = {
+	id = PrimPlay_situation_event.4110
+	title = PrimPlay_situation_event.4100.title
+	desc = {
+		text = PrimPlay_situation_event.410.desc
+		#trigger = {
+		#	owner = { is_regular_empire = yes }	#To be done later
+		#}
+	}
+	#desc = {
+	#	text = deficit.110.desc.gestalt
+	#	trigger = {
+	#		owner = { is_gestalt = yes }
+	#	}
+	#}
+	picture = GFX_evt_deficit
+	show_sound = event_life_support_fail
+	is_triggered_only = yes
+	situation = this
+	force_open = yes
+
+	option = {
+		name = UNFORTUNATE
+
+		owner = {
+			add_resource = {
+				energy = @bailout_basic_base_amount
+				mult = value:bailout_scaling_factor
+			}
+			country_defaulted_effect = yes
+		}
+	}
+	after = {
+		destroy_situation = this
+	}
+}
 
 
 

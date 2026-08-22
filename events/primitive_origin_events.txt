@@ -288,6 +288,106 @@ carrier_event = {
 }
 
 ########
+# MSI
+########
+# You're in a deficit
+situation_event = {
+	id = origin.4170
+	title = "origin.4130.name"
+	desc = "origin.4170.desc"
+	is_triggered_only = yes
+	diplomatic = yes
+	picture_event_data = {
+		portrait = event_target:MSI_country.species
+		room = slaver_room
+	}
+
+	trigger = {
+		owner = {
+			has_origin = origin_payback
+			exists = event_target:MSI_country
+			has_communications = event_target:MSI_country
+			has_event_chain = payback_debt_collectors_chain
+			NOR = {
+				has_country_flag = fought_debt_collectors_last_time
+				has_country_flag = origin_4170_recently_fired
+				has_country_flag = payback_revenge_complete
+			}
+			any_situation = {
+				OR = {
+					is_situation_type = situation_energy_deficit
+					is_situation_type = situation_primitive_uranium_deficit
+					is_situation_type = situation_mineral_deficit
+					is_situation_type = situation_food_deficit
+					is_situation_type = situation_consumer_goods_deficit
+					is_situation_type = situation_alloys_deficit
+				}
+			}
+		}
+	}
+
+	immediate = {
+		owner = {
+			set_timed_country_flag = {
+				flag = origin_4170_recently_fired
+				days = 1800	# 5 years
+			}
+		}
+	}
+
+	option = {
+		name = "origin.4170.a"
+		owner = {
+			switch = {
+				trigger = has_deficit
+				energy = {
+					add_resource = {
+						energy = 1000
+					}
+				}
+				primitive_uranium = {
+					add_resource = {
+						primitive_uranium = 500
+					}
+				}
+				minerals = {
+					add_resource = {
+						minerals = 1000
+					}
+				}
+				food = {
+					add_resource = {
+						food = 1000
+					}
+				}
+				consumer_goods = {
+					add_resource = {
+						consumer_goods = 500
+					}
+				}
+				alloys = {
+					add_resource = {
+						alloys = 500
+					}
+				}
+			}
+		}
+	}
+
+	option = {
+		name = "origin.4170.b"
+		owner = {
+			add_monthly_resource_mult = {
+				resource = unity
+				value = @tier1materialreward
+				min = @tier1materialmin
+				max = @tier1materialmax
+			}
+		}
+	}
+}
+
+########
 # Obelisk 
 ########
 
