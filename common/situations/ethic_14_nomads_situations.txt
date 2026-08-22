@@ -1,5 +1,5 @@
 
-### Forever Cruise - Passenger Satisfaction - Machine Cult additions
+### Forever Cruise - Passenger Satisfaction - Machine Cult additions (Please keep up to date with vanilla)
 situation_passenger_satisfaction = {
 	picture = GFX_evt_forever_cruise
 	complete_icon_frame = GFX_situation_outcome_frame_red
@@ -777,5 +777,284 @@ situation_passenger_satisfaction = {
 			owner = { has_country_flag = forever_cruise_mutiny }
 		}
 		text = "situation_passenger_satisfaction_blocked_mutiny"
+	}
+}
+
+### Nomad Mineral Situation - Anarchy Additions (Please keep up to date with vanilla)
+situation_nomad_economy = {
+	picture = GFX_evt_waystation
+	situation_log_category = empire_concerns
+
+	category = neutral
+
+	initial_progress	= 10000
+	total_progress		= {
+		base = 0
+		add = owner.value:nomad_max_operational_reserves
+	}
+
+	override_finisher_title = situation_nomad_economy_capacity_title
+	override_finisher_desc = nomad_max_reserves_breakdown
+	override_progress_current_desc = situation_nomad_economy_reserves_current
+
+	abort_trigger = {
+		OR = {
+			NOT = { exists = owner }
+			owner = {
+				is_nomadic = no
+			}
+		}
+	}
+
+	on_start = {
+		set_situation_approach = situation_nomad_economy_smooth_spending
+	}
+
+	on_fail = {}
+
+	on_progress_complete = {}
+
+	permanent = yes
+	show_in_outliner = no
+
+	stages = {
+		situation_nomad_economy_stage_critical = {
+			icon = GFX_situation_stage_1
+			icon_background = GFX_situation_stage_frame_red
+			color = warning_red
+			section_weight = 5
+			modifier = {
+				ship_fire_rate_mult = -0.5
+				ship_shield_mult = -0.5
+				ship_armor_mult = -0.5
+				planet_stability_add = -5
+				country_physics_research_produces_mult = -0.75
+				country_society_research_produces_mult = -0.75
+				country_engineering_research_produces_mult = -0.75
+				country_unity_produces_mult = -0.75
+				country_alloys_produces_mult = -0.75
+			}
+			triggered_modifier = {
+				potential = {
+					owner = {
+						any_owned_species = {
+							is_archetype = LITHOID
+						}
+					}
+				}
+				modifier = {
+					lithoid_pop_happiness = -0.25
+					lithoid_logistic_growth_mult = -0.75
+					lithoid_pop_bonus_workforce_mult = -0.75
+				}
+			}
+			triggered_modifier = {
+				potential = {
+					owner = {
+						any_owned_species = {
+							is_robotic = yes
+						}
+					}
+				}
+				modifier = {
+					robotic_pop_bonus_workforce_mult = -0.75
+				}
+			}
+		}
+		situation_nomad_economy_stage_1_struggle = {
+			icon = GFX_situation_stage_2
+			icon_background = GFX_situation_stage_frame_orange
+			color = light_orange
+			section_weight = 20
+			modifier = {
+				ship_fire_rate_mult = -0.25
+				ship_shield_mult = -0.25
+				ship_armor_mult = -0.25
+				planet_stability_add = -3
+			}
+		}
+		situation_nomad_economy_stage_2_stable = {
+			icon = GFX_situation_stage_3
+			icon_background = GFX_situation_stage_frame_blue
+			color = white
+			section_weight = {
+				base = 50
+				modifier = {
+					owner? = {
+						OR = {
+							has_valid_civic = civic_anarchy_utopia
+							has_valid_civic = civic_shared_burden
+							is_worker_coop_empire = yes
+						}
+					}
+					factor = 1.5
+				}
+			}
+			modifier = {
+				planet_stability_add = 5
+			}
+		}
+		situation_nomad_economy_stage_3_thriving = {
+			icon = GFX_situation_stage_4
+			icon_background = GFX_situation_stage_frame_green
+			color = light_green
+			section_weight = 25
+			modifier = {
+				planet_stability_add = 10
+				all_technology_research_speed = 0.1
+			}
+		}
+	}
+
+	approach = {
+		name = situation_nomad_economy_stringent_budget
+		icon = GFX_situation_approach_nomad_neutral
+		icon_background = GFX_situation_approach_bg_yellow
+		on_select = {
+			custom_tooltip = "situation_nomad_economy_stringent_budget_tt"
+			hidden_effect = {
+				owner = {
+					country_event = {
+						id = nomads.37
+					}
+				}
+			}
+		}
+		default = yes
+		ai_weight = {
+			base = 0
+			modifier = {
+				add = 50
+				owner = {
+					any_situation = {
+						is_situation_type = situation_nomad_economy
+						nomad_in_reserve_crisis = yes
+					}
+				}
+			}
+		}
+
+		modifier = {
+			planet_jobs_upkeep_mult = -0.5
+			bureaucrat_jobs_bonus_workforce_mult = -0.5
+			researcher_jobs_bonus_workforce_mult = -0.5
+		}
+	}
+
+	approach = {
+		name = situation_nomad_economy_smooth_spending
+		icon = GFX_situation_approach_nomad_good
+		icon_background = GFX_situation_approach_bg_green
+		on_select = {
+			custom_tooltip = "situation_nomad_economy_smooth_spending_tt"
+		}
+		ai_weight = {
+			base = 10
+		}
+		modifier = {
+		}
+	}
+
+	approach = {
+		name = situation_nomad_economy_full_spending
+		icon = GFX_situation_approach_nomad_very_good
+		icon_background = GFX_situation_approach_bg_green
+		allow = {
+			custom_tooltip = {
+				fail_text = no_situation_progress
+				owner = {
+					any_situation = {
+						is_situation_type = situation_nomad_economy
+						NOT = { nomad_in_reserve_crisis = yes }
+					}
+				}
+			}
+		}
+		on_select = {
+			custom_tooltip = "situation_nomad_economy_full_spending_tt"
+		}
+		ai_weight = {
+			base = 0
+			modifier = {
+				add = 50
+				owner = {
+					any_situation = {
+						is_situation_type = situation_nomad_economy
+						situation_progress_percent >= @ai_nomad_full_spending_reserve_percent
+					}
+				}
+			}
+		}
+		modifier = {
+			planet_building_build_speed_mult = 0.5
+			specialist_and_complex_drone_cat_bonus_workforce_mult = 0.5
+		}
+	}
+
+	approach = {
+		name = situation_nomad_economy_harvest_everything
+		icon = GFX_situation_approach_nomad_emergency
+		icon_background = GFX_situation_approach_bg_yellow
+		potential = {
+			owner? = {
+				is_star_seeker_empire = yes
+			}
+		}
+		allow = {
+			custom_tooltip = {
+				fail_text = no_arkship_is_encamped
+				owner = {
+					any_owned_ship = {
+						is_arkship_ship = yes
+						is_system_locked = yes
+					}
+				}
+			}
+			custom_tooltip = {
+				fail_text = no_situation_progress
+				owner = {
+					# A running Festival stays valid even if its reserve drain dips into the crisis band; starting one still cannot.
+					OR = {
+						has_country_flag = celebration_active
+						any_situation = {
+							is_situation_type = situation_nomad_economy
+							NOT = { nomad_in_reserve_crisis = yes }
+						}
+					}
+				}
+			}
+		}
+		on_select = {
+			custom_tooltip = "situation_nomad_economy_harvest_everything_tt"
+		}
+		modifier = {
+			pop_bonus_workforce_mult = 1
+			planet_jobs_produces_mult = 1
+			logistic_growth_mult = 1
+			diplo_weight_economy_mult = -0.75
+		}
+		ai_weight = {
+			base = 0
+		}
+	}
+	on_monthly = {
+		events = {
+			nomads.38		# Festival duration countdown
+		}
+	}
+	monthly_progress = {
+		base = 0
+		# Modifiers are defined in tooltip order, most important first
+		modifier = {
+			subtract = value:nomad_celebration_upkeep
+			desc = "Celebration_Approach"
+			current_situation_approach = situation_nomad_economy_harvest_everything
+		}
+	}
+	triggered_blocked_desc = {
+		trigger = {
+			current_stage = situation_nomad_economy_stage_critical
+		}
+		text = situation_nomad_economy_critical_reserves_desc
 	}
 }
