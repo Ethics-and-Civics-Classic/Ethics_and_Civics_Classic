@@ -3726,16 +3726,17 @@ fleet_event = {
 		text = "EaC_civic_mechanic_events.2.desc"
 	}
 	desc = {
-		trigger = { owner = { has_civic = civic_military_dictatorship_corporate } }
-		text = "EaC_civic_mechanic_events.2.desc"
-	}
-	desc = {
 		trigger = {
 			owner = {
-				has_civic = civic_criminal_heritage
 				OR = {
-					has_valid_civic = civic_crusader_spirit_corporate
-					has_valid_civic = civic_void_reavers
+					has_civic = civic_military_dictatorship_corporate
+					AND = {
+						has_civic = civic_criminal_heritage
+						OR = {
+							has_valid_civic = civic_crusader_spirit_corporate
+							has_valid_civic = civic_void_reavers
+						}
+					}
 				}
 			}
 		}
@@ -13120,12 +13121,7 @@ country_event = {
 	is_triggered_only = yes
 
 	trigger = {
-		is_nomadic = yes
-		is_regular_empire = yes
-		OR = {
-			has_valid_civic = civic_environmentalist
-			has_valid_civic = civic_keepers_harmony
-		}
+		is_green_nomad_special = yes
 	}
 
 	immediate = {
@@ -13149,19 +13145,14 @@ country_event = {
 	is_triggered_only = yes
 
 	trigger = {
-		is_nomadic = yes
-		is_regular_empire = yes
-		OR = {
-			has_valid_civic = civic_keepers_harmony
-			has_valid_civic = civic_environmentalist
-		}
+		is_green_nomad_special = yes
 	}
 
 	immediate = {
 		if = {
 			limit = {
 				root = {
-					has_civic = civic_keepers_harmony
+					is_nomad_keepers_harmony = yes
 				}
 			}
 			save_event_target_as = nomad_country
@@ -13176,20 +13167,6 @@ country_event = {
 				random_list = {
 					# Default Pilgrimage
 					20 = {
-						modifier = {
-							factor = 0
-							NOR = {
-								has_surveyed_class = pc_desert
-								has_surveyed_class = pc_tropical
-								has_surveyed_class = pc_arid
-								has_surveyed_class = pc_continental
-								has_surveyed_class = pc_ocean
-								has_surveyed_class = pc_tundra
-								has_surveyed_class = pc_arctic
-								has_surveyed_class = pc_alpine
-								has_surveyed_class = pc_savannah
-							}
-						}
 						inline_script = {
 							script = events/nomads_planetary_pilgrimage_event
 							VARIANT = 1
@@ -13197,18 +13174,6 @@ country_event = {
 					}
 					# Presapient Pilgrimage
 					20 = {
-						modifier = {
-							factor = 0
-							NOR = {
-								has_country_flag = found_presapients
-								AND = {
-									every_playable_country = {
-										limit = { is_guided_sapience_empire = yes }
-									}
-									has_communications = ROOT
-								}
-							}
-						}
 						inline_script = {
 							script = events/nomads_planetary_pilgrimage_event
 							VARIANT = 2
@@ -13216,23 +13181,6 @@ country_event = {
 					}
 					# Holy World Pilgrimage
 					20 = {
-						modifier = {
-							factor = 0
-							NOR = {
-								any_relation = {
-									has_communications = root
-									OR = {
-										is_fallen_empire_spiritualist = yes
-										has_ascension_perk = ap_consecrated_worlds
-									}
-								}
-								has_country_flag = encountered_holy_world
-								has_origin = origin_scion
-								has_origin = origin_sacred_path
-								has_civic = civic_scion_spiritualist
-								has_civic = PrimPlayer_civic_scion_spiritualist
-							}
-						}
 						inline_script = {
 							script = events/nomads_planetary_pilgrimage_event
 							VARIANT = 3
@@ -13240,15 +13188,6 @@ country_event = {
 					}
 					# Unique Lifeforms Pilgrimage
 					20 = {
-						modifier = {
-							factor = 0
-							NOR = {
-								every_playable_country = {
-									limit = { NOT = { has_country_flag = turtle_world_spawned } }
-								}
-								has_global_flag = migrating_forests_global
-							}
-						}
 						inline_script = {
 							script = events/nomads_planetary_pilgrimage_event
 							VARIANT = 4
@@ -13256,15 +13195,6 @@ country_event = {
 					}
 					# Space Fauna Home System Pilgrimage
 					20 = {
-						# Not found fauna home system
-						modifier = {
-							factor = 0
-							NOR = { 
-								has_encountered_tiyanki = yes 
-								has_encountered_space_amoeba = yes
-								has_encountered_crystalline_entity = yes
-							}
-						}
 						inline_script = {
 							script = events/nomads_planetary_pilgrimage_event
 							VARIANT = 5
@@ -13279,7 +13209,7 @@ country_event = {
 		if = {
 			limit = {
 				root = {
-					has_civic = civic_environmentalist
+					is_nomad_environmentalist = yes
 				}
 			}
 			save_event_target_as = nomad_country
@@ -13294,20 +13224,6 @@ country_event = {
 				random_list = {
 					# Xenogeology Study
 					20 = {
-						modifier = {
-							factor = 0
-							NOR = {
-								has_surveyed_class = pc_desert
-								has_surveyed_class = pc_tropical
-								has_surveyed_class = pc_arid
-								has_surveyed_class = pc_continental
-								has_surveyed_class = pc_ocean
-								has_surveyed_class = pc_tundra
-								has_surveyed_class = pc_arctic
-								has_surveyed_class = pc_alpine
-								has_surveyed_class = pc_savannah
-							}
-						}
 						inline_script = {
 							script = events/nomads_conservation_study_event
 							VARIANT = 1
@@ -13315,13 +13231,6 @@ country_event = {
 					}
 					# Xenobiology Study
 					15 = {
-						modifier = {
-							factor = 0
-							NOR = {				
-								has_country_flag = Story3
-								has_country_flag = Story4
-							}
-						}
 						inline_script = {
 							script = events/nomads_conservation_study_event
 							VARIANT = 2
@@ -13329,11 +13238,6 @@ country_event = {
 					}
 					# Space Fauna Study
 					10 = {
-						# Not encountered any fauna
-						modifier = {
-							factor = 0
-                            has_encountered_any_fauna = no
-						}
 						inline_script = {
 							script = events/nomads_conservation_study_event
 							VARIANT = 3
