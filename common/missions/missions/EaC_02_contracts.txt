@@ -224,6 +224,14 @@ contract_planetary_pilgrimage_5 = {
 				SYSTEM = fromfrom
 			}
 		}
+		fromfrom = {
+            NOT = { is_pilgrimage_site_space_fauna = yes }
+            is_point_of_interest = {
+                id = pilgrimage_poi@this
+                event_chain = contract_planetary_pilgrimage_5_chain
+                owner = root
+            }
+        }
 	}
 
 	counter = {
@@ -247,11 +255,20 @@ contract_planetary_pilgrimage_5 = {
 			limit = {
 				is_pilgrimage_site_space_fauna = yes
 			}
-		}
-		enable_special_project = {
-			name = "CONTRACT_PILGRIMAGE_5_PROJECT"
-			location = fromfrom
-			owner = root
+			root = {
+				create_point_of_interest = {
+					id = pilgrimage_poi@prev
+					name = "pilgrimage_poi_name"
+					desc = "pilgrimage_poi_desc"
+					event_chain = contract_planetary_pilgrimage_5_chain
+					location = prev
+				}
+			}
+			enable_special_project = {
+				name = "CONTRACT_PILGRIMAGE_5_PROJECT"
+				location = fromfrom
+				owner = root
+			}
 		}
 	}
 
@@ -282,7 +299,7 @@ contract_planetary_pilgrimage_5 = {
 	on_cancel = {
 		if = {
 			limit = { has_event_chain = contract_planetary_pilgrimage_5_chain }
-
+			end_event_chain = contract_planetary_pilgrimage_5_chain
 		}
 		if = {
 			limit = {
@@ -410,6 +427,14 @@ contract_conservation_study_3 = {
 				SYSTEM = fromfrom
 			}
 		}
+		fromfrom = {
+            NOT = { is_conservation_site_space_fauna = yes }
+        	is_point_of_interest = {
+                id = pilgrimage_poi@this
+                event_chain = contract_planetary_pilgrimage_$VARIANT$_chain
+                owner = root
+            }
+        }
 	}
 
 	counter = {
@@ -430,21 +455,46 @@ contract_conservation_study_3 = {
 			target = ROOT
 		}
 		fromfrom = {
+			# Find a conservation site.
 			limit = {
 				is_conservation_site_space_fauna = yes
 			}
-		}
-		enable_special_project = {
-			name = "CONTRACT_CONSERVATION_3_PROJECT"
-			location = fromfrom
-			owner = root
+			# Mark it as a PoI.
+			root = {
+				create_point_of_interest = {
+					id = conservation_poi@prev
+					name = "conservation_poi_name"
+					desc = "conservation_poi_desc"
+					event_chain = contract_conservation_study_3_chain
+					location = prev
+				}
+			}
+			# Set the project.
+			enable_special_project = {
+				name = "CONTRACT_CONSERVATION_3_PROJECT"
+				location = fromfrom
+				owner = root
+			}
 		}
 	}
 
 	on_stop = {
-		end_event_chain = contract_conservation_study_3_chain
-		fromfrom = {
-			remove_star_flag = conservation_study_contract_issued@root
+		if = {
+            limit = {
+                exists = root
+            }
+			# Stop the chain.
+			end_event_chain = contract_conservation_study_3_chain
+			fromfrom = {
+				# Remove the star flag.
+				remove_star_flag = conservation_study_contract_issued@root
+				# And the PoI marker.
+				every_system_planet = {
+					root = {
+						remove_point_of_interest = conservation_poi@prev
+					}
+				}
+			}
 		}
 	}
 

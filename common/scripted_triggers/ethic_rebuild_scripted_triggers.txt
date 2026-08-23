@@ -124,6 +124,39 @@ has_subspecies_civic_or_origin = {
 	}
 }
 
+# determines valid blockers for Ecocentrist jobs
+has_eco_blocker = {
+	OR = {
+		has_deposit = d_active_volcano
+		has_deposit = d_alien_pets_deposit
+		has_deposit = d_ark_nature_preserve_blocker
+		has_deposit = d_avian_reserve
+		has_deposit = d_big_nature_preserve_blocker
+		has_deposit = d_dangerous_wildlife_blocker
+		has_deposit = d_deep_sinkhole
+		has_deposit = d_dense_jungle
+		has_deposit = d_house_turtle
+		has_deposit = d_lethal_ecosphere_blocker
+		has_deposit = d_living_snow_reserve
+		has_deposit = d_massive_glacier
+		has_deposit = d_migrating_forests
+		has_deposit = d_migrating_forest_reserve
+		has_deposit = d_mountain_range
+		has_deposit = d_noxious_swamp
+		has_deposit = d_quicksand_basin
+		has_deposit = d_raging_lavafalls
+		has_deposit = d_rugged_landscape
+		has_deposit = d_savage_wildlands
+		has_deposit = d_toxic_kelp
+		has_deposit = d_valley_of_zanaam
+		has_deposit = d_wandering_forests
+
+		has_modifier = pm_wenkwort_gardens
+		has_modifier = pm_wenkwort_zen
+		has_modifier = pm_wenkwort_custodian
+	}
+}
+
 ##########
 # Traits #
 ##########
@@ -613,7 +646,110 @@ industrial_megastructures_in_habitable_systems = {
 	}
 }
 
-# Green Nomad Triggers
+##############################
+# National Identity Triggers #
+##############################
+
+is_pirate_lord = {
+	exists = owner
+	owner = {
+		has_valid_civic = civic_military_dictatorship_corporate
+	}
+}
+
+is_pirate_empire = {
+	OR = {
+		has_valid_civic = civic_crusader_spirit_corporate
+		has_valid_civic = civic_void_reavers
+		has_civic = civic_pirate_mercenary_enclave
+		has_technology = tech_pirate_leaders
+	}
+}
+
+is_anarchist_empire = {
+	OR = {
+		has_valid_civic = civic_anarchy_utopia
+		has_valid_civic = civic_anarchy_ideals
+		AND = {
+			has_valid_civic = civic_primitive_enthusiasts
+			is_socialism = yes
+			is_egalitarian = yes
+		}
+	}
+}
+
+is_plutocracy = {
+	OR = {
+		has_valid_civic = civic_merchant_guilds
+		has_valid_civic = civic_state_monopoly
+	}
+}
+
+is_theocracy = {
+	OR = {
+		has_valid_civic = civic_exalted_priesthood
+		has_valid_civic = civic_imperial_cult
+		has_valid_civic = civic_divine_council
+		has_valid_civic = civic_spiritual_democracy
+	}
+}
+
+is_stratocracy = {
+	OR = {
+		has_valid_civic = civic_stratocracy
+		has_valid_civic = civic_military_dictatorship
+		has_valid_civic = civic_military_dictatorship_corporate
+		has_valid_civic = civic_military_junta
+		has_valid_civic = civic_citizen_service
+	}
+}
+
+is_technocracy = {
+	OR = {
+		has_valid_civic = civic_technocracy
+		has_valid_civic = civic_cyber_dictatorship
+		has_valid_civic = civic_science_directorate
+		has_valid_civic = civic_cyber_demos_cratos
+	}
+}
+
+is_utopic_gov = {
+	OR = {
+		has_valid_civic = civic_bureaucracy
+		has_valid_civic = civic_philosopher_king
+		has_valid_civic = civic_executive_committee
+		has_valid_civic = civic_peaceful_republic
+	}
+}
+
+is_spiritual_seeker_empire = {
+	OR = {
+		has_valid_civic = civic_spiritual_seekers
+	}
+}
+
+is_nomad_environmentalist = {
+	is_nomadic = yes
+	is_regular_empire = yes
+	has_valid_civic = civic_environmentalist
+}
+
+is_nomad_keepers_harmony = {
+	is_nomadic = yes
+	is_regular_empire = yes
+	has_valid_civic = civic_keepers_harmony
+}
+
+is_hospitality_machine_cult_machine_empire = {
+	has_valid_civic = civic_machine_cult_machine
+	has_origin = origin_forever_cruise
+	NOT = { has_country_flag = forever_cruise_over }
+}
+
+#################################
+# Green Nomad Contract Triggers #
+#################################
+# scope = planet
 is_pilgrimage_site_default = {
 	AND = {
 		is_habitable_planet = yes
@@ -630,6 +766,7 @@ is_pilgrimage_site_default = {
 	}
 }
 
+# scope = planet
 is_pilgrimage_site_presapient = {
 	OR = {
 		has_carrier_flag = pre_sapient_planet
@@ -637,6 +774,7 @@ is_pilgrimage_site_presapient = {
 	}
 }
 
+# scope = planet
 is_pilgrimage_site_wildlife = {
 	OR = {
 		every_deposit = {
@@ -658,7 +796,7 @@ is_pilgrimage_site_wildlife = {
 			limit = { is_deposit_type = d_living_snow_reserve }
 		}
 		every_deposit = {
-			limit = { is_deposit_type = d_landed_dragon }
+			limit = { is_deposit_type = d_avian_reserve }
 		}
 		every_deposit = {
 			limit = { is_deposit_type = d_alien_pets }
@@ -666,6 +804,7 @@ is_pilgrimage_site_wildlife = {
 	}
 }
 
+# scope = planet
 is_pilgrimage_site_holy_world = {
 	OR = {
 		is_holy_world = yes
@@ -677,6 +816,7 @@ is_pilgrimage_site_holy_world = {
 	}
 }
 
+# scope = system
 is_pilgrimage_site_space_fauna = {
 	OR = {
 		AND = {
@@ -740,18 +880,8 @@ is_pilgrimage_site_space_fauna = {
 	}
 }
 
+# scope = planet
 is_conservation_site_default = {
-	OR = {
-		NOT = { exists = space_owner }
-
-		AND = {
-			prev.owner = { 
-				is_unfriendly = no
-				has_communications = ROOT
-			}
-			root = { has_research_agreement = prev }
-		}
-	}
 	AND = {
 		is_habitable_planet = yes
 		NOR = {
@@ -765,29 +895,9 @@ is_conservation_site_default = {
 	}
 }
 
+# scope = planet
 is_conservation_site_wildlife = {
 	OR = {
-		NOT = { exists = space_owner }
-
-		AND = {
-			prev.owner = { 
-				is_unfriendly = no
-				has_communications = ROOT
-			}
-			root = { has_research_agreement = prev }
-		}
-	}
-	OR = {
-		prev.owner = { 
-			OR = {
-				has_origin = origin_primal_calling 
-				has_origin = fruitful
-				is_guided_sapience_empire = yes
-				is_green = yes
-				is_xenophile = yes
-			}
-		}
-
 		has_carrier_flag = pre_sapient_planet
 
 		every_deposit = {
@@ -809,9 +919,6 @@ is_conservation_site_wildlife = {
 			limit = { is_deposit_type = d_living_snow_reserve }
 		}
 		every_deposit = {
-			limit = { is_deposit_type = d_landed_dragon }
-		}
-		every_deposit = {
 			limit = { is_deposit_type = d_alien_pets }
 		}
 		every_deposit = {
@@ -823,18 +930,8 @@ is_conservation_site_wildlife = {
 	}
 }
 
+# scope = system
 is_conservation_site_space_fauna = {
-	OR = {
-		NOT = { exists = space_owner }
-
-		AND = {
-			prev.owner = { 
-				is_unfriendly = no
-				has_communications = ROOT
-			}
-			root = { has_research_agreement = prev }
-		}
-	}
 	OR = {
 		AND = {
 			has_star_flag = tiyanki_graveyard_system
@@ -901,6 +998,7 @@ is_conservation_site_space_fauna = {
 				has_country_flag = voidworms_encountered 
 				OR = { 
 					has_technology = tech_voidworm_immunity
+					has_modifier = voidworm_slayers_modifier 
 				}
 			}
 		}
