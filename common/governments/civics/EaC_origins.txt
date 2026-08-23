@@ -304,8 +304,24 @@ origin_broken_shackles = {
 				value = civic_hive_stargazers
 				value = civic_machine_exploration_protocol
 			}
+			NOR = { # Not Secret Societies
+				text = civic_tooltip_not_secret_societies
+				value = civic_secret_societies
+				value = civic_secret_societies_corporate
+			}
+			NOR = { # Not Tankbound
+				text = civic_tooltip_not_tankbound
+				value = civic_tankbound
+				value = civic_tankbound_corporate
+			}
 		}
-		# species_archetype = { NOT = { value = MACHINE } }
+		species_archetype = { NOT = { value = MACHINE } }
+		preferred_planet_class = {
+			NOT = {
+				text = does_not_have_volcanic_homeworld
+				value = pc_volcanic
+			}
+		}
 	}
 
 	description = "origin_tooltip_broken_shackles_effects"
@@ -316,6 +332,7 @@ origin_broken_shackles = {
 		envoys_add = 1
 		first_contact_speed_mult = 0.20
 		spy_network_daily_value_mult = 0.20
+		refugee_attraction = 1
 	}
 
 	blocks_random_machine_empire_generation	= yes
@@ -559,49 +576,6 @@ origin_mechanists = {
 	}
 }
 
-origin_toxic_knights = {
-	is_origin = yes
-	icon = "gfx/interface/icons/origins/origins_toxic_knights.dds"
-	picture = GFX_origin_toxic_knights
-	flags = { custom_start_screen }
-
-	initializers = { toxic_knights_start toxic_knights_sol_start }
-
-	playable = {
-		has_toxoids = yes
-	}
-
-	possible = {
-		is_nomadic = no
-		ethics = {
-			NOT = { value = ethic_gestalt_consciousness }
-		}
-		civics = {
-			NOR = {
-				value = civic_fanatic_purifiers
-				value = civic_dystopian_society
-			}
-			NOR = { # Not Tankbound
-				text = civic_tooltip_not_tankbound
-				value = civic_tankbound
-				value = civic_tankbound_corporate
-			}
-		}
-		species_archetype = { NOT = { value = MACHINE } }	#Cog Note - What if we allow this?
-	}
-
-	description = origin_toxic_knights_effects
-	negative_description = origin_toxic_knights_negative_effects
-
-	advanced_start = yes
-	max_once_global = yes
-	blocks_random_machine_empire_generation	= yes
-
-	random_weight = {
-		base = 2
-	}
-}
-
 origin_common_ground = {
 	is_origin = yes
 	icon = "gfx/interface/icons/origins/origins_common_ground.dds"
@@ -633,6 +607,8 @@ origin_common_ground = {
 				value = civic_fanatic_purifiers
 				value = civic_hive_devouring_swarm
 				value = civic_machine_terminator
+				value = civic_scorched_earth
+				value = civic_hive_scorched_earth
 			}
 		}
 	}
@@ -640,41 +616,11 @@ origin_common_ground = {
 	description = "origin_tooltip_common_ground_effects"
 	flags = { custom_start_screen }
 
+	traits = {
+	}
+
 	random_weight = {
 		base = 5
-	}
-}
-
-origin_common_ground_npc = {
-	is_origin = yes
-	icon = "gfx/interface/icons/origins/origins_common_ground.dds"
-	picture = GFX_origin_common_ground
-
-	playable = {
-		always = no # Non-player origin
-	}
-
-	possible = {
-		civics = {
-			NOR = {
-				value = civic_barbaric_despoilers
-				value = civic_barbaric_despoilers_corporate
-				value = PrimPlayer_civic_barbaric_despoilers_khan
-				value = civic_barbaric_despoilers_khan
-			}
-			NOR = {
-				text = civic_tooltip_not_genocidal
-				value = civic_fanatic_purifiers
-				value = civic_hive_devouring_swarm
-				value = civic_machine_terminator
-			}
-		}
-	}
-
-	description = origin_tooltip_common_ground_npc_effects
-
-	random_weight = {
-		base = 0
 	}
 }
 
@@ -698,6 +644,11 @@ origin_syncretic_evolution = {
 				value = civic_corporate_guided_sapience
 				value = civic_hive_guided_sapience
 				value = civic_machine_guided_sapience
+			}
+			NOR = {
+				text = civic_tooltip_not_tankbound
+				value = civic_tankbound
+				value = civic_tankbound_corporate
 			}
 		}
 	}
@@ -729,7 +680,6 @@ origin_fruitful = {
 	}
 
 	possible = {
-		is_nomadic = no
 		authority = { NOT = { value = auth_machine_intelligence } }
 		ethics = {
 			OR = {
@@ -777,8 +727,6 @@ origin_life_seeded = {
 	}
 
 	possible = {
-		is_nomadic = no
-		authority = { NOT = { value = auth_machine_intelligence } }		# Modded
 		civics = {
 			NOR = {
 				text = civic_tooltip_not_mutagenic
@@ -820,19 +768,10 @@ origin_life_seeded = {
 		negative_description = "origin_tooltip_life_seeded_machine_negative_effects"
 
 		trigger = {
-			# OR = {
-				# AND = {
-				#	is_scope_valid = no
-				#	local_human_species_class = MACHINE		# No Longer Used in Stellaris 4.0
-				#}
-				# AND = {
-					is_scope_valid = yes
-					OR = {
-						is_individual_machine = yes
-						is_machine_empire = yes
-					}
-				#}
-			#}
+			OR = {
+				is_individual_machine = yes
+				is_machine_empire = yes
+			}
 		}
 	}
 }
