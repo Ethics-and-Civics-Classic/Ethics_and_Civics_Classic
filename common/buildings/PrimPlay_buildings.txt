@@ -354,7 +354,7 @@ building_early_spaceport = {
 	can_build = yes
 	base_buildtime = 180
 	can_demolish = yes
-	can_be_ruined = no
+	can_be_ruined = yes
 	planet_limit = 1
 
 	category = resource
@@ -468,7 +468,7 @@ building_fallout_shelter = {
 	can_build = yes
 	base_buildtime = @b1_time
 	can_demolish = yes
-	can_be_ruined = no
+	can_be_ruined = yes
 	planet_limit = 1
 
 	category = resource
@@ -488,7 +488,7 @@ building_fallout_shelter = {
 				# has_origin = origin_primitive_player_early_space_age
 				AND = {
 					OR = {	
-						has_origin = origin_post_apocalyptic
+						is_apocalyptic_empire = yes
 						any_situation = { is_situation_type = PrimPlayer_situation } # Much more efficient trigger
 					}
 					has_technology = tech_primitive_atomic_age_weapons
@@ -518,7 +518,7 @@ building_fallout_shelter = {
 				# has_origin = origin_primitive_player_early_space_age
 				any_situation = { is_situation_type = PrimPlayer_situation } # Much more efficient trigger
 				is_primitive = yes
-				has_origin = origin_post_apocalyptic
+				is_apocalyptic_empire = yes
 			}
 		}
 	}
@@ -567,9 +567,9 @@ building_fallout_shelter = {
 		"tech_primitive_atomic_age_weapons"
 	}
 	
-	upgrades = {
-		"building_storm_resistant_production"
-	}
+	#upgrades = {
+	#	"building_storm_resistant_production"	#Cog Note - Suggested to be a standalone building
+	#}
 }
 #
 #####################
@@ -1024,7 +1024,7 @@ building_primitive_factory = {
 	can_build = yes
 	base_buildtime = @b1_time
 	can_demolish = yes
-	can_be_ruined = no
+	can_be_ruined = yes
 
 	category = manufacturing
 	
@@ -1155,7 +1155,7 @@ building_primitive_offices = {
 	base_buildtime = @b1_time
 	#planet_limit = 1
 	can_demolish = yes
-	can_be_ruined = no
+	can_be_ruined = yes
 
 	category = unity
 
@@ -1255,13 +1255,14 @@ building_primitive_research = {
 	can_build = yes
 	base_buildtime = @b1_time
 	can_demolish = yes
-	can_be_ruined = no
+	can_be_ruined = yes
 	planet_limit = 1
 	category = research
 	icon = building_primitive_labs
 
 	building_sets = {
 		pre_ftl
+		research
 	}
 
 	potential = {
@@ -1402,6 +1403,21 @@ building_primitive_research = {
 			}
 			energy = 1
 		}
+		#Nuclear Research
+		upkeep = {
+			trigger = {
+				exists = owner
+				owner = { has_technology = "tech_primitive_nuclear_physics" }
+			}
+			energy = 1
+		}
+		produces = {
+			trigger = {
+				exists = owner
+				owner = { has_technology = "tech_primitive_nuclear_physics" }
+			}
+			primitive_uranium = 0.1
+		}
 		
 	}
 
@@ -1426,7 +1442,7 @@ building_primitive_mine = {
 	can_build = yes
 	base_buildtime = @b1_time
 	can_demolish = yes
-	can_be_ruined = no
+	can_be_ruined = yes
 
 	category = resource
 	
@@ -1515,12 +1531,13 @@ building_primitive_power_plant = {
 	can_build = yes
 	base_buildtime = @b1_time
 	can_demolish = yes
-	can_be_ruined = no
+	can_be_ruined = yes
 
 	category = resource
 	
 	building_sets = {
 		pre_ftl
+		#generator
 	}
 
 	potential = {
@@ -1587,6 +1604,591 @@ building_primitive_power_plant = {
 	}
 
 	upgrades = {
+
+	}
+}
+
+building_primitive_synthetics_refinery = {
+	can_build = yes
+	planet_limit = 3
+	base_buildtime = @b1_time
+	can_demolish = yes
+	can_be_ruined = yes
+	can_be_disabled = yes
+
+	category = resource
+	
+	building_sets = {
+		urban
+		pre_ftl
+	}
+
+	potential = {
+		exists = owner
+		always = no
+		owner = {
+			has_technology = "tech_primitive_plastic_material"
+		}
+	}
+	
+	triggered_planet_modifier = {
+		potential = {
+			NOT = { is_planet_class = pc_nuked }
+		}
+		pop_environment_tolerance = -0.10
+	}
+	
+	############################################
+	
+	prerequisites = {
+		"tech_primitive_plastic_material"
+	}
+	
+	resources = {
+		category = planet_buildings
+		cost = {
+			minerals = @b1_minerals
+		}
+		upkeep = {
+			energy = 1
+		}
+	}
+
+	upgrades = {
+		
+	}
+}
+
+building_primitive_nuclear_plant = {
+	can_build = yes
+	planet_limit = 3
+	base_buildtime = @b1_time
+	can_demolish = yes
+	can_be_ruined = yes
+	can_be_disabled = yes
+
+	category = resource
+	
+	building_sets = {
+		research
+		pre_ftl
+		#urban
+		#generator
+	}
+
+	potential = {
+		exists = owner
+		owner = {
+			has_technology = "tech_primitive_nuclear_physics"
+			has_technology = "tech_primitive_composite_material"
+			OR = {
+				is_apocalyptic_empire = yes
+				any_situation = { is_situation_type = PrimPlayer_situation }
+			}
+		}
+	}
+	
+	triggered_planet_modifier = {
+		potential = {
+			NOT = { is_planet_class = pc_nuked }
+			owner = {
+				NOT = { has_technology = tech_thrusters_1 }
+				is_nomadic = no
+			}
+		}
+		pop_environment_tolerance = -0.05
+	}
+	
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_nomadic = no
+				NOT = { has_technology = tech_mechanized_mining_2 }
+			}
+		}
+		planet_miners_primitive_uranium_produces_add = 0.5
+		planet_miners_minerals_produces_add = -1
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_nomadic = no
+				has_technology = tech_mechanized_mining_2
+			}
+		}
+		planet_miners_primitive_uranium_produces_add = 0.5
+	}
+
+	###########################################
+	
+				#REGULAR
+	
+	###########################################
+	#triggered_planet_modifier = {
+	#	potential = {
+	#		exists = owner
+	#		owner = { 
+	#			NOT = { has_technology = tech_basic_science_lab_1 }
+	#			has_technology = tech_primitive_universities
+	#			is_gestalt = no 
+	#		}
+	#	}
+	#
+	#	job_primitive_researcher_2_add = 200
+	#}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				#has_technology = tech_basic_science_lab_1
+				is_regular_empire = yes
+				NOT = {
+					has_country_flag = fallen_empire_1
+				}
+			}
+		}
+		modifier = {
+			job_physicist_add = 30
+		}
+	}
+	#Nuked Origin
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_apocalyptic_empire = yes
+				is_regular_empire = yes
+				NOT = {
+					has_country_flag = fallen_empire_1
+				}
+			}
+		}
+		modifier = {
+			job_physicist_add = 70
+		}
+	}
+	###########################################
+	
+				#HIVE
+	
+	########################################
+	#triggered_planet_modifier = {
+	#	potential = {
+	#		exists = owner
+	#		owner = { 
+	#			NOT = { has_technology = tech_basic_science_lab_1 }
+	#			is_hive_empire = yes 			
+	#		}
+	#	}
+	#
+	#	job_primitive_hive_brain_drone_add = 200
+	#
+	#}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				#has_technology = tech_basic_science_lab_1
+				is_hive_empire = yes
+			}
+		}
+		job_calculator_physicist_add = 30
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_apocalyptic_empire = yes
+				is_hive_empire = yes
+			}
+		}
+		job_calculator_physicist_add = 70
+	}
+	########################################
+	
+				#MACHINE
+	
+	############################################
+	#triggered_planet_modifier = {
+	#	potential = {
+	#		exists = owner
+	#		owner = {
+	#			NOT = { has_technology = tech_basic_science_lab_1 }
+	#			is_machine_empire = yes 
+	#		}
+	#	}
+	#
+	#	# job_primitive_machine_calculator_add = 100	# Cog Note - This should be fixed, broke after 4.0
+	#
+	#}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				#has_technology = tech_basic_science_lab_1
+				is_machine_empire = yes 
+			}
+		}
+		job_calculator_physicist_add = 30
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_apocalyptic_empire = yes
+				is_machine_empire = yes 
+			}
+		}
+		job_calculator_physicist_add = 70
+	}
+	############################################
+	
+	prerequisites = {
+		"tech_primitive_composite_material"
+	}
+	
+	resources = {
+		category = planet_buildings
+		cost = {
+			minerals = @b1_minerals
+		}
+		#Nuclear Research
+		produces = {
+			trigger = {
+				owner = { 
+					is_nomadic = yes
+				}
+			}
+			primitive_uranium = 2.5
+		}
+	}
+	
+	#on_built = { 
+		#if = {
+		#	limit = { owner = { is_nomadic = yes } }
+		#	if = { 
+		#		limit = { 
+		#			NOT = { has_modifier = irradiated_wasteland  }
+		#		}
+		#		add_modifier = { modifier = irradiated_wasteland }
+		#	}
+		#}
+	#}
+	
+	#on_destroy = { 
+		#if = {
+		#	limit = { owner = { is_nomadic = yes } }
+		#	if = { 
+		#		limit = { 
+		#			has_modifier = irradiated_wasteland
+		#			NOR = { 
+		#				has_building = building_primitive_nuclear_plant 
+		#				has_building = building_primitive_nuclear_plant_apocalyptic
+		#			} 
+		#		}
+		#		remove_modifier = irradiated_wasteland
+		#	}
+		#}
+	#}
+	
+	#triggered_desc = {
+	#	trigger = {
+	#		exists = owner
+	#		owner = {
+	#			is_nomadic = yes
+	#		}
+	#	}
+	#	text = building_primitive_nuclear_plant_irradiated_wasteland_effect
+	#}
+	
+	triggered_desc = {
+		trigger = {
+			exists = owner
+			owner = {
+				NOT = { has_technology = tech_thrusters_1 }
+				is_nomadic = no
+			}
+		}
+		text = building_primitive_nuclear_plant_waste_effect
+	}
+
+	
+	show_tech_unlock_if = {
+		
+	}
+
+	upgrades = {
+		"building_primitive_nuclear_plant_apocalyptic"
+	}
+}
+
+building_primitive_nuclear_plant_apocalyptic = {
+	can_build = no
+	planet_limit = 3
+	base_buildtime = @b1_time
+	can_demolish = yes
+	can_be_ruined = yes
+	can_be_disabled = yes
+
+	category = resource
+	
+	building_sets = {
+		research
+		pre_ftl
+		#urban
+		#generator
+	}
+
+	potential = {
+		exists = owner
+		owner = { is_apocalyptic_empire = yes }
+		#OR = {
+		#	owner = {
+		#		has_technology = "tech_fusion_power"
+		#	}
+		#	AND = {
+		#		owner = { has_technology = "tech_primitive_arkship" }
+		#		has_modifier = primitive_arkship_planet_modifier
+		#	}
+		#}
+	}
+	
+	triggered_planet_modifier = {
+		potential = {
+			NOT = { is_planet_class = pc_nuked }
+			owner = {
+				NOT = { has_technology = tech_thrusters_1 }
+				is_nomadic = no
+			}
+		}
+		pop_environment_tolerance = -0.1
+	}
+	
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_nomadic = no
+				NOT = { has_technology = tech_mechanized_mining_2 }
+			}
+		}
+		planet_miners_primitive_uranium_produces_add = 0.5
+		planet_miners_minerals_produces_add = -6
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_nomadic = no
+				has_technology = tech_mechanized_mining_2
+			}
+		}
+		planet_miners_primitive_uranium_produces_add = 1
+	}
+
+	###########################################
+	
+				#REGULAR
+	
+	###########################################
+	#triggered_planet_modifier = {
+	#	potential = {
+	#		exists = owner
+	#		owner = { 
+	#			NOT = { has_technology = tech_basic_science_lab_1 }
+	#			has_technology = tech_primitive_universities
+	#			is_gestalt = no 
+	#		}
+	#	}
+	#
+	#	job_primitive_researcher_2_add = 200
+	#}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				#has_technology = tech_basic_science_lab_1
+				is_regular_empire = yes
+				NOT = {
+					has_country_flag = fallen_empire_1
+				}
+			}
+		}
+		modifier = {
+			job_physicist_add = 30
+		}
+	}
+	#Nuked Origin
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_apocalyptic_empire = yes
+				is_regular_empire = yes
+				NOT = {
+					has_country_flag = fallen_empire_1
+				}
+			}
+		}
+		modifier = {
+			job_physicist_add = 70
+		}
+	}
+	###########################################
+	
+				#HIVE
+	
+	########################################
+	#triggered_planet_modifier = {
+	#	potential = {
+	#		exists = owner
+	#		owner = { 
+	#			NOT = { has_technology = tech_basic_science_lab_1 }
+	#			is_hive_empire = yes 			
+	#		}
+	#	}
+	#
+	#	job_primitive_hive_brain_drone_add = 200
+	#
+	#}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				#has_technology = tech_basic_science_lab_1
+				is_hive_empire = yes
+			}
+		}
+		job_calculator_physicist_add = 30
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_apocalyptic_empire = yes
+				is_hive_empire = yes
+			}
+		}
+		job_calculator_physicist_add = 70
+	}
+	########################################
+	
+				#MACHINE
+	
+	############################################
+	#triggered_planet_modifier = {
+	#	potential = {
+	#		exists = owner
+	#		owner = {
+	#			NOT = { has_technology = tech_basic_science_lab_1 }
+	#			is_machine_empire = yes 
+	#		}
+	#	}
+	#
+	#	# job_primitive_machine_calculator_add = 100	# Cog Note - This should be fixed, broke after 4.0
+	#
+	#}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				#has_technology = tech_basic_science_lab_1
+				is_machine_empire = yes 
+			}
+		}
+		job_calculator_physicist_add = 30
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_apocalyptic_empire = yes
+				is_machine_empire = yes 
+			}
+		}
+		job_calculator_physicist_add = 70
+	}
+	############################################
+	
+	show_tech_unlock_if = {
+		is_apocalyptic_empire = yes
+	}
+	
+	prerequisites = {
+		OR = {
+			"tech_fusion_power"
+			"tech_primitive_arkship"
+		}
+	}
+	
+	resources = {
+		category = planet_buildings
+		cost = {
+			minerals = @b1_minerals
+		}
+		#Nuclear Research
+		produces = {
+			trigger = {
+				owner = { 
+					is_nomadic = yes
+				}
+			}
+			primitive_uranium = 5
+		}
+	}
+	
+	#on_built = { 
+		#if = {
+		#	limit = { owner = { is_nomadic = yes } }
+		#	if = { 
+		#		limit = { 
+		#			NOT = { has_modifier = irradiated_wasteland  }
+		#		}
+		#		add_modifier = { modifier = irradiated_wasteland }
+		#	}
+		#}
+	#}
+	
+	#on_destroy = { 
+		#if = {
+		#	limit = { owner = { is_nomadic = yes } }
+		#	if = { 
+		#		limit = { 
+		#			has_modifier = irradiated_wasteland
+		#			NOR = { 
+		#				has_building = building_primitive_nuclear_plant 
+		#				has_building = building_primitive_nuclear_plant_apocalyptic
+		#			} 
+		#		}
+		#		remove_modifier = irradiated_wasteland
+		#	}
+		#}
+	#}
+	
+	#triggered_desc = {
+	#	trigger = {
+	#		exists = owner
+	#		owner = {
+	#			is_nomadic = yes
+	#		}
+	#	}
+	#	text = building_primitive_nuclear_plant_irradiated_wasteland_effect
+	#}
+	
+	triggered_desc = {
+		trigger = {
+			exists = owner
+			owner = {
+				NOT = { has_technology = tech_thrusters_1 }
+				is_nomadic = no
+			}
+		}
+		text = building_primitive_nuclear_plant_waste_effect
+	}
+
+	upgrades = {
 	}
 }
 
@@ -1606,6 +2208,7 @@ building_primitive_farm = {
 	potential = {
 		exists = owner
 		owner = {
+			is_nomadic = no
 			is_hive_empire = no
 			is_lithoid_empire = no
 			OR = {
@@ -1647,6 +2250,7 @@ building_primitive_farm = {
 				}
 				is_hive_empire = yes
 				is_lithoid_empire = yes
+				is_nomadic = yes
 			}
 		}
 	}
@@ -1693,12 +2297,7 @@ building_primitive_capital = {
 		owner = {
 			is_hive_empire = no
 			OR = {
-				# has_origin = origin_primitive_player_pre_industrial_age
-				# has_origin = origin_primitive_player_industrial_age
-				# has_origin = origin_primitive_player_machine_age
-				# has_origin = origin_primitive_player_atomic_age
-				# has_origin = origin_primitive_player_early_space_age
-				any_situation = { is_situation_type = PrimPlayer_situation } # Much more efficient trigger
+				NOT = { has_technology = "tech_planetary_government" }
 				AND = {
 					OR = {
 						has_country_flag = machine_age
@@ -1712,23 +2311,18 @@ building_primitive_capital = {
 		}
 	}
 
-	destroy_trigger = {
-		exists = owner
-		owner = {
-			OR = {
-				NOT = {
-					# has_origin = origin_primitive_player_pre_industrial_age
-					# has_origin = origin_primitive_player_industrial_age
-					# has_origin = origin_primitive_player_machine_age
-					# has_origin = origin_primitive_player_atomic_age
-					# has_origin = origin_primitive_player_early_space_age
-					any_situation = { is_situation_type = PrimPlayer_situation } # Much more efficient trigger
-					is_primitive = yes
-				}
-				is_hive_empire = yes
-			}
-		}
-	}
+	#destroy_trigger = {
+	#	exists = owner
+	#	owner = {
+	#		OR = {
+	#			NOT = {
+	#				any_situation = { is_situation_type = PrimPlayer_situation } # Much more efficient trigger
+	#				is_primitive = yes
+	#			}
+	#			is_hive_empire = yes
+	#		}
+	#	}
+	#}
 
 	convert_to = {
 		building_machine_capital
@@ -1922,7 +2516,7 @@ building_urban_dwellings = {
 	can_build = yes
 	base_buildtime = @b1_time
 	can_demolish = yes
-	can_be_ruined = no
+	can_be_ruined = yes
 	icon = building_residence
 
 	category = amenity
@@ -2006,7 +2600,7 @@ building_pre_ftl_radio_telescope = {
 	can_build = yes
 	base_buildtime = @b1_time
 	can_demolish = yes
-	can_be_ruined = no
+	can_be_ruined = yes
 	empire_limit = { 	#optional: default is no limit
 		base = 1		#don't set base to less than 0, it will ignore it (for performance optimisation reasons)
 	}
@@ -2034,6 +2628,7 @@ building_pre_ftl_radio_telescope = {
 	
 	building_sets = {
 		pre_ftl
+		research
 	}
 
 	potential = {
@@ -2485,7 +3080,7 @@ building_hive_primitive_factory = {
 	can_build = yes
 	base_buildtime = @b1_time
 	can_demolish = yes
-	can_be_ruined = no
+	can_be_ruined = yes
 
 	category = manufacturing
 	
@@ -2567,7 +3162,7 @@ building_hive_primitive_mine = {
 	can_build = yes
 	base_buildtime = @b1_time
 	can_demolish = yes
-	can_be_ruined = no
+	can_be_ruined = yes
 
 	category = resource
 	
@@ -2659,12 +3254,13 @@ building_hive_primitive_power_plant = {
 	can_build = yes
 	base_buildtime = @b1_time
 	can_demolish = yes
-	can_be_ruined = no
+	can_be_ruined = yes
 
 	category = resource
 	
 	building_sets = {
 		pre_ftl
+		generator
 	}
 
 	potential = {
@@ -3092,7 +3688,7 @@ building_hive_urban_dwellings = {
 	can_build = yes
 	base_buildtime = @b1_time
 	can_demolish = yes
-	can_be_ruined = no
+	can_be_ruined = yes
 
 	category = amenity
 	
@@ -3173,7 +3769,7 @@ building_hive_primitive_node = {
 	can_build = no
 	planet_limit = 1
 	can_demolish = yes
-	can_be_ruined = no
+	can_be_ruined = yes
 
 	category = unity
 
@@ -3645,7 +4241,7 @@ building_machine_primitive_node = {
 	can_build = no
 	planet_limit = 1
 	can_demolish = yes
-	can_be_ruined = no
+	can_be_ruined = yes
 
 	category = unity
 

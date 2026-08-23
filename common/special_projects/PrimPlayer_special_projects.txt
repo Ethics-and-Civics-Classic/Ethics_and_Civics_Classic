@@ -16,30 +16,35 @@ special_project = {
 	event_scope = carrier_event
 
 	on_success = {
-		create_ambient_object = {
-			type = nebula_L3_entity
-			scale = 0.02
-			location = this
-			use_3d_location = yes
-		}
-		last_created_ambient_object = {
-			set_ambient_object_flag = stormfall_planet_nascent
-		}
-		add_modifier = {
-			modifier = cs_storm_chasers_homeworld_storm_attraction
-		}
-		create_influence_field_if_needed = yes
+		from.owner = {
+			random_owned_planet = {
+				limit = { is_capital = yes }
+				create_ambient_object = {
+					type = nebula_L3_entity
+					scale = 0.02
+					location = this
+					use_3d_location = yes
+				}
+				last_created_ambient_object = {
+					set_ambient_object_flag = stormfall_planet_nascent
+				}
+				add_modifier = {
+					modifier = cs_storm_chasers_homeworld_storm_attraction
+				}
+				create_influence_field_if_needed = yes
 
-		owner = {
-			start_situation = {
-				type = situation_stormfall
-				target = prev
+				owner = {
+					start_situation = {
+						type = situation_stormfall
+						target = prev
+					}
+					end_event_chain = "STORM_CHASER_CAPSULE_PROJECT_chain"
+				}
+				if = {
+					limit = { has_modifier = irradiated_wasteland }	#Might conflict with tomb world
+					remove_modifier = irradiated_wasteland
+				}
 			}
-			end_event_chain = "STORM_CHASER_CAPSULE_PROJECT_chain"
-		}
-		if = {
-			limit = { has_modifier = irradiated_wasteland }	#Might conflict with tomb world
-			remove_modifier = irradiated_wasteland
 		}
 	}
 }
@@ -64,11 +69,16 @@ special_project = {
 	event_scope = carrier_event
 
 	on_success = {
-		if = {
-			limit = { has_modifier = irradiated_wasteland }	#Might conflict with tomb world
-			remove_modifier = irradiated_wasteland
+		from.owner = {
+			random_owned_planet = {
+				limit = { is_capital = yes }
+				if = {
+					limit = { has_modifier = irradiated_wasteland }	#Might conflict with tomb world
+					remove_modifier = irradiated_wasteland
+				}
+				owner = { end_event_chain = "STORM_CHASER_CAPSULE_PROJECT_chain" }
+			}
 		}
-		owner = { end_event_chain = "STORM_CHASER_CAPSULE_PROJECT_chain" }
 	}
 }
 
@@ -83,8 +93,13 @@ special_project = {
 	event_scope = carrier_event
 
 	on_success = {
-		carrier_event = { id = random_primitive_events.251 }
-		owner = { end_event_chain = "PrimPlayer_subterranean_civilization_chain" }
+		from.owner = {
+			random_owned_planet = {
+				limit = { has_carrier_flag = toxic_terraforming_candidate }
+				carrier_event = { id = random_primitive_events.251 }
+				owner = { end_event_chain = "PrimPlayer_subterranean_civilization_chain" }
+			}
+		}
 	}
 
 	on_fail = {
@@ -104,21 +119,31 @@ special_project = {
 	event_scope = carrier_event
 
 	on_success = {
-		carrier_event = { id = random_primitive_events.252 }
-		owner = { end_event_chain = "PrimPlayer_subterranean_civilization_chain" }
+		from.owner = {
+			random_owned_planet = {
+				limit = { has_carrier_flag = toxic_terraforming_candidate }
+				carrier_event = { id = random_primitive_events.252 }
+				owner = { end_event_chain = "PrimPlayer_subterranean_civilization_chain" }
+			}
+		}
 	}
 
 	on_fail = {
 		end_event_chain = "PrimPlayer_subterranean_civilization_chain"
-		random_list = {
-			60 = {
-				FROM = { carrier_event = { id = random_primitive_events.254 } }
-			}
-			40 = {
-				FROM = { carrier_event = { id = random_primitive_events.259 } }
-				modifier = {
-					factor = 0
-					owner = { is_homicidal = yes }
+		from.owner = {
+			random_owned_planet = {
+				limit = { has_carrier_flag = toxic_terraforming_candidate }
+				random_list = {
+					60 = {
+						carrier_event = { id = random_primitive_events.254 }
+					}
+					40 = {
+						carrier_event = { id = random_primitive_events.259 }
+						modifier = {
+							factor = 0
+							owner = { is_homicidal = yes }
+						}
+					}
 				}
 			}
 		}
@@ -134,7 +159,12 @@ special_project = {
 	event_scope = carrier_event
 
 	on_success = {
-		carrier_event = { id = random_primitive_events.252 }
+		from.owner = {
+			random_owned_planet = {
+				limit = { has_carrier_flag = toxic_terraforming_candidate }
+				carrier_event = { id = random_primitive_events.252 }
+			}
+		}
 	}
 
 	on_fail = {
@@ -219,38 +249,5 @@ special_project = {
 	}
 
 	on_fail = {
-	}
-}
-
-special_project = {
-	key = "ANCIENT_ARKSHIP_FTL_DEACTIVATE_PROJECT"
-	cost = 150
-	tech_department = engineering_technology
-	picture = GFX_evt_generator_powerup
-	timelimit = 360
-	location = yes
-
-	event_scope = carrier_event
-	
-	requirements = {
-		
-	}
-	
-	#OR = {
-	#	has_technology = tech_alien_life_studies 
-	#	is_guided_sapience_empire = yes
-	#}
-
-	on_success = {
-		carrier_event = { id = PrimPlay_situation_event.1101 }
-	}
-
-	on_fail = {
-		FROM.owner = {
-			random_controlled_ship = { 
-				limit = { has_ship_flag = PrimPlay_situation_event_1100 }
-				ship_event = { id = PrimPlay_situation_event.1102 }
-			}
-		}
 	}
 }

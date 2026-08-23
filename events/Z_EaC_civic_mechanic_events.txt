@@ -369,7 +369,12 @@ country_event = {
 		# 20% Chance for a random positive trait and a random negative trait
 		if = {
 			limit = {
-				has_valid_civic = civic_aristocratic_elite
+				OR = {
+					has_valid_civic = civic_aristocratic_elite
+					has_origin = origin_heirs_of_the_khan
+					has_civic = PrimPlayer_civic_heirs_of_the_khan
+					has_civic = civic_heirs_of_the_khan
+				}
 			}
 			from = {
 				random_list = {
@@ -3705,6 +3710,22 @@ fleet_event = {
 	is_triggered_only = yes
 
 	desc = {
+		trigger = { 
+			owner = { 
+				NOR = { 
+					has_civic = civic_criminal_heritage 
+					has_civic = civic_military_dictatorship_corporate
+				}
+				OR = {
+					has_origin = origin_heirs_of_the_khan
+					has_civic = PrimPlayer_civic_heirs_of_the_khan 
+					has_civic = civic_heirs_of_the_khan 
+				}
+			} 
+		}
+		text = "EaC_civic_mechanic_events.2.desc"
+	}
+	desc = {
 		trigger = { owner = { has_civic = civic_military_dictatorship_corporate } }
 		text = "EaC_civic_mechanic_events.2.desc"
 	}
@@ -3744,22 +3765,10 @@ fleet_event = {
 	immediate = {
 		set_event_locked = yes
 	}
-
-	option = {
+	
+	option = {	#Mercenary Enclave
 		name = DEAL
 		custom_tooltip = "enclave.2.a.tooltip"
-		trigger = {
-			owner = {
-				if = {
-					limit = { has_civic = civic_criminal_heritage }
-					NOR = {
-						has_valid_civic = civic_crusader_spirit_corporate
-						has_valid_civic = civic_void_reavers
-					}
-				}
-				else = { NOT = { has_valid_civic = civic_military_dictatorship_corporate } }
-			}
-		}
 		allow = {
 			is_merc_enclave_founding_allowed = yes
 			owner = {
@@ -3771,6 +3780,7 @@ fleet_event = {
 				}
 				else = {
 				resource_stockpile_compare = { resource = energy value >= 1500 }
+				nomad_can_afford_enclave_cost = { COST = 1500 }
 				}
 				resource_stockpile_compare = { resource = alloys value >= 2000 }
 				resource_stockpile_compare = { resource = influence value >= 100 }
@@ -3809,6 +3819,196 @@ fleet_event = {
 			modifier = {
 				factor = 0
 				owner = {
+					is_fanatic_pacifist = yes
+				}
+			}
+			modifier = {
+				factor = 0.1
+				owner = {
+					has_ethic = ethic_pacifist
+				}
+			}
+			modifier = {
+				factor = 5
+				owner = {
+					has_ethic = ethic_militarist
+				}
+			}
+			modifier = {
+				factor = 10
+				owner = {
+					has_ethic = ethic_fanatic_militarist
+				}
+			}
+			modifier = {
+				factor = 5
+				owner = {
+					is_megacorp = yes
+				}
+			}
+		}
+	}
+	
+	option = { #Pirate Enclave
+		name = DEAL
+		#custom_tooltip = "enclave.2.a.tooltip"
+		custom_tooltip = "EaC_civic_mechanic_events.2.a.tooltip"
+		trigger = {
+			owner = {
+				OR = {
+					has_origin = origin_heirs_of_the_khan
+					has_civic = PrimPlayer_civic_heirs_of_the_khan 
+					has_civic = civic_heirs_of_the_khan 
+				}
+				NOR = { 
+					has_civic = civic_criminal_heritage 
+					has_civic = civic_military_dictatorship_corporate
+				} 
+			}
+		}
+		allow = {
+			is_merc_enclave_founding_allowed = yes
+			owner = {
+				if = {
+					limit = {
+						country_uses_bio_ships = yes
+					}
+					resource_stockpile_compare = { resource = food value >= 1500 }
+				}
+				else = {
+				resource_stockpile_compare = { resource = energy value >= 1500 }
+				nomad_can_afford_enclave_cost = { COST = 1500 }
+				}
+				resource_stockpile_compare = { resource = alloys value >= 2000 }
+				resource_stockpile_compare = { resource = influence value >= 100 }
+			}
+		}
+		owner = {
+			if = {
+				limit = {
+					country_uses_bio_ships = yes
+				}
+				add_resource = {
+					food = -1500
+				}
+			}
+			else = {
+			add_resource = {
+				energy = -1500
+				}
+			}
+			add_resource = {
+				alloys = -2000
+				influence = -100
+			}
+		}
+
+		hidden_effect = {
+			owner = {
+				set_country_flag = tutorial_met_mercenary_enclave
+				set_country_flag = formed_mercenaries
+			}
+			fleet_event = { id = EaC_civic_mechanic_events.21 }
+		}
+
+		ai_chance = {
+			factor = 100
+			modifier = {
+				factor = 0
+				owner = {
+					has_ethic = ethic_fanatic_pacifist
+				}
+			}
+			modifier = {
+				factor = 0.1
+				owner = {
+					has_ethic = ethic_pacifist
+				}
+			}
+			modifier = {
+				factor = 5
+				owner = {
+					has_ethic = ethic_militarist
+				}
+			}
+			modifier = {
+				factor = 10
+				owner = {
+					has_ethic = ethic_fanatic_militarist
+				}
+			}
+			modifier = {
+				factor = 5
+				owner = {
+					is_megacorp = yes
+				}
+			}
+		}
+	}
+
+	option = {
+		name = DEAL
+		custom_tooltip = "enclave.2.a.tooltip"
+		trigger = {
+			owner = {
+				has_civic = civic_criminal_heritage
+				NOR = {
+					has_valid_civic = civic_crusader_spirit_corporate
+					has_valid_civic = civic_void_reavers
+					has_valid_civic = civic_military_dictatorship_corporate
+				}
+			}
+		}
+		allow = {
+			is_merc_enclave_founding_allowed = yes
+			owner = {
+				if = {
+					limit = {
+						country_uses_bio_ships = yes
+					}
+					resource_stockpile_compare = { resource = food value >= 1500 }
+				}
+				else = {
+				resource_stockpile_compare = { resource = energy value >= 1500 }
+				nomad_can_afford_enclave_cost = { COST = 1500 }
+				}
+				resource_stockpile_compare = { resource = alloys value >= 2000 }
+				resource_stockpile_compare = { resource = influence value >= 100 }
+			}
+		}
+		owner = {
+			if = {
+				limit = {
+					country_uses_bio_ships = yes
+				}
+				add_resource = {
+					food = -1500
+				}
+			}
+			else = {
+			add_resource = {
+				energy = -1500
+				}
+			}
+			add_resource = {
+				alloys = -2000
+				influence = -100
+			}
+		}
+
+		hidden_effect = {
+			owner = {
+				set_country_flag = tutorial_met_mercenary_enclave
+				set_country_flag = formed_mercenaries
+			}
+			fleet_event = { id = enclave.21 }
+		}
+
+		ai_chance = {
+			factor = 100
+			modifier = {
+				factor = 0
+				owner = {
 					has_ethic = ethic_fanatic_pacifist
 				}
 			}
@@ -3841,8 +4041,12 @@ fleet_event = {
 
 	option = {
 		name = EaC_civic_mechanic_events.2.a
-		custom_tooltip = "EaC_civic_mechanic_events.2.a.tooltip"
-		trigger = { owner = { has_civic = civic_military_dictatorship_corporate } }
+		custom_tooltip = "EaC_civic_mechanic_events.2.a.vassal.tooltip"
+		trigger = { 
+			owner = { 
+				has_civic = civic_military_dictatorship_corporate 
+			} 
+		}
 		allow = {
 			is_merc_enclave_founding_allowed = yes
 			owner = {
@@ -3854,6 +4058,7 @@ fleet_event = {
 				}
 				else = {
 				resource_stockpile_compare = { resource = energy value >= 1500 }
+				nomad_can_afford_enclave_cost = { COST = 1500 }
 				}
 				resource_stockpile_compare = { resource = alloys value >= 2000 }
 				resource_stockpile_compare = { resource = influence value >= 100 }
@@ -3945,6 +4150,7 @@ fleet_event = {
 				}
 				else = {
 				resource_stockpile_compare = { resource = energy value >= 1500 }
+				nomad_can_afford_enclave_cost = { COST = 1500 }
 				}
 				resource_stockpile_compare = { resource = alloys value >= 2000 }
 				resource_stockpile_compare = { resource = influence value >= 100 }
@@ -5256,6 +5462,21 @@ country_event = {
 							save_event_target_as = mercenary_patron
 						}
 					}
+					if = {
+						limit = {
+							any_starbase_in_system = {
+								is_waystation_starbase = yes
+								owner = { is_nomadic = yes }
+							}
+						}
+						random_starbase_in_system = {
+							limit = {
+								is_waystation_starbase = yes
+								owner = { is_nomadic = yes }
+							}
+							owner = { save_event_target_as = mercenary_nomad_patron }
+						}
+					}
 				}
 			}
 			random_owned_fleet = {
@@ -5284,6 +5505,7 @@ country_event = {
 				resource = energy
 				value >= 2500
 			}
+			nomad_can_afford_enclave_cost = { COST = 2500 }
 		}
 		add_resource = {
 			energy = -2500
@@ -5568,23 +5790,71 @@ country_event = {
 		name = EaC_civic_mechanic_events.205.h
 		custom_tooltip = mercenary_tt_patron
 		trigger = {
-			NOT = {
+			NOR = {
 				has_civic = civic_military_dictatorship_corporate
 				has_civic = civic_criminal_heritage
+				has_origin = origin_heirs_of_the_khan
+				has_civic = PrimPlayer_civic_heirs_of_the_khan 
+				has_civic = civic_heirs_of_the_khan 
 			}
 			NOR = {
 				is_hostile = event_target:mercenary_enclave_country
 				# is_homicidal = yes
 			}
-			exists = event_target:mercenary_patron
-			event_target:mercenary_patron = {
-				is_same_empire = root
+			OR = {
+				AND = {
+					exists = event_target:mercenary_patron
+					event_target:mercenary_patron = {
+						is_same_empire = root
+					}
+				}
+				AND = {
+					exists = event_target:mercenary_nomad_patron
+						event_target:mercenary_nomad_patron = {
+						is_same_empire = root
+					}
+				}
 			}
 		}
 		hidden_effect = {
 			country_event = { id = EaC_civic_mechanic_events.280 }
 		}
 	}
+	
+	# Heir to the Khan
+	option = {
+		name = EaC_civic_mechanic_events.205.h
+		custom_tooltip = mercenary_tt_patron
+		trigger = {
+			OR = {
+				has_origin = origin_heirs_of_the_khan
+				has_civic = PrimPlayer_civic_heirs_of_the_khan 
+				has_civic = civic_heirs_of_the_khan 
+			}
+			NOR = {
+				is_hostile = event_target:mercenary_enclave_country
+				# is_homicidal = yes
+			}
+			OR = {
+				AND = {
+					exists = event_target:mercenary_patron
+					event_target:mercenary_patron = {
+						is_same_empire = root
+					}
+				}
+				AND = {
+					exists = event_target:mercenary_nomad_patron
+						event_target:mercenary_nomad_patron = {
+						is_same_empire = root
+					}
+				}
+			}
+		}
+		hidden_effect = {
+			country_event = { id = EaC_civic_mechanic_events.280 }
+		}
+	}
+	
 	# Is Pirate Lord
 	option = {
 		name = EaC_civic_mechanic_events.205.j
@@ -5595,9 +5865,19 @@ country_event = {
 				is_hostile = event_target:mercenary_enclave_country
 				# is_homicidal = yes
 			}
-			exists = event_target:mercenary_patron
-			event_target:mercenary_patron = {
-				is_same_empire = root
+			OR = {
+				AND = {
+					exists = event_target:mercenary_patron
+					event_target:mercenary_patron = {
+						is_same_empire = root
+					}
+				}
+				AND = {
+					exists = event_target:mercenary_nomad_patron
+						event_target:mercenary_nomad_patron = {
+						is_same_empire = root
+					}
+				}
 			}
 		}
 		hidden_effect = {
@@ -5615,9 +5895,19 @@ country_event = {
 				is_hostile = event_target:mercenary_enclave_country
 				# is_homicidal = yes
 			}
-			exists = event_target:mercenary_patron
-			event_target:mercenary_patron = {
-				is_same_empire = root
+			OR = {
+				AND = {
+					exists = event_target:mercenary_patron
+					event_target:mercenary_patron = {
+						is_same_empire = root
+					}
+				}
+				AND = {
+					exists = event_target:mercenary_nomad_patron
+						event_target:mercenary_nomad_patron = {
+						is_same_empire = root
+					}
+				}
 			}
 		}
 		hidden_effect = {
@@ -6727,6 +7017,27 @@ country_event = {
 				}
 			}
 		}
+		if = {
+			limit = {
+				exists = event_target:mercenary_nomad_patron
+			}
+			event_target:mercenary_nomad_patron = {
+				random_list = {
+					24 = { country_event = { id = EaC_civic_mechanic_events.2000 } }
+					24 = { country_event = { id = EaC_civic_mechanic_events.2005 } }
+					24 = { country_event = { id = EaC_civic_mechanic_events.2010 } }
+					24 = {
+						modifier = {
+							factor = 0
+							event_target:mercenary_nomad_patron = { used_naval_capacity_percent > 0.95 }
+						}
+						country_event = { id = EaC_civic_mechanic_events.2015 }
+					}
+					2 = { country_event = { id = EaC_civic_mechanic_events.2020 } }
+					2 = { country_event = { id = EaC_civic_mechanic_events.2025 } }
+				}
+			}
+		}
 	}
 
 	after = {
@@ -6970,10 +7281,10 @@ country_event = {
 					amount = -15
 				}
 				set_country_flag = fleet_commandeered
-				set_timed_country_flag = {
-					flag = fleet_commandeered_reserved
-					years = 1
-				}
+				#set_timed_country_flag = {
+				#	flag = fleet_commandeered_reserved
+				#	years = 1
+				#}
 
 				country_event = { id = EaC_civic_mechanic_events.289 days = 90 } # In three months, bring fleet back for repairs
 			}
@@ -6994,20 +7305,22 @@ country_event = {
 		allow = {
 			has_country_resource = { type = energy amount >= 3000 }
 			has_country_resource = { type = influence amount >= 75 }
+			nomad_can_afford_enclave_cost = { COST = 3000 }
 		}
 		add_resource = { energy = -3000 influence = -75 }
 		custom_tooltip = EaC_civic_mechanic_events.285.tooltip
 		hidden_effect = {
+			root = { set_country_flag = commandeering_patron@event_target:mercenary_enclave_country }
 			event_target:mercenary_enclave_country = {
 				add_trust = {
 					who = root
 					amount = -15
 				}
 				set_country_flag = fleet_commandeered
-				set_timed_country_flag = {
-					flag = fleet_commandeered_reserved
-					years = 1
-				}
+				#set_timed_country_flag = {
+				#	flag = fleet_commandeered_reserved
+				#	years = 1
+				#}
 
 				country_event = { id = EaC_civic_mechanic_events.289 days = 180 } # In six months, give fleet to patron
 			}
@@ -7028,20 +7341,22 @@ country_event = {
 		allow = {
 			has_country_resource = { type = energy amount >= 6000 }
 			has_country_resource = { type = influence amount >= 100 }
+			nomad_can_afford_enclave_cost = { COST = 6000 }
 		}
 		add_resource = { energy = -6000 influence = -100 }
 		custom_tooltip = EaC_civic_mechanic_events.285.tooltip
 		hidden_effect = {
+			root = { set_country_flag = commandeering_patron@event_target:mercenary_enclave_country }
 			event_target:mercenary_enclave_country = {
 				add_trust = {
 					who = root
 					amount = -15
 				}
 				set_country_flag = fleet_commandeered
-				set_timed_country_flag = {
-					flag = fleet_commandeered_reserved
-					years = 1
-				}
+				#set_timed_country_flag = {
+				#	flag = fleet_commandeered_reserved
+				#	years = 1
+				#}
 				country_event = { id = EaC_civic_mechanic_events.289 days = 180 } # In six months, give fleet to patron
 			}
 			event_target:current_mercenary_client = {
@@ -7061,20 +7376,22 @@ country_event = {
 		allow = {
 			has_country_resource = { type = energy amount >= 10000 }
 			has_country_resource = { type = influence amount >= 125 }
+			nomad_can_afford_enclave_cost = { COST = 10000 }
 		}
 		add_resource = { energy = -10000 influence = -125 }
 		custom_tooltip = EaC_civic_mechanic_events.285.tooltip
 		hidden_effect = {
+			root = { set_country_flag = commandeering_patron@event_target:mercenary_enclave_country }
 			event_target:mercenary_enclave_country = {
 				add_trust = {
 					who = root
 					amount = -15
 				}
 				set_country_flag = fleet_commandeered
-				set_timed_country_flag = {
-					flag = fleet_commandeered_reserved
-					years = 1
-				}
+				#set_timed_country_flag = {
+				#	flag = fleet_commandeered_reserved
+				#	years = 1
+				#}
 				country_event = { id = EaC_civic_mechanic_events.289 days = 180 } # In six months, give fleet to patron
 			}
 			event_target:current_mercenary_client = {
@@ -7094,20 +7411,22 @@ country_event = {
 		allow = {
 			has_country_resource = { type = energy amount >= 15000 }
 			has_country_resource = { type = influence amount >= 150 }
+			nomad_can_afford_enclave_cost = { COST = 15000 }
 		}
 		add_resource = { energy = -15000 influence = -150 }
 		custom_tooltip = EaC_civic_mechanic_events.285.tooltip
 		hidden_effect = {
+			root = { set_country_flag = commandeering_patron@event_target:mercenary_enclave_country }
 			event_target:mercenary_enclave_country = {
 				add_trust = {
 					who = root
 					amount = -15
 				}
 				set_country_flag = fleet_commandeered
-				set_timed_country_flag = {
-					flag = fleet_commandeered_reserved
-					years = 1
-				}
+				#set_timed_country_flag = {
+				#	flag = fleet_commandeered_reserved
+				#	years = 1
+				#}
 
 				country_event = { id = EaC_civic_mechanic_events.289 days = 180 } # In six months, give fleet to patron
 			}
@@ -7127,6 +7446,7 @@ country_event = {
 		allow = {
 			has_country_resource = { type = energy amount >= 22000 }
 			has_country_resource = { type = influence amount >= 200 }
+			nomad_can_afford_enclave_cost = { COST = 22000 }
 		}
 		add_resource = { energy = -22000 influence = -200 }
 		custom_tooltip = EaC_civic_mechanic_events.285.tooltip
@@ -7137,10 +7457,10 @@ country_event = {
 					amount = -15
 				}
 				set_country_flag = fleet_commandeered
-				set_timed_country_flag = {
-					flag = fleet_commandeered_reserved
-					years = 1
-				}
+				#set_timed_country_flag = {
+				#	flag = fleet_commandeered_reserved
+				#	years = 1
+				#}
 
 				country_event = { id = EaC_civic_mechanic_events.289 days = 180 } # In six months, give fleet to patron
 			}
@@ -7174,17 +7494,23 @@ country_event = {
 			}
 			save_event_target_as = mercenary_fleet
 		}
-		random_owned_fleet = {
+		random_playable_country = {
 			limit = {
-				is_ship_size = enclave_pirate_mercenary_station
+				has_country_flag = commandeering_patron@root
 			}
-			solar_system = {
-				save_event_target_as = mercenary_home_system
-				space_owner = {
-					save_event_target_as = mercenary_patron
-				}
-			}
+			save_event_target_as = mercenary_patron
 		}
+		#random_owned_fleet = {
+		#	limit = {
+		#		is_ship_size = enclave_pirate_mercenary_station
+		#	}
+		#	solar_system = {
+		#		save_event_target_as = mercenary_home_system
+		#		space_owner = {
+		#			save_event_target_as = mercenary_patron
+		#		}
+		#	}
+		#}
 		root = {
 			save_event_target_as = mercenary_enclave_country
 		}

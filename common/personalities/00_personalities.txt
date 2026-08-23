@@ -101,20 +101,17 @@ honorbound_warriors = {
 
 	allow = {
 		is_country_type = default
-		OR = {
-			AND = {
-				has_ethic = "ethic_fanatic_militarist"
-				OR = {
-					has_ethic = "ethic_spiritualist"
-					has_ethic = "ethic_egalitarian"
-					has_ethic = "ethic_xenophile"
-				}
-			}
-			AND = {
-				has_ethic = "ethic_fanatic_xenophile"
-				has_ethic = "ethic_militarist"
-			}
-		}
+		is_militarist = yes				# Fixed this to make this spawn a little more common. -- Sage
+        OR = {
+            AND = {
+                is_xenophile = yes
+                is_authoritarian = no
+            }
+            AND = {
+                is_spiritualist = yes
+                is_xenophobe = no
+            }
+        }
 	}
 
 	weight_modifier = {
@@ -226,7 +223,6 @@ erudite_explorers = {
 	defensive_pact_acceptance = 5
 	migration_pact_acceptance = 0
 	loyalty_acceptance = 2.0
-
 	advanced_start_chance = 25
 
 	weapon_preferences = weapon_type_energy
@@ -460,10 +456,7 @@ ruthless_capitalists = {
 
 	allow = {
 		is_country_type = default
-		NOR = {
-			has_ethic = "ethic_fanatic_pacifist"
-			is_socialism = yes	
-		}
+		NOT = {	has_ethic = ethic_fanatic_pacifist }
 		is_capitalism = yes
 		OR = {
 			is_industrial = yes
@@ -477,22 +470,30 @@ ruthless_capitalists = {
 		
 		modifier = {
 			factor = 10
-			has_valid_civic = civic_industrial_automation
+			OR = {
+				has_valid_civic = civic_industrial_automation
+				has_valid_civic = civic_twisted_experimenters
+				has_valid_civic = civic_twisted_experimenters_corporate
+			}
 		}
 		modifier = {
 			factor = 50
-			has_valid_civic = civic_merchant_guilds
+			OR = {
+				has_valid_civic = civic_criminal_heritage
+				has_valid_civic = civic_merchant_guilds
+				has_valid_civic = civic_ruthless_competition
+			}
 		}
 		modifier = {
-			factor = 1
+			factor = 2
 			has_trait = trait_thrifty
 		}
 		modifier = {
-			factor = 1
+			factor = 2
 			has_trait = trait_industrious
 		}
 		modifier = {
-			factor = 1
+			factor = 2
 			has_election_type = oligarchic
 		}
 	}
@@ -559,8 +560,11 @@ peaceful_traders = {
 		weight = 100
 		modifier = {
 			factor = 10
-			has_valid_civic = civic_corporate_dominion
-			has_trait = "trait_thrifty"
+			OR = {
+				has_valid_civic = civic_corporate_dominion
+				has_valid_civic = civic_distributism
+				has_trait = "trait_thrifty"
+			}
 		}
 	}
 }
@@ -691,7 +695,11 @@ slaving_despots = {
 
 	allow = {
 		is_country_type = default
-		has_valid_civic = civic_slaver_guilds
+		OR = {
+			has_valid_civic = civic_slaver_guilds
+			has_valid_civic = civic_indentured_assets
+			has_valid_civic = civic_divine_order			# Added the civics that have over 30% of the pop enslaved. -- Sage
+		}
 		OR = {
 			is_authoritarian = yes
 			is_xenophobe = yes
@@ -706,10 +714,10 @@ slaving_despots = {
 
 	weight_modifier = {
 		weight = 200
-			modifier = {
-				weight = 1000
-				has_civic = civic_state_monopoly
-			}
+		modifier = {
+			weight = 1000
+			has_civic = civic_state_monopoly
+		}
 	}
 }
 
@@ -767,7 +775,11 @@ decadent_hierarchy = {
 
 	allow = {
 		is_country_type = default
-		has_valid_civic = civic_slaver_guilds
+		OR = {
+			has_valid_civic = civic_slaver_guilds
+			has_valid_civic = civic_indentured_assets
+			has_valid_civic = civic_divine_order			# Added the civics that have over 30% of the pop enslaved. -- Sage
+		}
 		OR = {
 			is_authoritarian = yes
 			is_capitalism = yes
@@ -776,10 +788,11 @@ decadent_hierarchy = {
 			is_pacifist = yes
 			is_xenophile = yes
 		}
-		OR = {
-			has_trait = "trait_decadent"
-			is_xenophobe = yes
-		}
+		is_xenophobe = no
+		#OR = {
+		#	has_trait = "trait_decadent"								# Removed this requirement --Sage
+		#	is_xenophobe = yes
+		#}
 		NOR = {
 			is_egalitarian = yes
 			is_socialism = yes
@@ -788,6 +801,34 @@ decadent_hierarchy = {
 
 	weight_modifier = {
 		weight = 200
+		modifier = {													# Added the following weights --Sage
+			weight = 10
+			OR = {
+				has_valid_civic = civic_aristocratic_elite
+				has_valid_civic = civic_aristocratic_elite_corporate
+				has_valid_civic = civic_genetic_aristocracy
+			}
+		}
+		modifier = {
+			weight = 10
+			OR = {
+				has_valid_civic = civic_consumerism
+				has_valid_civic = civic_consumerism_corporate
+			}
+		}
+		modifier = {
+			weight = 100
+			OR = {
+				has_origin = origin_forever_cruise						
+				has_valid_civic = civic_corporate_hedonism
+				has_valid_civic = civic_pleasure_seekers
+			}
+		}
+		modifier = {
+			weight = 1000
+			has_trait = "trait_decadent"							# Made Decadent a weight instead of a requirement
+			NOT = { has_valid_civic = civic_fanatic_purifiers }
+		}
 	}
 }
 
@@ -1004,14 +1045,14 @@ federation_builders = {
 				is_socialism = yes
 			}
 			AND = {
-				is_xenophile = yes
+				is_egalitarian = yes		# Had Xenophile here twice, assuming you meant Egalitarian -- Sage
 				is_socialism = yes
 			}
 		}
 	}
 
 	weight_modifier = {
-		weight = 5 # Very common, so lower weight
+		weight = 10 # Very common, so lower weight
 	}
 }
 
@@ -1348,66 +1389,85 @@ migrating_flock = {
 }
 
 metalhead = {
-	aggressiveness = 10.0
-	trade_willingness = 0.0
-	bravery = 10.0
-	combat_bravery = 10.0
-
-	military_spending = 1.2
-	colony_spending = 1.2
-
-	federation_acceptance = -1000
-	nap_acceptance = -1000
-	commercial_pact_acceptance = -1000
-	research_agreement_acceptance = -1000
-	defensive_pact_acceptance = -1000
-	migration_pact_acceptance = -1000
-	loyalty_acceptance = 1.0
-
-	advanced_start_chance = 100
-
-	weapon_preferences = weapon_type_energy
-	armor_ratio = 0.5
-	shields_ratio = 0.0
-	hull_ratio = 0.5
-
-	threat_modifier = 0
-	threat_others_modifier = 0
-	friction_modifier = 0
-	claims_modifier = 0
-
-	behaviour = {
-		conqueror = yes
-		subjugator = no
-		liberator = no
-		slaver = no
-		opportunist = yes
-		uplifter = no
-		purger = yes
-		displacer = no
-		dominator = yes
-		infiltrator = no
-		robot_exploiter = no
-		robot_liberator = yes
-		propagator = no
-		multispecies = no
-		crisis_fighter = no
-		attack_neutrals = yes
-	}
-
-	allow = {
-		is_country_type = default
-		has_ethic = "ethic_fanatic_militarist"
-		has_ethic = "ethic_fanatic_xenophobe"
-		has_trait = "trait_industrious"
-		has_trait = "trait_strong"
-	}
-
-	weight_modifier = {
-		weight = 1000
-	}
+    aggressiveness = 10
+    trade_willingness = 0
+    bravery = 10
+    combat_bravery = 10
+    military_spending = 1.2
+    colony_spending = 1.2
+    federation_acceptance = -1000
+    nap_acceptance = -1000
+    commercial_pact_acceptance = -1000
+    research_agreement_acceptance = -1000
+    defensive_pact_acceptance = -1000
+    migration_pact_acceptance = -1000
+    loyalty_acceptance = 1
+    advanced_start_chance = 100
+    weapon_preferences = weapon_type_energy
+    armor_ratio = 0.5
+    shields_ratio = 0
+    hull_ratio = 0.5
+    threat_modifier = 0
+    threat_others_modifier = 0
+    friction_modifier = 0
+    claims_modifier = 0
+    behaviour = {
+        conqueror = yes
+        subjugator = no
+        liberator = no
+        slaver = no
+        opportunist = yes
+        uplifter = no
+        purger = yes
+        displacer = no
+        dominator = yes
+        infiltrator = no
+        robot_exploiter = no
+        robot_liberator = yes
+        propagator = no
+        multispecies = no
+        crisis_fighter = no
+        attack_neutrals = yes
+    }
+    allow = {
+        is_country_type = default
+        is_militarist = yes
+        is_xenophobe = yes
+		OR = {
+        	is_materialist = yes
+			is_industrial = yes			# Sage Note - This just makes sense.
+		}
+		NOR = {
+			is_spiritualist = yes
+			is_green = yes
+		}
+        OR = {
+            AND = {
+                has_trait = trait_industrious
+                has_trait = trait_strong
+            }
+            AND = {
+                has_trait = trait_industrious
+                has_trait = trait_very_strong
+            }
+            AND = {
+                has_trait = trait_robot_history_warbot
+                has_trait = trait_robot_power_drills
+            }
+        }
+    }
+    weight_modifier = {
+        weight = 100
+		modifier = {
+			add = 1000
+			has_ethic = ethic_fanatic_xenophobe
+		}
+		modifier = {
+			add = 1000
+			has_ethic = ethic_fanatic_militarist
+		}
+    }
 }
-
 
 machine_intelligence = {
 	aggressiveness = 1.0
@@ -1693,15 +1753,20 @@ fanatic_befrienders = {
 
 	allow = {
 		is_country_type = default
-		has_ethic = "ethic_fanatic_militarist"
-		has_ethic = "ethic_fanatic_xenophile"
-		has_trait = "trait_repugnant"
-		has_trait = "trait_solitary"
-		has_trait = "trait_venerable"
-}
+		is_xenophile = yes				# Sage Note - fixed this so the Blorg spawn correctly.
+		is_militarist = yes
+		has_trait = trait_repugnant
+		has_trait = trait_solitary
+		has_trait = trait_venerable
+
+	}
 
 	weight_modifier = {
 		weight = 100
+		modifier = {
+			add = 1000
+			has_ethic = ethic_fanatic_xenophile
+		}
 	}
 }
 

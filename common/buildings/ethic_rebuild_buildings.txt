@@ -1,3 +1,269 @@
+building_xeno_zoo = {
+	base_buildtime = @b1_time
+	planet_limit = 1
+	category = research
+
+	building_sets = {
+		urban
+		research
+		society
+		zoo
+	}
+
+	potential = {
+		exists = owner
+		owner = {
+			is_regular_empire = yes
+			is_guided_sapience_empire = no
+		}
+		#colony = {	#Conflicts with planet owners that don't own the system
+			OR = {
+				has_modifier = resort_colony
+				OR = {
+					has_deposit = d_alien_pets_deposit
+					has_deposit = d_avian_reserve
+					AND = {
+						exists = owner
+						owner = { has_policy_flag = pre_sapients_protect }
+						any_owned_pop_group = {
+							is_sapient = no
+						}
+					}
+					AND = {
+						exists = owner
+						any_owned_pop_group = {
+							has_citizenship_type = {
+								type = citizenship_protected_drone
+								country = owner
+							}
+						}
+					}
+					any_owned_pop_group = {
+						is_livestock = yes
+					}
+					AND = {
+						exists = owner
+						any_owned_pop_group = {
+							has_trait = trait_nascent_stage
+						}
+					}
+				}
+			}
+		#}
+	}
+
+	destroy_trigger = {
+		OR = {
+			AND = {
+				exists = owner
+				owner = {
+					OR = {
+						is_regular_empire = no
+						is_guided_sapience_empire = yes
+					}
+				}
+			}
+			planet = {
+				NOR = {
+					has_modifier = resort_colony
+					has_deposit = d_alien_pets_deposit
+					has_deposit = d_avian_reserve
+					AND = {
+						exists = owner
+						owner = { has_policy_flag = pre_sapients_protect }
+						any_owned_pop_group = {
+							is_sapient = no
+						}
+					}
+					AND = {
+						exists = owner
+						any_owned_pop_group = {
+							has_citizenship_type = {
+								type = citizenship_protected_drone
+								country = owner
+							}
+						}
+					}
+					any_owned_pop_group = {
+						is_livestock = yes
+					}
+					AND = {
+						exists = owner
+						any_owned_pop_group = {
+							has_trait = trait_nascent_stage
+						}
+					}
+				}
+			}
+		}
+	}
+
+	resources = {
+		category = planet_buildings
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = exotic_gases
+			COST = @b1_minerals
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
+		}
+		upkeep = {
+			energy = @b1_upkeep
+		}
+	}
+
+	inline_script = {
+		script = jobs/biologists_add
+		AMOUNT = @building_static_jobs
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			has_modifier = resort_colony
+		}
+		modifier = {
+			job_biologist_add = @building_static_jobs
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			OR = {
+				any_owned_pop_group = {
+					is_livestock = yes
+					is_lithoid = no
+				}
+				any_owned_pop_group = {
+					has_citizenship_type = {
+						type = citizenship_protected_drone
+						country = owner
+					}
+				}
+			}
+			owner = {
+				NOT = { has_valid_civic = civic_warrior_culture }
+			}
+		}
+		modifier = {
+			job_livestock_zoo_animal_add = 300
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			planet = {
+				any_owned_pop_group = {
+					is_livestock = yes
+					is_lithoid = yes
+				}
+			}
+			exists = owner
+			owner = {
+				NOT = { has_valid_civic = civic_warrior_culture }
+			}
+		}
+		modifier = {
+			job_livestock_zoo_animal_lithoid_add = 300
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			OR = {
+				any_owned_pop_group = {
+					is_livestock = yes
+					is_lithoid = no
+				}
+				any_owned_pop_group = {
+					has_citizenship_type = {
+						type = citizenship_protected_drone
+						country = owner
+					}
+				}
+			}
+			owner = {
+				has_valid_civic = civic_warrior_culture
+			}
+		}
+		modifier = {
+			job_livestock_zoo_beast_add = 300
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			planet = {
+				any_owned_pop_group = {
+					is_livestock = no
+					is_lithoid = yes
+				}
+			}
+			exists = owner
+			owner = {
+				has_valid_civic = civic_warrior_culture
+			}
+		}
+		modifier = {
+			job_livestock_zoo_beast_lithoid_add = 300
+		}
+	}
+
+	triggered_desc = {
+		trigger = {
+			exists = owner
+			owner = {
+				NOT = { has_valid_civic = civic_warrior_culture }
+			}
+		}
+		text = pre_sapient_job_xeno_zoo_animal_tt
+	}
+
+	triggered_desc = {
+		trigger = {
+			exists = owner
+			owner = {
+				has_valid_civic = civic_warrior_culture
+			}
+		}
+		text = pre_sapient_job_xeno_zoo_beast_tt
+	}
+
+	triggered_desc = {
+		text = biologist_is_xeno_zoo_keeper_tt
+	}
+
+	triggered_desc = {
+		text = NEW_LINE
+	}
+
+	triggered_desc = {
+		trigger = {
+			exists = owner
+			owner = {
+				NOT = { has_valid_civic = civic_warrior_culture }
+			}
+		}
+		text = job_xeno_zoo_animal_effect_desc
+	}
+
+	triggered_desc = {
+		trigger = {
+			exists = owner
+			owner = {
+				has_valid_civic = civic_warrior_culture
+			}
+		}
+		text = job_xeno_zoo_beast_effect_desc
+	}
+
+	prerequisites = {
+		"tech_alien_life_studies"
+	}
+}
+
 building_clone_army_clone_vat = {
 	icon = building_ancient_relics
 	base_buildtime = 90
@@ -626,16 +892,16 @@ building_pirate_haven_2 = {
 		mult = value:branch_office_value_for_buildings
 	}
 
-	planet_modifier = {
-		planet_crime_add = 25				#Higher crime for balance
-		job_soldier_add = 100				#Cog Note - Why not have both?
-		job_bureaucrat_add = 100			#Cog Note - Why not have All?
-		job_politician_add = 100			#Cog Note - This is on your own planet, so it wouldn't be offworld
-		army_starting_experience_add = 100
-		planet_civilians_unity_produces_add = 0.5	#Cog Note - They share stories, don't they? That's unity :P
-		planet_civilians_consumer_goods_upkeep_add = 0.25
-	}
-	
+    planet_modifier = {
+        planet_crime_add = 10
+        job_soldier_per_pop = 0.03				#Cog Note - Why not have both? # Sage Note - This feels like just 100 extra soldiers doesn't have enough long-term 'oomph' for a unique building.
+		job_bureaucrat_add = 100			#Cog Note - Why not have All?	# Sage Note - Because worker co-ops don't have politicians, silly.
+		#job_politician_add = 100			#Cog Note - This is on your own planet, so it wouldn't be offworld
+        army_starting_experience_add = 100
+        planet_civilians_unity_produces_add = 0.5
+        planet_civilians_consumer_goods_upkeep_add = 0.25
+    }
+
 	#triggered_planet_modifier = {
 	#	potential = {
 	#		exists = owner
@@ -667,7 +933,23 @@ building_pirate_haven_2 = {
 	#		job_gladiator_add = 100	#maybe this is not the building for this job...
 	#	}
 	#}
-	
+
+	triggered_planet_modifier = {
+        potential = {
+            exists = owner
+            owner = { NOT = { has_valid_civic = civic_worker_coop } }
+        }
+        job_politician_add = 100		# Pirate Commandante trigger
+    }
+    triggered_planet_modifier = {
+        potential = {
+            exists = owner
+            owner = { has_valid_civic = civic_worker_coop }
+        }
+        job_enforcer_add = 100			# Pirate Enforcer / Combat Instructor trigger
+        job_bureaucrat_add = 100		# Steward Captain trigger
+    }
+
 	triggered_planet_modifier = {
 		potential = {
 			always = yes
@@ -698,7 +980,17 @@ building_pirate_haven_2 = {
 		planet_jobs_trade_produces_mult = @trade_value_from_jobs
 		mult = value:num_jobs_with_tag|TAG|soldier|
 	}
-	
+	    
+	triggered_planet_modifier = {
+        potential = {
+            owner = {
+                is_worker_coop_empire = yes
+            }
+        }
+        planet_jobs_trade_produces_mult = @trade_value_from_jobs
+        mult = value:num_jobs_with_tag|TAG|bureaucrat|				# Union pirates gotta have that mult. -- Sage
+    }
+    
 	#Trader Jobs from civics
 	triggered_country_modifier = {
 		potential = {
@@ -739,7 +1031,10 @@ building_pirate_haven_2 = {
 			owner = {
 				OR = {
 					has_civic= civic_ruthless_competition			# Due to Slavery
-					has_civic= civic_slaver_guilds					# Due to Slavery
+					has_valid_civic = civic_slaver_guilds
+					has_origin = origin_heirs_of_the_khan
+					has_valid_civic = PrimPlayer_civic_heirs_of_the_khan	# Due to Slavery
+					has_valid_civic = civic_heirs_of_the_khan	# Due to Slavery
 					has_civic= civic_indentured_assets				# Due to Slavery
 					has_civic= civic_barbaric_despoilers			# Cog Note - This civic is an upgrade of Slaver Guilds
 					has_civic= civic_barbaric_despoilers_corporate	# Cog Note - This civic is an upgrade of Slaver Guilds
