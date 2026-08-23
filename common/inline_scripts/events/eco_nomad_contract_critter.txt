@@ -1,13 +1,11 @@
+
 modifier = {
-	factor = @cruise_contract_mult
+	factor = 0
+	has_country_flag = contract_$CONTRACT_NAME$_$VARIANT$_issued
 }
 modifier = {
 	factor = 0
-	has_country_flag = contract_conservation_study_$VARIANT$_issued
-}
-modifier = {
-	factor = 0
-	has_country_flag = conservation_study_failed
+	has_country_flag = $CONTRACT_NAME$_failed
 }
 random_owned_fleet = {
 	limit = {
@@ -22,7 +20,7 @@ random_system = {
 		distance = {
 			source = event_target:arkship_system
 			min_jumps = 1
-			max_jumps = 20
+			max_jumps = 10
 		}
 		root = {
 			intel_level = {
@@ -30,29 +28,21 @@ random_system = {
 				system = prev
 			}
 		}
-		OR = {
-			is_conservation_site_space_fauna = yes
-			any_system_planet = {
-				OR = {
-					is_conservation_site_default = yes
-					is_conservation_site_wildlife = yes
-				}
-			}
-		}
+		is_$SITE$_space_fauna = yes
 		NOT = {
-			has_star_flag = conservation_study_contract_issued@root
+			has_star_flag = $CONTRACT_NAME$_contract_issued@root
 		}
 	}
 	save_event_target_as = contract_system
 	event_target:nomad_country = {
 		issue_contract = {
-			contract = contract_conservation_study_$VARIANT$
+			contract = contract_$CONTRACT_NAME$_$VARIANT$
 			location = event_target:contract_system
 			target = root
 		}
-		set_country_flag = conservation_study_issued
+		set_country_flag = $CONTRACT_NAME$_issued
 		set_timed_country_flag = {
-			flag = contract_conservation_study_$VARIANT$_issued
+			flag = contract_$CONTRACT_NAME$_$VARIANT$_issued
 			days = 720
 		}
 	}
