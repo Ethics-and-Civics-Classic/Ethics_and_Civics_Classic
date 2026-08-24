@@ -94,6 +94,16 @@ physicist = {
 
 	inline_script = "jobs/inf_navalcap_jobs"
 
+	#triggered_country_modifier = {
+	#	potential = {
+	#		local_or_sector_governor_has_trait = {
+	#			TRAIT = leader_trait_academia_recruiter
+	#		}
+	#	}
+	#	country_naval_cap_add = 1
+	#	mult = planet.modifier:job_researcher_naval_cap_add
+	#}
+
 	resources = {
 		category = planet_physicists
 		produces = {
@@ -435,6 +445,16 @@ biologist = {
 
 	inline_script = "jobs/inf_navalcap_jobs"
 
+	#triggered_country_modifier = {
+	#	potential = {
+	#		local_or_sector_governor_has_trait = {
+	#			TRAIT = leader_trait_academia_recruiter
+	#		}
+	#	}
+	#	country_naval_cap_add = 1
+	#	mult = planet.modifier:job_researcher_naval_cap_add
+	#}
+
 	resources = {
 		category = planet_biologists
 		produces = {
@@ -512,7 +532,7 @@ biologist = {
 		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
 	}
 
-	# Job Swap - Rangers
+	## Amenities
 	triggered_planet_modifier = {
 		potential = {
 			biologist_is_ranger_trigger = yes
@@ -556,7 +576,7 @@ biologist = {
 		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
 	}
 
-	## Amenities
+	# Job Swap - Rangers
 	triggered_planet_modifier = {
 		potential = {
 			biologist_is_ranger_trigger = yes
@@ -678,19 +698,19 @@ engineer = {
 		complex_specialist_job_check_trigger = yes
 	}
 
-	#inline_script = "jobs/academia_recruiter_naval_cap_add"
+	inline_script = "jobs/academia_recruiter_naval_cap_add"
 
-	#inline_script = "jobs/inf_navalcap_jobs"
+	inline_script = "jobs/inf_navalcap_jobs"
 
-	triggered_country_modifier = {
-		potential = {
-			local_or_sector_governor_has_trait = {
-				TRAIT = leader_trait_academia_recruiter
-			}
-		}
-		country_naval_cap_add = 1
-		mult = planet.modifier:job_researcher_naval_cap_add
-	}
+	#triggered_country_modifier = {
+	#	potential = {
+	#		local_or_sector_governor_has_trait = {
+	#			TRAIT = leader_trait_academia_recruiter
+	#		}
+	#	}
+	#	country_naval_cap_add = 1
+	#	mult = planet.modifier:job_researcher_naval_cap_add
+	#}
 
 	#Innovative Economy Trade
 	triggered_planet_modifier = {	
@@ -775,6 +795,27 @@ engineer = {
 			}
 			engineering_research = 0.5
 		}
+	}
+
+	## Amenities
+	triggered_planet_modifier = {
+		potential = {
+			owner? = { has_active_tradition = tr_discovery_faith_in_science }
+		}
+		planet_amenities_add = 200
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	}
+
+	# Caregiver Paragon Effect
+	triggered_planet_modifier = {
+		potential = {
+			leader? = {
+				has_trait = leader_trait_nomadic_caregiver
+			}
+			owner? = { NOT = { has_valid_civic = civic_dystopian_society } }
+		}
+		planet_amenities_add = 150
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
 	}
 
 	## Amenities
@@ -1076,6 +1117,13 @@ enforcer = {
     #    }
     #    text = job_pirate_combat_instructor_effect_desc
     #}
+    #triggered_desc = {
+    #    trigger = {
+    #        exists = owner
+    #        enforcer_is_pirate_combat_instructor_trigger = yes
+    #    }
+    #    text = job_pirate_combat_instructor_effect_desc
+    #}
 	
 	
 	
@@ -1330,6 +1378,7 @@ entertainer = {
 				owner = { has_valid_civic = civic_distributism }
 			}
 			trade = 1
+			unity = 1.5
 		}
 	}
 
@@ -1366,8 +1415,7 @@ entertainer = {
 	triggered_planet_modifier = {
 		potential = {
 			entertainer_is_duelist_trigger = yes
-			exists = owner
-			owner = {
+			owner? = {
 				has_councilor = { COUNCILOR = "councilor_warrior_culture" }
 			}
 		}
@@ -1769,6 +1817,17 @@ bureaucrat = {
 		}
 		swap_type = {
 			trigger = {
+				bureaucrat_is_sacred_path_specialist = yes
+			}
+			name = sacred_path_specialist
+			desc = job_sacred_path_specialist_desc
+			icon = sacred_path_specialist
+			building_icon = building_temple
+			condition_string = SPECIALIST_JOB_TRIGGER
+			weight = 500
+		}
+		swap_type = {
+			trigger = {
 				bureaucrat_is_corpse_reader = yes
 			}
 			name = corpse_reader
@@ -1893,17 +1952,17 @@ bureaucrat = {
 	possible_precalc = can_fill_specialist_job
 	possible = {
 		complex_specialist_job_check_trigger = yes
-		if = {
-			limit = { planet = { bureaucrat_is_spiritualist = yes } }
-			OR = {
-				OR = {
-					has_ethic = ethic_spiritualist
-					has_trait = trait_machine_cult_cybernetic
-				}
-				owner = { is_individual_machine = yes }
-				owner = { is_gestalt = yes }
-			}
-		}
+		#if = {	# Leads to no pops taking priest jobs at all if there aren't enough spiritualist pops, undercutting a significant vital function of the empire. --Sage
+		#	limit = { planet = { bureaucrat_is_spiritualist = yes } }
+		#	OR = {
+		#		OR = {
+		#			has_ethic = ethic_spiritualist
+		#			has_trait = trait_machine_cult_cybernetic
+		#		}
+		#		owner = { is_individual_machine = yes }
+		#		owner = { is_gestalt = yes }
+		#	}
+		#}
 	}
 
 	resources = {
@@ -1924,14 +1983,9 @@ bureaucrat = {
 			NOT = { has_trait = trait_mechanical }
 		}
 		modifier = {
-			factor = 2
+			factor = 2	# Makes this job more attractive to theocracies. -- Sage
 			owner? = { 
-				OR = {
-					has_civic = civic_exalted_priesthood 
-					has_civic = civic_imperial_cult
-					has_civic = civic_divine_council
-					has_civic = civic_spiritual_democracy
-				}
+				is_theocracy = yes
 			}
 		}
 		modifier = {
@@ -1943,10 +1997,13 @@ bureaucrat = {
 			is_enslaved = yes
 			has_slavery_type = { type = slavery_indentured }
 		}
+		modifier = {
+			factor = 1.5
+			has_ethic = ethic_spiritualist		# Make it a weight instead of a requirement. -- Sage
+		}
 	}
 
 	inline_script = "jobs/automodding_priority_unity"
-
 }
 
 chemist = {
@@ -2224,18 +2281,6 @@ healthcare = {
 			condition_string = SPECIALIST_JOB_TRIGGER
 			building_icon = building_medical_2
 		}
-		# Mutagenic Spa Attendant
-		swap_type = {
-			trigger = {
-				healthcare_is_mutagenic_trigger = yes
-			}
-			name = bath_attendant
-			desc = bath_attendant
-			icon = bath_attendant
-			building_icon = building_toxic_bath
-			condition_string = SPECIALIST_JOB_TRIGGER
-			weight = 5
-		}
 		# Genomic Researchers
 		swap_type = {
 			trigger = {
@@ -2419,30 +2464,26 @@ healthcare = {
 			owner = { has_policy_flag = public_healthcare }		# Modded
 		}
 	}
-
 }
 
-trader = {
+bath_attendant = {		#They brought bath attendants back, so we're de-mothballing this one. --Sage
 	category = specialist
 
 	swappable_data = {
 		default = {
 			condition_string = SPECIALIST_JOB_TRIGGER
-			building_icon = building_galactic_stock_exchange
-			icon = overlord_trader
+			building_icon = building_toxic_bath
 		}
-		# Subterranean Liaison Officer
 		swap_type = {
 			trigger = {
-				trader_is_subterranean = yes
+				owner? = { is_individual_machine = yes }
 			}
-			name = underground_trade_worker
-			desc = underground_trade_worker
+			name = bath_attendant_individual_machine
+			desc = bath_attendant_individual_machine
+			icon = bath_attendant_individual_machine
 			weight = 5
 		}
 	}
-
-	tags = { trade amenities }
 
 	possible_pre_triggers = {
 		has_owner = yes
@@ -2452,26 +2493,50 @@ trader = {
 	}
 
 	possible_precalc = can_fill_specialist_job
+	possible = {
+		hidden_trigger = { exists = owner }
+		owner = {
+			is_gestalt = no
+		}
+	}
 
 	resources = {
-		category = planet_traders
-		produces = {
-			trade = 8
-		}
+		category = planet_bath_attendants
 		produces = {
 			trigger = {
-				trader_is_subterranean = yes
+				owner? = { is_megacorp = yes }
 			}
 			trade = 2
 		}
 		upkeep = {
 			consumer_goods = 1
 		}
-		upkeep = {
-			trigger = {
-				trader_is_subterranean = yes
-			}
-			consumer_goods = 1
+     #	produces = {
+     #		trigger = {
+     #			exists = planet
+     #			planet = {
+     #				OR = {
+     #					has_councilor = { COUNCILOR = councilor_toxic_baths }
+     #					has_councilor = { COUNCILOR = councilor_corporate_toxic_baths }
+     #				}
+     #			}
+     #		}
+     #    #		unity = @councilor_toxic_baths_attendant_unity
+     #		mult = value:councilor_level_combo|COUNCILOR_1|councilor_toxic_baths|COUNCILOR_2|councilor_corporate_toxic_baths|
+     #	}
+	}
+
+   #triggered_planet_modifier = {
+   #	founder_species_growth_mult = 0.015
+   #	pop_environment_tolerance = -0.0025
+   #	pop_happiness = -0.0075
+   #	mult = planet.value:toxic_attendant_growth
+   #}
+ 
+	triggered_planet_modifier = {
+		potential = { 
+			exists = owner
+			owner = { is_gestalt = no } 
 		}
 		pop_ethic_industrial_attraction_mult = 0.01
 		pop_ethic_green_attraction_mult = -0.01
@@ -2489,117 +2554,36 @@ trader = {
 					has_country_flag = forever_cruise_over
 				}
 			}
-			trade = 1
 		}
-	}
-
-	overlord_resources = {
-		category = planet_corporate_franchising_meddling
-		produces = {
-			trigger = {
-				colony = {
-					has_carrier_flag = has_franchise_headquarters
-				}
-			}
-			unity = 0.5
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			trader_is_subterranean = yes
-			owner? = { NOT = { has_valid_civic = civic_dystopian_society } }
-		}
-		planet_amenities_add = 300
-		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
-	}
-
-	#Federal State Policy
-	triggered_planet_modifier = {
-		potential = {
-			planet = {
-				exists = owner
-				owner = { has_policy_flag = "federal_state" }
-			}
-		}
-		modifier = {
-			planet_stability_add = 0.6
-		}
+		pop_bureaucrat_bonus_workforce_mult = 0.025
 	}
 
 	triggered_planet_modifier = {
 		potential = {
 			owner? = {
-				has_tradition = tr_mercantile_commercial_enterprise
+				is_megacorp = no
 				NOT = {
 					has_valid_civic = civic_dystopian_society
 				}
 			}
 		}
-		planet_amenities_add = 200
+		planet_amenities_add = 500
 		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
 	}
 
 	triggered_planet_modifier = {
 		potential = {
-			colony.orbital_defence.starbase? = {
-				has_starbase_building = ring_trade_hub
-			}
-			owner? = { NOT = { has_valid_civic = civic_dystopian_society } }
-		}
-		planet_amenities_add = 100
-		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			starbase? = {
-				has_starbase_building = arkship_trade_hub
-			}
-			owner? = { NOT = { has_valid_civic = civic_dystopian_society } }
-		}
-		planet_amenities_add = 100
-		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
-	}
-
-	#Wasteful Consumerism
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = {
-				OR = {
-					has_valid_civic = civic_consumerism
-					has_valid_civic = civic_consumerism_corporate
-				}
+			owner? = {
+				has_origin = origin_forever_cruise
+				NOT = { has_country_flag = forever_cruise_over }
 			}
 		}
-		planet_amenities_add = 100
-		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+		planet_cruise_passengers_produces_mult = 0.05
 	}
 
 	weight = {
 		weight = @specialist_job_weight
-		mult = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
-		# crisis purge
-		modifier = {
-			factor = 0.01
-			colony.controller? = {
-				OR = {
-					is_country_type = swarm
-					is_country_type = ai_empire
-				}
-			}
-			OR = { # contingency won't purge itself
-				NOT = { exists = event_target:custodian_bot }
-				AND = {
-					exists = event_target:custodian_bot
-					NOT = { species = { is_same_value = event_target:custodian_bot } }
-				}
-			}
-		}
 	}
-
-	inline_script = "jobs/automodding_priority_trade"
 }
 
 foundry = {
@@ -2643,117 +2627,8 @@ foundry = {
 
 	resources = {
 		category = planet_metallurgists
-		produces = {
-			alloys = 3
-		}
-		#Distributism
-		produces = {
-			trigger = {
-				owner = { has_valid_civic = civic_distributism }
-			}
-			trade = 1
-		}
-		produces = {
-			trigger = {
-				industrial_jobs_are_catalytic_trigger = yes
-			}
-			alloys = 0.75
-		}
-		upkeep = {
-			trigger = {
-				industrial_jobs_are_catalytic_trigger = no
-			}
-			minerals = 6
-		}
-		upkeep = {
-			trigger = {
-				industrial_jobs_are_catalytic_trigger = yes
-			}
-			food = 9
-		}
-		produces = {
-			trigger = {
-				planet = {
-					has_carrier_flag = has_material_requisitorium
-				}
-			}
-			alloys = @requisitorium_alloys_reduction
-		}
-		upkeep = {
-			trigger = {
-				industrial_jobs_are_catalytic_trigger = no
-				planet = {
-					has_carrier_flag = has_material_requisitorium
-				}
-			}
-			minerals = 2
-		}
-		upkeep = {
-			trigger = {
-				industrial_jobs_are_catalytic_trigger = yes
-				planet = {
-					has_carrier_flag = has_material_requisitorium
-					has_building = building_ministry_production
-				}
-			}
-			food = 3
-		}
-		upkeep = {				# catalytic empire green foundray prod. mineral
-			trigger = {
-				exists = owner											# Modded
-				owner = { is_green = yes }								# Modded
-				industrial_jobs_are_catalytic_trigger = no				# - mineral upkeep # make catalytic empires foundry produce small amount minerals? 
-			}
-			minerals = -1												# Modded
-		}
-		produces = {
-			trigger = {													# Modded	
-				exists = owner												# Modded
-				owner = { is_green = yes }									# Modded	
-				industrial_jobs_are_catalytic_trigger = yes					# Modded			
-			}
-			minerals = 0.6
-		}
-		upkeep = {
-			trigger = {
-				exists = owner											# Modded
-				owner = { has_valid_civic = civic_eco_warfare }			# Modded
-				industrial_jobs_are_catalytic_trigger = no				# - mineral upkeep # make catalytic empires foundry produce small amount minerals use more food?
-			}
-			minerals = -1												# Modded
-			food = 1													# Modded
-		}
-		upkeep = {
-			trigger = {
-				exists = owner											# Modded	
-				owner = {												# Modded	
-					has_valid_civic = civic_eco_warfare					# Modded	
-				}
-				industrial_jobs_are_catalytic_trigger = yes				# Modded	
-			}
-			food = 1
-		}
-		produces = {
-			trigger = {
-				exists = owner											# Modded
-				owner = {												# Modded	
-					has_valid_civic = civic_eco_warfare					# Modded	
-				}
-				industrial_jobs_are_catalytic_trigger = yes				# Modded
-			}
-			minerals = 0.6
-		}
-		upkeep = {
-			trigger = {
-				industrial_jobs_are_catalytic_trigger = no			# Modded
-				is_lithoid_empire = no								# Modded
-				exists = owner										# Modded
-				owner = { has_technology = tech_bioreactor}			# Modded
-			}
-			minerals = -1			# Modded
-			food = 1				# Modded
-		}
 		inline_script = "output/foundry_output"
+		# All foundry output is handled via inline script. --Sage
 	}
 
 	overlord_resources = {
@@ -2892,8 +2767,8 @@ artisan = {
 					artisan_is_pearl_diver_trigger = yes
 				}
 			}
-			minerals = -2
-			food = 3
+			minerals = 2
+			food = -3
 		}
 		# Job Swap - Catalytic
 		upkeep = {
@@ -2909,8 +2784,8 @@ artisan = {
 					artisan_is_pearl_diver_trigger = yes
 				}
 			}
-			minerals = 2
-			food = -3
+			minerals = -2
+			food = 3
 		}
 		produces = {
 			trigger = {
@@ -2951,8 +2826,7 @@ artisan = {
 		}
 		upkeep = {
 			trigger = {
-				exists = owner												# Modded
-				owner = {
+				owner? = {
 					has_edict = industrial_subsidies						# Modded
 				}
 			}
@@ -2960,15 +2834,13 @@ artisan = {
 		}
 		upkeep = {
 			trigger = {
-				exists = owner												# Modded
-				owner = { is_green = yes }									# Modded
+				owner? = { is_green = yes }									# Modded
 			}
 			minerals = -1													# Modded
 		}
 		upkeep = {
 			trigger = {
-				exists = owner												# Modded
-				owner = { has_valid_civic = civic_naturalism }				# Modded
+				owner? = { has_valid_civic = civic_naturalism }				# Modded
 			}
 			minerals = -1													# Modded
 			food = 1														# Modded
@@ -2976,8 +2848,7 @@ artisan = {
 		upkeep = {
 			trigger = {
 				is_lithoid_empire = no										# Modded
-				exists = owner												# Modded
-				owner = { has_technology = tech_bioreactor }				# Modded
+				owner? = { has_technology = tech_bioreactor }				# Modded
 			}
 			minerals = -1													# Modded
 			food = 1														# Modded
@@ -3020,36 +2891,9 @@ artisan = {
 			is_enslaved = yes
 			can_take_servant_job = no
 		}
-
-		# low income modifier
-		modifier = {
-			factor = 1.2
-			exists = planet
-			planet = {
-				has_available_jobs = "artisan"
-			}
-			exists = owner
-			owner = {
-				is_ai = yes
-				has_monthly_income = {
-					resource = consumer_goods
-					value < 5
-				}
-			}
-		}
 	}
 
 	inline_script = "jobs/automodding_priority_consumer_goods"
-
-	#promotion = {
-	#	time = @standard_promotion_time
-	#	effect = {
-	#		pop_amount_change_category = {
-	#			CATEGORY = specialist
-	#			AMOUNT = local_pop_amount
-	#		}
-	#	}
-	#}
 }
 
 trader = {
@@ -3228,16 +3072,139 @@ trader = {
 	}
 
 	inline_script = "jobs/automodding_priority_trade"
+}
 
-	#promotion = {
-	#	time = @standard_promotion_time
-	#	effect = {
-	#		pop_amount_change_category = {
-	#			CATEGORY = specialist
-	#			AMOUNT = local_pop_amount
-	#		}
-	#	}
+##########################
+### Offworld Corp Jobs ###
+##########################
+
+# Offworld Steward Captains
+steward_pirate_offworld = { #Sage: Added by branch offices off-world
+	category = specialist
+	swappable_data = {
+		default = {
+			condition_string = SPECIALIST_JOB_TRIGGER
+			building_icon = building_pirate_haven
+			icon = pirate_quartermaster
+		}
+	}
+
+	# possible = { always = no } #Steam: We do actually need to keep this job avalible for now
+
+	possible_pre_triggers = {
+		has_owner = yes
+		is_enslaved = no
+		is_being_purged = no
+		is_being_assimilated = no
+		is_sapient = yes
+	}
+
+	possible_precalc = can_fill_specialist_job
+
+	country_modifier = {
+		country_naval_cap_add = 2
+	}
+
+	resources = {
+		category = planet_bureaucrats
+		produces = {
+			unity = 2
+		}
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {  has_valid_civic = civic_citizen_service }
+			}
+			unity = 1
+		}
+		produces = {
+			trigger = {
+				exists = owner
+				owner = { has_valid_civic = civic_byzantine_bureaucracy }
+			}
+			unity = 1
+		}
+		upkeep = {
+			consumer_goods = 2
+		}
+	}
+
+	planet_modifier = {
+		planet_orbital_bombardment_damage = -0.05
+		planet_stability_add = 2
+		planet_defense_armies_add = 1
+		pop_government_ethic_attraction = -0.01
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			always = yes
+		}
+		planet_amenities_add = 300
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	}
+	
+	# pop_group_modifier = {	# No Longer Used in Stellaris 4.0
+	#	pop_defense_armies_add = 1
 	#}
+
+	triggered_planet_modifier = {
+		potential = {
+			has_trait = trait_repugnant
+		}
+		planet_amenities_add = -100
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {  has_valid_civic = civic_citizen_service }
+		}
+		planet_amenities_add = 300
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	}
+
+	triggered_country_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_valid_civic = civic_byzantine_bureaucracy }
+		}
+		modifier = {
+			empire_size_pops_mult = -0.005
+		}
+	}
+
+	weight = {
+		weight = @specialist_job_weight
+		mult = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
+		modifier = {
+			factor = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
+			has_trait = trait_repugnant
+		}
+		modifier = {
+			factor = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
+			owner = { has_valid_civic = civic_citizen_service }
+		}
+		modifier = {
+			factor = 2.0
+			OR = {
+				has_trait = trait_very_strong
+			}
+		}
+		modifier = {
+			factor = 1.5
+			OR = {
+				has_trait = trait_strong
+			}
+		}
+		# modifier = {
+		#	factor = 5
+		#	has_job_type = commandante_pirate	# No Longer Used in Stellaris 4.0
+		#}
+	}
+
+	inline_script = "jobs/automodding_priority_unity"
 }
 
 ##########################
