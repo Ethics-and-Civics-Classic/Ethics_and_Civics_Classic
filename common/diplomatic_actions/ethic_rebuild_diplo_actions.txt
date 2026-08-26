@@ -32,6 +32,206 @@ action_start_proxy_war = {
 	}
 }
 
+# Form a non-aggression pact with another empire, unable to declare war on each other while it is in effect.
+# Usable by regular empires only. Not possible while in a federation. Raises trust over time.
+action_form_non_aggression_pact = {
+	icon = "GFX_diplomacy_status_non_aggression_pact"
+	diplo_view_acceptance_icon = yes
+	should_notify_all_communications = yes
+	AI_acceptance_base_value = -50
+	action_type = positive
+	possible = {
+		custom_tooltip = {
+			fail_text = "requires_actor_not_fanatic_purifiers"
+			OR = {
+				is_same_species = from
+				NOT = { has_valid_civic = civic_fanatic_purifiers	}
+			}
+		}
+		custom_tooltip = {
+			fail_text = "requires_recipient_not_fanatic_purifiers"
+			OR = {
+				is_same_species = from
+				from = { NOT = { has_valid_civic = civic_fanatic_purifiers } }
+			}
+		}
+		custom_tooltip = {
+			fail_text = "requires_actor_not_devouring_swarm"
+			NOT = { has_valid_civic = civic_hive_devouring_swarm	}
+		}
+		custom_tooltip = {
+			fail_text = "requires_recipient_not_devouring_swarm"
+			from = { NOT = { has_valid_civic = civic_hive_devouring_swarm } }
+		}
+		custom_tooltip = {
+			fail_text = "requires_actor_not_machine_terminator"
+			OR = {
+				is_same_species = from
+				NOT = { has_civic = civic_machine_terminator }
+				AND = {
+					has_civic = civic_machine_terminator
+					from = {
+						OR = {
+							has_country_flag = synthetic_empire
+							is_machine_empire = yes
+							is_individual_machine = yes
+						}
+					}
+				}
+			}
+		}
+		custom_tooltip = {
+			fail_text = "requires_recipient_not_machine_terminator"
+			OR = {
+				is_same_species = from
+				from = { NOT = { has_civic = civic_machine_terminator } }
+				AND = {
+					from = { has_civic = civic_machine_terminator }
+					OR = {
+						has_country_flag = synthetic_empire
+						is_machine_empire = yes
+						is_individual_machine = yes
+					}
+				}
+			}
+		}
+		custom_tooltip = {
+			fail_text = "requires_actor_not_scorched_earth"
+			OR = {
+				is_genocidal_infernal = no
+				from = { is_infernal_empire = yes }
+			}
+		}
+		custom_tooltip = {
+			fail_text = "requires_recipient_not_scorched_earth"
+			OR = {
+				is_infernal_empire = yes
+				from = { is_genocidal_infernal = no }
+			}
+		}
+		custom_tooltip = {
+			fail_text = "requires_actor_not_khan"
+			NOT = { has_country_flag = heir_of_the_khan_khan }
+		}
+		custom_tooltip = {
+			fail_text = "requires_recipient_not_khan"
+			from = { NOT = { has_country_flag = heir_of_the_khan_khan } }
+		}
+		if = {
+			limit = {
+				from = { has_valid_civic = civic_pompous_purists }
+				NOT = { root = { is_overlord_to = from } }
+			}
+			if = {
+				limit = {
+					has_intel = {
+						who = from
+						intel = civics
+					}
+				}
+				custom_tooltip = {
+					fail_text = requires_recipient_not_pompous
+					always = no
+				}
+			}
+			else = {
+				custom_tooltip = {
+					fail_text = diplo_action_no_low_intel
+					always = no
+				}
+			}
+		}
+		# Requirements:
+		# - 10 Trust OR Neutral Opinion
+		# - An Embassy OR Improving Relations.
+		custom_tooltip = {
+			fail_text = requires_10_trust_or_neutral
+			OR = {
+				opinion_level = {
+					who = from
+					level >= neutral
+				}
+				from = {
+					trust = {
+						who = root
+						value >= 10
+					}
+				}
+				AND = {
+					has_valid_civic = civic_hive_familiar_face
+					from = {
+						trust = {
+							who = root
+							value >= 5
+						}
+					}
+				}
+			}
+		}
+		custom_tooltip = {
+			fail_text = requires_embassy_or_improving_relations
+			OR = {
+				is_improving_relations_with = from
+				has_embassy = from
+			}
+		}
+	}
+	should_ai_propose = {
+		weight = 5
+		# More likely to propose if we're not interested in conflict
+		modifier = {
+			factor = 2
+			root = {
+				NOR = {
+					has_ai_personality_behaviour = conqueror
+					has_ai_personality_behaviour = subjugator
+					has_ai_personality_behaviour = sneak_attacker
+				}
+			}
+		}
+		# Less likely to propose if we are Pirates
+		modifier = {
+			factor = 0.5
+			root = {
+				is_pirate_empire = yes
+			}
+		}
+	}
+	ai_acceptance = {
+		# Pirates and barbaric despoilers are reluctant to accept neighborly arrangements
+		modifier = {
+			subtract = 10
+			root = {
+				NOR = { 
+					is_barbaric_despoiler = yes 
+					is_pirate_lord = yes 
+				}
+				is_pirate_empire = yes
+			}
+			desc = RECIPIENT_IS_PIRATE
+		}
+		# Pirate Lords will laugh in your face.
+		modifier = {
+			subtract = 1000
+			root = {
+				is_pirate_lord = yes
+			}
+			desc = PIRATE_LORD
+		}
+		modifier = {
+			subtract = 1000
+			root = {
+				NOR = { 
+					is_pirate_lord = yes 
+					is_pirate_empire = yes
+				}
+				is_barbaric_despoiler = yes
+			}
+			desc = BARBARIC_DESPOILER
+		}
+	}
+}
+
 # Turns another empire into a subject peacefully.
 # Intricacies of this relationship, including subject type, are determined by terms of the Agreement between Overlord and subject.
 action_demand_subjugation = {
@@ -242,6 +442,16 @@ action_demand_subjugation = {
 				}
 			}
 		}
+		# Barbaric Despoilers want to dominate.
+		modifier = {
+			mult = 1.5
+			is_barbaric_despoiler = yes
+			relative_power = {
+				who = from
+				category = fleet
+				value >= equivalent
+			}
+		}
 	}
 
 	ai_acceptance = {
@@ -290,7 +500,7 @@ action_demand_subjugation = {
 			}
 			OR = {
 				has_origin = origin_heirs_of_the_khan
-				has_origin = civic_heirs_of_the_khan
+				has_civic = civic_heirs_of_the_khan
 			}
 			desc = RIGHTFUL_KHAN
 		}
@@ -337,6 +547,30 @@ action_demand_subjugation = {
 			}
 		}
 
+		# The Pirate Lord bows to no one.
+		modifier = {
+			subtract = 1000
+			root = { is_pirate_lord = yes }
+			desc = PIRATE_LORD
+		}
+		# If you are a worthy Pirate Lord, other pirates are more likely to fall in line... unless they're the fucking Prank Patrol.
+		modifier = {
+			add = 20
+			root = {
+				is_pirate_empire = yes
+				is_pirate_lord = no
+			}
+			from = {
+				is_pirate_lord = yes
+			}
+			relative_power = {
+				who = from
+				category = all
+				value >= equivalent
+			}
+			desc = PIRATE_LORD
+		}
+
 		modifier = { # If you are equal or stronger than the Khan, disregard all of the above modifiers
 			mult = 0
 			from = {
@@ -348,6 +582,14 @@ action_demand_subjugation = {
 				value >= equivalent
 			}
 			desc = BLANK_STRING
+		}
+		# Anarchsits bow to no one. Not even the Khan.
+		modifier = {
+			add = -1000
+			root = {
+				is_anarchist_empire = yes
+			}
+			desc = ANARCHISTS
 		}
 	}
 }
@@ -558,7 +800,7 @@ action_ask_to_become_subjugated = {
 			}
 			OR = {
 				has_origin = origin_heirs_of_the_khan
-				has_origin = civic_heirs_of_the_khan
+				has_civic = civic_heirs_of_the_khan
 			}
 			desc = RIGHTFUL_KHAN
 		}
@@ -630,6 +872,22 @@ action_ask_to_become_subjugated = {
 				has_faction = imperialist
 			}
 			desc = TOO_IMPERIAL
+		}
+		# The Pirate Lord accepts no masters.
+		modifier = {
+			subtract = 1000
+			root = {
+				is_pirate_lord = yes
+			}
+			desc = PIRATE_LORD
+		}
+		# Anarchists bow to no one.
+		modifier = {
+			subtract = 1000
+			root = { 
+				is_anarchist_empire = yes
+			}
+			desc = ANARCHISTS
 		}
 	}
 
@@ -1243,23 +1501,66 @@ action_form_commercial_pact = {
 			}
 		}
 	}
-	
-	ai_acceptance = {
+
+	should_ai_propose = {
+		weight = 5
+		# More likely to propose if we're a megacorp
 		modifier = {
-			add = 150
-			has_policy_flag = diplo_stance_mercantile
-			OR = { is_country_type = PrimPlayer_ethic_fanatic_nation is_country_type = PrimPlayer_ethic_fanatic_nation_nomadic }
-			desc = diplo_stance_mercantile
+			factor = 2
+			root = {
+				is_megacorp = yes
+			}
+		}
+		# More likely if we already have good relations
+		modifier = {
+			factor = 1.5
+			opinion_level = {
+				who = from
+				level >= good
+			}
+		}
+		# Won't happen if we have poor opinion
+		modifier = {
+			factor = 0
+			opinion_level = {
+				who = from
+				level <= poor
+			}
+		}
+		# More likely if we are Barbaric Despoilers and they allow slaves.
+		modifier = {
+			factor = 1.5
+			is_barbaric_despoiler = yes
+			from = {
+				has_policy_flag = slavery_allowed
+				is_gestalt = no
+			}
+		}
+		# Will not propose if we are opposed to their economic model.
+		modifier = {
+			factor = 0
+			is_socialism = yes
+			from = { is_capitalism = yes }
 		}
 		modifier = {
-			add = 100
-			has_policy_flag = diplo_stance_cooperative
-			OR = { is_country_type = PrimPlayer_ethic_fanatic_nation is_country_type = PrimPlayer_ethic_fanatic_nation_nomadic }
-			desc = diplo_stance_cooperative
+			factor = 0
+			is_capitalism = yes
+			from = { is_socialism = yes }
+		}
+		# Will not propose if we are egalitarian and they're slavers.
+		modifier = {
+			factor = 0
+			is_egalitarian = yes
+			from = {
+				has_policy_flag = slavery_allowed
+				is_gestalt = no
+			}
 		}
 	}
 }
 
+# Creates a migration treaty that allows pops to move freely between two empires. Only possible if both empires have suitable worlds for each others' pops.
+# Usable by regular empires only. Raises trust over time.
 action_form_migration_pact = {
 	icon = "GFX_diplomacy_status_migration_pact"
 	diplo_view_acceptance_icon = yes
@@ -1284,12 +1585,34 @@ action_form_migration_pact = {
 			}
 		}
 		custom_tooltip = {
+			fail_text = "requires_actor_not_scorched_earth"
+			OR = {
+				is_genocidal_infernal = no
+				from = { is_infernal_empire = yes }
+			}
+		}
+		custom_tooltip = {
+			fail_text = "requires_recipient_not_scorched_earth"
+			OR = {
+				is_infernal_empire = yes
+				from = { is_genocidal_infernal = no }
+			}
+		}
+		custom_tooltip = {
 			fail_text = "requires_actor_not_gestalt_consciousness"
-			is_gestalt = no
+			NOT = { has_ethic = ethic_gestalt_consciousness	}
 		}
 		custom_tooltip = {
 			fail_text = "requires_recipient_not_gestalt_consciousness"
-			from = { is_gestalt = no }
+			from = { NOT = { has_ethic = ethic_gestalt_consciousness } }
+		}
+		custom_tooltip = {
+			fail_text = "requires_actor_not_khan"
+			NOT = { has_country_flag = heir_of_the_khan_khan }
+		}
+		custom_tooltip = {
+			fail_text = "requires_recipient_not_khan"
+			from = { NOT = { has_country_flag = heir_of_the_khan_khan } }
 		}
 		if = {
 			limit = { from = { has_valid_civic = civic_inwards_perfection } }
@@ -1320,7 +1643,7 @@ action_form_migration_pact = {
 			limit = {
 				from = {
 					has_valid_civic = civic_selective_kinship
-					NOT = { is_same_species_class = root }
+					NOT = { is_same_species_class = ROOT }
 				}
 			}
 			if = {
@@ -1350,16 +1673,7 @@ action_form_migration_pact = {
 			}
 		}
 		if = {
-			limit = { 
-				from = { 
-					OR = {
-						has_valid_civic = civic_barbaric_despoilers 
-						has_valid_civic = civic_barbaric_despoilers_corporate
-						has_valid_civic = PrimPlayer_civic_barbaric_despoilers_khan
-						has_valid_civic = civic_barbaric_despoilers_khan
-					}
-				} 
-			}
+			limit = { from = { is_barbaric_despoiler = yes } }
 			if = {
 				limit = {
 					has_intel = {
@@ -1381,14 +1695,14 @@ action_form_migration_pact = {
 		}
 		custom_tooltip = {
 			fail_text = "requires_actor_not_barbaric_despoilers"
-			NOT = { has_valid_civic = civic_barbaric_despoilers }
+			NOT = { is_barbaric_despoiler = yes }
 		}
 		custom_tooltip = {
 			fail_text = "federation_internal_migration"
 			NOT = {
 				AND = {
 					has_federation = yes
-					any_federation_ally = { is_same_value = root.from }
+					federation = { any_member = { is_same_value = root.from } }
 					federation = { has_federation_law = free_migration_yes }
 				}
 			}
@@ -1399,7 +1713,7 @@ action_form_migration_pact = {
 				AND = {
 					has_federation = yes
 					federation = { has_federation_law = treaties_separate_no }
-					count_federation_ally = { count = 0 limit = { is_same_value = root.from } }
+					NOT = { federation = { any_member = { is_same_value = root.from } } }
 				}
 			}
 		}
@@ -1412,7 +1726,7 @@ action_form_migration_pact = {
 						federation = {
 							has_federation_law = treaties_separate_no
 						}
-						count_federation_ally = { count = 0 limit = { is_same_value = root } }
+						NOT = { federation = { any_member = { is_same_value = root } } }
 					}
 				}
 			}
@@ -1461,6 +1775,15 @@ action_form_migration_pact = {
 						value >= 20
 					}
 				}
+				AND = {
+					has_valid_civic = civic_hive_familiar_face
+					from = {
+						trust = {
+							who = root
+							value >= 10
+						}
+					}
+				}
 			}
 		}
 		custom_tooltip = {
@@ -1469,6 +1792,27 @@ action_form_migration_pact = {
 				has_embassy = from
 				has_active_tradition = tr_diplomacy_diplomatic_networking
 			}
+		}
+	#	custom_tooltip = {
+	#		fail_text = "requires_actor_not_nomad"
+	#		is_nomadic = no
+	#	}
+	#	custom_tooltip = {
+	#		fail_text = "requires_recipient_not_nomad"
+	#		FROM = { is_nomadic = no }
+	#	}
+	}
+	should_ai_propose = {
+		# Will not propose if not multispecies.
+		modifier = {
+			factor = 0
+			from = {
+				NOT = { has_ai_personality_behaviour = multispecies }
+			}
+		}
+		modifier = {
+			factor = 0
+			NOT = { has_ai_personality_behaviour = multispecies }
 		}
 	}
 }
@@ -1555,6 +1899,7 @@ action_make_rival = {
 			NOT = { has_valid_civic = civic_inwards_perfection }
 		}
 		custom_tooltip = {
+			fail_text = "$civic_peacekeepers$"
 			NOT = { has_valid_civic = civic_peacekeepers }
 		}
 		custom_tooltip = {
