@@ -3,6 +3,7 @@
 @rural_district_ai_coefficient = 0.75
 
 district_generator = {
+	shared_capacity_modifier = district_generator
 	expansion_planner = yes
 	base_buildtime = 240
 	overlay_icon = GFX_district_energy
@@ -55,6 +56,7 @@ district_generator = {
 		district_geothermal
 		district_nexus_1
 		district_hive_1
+		district_ark_generator
 	}
 
 	resources = {
@@ -138,31 +140,6 @@ district_generator = {
 		}
 	}
 
-	#triggered_desc = {		#Steam: Vanilla doesn't use triggered desc on districts anymore
-	#	trigger = {
-	#		exists = owner
-	#		owner = { is_gestalt = yes }
-	#	}
-	#	text = job_technician_drone_effect_desc
-	#}
-	#triggered_desc = {
-	#	trigger = {
-	#		exists = owner
-	#		owner = {
-	#			is_gestalt = no
-	#			is_fallen_empire_spiritualist = no
-	#		}
-	#	}
-	#	text = job_technician_effect_desc
-	#}
-	#triggered_desc = {
-	#	trigger = {
-	#		exists = owner
-	#		owner = { is_fallen_empire_spiritualist = yes }
-	#	}
-	#	text = job_fe_acolyte_generator_effect_desc
-	#}
-
 	inline_script = {	#Steam: Vanilla Imported
 		script = districts/district_triggered_name_generator
 	}
@@ -174,11 +151,17 @@ district_generator = {
 	prerequisites = {
 		tech_power_plant_1
 	}
-	
+
+	show_tech_unlock_if = {
+		is_nomadic = no
+		is_wilderness_empire = no
+	}
+
 	ai_weight_coefficient = @rural_district_ai_coefficient
 }
 
 district_mining = {
+	shared_capacity_modifier = district_mining
 	expansion_planner = yes
 	base_buildtime = 240
 	overlay_icon = GFX_district_minerals
@@ -245,6 +228,8 @@ district_mining = {
 		district_nexus_2
 		district_hive_2
 		district_melting
+		district_ark_military
+		district_ark_forever_cruise
 	}
 
 
@@ -266,15 +251,14 @@ district_mining = {
 			energy = 0.25									# Modded
 		}
 	}
+	inline_script = {
+		script = jobs/miners_add
+		AMOUNT = @base_rural_district_jobs
+	}
 
 	planet_modifier = {
 		planet_housing_add = 200
 	}
-	
-	#inline_script = {		#Do later
-	#	script = jobs/miners_add
-	#	AMOUNT = @base_rural_district_jobs
-	#}
 
 	triggered_planet_modifier = {
 		potential = {
@@ -414,43 +398,6 @@ district_mining = {
 		}
 	}
 
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = { is_tankbound_empire = yes }
-		}
-		modifier = {
-			job_miner_automated_workforce_mult = 1.0
-			job_production_overseer_add = 100
-		}
-	}
-
-	#triggered_desc = {		#Steam: Vanilla doesn't use triggered desc on districts anymore
-	#	trigger = {
-	#		exists = owner
-	#		owner = { is_gestalt = yes }
-	#	}
-	#	text = job_mining_drone_effect_desc
-	#}
-	#triggered_desc = {
-	#	trigger = {
-	#		exists = owner
-	#		owner = {
-	#			is_gestalt = no
-	#			is_fallen_empire_spiritualist = no
-	#		}
-	#	}
-	#	text = job_miner_effect_desc
-	#}
-
-	#triggered_desc = {
-	#	trigger = {
-	#		exists = owner
-	#		owner = { is_fallen_empire_spiritualist = yes }
-	#	}
-	#	text = job_fe_acolyte_mine_effect_desc
-	#}
-
 	inline_script = {	#Steam: Vanilla Imported
 		script = districts/district_triggered_name_mining
 	}
@@ -462,11 +409,17 @@ district_mining = {
 	prerequisites = {
 		tech_mechanized_mining
 	}
-	
+
+	show_tech_unlock_if = {
+		is_nomadic = no
+		is_wilderness_empire = no
+	}
+
 	ai_weight_coefficient = @rural_district_ai_coefficient
 }
 
 district_farming = {
+	shared_capacity_modifier = district_farming
 	expansion_planner = yes
 	base_buildtime = 240
 	overlay_icon = GFX_district_food
@@ -527,6 +480,7 @@ district_farming = {
 		district_orchard_forests
 		district_nexus_3
 		district_hive_3
+		district_ark_basic
 	}
 
 	resources = {
@@ -677,17 +631,6 @@ district_farming = {
 		}
 	}
 
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = { is_tankbound_empire = yes }
-		}
-		modifier = {
-			job_farmer_automated_workforce_mult = 1.0
-			job_production_overseer_add = 100
-		}
-	}
-
 	inline_script = {
 		script = districts/district_triggered_name_farming
 	}
@@ -698,6 +641,11 @@ district_farming = {
 
 	prerequisites = {
 		tech_industrial_farming
+	}
+
+	show_tech_unlock_if = {
+		is_nomadic = no
+		is_wilderness_empire = no
 	}
 
 	destroy_trigger = {

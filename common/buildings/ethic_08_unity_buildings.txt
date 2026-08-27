@@ -328,8 +328,10 @@ building_citadel_of_faith = {
 
 	potential = {
 		exists = owner
-		NOT = { has_modifier = slave_colony }
-		NOT = { has_modifier = penal_colony }
+		NOR = { 
+			has_modifier = slave_colony 
+			has_modifier = penal_colony 
+		}
 		owner = {
 			OR = {
 				is_spiritualist = yes
@@ -363,28 +365,42 @@ building_citadel_of_faith = {
 
 	resources = {
 		category = planet_buildings
-		cost = {
-			trigger = {
-				has_ringworld_output_boost = no
-			}
-			minerals = @b2_minerals
-			rare_crystals = @b2_rare_cost
-		}
-		cost = {
-			trigger = {
-				has_ringworld_output_boost = yes
-			}
-			minerals = 1200
-			rare_crystals = 375
-		}
-		upkeep = {
-			trigger = {
-				has_ringworld_output_boost = no
-			}
-			energy = @b2_upkeep
-			rare_crystals = @b2_rare_upkeep
-		}
-		upkeep = {
+        inline_script = {
+            script = buildings/nomadic_cost_switcher_with_additional_trigger
+            TRIGGER = "has_ringworld_output_boost = no"
+            REGULAR_RESOURCE = minerals
+            NOMADIC_RESOURCE = rare_crystals
+            COST = @b2_minerals
+            NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
+        }
+        cost = {
+            trigger = {
+                has_ringworld_output_boost = no
+            }
+        	rare_crystals = @b2_rare_cost
+        }
+        inline_script = {
+        	script = buildings/nomadic_cost_switcher_with_additional_trigger
+        	TRIGGER = "has_ringworld_output_boost = yes"
+            REGULAR_RESOURCE = minerals
+            NOMADIC_RESOURCE = rare_crystals
+            COST = 1200
+            NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
+        }
+        cost = {
+            trigger = {
+                has_ringworld_output_boost = yes
+            }
+            rare_crystals = 375
+        }
+        upkeep = {
+            trigger = {
+                has_ringworld_output_boost = no
+            }
+            energy = @b2_upkeep
+            rare_crystals = @b2_rare_upkeep
+        }
+        upkeep = {
 			trigger = {
 				has_ringworld_output_boost = yes
 			}
@@ -394,14 +410,14 @@ building_citadel_of_faith = {
 	}
 	
 	planet_modifier = {
-		planet_bureaucrats_unity_produces_add = 3
+		planet_bureaucrats_unity_produces_add = 1
 	}
 
 	triggered_planet_modifier = {
 		potential = {
 			has_ringworld_output_boost = yes
 		}
-		planet_bureaucrats_unity_produces_add = 1
+		planet_bureaucrats_unity_produces_add = 0.5
 	}
 
 	triggered_planet_modifier = {
@@ -411,7 +427,7 @@ building_citadel_of_faith = {
 				is_gestalt = no
 			}
 		}
-		planet_bureaucrats_consumer_goods_upkeep_add = 3
+		planet_bureaucrats_consumer_goods_upkeep_add = 1
 	}
 	triggered_planet_modifier = {
 		potential = {
@@ -420,18 +436,18 @@ building_citadel_of_faith = {
 				is_machine_empire = yes
 			}
 		}
-		planet_bureaucrats_energy_upkeep_add = 6
+		planet_bureaucrats_energy_upkeep_add = 4
 	}
 	triggered_planet_modifier = {
 		potential = {
 			exists = owner
 			owner = {
 				is_hive_empire = yes
-				is_lithoid_empire = no
+				is_lithoid_or_infernal_empire = no
 			}
 		}
-		planet_bureaucrats_food_upkeep_add = 3
-		planet_bureaucrats_energy_upkeep_add = 3
+		planet_bureaucrats_food_upkeep_add = 2
+		planet_bureaucrats_energy_upkeep_add = 2
 	}
 	triggered_planet_modifier = {
 		potential = {
@@ -441,20 +457,20 @@ building_citadel_of_faith = {
 				is_lithoid_empire = yes
 			}
 		}
-		planet_bureaucrats_minerals_upkeep_add = 3
+		planet_bureaucrats_minerals_upkeep_add = 2
+		planet_bureaucrats_energy_upkeep_add = 2
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_hive_empire = yes
+				is_infernal_empire = yes
+			}
+		}
+		planet_bureaucrats_alloys_upkeep_add = 0.75
 		planet_bureaucrats_energy_upkeep_add = 3
 	}
-	
-	# Add bonus High Priest OR Tech Hierophant Jobs
-	# triggered_planet_modifier = {
-	# 	potential = {
-	# 		exists = owner
-	# 		owner = {
-	# 			NOT = { has_origin = origin_cybernetic_creed }
-	# 		}
-	# 	}
-	# 	job_politician_add = 200			# Enriad - high_priest are politician in 4.0, moved to next inline_script
-	# }
 
 	inline_script = {
 		script = "jobs/politician_add"
@@ -465,115 +481,17 @@ building_citadel_of_faith = {
 		potential = {
 			exists = owner
 			owner = {
-				OR = {
-					has_civic = civic_imperial_cult
-					has_civic = civic_divine_council
-					has_civic = civic_spiritual_democracy
-					has_civic = civic_exalted_priesthood
-				}
+				is_theocracy = yes
 			}
 		}
 		modifier = {
 			job_politician_add = 100		# Enriad - in one building should be only one inline_script
 		}
 	}
-	
-	# triggered_desc = {					# Enriad - Marked for deletion, moved to inline_scripts "jobs/politician_add" and "jobs/politician_add_EaC"
-	# 	trigger = {
-	# 		exists = owner
-	# 		owner = {
-	# 			NOT = { has_origin = origin_cybernetic_creed }
-	# 		}
-	# 	}
-	# 	text = job_high_priest_effect_desc
-	# }
-	# triggered_planet_modifier = {			# Enriad - high_priest are politician in 4.0, moved to inline_script
-	# 	potential = {
-	# 		exists = owner
-	# 		owner = {
-	# 			has_origin = origin_cybernetic_creed
-	# 		}
-	# 	}
-	# 	job_technophant_add = 200
-	# }
-	# triggered_desc = {					# Enriad - Marked for deletion, moved to inline_scripts "jobs/politician_add" and "jobs/politician_add_EaC"
-	# 	trigger = {
-	# 		exists = owner
-	# 		owner = {
-	# 			has_origin = origin_cybernetic_creed
-	# 		}
-	# 	}
-	# 	text = job_technophant_effect_desc
-	# }
 
-	# triggered_planet_modifier = {			# Enriad - Templars moved to be a reskin of Soldiers, marked for deletion
-	# 	potential = {
-	# 		exists = owner
-	# 		owner = { has_civic = civic_defenders_faith }
-	# 	}
-	# 	modifier = {
-	# 		job_bureaucrat_add = -200
-	# 		job_templar_add = 200
-	# 		# pop_ethic_spiritualist_attraction_mult = 0.20	# Added to priest job
-	# 	}
-	# }
-
-	# triggered_planet_modifier = {			# Enriad - disabled bc transcend is civilian now
-	# 	potential = {
-	# 		exists = owner
-	# 		owner = { has_civic = civic_spiritual_seekers }
-	# 	}
-	# 	modifier = {
-	# 		job_transcend_add = 100
-	# 	}
-	# }
-
-	#country_modifier = {
-	#	country_official_cap_add = 1 #No limit in 4.0 makes it kinda OP - Szatan2000
-	#}
-
-	# triggered_desc = {		# Enriad - Marked for deletion, moved to inline_scripts "jobs/politician_add" and "jobs/politician_add_EaC"
-	# 	trigger = {
-	# 		exists = owner
-	# 		owner = {
-	# 			OR = {
-	# 				has_civic = civic_imperial_cult
-	# 				has_civic = civic_divine_council
-	# 				has_civic = civic_spiritual_democracy
-	# 				has_civic = civic_exalted_priesthood
-	# 			}
-	# 		}
-	# 	}
-	# 	text = job_high_priest_effect_desc
-	# }
-
-	# triggered_desc = {			# Enriad - disabled bc transcend is civilian now
-	# 	trigger = {
-	# 		exists = owner
-	# 		owner = {
-	# 			has_civic = civic_spiritual_seekers
-	# 		}
-	# 	}
-	# 	text = job_transcend_effect_desc
-	# }
-
-	# triggered_desc = {						# Enriad - Templars moved to be a reskin of Soldiers, marked for deletion
-	# 	trigger = {
-	# 		exists = owner
-	# 		owner = {
-	# 			has_civic = civic_defenders_faith
-	# 		}
-	# 	}
-	# 	text = job_templar_effect_desc
-	# }
-	
 	prerequisites = {
 		"tech_transcendent_faith"
 	}
-
-	#triggered_desc = {
-	#	text = job_priest_effect_desc
-	#}
 }
 
 # Servitors
