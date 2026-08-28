@@ -1,5 +1,5 @@
-#Lets have it so the UNE spawned by player CoM has the same Ethics and Civics (roll credits) as the prescripted one in empire selection
 
+# Sol System (Commonwealth of Man SP)
 com_sol_system = {
 	name = "NAME_Sol"
 	class = "sc_g"
@@ -20,8 +20,11 @@ com_sol_system = {
 		base = 0
 		modifier = {
 			any_playable_country = {
-				has_country_flag = human_2
 				is_human_species = yes
+				OR = {
+					has_country_flag = human_2
+					has_country_flag = human_3
+				}
 			}
 			NOR = {
 				any_country = { has_country_flag = human_1 }
@@ -106,27 +109,32 @@ com_sol_system = {
 
 			prevent_anomaly = yes
 			random_country = {
-				limit = { has_country_flag = human_2 }
-				set_country_flag = parent_system_spawned
-				save_event_target_as = commonwealth
+				limit = {
+					OR = {
+						has_country_flag = human_2
+						has_country_flag = human_3
+					}
+				}
 				owner_species = {
 					save_event_target_as = human_species
-					set_species_homeworld = prevprev
 				}
+			}
+			modify_species = {
+				species = event_target:human_species
+				ideal_planet_class = pc_continental
+				change_scoped_species = no
+				effect = { save_event_target_as = UNE_human_species }
 			}
 			create_country = {
 				name = "NAME_United_Nations_of_Earth"
 				adjective = "PRESCRIPTED_adjective_humans1"
 				authority = "auth_democratic"
-
-
 				civics = {
 					civic = civic_welfare_state
 					civic = civic_free_haven
 					civic = civic_research_cooperatives	
 				}
-
-				species = event_target:human_species
+				species = event_target:UNE_human_species
 				name_list = "HUMAN1"
 				ship_prefix = "UNS"
 				ethos = {
@@ -165,7 +173,11 @@ com_sol_system = {
 					}
 					if = {
 						limit = {
-							event_target:commonwealth = {
+							any_country = {
+								OR = {
+									has_country_flag = human_2
+									has_country_flag = human_3
+								}
 								has_origin = origin_necrophage
 							}
 						}
@@ -174,7 +186,11 @@ com_sol_system = {
 					}
 					if = {
 						limit = {
-							event_target:commonwealth = {
+							any_country = {
+								OR = {
+									has_country_flag = human_2
+									has_country_flag = human_3
+								}
 								has_origin = origin_clone_army
 							}
 						}
@@ -188,17 +204,35 @@ com_sol_system = {
 			generate_earth_deposits_and_blockers = yes
 			set_earth_entity = yes
 			clear_blockers = yes
-			generate_start_buildings_and_districts = yes
-			generate_start_pops = yes
-			generate_lost_colony_parent_bonus = yes
+			colony = {
+				generate_start_buildings_and_districts = yes
+				generate_start_pops = yes
+				generate_lost_colony_parent_bonus = yes
+			}
 			event_target:npc_UNoE = {
 				set_country_flag = human_1
 				set_country_flag = lost_colony_parent
-				set_country_flag = special_intro_for@event_target:commonwealth
-				set_country_flag = lost_colony_parent_of@event_target:commonwealth
 				create_starting_leaders = yes
 				country_event = { id = game_start.9 }
 				country_event = { id = game_start.33 days = 1 } # needs delay for system ownership to settle
+			}
+			every_country = {
+				limit = {
+					OR = {
+						has_country_flag = human_2
+						has_country_flag = human_3
+					}
+				}
+				save_event_target_as = current_lost_colony
+				set_country_flag = parent_system_spawned
+				set_country_flag = special_intro_for@event_target:npc_UNoE
+				owner_species = {
+					set_species_homeworld = prevprev
+				}
+				event_target:npc_UNoE = {
+					set_country_flag = special_intro_for@event_target:current_lost_colony
+					set_country_flag = lost_colony_parent_of@event_target:current_lost_colony
+				}
 			}
 			set_name = "NAME_Earth"
 		}
@@ -275,6 +309,7 @@ com_sol_system = {
 		orbit_angle = -160
 		size = 35
 		has_ring = no
+		flags = { planet_jupiter }
 		entity = "gas_giant_jupiter_entity"
 		change_orbit = 6
 
@@ -285,6 +320,7 @@ com_sol_system = {
 			orbit_distance = 10
 			orbit_angle = 110
 			has_ring = no
+			flags = { moon_io }
 		}
 		moon = {
 			name = "NAME_Europa"
@@ -293,6 +329,7 @@ com_sol_system = {
 			orbit_distance = 2.5
 			orbit_angle = 190
 			has_ring = no
+			flags = { moon_europa }
 		}
 		moon = {
 			name = "NAME_Ganymede"
@@ -301,6 +338,7 @@ com_sol_system = {
 			orbit_distance = 2.5
 			orbit_angle = 80
 			has_ring = no
+			flags = { moon_ganymede }
 		}
 		moon = {
 			name = "NAME_Callisto"
@@ -309,6 +347,7 @@ com_sol_system = {
 			orbit_distance = 2.5
 			orbit_angle = -155
 			has_ring = no
+			flags = { moon_callisto }
 		}
 	}
 
