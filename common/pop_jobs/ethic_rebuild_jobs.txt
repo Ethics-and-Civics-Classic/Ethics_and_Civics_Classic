@@ -236,7 +236,6 @@ bio_trophy = {
 	swappable_data = {
 		default = {
 			building_icon = building_organic_sanctuary
-			icon = bio_trophy
 		}
 		swap_type = {
 			trigger = {
@@ -273,37 +272,21 @@ bio_trophy = {
 			is_pop_category = bio_trophy
 			is_pop_category = bio_trophy_unemployment
 		}
-		planet = { NOT = { is_planet_class = pc_cosmogenesis_world } }
+		colony? = { NOT = { is_planet_class = pc_cosmogenesis_world } }
+		owner? = { 
+			is_hospitality_servitor_empire = no 
+			is_hospitality_machine_cult_machine_empire = no
+		}
 	}
 
 	resources = {
 		category = planet_bio_trophies
 		produces = {
-			trigger = {
-				#has_citizenship_type = { type = citizenship_organic_trophy country = owner }	#Cog Note - for some reason I can't scope pop here
-				OWNER = {
-					OR = {
-						has_valid_civic = civic_machine_servitor		#Cog Note - This will ensure only bio_trophies are getting unity
-						has_valid_civic = civic_machine_cult_machine	#Cog Note - This will ensure only bio_trophies are getting unity
-					}
-				}
-			}
-			unity = 2
+			unity = 1
 		}
 	}
 	
-	triggered_planet_modifier = {
-		potential = {
-			planet = {
-				has_owner = yes
-				owner = {
-					OR = {
-						has_valid_civic = civic_machine_servitor
-            			has_valid_civic = civic_machine_cult_machine
-					}
-				}
-			}
-		}
+	planet_modifier = {
 		pop_cat_complex_drone_bonus_workforce_mult = 0.01
 	}
 
@@ -355,7 +338,10 @@ bio_trophy_unemployment = {
 	possible = {
 		has_citizenship_type = { type = citizenship_organic_trophy country = owner }
 		colony? = { NOT = { is_planet_class = pc_cosmogenesis_world } }
-		owner? = { is_hospitality_servitor_empire = no }
+		owner? = { 
+			is_hospitality_servitor_empire = no 
+			is_hospitality_machine_cult_machine_empire = no
+		}
 	}
 
 	resources = {
@@ -432,7 +418,7 @@ bio_trophy_unprocessing = {
 		#		has_valid_civic = civic_machine_cult_machine
 		#	}
 		#}
-		planet = { NOT = { is_planet_class = pc_cosmogenesis_world } }
+		colony? = { NOT = { is_planet_class = pc_cosmogenesis_world } }
 	}
 }
 
@@ -589,8 +575,7 @@ civilian = {
 		# Primitive Enthusiasts
 		produces = {
 			trigger = {
-				exists = owner
-				owner = { has_valid_civic = civic_primitive_enthusiasts } 
+				owner? = { has_valid_civic = civic_primitive_enthusiasts } 
 			}
 			food = 1
 		}
@@ -605,22 +590,20 @@ civilian = {
 		# Spiritual Seekers
 		produces = {
 			trigger = {
-				exists = owner
-				owner = {
+				owner? = {
 					is_spiritual_seeker_empire = yes
 				}
 			}
-			unity = 0.75
-			society_research = 0.5
-			physics_research = 0.5
-			engineering_research = 0.25
+			unity = 0.3
+			society_research = 0.1
+			physics_research = 0.1
+			engineering_research = 0.05
 		}
 		inline_script = "jobs/ethic_job_resources"
 		
 		upkeep = {
 			trigger = {
-				exists = owner
-				owner = {
+				owner? = {
 					is_spiritual_seeker_empire = yes
 				}
 			}
@@ -642,11 +625,18 @@ civilian = {
 		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
 	}
 
+	# Paragon Origin
+	triggered_country_modifier = {
+		potential = {
+			owner? = { has_modifier = paragon_origin_strengthened_government_iii }
+		}
+		country_edict_fund_add = 1
+	}
+
 	# Spiritual Seekers
 	triggered_planet_modifier = {
 		potential = {
-			exists = owner
-			owner = {
+			owner? = {
 				is_spiritual_seeker_empire = yes
 			}
 		}
@@ -654,53 +644,11 @@ civilian = {
     }
 	triggered_country_modifier = {
 		potential = {
-			exists = owner
-			owner = {
+			owner? = {
 				is_spiritual_seeker_empire = yes
 			}
 		}
-		country_edict_fund_add = 1.25
-	}
-
-	# Paragon Origin
-	triggered_country_modifier = {
-		potential = {
-			exists = owner
-			owner = { has_modifier = paragon_origin_strengthened_government_iii }
-		}
-		country_edict_fund_add = 1
-	}
-
-	# Computation Core
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = {
-				has_policy_flag = computation_core_production
-			}
-		}
-		foundry_jobs_bonus_workforce_mult = 0.005
-		artisan_jobs_bonus_workforce_mult = 0.005
-	}
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = {
-				has_policy_flag = computation_core_stability
-			}
-		}
-		bureaucrat_jobs_bonus_workforce_mult = 0.005
-	}
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = {
-				has_policy_flag = computation_core_research
-			}
-		}
-		physicist_jobs_bonus_workforce_mult = 0.005
-		biologist_jobs_bonus_workforce_mult = 0.005
-		engineer_jobs_bonus_workforce_mult = 0.005
+		country_edict_fund_add = 0.75
 	}
 
 	inline_script = "jobs/ethic_job_modifiers"
@@ -741,7 +689,7 @@ uav_dispatcher = {
 				exists = owner
 				owner = { has_active_tradition = tr_domination_judgment_corps}
 			}
-			unity = 1
+			unity = 0.5
 		}
 		upkeep = {
 			trigger = {
@@ -1041,14 +989,14 @@ soldier = {
 					has_valid_civic = civic_martial_brotherhood
 				}
 			}
-			unity = 2
+			unity = 0.5
 		}
 		produces = {
 			trigger = {
 				soldier_is_necromancer = yes
 			}
-			physics_research = 2
-			society_research = 2
+			society_research = 0.5
+			engineering_research = 0.5
 		}
 		produces = {
 			trigger = {
@@ -1060,7 +1008,7 @@ soldier = {
 			trigger = {
 				soldier_is_templar = yes
 			}
-			unity = 2
+			unity = 0.5
 		}
 		produces = {
 			trigger = {
@@ -1068,132 +1016,26 @@ soldier = {
 				exists = planet
 				planet = { has_modifier = witch_hunt }
 			}
-			unity = 2
-		}
-		upkeep = {
-			energy = 0.5
-			minerals = 0.5
+			unity = 1
 		}
 		upkeep = {
 			trigger = {
 				soldier_is_necromancer = yes
 			}
-			consumer_goods = 1
+			consumer_goods = 0.5
 		}
 		upkeep = {
 			trigger = {
 				soldier_is_mercenary = yes
 			}
-			consumer_goods = 0.5
+			consumer_goods = 0.25
+		}
+		upkeep = {
+			alloys = 1
 		}
 	}
 
-	triggered_country_modifier = {
-		potential = {
-			exists = planet
-			planet = {
-				exists = owner
-				owner = { has_technology = "tech_ground_defense_planning" }
-			}
-		}
-		modifier = {
-			country_naval_cap_add = 2
-		}
-	}
-
-	triggered_country_modifier = {
-		potential = {
-			soldier_is_mercenary = yes
-		}
-		modifier = {
-			country_naval_cap_add = 1
-		}
-	}
-
-	triggered_country_modifier = {
-		potential = {
-			exists = owner
-			owner = {
-				any_owned_leader = {
-					is_councilor = yes
-					has_trait = leader_trait_bellicose
-				}
-			}
-		}
-
-		modifier = {
-			country_naval_cap_add = 2
-		}
-		mult = value:bellicose_naval_cap
-	}
-
-	# pop_group_modifier = {	# No Longer Used in Stellaris 4.0
-	#	pop_defense_armies_add = 3
-	#}
-
-	planet_modifier = {
-		planet_stability_add = 0.25
-		planet_defense_armies_add = 3
-	}
-
-	# triggered_pop_group_modifier = {	# No Longer Used in Stellaris 4.0
-	#	potential = {
-	#		exists = owner
-	#		owner = {
-	#			any_owned_leader = {
-	#				is_councilor = yes
-	#				has_trait = leader_trait_bellicose
-	#			}
-	#		}
-	#	}
-	#
-	#	modifier = {
-	#		pop_defense_armies_add = 1
-	#	}
-	#	mult = value:bellicose_naval_cap
-	#}
-	
-	triggered_planet_modifier = {
-		modifier = {
-			planet_stability_add = 1
-		}
-		mult = planet.modifier:job_soldier_stability_add
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			planet = {
-				exists = owner
-				owner = { has_tradition = "tr_modularity_3" }
-			}
-		}
-		modifier = {
-			planet_stability_add = 0.25
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			soldier_is_templar = yes
-			exists = planet
-			planet = { has_modifier = witch_hunt }
-		}
-		modifier = {
-			planet_stability_add = 2
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			has_councilor = { COUNCILOR = "councilor_private_military_companies" }
-		}
-
-		modifier = {
-			planet_stability_add = @councilor_private_military_companies_stability
-		}
-
-		mult = value:councilor_level|TYPE|councilor_private_military_companies|
-	}
+	inline_script = "output/soldier_triggered_modifiers"
 
 	possible_pre_triggers = {
 		has_owner = yes
@@ -1205,54 +1047,13 @@ soldier = {
 	possible = {
 		soldier_job_check_trigger = yes
 		owner = { is_gestalt = no }
-		if = {
-			limit = {
-				AND = {
-					soldier_is_templar = yes
-					OR = {
-						soldier_is_mercenary = yes
-						soldier_is_pirate = yes
-					}
-				}
-			}
-			OR = {
-				has_ethic = ethic_capitalism
-				has_ethic = ethic_spiritualist
-				has_ethic = ethic_militarist
-			}
-		}
-		else_if = {
-			limit = {
-				soldier_is_templar = yes
-			}
-			OR = {
-				has_ethic = ethic_spiritualist
-				has_ethic = ethic_militarist
-			}
-		}
-		else_if = {
-			limit = {
-				OR = {
-					soldier_is_mercenary = yes
-					soldier_is_pirate = yes
-				}
-			}
-			OR = {
-				has_ethic = ethic_capitalism
-				has_ethic = ethic_militarist
-			}
-		}
-		else = {
-			NOT = { has_ethic = ethic_pacifist }
-		}
 	}
 
 	weight = {
 		weight = @soldier_job_weight
 		modifier = {
 			factor = 10
-			exists = planet
-			planet = {
+			colony? = {
 				exists = leader
 				leader = {
 					leader_class = commander
@@ -1313,8 +1114,14 @@ soldier = {
 			factor = 5
 			has_trait = trait_cyborg_creed_of_war
 		}
+        modifier = {
+            factor = 1.5 										# Modded
+             OR = {
+                has_trait = trait_robot_integrated_weaponry		# Modded
+                has_trait = trait_cyborg_integrated_weaponry	# Modded
+            }
+        }
 	}
-
 }
 
 planetary_guard = {
@@ -1337,12 +1144,11 @@ planetary_guard = {
 		category = planet_soldiers
 		produces = {
 			trigger = {
-				exists = owner
-				owner = {
+				owner? = {
 					has_valid_civic = civic_martial_brotherhood
 				}
 			}
-			unity = 2
+			unity = 1
 		}
 		upkeep = {
 			energy = 0.5
@@ -1356,7 +1162,7 @@ planetary_guard = {
 
 	triggered_planet_modifier = {
 		modifier = {
-			planet_stability_add = 1
+			planet_stability_add = 0.15
 		}
 		mult = planet.modifier:job_soldier_stability_add
 	}
@@ -1442,8 +1248,14 @@ planetary_guard = {
 			factor = 2
 			has_trait = trait_lithoid
 		}
+        modifier = {
+            factor = 1.5 										# Modded
+             OR = {
+                has_trait = trait_robot_integrated_weaponry		# Modded
+                has_trait = trait_cyborg_integrated_weaponry	# Modded
+            }
+        }
 	}
-	
 }
 
 slave_master = {	#Added by Caste System
@@ -4811,7 +4623,7 @@ criminal = {
 			consumer_goods = 1
 		}
 		produces = {
-			trade = -5
+			trade = -2
 		}
 		produces = {
 			trigger = {
@@ -4821,7 +4633,7 @@ criminal = {
 				}
 				planet = { has_modifier = crime_lord_deal }
 			}
-			trade = 7
+			trade = 4
 		}
 		produces = {
 			trigger = {
@@ -4830,18 +4642,17 @@ criminal = {
 					has_civic = civic_pirate_mercenary_enclave
 				}
 			}
-			trade = 7
+			trade = 4
 		}
 	}
 
 	planet_modifier = {
-		#planet_jobs_trade_produces_add = -5
 		branch_office_criminal_syndicate_value_add = 7.5
 	}
 
 	triggered_planet_modifier = {
 		potential = {
-			planet = {
+			colony = {
 				has_branch_office = yes
 				branch_office_owner = {
 					has_councilor = { COUNCILOR = "councilor_criminal_heritage" }
@@ -4853,74 +4664,6 @@ criminal = {
 		mult = value:pop_branch_office_councilor_level|TYPE|councilor_criminal_heritage|
 	}
 
-	#triggered_planet_modifier = {	# No Longer Used in Stellaris 4.0
-	#	potential = {
-	#		#planet = {
-	#		#	owner = {
-	#		#		OR = {
-	#		#			has_valid_civic = civic_military_dictatorship_corporate
-	#		#			has_valid_civic = civic_criminal_heritage
-	#		#		}
-	#		#	}
-	#		#	solar_system = {
-	#		#		# any_ship_in_system = {
-	#		#		#	is_ship_size = enclave_pirate_mercenary_station
-	#		#		#	distance = {
-	#		#		#		source = prevprev
-	#		#		#		same_solar_system = yes
-	#		#		#	}
-	#		#		# }
-	#		#		has_star_flag = EaC_civic_mechanic_events.pirate_enclave.star_flag # More efficient than commented section
-	#		#	}
-	#		#}
-	#		planet = {
-	#			if = {
-	#				limit = { OWNER = { has_policy_flag = economic_policy_criminal } }
-	#				has_modifier = crime_lord_deal
-	#			}
-	#			else = {
-	#				owner = {
-	#					OR = {
-	#						has_valid_civic = civic_military_dictatorship_corporate
-	#						has_valid_civic = civic_criminal_heritage
-	#					}
-	#				}
-	#				solar_system = {
-	#					has_star_flag = EaC_civic_mechanic_events.pirate_enclave.star_flag
-	#					has_star_flag = EaC_civic_mechanic_events.pirate_enclave.offworld_trading_company.star_flag
-	#				}
-	#			}
-	#		}
-	#	}
-	#	planet_jobs_trade_produces_add = 7
-	#}
-	
-	#triggered_planet_modifier = {
-	#	potential = {
-	#		OWNER = { has_policy_flag = economic_policy_criminal }
-	#		planet = { has_modifier = crime_lord_deal }
-	#	}
-	#	planet_jobs_trade_produces_add = 7
-	#}
-	#
-	#triggered_planet_modifier = {
-	#	potential = {
-	#		owner = {
-	#			OR = {
-	#				has_valid_civic = civic_military_dictatorship_corporate
-	#				has_valid_civic = civic_criminal_heritage
-	#			}
-	#		}
-	#		solar_system = {
-	#			OR = {
-	#				has_star_flag = EaC_civic_mechanic_events.pirate_enclave.star_flag
-	#				has_star_flag = EaC_civic_mechanic_events.pirate_enclave.offworld_trading_company.star_flag
-	#			}
-	#		}
-	#	}
-	#	planet_jobs_trade_produces_add = 7
-	#}
-	
 	weight = {
 		weight = @criminal_job_weight
 	}
@@ -4957,10 +4700,10 @@ general_striker = {
 			has_living_standard = { country = owner type = living_standard_stratified }
 			has_living_standard = { country = owner type = living_standard_subsistence }
 		}
-		OR = {
-			has_ethic = ethic_socialism
-			has_ethic = ethic_egalitarian
-		}
+		#OR = {	 # Was making them not spawn at all if attraction was low. --Sage
+		#	has_ethic = ethic_socialism
+		#	has_ethic = ethic_egalitarian
+		#}
 	}
 
 	resources = {
@@ -4995,6 +4738,13 @@ general_striker = {
 	weight = {
 		# weight = @criminal_job_weight
 		weight = 1000
+		modifier = {
+			factor = 2
+			OR = {	 # Made it a weight instead. --Sage
+				has_ethic = ethic_socialism
+				has_ethic = ethic_egalitarian
+			}
+		}
 	}
 }
 
@@ -5027,10 +4777,10 @@ underground_railroad_conductor = {
 		#	has_living_standard = { country = owner type = living_standard_stratified }
 		#	has_living_standard = { country = owner type = living_standard_subsistence }
 		#}
-		OR = {
-			has_ethic = ethic_egalitarian
+		#OR = {	# Was making them not spawn often enough. --Sage
+			#has_ethic = ethic_egalitarian
 			is_enslaved = yes
-		}
+		#}
 	}
 
 	resources = {
@@ -5063,6 +4813,13 @@ underground_railroad_conductor = {
 	weight = {
 		# weight = @criminal_job_weight
 		weight = 1000
+		modifier = {
+			factor = 2
+			OR = {	 # Made it a weight instead. --Sage
+				has_ethic = ethic_xenophile
+				has_ethic = ethic_egalitarian
+			}
+		}
 	}
 }
 
