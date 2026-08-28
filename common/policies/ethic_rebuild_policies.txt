@@ -163,7 +163,6 @@ war_philosophy = {
 		valid = {
 			NOR = {
 				is_fanatic_militarist = yes
-				has_ethic = "ethic_fanatic_militarist"
 				has_valid_civic = "civic_fanatic_purifiers"
 				has_valid_civic = "civic_hive_devouring_swarm"
 				has_valid_civic = "civic_machine_terminator"
@@ -214,6 +213,7 @@ diplomatic_stance = {
 				is_country_type = PrimPlayer_ethic_fanatic_nation
 				is_country_type = PrimPlayer_ethic_fanatic_nation_nomadic
 			}
+			is_nomadic = no # Gonna stick with vanilla on this one unless players want it back. --Sage
 		}
 
 		valid = {
@@ -2706,6 +2706,7 @@ economic_policy = {
 
 		modifier = {
 			empire_size_branch_office_mult = -0.50
+			planet_crime_mult = 0.05
 		}
 
 		ai_weight = {
@@ -2735,7 +2736,7 @@ economic_policy = {
 		}
 
 		modifier = {
-			country_consumer_goods_produces_mult = 0.15
+			country_consumer_goods_produces_mult = 0.25
 			country_alloys_produces_mult = -0.25
 		}
 
@@ -2791,7 +2792,7 @@ economic_policy = {
 
 		modifier = {
 			country_consumer_goods_produces_mult = -0.25
-			country_alloys_produces_mult = 0.15
+			country_alloys_produces_mult = 0.25
 		}
 
 		policy_flags = {
@@ -2944,7 +2945,7 @@ trade_policy = {
 		on_enabled = {
 			set_trade_conversions = {
 				trade = 0.5
-				unity = 0.25
+				unity = 0.125
 			}
 		}
 
@@ -2980,7 +2981,7 @@ trade_policy = {
 				trade = 0.50
 				energy = 0.15
 				consumer_goods = 0.15
-				unity = 0.15
+				unity = 0.075
 			}
 		}
 
@@ -3006,7 +3007,7 @@ trade_policy = {
 		on_enabled = {
 			set_trade_conversions = {
 				trade = 0.5
-				unity = 0.375
+				unity = 0.1875
 			}
 		}
 
@@ -3037,7 +3038,7 @@ trade_policy = {
 				energy = 0.20
 				minerals = 0.20
 				food = 0.20
-				unity = 0.15
+				unity = 0.075
 			}
 		}
 
@@ -3068,7 +3069,7 @@ trade_policy = {
 		on_enabled = {
 			set_trade_conversions = {
 				trade = 0.25
-				society_research = 0.15
+				society_research = 0.075
 				consumer_goods = 0.30
 				food = 0.30
 			}
@@ -3099,7 +3100,7 @@ trade_policy = {
 			set_trade_conversions = {
 				trade = 0.50
 				minerals = 0.30
-				alloys = 0.20
+				alloys = 0.15
 			}
 		}
 
@@ -3134,9 +3135,9 @@ trade_policy = {
 		on_enabled = {
 			set_trade_conversions = {
 				trade = 0.30
-				physics_research = 0.20
-				society_research = 0.20
-				engineering_research = 0.20
+				physics_research = 0.1
+				society_research = 0.1
+				engineering_research = 0.1
 			}
 		}
 
@@ -3481,9 +3482,12 @@ artificial_intelligence_policy = {
 robot_pop_policy = {
 
 	potential = {
-		NOR = {
-			is_gestalt = yes
-			is_individual_machine = yes
+		OR = {
+			NOR = {
+				has_ethic = ethic_gestalt_consciousness
+				is_individual_machine = yes
+			}
+			has_origin = origin_nomadic_purger
 		}
 	}
 
@@ -3491,15 +3495,22 @@ robot_pop_policy = {
 		name = "robot_pops_outlawed"
 
 		valid = {
-			NOR = {
-				is_materialist = yes
-				has_valid_civic = civic_machine_cult
-				has_valid_civic = civic_machine_cult_machine
-				has_origin = origin_synthetic_fertility
-				has_policy_flag = ai_full_rights
-				hidden_trigger = { has_origin = "origin_slavers" }
+			OR = {
+				has_origin = origin_nomadic_purger
+				AND = {
+					is_materialist = no
+					NOR = {
+						has_valid_civic = civic_machine_cult
+						has_valid_civic = civic_machine_cult_machine
+						has_origin = origin_synthetic_fertility
+						has_policy_flag = ai_full_rights
+					}
+					is_individual_machine = no
+				}
+				hidden_trigger = {
+					has_origin = origin_slavers
+				}
 			}
-			is_individual_machine = no
 		}
 
 		policy_flags = {
@@ -3521,20 +3532,12 @@ robot_pop_policy = {
 		ai_weight = {
 			factor = 1
 			modifier = {
-				factor = 0
-				is_materialist = yes
-			}
-			modifier = {
 				factor = 10
 				has_valid_ai_personality = yes
 				NOR = {
 					has_ai_personality_behaviour = robot_exploiter
 					has_ai_personality_behaviour = robot_liberator
 				}
-			}
-			modifier = {
-				factor = 5
-				has_ethic = "ethic_spiritualist"
 			}
 			modifier = {
 				factor = 10
@@ -3545,6 +3548,10 @@ robot_pop_policy = {
 
 	option = {
 		name = "robot_pops_allowed"
+
+		potential = {
+			NOT = { has_origin = origin_nomadic_purger }
+		}
 
 		policy_flags = {
 			robots_allowed
@@ -3574,7 +3581,11 @@ purge = {
 
 		valid = {
 			NOT = { has_ethic = ethic_gestalt_consciousness }
-			NOT = { has_valid_civic = "civic_fanatic_purifiers" }
+			NOR = {
+				has_valid_civic = "civic_fanatic_purifiers"
+				has_valid_civic = "civic_scorched_earth"
+				has_origin = origin_nomadic_purger
+			}
 		}
 
 		policy_flags = {
@@ -3589,22 +3600,29 @@ purge = {
 			purge_displacement_only
 		}
 
-		modifier = {}
+		modifier = {
+			refugee_attraction = -0.25
+		}
 
 		valid = {
-			custom_tooltip = {
-				text = civic_tooltip_not_xenophile
-				NOR = {
-					has_ethic = ethic_xenophile
-					has_ethic = ethic_fanatic_xenophile
+			is_xenophile = no
+			is_homicidal = no
+			NAND = {
+				has_origin = origin_nomadic_purger
+				overlord? = {
+					has_policy_flag = nomad_total_war_purge
 				}
 			}
 			NOT = { has_valid_civic = civic_anarchy_utopia }
-			is_homicidal = no
 		}
 
 		ai_weight = {
 			factor = 5
+			modifier = {
+				factor = 10
+				has_ethic = ethic_gestalt_consciousness
+				values_others = yes
+			}
 			modifier = {
 				factor = 0
 				has_valid_ai_personality = yes
@@ -3634,7 +3652,9 @@ purge = {
 		policy_flags = {
 			purge_allowed
 		}
-		modifier = {}
+		modifier = {
+			refugee_attraction = -0.90
+		}
 
 		valid = {
 			custom_tooltip = {
@@ -3649,23 +3669,20 @@ purge = {
 			NOT = { has_valid_civic = civic_anarchy_utopia }
 			OR = {
 				has_ethic = ethic_gestalt_consciousness
-				custom_tooltip = {
-					text = civic_tooltip_xenophobe
-					OR = {
-						has_ethic = ethic_xenophobe
-						has_ethic = ethic_fanatic_xenophobe
-					}
-				}
+				is_xenophobe = yes
 				has_crisis_perk = menp_undertaker	# Unlocked with Crisis Level 1
 				AND = {
 					custom_tooltip = {
 						text = civic_tooltip_not_xenophile
-						NOR = {
-							has_ethic = ethic_xenophile
-							has_ethic = ethic_fanatic_xenophile
-						}
+						is_xenophile = no
 					}
 					has_purity_imperfection_remediation_tradition = yes
+				}
+			}
+			NAND = {
+				has_origin = origin_nomadic_purger
+				overlord? = {
+					has_policy_flag = nomad_total_war_displace
 				}
 			}
 		}
@@ -3675,14 +3692,11 @@ purge = {
 			modifier = {
 				factor = 40
 				has_ethic = ethic_gestalt_consciousness
-				NOT = { has_valid_civic = civic_hive_empath }
+				values_others = no
 			}
 			modifier = {
 				factor = 0
-				OR = {
-					has_ethic = ethic_pacifist
-					has_ethic = ethic_fanatic_pacifist
-				}
+				is_pacifist = yes
 			}
 			modifier = {
 				factor = 0
@@ -3798,9 +3812,9 @@ pre_sapients = {
 
 	option = {
 		name = "pre_sapients_eat"
+		pre_sapient_purge = purge_processing
 
 		potential = {
-			host_has_dlc = "Utopia"
 			is_synthetic_empire = no
 			NOR = {
 				has_valid_civic = civic_fanatic_purifiers
@@ -3839,6 +3853,7 @@ pre_sapients = {
 
 	option = {
 		name = "pre_sapients_purge"
+		pre_sapient_purge = purge_normal
 
 		valid = {
 			NOR = {
@@ -3847,7 +3862,7 @@ pre_sapients = {
 				has_ethic = "ethic_fanatic_xenophile"
 				has_ethic = "ethic_green"
 				has_ethic = "ethic_fanatic_green"
-				has_valid_civic = civic_guided_sapience
+				is_guided_sapience_empire = yes
 				hidden_trigger = { has_origin = "origin_slavers" }
 			}
 		}
@@ -4025,8 +4040,6 @@ slavery = {
 
 		valid = {
 			NOR = {
-				has_valid_civic = civic_ruthless_competition
-				has_valid_civic = civic_slaver_guilds
 				AND = {
 					has_origin = origin_heirs_of_the_khan
 					OR = {
@@ -4064,9 +4077,11 @@ slavery = {
 						has_valid_civic = civic_barbaric_despoilers_khan  # Cog Note - This civic is an upgrade of Slaver Guilds
 					}
 				}
-				has_valid_civic = civic_state_monopoly
-				has_valid_civic = civic_divine_order
+				has_valid_civic = civic_slaver_guilds
 				has_valid_civic = civic_indentured_assets
+				has_valid_civic = civic_divine_order
+				has_valid_civic = civic_slave_race
+				has_ascension_perk = ap_nihilistic_acquisition
 				has_origin = origin_slavers
 			}
 		}
@@ -4091,14 +4106,15 @@ slavery = {
 			custom_tooltip = {
 				success_text = is_not_a_signatory_vassal_success
 				fail_text = is_not_a_signatory_vassal_fail
-				count_agreement = { count = 0 limit = { agreement_preset = preset_signatory } }
+				NOT = { any_agreement = { agreement_preset = preset_signatory } }
 			}
 			custom_tooltip = {
 				fail_text = is_broken_shackles_origin
 				NOT = { has_origin = origin_broken_shackles }
 			}
 			NOR = {
-				has_civic = civic_shared_burden
+				has_valid_civic = civic_shared_burden
+				has_valid_civic = civic_worker_coop
 				has_valid_civic = civic_beacon_of_liberty
 			}
 			OR = {
@@ -4106,6 +4122,9 @@ slavery = {
 				is_xenophobe = yes
 				has_ethic = ethic_fanatic_capitalism
 				has_valid_civic = civic_slaver_guilds
+				has_valid_civic = civic_indentured_assets
+				has_valid_civic = civic_divine_order
+				has_valid_civic = civic_slave_race
 				custom_tooltip = {
 					success_text = origin_heirs_of_the_khan
 					AND = {
@@ -4134,7 +4153,6 @@ slavery = {
 						has_valid_civic = civic_barbaric_despoilers_khan  # Cog Note - This civic is an upgrade of Slaver Guilds
 					}
 				}
-				has_valid_civic = civic_indentured_assets
 				has_origin = origin_slavers
 			}
 		}
@@ -4142,7 +4160,10 @@ slavery = {
 		policy_flags = {
 			slavery_allowed
 		}
-		modifier = {}
+
+		modifier = {
+			refugee_attraction = -0.40
+		}
 
 		ai_weight = {
 			factor = 10
@@ -4159,7 +4180,7 @@ slavery = {
 					is_xenophobe = yes
 				}
 			}
-			# Special case for harmonious collectives
+			# special case for harmonious collectives
 			modifier = {
 				factor = 0
 				has_valid_ai_personality = no
@@ -4169,19 +4190,17 @@ slavery = {
 					is_militarist = yes
 				}
 				OR = {
-					is_pacifist = yes
-					is_xenophile = yes
+					has_ethic = "ethic_pacifist"
+					has_ethic = "ethic_fanatic_pacifist"
+					has_ethic = "ethic_xenophile"
+					has_ethic = "ethic_fanatic_xenophile"
 				}
-				is_authoritarian = yes
+				OR = {
+					has_ethic = "ethic_authoritarian"
+					has_ethic = "ethic_fanatic_authoritarian"
+				}
 				NOR = {
-					has_valid_civic = "civic_slaver_guilds"
-					has_origin = origin_heirs_of_the_khan
-					has_valid_civic = PrimPlayer_civic_heirs_of_the_khan	# Due to Slavery
-					has_valid_civic = civic_heirs_of_the_khan	# Due to Slavery
-					has_valid_civic = "civic_barbaric_despoilers"			# Cog Note - This civic is an upgrade of Slaver Guilds
-					has_valid_civic = "civic_barbaric_despoilers_corporate"	# Cog Note - This civic is an upgrade of Slaver Guilds
-					has_valid_civic = "PrimPlayer_civic_barbaric_despoilers_khan"  # Cog Note - This civic is an upgrade of Slaver Guilds
-					has_valid_civic = "civic_barbaric_despoilers_khan"  # Cog Note - This civic is an upgrade of Slaver Guilds
+					has_khan_civic_or_origin = yes
 					has_trait = "trait_decadent"
 					has_trait = "trait_robot_decadent"
 				}
