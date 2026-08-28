@@ -1003,296 +1003,575 @@ generate_civic_secondary_pops = {
 	}
 }
 
-# Nomads
-# Sets contract counter for Keepers of Harmony and creates Conservatory building for Green nomads. Please keep in line with Vanilla otherwise. -- Sage
-nomad_country_initial_setup_effect = {
-	capital_scope = {
-		upgrade_colony_shelter = yes
-	}
-	# Arkship Random Event Director
-	country_event = {
-		id = arkship.1
-		random = 20
-	}
-	# Nomadic empires can ignore closed borders
-	set_faction_properties = {
-		needs_border_access = no
-	}
-	save_event_target_as = nomad_country
-
-	set_variable = { which = contract_completed value = 0 }
-
-	# Set Contract counter for Forever Cruise empires
+# Just for fun, adding in two completely new and unexpected EAC original lost colonies for earth. You were expecting the UNE? Nah, fam, we got something new here! --Sage
+lost_colony_generate_parent_human_effect = {
+	# The parent always spawns on Earth (pc_continental). If the child is nomadic its
+	# species carries arkship habitability (trait_pc_ark_preference), so derive a
+	# continental-preference variant for the planet-bound parent. origin.100 cannot fix
+	# this because it intentionally skips humans (is_human_species = no).
 	if = {
-		limit = {
-			has_origin = origin_forever_cruise
-		}
-		set_variable = { which = cruise_contract_completed value = 0 }
-	}
-	# Set Contract counter for Keepers of Harmony empires
-	if = {
-		limit = {
-			has_valid_civic = civic_keepers_harmony
-		}
-		set_variable = { which = planetary_pilgrimage_completed value = 0 }
-	}
-	
-	set_resource_converter = nomadic_operational_reserves
-
-	# Caravan Masters start with an initial Waystation & Tech
-	if = {
-		limit = {
-			is_caravan_masters_empire = yes
-		}
-		capital_scope = {
-			solar_system = {
-				create_waystation_effect = {
-					OWNER = event_target:nomad_country
-					ANGLE = 120
-				}
-			}
-		}
-		random_owned_nonprimary_starbase = {
-			limit = {
-				is_waystation_starbase = yes
-			}
-			set_starbase_module = {
-				slot = 1
-				module = waystation_energy_module
-			}
-			set_starbase_module = {
-				slot = 2
-				module = waystation_mining_module
-			}
-		}
-		add_research_option = tech_waystation_2
-	}
-	# Deep Sleep Cryo Pod Blockers
-	if = {
-		limit = {
-			is_deep_sleep_country = yes
-		}
-		capital_scope = {
-			add_blocker = { type = d_deep_sleep_cryo_pods }
-			add_blocker = { type = d_deep_sleep_cryo_pods }
-			add_blocker = { type = d_deep_sleep_cryo_pods }
-		}
-	}
-	# Green Nomads get Conservatory and Garden Biotopes
-	if = {
-		limit = {
-			is_green = yes
-		}
-		capital_scope = {
-			if = {
-				limit = { 
-					owner = {
-						is_gestalt = yes 
-					}
-					NOT = { has_origin = origin_sacred_path } 
-				}
-				add_building = {
-					zone = zone_ark_research_unity_gestalt
-					building = building_nomad_conservatory
-				}
-				add_blocker = { type = d_ark_nature_preserve_blocker }
-			}
-			# Because Sacred Path overwrites the default ark city zones, if a Sacred Path empire is green, it gets its own check in inline_scripts/game_start/origin_sacred_path.txt -- Sage
-			if = {
-				limit = { 
-					owner = {
-						has_civic = civic_keepers_harmony
-						NOT = { has_civic = civic_naturalism }
-						NOT = { has_origin = origin_sacred_path }
-					} 
-				}
-				add_building = {
-					zone = zone_ark_research_unity
-					building = building_nature_sanctuary_nomad
-				}
-				add_blocker = { type = d_ark_nature_preserve_blocker }
-			}
-			else_if = {
-				limit = {
-					owner = {
-						has_civic = civic_naturalism
-						NOT = { has_civic = civic_keepers_harmony }
-						NOT = { has_origin = origin_sacred_path }
-					}
-				}
-				add_building = {
-					zone = zone_ark_research_unity
-					building = building_national_park_nomad
-				}
-				add_blocker = { type = d_ark_nature_preserve_blocker }
-			}
-			else_if = {
-				limit = {
-					owner = {
-						AND = {
-							has_civic = civic_naturalism
-							has_civic = civic_keepers_harmony 
-						}
-						NOT = { has_origin = origin_sacred_path }
-					}
-				}
-				add_building = {
-					zone = zone_ark_research_unity
-					building = building_national_park_nomad
-				}
-				add_blocker = { type = d_ark_nature_preserve_blocker }
-			}
-			else_if = {
-				limit = {
-					owner = {
-						NOT = { has_origin = origin_sacred_path }
-					}
-				}
-				add_building = {
-					zone = zone_ark_research_unity
-					building = building_nomad_conservatory
-				}
-				add_blocker = { type = d_ark_nature_preserve_blocker }
-			}
-		}
-	}
-
-	if = {
-		limit = {
-			NOT = { has_origin = origin_forever_cruise }
-		}
-		# Issue the initial contracts from your own nomad country
-		country_event = {
-			id = nomads.3010
-		}
-	}
-
-	if = {
-		# Necrophage nomads keep their two guaranteed ideal planets as pre-FTL
-		limit = {
-			has_origin = origin_necrophage
-			NOT = { has_country_flag = is_advanced_start_AI }
-		}
-		# First pre-scripted ideal: older, more developed pre-FTL
-		closest_system = {
-			limit = { has_star_flag = neighbor_t1_first_colony }
-			max_steps = 3
-			random_system_planet = {
-				limit = {
-					has_carrier_flag = prescripted_ideal
-				}
-				random_list = {
-					1 = { change_pc = pc_tropical }
-					1 = { change_pc = pc_arid }
-					1 = { change_pc = pc_continental }
-					1 = { change_pc = pc_ocean }
-					1 = { change_pc = pc_tundra }
-					1 = { change_pc = pc_arctic }
-					1 = { change_pc = pc_alpine }
-					1 = { change_pc = pc_savannah }
-					1 = { change_pc = pc_desert }
-				}
-				reroll_planet = yes
-				generate_very_early_pre_ftls_on_planet = yes
-				set_name = random
-				change_colony_foundation_date = -461
-
-				while = {
-					count = 4
-					create_army = {
-						owner = last_created_country
-						type = primitive_additional_army
-						species = last_created_country
-					}
-				}
-			}
-		}
-		# Second pre-scripted ideal: even older pre-FTL
-		closest_system = {
-			limit = { has_star_flag = neighbor_t2_second_colony }
-			max_steps = 6
-			random_system_planet = {
-				limit = {
-					has_carrier_flag = prescripted_ideal
-				}
-				random_list = {
-					1 = { change_pc = pc_tropical }
-					1 = { change_pc = pc_arid }
-					1 = { change_pc = pc_continental }
-					1 = { change_pc = pc_ocean }
-					1 = { change_pc = pc_tundra }
-					1 = { change_pc = pc_arctic }
-					1 = { change_pc = pc_alpine }
-					1 = { change_pc = pc_savannah }
-					1 = { change_pc = pc_desert }
-				}
-				reroll_planet = yes
-				generate_very_early_pre_ftls_on_planet = yes
-				set_name = random
-				change_colony_foundation_date = -1275
-
-				while = {
-					count = 4
-					create_army = {
-						owner = last_created_country
-						type = primitive_additional_army
-						species = last_created_country
-					}
-				}
+		limit = { event_target:human_lost_colony = { is_nomadic = yes } }
+		event_target:human_lost_colony = {
+			modify_species = {
+				species = species
+				ideal_planet_class = pc_continental
+				change_scoped_species = no
+				effect = { save_event_target_as = human_parent_species }
 			}
 		}
 	}
 	else = {
-		# Change starting pre-scripted ideals into inhabitable worlds
-		# First pre-sripted is a research system
-		closest_system = {
-			limit = { has_star_flag = neighbor_t1_first_colony }
-			max_steps = 3
-			convert_to_research_system_effect = yes
-		}
-		# Second pre-sripted is a resource system
-		closest_system = {
-			limit = { has_star_flag = neighbor_t2_second_colony }
-			max_steps = 6
-			convert_to_resource_system_effect = yes
-		}
+		event_target:human_species = { save_event_target_as = human_parent_species }
 	}
-	# Caravan Masters keeps their starting-system deposits so the civic's free Waystation has something to work with
-	if = {
+	if = { # hive parent
 		limit = {
-			is_caravan_masters_empire = no
+			event_target:human_lost_colony = {
+				is_hive_empire = yes
+			}
 		}
-		capital_scope = {
-			solar_system = {
-				every_system_planet = {
-					limit = {
-						has_deposit = d_minerals_5
+		if = { # Parent hive has Progenitor hive if you own the Overlord DLC
+			limit = {
+				has_overlord_dlc = yes
+			}
+			random_list = {
+				50 = {
+					create_country = {
+						species = event_target:human_parent_species
+						name_list = HUMAN1
+						type = default
+						origin = "origin_progenitor_hive"
+						authority = auth_hive_mind
+						civics = {
+							civic = civic_hive_empath
+							civic = civic_hive_divided_attention
+							civic = random
+						}
 					}
-					remove_deposit = d_minerals_5
 				}
-				every_system_planet = {
-					limit = {
-						has_deposit = d_energy_5
+				50 = {
+					create_country = {
+						species = event_target:human_parent_species
+						name_list = HUMAN2
+						type = default
+						origin = "origin_progenitor_hive"
+						authority = auth_hive_mind
+						civics = {
+							civic = civic_hive_strength_of_legions
+							civic = civic_hive_divided_attention
+							civic = random
+						}
 					}
-					remove_deposit = d_energy_5
 				}
-				every_system_planet = {
-					limit = {
-						has_harvestable_resources_trigger = yes
+			}
+		}
+		else = {
+			random_list = {
+				50 = {
+					create_country = {
+						species = event_target:human_parent_species
+						name_list = HUMAN1
+						type = default
+						origin = "origin_default"
+						authority = auth_hive_mind
+						civics = {
+							civic = civic_hive_empath
+							civic = civic_hive_divided_attention
+							civic = random
+						}
 					}
-					set_variable_to_random_value = { which = duration min = @arkship_harvest_resources_duration max = @arkship_harvest_resources_duration_doubled rounded = yes }
-					add_modifier = {
-						modifier = harvested_resources_mining
-						months = 1
-						time_multiplier = duration
+				}
+				50 = {
+					create_country = {
+						species = event_target:human_parent_species
+						name_list = HUMAN2
+						type = default
+						origin = "origin_default"
+						authority = auth_hive_mind
+						civics = {
+							civic = civic_hive_strength_of_legions
+							civic = civic_hive_divided_attention
+							civic = random
+						}
 					}
 				}
 			}
 		}
 	}
-
-	# Grant the Arkship Readiness checklist
-	country_event = {
-		id = nomads.50
+	else = { # default parent
+		if = { # Earth Bio-Protectorate and Lundgren Mining Corp if you own the Megacorp DLC
+			limit = {
+				has_megacorp = yes
+			}
+			random_list = {
+				50 = {
+					create_country = {
+						species = event_target:human_parent_species
+						name = "LOST_COLONY_earth_bp"
+						adjective = "LOST_COLONY_earth_bp_adjective"
+						authority = "auth_dictatorial"
+						civics = {
+							civic = civic_naturalism
+							civic = civic_inwards_perfection
+							civic = civic_bureaucracy	
+						}
+						name_list = "HUMAN1"
+						ship_prefix = "PRESCRIPTED_ship_prefix_humans1"
+						ethos = {
+							ethic = "ethic_fanatic_green"
+							ethic = "ethic_xenophobe"
+							ethic = "ethic_pacifist"
+							ethic = "ethic_authoritarian"
+						}
+						flag = {
+							icon = {
+								category = "plantoid"
+								file = "plantoid_02.dds"
+							}
+							background = {
+								category = "backgrounds"
+								file = "new_dawn.dds"
+							}
+							colors = {
+								"intense_blue"
+								"green"
+								"purple"
+								"null"
+							}
+						}
+						type = default
+						origin = "origin_default"
+					}
+				}
+				50 = {
+					create_country = {
+						species = event_target:human_parent_species
+						name = "LOST_COLONY_lundgren_corp"
+						adjective = "LOST_COLONY_lundgren_corp_adjective"
+						authority = "auth_corporate"
+						civics = {
+							civic = civic_merchant_guilds
+							civic = civic_private_prospectors
+							civic = civic_privatized_exploration	
+						}
+						name_list = "HUMAN2"
+						ship_prefix = "PRESCRIPTED_ship_prefix_humans2"
+						ethos = {
+							ethic = "ethic_capitalism"
+							ethic = "ethic_fanatic_industrial"
+							ethic = "ethic_authoritarian"
+							ethic = "ethic_xenophile"
+						}
+						flag = {
+							icon = {
+								category = "corporate"
+								file = "corporate_06.dds"
+							}
+							background = {
+								category = "backgrounds"
+								file = "circle.dds"
+							}
+							colors= {
+								"black"
+								"ochre_brown"
+								"black"
+								"null"
+							}
+						}
+						type = default
+						origin = "origin_default"
+					}
+				}
+			}
+		}
+		else = { # Earth Bio-Protectorate and Lundgren Mining Corp if you don't own the Megacorp DLC
+			random_list = {
+				50 = {
+					create_country = {
+						species = event_target:human_parent_species
+						name = "LOST_COLONY_earth_bp"
+						adjective = "LOST_COLONY_earth_bp_adjective"
+						authority = "auth_dictatorial"
+						civics = {
+							civic = civic_naturalism
+							civic = civic_inwards_perfection
+							civic = random	
+						}
+						name_list = "HUMAN1"
+						ship_prefix = "PRESCRIPTED_ship_prefix_humans1"
+						ethos = {
+							ethic = "ethic_fanatic_green"
+							ethic = "ethic_xenophobe"
+							ethic = "ethic_pacifist"
+							ethic = "ethic_authoritarian"
+						}
+						flag = {
+							icon = {
+								category = "plantoid"
+								file = "plantoid_02.dds"
+							}
+							background = {
+								category = "backgrounds"
+								file = "new_dawn.dds"
+							}
+							colors = {
+								"intense_blue"
+								"green"
+								"purple"
+								"null"
+							}
+						}
+						type = default
+						origin = "origin_default"
+					}
+				}
+				50 = {
+					create_country = {
+						species = event_target:human_parent_species
+						name = "LOST_COLONY_lundgren_corp"
+						adjective = "LOST_COLONY_lundgren_corp_adjective"
+						authority = "auth_oligarchic"
+						civics = {
+							civic = civic_mining_guilds
+							civic = civic_privatized_exploration
+							civic = random
+						}
+						name_list = "HUMAN2"
+						ship_prefix = "PRESCRIPTED_ship_prefix_humans2"
+						ethos = {
+							ethic = "ethic_capitalism"
+							ethic = "ethic_fanatic_industrial"
+							ethic = "ethic_authoritarian"
+							ethic = "ethic_xenophile"
+						}
+						flag = {
+							icon = {
+								category = "corporate"
+								file = "corporate_06.dds"
+							}
+							background = {
+								category = "backgrounds"
+								file = "circle.dds"
+							}
+							colors= {
+								"black"
+								"ochre_brown"
+								"black"
+								"null"
+							}
+						}
+						type = default
+						origin = "origin_default"
+					}
+				}
+			}
+		}
+	}
+	last_created_country = {
+		save_event_target_as = lost_colony_parent
+		add_resource = {
+			minerals = 2400
+			energy = 2400
+			food = 2400
+			alloys = 800
+			consumer_goods = 1200
+			influence = 600
+		}
 	}
 }
+
+# Nomads
+## Sets contract counter for Keepers of Harmony and creates Conservatory building for Green nomads. Please keep in line with Vanilla otherwise. -- Sage
+# Disabled until I can fix it. -- Sage
+#nomad_country_initial_setup_effect = {
+#	capital_scope = {
+#		upgrade_colony_shelter = yes
+#	}
+#	# Arkship Random Event Director
+#	country_event = {
+#		id = arkship.1
+#		random = 20
+#	}
+#	# Nomadic empires can ignore closed borders
+#	set_faction_properties = {
+#		needs_border_access = no
+#	}
+#	save_event_target_as = nomad_country
+#
+#	set_variable = { which = contract_completed value = 0 }
+#
+#	# Set Contract counter for Forever Cruise empires
+#	if = {
+#		limit = {
+#			has_origin = origin_forever_cruise
+#		}
+#		set_variable = { which = cruise_contract_completed value = 0 }
+#	}
+#	# Set Contract counter for Keepers of Harmony empires
+#	if = {
+#		limit = {
+#			has_valid_civic = civic_keepers_harmony
+#		}
+#		set_variable = { which = planetary_pilgrimage_completed value = 0 }
+#	}
+#	
+#	set_resource_converter = nomadic_operational_reserves
+#
+#	# Caravan Masters start with an initial Waystation & Tech
+#	if = {
+#		limit = {
+#			is_caravan_masters_empire = yes
+#		}
+#		capital_scope = {
+#			solar_system = {
+#				create_waystation_effect = {
+#					OWNER = event_target:nomad_country
+#					ANGLE = 120
+#				}
+#			}
+#		}
+#		random_owned_nonprimary_starbase = {
+#			limit = {
+#				is_waystation_starbase = yes
+#			}
+#			set_starbase_module = {
+#				slot = 1
+#				module = waystation_energy_module
+#			}
+#			set_starbase_module = {
+#				slot = 2
+#				module = waystation_mining_module
+#			}
+#		}
+#		add_research_option = tech_waystation_2
+#	}
+#	# Deep Sleep Cryo Pod Blockers
+#	if = {
+#		limit = {
+#			is_deep_sleep_country = yes
+#		}
+#		capital_scope = {
+#			add_blocker = { type = d_deep_sleep_cryo_pods }
+#			add_blocker = { type = d_deep_sleep_cryo_pods }
+#			add_blocker = { type = d_deep_sleep_cryo_pods }
+#		}
+#	}
+#	# Green Nomads get Conservatory and Garden Biotopes
+#	if = {
+#		limit = {
+#			is_green = yes
+#		}
+#		capital_scope = {
+#			if = {
+#				limit = { 
+#					owner = {
+#						is_gestalt = yes 
+#					}
+#					NOT = { has_origin = origin_sacred_path } 
+#				}
+#				add_building = {
+#					zone = zone_ark_research_unity_gestalt
+#					building = building_nomad_conservatory
+#				}
+#				add_blocker = { type = d_ark_nature_preserve_blocker }
+#			}
+#			# Because Sacred Path overwrites the default ark city zones, if a Sacred Path empire is green, it gets its own check in inline_scripts/game_start/origin_sacred_path.txt -- Sage
+#			if = {
+#				limit = { 
+#					owner = {
+#						has_civic = civic_keepers_harmony
+#						NOT = { has_civic = civic_naturalism }
+#						NOT = { has_origin = origin_sacred_path }
+#					} 
+#				}
+#				add_building = {
+#					zone = zone_ark_research_unity
+#					building = building_nature_sanctuary_nomad
+#				}
+#				add_blocker = { type = d_ark_nature_preserve_blocker }
+#			}
+#			else_if = {
+#				limit = {
+#					owner = {
+#						has_civic = civic_naturalism
+#						NOT = { has_civic = civic_keepers_harmony }
+#						NOT = { has_origin = origin_sacred_path }
+#					}
+#				}
+#				add_building = {
+#					zone = zone_ark_research_unity
+#					building = building_national_park_nomad
+#				}
+#				add_blocker = { type = d_ark_nature_preserve_blocker }
+#			}
+#			else_if = {
+#				limit = {
+#					owner = {
+#						AND = {
+#							has_civic = civic_naturalism
+#							has_civic = civic_keepers_harmony 
+#						}
+#						NOT = { has_origin = origin_sacred_path }
+#					}
+#				}
+#				add_building = {
+#					zone = zone_ark_research_unity
+#					building = building_national_park_nomad
+#				}
+#				add_blocker = { type = d_ark_nature_preserve_blocker }
+#			}
+#			else_if = {
+#				limit = {
+#					owner = {
+#						NOT = { has_origin = origin_sacred_path }
+#					}
+#				}
+#				add_building = {
+#					zone = zone_ark_research_unity
+#					building = building_nomad_conservatory
+#				}
+#				add_blocker = { type = d_ark_nature_preserve_blocker }
+#			}
+#		}
+#	}
+#
+#	if = {
+#		limit = {
+#			NOT = { has_origin = origin_forever_cruise }
+#		}
+#		# Issue the initial contracts from your own nomad country
+#		country_event = {
+#			id = nomads.3010
+#		}
+#	}
+#
+#	if = {
+#		# Necrophage nomads keep their two guaranteed ideal planets as pre-FTL
+#		limit = {
+#			has_origin = origin_necrophage
+#			NOT = { has_country_flag = is_advanced_start_AI }
+#		}
+#		# First pre-scripted ideal: older, more developed pre-FTL
+#		closest_system = {
+#			limit = { has_star_flag = neighbor_t1_first_colony }
+#			max_steps = 3
+#			random_system_planet = {
+#				limit = {
+#					has_carrier_flag = prescripted_ideal
+#				}
+#				random_list = {
+#					1 = { change_pc = pc_tropical }
+#					1 = { change_pc = pc_arid }
+#					1 = { change_pc = pc_continental }
+#					1 = { change_pc = pc_ocean }
+#					1 = { change_pc = pc_tundra }
+#					1 = { change_pc = pc_arctic }
+#					1 = { change_pc = pc_alpine }
+#					1 = { change_pc = pc_savannah }
+#					1 = { change_pc = pc_desert }
+#				}
+#				reroll_planet = yes
+#				generate_very_early_pre_ftls_on_planet = yes
+#				set_name = random
+#				change_colony_foundation_date = -461
+#
+#				while = {
+#					count = 4
+#					create_army = {
+#						owner = last_created_country
+#						type = primitive_additional_army
+#						species = last_created_country
+#					}
+#				}
+#			}
+#		}
+#		# Second pre-scripted ideal: even older pre-FTL
+#		closest_system = {
+#			limit = { has_star_flag = neighbor_t2_second_colony }
+#			max_steps = 6
+#			random_system_planet = {
+#				limit = {
+#					has_carrier_flag = prescripted_ideal
+#				}
+#				random_list = {
+#					1 = { change_pc = pc_tropical }
+#					1 = { change_pc = pc_arid }
+#					1 = { change_pc = pc_continental }
+#					1 = { change_pc = pc_ocean }
+#					1 = { change_pc = pc_tundra }
+#					1 = { change_pc = pc_arctic }
+#					1 = { change_pc = pc_alpine }
+#					1 = { change_pc = pc_savannah }
+#					1 = { change_pc = pc_desert }
+#				}
+#				reroll_planet = yes
+#				generate_very_early_pre_ftls_on_planet = yes
+#				set_name = random
+#				change_colony_foundation_date = -1275
+#
+#				while = {
+#					count = 4
+#					create_army = {
+#						owner = last_created_country
+#						type = primitive_additional_army
+#						species = last_created_country
+#					}
+#				}
+#			}
+#		}
+#	}
+#	else = {
+#		# Change starting pre-scripted ideals into inhabitable worlds
+#		# First pre-sripted is a research system
+#		closest_system = {
+#			limit = { has_star_flag = neighbor_t1_first_colony }
+#			max_steps = 3
+#			convert_to_research_system_effect = yes
+#		}
+#		# Second pre-sripted is a resource system
+#		closest_system = {
+#			limit = { has_star_flag = neighbor_t2_second_colony }
+#			max_steps = 6
+#			convert_to_resource_system_effect = yes
+#		}
+#	}
+#	# Caravan Masters keeps their starting-system deposits so the civic's free Waystation has something to work with
+#	if = {
+#		limit = {
+#			is_caravan_masters_empire = no
+#		}
+#		capital_scope = {
+#			solar_system = {
+#				every_system_planet = {
+#					limit = {
+#						has_deposit = d_minerals_5
+#					}
+#					remove_deposit = d_minerals_5
+#				}
+#				every_system_planet = {
+#					limit = {
+#						has_deposit = d_energy_5
+#					}
+#					remove_deposit = d_energy_5
+#				}
+#				every_system_planet = {
+#					limit = {
+#						has_harvestable_resources_trigger = yes
+#					}
+#					set_variable_to_random_value = { which = duration min = @arkship_harvest_resources_duration max = @arkship_harvest_resources_duration_doubled rounded = yes }
+#					add_modifier = {
+#						modifier = harvested_resources_mining
+#						months = 1
+#						time_multiplier = duration
+#					}
+#				}
+#			}
+#		}
+#	}
+#
+#	# Grant the Arkship Readiness checklist
+#	country_event = {
+#		id = nomads.50
+#	}
+#}
+#
+#
