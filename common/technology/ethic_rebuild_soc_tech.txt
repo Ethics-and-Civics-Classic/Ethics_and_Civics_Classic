@@ -1,98 +1,3 @@
-# 00_soc_tech.txt
-# tech_interplanetary_commerce = {
-#	cost = 0
-#	area = society
-#	start_tech = yes
-#	category = { statecraft }
-#	tier = 0
-#
-#	potential = {
-#		is_gestalt = no
-#	}
-#
-#	## Unlock commercial zone building
-#}
-
-## Space Trading
-# tech_space_trading = {
-#	cost = @tier1cost3
-#	area = society
-#	tier = 1
-#	category = { good_trading }
-#	prerequisites = { "tech_interplanetary_commerce" }
-#	weight = @tier1weight3
-#
-#	potential = {
-#		is_gestalt = no
-#	}
-#
-#	weight_modifier = {
-#		modifier = {
-#			factor = 1.25
-#			has_trait_in_council = { TRAIT = leader_trait_expertise_good_trading }
-#		}
-#		modifier = {
-#			factor = 1.25
-#			has_tradition = tr_prosperity_adopt
-#		}
-#
-#		modifier = {
-#			factor = 2
-#			has_policy_flag = economic_stance_market
-#		}
-#	}
-#
-#	ai_weight = {
-#		factor = 2
-#		modifier = {
-#			factor = 1.25
-#			has_trait_in_council = { TRAIT = leader_trait_expertise_good_trading }
-#		}
-#	}
-#}
-
-# Interstellar Economics
-# tech_interstellar_economics = {
-#	cost = @tier3cost1
-#	area = society
-#	tier = 3
-#	category = { good_trading }
-#	prerequisites = { "tech_space_trading" }
-#	weight = @tier3weight1
-#
-#	potential = {
-#		is_gestalt = no
-#	}
-#
-#	weight_modifier = {
-#		factor = 2
-#
-#		modifier = {
-#			factor = 0
-#			NOR = {
-#				has_technology = tech_mine_rare_crystals
-#				has_technology = tech_rare_crystals
-#				has_country_flag = has_market_access
-#			}
-#		}
-#		modifier = {
-#			factor = 1.25
-#			has_trait_in_council = { TRAIT = leader_trait_expertise_good_trading }
-#		}
-#		modifier = {
-#			factor = 1.25
-#			has_tradition = tr_prosperity_adopt
-#		}
-#	}
-#
-#	ai_weight = {
-#		factor = 2
-#		modifier = {
-#			factor = 1.25
-#			has_trait_in_council = { TRAIT = leader_trait_expertise_good_trading }
-#		}
-#	}
-#}
 
 ############
 # Vivarium #
@@ -214,7 +119,7 @@ tech_galactic_markets = {
 	cost = @tier4cost1
 	area = society
 	tier = 4
-	category = { good_trading }
+	category = { statecraft }
 	prerequisites = { "tech_colonial_centralization" "tech_interstellar_economics" }
 	weight = @tier4weight1
 	is_rare = yes
@@ -222,18 +127,14 @@ tech_galactic_markets = {
 	# Unlocks Galactic Stock Exchange empire wonder
 
 	potential = {
-		NOR = { is_gestalt = yes has_civic = civic_distributism }
+		NOR = { 
+			is_gestalt = yes 
+			has_civic = civic_distributism 
+		}
 	}
 
 	weight_modifier = {
 		factor = 0.5
-		# modifier = {
-		#	factor = 0.25
-		#	NOR = {
-		#		has_trait_in_council = { TRAIT = leader_trait_expertise_good_trading }
-		#		has_trait_in_council = { TRAIT = leader_trait_curator }
-		#	}
-		#}
 		modifier = {
 			factor = 0.25
 			NOR = {
@@ -249,31 +150,21 @@ tech_galactic_markets = {
 			script = technologies/rare_technologies_weight_modifiers
 			TECHNOLOGY = tech_galactic_markets
 		}
-		# modifier = {
-		#	factor = 1.25
-		#	has_trait_in_council = { TRAIT = leader_trait_expertise_good_trading }
-		#}
-		modifier = {
-			factor = 0
-			#OR = {
-				has_ethic = ethic_fanatic_socialism
-			#}
-		}
 		modifier = {
 			factor = 0
 			num_communications < 2
 		}
+		modifier = {
+			factor = 0
+			has_ethic = ethic_fanatic_socialism
+		}
 	}
 
 	ai_weight = {
-		# modifier = {
-		#	factor = 1.25
-		#	has_trait_in_council = { TRAIT = leader_trait_expertise_good_trading }
-		#}
 	}
 }
 
-# Tomb World Adaptation
+#Tomb World Adaptation
 tech_tomb_world_adaption = {
 	cost = @tier3cost1
 	area = society
@@ -282,6 +173,10 @@ tech_tomb_world_adaption = {
 	prerequisites = { "tech_colonization_3" }
 	weight = @tier3weight1
 	is_rare = yes
+
+	potential = {
+		is_wilderness_empire = no
+	}
 
 	modifier = {
 		pc_nuked_habitability = 0.2
@@ -314,8 +209,8 @@ tech_tomb_world_adaption = {
 
 	ai_weight = {
 		modifier = {
-			factor = 1.25
-			has_trait_in_council = { TRAIT = leader_trait_expertise_new_worlds }
+			factor = 5
+			has_valid_civic = civic_terraforming
 		}
 	}
 }
@@ -328,6 +223,10 @@ tech_mountain_range = {
 	prerequisites = { "tech_colonization_1" }
 	weight = @tier2weight2
 
+	potential = {
+		is_nomadic = no
+	}
+
 	weight_groups = {
 		deposit_blockers
 	}
@@ -355,21 +254,17 @@ tech_mountain_range = {
 				}
 			}
 		}
-		modifier = {
-			factor = 1.25
-			has_trait_in_council = { TRAIT = leader_trait_expertise_new_worlds }
-		}
+
 		modifier = {
 			factor = 0
 			num_owned_planets < 2
 		}
 		modifier = {
-			factor = 0.5
-			has_ethic = ethic_green
-		}
-		modifier = {
-			factor = 0.25
-			has_ethic = ethic_fanatic_green
+			factor = 0.2
+			AND = {
+				is_green = yes
+				NOT = { has_civic = civic_terraforming }
+			}
 		}
 	}
 
@@ -385,18 +280,17 @@ tech_mountain_range = {
 				}
 			}
 		}
-		modifier = {
-			factor = 1.25
-			has_trait_in_council = { TRAIT = leader_trait_expertise_new_worlds }
-		}
+
 		modifier = {
 			factor = 0
 			num_owned_planets < 2
 		}
-
 		modifier = {
-			factor = 0.2
-			is_green = yes
+			factor = 0
+			AND = {
+				is_green = yes
+				NOT = { has_civic = civic_terraforming }
+			}
 		}
 	}
 }
@@ -409,6 +303,10 @@ tech_volcano = {
 	prerequisites = { "tech_colonization_1" }
 	weight = @tier2weight2
 
+	potential = {
+		is_nomadic = no
+	}
+
 	weight_groups = {
 		deposit_blockers
 	}
@@ -429,46 +327,17 @@ tech_volcano = {
 			has_ascension_perk = ap_mastery_of_nature
 		}
 		modifier = {
-			factor = 0
+			factor = 0 # if we have no Volcanic worlds and no volcanic blockers, this tech option doesn't appear
 			NOT = {
 				any_owned_planet = {
 					has_deposit = "d_active_volcano"
 				}
-			}
-		}
-		modifier = {
-			factor = 1.25
-			has_trait_in_council = { TRAIT = leader_trait_expertise_new_worlds }
-		}
-		modifier = {
-			factor = 0
-			num_owned_planets < 2
-		}
-		modifier = {
-			factor = 0.5
-			has_ethic = ethic_green
-		}
-		modifier = {
-			factor = 0.25
-			has_ethic = ethic_fanatic_green
-		}
-	}
-
-	ai_weight = {
-		modifier = {
-			factor = 3
-		}
-		modifier = {
-			factor = 0
-			NOT = {
-				any_owned_planet = {
-					has_deposit = "d_active_volcano"
+				any_system_within_border = {
+					any_system_planet = {
+						is_planet_class = pc_volcanic
+					}
 				}
 			}
-		}
-		modifier = {
-			factor = 1.25
-			has_trait_in_council = { TRAIT = leader_trait_expertise_new_worlds }
 		}
 		modifier = {
 			factor = 0
@@ -476,7 +345,39 @@ tech_volcano = {
 		}
 		modifier = {
 			factor = 0.2
-			is_green = yes
+			AND = {
+				is_green = yes
+				NOT = { has_civic = civic_terraforming }
+			}
+		}
+	}
+
+	prereqfor_desc = {
+		diplo_action = {
+			title = "TECH_UNLOCK_VOLCANO_TERRAFORM_TITLE"
+			desc = "TECH_UNLOCK_VOLCANO_TERRAFORM_DESC"
+		}
+	}
+
+	ai_weight = {
+		modifier = {
+			factor = 0
+			NOT = {
+				any_owned_planet = {
+					has_deposit = "d_active_volcano"
+				}
+			}
+		}
+		modifier = {
+			factor = 0
+			num_owned_planets < 2
+		}
+		modifier = {
+			factor = 0
+			AND = {
+				is_green = yes
+				NOT = { has_civic = civic_terraforming }
+			}
 		}
 	}
 }
@@ -489,6 +390,10 @@ tech_dangerous_wildlife = {
 	prerequisites = { "tech_colonization_1" }
 	weight = @tier2weight2
 
+	potential = {
+		is_nomadic = no
+	}
+
 	weight_groups = {
 		deposit_blockers
 	}
@@ -517,28 +422,21 @@ tech_dangerous_wildlife = {
 				}
 			}
 		}
-		modifier = {
-			factor = 1.25
-			has_trait_in_council = { TRAIT = leader_trait_expertise_new_worlds }
-		}
+
 		modifier = {
 			factor = 0
 			num_owned_planets < 2
 		}
 		modifier = {
-			factor = 0.5
-			has_ethic = ethic_green
-		}
-		modifier = {
-			factor = 0.25
-			has_ethic = ethic_fanatic_green
+			factor = 0.2
+			AND = {
+				is_green = yes
+				NOT = { has_civic = civic_terraforming }
+			}
 		}
 	}
 
 	ai_weight = {
-		modifier = {
-			factor = 3
-		}
 		modifier = {
 			factor = 0
 			NOT = {
@@ -547,17 +445,17 @@ tech_dangerous_wildlife = {
 				}
 			}
 		}
-		modifier = {
-			factor = 1.25
-			has_trait_in_council = { TRAIT = leader_trait_expertise_new_worlds }
-		}
+
 		modifier = {
 			factor = 0
 			num_owned_planets < 2
 		}
 		modifier = {
-			factor = 0.2
-			is_green = yes
+			factor = 0
+			AND = {
+				is_green = yes
+				NOT = { has_civic = civic_terraforming }
+			}
 		}
 	}
 }
@@ -570,6 +468,10 @@ tech_dense_jungle = {
 	prerequisites = { "tech_colonization_1" }
 	weight = @tier1weight2
 
+	potential = {
+		is_nomadic = no
+	}
+
 	weight_groups = {
 		deposit_blockers
 	}
@@ -597,28 +499,21 @@ tech_dense_jungle = {
 				}
 			}
 		}
-		modifier = {
-			factor = 1.25
-			has_trait_in_council = { TRAIT = leader_trait_expertise_new_worlds }
-		}
+
 		modifier = {
 			factor = 0
 			num_owned_planets < 2
 		}
 		modifier = {
-			factor = 0.5
-			has_ethic = ethic_green
-		}
-		modifier = {
-			factor = 0.25
-			has_ethic = ethic_fanatic_green
+			factor = 0.2
+			AND = {
+				is_green = yes
+				NOT = { has_civic = civic_terraforming }
+			}
 		}
 	}
 
 	ai_weight = {
-		modifier = {
-			factor = 3
-		}
 		modifier = {
 			factor = 0
 			NOT = {
@@ -627,17 +522,17 @@ tech_dense_jungle = {
 				}
 			}
 		}
-		modifier = {
-			factor = 1.25
-			has_trait_in_council = { TRAIT = leader_trait_expertise_new_worlds }
-		}
+
 		modifier = {
 			factor = 0
 			num_owned_planets < 2
 		}
 		modifier = {
-			factor = 0.2
-			is_green = yes
+			factor = 0
+			AND = {
+				is_green = yes
+				NOT = { has_civic = civic_terraforming }
+			}
 		}
 	}
 }
@@ -650,6 +545,10 @@ tech_quicksand_basin = {
 	prerequisites = { "tech_colonization_1" }
 	weight = @tier1weight2
 
+	potential = {
+		is_nomadic = no
+	}
+
 	weight_groups = {
 		deposit_blockers
 	}
@@ -677,28 +576,21 @@ tech_quicksand_basin = {
 				}
 			}
 		}
-		modifier = {
-			factor = 1.25
-			has_trait_in_council = { TRAIT = leader_trait_expertise_new_worlds }
-		}
+
 		modifier = {
 			factor = 0
 			num_owned_planets < 2
 		}
 		modifier = {
-			factor = 0.5
-			has_ethic = ethic_green
-		}
-		modifier = {
-			factor = 0.25
-			has_ethic = ethic_fanatic_green
+			factor = 0.2
+			AND = {
+				is_green = yes
+				NOT = { has_civic = civic_terraforming }
+			}
 		}
 	}
 
 	ai_weight = {
-		modifier = {
-			factor = 3
-		}
 		modifier = {
 			factor = 0
 			NOT = {
@@ -707,17 +599,17 @@ tech_quicksand_basin = {
 				}
 			}
 		}
-		modifier = {
-			factor = 1.25
-			has_trait_in_council = { TRAIT = leader_trait_expertise_new_worlds }
-		}
+
 		modifier = {
 			factor = 0
 			num_owned_planets < 2
 		}
 		modifier = {
-			factor = 0.2
-			is_green = yes
+			factor = 0
+			AND = {
+				is_green = yes
+				NOT = { has_civic = civic_terraforming }
+			}
 		}
 	}
 }
@@ -730,6 +622,10 @@ tech_noxious_swamp = {
 	prerequisites = { "tech_colonization_1" }
 	weight = @tier1weight2
 
+	potential = {
+		is_nomadic = no
+	}
+
 	weight_groups = {
 		deposit_blockers
 	}
@@ -757,28 +653,21 @@ tech_noxious_swamp = {
 				}
 			}
 		}
-		modifier = {
-			factor = 1.25
-			has_trait_in_council = { TRAIT = leader_trait_expertise_new_worlds }
-		}
+
 		modifier = {
 			factor = 0
 			num_owned_planets < 2
 		}
 		modifier = {
-			factor = 0.5
-			has_ethic = ethic_green
-		}
-		modifier = {
-			factor = 0.25
-			has_ethic = ethic_fanatic_green
+			factor = 0.2
+			AND = {
+				is_green = yes
+				NOT = { has_civic = civic_terraforming }
+			}
 		}
 	}
 
 	ai_weight = {
-		modifier = {
-			factor = 3
-		}
 		modifier = {
 			factor = 0
 			NOT = {
@@ -787,17 +676,17 @@ tech_noxious_swamp = {
 				}
 			}
 		}
-		modifier = {
-			factor = 1.25
-			has_trait_in_council = { TRAIT = leader_trait_expertise_new_worlds }
-		}
+
 		modifier = {
 			factor = 0
 			num_owned_planets < 2
 		}
 		modifier = {
-			factor = 0.2
-			is_green = yes
+			factor = 0
+			AND = {
+				is_green = yes
+				NOT = { has_civic = civic_terraforming }
+			}
 		}
 	}
 }
@@ -810,6 +699,10 @@ tech_massive_glacier = {
 	prerequisites = { "tech_colonization_1" }
 	weight = @tier1weight2
 
+	potential = {
+		is_nomadic = no
+	}
+
 	weight_groups = {
 		deposit_blockers
 	}
@@ -837,28 +730,21 @@ tech_massive_glacier = {
 				}
 			}
 		}
-		modifier = {
-			factor = 1.25
-			has_trait_in_council = { TRAIT = leader_trait_expertise_new_worlds }
-		}
+
 		modifier = {
 			factor = 0
 			num_owned_planets < 2
 		}
 		modifier = {
-			factor = 0.5
-			has_ethic = ethic_green
-		}
-		modifier = {
-			factor = 0.25
-			has_ethic = ethic_fanatic_green
+			factor = 0.2
+			AND = {
+				is_green = yes
+				NOT = { has_civic = civic_terraforming }
+			}
 		}
 	}
 
 	ai_weight = {
-		modifier = {
-			factor = 3
-		}
 		modifier = {
 			factor = 0
 			NOT = {
@@ -867,17 +753,17 @@ tech_massive_glacier = {
 				}
 			}
 		}
-		modifier = {
-			factor = 1.25
-			has_trait_in_council = { TRAIT = leader_trait_expertise_new_worlds }
-		}
+
 		modifier = {
 			factor = 0
 			num_owned_planets < 2
 		}
 		modifier = {
-			factor = 0.2
-			is_green = yes
+			factor = 0
+			AND = {
+				is_green = yes
+				NOT = { has_civic = civic_terraforming }
+			}
 		}
 	}
 }
@@ -890,6 +776,10 @@ tech_toxic_kelp = {
 	prerequisites = { "tech_colonization_1" }
 	weight = @tier1weight2
 
+	potential = {
+		is_nomadic = no
+	}
+
 	weight_groups = {
 		deposit_blockers
 	}
@@ -917,28 +807,21 @@ tech_toxic_kelp = {
 				}
 			}
 		}
-		modifier = {
-			factor = 1.25
-			has_trait_in_council = { TRAIT = leader_trait_expertise_new_worlds }
-		}
+
 		modifier = {
 			factor = 0
 			num_owned_planets < 2
 		}
 		modifier = {
-			factor = 0.5
-			has_ethic = ethic_green
-		}
-		modifier = {
-			factor = 0.25
-			has_ethic = ethic_fanatic_green
+			factor = 0.2
+			AND = {
+				is_green = yes
+				NOT = { has_civic = civic_terraforming }
+			}
 		}
 	}
 
 	ai_weight = {
-		modifier = {
-			factor = 3
-		}
 		modifier = {
 			factor = 0
 			NOT = {
@@ -947,17 +830,17 @@ tech_toxic_kelp = {
 				}
 			}
 		}
-		modifier = {
-			factor = 1.25
-			has_trait_in_council = { TRAIT = leader_trait_expertise_new_worlds }
-		}
+
 		modifier = {
 			factor = 0
 			num_owned_planets < 2
 		}
 		modifier = {
-			factor = 0.2
-			is_green = yes
+			factor = 0
+			AND = {
+				is_green = yes
+				NOT = { has_civic = civic_terraforming }
+			}
 		}
 	}
 }
@@ -970,6 +853,10 @@ tech_deep_sinkhole = {
 	prerequisites = { "tech_colonization_1" }
 	weight = @tier1weight2
 
+	potential = {
+		is_nomadic = no
+	}
+
 	weight_groups = {
 		deposit_blockers
 	}
@@ -997,28 +884,21 @@ tech_deep_sinkhole = {
 				}
 			}
 		}
-		modifier = {
-			factor = 1.25
-			has_trait_in_council = { TRAIT = leader_trait_expertise_new_worlds }
-		}
+
 		modifier = {
 			factor = 0
 			num_owned_planets < 2
 		}
 		modifier = {
-			factor = 0.5
-			has_ethic = ethic_green
-		}
-		modifier = {
-			factor = 0.25
-			has_ethic = ethic_fanatic_green
+			factor = 0.2
+			AND = {
+				is_green = yes
+				NOT = { has_civic = civic_terraforming }
+			}
 		}
 	}
 
 	ai_weight = {
-		modifier = {
-			factor = 3
-		}
 		modifier = {
 			factor = 0
 			NOT = {
@@ -1027,22 +907,22 @@ tech_deep_sinkhole = {
 				}
 			}
 		}
-		modifier = {
-			factor = 1.25
-			has_trait_in_council = { TRAIT = leader_trait_expertise_new_worlds }
-		}
+
 		modifier = {
 			factor = 0
 			num_owned_planets < 2
 		}
 		modifier = {
-			factor = 0.2
-			is_green = yes
+			factor = 0
+			AND = {
+				is_green = yes
+				NOT = { has_civic = civic_terraforming }
+			}
 		}
 	}
 }
 
-# Selected Lineages
+#Selected Lineages
 tech_selected_lineages = {
 	cost = @tier3cost2
 	area = society
@@ -1071,40 +951,59 @@ tech_selected_lineages = {
 		}
 		modifier = {
 			factor = 0
-			has_ethic = ethic_fanatic_socialism
+			OR = {
+				is_fanatic_socialism = yes
+				is_fanatic_egalitarian = yes
+			}
+		}
+		modifier = {
+			factor = 0.25
+			OR = {
+				is_socialism = yes
+				is_egalitarian = yes
+			}
 		}
 		modifier = {
 			factor = 2
-			is_capitalism = yes
+			is_authoritarian = yes
+		}
+		modifier = {
+			factor = 5
+			OR = {
+				has_authority = auth_imperial
+				has_civic = civic_aristocratic_elite
+				has_civic = civic_aristocratic_elite_corporate
+			}
 		}
 		inline_script = {
 			script = technologies/rare_technologies_weight_modifiers
 			TECHNOLOGY = tech_selected_lineages
 		}
 		modifier = {
-			factor = 1.25
-			has_trait_in_council = { TRAIT = leader_trait_expertise_biology }
-		}
-		modifier = {
 			factor = 2
 			has_relic = r_pox_sample
+		}
+		modifier = {
+			factor = 0.5
+			is_individual_machine = yes
+			any_owned_species = {
+				is_organic_species = no
+			}
 		}
 	}
 
 	ai_weight = {
-		factor = 3 # Rare tech
 		modifier = {
-			factor = 1.50
-			has_ethic = ethic_fanatic_socialism
-		}
-		modifier = {
-			factor = 1.25
-			has_trait_in_council = { TRAIT = leader_trait_expertise_biology }
+			factor = 0
+			OR = {
+				is_fanatic_egalitarian = yes
+				is_fanatic_socialism = yes
+			}
 		}
 	}
 }
 
-# Capacity Boosters
+#Capacity Boosters
 tech_capacity_boosters = {
 	cost = @tier4cost3
 	area = society
@@ -1134,19 +1033,29 @@ tech_capacity_boosters = {
 		}
 		modifier = {
 			factor = 0
-			is_socialism = yes
+			OR = {
+				is_egalitarian = yes
+				is_socialism = yes
+			}
 		}
 		modifier = {
 			factor = 2
-			is_capitalism = yes
+			OR = {
+				is_authoritarian = yes
+				is_capitalism = yse
+			}
+		}
+		modifier = {
+			factor = 5
+			OR = {
+				has_authority = auth_imperial
+				has_civic = civic_aristocratic_elite
+				has_civic = civic_aristocratic_elite_corporate
+			}
 		}
 		inline_script = {
 			script = technologies/rare_technologies_weight_modifiers
 			TECHNOLOGY = tech_capacity_boosters
-		}
-		modifier = {
-			factor = 1.25
-			has_trait_in_council = { TRAIT = leader_trait_expertise_biology }
 		}
 		modifier = {
 			factor = 2
@@ -1162,11 +1071,6 @@ tech_capacity_boosters = {
 	}
 
 	ai_weight = {
-		factor = 3 # Rare tech
-		modifier = {
-			factor = 1.25
-			has_trait_in_council = { TRAIT = leader_trait_expertise_biology }
-		}
 	}
 }
 
@@ -1174,7 +1078,7 @@ tech_capacity_boosters = {
 # Psionics
 # ##################
 
-# Psionic Theory
+#Psionic Theory
 tech_psionic_theory = {
 	cost = @tier3cost1
 	area = society
@@ -1198,7 +1102,8 @@ tech_psionic_theory = {
 	}
 
 	modifier = {
-		empire_size_pops_mult = -0.10
+		empire_size_pops_mult = -0.05
+		army_morale_damage_taken_mult = -0.10
 	}
 
 	weight_modifier = {
@@ -1207,7 +1112,6 @@ tech_psionic_theory = {
 			factor = 0
 			has_shroud_dlc = no
 			has_ethic = ethic_gestalt_consciousness
-			NOT = { has_civic = civic_machine_cult_machine }
 		}
 		modifier = {
 			factor = 0.5
@@ -1246,10 +1150,6 @@ tech_psionic_theory = {
 				has_trait_in_council = { TRAIT = leader_trait_whisperers_chosen }
 			}
 		}
-		modifier = {
-			factor = 8
-			has_trait_in_council = { TRAIT = leader_trait_expertise_psionics }
-		}
 		inline_script = {
 			script = technologies/rare_technologies_weight_modifiers
 			TECHNOLOGY = tech_psionic_theory
@@ -1257,20 +1157,17 @@ tech_psionic_theory = {
 		modifier = {
 			factor = 2
 			any_owned_pop_group = {
-				pop_group_has_trait = trait_psionic
+				is_psionic_species = yes
 			}
 		}
 		modifier = {
 			factor = 1.25
 			any_owned_pop_group = {
-				OR = {
-					pop_group_has_trait = trait_latent_psionic
-					pop_group_has_trait = trait_robot_latent_psionic
-				}
+				is_latent_psionic_species = yes
 			}
 			NOT = {
 				any_owned_pop_group = {
-					pop_group_has_trait = trait_psionic
+					is_psionic_species = yes
 				}
 			}
 		}
@@ -1286,29 +1183,44 @@ tech_psionic_theory = {
 			AND = {
 				is_materialist = yes
 				NOR = {
-					has_trait_tier1or2or3 = { TRAIT = leader_trait_expertise_psionics }
+					has_tier1or2or3_in_council = { TRAIT = leader_trait_expertise_psionics }
 					has_councilor = { COUNCILOR = "councilor_shroudwalker_teacher" }
 					any_owned_pop_group = {
-						OR = {
-							pop_group_has_trait = trait_psionic
-							pop_group_has_trait = trait_latent_psionic
-							pop_group_has_trait = trait_latent_machine
-						}
+						has_psionic_species_trait = yes
 					}
 				}
 			}
 		}
+		modifier = {
+			factor = 0
+			has_origin = origin_endbringers
+		}
+		modifier = {
+			factor = @ap_pending_tech_boost
+			has_ascension_perk = ap_mind_over_matter
+		}
 	}
 
 	ai_weight = {
-		factor = 5 # Very rare tech
 		modifier = {
-			factor = 1.5
+			factor = 5
 			is_spiritualist = yes
 		}
+
 		modifier = {
-			factor = 1.25
-			has_trait_in_council = { TRAIT = leader_trait_expertise_psionics }
+			factor = 2
+			is_ai = no #auto-research
+		}
+
+		modifier = {
+			factor = 10
+			any_country = {
+				has_origin = origin_mindwardens
+			}
+		}
+		modifier = {
+			factor = @ap_pending_tech_boost
+			has_ascension_perk = ap_mind_over_matter
 		}
 	}
 }
@@ -1451,10 +1363,6 @@ tech_planned_economy = {
 		factor = 2
 		modifier = {
 			factor = 1.25
-			has_trait_in_council = { TRAIT = leader_trait_expertise_good_trading }
-		}
-		modifier = {
-			factor = 1.25
 			has_tradition = tr_prosperity_adopt
 		}
 
@@ -1491,10 +1399,6 @@ tech_innovations = {
 
 	weight_modifier = {
 		factor = 1.5
-		modifier = {
-			factor = 1.25
-			has_trait_in_council = { TRAIT = leader_trait_expertise_good_trading }
-		}
 		modifier = {
 			factor = 1.25
 			has_tradition = tr_prosperity_adopt
@@ -1594,58 +1498,37 @@ tech_mining_consortium = {
 	}
 }
 
-tech_bioreactor = {
+tech_industrial_biotech = { # Renamed from tech_bioreactor to avoid confusion with vanilla. --Sage
 	cost = @tier3cost2
 	area = society
 	tier = 3
 	category = { biology }
 	weight = @tier3weight2
 	prerequisites = { "tech_food_processing_2" }
-	start_tech = yes
 	is_rare = yes
+
 	potential = {
-	}
-	
-	starting_potential = {
-		OR = {	
-			has_civic = civic_circular_economy
-			AND = { 
-				has_valid_civic = civic_machine_zero_waste_protocols
-				OR = {
-					has_ethic = ethic_green	
-					has_ethic = ethic_fanatic_green		
-				}
-			}	
-			has_civic = civic_catalytic_processing
-			has_civic = civic_corporate_catalytic_processing
-			has_civic = civic_hive_catalytic_processing
-			has_civic = civic_machine_catalytic_processing
-		}
+		is_wilderness_empire = no
 	}
 
-	modifier = {
-	}
 	weight_modifier = {
-		factor = 1.5
+		factor = 0.1
 		modifier = {
-			factor = 0
-			NOR = {
-				is_green = yes
-				has_civic = civic_catalytic_processing
-				has_civic = civic_corporate_catalytic_processing
+			factor = 20
+			OR = {
+				is_catalytic_empire = yes
+				is_machine_empire = yes
+				is_mechanical_empire = yes
+				is_lithoid_or_infernal_empire = yes
 			}
+		}
+		inline_script = {
+			script = technologies/rare_technologies_weight_modifiers
+			TECHNOLOGY = tech_industrial_biotech
 		}
 		modifier = {
 			factor = 5
 			is_green = yes
-		}
-		modifier = {
-			factor = 1.5
-			has_trait_in_council = { TRAIT = leader_trait_expertise_industry }
-		}
-		modifier = {
-			factor = 1.25
-			has_trait_in_council = { TRAIT = leader_trait_expertise_biology }
 		}
 		modifier = {
 			factor = 1.25
@@ -1657,14 +1540,7 @@ tech_bioreactor = {
 	}
 
 	ai_weight = {
-		modifier = {
-			factor = 1.5
-			has_trait_in_council = { TRAIT = leader_trait_expertise_industry }
-		}
-		modifier = {
-			factor = 1.25
-			has_trait_in_council = { TRAIT = leader_trait_expertise_biology }
-		}
+
 	}
 }
 
@@ -1678,10 +1554,6 @@ tech_centralized_state = {
 
 	weight_modifier = {
 		factor = 1.25
-		modifier = {
-			factor = 1.25
-			has_trait_in_council = { TRAIT = leader_trait_expertise_statecraft }
-		}
 		modifier = {
 			factor = 1.25
 			is_authoritarian = yes
@@ -1718,10 +1590,6 @@ tech_federal_state = {
 
 	weight_modifier = {
 		factor = 1.25
-		modifier = {
-			factor = 1.25
-			has_trait_in_council = { TRAIT = leader_trait_expertise_statecraft }
-		}
 		modifier = {
 			factor = 1.25
 			is_egalitarian = yes
