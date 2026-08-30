@@ -93,6 +93,7 @@ manufacturers = {
 
 	is_potential = {
 		is_faction_allowed = yes
+		is_nomadic = no
 	}
 
 	parameters = {
@@ -111,13 +112,12 @@ manufacturers = {
 
 	can_join_faction = {
 		is_shackled_robot = no
-		has_culture_shock = no
 		can_think = yes
-		is_industrial = yes
+		is_interlink_cyborg_pop = no
 	}
-	
+
 	attraction = {
-		base = 150
+		base = 100
 		
 		modifier = {
 			factor = 1.25
@@ -145,7 +145,17 @@ manufacturers = {
 		}
 	}
 
-	demand = {
+    inline_script = {
+        script = pop_faction_types/demand_faction_outraged
+        FLAG = galactic_community_resolution_passed_ecology
+    }
+
+    inline_script = {
+        script = pop_faction_types/demand_faction_pleased
+        FLAG = galactic_community_resolution_passed_industry
+    }
+
+	demand = { # POLITICAL_PLURALISM
 		title = "POLITICAL_PLURALISM"
 		unfulfilled_title = "POLITICAL_PLURALISM"
 		desc = "POLITICAL_PLURALISM_DESC"
@@ -166,7 +176,7 @@ manufacturers = {
 		}
 	}
 	
-	demand = {
+	demand = { # ECO_ASCENSION_1
 		title = "ECO_ASCENSION_1"
 		unfulfilled_title = "ECO_NO_ASCENSION_1"
 		desc = "ECO_ASCENSION_1_DESC"
@@ -189,7 +199,7 @@ manufacturers = {
 		}
 	}
 
-	demand = {
+	demand = { # CONSUMER_MARKETS
 		title = "CONSUMER_MARKETS"
 		unfulfilled_title = "CONSUMER_MARKETS"
 		desc = "CONSUMER_MARKETS_DESC"
@@ -209,7 +219,7 @@ manufacturers = {
 		}
 	}
 	
-	demand = {
+	demand = { # INDUSTRIAL_INFRASTRUCTURE
 		title = "INDUSTRIAL_INFRASTRUCTURE"
 		unfulfilled_title = "NO_INDUSTRIAL_INFRASTRUCTURE"
 		desc = "INDUSTRIAL_INFRASTRUCTURE_DESC"
@@ -236,7 +246,7 @@ manufacturers = {
 		}
 	}
 
-	demand = {
+	demand = { # MINERALS_ACCUMULATION
 		title = "MINERALS_ACCUMULATION_1"
 		unfulfilled_title = "NO_MINERALS_ACCUMULATION_1"
 		desc = "MINERALS_ACCUMULATION_1_DESC"
@@ -268,7 +278,7 @@ manufacturers = {
 		}
 	}
 
-	demand = {
+	demand = { # OWN_RICH_WORLD
 		title = "OWN_RICH_WORLD"
 		unfulfilled_title = "NO_OWN_RICH_WORLD"
 		desc = "OWN_RICH_WORLD_DESC"
@@ -292,7 +302,7 @@ manufacturers = {
 		}
 	}
 	
-	demand = {
+	demand = { # OWN_ANCIENT_TECH
 		title = "OWN_ANCIENT_TECH"
 		unfulfilled_title = "NO_OWN_ANCIENT_TECH"
 		desc = "OWN_ANCIENT_TECH_DESC"
@@ -317,7 +327,7 @@ manufacturers = {
 		}
 	}
 
-	demand = {
+	demand = { # INDUSTRY_ASCENSION_1
 		title = "INDUSTRY_ASCENSION_1"
 		unfulfilled_title = "NO_INDUSTRY_ASCENSION_1"
 		desc = "INDUSTRY_ASCENSION_1_DESC"
@@ -343,7 +353,7 @@ manufacturers = {
 		}
 	}
 	
-	demand = {
+	demand = { # INDUSTRY_ASCENSION_2
 		title = "INDUSTRY_ASCENSION_2"
 		unfulfilled_title = "NO_INDUSTRY_ASCENSION_2"
 		desc = "INDUSTRY_ASCENSION_2_DESC"
@@ -365,14 +375,55 @@ manufacturers = {
 		}
 	}
 
-	# Global Faction Demands.
+	demand = { # Unplugged: Cyberize (Machine Cult Exempt)
+		title = IMPERIALIST_UNPLUGGED_CYBERIZE
+		unfulfilled_title = IMPERIALIST_UNPLUGGED_NOT_CYBERIZE
+		desc = IMPERIALIST_UNPLUGGED_CYBERIZE_DESC
+
+		unfulfilled_effect = -10
+		fulfilled_effect = 5
+
+		potential = {
+			exists = owner
+			owner = {
+				has_origin = origin_unplugged
+				NOT = { has_civic = civic_machine_cult }
+				any_situation = {
+					is_situation_type = situation_unplugged_identity
+				}
+			}
+		}
+
+		trigger = {
+			owner = {
+				any_situation = {
+					is_situation_type = situation_unplugged_identity
+					OR = {
+						AND = { # safely in the Cyberize stage
+							current_stage = unplugged_identity_stage_3
+							situation_monthly_progress > 0
+						}
+						AND = { # trending towards Cyberization and our Approach is aligned
+							situation_monthly_progress > 0.05
+							OR = {
+								current_situation_approach = situation_unplugged_identity_discourage_change
+								current_situation_approach = situation_unplugged_identity_embrace_opinion
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	# Faction Demands for Ruler and Council positions.
 	inline_script = {
-		script = "paragon/global_faction_demands"
+		script = "pop_faction_types/global_faction_demands"
 		ETHIC = ethic_industrial
 		ETHIC_FANATIC = ethic_fanatic_industrial
 		ETHIC_OPPOSED = ethic_green
-	} 
-	
+	}
+
 	on_create = {
 		pop_faction_event = { id = factions.1 }
 	}
@@ -396,21 +447,21 @@ manufacturers = {
 		embrace_faction = {
 			title = "EMBRACE_FACTION"
 			description = "EMBRACE_FACTION_DESC"
-			
+
 			cost = {
 				unity = 5000
 			}
-			
+
 			potential = {
 				exists = owner
 				owner = {
 					OR = {
 						is_subject = no
-						count_agreement = { count = 0 limit = { agreement_preset = preset_dominion } }
+						NOT = { any_agreement = { agreement_preset = preset_dominion } }
 					}
 				}
 			}
-			
+
 			valid = {
 				custom_tooltip = {
 					fail_text = EMBRACE_FACTION_COOLDOWN
@@ -420,19 +471,20 @@ manufacturers = {
 				}
 				support > 0.20
 				parameter:empire = {
-					NOT = { has_ethic = "ethic_fanatic_industrial" }
+					is_fanatic_industrial = no
 				}
 			}
 
 			effect = {
-				add_modifier = { modifier = embraced_faction years = 10 }
+				add_modifier = { modifier = embraced_faction days = 3600 }
+				owner = { set_country_flag = has_embraced_faction }
 				parameter:empire = {
 					shift_ethic = ethic_industrial
 					hidden_effect = {
-						add_modifier = { modifier = embraced_faction_timer years = 10 }
+						add_modifier = { modifier = embraced_faction_timer days = 3600 }
 						every_pop_faction = {
 							limit = { NOT = { is_same_value = root } }
-							add_modifier = { modifier = embraced_another_faction years = 10 }
+							add_modifier = { modifier = embraced_another_faction days = 3600 }
 						}
 					}
 				}
@@ -442,7 +494,7 @@ manufacturers = {
 						every_relation = {
 							limit = {
 								is_ai = no
-								is_country_type = default			
+								is_country_type = default
 								has_communications = prev
 								has_intel_level = {
 									who = prev
@@ -455,7 +507,7 @@ manufacturers = {
 					}
 				}
 			}
-			
+
 			ai_weight = {
 				base = 1
 				modifier = {
@@ -464,6 +516,10 @@ manufacturers = {
 					owner = {
 						has_ethic = ethic_industrial
 					}
+				}
+				modifier = {
+					factor = 0
+					owner = { has_valid_civic = civic_fanatic_purifiers }
 				}
 				modifier = {
 					factor = 0
@@ -478,23 +534,24 @@ manufacturers = {
 		promote_faction = {
 			title = "PROMOTE_FACTION"
 			description = "PROMOTE_FACTION_DESC"
-			
+
 			potential = {
 				exists = owner
-				parameter:empire = { 
-					NOR = { 
+				parameter:empire = {
+					NOR = {
 						has_modifier = suppressed_industrial
-						has_modifier = promoted_industrial 
+						has_modifier = promoted_industrial
 					}
 				}
 			}
 
 			effect = {
+				owner = { set_country_flag = has_promoted_faction }
 				parameter:empire = {
 					add_modifier = { modifier = promoted_industrial days = -1 }
 				}
 			}
-			
+
 			ai_weight = {
 				base = 0
 			}
@@ -502,12 +559,10 @@ manufacturers = {
 		cancel_promote_faction = {
 			title = "CANCEL_PROMOTE_FACTION"
 			description = "CANCEL_PROMOTE_FACTION_DESC"
-			
+
 			potential = {
 				exists = owner
-				parameter:empire = { 
-					has_modifier = promoted_industrial
-				}
+				parameter:empire = { has_modifier = promoted_industrial }
 			}
 
 			effect = {
@@ -515,7 +570,7 @@ manufacturers = {
 					remove_modifier = promoted_industrial
 				}
 			}
-			
+
 			ai_weight = {
 				base = 0
 			}
@@ -523,13 +578,13 @@ manufacturers = {
 		suppress_faction = {
 			title = "SUPPRESS_FACTION"
 			description = "SUPPRESS_FACTION_DESC"
-			
+
 			potential = {
 				exists = owner
-				parameter:empire = { 
-					NOR = { 
+				parameter:empire = {
+					NOR = {
 						has_modifier = suppressed_industrial
-						has_modifier = promoted_industrial 
+						has_modifier = promoted_industrial
 					}
 				}
 			}
@@ -540,7 +595,7 @@ manufacturers = {
 					add_modifier = { modifier = suppressed_industrial days = -1 }
 				}
 			}
-			
+
 			ai_weight = {
 				base = 0
 			}
@@ -548,12 +603,10 @@ manufacturers = {
 		cancel_suppress_faction = {
 			title = "CANCEL_SUPPRESS_FACTION"
 			description = "CANCEL_SUPPRESS_FACTION_DESC"
-			
+
 			potential = {
 				exists = owner
-				parameter:empire = { 
-					has_modifier = suppressed_industrial
-				}
+				parameter:empire = { has_modifier = suppressed_industrial }
 			}
 
 			effect = {
@@ -562,7 +615,7 @@ manufacturers = {
 					remove_modifier = suppressed_industrial
 				}
 			}
-			
+
 			ai_weight = {
 				base = 0
 			}
@@ -577,12 +630,11 @@ manufacturers = {
 				owner = {
 					is_oligarchic_authority = yes
 					has_country_flag = cyber_collectivist
-					NOT = { has_edict = civic_crowdsourcing_edict }
-					#NOR = {
-					#	has_civic = civic_anarchy_utopia
-					#	has_civic = civic_crowdsourcing
-					#	has_civic = civic_corporate_crowdsourcing
-					#}
+					NOR = {
+						has_valid_civic = civic_anarchy_utopia
+						has_valid_civic = civic_crowdsourcing
+						has_valid_civic = civic_corporate_crowdsourcing
+					}
 				}
 				is_faction_extorted = no
 			}
@@ -606,12 +658,11 @@ manufacturers = {
 				owner = {
 					is_oligarchic_authority = yes
 					has_country_flag = cyber_collectivist
-					has_edict = civic_crowdsourcing_edict
-					#OR = {
-					#	has_civic = civic_anarchy_utopia
-					#	has_civic = civic_crowdsourcing
-					#	has_civic = civic_corporate_crowdsourcing
-					#}
+					OR = {
+						has_valid_civic = civic_anarchy_utopia
+						has_valid_civic = civic_crowdsourcing
+						has_valid_civic = civic_corporate_crowdsourcing
+					}
 				}
 				is_faction_extorted = no
 			}

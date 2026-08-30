@@ -998,3 +998,111 @@ set_merchant_government_effect = {
 		}
 	}
 }
+
+############
+############
+############
+# Council Agenda effects
+# Added by Sage 08/06/2026
+
+# Environmental Steward Finisher
+# Agenda Finisher Effect Script
+# scope = planet | owner = country
+add_environmental_stewards_agenda = {											
+	if = {
+		limit = { NOT = { has_modifier = natural_beauty } }
+		add_modifier = { modifier = natural_beauty }
+	}
+	else = {
+		add_modifier = { modifier = environmental_stewards_agenda_boost days = 3600 }
+	} 
+}
+
+# Quarterly Budget Review Finisher
+add_quarterly_budget_review_agenda = {
+	exists = owner 
+	owner = {
+		if = {
+			limit = {
+				is_megacorp = yes
+			}
+			add_resource = {
+				trade = @agenda_a_higher_purpose_unity
+				mult = value:country_assigned_traders
+			}
+			random_list = {
+				3 = {
+					random_owned_planet = {
+						if = {
+							limit = {
+								num_free_districts = { type = any value >= 1 }
+							}
+							add_blocker = {
+								type = d_decrepit_dwellings
+							}			
+						}
+						else = {
+							add_modifier = { modifier = EaC_labor_movements days = 720 }
+						}
+					}
+				}
+				4 = {
+					country_event = {
+						id = crime.51
+						days = 1
+						random = 30
+					}
+				}
+				3 = {
+					country_event = {
+						id = pirate.5
+						days = 1
+						random = 30
+					}
+				}
+			}
+		}
+		else = {
+			random_owned_planet = {
+				limit = {
+					is_capital = yes
+				}
+				add_modifier = { modifier = quarterly_budget_review_agenda_boost days = 720 }
+			}
+			random_list = {
+				6 = {
+					random_owned_planet = {
+						limit = {
+							is_colony = yes
+						}
+						if = {
+							limit = {
+								num_free_districts = { type = any value >= 1 }
+							}
+							add_blocker = {
+								type = d_decrepit_dwellings 
+							}			
+						}
+						else = {
+							add_modifier = { modifier = EaC_labor_movements days = 720 }
+						}
+					}
+				}
+				2 = {
+					country_event = {
+						id = crime.51
+						days = 1
+						random = 30
+					}
+				}
+				2 = {
+					country_event = {
+						id = pirate.5
+						days = 1
+						random = 30
+					}
+				}
+			}
+		}
+	}
+}

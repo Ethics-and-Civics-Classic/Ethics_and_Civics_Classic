@@ -154,150 +154,15 @@ situation_event = {
 	}
 }
 
-### Nemma Colony Fix (Ecocentrist / Industrial)
- #Nemma World
-carrier_event = {
-	id = colony.9000
-	title = "colony.9000.name"
-	desc = "colony.9000.desc"
-	picture = GFX_evt_continental
-	show_sound = event_alien_nature
-	location = ROOT
-	trackable = yes
-	event_chain = nemma_world_chain
-
-	is_triggered_only = yes
-
-	pre_triggers = {
-		has_owner = yes
-		is_homeworld = no
-		is_capital = no
-		is_ai = no
-		has_ground_combat = no
-		original_owner = yes
-	}
-
-	trigger = {
-		pop_amount > 0
-		OR = {
-			is_planet_class = pc_continental
-			is_planet_class = pc_ocean
-		}
-		NOR = {
-			any_country = { has_country_flag = turtle_world_spawned }
-			has_planet_flag = colony_event
-			owner = { is_wilderness_empire = yes }
-		}
-	}
-
-	immediate = {
-		set_carrier_flag = turtle_world_colony
-		set_carrier_flag = colony_event
-		owner = {
-			set_country_flag = turtle_world_spawned
-			begin_event_chain = {
-				event_chain = nemma_world_chain
-				target = this
-			}
-		}
-	}
-
-	option = {
-		name = {
-			trigger = {
-				owner = { NOT = { species_portrait = rep14 } }
-			}
-			text = "colony.9000.a"
-		}
-		name = {
-			trigger = {
-				owner = { species_portrait = rep14 }
-			}
-			text = "colony.9000.a.turtle"
-		}
-		owner = {
-			tooltip = {
-				begin_event_chain = {
-					event_chain = nemma_world_chain
-					target = this
-				}
-			}
-		}
-		add_modifier = {
-			modifier = "turtle_world_modifier"
-			days = -1
-		}
-
-		if = {
-			limit = { owner = { has_origin = origin_evolutionary_predators } }
-			add_modifier = {
-				modifier = "turtle_world_modifier_evopred"
-				days = -1
-			}
-		}
-
-		hidden_effect = {
-			carrier_event = {
-				id = colony.9005 days = 700 random = 30
-			}
-		}
-	}
-}
+### Nemma by Victor Haeggman (with Ecocentrist / Industrial ethics)
 
 carrier_event = {
-	id = colony.9005
-	title = "colony.9005.name"
-	desc = {
-		trigger = { owner = { is_gestalt = no } }
-		text = "colony.9005.desc"
-	}
-	desc = {
-		trigger = { owner = { is_gestalt = yes } }
-		text = "colony.9005.desc.gestalt"
-	}
-	picture = GFX_evt_unspeakable_horror
-	show_sound = event_space_amoeba
-	location = ROOT
-	trackable = yes
-	event_chain = nemma_world_chain
-
-	is_triggered_only = yes
-
-	option = { # Yes investigate the Nemmas
-		name = colony.9005.a
-		enable_special_project = {
-			name = "study_turtle_world_project"
-			location = this
-			owner = root
-		}
-	}
-	option = { # Leave the Nemmas alone
-		name = {
-			trigger = { owner = { is_gestalt = no } }
-			text = "colony.9005.b"
-		}
-		name = {
-			trigger = { owner = { is_gestalt = yes } }
-			text = "colony.9005.b.gestalt"
-		}
-		owner = {
-			end_event_chain = nemma_world_chain
-		}
-		remove_modifier = "turtle_world_modifier"
-		add_modifier = {
-			modifier = "turtle_world_modifier_alone"
-			days = -1
-		}
-	}
-}
-
-planet_event = {
 	id = colony.9010
 	title = "colony.9010.name"
 	desc = "colony.9010.desc"
 	picture = GFX_evt_board_meeting
 	show_sound = event_administrative_work
-	location = root
+	location = ROOT
 	trackable = yes
 	event_chain = nemma_world_chain
 
@@ -319,13 +184,16 @@ planet_event = {
 						NOT = { has_civic = civic_machine_servitor }
 					}
 				}
+
 			}
 		}
 		enable_special_project = {
 			name = "breed_turtle_world_project"
+			location = this
 			owner = root
 		}
 	}
+
 	option = {
 		name = colony.9010.b
 		trigger = {
@@ -344,6 +212,7 @@ planet_event = {
 		}
 		enable_special_project = {
 			name = "enslave_turtle_world_project"
+			location = this
 			owner = root
 		}
 	}
@@ -360,6 +229,7 @@ planet_event = {
 		}
 		enable_special_project = {
 			name = "mine_turtle_world_project"
+			location = this
 			owner = root
 		}
 	}
@@ -370,184 +240,20 @@ planet_event = {
 		}
 		enable_special_project = {
 			name = "kill_turtle_world_project"
+			location = this
 			owner = root
 		}
 	}
 }
 
- #Commence the Nemma breeding!
-planet_event = {
-	id = colony.9015
-	title = "colony.9015.name"
-	desc = "colony.9015.desc"
-	picture = GFX_evt_alien_planet
-	show_sound = event_default
-	location = root
-	trackable = yes
-	event_chain = nemma_world_chain
-
-	is_triggered_only = yes
-
-	immediate = {
-		set_variable = {
-			which = turtle_amount
-			value = 0
-		}
-	}
-
-	option = {
-		name = colony.9015.a
-		hidden_effect = {
-			planet_event = {
-				id = colony.9020 days = 3600 random = 100
-			}
-		}
-	}
-}
-
- #Successful breeding!
-planet_event = {
-	id = colony.9020
-	title = "colony.9020.name"
-	desc = {
-		trigger = {
-			check_variable = {
-				which = turtle_amount
-				value = 5
-			}
-		}
-		text = "colony.9020.desc.full"
-	}
-	desc = {
-		trigger = {
-			check_variable = {
-				which = turtle_amount
-				value < 5
-			}
-		}
-		text = "colony.9020.desc"
-	}
-	picture = GFX_evt_alien_nature
-	show_sound = event_alien_nature
-	location = root
-	trackable = yes
-	event_chain = nemma_world_chain
-
-	is_triggered_only = yes
-
-	immediate = {
-		add_deposit = d_house_turtle
-		change_variable = {
-			which = turtle_amount
-			value = 1
-		}
-	}
-
-	option = {
-		name = colony.9020.a
-		trigger = {
-			check_variable = {
-				which = turtle_amount
-				value < 6
-			}
-		}
-		hidden_effect = {
-			random_list = {
-				2 = {
-					planet_event = {
-						id = colony.9020 days = 3600 random = 100
-					}
-				}
-
-				1 = {
-					planet_event = {
-						id = colony.9025 days = 3600 random = 100
-					}
-					modifier = {
-						factor = turtle_amount
-						is_variable_set = turtle_amount
-					}
-				}
-			}
-		}
-	}
-	option = {
-		name = {
-			trigger = { owner = { is_gestalt = no } }
-			text = "colony.9020.b"
-		}
-		name = {
-			trigger = { owner = { is_gestalt = yes } }
-			text = "colony.9020.b.gestalt"
-		}
-		trigger = {
-			check_variable = {
-				which = turtle_amount
-				value = 6
-			}
-		}
-		owner = {
-			end_event_chain = nemma_world_chain
-		}
-	}
-}
-
- #Failed breeding!
-planet_event = {
-	id = colony.9025
-	title = "colony.9025.name"
-	desc = "colony.9025.desc"
-	picture = GFX_evt_clocks
-	show_sound = event_laboratory_sound
-	location = root
-	trackable = yes
-	event_chain = nemma_world_chain
-
-	is_triggered_only = yes
-
-	option = {
-		name = colony.9025.a
-		owner = {
-			add_monthly_resource_mult = {
-				resource = society_research
-				value = @tier2researchreward
-				min = @tier2researchmin
-				max = @tier2researchmax
-			}
-		}
-		hidden_effect = {
-			random_list = {
-				3 = {
-					planet_event = {
-						id = colony.9020 days = 3600 random = 100
-					}
-					change_variable = {
-						which = turtle_amount
-						value = 1
-					}
-				}
-				1 = {
-					planet_event = {
-						id = colony.9025 days = 3600 random = 100
-					}
-					modifier = {
-						factor = turtle_amount
-						is_variable_set = turtle_amount
-					}
-				}
-			}
-		}
-	}
-}
-
- #Commence the Nemma enslavement!
-planet_event = {
+#Commence the Nemma enslavement!
+carrier_event = {
 	id = colony.9030
 	title = "colony.9030.name"
 	desc = "colony.9030.desc"
 	picture = GFX_evt_genetic_modification
 	show_sound = event_laboratory_sound
-	location = root
+	location = ROOT
 	trackable = yes
 	event_chain = nemma_world_chain
 
@@ -571,7 +277,7 @@ planet_event = {
                         }
 					}
 				}
-				planet_event = {
+				carrier_event = {
 					id = colony.9035 days = 1000 random = 50
 				}
 			}
@@ -579,122 +285,172 @@ planet_event = {
 	}
 }
 
- #Free the Nemma!
-planet_event = {
-	id = colony.9035
-	title = "colony.9035.name"
-	desc = "colony.9035.desc"
-	picture = GFX_evt_burning_settlement
-	show_sound = event_planetary_riot
-	location = root
-	trackable = yes
-	event_chain = nemma_world_chain
-
+#necroids.2 Tell player about necrophage mechanic 180 days before it happens
+country_event = {
+	id = necroids.2
+	title = necroids.2.name
+	desc = {
+		trigger = { is_hive_empire = no }
+		text = necroids.2.desc
+	}
+	desc = {
+		trigger = { is_hive_empire = yes }
+		text = necroids.2.desc.gestalt
+	}
+	show_sound = event_necrophage
+	picture = GFX_evt_necrophage
 	is_triggered_only = yes
 
-	option = {
-		name = colony.9035.a
-		remove_modifier = turtle_world_slaves_modifier
-		add_modifier = {
-			modifier = "turtle_world_modifier"
-			days = -1
-		}
-		hidden_effect = {
-			planet_event = {
-				id = colony.9015 days = 2000 random = 100
+	trigger = {
+		capital_scope = {
+			colony_age > 8
+			has_building = building_necrophage_elevation_chamber
+			num_assigned_jobs = {
+				job = necro_apprentice
+				value >= 1
 			}
 		}
 	}
-	option = {
-		name = colony.9035.b
-		owner = {
-			end_event_chain = nemma_world_chain
-		}
-		add_modifier = {
-			modifier = "embraced_turtle_slavery_modifier"
-			days = -1
-		}
-	}
-}
-
- #Commence the Nemma mining!
-planet_event = {
-	id = colony.9040
-	title = "colony.9040.name"
-	desc = "colony.9040.desc"
-	picture = GFX_evt_drilling_for_gas
-	show_sound = event_construction
-	location = root
-	trackable = yes
-	event_chain = nemma_world_chain
-
-	is_triggered_only = yes
-
-	option = {
-		name = EXCELLENT
-		owner = {
-			end_event_chain = nemma_world_chain
-		}
-		add_deposit = d_turtle_miner
-	}
-}
-
- #Commence the eating of the dead Nemma!
-planet_event = {
-	id = colony.9045
-	title = "colony.9045.name"
-	desc = "colony.9045.desc"
-	picture = GFX_evt_ocean
-	show_sound = event_alien_nature
-	location = root
-	trackable = yes
-	event_chain = nemma_world_chain
-
-	is_triggered_only = yes
 
 	immediate = {
-		owner = {
-			add_resource = {
-				minerals = 3000
-				food = 3000
+		capital_scope = {
+			random_owned_species = {
+				limit = { species_can_be_necrophaged = yes }
+				save_event_target_as = necrophage_species
 			}
 		}
 	}
 
 	option = {
-		exclusive_trigger = {
+		name = necroids.2.A
+		custom_tooltip = necroids.2.A.tooltip
+	}
+}
+
+# AI help for getting secondary symbiotic species on the planet
+carrier_event = {
+	id = necroids.3
+	is_triggered_only = yes
+	hide_window = yes
+
+	trigger = {
+		exists = owner
+		owner = {
+			is_ai = yes
+			has_origin = origin_necrophage
+			has_trait = trait_necrophage
+			any_owned_species = {
+				species_can_be_necrophaged = yes
+				NOT = {
+					has_citizenship_type = { type = citizenship_purge country = root.owner }
+				}
+			}
+		}
+		OR = {
+			AND = {
+				any_owned_species = {
+					is_same_species = root.owner_species
+				}
+				NOT = {
+					any_owned_species = {
+						species_can_be_necrophaged = yes
+					}
+				}
+			}
+			AND = {
+				NOT = {
+					any_owned_species = {
+						is_same_species = root.owner_species
+					}
+				}
+				any_owned_species = {
+					species_can_be_necrophaged = yes
+				}
+			}
+		}
+	}
+
+	immediate = {
+		if = {
+			limit = {
+				any_owned_species = {
+					is_same_species = root.owner_species
+				}
+				NOT = {
+					any_owned_species = {
+						species_can_be_necrophaged = yes
+					}
+				}
+			}
 			owner = {
-				has_civic = civic_hive_devouring_swarm
-				NOT = { has_origin = origin_evolutionary_predators }
+				random_owned_planet = {
+					limit = {
+						any_owned_species = {
+							species_can_be_necrophaged = yes
+							NOT = {
+								has_citizenship_type = { type = citizenship_purge country = root.owner }
+							}
+						}
+						count_owned_pop_amount = {
+							count >= 200
+							limit = {
+								species = {
+									species_can_be_necrophaged = yes
+									NOT = {
+										has_citizenship_type = { type = citizenship_purge country = root.owner }
+									}
+								}
+							}
+						}
+					}
+					weighted_random_owned_pop_group = {
+						limit = {
+							species = {
+								species_can_be_necrophaged = yes
+								NOT = {
+									has_citizenship_type = { type = citizenship_purge country = root.owner }
+								}
+							}
+						}
+						resettle_pop_group = {
+							POP_GROUP = this
+							PLANET = root
+							AMOUNT = 100
+						}
+					}
+				}
 			}
 		}
-		name = PREY
-	}
-
-	option = {
-		exclusive_trigger = {
-			owner = { has_civic = civic_machine_terminator }
-		}
-		name = E_DOW_PROPOSE_03
-	}
-
-	option = {
-		exclusive_trigger = {
-			owner = { has_origin = origin_evolutionary_predators }
-		}
-		name = DELICIOUS
-		owner = { give_evolutionary_predator_situation_progress_and_dna = { AMOUNT = large TYPE = reptilian } }
-	}
-
-	option = {
-		name = colony.9045.a
-	}
-
-	after = {
-		remove_modifier = "turtle_world_modifier"
-		add_deposit = d_turtle_corpse
-		owner = {
-			end_event_chain = nemma_world_chain
+		else = {
+			owner = {
+				random_owned_planet = {
+					limit = {
+						any_owned_species = {
+							is_same_species = root.owner_species
+						}
+						count_owned_pop_amount = {
+							count >= 200
+							limit = {
+								species = {
+									is_same_species = root.owner_species
+								}
+							}
+						}
+					}
+					random_owned_pop_group = {
+						limit = {
+							species = {
+								is_same_species = root.owner_species
+							}
+						}
+						resettle_pop_group = {
+							POP_GROUP = this
+							PLANET = root
+							AMOUNT = 100
+						}
+					}
+				}
+			}
 		}
 	}
 }

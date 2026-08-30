@@ -825,13 +825,31 @@ ethic_fanatic_xenophobe = {
 		founder_species_growth_mult = 0.20				# Vanilla
 		rivalries_influence_produces_mult = 0.3
 		tradition_cost_empire_size_mult = -0.4
-		ship_home_territory_fire_rate_mult = 0.2
 		diplomacy_upkeep_mult = 0.25
 		# country_starbase_influence_cost_mult = -0.4	# Vanilla
 		add_attunement_the_eater_of_worlds = @ethic_attunement2
 		refugee_attraction = -0.30
 	}
-
+    triggered_country_modifier = {
+        potential = {
+            is_nomadic = no
+        }
+        country_starbase_influence_cost_mult = -0.4
+		ship_home_territory_fire_rate_mult = 0.2
+    }
+    triggered_country_modifier = {
+        potential = {
+            is_nomadic = yes
+        }
+        megastructures_arkships_influence_cost_mult = -0.1
+    }
+    random_weight = {
+        base = 150
+        modifier = {
+            factor = 0.2
+            blocks_disruptive_gameplay = yes
+        }
+    }
 	random_weight = {
 		base = 150
 		modifier = {
@@ -864,10 +882,24 @@ ethic_xenophobe = {
 		founder_species_growth_mult = 0.10				# Vanilla
 		rivalries_influence_produces_mult = 0.15
 		tradition_cost_empire_size_mult = -0.2
-		ship_home_territory_fire_rate_mult = 0.1
 		# country_starbase_influence_cost_mult = -0.2	# Vanilla
 		add_attunement_the_eater_of_worlds = @ethic_attunement1
 		refugee_attraction = -0.15
+	}
+
+	triggered_country_modifier = {
+		potential = {
+			is_nomadic = no
+		}
+		country_starbase_influence_cost_mult = -0.2
+		ship_home_territory_fire_rate_mult = 0.1
+	}
+
+	triggered_country_modifier = {
+		potential = {
+			is_nomadic = yes
+		}
+		megastructures_arkships_influence_cost_mult = -0.05
 	}
 
 	random_weight = {
@@ -1741,6 +1773,19 @@ ethic_fanatic_militarist = {
 		add_attunement_the_eater_of_worlds = @ethic_attunement2
 	}
 
+    triggered_country_modifier = {
+        potential = {
+            is_nomadic = no
+        }
+        country_claim_influence_cost_mult = -0.2
+    }
+    triggered_country_modifier = {
+        potential = {
+            is_nomadic = yes
+        }
+        scavenge_debris_mult = 0.1
+    }
+
 	# More common ethic
 	random_weight = {
 		base = 250
@@ -1772,7 +1817,18 @@ ethic_militarist = {
 		max_rivalries = 1
 		add_attunement_the_eater_of_worlds = @ethic_attunement1
 	}
-
+	triggered_country_modifier = {
+		potential = {
+			is_nomadic = no
+		}
+		country_claim_influence_cost_mult = -0.1
+	}
+	triggered_country_modifier = {
+		potential = {
+			is_nomadic = yes
+		}
+		scavenge_debris_mult = 0.05
+	}
 	# More common ethic
 	random_weight = {
 		base = 150
@@ -2643,6 +2699,7 @@ ethic_spiritualist = {
 		high_priest = 25
 		priest = 25
 		death_priest = 25
+		druid = 25
 		telepath = 25
 		death_chronicler = 25
 		necro_apprentice = 25
@@ -2689,9 +2746,10 @@ ethic_spiritualist = {
 					has_technology = "tech_psionic_theory"
 					is_individual_machine = no
 				}
-				has_ascension_perk = ap_mind_over_matter
+				has_psionic_ascension = yes
 				has_origin = origin_shroudwalker_apprentice
 				has_tradition = tr_psionics_psionic_assimilation
+				has_tradition = tr_psionics_shroud_great_awakening
 				any_owned_species = {
 					has_psionic_species_trait = yes
 				}
@@ -2733,6 +2791,10 @@ ethic_spiritualist = {
 				is_robotic = yes
 			}
 			is_individual_machine = no
+			NOR = {
+				has_civic = civic_machine_cult
+				has_civic = civic_machine_cult_machine
+			}
 		}
 	}
 
@@ -2741,6 +2803,31 @@ ethic_spiritualist = {
 		trigger = {
 			has_policy_flag = ai_full_rights
 			is_individual_machine = no
+			NOR = {
+				has_civic = civic_machine_cult
+				has_civic = civic_machine_cult_machine
+			}
+		}
+	}
+
+	pop_attraction_tag = {
+		desc = POP_ATTRACTION_MACHINE_CULT_POS
+		trigger = {
+			any_owned_species = {
+				is_robotic = yes
+			}
+			is_individual_machine = no
+			has_civic = civic_machine_cult
+		}
+	}
+
+	pop_attraction_tag = {
+		desc = POP_ATTRACTION_MACHINE_CULT_MACHINE_POS
+		trigger = {
+			any_owned_species = {
+				has_trait = trait_machine_cult_cybernetic
+			}
+			has_civic = civic_machine_cult_machine
 		}
 	}
 
@@ -2914,17 +3001,24 @@ ethic_spiritualist = {
 		modifier = {
 			factor = 1.5
 			is_country_type = default
-			has_ascension_perk = ap_mind_over_matter
+			has_psionic_ascension = yes
 		}
 		modifier = {
 			factor = 1.5
 			is_country_type = default
-			has_tradition = tr_psionics_psionic_assimilation
+			OR = {
+				has_tradition = tr_psionics_psionic_assimilation
+				has_tradition = tr_psionics_shroud_great_awakening	
+			}
 		}
 		modifier = {
 			factor = 0.75
 			is_country_type = default
 			has_policy_flag = ai_full_rights
+			NOR = { 
+				has_civic = civic_machine_cult 
+				has_civic = civic_machine_cult_machine
+			}
 		}
 		modifier = {
 			exists = overlord
@@ -2959,32 +3053,38 @@ ethic_spiritualist = {
 		}
 		modifier = {
 			factor = 1.1
-			OR = {
-				has_trait = trait_latent_psionic
-				has_trait = trait_robot_latent_psionic
-			}
+			is_latent_psionic_species = yes
 		}
 		modifier = {
 			factor = 1.2
-			has_trait = trait_psionic
+			is_psionic_species = yes
 		}
 		modifier = {
 			factor = 0.25
 			is_robot_pop_group = yes
+			owner = {
+				is_individual_machine = no
+				NOR = { 
+					has_valid_civic = civic_machine_cult_machine
+					has_valid_civic = civic_machine_cult
+				}
+			}
 		}
-		# modifier = {
-		#	factor = 2
-		#	OR = {
-		#		has_job_type = priest			# No Longer Used in Stellaris 4.0
-		#		has_job_type = high_priest
-		#		has_job_type = death_priest
-		#		has_job_type = mortal_initiate
-		#		has_job_type = preacher
-		#		has_job_type = haruspex
-		#		has_job_type = technophant
-		#		has_cybernetic_creed_trait = yes
-		#	}
-		#}
+		modifier = {
+			factor = 1.1
+			is_robot_pop_group = yes
+			owner = {
+				is_individual_machine = yes
+				has_valid_civic = civic_machine_cult_machine
+			}
+		}
+		modifier = {
+			factor = 2
+			OR = {
+				has_cybernetic_creed_trait = yes
+				has_trait = trait_machine_cult_cybernetic
+			}
+		}
 	}
 }
 

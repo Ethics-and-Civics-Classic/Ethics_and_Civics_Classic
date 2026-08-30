@@ -8,16 +8,38 @@
 living_standard_organic_trophy = {
 	triggered_pop_group_modifier = {
 		potential = {
-			NAND = {
-				exists = owner
-				owner = { has_deficit = consumer_goods }
+			owner? = { NOT = { has_deficit = consumer_goods } }
+			OR = {
+				is_pop_category = bio_trophy
+				is_pop_category = cruise_passenger
 			}
 		}
 		pop_happiness = 0.4
 	}
 
+	triggered_pop_group_modifier = {
+		potential = {
+			OR = {
+				owner? = { has_deficit = consumer_goods }
+				NOR = {
+					is_pop_category = bio_trophy
+					is_pop_category = cruise_passenger
+				}
+			}
+		}
+		pop_happiness = -0.4
+	}
+
 	pop_group_modifier = {
 		pop_category_bio_trophy_consumer_goods_upkeep_add = @living_standard_luxuries_very_high
+	}
+
+	# Forever Cruise Bio-Trophy Passengers also add the luxury upkeep of First-Class Passengers.
+	triggered_pop_group_modifier = {
+		potential = {
+			owner? = { is_hospitality_servitor_empire = yes }
+		}
+		pop_category_cruise_passenger_consumer_goods_upkeep_add = @living_standard_luxuries_very_high_passenger
 	}
 
 	potential = {
@@ -46,7 +68,6 @@ living_standard_organic_trophy = {
 		factor = 100
 	}
 }
-
 
 living_standard_chemical_bliss = {
 	triggered_pop_group_modifier = {
@@ -97,19 +118,17 @@ living_standard_chemical_bliss = {
 		pop_category_rulers_consumer_goods_upkeep_add = @living_standard_luxuries_very_high
 		pop_category_specialists_consumer_goods_upkeep_add = @living_standard_luxuries_very_high
 		pop_category_workers_consumer_goods_upkeep_add = @living_standard_luxuries_very_high
-		pop_category_slave_consumer_goods_upkeep_add = @living_standard_luxuries_low
 		pop_category_civilians_consumer_goods_upkeep_add = @living_standard_luxuries_low
 	}
 
 	triggered_pop_group_modifier = {	#Steam: I think it should apply to chemical bliss, considering the downsides and similarities	# Enriad - for balance thoughts Transcended Hedonist synergy possible only with Hedonist Decadent Lifestyle
 		potential = {
-			exists = owner
-			owner = { is_spiritual_seeker_empire = yes }
+			owner? = { is_spiritual_seeker_empire = yes }
 		}
-		pop_category_civilians_unity_produces_add = 0.5
-		pop_category_civilians_physics_research_produces_add = 0.25
-		pop_category_civilians_society_research_produces_add = 0.25
-		pop_category_civilians_engineering_research_produces_add = 0.25
+		pop_category_civilians_unity_produces_add = 0.25
+		pop_category_civilians_physics_research_produces_add = 0.15
+		pop_category_civilians_society_research_produces_add = 0.15
+		pop_category_civilians_engineering_research_produces_add = 0.15
 		pop_category_civilians_energy_upkeep_add = 0.25
 	}
 
@@ -118,7 +137,11 @@ living_standard_chemical_bliss = {
 			has_technology = tech_subdermal_stimulation
 			NOT = { has_valid_civic = civic_dystopian_society }
 		}
-		NOR = { has_trait = trait_hive_mind is_robotic = yes }
+		NOR = {
+			has_trait = trait_hive_mind
+			has_trait = trait_mechanical
+			has_trait = trait_machine_unit
+		}
 	}
 
 	allow = {
@@ -170,6 +193,7 @@ living_standard_shared_burden = {
 	potential = {
 		exists = from
 		from = { has_valid_civic = civic_shared_burden }
+		is_cruise_passenger = no
 	}
 
 	triggered_pop_group_modifier = {
@@ -179,10 +203,7 @@ living_standard_shared_burden = {
 				owner = { has_deficit = consumer_goods }
 			}
 		}
-		pop_cat_ruler_happiness = 0.05
-		pop_cat_specialist_happiness = 0.05
-		pop_cat_worker_happiness = 0.05
-		pop_unemployment_demotion_time_mult = -0.45
+		pop_happiness = 0.05
 	}
 
 	## Triggered so the auto-generated modifier is hidden.
@@ -200,9 +221,6 @@ living_standard_shared_burden = {
 		potential = {
 			always = yes
 		}
-		pop_cat_ruler_unemployment_political_power = 3
-		pop_cat_specialist_unemployment_political_power = 3
-		pop_cat_worker_unemployment_political_power = 3
 	}
 
 	pop_group_modifier = {
@@ -216,7 +234,7 @@ living_standard_shared_burden = {
 		pop_cat_civilian_political_power = 3
 		pop_civilian_bonus_workforce_mult = 0.15
 	}
-	
+
 	triggered_pop_group_modifier = {
 		potential = {
 			is_pop_category = civilian
@@ -276,169 +294,6 @@ living_standard_shared_burden = {
 	}
 }
 
-living_standard_academic_privilege = {
-	in_breach_of = {
-		{
-			trigger = {
-				is_gestalt = no
-			}
-			key = resolution_greatergood_balance_in_the_middle
-		}
-		{
-			trigger = {
-				is_gestalt = no
-			}
-			key = resolution_greatergood_universal_prosperity_mandate
-		}
-	}
-
-	triggered_pop_group_modifier = {
-		potential = {
-			NAND = {
-				exists = owner
-				owner = { has_deficit = consumer_goods }
-			}
-		}
-		researcher_jobs_bonus_workforce_mult = 0.1
-		pop_cat_ruler_happiness = 0.15
-		pop_cat_specialist_happiness = 0.15
-	}
-
-	# Triggered so the auto-generated modifier is hidden.
-	#triggered_pop_group_modifier = {
-	#	potential = {
-	#		always = yes
-	#	}
-	#	living_standard_trade_value_rulers_add =			@trade_value_very_high
-	#	living_standard_trade_value_specialists_add =		@trade_value_very_high
-	#	living_standard_trade_value_workers_add = 			@trade_value_normal
-	#}
-	
-	triggered_pop_group_modifier = {
-		# Triggered to hide from the auto-generated tooltip
-		potential = {
-			always = yes
-		}
-		pop_cat_ruler_unemployment_political_power = 6
-		pop_cat_specialist_unemployment_political_power = 2.5
-		pop_cat_worker_unemployment_political_power = 0.5
-	}
-
-	pop_group_modifier = {
-		pop_category_rulers_consumer_goods_upkeep_add = @living_standard_luxuries_very_high
-		pop_category_specialists_consumer_goods_upkeep_add = @living_standard_luxuries_very_high
-		pop_category_workers_consumer_goods_upkeep_add = @living_standard_luxuries_normal
-		pop_category_civilians_consumer_goods_upkeep_add = @living_standard_luxuries_normal
-		pop_cat_ruler_political_power = 6
-		pop_cat_specialist_political_power = 2.5
-		pop_cat_worker_political_power = 0.5
-		pop_cat_civilian_political_power = 0.5
-		pop_civilian_bonus_workforce_mult = 0.10
-	}
-
-	potential = {
-		exists = from
-		from = {
-			is_gestalt = no
-			NOR = {
-				has_valid_civic = civic_shared_burden
-				is_worker_coop_empire = yes
-				has_valid_civic = civic_dystopian_society
-				from = { has_valid_civic = civic_welfare_state }
-			}
-		}
-		NOR = {
-			has_trait = trait_hive_mind
-			AND = {
-				from = { is_individual_machine = no }
-				has_trait = trait_machine_unit
-			}
-			is_shackled_robot_species_rights = yes
-		}
-	}
-
-	allow = {
-		hidden_trigger = { exists = from }
-		custom_tooltip = {
-			fail_text = empire_not_materialist
-			from = {
-				is_materialist = yes
-			}
-		}
-		custom_tooltip = {
-			fail_text = is_slaves_tooltip
-			NOT = { has_citizenship_type = { country = from type = citizenship_slavery } }
-		}
-		custom_tooltip = {
-			fail_text = is_purged_not_neutered
-			if = {
-				limit = {
-					OR = {
-						has_citizenship_type = { country = from type = citizenship_purge_machine }
-						has_citizenship_type = { country = from type = citizenship_purge }
-					}
-				}
-				OR = {
-					has_purge_type = { country = from type = purge_neutering }
-					has_purge_type = { country = from type = purge_cosmogenesis_lathe_resettle }
-				}
-			}
-		}
-		custom_tooltip = {
-			fail_text = SPECIES_MUST_NOT_BE_ASSIMILATING
-			NOT = {
-				has_citizenship_type = {
-					type = citizenship_assimilation
-					country = from
-				}
-			}
-		}
-	}
-
-	ai_will_do = {
-		factor = 10
-		modifier = {
-			factor = 0
-			NOT = { has_citizenship_type = { country = from type = citizenship_full } }
-		}
-		modifier = {
-			factor = 0
-			NOT = { has_living_standard = { country = from type = living_standard_academic_privilege } }
-			NOT = {
-				from = {
-					has_monthly_income = {
-						resource = minerals
-						value > 300
-					}
-				}
-			}
-		}
-		modifier = {
-			factor = 0
-			has_living_standard = { country = from type = living_standard_academic_privilege }
-			NOT = {
-				from = {
-					has_monthly_income = {
-						resource = minerals
-						value > 200
-					}
-				}
-			}
-		}
-
-		modifier = {
-			factor = 0.25
-			from = {
-				is_galactic_community_member = yes
-			}
-			OR = {
-				is_active_resolution = "resolution_greatergood_balance_in_the_middle"
-				is_active_resolution = "resolution_greatergood_universal_prosperity_mandate"
-			}
-		}
-	}
-}
-
 living_standard_utopian = {
 	triggered_pop_group_modifier = {
 		potential = {
@@ -448,9 +303,7 @@ living_standard_utopian = {
 			}
 			# from = { NOT = { has_valid_civic = civic_beacon_of_liberty } } 		# Enriad - causes errors
 		}
-		pop_cat_ruler_happiness = 0.20
-		pop_cat_specialist_happiness = 0.20
-		pop_cat_worker_happiness = 0.20
+		pop_happiness = 0.20
 	}
 
 	#triggered_pop_group_modifier = {
@@ -492,9 +345,6 @@ living_standard_utopian = {
 		potential = {
 			always = yes
 		}
-		pop_cat_ruler_unemployment_political_power = 4
-		pop_cat_specialist_unemployment_political_power = 4
-		pop_cat_worker_unemployment_political_power = 4
 	}
 
 	#pop_group_modifier = {
@@ -515,13 +365,13 @@ living_standard_utopian = {
 		pop_cat_specialist_political_power = 4
 		pop_cat_worker_political_power = 4
 		pop_cat_civilian_political_power = 4
-		pop_civilian_bonus_workforce_mult = 0.2
 	}
 
 	potential = {
 		exists = from
 		from = {
-			NOR = { is_gestalt = yes has_civic = civic_dystopian_society }
+			is_gestalt = no
+			NOT = { has_valid_civic = civic_dystopian_society }
 		}
 		NOR = {
 			has_trait = trait_hive_mind
@@ -530,6 +380,7 @@ living_standard_utopian = {
 				has_trait = trait_machine_unit
 			}
 			is_shackled_robot_species_rights = yes
+			is_cruise_passenger = yes
 		}
 	}
 
@@ -609,6 +460,19 @@ living_standard_utopian = {
 				}
 			}
 		}
+		# Make Utopias more likely to choose this. -- Sage
+		modifier = {
+			factor = 5
+			from = {
+				OR = {
+					has_valid_civic = civic_bureaucracy
+					has_valid_civic = civic_philosopher_king
+					has_valid_civic = civic_executive_committee
+					has_valid_civic = civic_peaceful_republic
+
+				}
+			}
+		}
 	}
 }
 
@@ -630,10 +494,14 @@ living_standard_good = {
 				owner = { has_deficit = consumer_goods }
 			}
 		}
-		pop_cat_ruler_happiness = 0.10
-		pop_cat_specialist_happiness = 0.10
-		pop_cat_worker_happiness = 0.10
-		pop_slave_happiness = 0.10
+		pop_happiness = 0.05
+	}
+
+	triggered_pop_group_modifier = {
+		potential = {
+			is_pop_category = civilian
+		}
+		pop_category_civilians_unity_produces_add = 0.5
 	}
 
 	#triggered_pop_group_modifier = {
@@ -667,20 +535,10 @@ living_standard_good = {
 	#}
 	
 	triggered_pop_group_modifier = {
-		potential = {
-			is_pop_category = civilian
-		}
-		pop_category_civilians_unity_produces_add = 1
-	}
-
-	triggered_pop_group_modifier = {
 		# Triggered to hide from the auto-generated tooltip
 		potential = {
 			always = yes
 		}
-		pop_cat_ruler_unemployment_political_power = 4
-		pop_cat_specialist_unemployment_political_power = 3
-		pop_cat_worker_unemployment_political_power = 2
 	}
 
 	pop_group_modifier = {
@@ -688,12 +546,10 @@ living_standard_good = {
 		pop_category_specialists_consumer_goods_upkeep_add = @living_standard_luxuries_high
 		pop_category_workers_consumer_goods_upkeep_add = @living_standard_luxuries_high
 		pop_category_civilians_consumer_goods_upkeep_add = @living_standard_luxuries_high
-		pop_category_slave_consumer_goods_upkeep_add = @living_standard_luxuries_low
 		pop_cat_ruler_political_power = 4
 		pop_cat_specialist_political_power = 3
 		pop_cat_worker_political_power = 2
 		pop_cat_civilian_political_power = 2
-		pop_civilian_bonus_workforce_mult = 0.1
 	}
 
 	potential = {
@@ -702,15 +558,15 @@ living_standard_good = {
 			is_gestalt = no
 			NOR = {
 				has_valid_civic = civic_shared_burden
+				has_valid_civic = civic_anarchy_utopia
 				is_worker_coop_empire = yes
 				has_valid_civic = civic_dystopian_society
 			}
-			if = {
-				limit = { has_valid_civic = civic_beacon_of_liberty }
-				has_valid_civic = civic_labour_unions
-			}
 		}
-		NOT = { has_trait = trait_hive_mind }
+		NOR = {
+			has_trait = trait_hive_mind
+			is_cruise_passenger = yes
+		}
 		OR = {
 			AND = {
 				is_robotic_species = yes
@@ -768,7 +624,15 @@ living_standard_good = {
 				}
 			}
 		}
+		custom_tooltip = {
+			fail_text = "SCORCHED_HERALDS_ONLY_INF"
+			if = {
+				limit = { from = { is_genocidal_infernal = yes } }
+				has_trait = trait_infernal
+			}
+		}
 	}
+
 	ai_will_do = {
 		factor = 5
 		modifier = {
@@ -776,19 +640,12 @@ living_standard_good = {
 			NOT = { has_citizenship_type = { country = from type = citizenship_full } }
 		}
 		modifier = {
-			factor = 25
-			from = { has_valid_civic = civic_welfare_state } 
-		}
-		modifier = {
-			factor = 15
-			from = { has_ethic = ethic_fanatic_socialism } 
-		}
-		modifier = {
 			factor = 0
 			from = {
 				NOR = {
+					is_pacifist = yes
+					is_egalitarian = yes
 					is_socialism = yes
-					has_valid_civic = civic_welfare_state
 				}
 			}
 		}
@@ -823,6 +680,208 @@ living_standard_good = {
 			}
 			OR = {
 				is_active_resolution = "resolution_greatergood_universal_prosperity_mandate"
+			}
+		}
+		# Make valid Utopias more likely to choose this. -- Sage
+		modifier = {
+			factor = 5
+			from = {
+				OR = {
+					has_valid_civic = civic_bureaucracy
+					has_valid_civic = civic_philosopher_king
+					has_valid_civic = civic_executive_committee
+					has_valid_civic = civic_peaceful_republic
+
+				}
+			}
+		}
+	}
+}
+
+living_standard_academic_privilege = {
+	in_breach_of = {
+		{
+			trigger = {
+				is_gestalt = no
+			}
+			key = resolution_greatergood_balance_in_the_middle
+		}
+		{
+			trigger = {
+				is_gestalt = no
+			}
+			key = resolution_greatergood_universal_prosperity_mandate
+		}
+	}
+
+	triggered_pop_group_modifier = {
+		potential = {
+			NAND = {
+				exists = owner
+				owner = { has_deficit = consumer_goods }
+			}
+		}
+		researcher_jobs_bonus_workforce_mult = 0.1
+		pop_cat_ruler_happiness = 0.15
+		pop_cat_specialist_happiness = 0.15
+	}
+
+	# Triggered so the auto-generated modifier is hidden.
+	#triggered_pop_group_modifier = {
+	#	potential = {
+	#		always = yes
+	#	}
+	#	living_standard_trade_value_rulers_add =			@trade_value_very_high
+	#	living_standard_trade_value_specialists_add =		@trade_value_very_high
+	#	living_standard_trade_value_workers_add = 			@trade_value_normal
+	#}
+	
+	triggered_pop_group_modifier = {
+		# Triggered to hide from the auto-generated tooltip
+		potential = {
+			always = yes
+		}
+	}
+
+	pop_group_modifier = {
+		pop_category_rulers_consumer_goods_upkeep_add = @living_standard_luxuries_very_high
+		pop_category_specialists_consumer_goods_upkeep_add = @living_standard_luxuries_very_high
+		pop_category_workers_consumer_goods_upkeep_add = @living_standard_luxuries_normal
+		pop_category_civilians_consumer_goods_upkeep_add = @living_standard_luxuries_normal
+		pop_cat_ruler_political_power = 6
+		pop_cat_specialist_political_power = 2.5
+		pop_cat_worker_political_power = 0.5
+		pop_cat_civilian_political_power = 0.5
+	}
+
+	potential = {
+		exists = from
+		from = {
+			is_gestalt = no
+			NOR = {
+				has_valid_civic = civic_shared_burden
+				has_valid_civic = civic_anarchy_utopia
+				is_worker_coop_empire = yes
+				has_valid_civic = civic_dystopian_society
+				has_valid_civic = civic_welfare_state
+			}
+		}
+		NOR = {
+			has_trait = trait_hive_mind
+			AND = {
+				from = { is_individual_machine = no }
+				has_trait = trait_machine_unit
+			}
+			is_shackled_robot_species_rights = yes
+		}
+	}
+
+	allow = {
+		hidden_trigger = { exists = from }
+		custom_tooltip = {
+			fail_text = empire_not_materialist
+			from = {
+				is_materialist = yes
+			}
+		}
+		custom_tooltip = {
+			fail_text = is_slaves_tooltip
+			NOT = { has_citizenship_type = { country = from type = citizenship_slavery } }
+		}
+		custom_tooltip = {
+			fail_text = is_purged_not_neutered
+			if = {
+				limit = {
+					OR = {
+						has_citizenship_type = { country = from type = citizenship_purge_machine }
+						has_citizenship_type = { country = from type = citizenship_purge }
+					}
+				}
+				OR = {
+					has_purge_type = { country = from type = purge_neutering }
+					has_purge_type = { country = from type = purge_cosmogenesis_lathe_resettle }
+				}
+			}
+		}
+		custom_tooltip = {
+			fail_text = SPECIES_MUST_NOT_BE_ASSIMILATING
+			NOT = {
+				has_citizenship_type = {
+					type = citizenship_assimilation
+					country = from
+				}
+			}
+		}
+		custom_tooltip = {
+			fail_text = "SCORCHED_HERALDS_ONLY_INF"
+			if = {
+				limit = { from = { is_genocidal_infernal = yes } }
+				has_trait = trait_infernal
+			}
+		}
+	}
+
+	ai_will_do = {
+		factor = 10
+		modifier = {
+			factor = 0
+			NOT = { has_citizenship_type = { country = from type = citizenship_full } }
+		}
+		modifier = {
+			factor = 0
+			NOT = { has_living_standard = { country = from type = living_standard_academic_privilege } }
+			NOT = {
+				from = {
+					has_monthly_income = {
+						resource = minerals
+						value > 300
+					}
+				}
+			}
+		}
+		modifier = {
+			factor = 0
+			has_living_standard = { country = from type = living_standard_academic_privilege }
+			NOT = {
+				from = {
+					has_monthly_income = {
+						resource = minerals
+						value > 200
+					}
+				}
+			}
+		}
+
+		modifier = {
+			factor = 0.25
+			from = {
+				is_galactic_community_member = yes
+			}
+			OR = {
+				is_active_resolution = "resolution_greatergood_balance_in_the_middle"
+				is_active_resolution = "resolution_greatergood_universal_prosperity_mandate"
+			}
+		}
+		# To make Technocracies choose this more often. -- Sage
+		modifier = {
+			factor = 10
+			from = {
+				OR = {
+					has_valid_civic = civic_technocracy
+					has_valid_civic = civic_cyber_dictatorship
+					has_valid_civic = civic_science_directorate
+					has_valid_civic = civic_cyber_demos_cratos
+					has_valid_civic = civic_augmentation_bazaars
+				}
+			}
+			OR = {
+				from = {
+					NOT = { is_galactic_community_member = yes }
+				}
+				NOR = {
+					is_active_resolution = "resolution_greatergood_balance_in_the_middle"
+					is_active_resolution = "resolution_greatergood_universal_prosperity_mandate"
+				}
 			}
 		}
 	}
@@ -874,15 +933,12 @@ living_standard_normal = {
 	#	pop_cat_specialist_political_power = 2.5
 	#	pop_cat_worker_political_power = 1.5
 	#}
-	
+
 	triggered_pop_group_modifier = {
 		# Triggered to hide from the auto-generated tooltip
 		potential = {
 			always = yes
 		}
-		pop_cat_ruler_unemployment_political_power = 5
-		pop_cat_specialist_unemployment_political_power = 2.5
-		pop_cat_worker_unemployment_political_power = 1.5
 	}
 
 	pop_group_modifier = {
@@ -890,7 +946,6 @@ living_standard_normal = {
 		pop_category_specialists_consumer_goods_upkeep_add = @living_standard_luxuries_high
 		pop_category_workers_consumer_goods_upkeep_add = @living_standard_luxuries_normal
 		pop_category_civilians_consumer_goods_upkeep_add = @living_standard_luxuries_normal
-		pop_category_slave_consumer_goods_upkeep_add = @living_standard_luxuries_very_low
 		pop_cat_ruler_political_power = 5.0
 		pop_cat_specialist_political_power = 2.5
 		pop_cat_worker_political_power = 1.5
@@ -899,13 +954,14 @@ living_standard_normal = {
 
 	potential = {
 		exists = from
+		NOT = { has_resource_slavery_type = yes }
 		from = {
 			is_gestalt = no
 			NOR = {
 				has_valid_civic = civic_shared_burden
+				has_valid_civic = civic_anarchy_utopia
 				is_worker_coop_empire = yes
 				has_valid_civic = civic_dystopian_society
-				# has_ethic = ethic_fanatic_egalitarian
 			}
 		}
 		NOR = {
@@ -915,6 +971,7 @@ living_standard_normal = {
 				has_trait = trait_machine_unit
 			}
 			is_shackled_robot_species_rights = yes
+			is_cruise_passenger = yes
 		}
 	}
 
@@ -950,7 +1007,15 @@ living_standard_normal = {
 				}
 			}
 		}
+		custom_tooltip = {
+			fail_text = "SCORCHED_HERALDS_ONLY_INF"
+			if = {
+				limit = { from = { is_genocidal_infernal = yes } }
+				has_trait = trait_infernal
+			}
+		}
 	}
+
 	ai_will_do = {
 		factor = 1
 		modifier = {
@@ -1028,6 +1093,7 @@ living_standard_stratified = {
 			always = yes
 		}
 		pop_cat_worker_happiness = -0.10
+		pop_cat_civilian_happiness = -0.10
 		pop_slave_happiness = -0.10
 	}
 
@@ -1036,9 +1102,6 @@ living_standard_stratified = {
 		potential = {
 			always = yes
 		}
-		pop_cat_ruler_unemployment_political_power = 8
-		pop_cat_specialist_unemployment_political_power = 1.25
-		pop_cat_worker_unemployment_political_power = -0.25
 	}
 
 	pop_group_modifier = {
@@ -1046,7 +1109,6 @@ living_standard_stratified = {
 		pop_category_specialists_consumer_goods_upkeep_add = @living_standard_luxuries_high
 		pop_category_workers_consumer_goods_upkeep_add = @living_standard_luxuries_low
 		pop_category_civilians_consumer_goods_upkeep_add = @living_standard_luxuries_low
-		pop_category_slave_consumer_goods_upkeep_add = @living_standard_luxuries_none
 		pop_cat_ruler_political_power = 8
 		pop_cat_specialist_political_power = 1.25
 		pop_cat_worker_political_power = -0.25
@@ -1059,6 +1121,8 @@ living_standard_stratified = {
 			is_gestalt = no
 			NOR = {
 				# has_valid_civic = civic_shared_burden # E&CC
+				has_valid_civic = civic_anarchy_ideals
+				has_valid_civic = civic_anarchy_utopia
 				is_worker_coop_empire = yes
 				has_valid_civic = civic_dystopian_society
 			}
@@ -1070,6 +1134,7 @@ living_standard_stratified = {
 				has_trait = trait_machine_unit
 			}
 			is_shackled_robot_species_rights = yes
+			is_cruise_passenger = yes
 		}
 	}
 
@@ -1127,6 +1192,7 @@ living_standard_stratified = {
 			}
 		}
 	}
+
 	ai_will_do = {
 		factor = 5
 		modifier = {
@@ -1138,6 +1204,160 @@ living_standard_stratified = {
 				is_active_resolution = "resolution_greatergood_greater_than_ourselves"
 				is_active_resolution = "resolution_greatergood_balance_in_the_middle"
 				is_active_resolution = "resolution_greatergood_universal_prosperity_mandate"
+			}
+		}
+		# Make Utopias invalid for this. -- Sage
+		modifier = {
+			factor = 0
+			from = {
+				OR = {
+					has_valid_civic = civic_bureaucracy
+					has_valid_civic = civic_philosopher_king
+					has_valid_civic = civic_executive_committee
+					has_valid_civic = civic_peaceful_republic
+
+				}
+			}
+		}
+	}
+}
+
+living_standard_subsistence = {
+	# Triggered so the auto-generated modifier is hidden.
+	triggered_pop_group_modifier = {
+		potential = {
+			always = yes
+		}
+		pop_happiness = -0.20
+	}
+
+	triggered_pop_group_modifier = {
+		# Triggered to hide from the auto-generated tooltip
+		potential = {
+			always = yes
+		}
+	}
+
+	pop_group_modifier = {
+		pop_category_rulers_consumer_goods_upkeep_add = @living_standard_luxuries_high
+		pop_category_specialists_consumer_goods_upkeep_add = @living_standard_luxuries_normal
+		pop_category_workers_consumer_goods_upkeep_add = @living_standard_luxuries_very_low
+		pop_category_civilians_consumer_goods_upkeep_add = @living_standard_luxuries_very_low
+		pop_cat_ruler_political_power = 9.5
+		pop_cat_worker_political_power = -0.5
+		pop_cat_civilian_political_power = -1
+	}
+
+	in_breach_of = {
+		{
+			key = resolution_greatergood_five_year_plans
+		}
+		{
+			trigger = {
+				is_gestalt = no
+			}
+			key = resolution_greatergood_greater_than_ourselves
+		}
+		{
+			trigger = {
+				is_gestalt = no
+			}
+			key = resolution_greatergood_balance_in_the_middle
+		}
+		{
+			trigger = {
+				is_gestalt = no
+			}
+			key = resolution_greatergood_universal_prosperity_mandate
+		}
+	}
+
+
+	potential = {
+		exists = from
+		NOT = { has_resource_slavery_type = yes }
+		from = {
+			NOR = {
+				has_valid_civic = civic_shared_burden
+				is_worker_coop_empire = yes
+				has_valid_civic = civic_anarchy_utopia
+				has_valid_civic = civic_anarchy_ideals
+				has_valid_civic = civic_dystopian_society
+			}
+		}
+		OR = {
+			from = { is_gestalt = no }
+			has_citizenship_type = { type = citizenship_slavery country = from }
+		}
+		NOR = {
+			has_trait = trait_hive_mind
+			AND = {
+				from = { is_individual_machine = no }
+				has_trait = trait_machine_unit
+			}
+			is_shackled_robot_species_rights = yes
+			is_cruise_passenger = yes
+		}
+	}
+
+	allow = {
+		hidden_trigger = { exists = from }
+		custom_tooltip = {
+			fail_text = MUST_BE_SLAVES_LIMITED_OR_DISPLACEMENT
+			OR = {
+				has_citizenship_type = { country = from type = citizenship_slavery }
+				has_citizenship_type = { type = citizenship_limited country = from }
+				AND = {
+					OR = {
+						has_citizenship_type = { country = from type = citizenship_purge_machine }
+						has_citizenship_type = { country = from type = citizenship_purge }
+					}
+					has_purge_type = { country = from type = purge_displacement }
+				}
+			}
+		}
+		custom_tooltip = {
+			fail_text = SPECIES_MUST_NOT_BE_ASSIMILATING
+			NOT = {
+				has_citizenship_type = {
+					type = citizenship_assimilation
+					country = from
+				}
+			}
+		}
+	}
+	ai_will_do = {
+		factor = 10
+		modifier = {
+			factor = 0
+			from = {
+				is_xenophobe = no
+				is_gestalt = no
+			}
+		}
+		modifier = {
+			factor = 0.1
+			from = {
+				is_galactic_community_member = yes
+			}
+			OR = {
+				is_active_resolution = "resolution_greatergood_five_year_plans"
+				is_active_resolution = "resolution_greatergood_greater_than_ourselves"
+				is_active_resolution = "resolution_greatergood_balance_in_the_middle"
+				is_active_resolution = "resolution_greatergood_universal_prosperity_mandate"
+			}
+		}
+		# Make Utopias invalid for this. -- Sage
+		modifier = {
+			factor = 0
+			from = {
+				OR = {
+					has_valid_civic = civic_bureaucracy
+					has_valid_civic = civic_philosopher_king
+					has_valid_civic = civic_executive_committee
+					has_valid_civic = civic_peaceful_republic
+
+				}
 			}
 		}
 	}
@@ -1152,6 +1372,8 @@ living_standard_decadent = {
 				has_valid_civic = civic_shared_burden
 				is_worker_coop_empire = yes
 				has_valid_civic = civic_dystopian_society
+				has_valid_civic = civic_anarchy_utopia
+				has_valid_civic = civic_anarchy_ideals
 			}
 		}
 		OR = {
@@ -1258,5 +1480,100 @@ living_standard_decadent = {
 
 	ai_will_do = {
 		factor = 10
+		# Make Utopias invalid for this. -- Sage
+		modifier = {
+			factor = 0
+			from = {
+				OR = {
+					has_valid_civic = civic_bureaucracy
+					has_valid_civic = civic_philosopher_king
+					has_valid_civic = civic_executive_committee
+					has_valid_civic = civic_peaceful_republic
+
+				}
+			}
+		}
+	}
+}
+
+## EaC Addition
+
+living_standard_community_labor = {
+	potential = {
+		exists = from
+		from = { 
+			is_megacorp = no
+			has_valid_civic = civic_anarchy_utopia
+		}
+		is_cruise_passenger = no
+	}
+
+	triggered_pop_group_modifier = {
+		# Triggered to hide from the auto-generated tooltip
+		potential = {
+			always = yes
+		}
+	}
+
+	pop_group_modifier = {
+		pop_category_rulers_consumer_goods_upkeep_add = @living_standard_luxuries_high
+		pop_category_specialists_consumer_goods_upkeep_add = @living_standard_luxuries_high
+		pop_category_workers_consumer_goods_upkeep_add = @living_standard_luxuries_high
+		pop_category_civilians_consumer_goods_upkeep_add = @living_standard_luxuries_high
+		pop_cat_ruler_political_power = 3
+		pop_cat_specialist_political_power = 3
+		pop_cat_worker_political_power = 3
+		pop_cat_civilian_political_power = 3
+	}
+
+	triggered_pop_group_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_active_tradition = tr_harmony_kinship_shared_burdens
+			}
+		}
+		pop_happiness = 0.05
+		pop_bonus_workforce_mult = 0.05
+	}
+
+	allow = {
+		hidden_trigger = { exists = from }
+		custom_tooltip = {
+			fail_text = is_slaves_tooltip
+			NOT = { has_citizenship_type = { country = from type = citizenship_slavery } }
+		}
+		custom_tooltip = {
+			fail_text = is_servitude_tooltip
+			NOR = { has_citizenship_type = { country = from type = citizenship_robot_servitude } }
+		}
+		custom_tooltip = {
+			fail_text = is_purged_not_neutered
+			if = {
+				limit = {
+					OR = {
+						has_citizenship_type = { country = from type = citizenship_purge_machine }
+						has_citizenship_type = { country = from type = citizenship_purge }
+					}
+				}
+				OR = {
+					has_purge_type = { country = from type = purge_neutering }
+					has_purge_type = { country = from type = purge_cosmogenesis_lathe_resettle }
+				}
+			}
+		}
+		custom_tooltip = {
+			fail_text = SPECIES_MUST_NOT_BE_ASSIMILATING
+			NOT = {
+				has_citizenship_type = {
+					type = citizenship_assimilation
+					country = from
+				}
+			}
+		}
+	}
+
+	ai_will_do = {
+		factor = 1
 	}
 }

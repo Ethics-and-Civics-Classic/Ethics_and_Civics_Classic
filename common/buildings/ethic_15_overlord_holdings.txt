@@ -21,9 +21,17 @@ holding_communal_housing_outreach = {
 	}
 
 	potential = {
-		owner.overlord = { has_valid_civic = civic_shared_burden }
+		owner.overlord = { 
+			has_valid_civic = civic_shared_burden
+			has_valid_civic = civic_anarchy_ideals
+			has_valid_civic = civic_anarchy_utopia
+		}
 		NOT = {
-			owner = { has_valid_civic = civic_shared_burden }
+			owner = { 
+				has_valid_civic = civic_shared_burden 
+				has_valid_civic = civic_anarchy_ideals
+				has_valid_civic = civic_anarchy_utopia
+			}
 		}
 	}
 
@@ -75,85 +83,6 @@ holding_communal_housing_outreach = {
 	}
 }
 
-
-holding_parasitic_algorithms = {
-	base_buildtime = @b2_time
-	owner_type = subject_holding
-	icon = holding_parasitic_algorithms
-	empire_limit = 1
-
-	category = research
-
-	potential = {
-		has_overlord_dlc = yes
-	}
-
-	allow = {
-		custom_tooltip = {
-			fail_text = is_capital
-			exists = planet
-			planet = {
-				is_capital = yes
-			}
-		}
-		OR = {
-			custom_tooltip = {
-				fail_text = subject_is_scholarium
-				exists = planet.owner
-				planet.owner = {
-					is_specialist_subject_type = { TYPE = scholarium }
-				}
-			}
-			planet.owner = { any_agreement = { agreement_preset = preset_franchisee } }
-		}
-	}
-
-	resources = {
-		category = planet_holdings
-		cost = {
-			minerals = @b1_minerals
-		}
-		upkeep = {
-			energy = @b1_upkeep
-		}
-	}
-
-	country_modifier = {
-		all_technology_research_speed = 0.03
-		planet_researchers_upkeep_mult = 0.03
-	}
-
-	planet_modifier = {
-		monthly_loyalty = -1
-	}
-
-	on_built = {
-		planet = {
-			set_carrier_flag = has_science_ministry
-		}
-	}
-
-	on_destroy = {
-		planet = {
-			remove_carrier_flag = has_science_ministry
-		}
-	}
-
-	destroy_trigger = {
-		exists = planet.owner
-		planet.owner = {
-			NOR = {
-				is_specialist_subject_type = { TYPE = scholarium }
-				any_agreement = { agreement_preset = preset_franchisee }
-			}
-		}
-	}
-
-	#triggered_desc = {
-	#	text = holding_parasitic_algorithms_effect_desc
-	#}
-}
-
 holding_overlord_vigil_command = {
 	base_buildtime = @b2_time
 	owner_type = subject_holding
@@ -191,7 +120,13 @@ holding_overlord_vigil_command = {
 	resources = {
 		category = planet_holdings
 		cost = {
-			minerals = @b1_minerals
+			inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = exotic_gases
+			COST = @b1_minerals
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
+		}
 		}
 		upkeep = {
 			energy = @b1_upkeep
@@ -264,6 +199,534 @@ holding_overlord_vigil_command = {
 				is_specialist_subject_type = { TYPE = bulwark }
 				any_agreement = { agreement_preset = preset_relic_satrapy }
 			}
+		}
+	}
+}
+
+holding_parasitic_algorithms = {
+	base_buildtime = @b2_time
+	owner_type = subject_holding
+	icon = holding_parasitic_algorithms
+	empire_limit = 1
+
+	category = research
+
+	potential = {
+		has_overlord_dlc = yes
+	}
+
+	allow = {
+		custom_tooltip = {
+			fail_text = is_capital
+			exists = planet
+			planet = {
+				is_capital = yes
+			}
+		}
+		OR = {
+			custom_tooltip = {
+				fail_text = subject_is_scholarium
+				exists = planet.owner
+				planet.owner = {
+					is_specialist_subject_type = { TYPE = scholarium }
+				}
+			}
+			planet.owner = { any_agreement = { agreement_preset = preset_franchisee } }
+		}
+	}
+
+	resources = {
+		category = planet_holdings
+		cost = {
+			inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = exotic_gases
+			COST = @b1_minerals
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
+		}
+		}
+		upkeep = {
+			energy = @b1_upkeep
+		}
+	}
+
+	country_modifier = {
+		all_technology_research_speed = 0.03
+		planet_researchers_upkeep_mult = 0.03
+	}
+
+	planet_modifier = {
+		monthly_loyalty = -1
+	}
+
+	on_built = {
+		planet = {
+			set_carrier_flag = has_science_ministry
+		}
+	}
+
+	on_destroy = {
+		planet = {
+			remove_carrier_flag = has_science_ministry
+		}
+	}
+
+	destroy_trigger = {
+		exists = planet.owner
+		planet.owner = {
+			NOR = {
+				is_specialist_subject_type = { TYPE = scholarium }
+				any_agreement = { agreement_preset = preset_franchisee }
+			}
+		}
+	}
+
+	triggered_desc = {
+		text = holding_parasitic_algorithms_effect_desc
+	}
+}
+
+holding_organic_sanctuary = {
+	base_buildtime = @b2_time
+	owner_type = subject_holding
+	icon = building_organic_sanctuary
+	planet_limit = 1
+
+	category = unity
+
+	resources = {
+		category = planet_holdings
+		upkeep = {
+			consumer_goods = 10
+		}
+	}
+
+	potential = {
+		owner.overlord = {
+			has_valid_civic = civic_machine_servitor
+			has_valid_civic = civic_machine_cult_machine
+		}
+		owner = { is_machine_empire = no }
+	}
+
+	allow = {
+		custom_tooltip = {
+			fail_text = no_organic_sanctuary_wilderness
+			owner = { is_wilderness_empire = no }
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = planet.owner
+			planet.owner = { is_gestalt = no }
+		}
+		job_overlord_bio_trophy_add = 500
+		monthly_loyalty = 0.5
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = planet.owner
+			planet.owner = { is_gestalt = yes }
+		}
+		job_overlord_bio_trophy_drone_add = 500
+	}
+}
+
+holding_franchise_headquarters = {
+	base_buildtime = @b2_time
+	owner_type = subject_holding
+	icon = holding_franchise_headquarters
+	planet_limit = 1
+
+	category = government
+
+	potential = {
+		owner = {
+			is_wilderness_empire = no
+			overlord = { has_civic = civic_franchising }
+		}
+	}
+
+	allow = {
+		custom_tooltip = {
+			fail_text = no_branch_office
+			planet = {
+				has_branch_office = owner.overlord
+			}
+		}
+	}
+
+	destroy_trigger = {
+		NOT = {
+			planet = {
+				has_branch_office = owner.overlord
+			}
+		}
+	}
+
+	resources = {
+		category = planet_holdings
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = alloys
+			COST = @b1_minerals
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
+		}
+		upkeep = {
+			energy = @b1_upkeep
+		}
+	}
+
+	on_built = {
+		planet = {
+			set_carrier_flag = has_franchise_headquarters
+		}
+	}
+
+	on_destroy = {
+		planet = {
+			remove_carrier_flag = has_franchise_headquarters
+		}
+	}
+
+	planet_modifier = {
+		monthly_loyalty = -0.5
+		job_overlord_manager_add = 200
+		planet_traders_trade_produces_add = -2
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			owner.overlord = {
+				is_fanatic_spiritualist = yes
+			}
+		}
+		pop_ethic_spiritualist_attraction_mult = 1
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			owner.overlord = {
+				is_fanatic_materialist = yes
+			}
+		}
+		pop_ethic_materialist_attraction_mult = 1
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			owner.overlord = {
+				is_fanatic_xenophobe = yes
+			}
+		}
+		pop_ethic_xenophobe_attraction_mult = 1
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			owner.overlord = {
+				is_fanatic_xenophile = yes
+			}
+		}
+		pop_ethic_xenophile_attraction_mult = 1
+	}
+
+	# Just in case there's a Fan. Auth. Corporate Galactic Imperium with the civic.
+	triggered_planet_modifier = {
+		potential = {
+			owner.overlord = {
+				is_fanatic_authoritarian = yes
+			}
+		}
+		pop_ethic_authoritarian_attraction_mult = 1
+	}
+
+	# Just in case there's a Fan. Egal. Corporate Galactic Imperium with the civic.
+	triggered_planet_modifier = {
+		potential = {
+			owner.overlord = {
+				is_fanatic_egalitarian = yes
+			}
+		}
+		pop_ethic_egalitarian_attraction_mult = 1
+	}
+
+	# EaC Ethics
+	triggered_planet_modifier = {
+		potential = {
+			owner.overlord = {
+				is_fanatic_socialism = yes
+			}
+		}
+		pop_ethic_socialism_attraction_mult = 1
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			owner.overlord = {
+				is_fanatic_capitalism = yes
+			}
+		}
+		pop_ethic_capitalism_attraction_mult = 1
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			owner.overlord = {
+				is_fanatic_green = yes
+			}
+		}
+		pop_ethic_green_attraction_mult = 1
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			owner.overlord = {
+				is_fanatic_industrial = yes
+			}
+		}
+		pop_ethic_industrial_attraction_mult = 1
+	}
+
+	triggered_desc = {
+		text = holding_franchise_headquarters_effect
+	}
+
+	triggered_desc = {
+		trigger = {
+			exists = owner.overlord
+			owner.overlord = {
+				is_fanatic = no
+			}
+		}
+		text = holding_franchise_headquarters_ethics_effect
+	}
+}
+
+holding_wilderness_glade = { # based on 'holding_splinter_hive'
+	base_buildtime = @b2_time
+	owner_type = subject_holding
+	icon = holding_wilderness_glade
+	planet_limit = 1
+
+	category = pop_assembly
+
+	resources = {
+		category = planet_holdings
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = rare_crystals
+			COST = @b1_minerals
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
+		}
+		upkeep = {
+			food = @b1_upkeep
+		}
+	}
+
+	potential = {
+		has_overlord_dlc = yes
+		owner = {
+			overlord = { is_wilderness_empire = yes }
+			is_wilderness_empire = no
+			OR = {
+				is_machine_empire = no
+				has_valid_civic = civic_machine_servitor
+				has_valid_civic = civic_machine_cult_machine
+			}
+		}
+	}
+
+	allow = {
+		custom_tooltip = {
+			fail_text = no_free_district_for_wilderness_glade
+			planet = {
+				num_free_districts = {
+					type = any
+					value > 0
+				}
+			}
+		}
+		custom_tooltip = {
+			fail_text = WILDERNESS_NATURAL_WORLDS_DECLINE
+			planet = { is_habitable_for_wilderness = yes }
+		}
+		planet = {
+			pop_amount >= 2500
+		}
+	}
+
+	planet_modifier = {
+		monthly_loyalty = -2
+	}
+
+	# Subject feeds the Wilderness (described in text via 'WildernessGladeProvides')
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { country_uses_food = yes }
+			owner.overlord = { is_lithoid = no }
+		}
+		planet_jobs_food_produces_mult = -0.10
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { country_uses_food = yes }
+			owner.overlord = { is_lithoid = yes }
+		}
+		planet_jobs_minerals_produces_mult = -0.10
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { country_uses_food = no }
+		}
+		planet_jobs_energy_produces_mult = -0.10
+	}
+
+	# Wilderness Symbionts help expose resources/share their surplus
+	planet_modifier = {
+		planet_jobs_productive_upkeep_mult = -0.05
+	}
+
+	on_built = {
+		planet = {
+			add_blocker = { type = d_wilderness_glade_blocker }
+			owner.overlord.capital_scope = {
+				append_symbiotic_link = yes
+				refresh_wilderness_glade_modifier = yes
+			}
+		}
+	}
+
+	on_destroy = {
+		planet = {
+			remove_deposit = d_wilderness_glade_blocker
+			owner.overlord.capital_scope = {
+				remove_symbiotic_link = yes
+				refresh_wilderness_glade_modifier = yes
+			}
+		}
+	}
+
+	triggered_desc = {
+		text = holding_wilderness_glade_effect_desc
+	}
+}
+
+holding_national_park = {
+	base_buildtime = @b3_time
+	owner_type = subject_holding
+	icon = building_ecotourism_center
+	planet_limit = 1
+
+	category = unity
+
+	potential = {
+		owner = {
+			NOT = { has_valid_civic = civic_naturalism }
+			overlord = { has_valid_civic = civic_naturalism }
+		}
+		NOR = {
+			is_planet_class = pc_hive
+			is_planet_class = pc_machine
+			has_modifier = slave_colony
+		}
+		is_artificial = no
+		is_urban_planet = no
+	}
+
+	allow = {
+		custom_tooltip = {
+			fail_text = no_free_district_for_national_park
+			planet = {
+				num_free_districts = {
+					type = any
+					value > 0
+				}
+			}
+		}
+		custom_tooltip = {
+			fail_text = no_national_park_wilderness
+			owner = { is_wilderness_empire = no }
+		}
+	}
+
+	resources = {
+		category = planet_holdings
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = exotic_gases
+			COST = @b1_minerals
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
+		}
+		upkeep = {
+			energy = @b1_upkeep
+		}
+	}
+
+	destroy_trigger = {
+		exists = owner
+		OR = {
+			is_planet_class = pc_hive
+			is_planet_class = pc_machine
+			is_urban_planet = yes
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { is_regular_empire = yes }
+		}
+		modifier = {
+			job_overlord_naturalist_add = 100
+		}
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = planet.owner
+			planet.owner = { is_industrial = yes }
+		}
+		monthly_loyalty = -0.5
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = planet.owner
+			planet.owner = {
+				is_green = yes
+			}
+		}
+		monthly_loyalty = 1
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = planet.owner
+			planet.owner = {
+				is_green = no
+				is_gestalt = no
+			}
+		}
+		pop_ethic_green_attraction_mult = 1
+	}
+
+	on_built = {
+		planet = {
+			add_blocker = { type = d_nature_preserve_blocker }
+		}
+	}
+
+	on_destroy = {
+		planet = {
+			remove_deposit = d_nature_preserve_blocker
 		}
 	}
 }

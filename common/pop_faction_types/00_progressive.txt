@@ -110,8 +110,8 @@ progressive = {
 
 	can_join_faction = {
 		is_shackled_robot = no
-		has_culture_shock = no
 		can_think = yes
+		is_interlink_cyborg_pop = no
 		#OR = {
 			is_egalitarian = yes
 			#owner = { 
@@ -154,7 +154,7 @@ progressive = {
 			factor = 0.25
 			NOT = { is_same_species = owner_species }
 		}
-		
+
 		#modifier = {
 		#	factor = 3
 		#	any_owned_planet = {
@@ -183,8 +183,19 @@ progressive = {
 		}
 	}
 	
-	
-	demand = {
+	# DEMAND: Faction Outraged (by a GalCom Resolution)
+	inline_script = {
+		script = pop_faction_types/demand_faction_outraged
+		FLAG = galcom_resolution_passed_anti_progressive
+	}
+
+	# DEMAND: Faction Pleased (by a GalCom Resolution)
+	inline_script = {
+		script = pop_faction_types/demand_faction_pleased
+		FLAG = galcom_resolution_passed_pro_progressive
+	}
+
+	demand = { # POLITICAL_PLURALISM
 		title = "POLITICAL_PLURALISM"
 		unfulfilled_title = "POLITICAL_PLURALISM"
 		desc = "POLITICAL_PLURALISM_DESC"
@@ -205,7 +216,7 @@ progressive = {
 		}
 	}
 	
-	demand = {
+	demand = { # DIRECT_DEMONCRACY
 		title = "DIRECT_DEMOCRACY"
 		unfulfilled_title = "NO_DIRECT_DEMOCRACY"
 		desc = "DIRECT_DEMOCRACY_DESC"
@@ -221,7 +232,7 @@ progressive = {
 				NOR = {
 					has_authority = auth_direct_democratic
 					is_democratic_authority = yes
-					}
+				}
 			}
 		}
 
@@ -230,24 +241,12 @@ progressive = {
 				OR = {
 					has_authority = auth_direct_democratic
 					is_democratic_authority = yes
-					}
+				}
 			}
 		}
 	}
-	
-	# DEMAND: Faction Outraged (by a GalCom Resolution)
-	inline_script = {
-		script = pop_faction_types/demand_faction_outraged
-		FLAG = galcom_resolution_passed_anti_progressive
-	}
 
-	# DEMAND: Faction Pleased (by a GalCom Resolution)
-	inline_script = {
-		script = pop_faction_types/demand_faction_pleased
-		FLAG = galcom_resolution_passed_pro_progressive
-	}
-
-	demand = {
+	demand = { # FEDERAL_STATE
 		title = "FEDERAL_STATE"
 		unfulfilled_title = "NO_FEDERAL_STATE"
 		desc = "FEDERAL_STATE_DESC"
@@ -273,9 +272,7 @@ progressive = {
 		}
 	}
 
-
-	
-	demand = {
+	demand = { # PROGRESSIVE_NO_SLAVERY
 		title = "PROGRESSIVE_NO_SLAVERY"
 		unfulfilled_title = "PROGRESSIVE_SLAVERY"
 		desc = "PROGRESSIVE_NO_SLAVERY_DESC"
@@ -309,9 +306,8 @@ progressive = {
 			}
 		}
 	}
-	
 
-	demand = {
+	demand = { # "PROGRESSIVE_NO_AUTO"
 		title = "PROGRESSIVE_NO_AUTO"
 		unfulfilled_title = "PROGRESSIVE_AUTO"
 		desc = "PROGRESSIVE_DEMOCRATIC_GOVERNMENT_DESC"
@@ -333,7 +329,7 @@ progressive = {
 		}
 	}
 
-	demand = {
+	demand = { # "PROGRESSIVE_FREE_MOVEMENT"
 		title = "PROGRESSIVE_FREE_MOVEMENT"
 		unfulfilled_title = "PROGRESSIVE_NO_FREE_MOVEMENT"
 		desc = "PROGRESSIVE_FREE_MOVEMENT_DESC"
@@ -363,7 +359,7 @@ progressive = {
 		}
 	}
 
-	demand = {
+	demand = { # "PROGRESSIVE_REPRODUCTIVE_FREEDOM"
 		title = "PROGRESSIVE_REPRODUCTIVE_FREEDOM"
 		unfulfilled_title = "PROGRESSIVE_NO_REPRODUCTIVE_FREEDOM"
 		desc = "PROGRESSIVE_REPRODUCTIVE_FREEDOM_DESC"
@@ -382,7 +378,7 @@ progressive = {
 		}
 	}
 
-	demand = {
+	demand = { # "PROGRESSIVE_NO_STRATIFIED"
 		title = "PROGRESSIVE_NO_STRATIFIED"
 		unfulfilled_title = "PROGRESSIVE_STRATIFIED"
 		desc = "PROGRESSIVE_NO_STRATIFIED_DESC"
@@ -408,7 +404,7 @@ progressive = {
 		}
 	}
 
-	demand = {
+	demand = { # "PROGRESSIVE_NO_ELITISM"
 		title = "PROGRESSIVE_NO_ELITISM"
 		unfulfilled_title = "PROGRESSIVE_ELITISM"
 		desc = "PROGRESSIVE_NO_ELITISM_DESC"
@@ -436,7 +432,7 @@ progressive = {
 		}
 	}
 
-	demand = {
+	demand = { # "COOPERATIVE_DIPLO_STANCE"
 		title = "COOPERATIVE_DIPLO_STANCE"
 		unfulfilled_title = "COOPERATIVE_DIPLO_STANCE"
 		desc = "COOPERATIVE_DIPLO_STANCE_DESC"
@@ -460,7 +456,7 @@ progressive = {
 		}
 	}
 
-	demand = {
+	demand = { # PROGRESSIVE_FEDERATION
 		title = PROGRESSIVE_FEDERATION
 		unfulfilled_title = PROGRESSIVE_FEDERATION_NOT_HEGEMONY
 		desc = PROGRESSIVE_FEDERATION_DESC
@@ -483,7 +479,7 @@ progressive = {
 		}
 	}
 
-	demand = {
+	demand = { # "PROGRESSIVE_BENEVOLENT_SUBJUGATION_POLICY"
 		title = "PROGRESSIVE_BENEVOLENT_SUBJUGATION_POLICY"
 		unfulfilled_title = "PROGRESSIVE_BENEVOLENT_NO_OPPRESSIVE_SUBJUGATION_POLICY"
 		desc = "PROGRESSIVE_BENEVOLENT_NO_OPPRESSIVE_SUBJUGATION_POLICY_DESC"
@@ -503,13 +499,83 @@ progressive = {
 		}
 	}
 
+	demand = { # Unplugged: De-Cyberize
+		title = PROGRESSIVE_UNPLUGGED_DECYBERIZE
+		unfulfilled_title = PROGRESSIVE_UNPLUGGED_NOT_DECYBERIZE
+		desc = PROGRESSIVE_UNPLUGGED_DECYBERIZE_DESC
+
+		unfulfilled_effect = -10
+		fulfilled_effect = 5
+
+		potential = {
+			exists = owner
+			owner = {
+				has_origin = origin_unplugged
+				NOT = { has_civic = civic_machine_cult }
+				any_situation = {
+					is_situation_type = situation_unplugged_identity
+				}
+			}
+		}
+
+		trigger = {
+			owner = {
+				any_situation = {
+					is_situation_type = situation_unplugged_identity
+					OR = {
+						AND = { # safely in the De-Cyberize stage
+							current_stage = unplugged_identity_stage_1
+							situation_monthly_progress < 0
+						}
+						AND = { # trending towards De-Cyberization and our Approach is aligned
+							situation_monthly_progress < 0.05
+							OR = {
+								current_situation_approach = situation_unplugged_identity_discourage_change
+								current_situation_approach = situation_unplugged_identity_embrace_opinion
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
 	# Faction Demands for Ruler and Council positions.
 	inline_script = {
-		script = "paragon/global_faction_demands"
+		script = "pop_faction_types/global_faction_demands"
 		ETHIC = ethic_egalitarian
 		ETHIC_FANATIC = ethic_fanatic_egalitarian
 		ETHIC_OPPOSED = ethic_authoritarian
-	} 
+	}
+
+	demand = { # "PROGRESSIVE_NO_NOMAD_FORCED_LABOR"
+		title = "PROGRESSIVE_NO_NOMAD_FORCED_LABOR"
+		unfulfilled_title = "PROGRESSIVE_NOMAD_FORCED_LABOR"
+		desc = "PROGRESSIVE_NO_NOMAD_FORCED_LABOR_DESC"
+
+		fulfilled_effect = 0.001
+		unfulfilled_effect = -15
+
+		potential = {
+			exists = owner
+			owner = {
+				is_nomadic = no
+				any_country = {
+					is_nomadic = yes
+					has_communications = root.owner
+				}
+			}
+		}
+
+		trigger = {
+			owner = {
+				NOR = {
+					has_policy_flag = arkship_raid_relocate_pops
+					has_policy_flag = arkship_raid_purge_pops
+				}
+			}
+		}
+	}
 
 	on_create = {
 		pop_faction_event = { id = factions.1 }
@@ -544,7 +610,7 @@ progressive = {
 				owner = {
 					OR = {
 						is_subject = no
-						count_agreement = { count = 0 limit = { agreement_preset = preset_dominion } }
+						NOT = { any_agreement = { agreement_preset = preset_dominion } }
 					}
 				}
 			}
@@ -563,14 +629,15 @@ progressive = {
 			}
 
 			effect = {
-				add_modifier = { modifier = embraced_faction years = 10 }
+				add_modifier = { modifier = embraced_faction days = 3600 }
+				owner = { set_country_flag = has_embraced_faction }
 				parameter:empire = {
 					shift_ethic = ethic_egalitarian
 					hidden_effect = {
-						add_modifier = { modifier = embraced_faction_timer years = 10 }
+						add_modifier = { modifier = embraced_faction_timer days = 3600 }
 						every_pop_faction = {
 							limit = { NOT = { is_same_value = root } }
-							add_modifier = { modifier = embraced_another_faction years = 10 }
+							add_modifier = { modifier = embraced_another_faction days = 3600 }
 						}
 					}
 				}
@@ -632,6 +699,7 @@ progressive = {
 			}
 
 			effect = {
+				owner = { set_country_flag = has_promoted_faction }
 				parameter:empire = {
 					add_modifier = { modifier = promoted_egalitarian days = -1 }
 				}

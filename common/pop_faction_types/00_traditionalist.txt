@@ -74,7 +74,7 @@ traditionalist = {
 					#	has_civic = civic_corporate_crowdsourcing
 					#}
 				}
-				is_lithoid_empire = no
+				is_lithoid_or_infernal_empire = no
 			}
 			food = @faction_base_output
 			mult = @faction_extortion_food_ratio
@@ -94,6 +94,21 @@ traditionalist = {
 			minerals = @faction_base_output
 			mult = @faction_extortion_minerals_ratio
 		}
+		produces = {
+			trigger = {
+				owner = {
+					NOT = { has_edict = civic_crowdsourcing_edict }
+					#NOR = {
+					#	has_civic = civic_anarchy_utopia
+					#	has_civic = civic_crowdsourcing
+					#	has_civic = civic_corporate_crowdsourcing
+					#}
+				}
+				is_infernal_empire = yes
+			}
+			alloys = @faction_base_output
+			mult = @faction_extortion_alloys_ratio
+		}
 		#Anarchy Ideals
 		produces = {
 			trigger = {
@@ -101,7 +116,7 @@ traditionalist = {
 					has_edict = civic_crowdsourcing_edict
 					has_civic = civic_anarchy_utopia
 				}
-				is_lithoid_empire = no
+				is_lithoid_or_infernal_empire = no
 			}
 			food = @faction_base_output
 			mult = @faction_extortion_food_anarchy_ratio
@@ -117,6 +132,18 @@ traditionalist = {
 			}
 			minerals = @faction_base_output
 			mult = @faction_extortion_minerals_anarchy_ratio
+		}
+		#Anarchy Ideals
+		produces = {
+			trigger = {
+				owner = {
+					has_edict = civic_crowdsourcing_edict
+					has_civic = civic_anarchy_utopia
+				}
+				is_infernal_empire = yes
+			}
+			minerals = @faction_base_output
+			mult = @faction_extortion_alloys_anarchy_ratio
 		}
 		#Crowdsourcing
 		produces = {
@@ -146,8 +173,9 @@ traditionalist = {
 
 	is_potential = {
 		is_faction_allowed = yes
-		NOT = {
+		NOR = {
 			has_origin = origin_cybernetic_creed
+			has_civic = civic_pyrolatry
 		}
 	}
 
@@ -167,7 +195,7 @@ traditionalist = {
 
 	can_join_faction = {
 		can_think = yes
-		is_spiritualist = yes
+		is_interlink_cyborg_pop = no
 	}
 
 	attraction = {
@@ -209,7 +237,19 @@ traditionalist = {
 		}
 	}
 
-	demand = {
+	# DEMAND: Faction Outraged (by a GalCom Resolution)
+	inline_script = {
+		script = pop_faction_types/demand_faction_outraged
+		FLAG = galcom_resolution_passed_anti_traditionalist
+	}
+
+	# DEMAND: Faction Pleased (by a GalCom Resolution)
+	inline_script = {
+		script = pop_faction_types/demand_faction_pleased
+		FLAG = galcom_resolution_passed_pro_traditionalist
+	}
+
+	demand = { # "POLITICAL_PLURALISM"
 		title = "POLITICAL_PLURALISM"
 		unfulfilled_title = "POLITICAL_PLURALISM"
 		desc = "POLITICAL_PLURALISM_DESC"
@@ -228,18 +268,6 @@ traditionalist = {
 				has_valid_civic = civic_parliamentary_system
 			}
 		}
-	}
-
-	# DEMAND: Faction Outraged (by a GalCom Resolution)
-	inline_script = {
-		script = pop_faction_types/demand_faction_outraged
-		FLAG = galcom_resolution_passed_anti_traditionalist
-	}
-
-	# DEMAND: Faction Pleased (by a GalCom Resolution)
-	inline_script = {
-		script = pop_faction_types/demand_faction_pleased
-		FLAG = galcom_resolution_passed_pro_traditionalist
 	}
 
 	demand = { # "TRADITIONALIST_NO_ROBOTS"
@@ -325,6 +353,47 @@ traditionalist = {
 		}
 	}
 
+	demand = { # Unplugged: De-Cyberize (Machine Cult Exempt)
+		title = TRADITIONALIST_UNPLUGGED_DECYBERIZE
+		unfulfilled_title = TRADITIONALIST_UNPLUGGED_NOT_DECYBERIZE
+		desc = TRADITIONALIST_UNPLUGGED_DECYBERIZE_DESC
+
+		unfulfilled_effect = -20
+		fulfilled_effect = 10
+
+		potential = {
+			exists = owner
+			owner = {
+				has_origin = origin_unplugged
+				NOT = { has_civic = civic_machine_cult }
+				any_situation = {
+					is_situation_type = situation_unplugged_identity
+				}
+			}
+		}
+
+		trigger = {
+			owner = {
+				any_situation = {
+					is_situation_type = situation_unplugged_identity
+					OR = {
+						AND = { # safely in the De-Cyberize stage
+							current_stage = unplugged_identity_stage_1
+							situation_monthly_progress < 0
+						}
+						AND = { # trending towards De-Cyberization and our Approach is aligned
+							situation_monthly_progress < 0.05
+							OR = {
+								current_situation_approach = situation_unplugged_identity_discourage_change
+								current_situation_approach = situation_unplugged_identity_embrace_opinion
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
 	demand = { # "TRADITIONALIST_SPIRITUALIST_GOVERNMENT"
 		title = "TRADITIONALIST_SPIRITUALIST_GOVERNMENT"
 		unfulfilled_title = "TRADITIONALIST_SECULAR_GOVERNMENT"
@@ -355,6 +424,7 @@ traditionalist = {
 		potential = {
 			exists = owner
 			owner = {
+				is_nomadic = no
 				has_surveyed_class = pc_nuked
 				NOR = {
 					is_apocalyptic_empire = yes
@@ -391,6 +461,7 @@ traditionalist = {
 		potential = {
 			exists = owner
 			owner = {
+				is_nomadic = no
 				has_surveyed_class = pc_gaia
 				has_ascension_perk = ap_consecrated_worlds
 			}
@@ -421,12 +492,12 @@ traditionalist = {
 		unfulfilled_effect = -0.001
 
 		potential = {
-			has_utopia = yes
 			exists = owner
 			owner = {
 				NOR = {
 					has_origin = origin_shroudwalker_apprentice
 					has_origin = origin_cybernetic_creed
+					has_origin = origin_mindwardens
 				}
 				OR = {
 					num_ascension_perks > 0
@@ -438,7 +509,7 @@ traditionalist = {
 
 		trigger = {
 			owner = {
-				has_ascension_perk = ap_mind_over_matter
+				has_psionic_ascension = yes
 			}
 		}
 	}
@@ -465,12 +536,13 @@ traditionalist = {
 		}
 	}
 
-	demand = { # "TRADITIONALIST_FLESH_IS_STRONG"
+	# THE FLESH IS STRONG/WEAK (LIMITED)
+	demand = { # Standard Traditionalist variant: reject full cyberization
 		title = "TRADITIONALIST_FLESH_IS_STRONG"
 		unfulfilled_title = "TRADITIONALIST_FLESH_IS_WEAK"
-		desc = "TRADITIONALIST_FLESH_IS_STRONG_DESC"
+		desc = "TRADITIONALIST_FLESH_IS_STRONG_LIMITED_DESC"
 
-		unfulfilled_effect = -15
+		unfulfilled_effect = -5
 		fulfilled_effect = 0.001
 
 		potential = {
@@ -478,9 +550,9 @@ traditionalist = {
 			owner = {
 				has_ascension_perk = ap_the_flesh_is_weak
 				NOR = {
+					has_policy_flag = cyberization_standards_limited
 					has_valid_civic = civic_machine_cult
 					has_valid_civic = civic_machine_cult_machine
-					has_policy_flag = cyberization_standards_limited
 					has_origin = origin_cybernetic_creed
 				}
 			}
@@ -507,7 +579,7 @@ traditionalist = {
 			owner = {
 				has_ascension_perk = ap_the_flesh_is_weak
 				has_policy_flag = cyberization_standards_limited
-				NOT = {
+				NOR = { 
 					has_valid_civic = civic_machine_cult
 					has_valid_civic = civic_machine_cult_machine
 					has_origin = origin_cybernetic_creed
@@ -518,6 +590,51 @@ traditionalist = {
 		trigger = {
 			owner = {
 				is_cyborg_empire = no
+			}
+		}
+	}
+
+	demand = { # "Machine Cult (organic) - Embrace Cyberization
+		title = "TRADITIONALIST_UNHALLOWED_FLESH"
+		unfulfilled_title = "TRADITIONALIST_UNHALLOWED_FLESH"
+		desc = "TRADITIONALIST_UNHALLOWED_FLESH_DESC"
+
+		unfulfilled_effect = -0.001
+		fulfilled_effect = 15
+
+		potential = {
+			exists = owner
+			owner = {
+				has_civic = civic_machine_cult
+			}
+		}
+
+		trigger = {
+			owner = {
+				is_cyborg_empire = yes
+			}
+		}
+	}
+
+	demand = { # Machine Cult (machine) - Unemployed Biotrophies
+		title = "MACHINECULT_NO_NEGLECTED_BIOTROPHIES"
+		unfulfilled_title = "MACHINECULT_NEGLECTED_BIOTROPHIES"
+		desc = "MACHINECULT_NO_NEGLECTED_BIOTROPHIES"
+
+		unfulfilled_effect = -5
+		fulfilled_effect = 15
+
+		potential = {
+			exists = owner
+			owner = {
+				has_civic = civic_machine_cult_machine
+			}
+		}
+
+		trigger = {
+			any_owned_pop_group = {
+				is_unemployed = yes
+				has_citizenship_type = { type = citizenship_organic_trophy country = owner }
 			}
 		}
 	}
@@ -600,7 +717,7 @@ traditionalist = {
 		}
 	}
 
-	demand = {
+	demand = { # "TRADITIONALIST_RELIGIOUS_FINDING"
 		title = "TRADITIONALIST_RELIGIOUS_FINDING"
 		unfulfilled_title = "TRADITIONALIST_NO_RELIGIOUS_FINDING"
 		desc = "TRADITIONALIST_RELIGIOUS_FINDING_DESC"
@@ -622,7 +739,7 @@ traditionalist = {
 		}
 	}
 
-	demand = {
+	demand = { # TRADITIONALIST_FEDERATION
 		title = TRADITIONALIST_FEDERATION
 		unfulfilled_title = TRADITIONALIST_FEDERATION_NOT_SPIRITUALIST
 		desc = TRADITIONALIST_FEDERATION_DESC
@@ -639,7 +756,6 @@ traditionalist = {
 			owner.federation = { has_federation_type = spiritualist_federation }
 		}
 	}
-
 
 	demand = { # Individualist Machines demand Ascension
 		title = "TRADITIONALIST_MACHINE_ASCEND"
@@ -663,7 +779,6 @@ traditionalist = {
 		}
 	}
 
-
 	demand = { # Individualist Machines demand few materialist machines
 		title = "TRADITIONALIST_AUTOMATAS_ASTRAY"
 		unfulfilled_title = "TRADITIONALIST_AUTOMATAS_ASTRAY_NO"
@@ -686,20 +801,19 @@ traditionalist = {
 			exists = owner
 			owner = {
 				count_owned_pop_amount = {
-					count < 1000
 					limit = {
 						has_ethic = ethic_materialist
 					}
+					count < 1000
 				}
 
 			}
 		}
 	}
 
-
 	# Faction Demands for Ruler and Council positions.
 	inline_script = {
-		script = "paragon/global_faction_demands"
+		script = "pop_faction_types/global_faction_demands"
 		ETHIC = ethic_spiritualist
 		ETHIC_FANATIC = ethic_fanatic_spiritualist
 		ETHIC_OPPOSED = ethic_materialist
@@ -738,7 +852,7 @@ traditionalist = {
 				owner = {
 					OR = {
 						is_subject = no
-						count_agreement = { count = 0 limit = { agreement_preset = preset_dominion } }
+						NOT = { any_agreement = { agreement_preset = preset_dominion } }
 					}
 				}
 			}
@@ -757,14 +871,15 @@ traditionalist = {
 			}
 
 			effect = {
-				add_modifier = { modifier = embraced_faction years = 10 }
+				add_modifier = { modifier = embraced_faction days = 3600 }
+				owner = { set_country_flag = has_embraced_faction }
 				parameter:empire = {
 					shift_ethic = ethic_spiritualist
 					hidden_effect = {
-						add_modifier = { modifier = embraced_faction_timer years = 10 }
+						add_modifier = { modifier = embraced_faction_timer days = 3600 }
 						every_pop_faction = {
 							limit = { NOT = { is_same_value = root } }
-							add_modifier = { modifier = embraced_another_faction years = 10 }
+							add_modifier = { modifier = embraced_another_faction days = 3600 }
 						}
 					}
 				}
@@ -826,6 +941,7 @@ traditionalist = {
 			}
 
 			effect = {
+				owner = { set_country_flag = has_promoted_faction }
 				parameter:empire = {
 					add_modifier = { modifier = promoted_spiritualist days = -1 }
 				}

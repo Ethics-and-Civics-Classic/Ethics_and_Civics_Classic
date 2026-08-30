@@ -12,12 +12,7 @@ technician = {
 		#Nuclear Technician
 		swap_type = {
 			trigger = {
-				owner? = { 
-					OR = {
-						is_apocalyptic_empire = yes 
-						NOT = { has_technology = "tech_fusion_power" }
-					}
-				}
+				technician_is_nuclear_trigger = yes
 			}
 			icon = nuclear_technician
 			name = nuclear_technician
@@ -69,18 +64,6 @@ technician = {
 
 	resources = {
 		category = planet_technician
-		upkeep = {
-			trigger = {
-				owner? = { is_apocalyptic_empire = yes }
-			}
-			primitive_uranium = 1
-		}
-		produces = {
-			trigger = {
-				owner? = { is_apocalyptic_empire = yes }
-			}
-			energy = 1
-		}
 		produces = {
 			energy = 6
 		}
@@ -95,6 +78,18 @@ technician = {
 				has_carrier_flag = has_energy_requisitorium
 			}
 			energy = @requisitorium_energy_reduction
+		}
+		upkeep = {
+			trigger = {
+				owner? = { is_apocalyptic_empire = yes }
+			}
+			primitive_uranium = 1
+		}
+		produces = {
+			trigger = {
+				owner? = { is_apocalyptic_empire = yes }
+			}
+			energy = 1
 		}
 	}
 
@@ -250,57 +245,29 @@ farmer = {
 		}
 		produces = {
 			trigger = {
-				exists = owner
-				owner = {
-					is_robot_empire = yes
-				}
+				owner? = { is_robot_empire = yes }
 			}
 			food = -1
 		}
 		# Job Swap - Anglers
 		produces = {
 			trigger = {
-				exists = planet
-				planet = {
+				colony? = {
 					farmer_is_angler_trigger = yes
 				}
 			}
-			food = 2
 			trade = 2
 		}
 		# Resort World
 		produces = {
 			trigger = {
-				exists = planet
-				planet = {
+				colony? = {
 					has_modifier = resort_colony
 				}
 			}
 			food = -1
-			trade = 2
+			trade = 1
 			unity = 1
-		}
-		produces = {
-			trigger = {
-				exists = planet
-				planet = {
-					farmer_is_angler_trigger = yes
-				}
-				has_councilor = { COUNCILOR = "councilor_anglers" }
-			}
-			food = @councilor_anglers_angler_food_bonus
-			mult = value:councilor_level|TYPE|councilor_anglers|
-		}
-		produces = {
-			trigger = {
-				exists = planet
-				planet = {
-					farmer_is_angler_trigger = yes
-				}
-				has_councilor = { COUNCILOR = "councilor_machine_anglers" }
-			}
-			food = @councilor_machine_anglers_angler_food_bonus
-			mult = value:councilor_level|TYPE|councilor_machine_anglers|
 		}
 		# Job Swap - Titan Hunters
 		produces = {
@@ -319,17 +286,14 @@ farmer = {
 		}
 		produces = {
 			trigger = {
-				planet = {
-					has_carrier_flag = has_produce_requisitorium
-				}
+				has_carrier_flag = has_produce_requisitorium
 			}
 			food = @requisitorium_food_reduction
 		}
         # Agrarian Idyll
 		produces = {
 			trigger = {
-				exists = owner
-				owner = {
+				owner? = {
 					has_valid_civic = civic_agrarian_idyll
 				}
 			}
@@ -341,14 +305,27 @@ farmer = {
 		category = planet_requisitioned_food
 		produces = {
 			trigger = {
-				planet = {
+				colony = {
 					has_carrier_flag = has_produce_requisitorium
 				}
 			}
 			food = @requisitorium_food_overlord
 		}
 	}
-	
+
+	triggered_planet_modifier = {
+		potential = {
+			owner? = {
+				has_valid_civic = civic_agrarian_idyll
+				NOT = {
+					has_valid_civic = civic_dystopian_society
+				}
+			}
+		}
+		planet_amenities_add = 200
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	}
+
 	# Resort World
 	triggered_planet_modifier = {
 		potential = {
@@ -357,15 +334,6 @@ farmer = {
 			planet = { has_modifier = resort_colony }
 		}
 		planet_amenities_add = -100
-		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = { has_valid_civic = civic_agrarian_idyll }
-		}
-		planet_amenities_add = 200
 		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
 	}
 
@@ -407,35 +375,6 @@ farmer = {
 			factor = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
 			owner = { has_valid_civic = civic_agrarian_idyll }
 		}
-		# low income modifier
-		modifier = {
-			factor = 3
-			exists = planet
-			planet = {
-				has_available_jobs = farmer
-			}
-			exists = owner
-			owner = {
-				has_monthly_income = {
-					resource = food
-					value < 10
-				}
-			}
-		}
-
-		modifier = {
-			factor = 0.5
-			has_trait = trait_lithoid
-
-			owner = {
-				is_lithoid_empire = yes
-				country_uses_food = no
-				has_monthly_income = {
-					resource = food
-					value >= 0
-				}
-			}
-		}
 		modifier = {
 			factor = 5
 			has_trait = trait_cyborg_creed_of_labor
@@ -475,8 +414,7 @@ squire = {
 		owner = {
 			is_gestalt = no
 		}
-		exists = planet
-		planet = {
+		colony? = {
 			OR = {
 				has_active_building = building_order_keep
 				has_active_building = building_order_castle
@@ -485,14 +423,14 @@ squire = {
 	}
 
 	triggered_planet_modifier = {
-		planet_defense_armies_add = 1
+		planet_defense_armies_add = 0.5
 		pop_knight_bonus_workforce_mult = 0.025
 		planet_knights_upkeep_mult = 0.005
 		pop_knight_commander_bonus_workforce_mult = 0.0125
 	}
 	triggered_planet_modifier = {
 		potential = {
-			always = yes
+			owner? = { NOT = { has_valid_civic = civic_dystopian_society } }
 		}
 		planet_amenities_add = 200
 		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
@@ -500,18 +438,14 @@ squire = {
 
 	triggered_planet_pop_group_modifier_for_all = {
 		potential = {
-			exists = planet
-			planet = {
-				has_modifier = syamelles_curse_habitat
-			}
+			has_modifier = syamelles_curse_habitat
 		}
 		bonus_pop_growth = 0.1
 	}
 
 	triggered_planet_modifier = {
 		potential = {
-			exists = planet
-			planet = {
+			colony? = {
 				has_modifier = syamelles_curse_habitat
 			}
 		}
@@ -525,15 +459,14 @@ squire = {
 		}
 		upkeep = {
 			trigger = {
-				planet = { has_modifier = syamelles_curse_habitat }
+				colony = { has_modifier = syamelles_curse_habitat }
 			}
 			alloys = 0.5
 		}
 		# Spiritual Seekers
 		produces = {
 			trigger = {
-				exists = owner
-				owner = {
+				owner? = {
 					has_valid_civic = civic_spiritual_seekers
 				}
 			}
@@ -544,8 +477,7 @@ squire = {
 	# Spiritual Seekers
 	triggered_planet_modifier = {
 		potential = {
-			exists = owner
-			owner = {
+			owner? = {
 				has_valid_civic = civic_spiritual_seekers
 			}
 		}
@@ -555,21 +487,16 @@ squire = {
 
 	triggered_country_modifier = {
 		potential = {
-			exists = planet
-			planet = {
-				exists = owner
-				owner = { has_technology = "tech_ground_defense_planning" }
-			}
+			owner? = { has_technology = "tech_ground_defense_planning" }
 		}
 		modifier = {
-			country_naval_cap_add = 2
+			country_naval_cap_add = 1
 		}
 	}
 
 	triggered_country_modifier = {
 		potential = {
-			exists = owner
-			owner = {
+			owner? = {
 				any_owned_leader = {
 					is_councilor = yes
 					has_trait = leader_trait_bellicose
@@ -578,15 +505,14 @@ squire = {
 		}
 
 		modifier = {
-			country_naval_cap_add = 2
+			country_naval_cap_add = 0.5
 		}
 		mult = value:bellicose_naval_cap
 	}
 
 	triggered_planet_modifier = {
 		potential = {
-			exists = owner
-			owner = {
+			owner? = {
 				any_owned_leader = {
 					is_councilor = yes
 					has_trait = leader_trait_bellicose
@@ -594,7 +520,7 @@ squire = {
 			}
 		}
 		modifier = {
-			planet_defense_armies_add = 1
+			planet_defense_armies_add = 0.5
 		}
 		mult = value:bellicose_naval_cap
 	}
@@ -603,7 +529,4 @@ squire = {
 		weight = @worker_job_weight
 		factor = 1.2
 	}
-
-	# inline_script = "jobs/automodding_priority_amenities"		# old script
-
 }

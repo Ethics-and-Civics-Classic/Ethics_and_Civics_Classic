@@ -134,9 +134,8 @@ supremacist = {
 
 	can_join_faction = {
 		is_shackled_robot = no
-		has_culture_shock = no
 		can_think = yes
-		is_xenophobe = yes
+		is_interlink_cyborg_pop = no
 		owner = {
 			is_pacifist = no
 		}
@@ -190,7 +189,19 @@ supremacist = {
 		}
 	}
 
-	demand = {
+	# DEMAND: Faction Outraged (by a GalCom Resolution)
+	inline_script = {
+		script = pop_faction_types/demand_faction_outraged
+		FLAG = galcom_resolution_passed_anti_supremacist
+	}
+
+	# DEMAND: Faction Pleased (by a GalCom Resolution)
+	inline_script = {
+		script = pop_faction_types/demand_faction_pleased
+		FLAG = galcom_resolution_passed_pro_supremacist
+	}
+
+	demand = { # "POLITICAL_PLURALISM"
 		title = "POLITICAL_PLURALISM"
 		unfulfilled_title = "POLITICAL_PLURALISM"
 		desc = "POLITICAL_PLURALISM_DESC"
@@ -211,19 +222,7 @@ supremacist = {
 		}
 	}
 
-	# DEMAND: Faction Outraged (by a GalCom Resolution)
-	inline_script = {
-		script = pop_faction_types/demand_faction_outraged
-		FLAG = galcom_resolution_passed_anti_supremacist
-	}
-
-	# DEMAND: Faction Pleased (by a GalCom Resolution)
-	inline_script = {
-		script = pop_faction_types/demand_faction_pleased
-		FLAG = galcom_resolution_passed_pro_supremacist
-	}
-
-	demand = {
+	demand = { # "SUPREMACIST_RULER_SAME_SPECIES"
 		title = "SUPREMACIST_RULER_SAME_SPECIES"
 		unfulfilled_title = "SUPREMACIST_RULER_NOT_SAME_SPECIES"
 		desc = "SUPREMACIST_RULER_NOT_SAME_SPECIES_DESC"
@@ -239,6 +238,7 @@ supremacist = {
 		trigger = {
 			owner = {
 				exists = ruler
+				exists = owner_species
 				OR = {
 					ruler = { is_same_species = owner_species }
 					AND = {
@@ -250,7 +250,7 @@ supremacist = {
 		}
 	}
 
-	demand = {
+	demand = { # "SUPREMACIST_COUNCIL_SAME_SPECIES1"
 		title = "SUPREMACIST_COUNCIL_SAME_SPECIES1"
 		unfulfilled_title = "SUPREMACIST_COUNCIL_NOT_SAME_SPECIES1"
 		desc = "SUPREMACIST_COUNCIL_NOT_SAME_SPECIES_DESC1"
@@ -320,7 +320,7 @@ supremacist = {
 		}
 	}
 
-	demand = {
+	demand = { # "SUPREMACIST_COUNCIL_SAME_SPECIES2"
 		title = "SUPREMACIST_COUNCIL_SAME_SPECIES2"
 		unfulfilled_title = "SUPREMACIST_COUNCIL_NOT_SAME_SPECIES2"
 		desc = "SUPREMACIST_COUNCIL_NOT_SAME_SPECIES_DESC2"
@@ -343,7 +343,8 @@ supremacist = {
 							count = 2
 							limit = {
 								is_councilor = yes
-								NOR = { is_ruler = yes is_same_species = owner_species }
+								is_ruler = no
+								NOT = { is_same_species = owner_species }
 							}
 						}
 					}
@@ -358,7 +359,8 @@ supremacist = {
 							count = 2
 							limit = {
 								is_councilor = yes
-								NOR = { is_ruler = yes is_same_species_class = owner_species }
+								is_ruler = no
+								NOT = { is_same_species_class = owner_species }
 							}
 						}
 					}
@@ -371,7 +373,7 @@ supremacist = {
 		}
 	}
 
-	demand = {
+	demand = { # "SUPREMACIST_COUNCIL_SAME_SPECIES3"
 		title = "SUPREMACIST_COUNCIL_SAME_SPECIES3"
 		unfulfilled_title = "SUPREMACIST_COUNCIL_NOT_SAME_SPECIES3"
 		desc = "SUPREMACIST_COUNCIL_NOT_SAME_SPECIES_DESC3"
@@ -394,7 +396,8 @@ supremacist = {
 							count = 3
 							limit = {
 								is_councilor = yes
-								NOR = { is_ruler = yes is_same_species = owner_species }
+								is_ruler = no
+								NOT = { is_same_species = owner_species }
 							}
 						}
 					}
@@ -409,7 +412,8 @@ supremacist = {
 							count = 3
 							limit = {
 								is_councilor = yes
-								NOR = { is_ruler = yes is_same_species_class = owner_species }
+								is_ruler = no
+								NOT = { is_same_species_class = owner_species }
 							}
 						}
 					}
@@ -422,7 +426,7 @@ supremacist = {
 		}
 	}
 
-	demand = {
+	demand = { # "SUPREMACIST_COUNCIL_SAME_SPECIES4"
 		title = "SUPREMACIST_COUNCIL_SAME_SPECIES4"
 		unfulfilled_title = "SUPREMACIST_COUNCIL_NOT_SAME_SPECIES4"
 		desc = "SUPREMACIST_COUNCIL_NOT_SAME_SPECIES_DESC4"
@@ -445,7 +449,8 @@ supremacist = {
 							count = 4
 							limit = {
 								is_councilor = yes
-								NOR = { is_ruler = yes is_same_species = owner_species }
+								is_ruler = no
+								NOT = { is_same_species = owner_species }
 							}
 						}
 					}
@@ -460,7 +465,8 @@ supremacist = {
 							count = 4
 							limit = {
 								is_councilor = yes
-								NOR = { is_ruler = yes is_same_species_class = owner_species }
+								is_ruler = no
+								NOT = { is_same_species_class = owner_species }
 							}
 						}
 					}
@@ -473,7 +479,7 @@ supremacist = {
 		}
 	}
 
-	demand = {
+	demand = { # "SUPREMACIST_COUNCIL_NOT_FULL_XENOS"
 		title = "SUPREMACIST_COUNCIL_NOT_FULL_XENOS"
 		unfulfilled_title = "SUPREMACIST_COUNCIL_FULL_XENOS"
 		desc = "SUPREMACIST_COUNCIL_FULL_XENOS_DESC"
@@ -484,8 +490,8 @@ supremacist = {
 		potential = {
 			exists = owner
 			owner = {
+				NOT = { has_valid_civic = civic_fanatic_purifiers }
 				NOR = {
-					has_valid_civic = civic_fanatic_purifiers
 					any_owned_leader = {
 						is_councilor = yes
 						is_same_species = owner_species
@@ -505,7 +511,8 @@ supremacist = {
 						count >= 5
 						limit = {
 							is_councilor = yes
-							NOR = { is_ruler = yes is_same_species = owner_species }
+							is_ruler = no
+							NOT = { is_same_species = owner_species }
 						}
 					}
 					any_owned_leader = {
@@ -518,7 +525,8 @@ supremacist = {
 							count >= 5
 							limit = {
 								is_councilor = yes
-								NOR = { is_ruler = yes is_same_species_class = owner_species }
+								is_ruler = no
+								NOT = { is_same_species_class = owner_species }
 							}
 						}
 					}
@@ -531,7 +539,7 @@ supremacist = {
 		}
 	}
 
-	demand = {
+	demand = { # "SUPREMACIST_ISOLATIONIST_NO_FEDERATION"
 		title = "SUPREMACIST_ISOLATIONIST_NO_FEDERATION"
 		unfulfilled_title = "SUPREMACIST_ISOLATIONIST_FEDERATION"
 		desc = "SUPREMACIST_ISOLATIONIST_NO_FEDERATION_DESC"
@@ -553,7 +561,7 @@ supremacist = {
 		}
 	}
 
-	demand = {
+	demand = { # "SUPREMACIST_UNRESTRICTED_STUDY"
 		title = "SUPREMACIST_UNRESTRICTED_STUDY"
 		unfulfilled_title = "SUPREMACIST_NO_UNRESTRICTED_STUDY"
 		desc = "SUPREMACIST_UNRESTRICTED_STUDY_DESC"
@@ -566,7 +574,7 @@ supremacist = {
 			owner = {
 				NOT = { has_valid_civic = civic_fanatic_purifiers }
 				any_relation = {
-					is_primitive = yes
+					is_country_type = primitive
 				}
 			}
 		}
@@ -577,11 +585,12 @@ supremacist = {
 					has_policy_flag = interference_active
 					has_policy_flag = interference_aggressive
 				}
+
 			}
 		}
 	}
 
-	demand = {
+	demand = { # "SUPREMACIST_NO_FREE_ALIENS"
 		title = "SUPREMACIST_NO_FREE_ALIENS"
 		unfulfilled_title = "SUPREMACIST_HAS_FREE_ALIENS"
 		desc = "SUPREMACIST_ALIEN_SLAVES_DESC"
@@ -628,7 +637,7 @@ supremacist = {
 		}
 	}
 
-	demand = {
+	demand = { # "SUPREMACIST_NO_MIGRATION_TREATIES"
 		title = "SUPREMACIST_NO_MIGRATION_TREATIES"
 		unfulfilled_title = "SUPREMACIST_MIGRATION_TREATIES"
 		desc = "SUPREMACIST_NO_MIGRATION_TREATIES_DESC"
@@ -648,7 +657,7 @@ supremacist = {
 			owner = {
 				NOR = {
 					num_migration_pacts > 0
-					any_playable_country = {
+					any_country = {
 						is_country_type = default
 						has_communications = root.owner
 						OR = {
@@ -665,7 +674,7 @@ supremacist = {
 		}
 	}
 
-	demand = {
+	demand = { # "SUPREMACIST_DOMINATION"
 		title = "SUPREMACIST_DOMINATION"
 		desc = "SUPREMACIST_DOMINATION_DESC"
 		unfulfilled_title = "SUPREMACIST_NO_DOMINATION"
@@ -694,7 +703,7 @@ supremacist = {
 		}
 	}
 
-	demand = {
+	demand = { # "SUPREMACIST_FANATIC_PURIFIERS"
 		title = "SUPREMACIST_FANATIC_PURIFIERS"
 		unfulfilled_title = "SUPREMACIST_NOT_FANATIC_PURIFIERS"
 		desc = "SUPREMACIST_FANATIC_PURIFIERS_DESC"
@@ -716,7 +725,7 @@ supremacist = {
 		}
 	}
 
-	demand = {
+	demand = { # "SUPREMACIST_GIANT_MASSACRE"
 		title = "SUPREMACIST_GIANT_MASSACRE"
 		unfulfilled_title = "SUPREMACIST_NO_GIANT_MASSACRE"
 		desc = "SUPREMACIST_GIANT_MASSACRE_DESC"
@@ -741,7 +750,7 @@ supremacist = {
 		}
 	}
 
-	demand = {
+	demand = { # "SUPREMACIST_PROCLAIM_SUPREMACY"
 		title = "SUPREMACIST_PROCLAIM_SUPREMACY"
 		unfulfilled_title = "SUPREMACIST_NO_PROCLAIM_SUPREMACY"
 		desc = "SUPREMACIST_PROCLAIM_SUPREMACY_DESC"
@@ -763,7 +772,7 @@ supremacist = {
 		}
 	}
 
-	demand = {
+	demand = { # "SUPREMACIST_CELEBRATE_DIVERSITY"
 		title = "SUPREMACIST_CELEBRATE_DIVERSITY"
 		unfulfilled_title = "SUPREMACIST_NO_CELEBRATE_DIVERSITY"
 		desc = "SUPREMACIST_CELEBRATE_DIVERSITY_DESC"
@@ -785,7 +794,7 @@ supremacist = {
 		}
 	}
 
-	demand = {
+	demand = { # "STRONG_DIPLO_STANCE"
 		title = "STRONG_DIPLO_STANCE"
 		unfulfilled_title = "STRONG_DIPLO_STANCE"
 		desc = "STRONG_DIPLO_STANCE_DESC"
@@ -817,7 +826,7 @@ supremacist = {
 		}
 	}
 
-	demand = {
+	demand = { # "WEAK_DIPLO_STANCE"
 		title = "WEAK_DIPLO_STANCE"
 		unfulfilled_title = "WEAK_DIPLO_STANCE"
 		desc = "WEAK_DIPLO_STANCE_DESC"
@@ -841,7 +850,7 @@ supremacist = {
 		}
 	}
 
-	demand = {
+	demand = { # "SUPREMACIST_AGGRESSIVE_FIRST_CONTACT_POLICY"
 		title = "SUPREMACIST_AGGRESSIVE_FIRST_CONTACT_POLICY"
 		unfulfilled_title = "SUPREMACIST_NO_AGGRESSIVE_FIRST_CONTACT_POLICY"
 		desc = "SUPREMACIST_NO_AGGRESSIVE_FIRST_CONTACT_POLICY_DESC"
@@ -866,7 +875,7 @@ supremacist = {
 		}
 	}
 
-	demand = {
+	demand = { # "SUPREMACIST_OPPRESSIVE_SUBJUGATION_POLICY"
 		title = "SUPREMACIST_OPPRESSIVE_SUBJUGATION_POLICY"
 		unfulfilled_title = "SUPREMACIST_NO_OPPRESSIVE_SUBJUGATION_POLICY"
 		desc = "SUPREMACIST_NO_OPPRESSIVE_SUBJUGATION_POLICY_DESC"
@@ -888,12 +897,79 @@ supremacist = {
 		}
 	}
 
+	demand = { # Unplugged: Cyberize
+		title = SUPREMACIST_UNPLUGGED_CYBERIZE
+		unfulfilled_title = SUPREMACIST_UNPLUGGED_NOT_CYBERIZE
+		desc = SUPREMACIST_UNPLUGGED_CYBERIZE_DESC
+
+		unfulfilled_effect = -10
+		fulfilled_effect = 5
+
+		potential = {
+			exists = owner
+			owner = {
+				has_origin = origin_unplugged
+				NOT = { has_civic = civic_machine_cult }
+				any_situation = {
+					is_situation_type = situation_unplugged_identity
+				}
+			}
+		}
+
+		trigger = {
+			owner = {
+				any_situation = {
+					is_situation_type = situation_unplugged_identity
+					OR = {
+						AND = { # safely in the Cyberize stage
+							current_stage = unplugged_identity_stage_3
+							situation_monthly_progress > 0
+						}
+						AND = { # trending towards Cyberization and our Approach is aligned
+							situation_monthly_progress > 0.05
+							OR = {
+								current_situation_approach = situation_unplugged_identity_discourage_change
+								current_situation_approach = situation_unplugged_identity_embrace_opinion
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
 	# Faction Demands for Ruler and Council positions.
 	inline_script = {
-		script = "paragon/global_faction_demands"
+		script = "pop_faction_types/global_faction_demands"
 		ETHIC = ethic_xenophobe
 		ETHIC_FANATIC = ethic_fanatic_xenophobe
 		ETHIC_OPPOSED = ethic_xenophile
+	}
+
+	demand = { # "SUPREMACIST_CULL_THE_DRIFTERS"
+		title = "SUPREMACIST_CULL_THE_DRIFTERS"
+		unfulfilled_title = "SUPREMACIST_NO_CULL_THE_DRIFTERS"
+		desc = "SUPREMACIST_CULL_THE_DRIFTERS_DESC"
+
+		fulfilled_effect = 10
+		unfulfilled_effect = -0.001
+
+		potential = {
+			exists = owner
+			owner = {
+				is_nomadic = no
+				any_country = {
+					is_nomadic = yes
+					has_communications = root.owner
+				}
+			}
+		}
+
+		trigger = {
+			owner = {
+				has_policy_flag = arkship_raid_purge_pops
+			}
+		}
 	}
 
 	on_create = {
@@ -929,7 +1005,7 @@ supremacist = {
 				owner = {
 					OR = {
 						is_subject = no
-						count_agreement = { count = 0 limit = { agreement_preset = preset_dominion } }
+						NOT = { any_agreement = { agreement_preset = preset_dominion } }
 					}
 				}
 			}
@@ -948,23 +1024,24 @@ supremacist = {
 			}
 
 			effect = {
-				add_modifier = { modifier = embraced_faction years = 10 }
+				add_modifier = { modifier = embraced_faction days = 3600 }
+				owner = { set_country_flag = has_embraced_faction }
 				parameter:empire = {
 					shift_ethic = ethic_xenophobe
 					hidden_effect = {
-						every_pop_faction = { # Embraces xenophobe ethos
+						every_pop_faction = { # embraces xenophobe ethos
 							limit = { is_pop_faction_type = isolationist }
-							add_modifier = { modifier = embraced_faction years = 10	}
+							add_modifier = { modifier = embraced_faction days = 3600	}
 						}
-						add_modifier = { modifier = embraced_faction_timer years = 10 }
+						add_modifier = { modifier = embraced_faction_timer days = 3600 }
 						every_pop_faction = {
 							limit = {
 								NOR = {
 									is_same_value = root
-									is_pop_faction_type = isolationist # Same ethos
+									is_pop_faction_type = isolationist # same ethos
 								}
 							}
-							add_modifier = { modifier = embraced_another_faction years = 10 }
+							add_modifier = { modifier = embraced_another_faction days = 3600 }
 						}
 					}
 				}
@@ -1026,6 +1103,7 @@ supremacist = {
 			}
 
 			effect = {
+				owner = { set_country_flag = has_promoted_faction }
 				parameter:empire = {
 					add_modifier = { modifier = promoted_xenophobe days = -1 }
 				}

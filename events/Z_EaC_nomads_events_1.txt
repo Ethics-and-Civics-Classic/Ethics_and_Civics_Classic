@@ -1,0 +1,1963 @@
+#################
+# Nomads Events #
+#################
+
+# nomads.1   -  99	Reserved for important base events
+# nomads.100 - 499	Champions Forge Enclave
+# nomads.500 - 999	Heirs of the Khan Origin
+# nomads.1000-1500	Forever Cruise Origin
+# nomads.1505-1999	Nomadic Paragons
+# nomads.2000-2999  The Sacred Path
+# nomads.3000-3999  Contracts Functionality
+# nomads.4000-4999	Arkship Functionality
+# nomads.5000-5999	Civics
+# nomads.6000-6999	Contract Events
+# nomads.7000-7999	Forgotten Empires
+# nomads.8000-8100	Dyson Gun
+
+namespace = nomads
+
+#######################
+# NOMADIC PARAGONS
+#######################
+
+# Introduction from the Champions Forge Enclave 
+# Sero with Green Ethic --Sage (August 6, 2026)
+country_event = {
+	id = nomads.1500
+	hide_window = yes
+	is_triggered_only = yes
+
+	immediate = {
+		random_list = {
+			1 = { # The Revenant
+				modifier = {
+					factor = 0
+					can_hire_nomadic_paragon_1 = no
+				}
+				ethic_leader_hire_event = { LEADER_ID = nomadic_revenant EVENT_ID = nomads.1505 }
+			}
+			1 = { # The Sage
+				modifier = {
+					factor = 0
+					can_hire_nomadic_paragon_2 = no
+				}
+				modifier = {
+					factor = 0
+					is_gestalt = yes
+				}
+				ethic_leader_hire_event = { LEADER_ID = nomadic_sage EVENT_ID = nomads.1515 }
+			}
+			1 = { # The Naturalist
+				modifier = {
+					factor = 0
+					can_hire_nomadic_paragon_3 = no
+				}
+				modifier = {
+					factor = 1.5
+					is_green = yes
+				}
+				ethic_leader_hire_event = { LEADER_ID = nomadic_naturalist EVENT_ID = nomads.1520 }
+			}
+			1 = { # The Caregiver
+				modifier = {
+					factor = 0
+					can_hire_nomadic_paragon_4 = no
+				}
+				modifier = {
+					factor = 1.5
+					is_spiritualist = yes
+				}
+				ethic_leader_hire_event = { LEADER_ID = nomadic_caregiver EVENT_ID = nomads.1530 }
+			}
+			1 = { # The Champion
+				modifier = {
+					factor = 0
+					can_hire_nomadic_paragon_5 = no
+				}
+				ethic_leader_hire_event = { LEADER_ID = nomadic_champion EVENT_ID = nomads.1555 }
+			}
+			1 = { # The Lost Princess
+				modifier = {
+					factor = 0
+					can_hire_nomadic_paragon_6 = no
+				}
+				ethic_leader_hire_event = { LEADER_ID = nomadic_princess EVENT_ID = nomads.1580 }
+			}
+		}
+	}
+}
+
+#Sero the Younger, the Naturalist 
+# (Green Ethic) -- Sage (August 6, 2026)
+country_event = {
+	id = nomads.1520
+	title = "nomads.1520.name"
+	desc = "nomads.1520.desc"
+	show_sound = nom_paragon_4_sero_the_younger_the_naturalist
+	is_triggered_only = yes
+
+	picture = GFX_leader_recruitment_bg_renowned
+	auto_opens = no
+	event_window_type = leader_recruit
+	notification_event_icon = "GFX_message_leader_recruitment_naturalist"
+
+	immediate = {
+		ethic_leader_creator = {
+			SPECIES_CLASS = random_non_machine
+			LEADER_PORTRAIT = par_renown_18
+			CLASS = scientist
+			TIER = leader_tier_renowned
+			NAME = NAME_nomadic_naturalist
+			LEVEL = 4
+			GENDER = male
+			IMMORTAL = no
+			ETHIC = green
+			DESC = DESC_nomadic_naturalist
+			CATCH_PHRASE = catch_phrase_nomadic_naturalist
+		}
+		last_created_leader = {
+			add_trait = {
+				trait = subclass_scientist_scholar
+				consume_selection = yes
+			}
+			add_trait = {
+				trait = leader_trait_roamer
+				consume_selection = yes
+			}
+			add_trait = {
+				trait = leader_trait_meticulous
+				consume_selection = yes
+			}
+			add_trait = {
+				trait = leader_trait_observant
+				consume_selection = yes
+			}
+			add_trait = {
+				trait = leader_trait_lawless
+				consume_selection = yes
+			}
+			add_trait = {
+				trait = leader_trait_nomadic_naturalist
+				consume_selection = yes
+			}
+			set_age = 50
+		}
+	}
+
+	picture_event_data = {
+		portrait = event_target:ethic_leader
+		room = ethic_spaceship_room
+	}
+
+	option = {
+		name = DISMISS
+		tag = dismiss_leader
+		hidden_effect = {
+			remove_global_flag = nomadic_naturalist # Put this leader back into the pool, so player can still get them
+			ethic_leader_kill_effect = yes
+			set_country_flag = dismissed_nomadic_naturalist
+		}
+	}
+	option = {
+		name = nomads.1520.a
+		response_text = nomads.1520.a.response
+		is_dialog_only = yes
+	}
+	option = {
+		name = nomads.1520.b
+		response_text = nomads.1520.b.response
+		is_dialog_only = yes
+	}
+	option = {
+		name = nomads.1520.c
+		response_text = nomads.1520.c.response
+		is_dialog_only = yes
+	}
+	option = {
+		name = nomads.1520.d
+		response_text = nomads.1520.d.response
+		is_dialog_only = yes
+	}
+	option = {
+		trigger = {
+			is_species_class = ART
+		}
+		name = nomads.1520.e
+		response_text = nomads.1520.e.response
+		is_dialog_only = yes
+	}
+	option = {
+		name = HIRE
+		tag = hire_leader
+		custom_tooltip = nomads.1520.hire_custom_tooltip
+		add_tech_option_or_research_effect = {
+			TECH = tech_alien_life_studies
+			PROGRESS = 0.25
+			CATEGORY = society_research
+		}
+		hidden_effect = {
+			ethic_leader_hire_effect = {
+				GLOBAL_EVENT_TARGET = nomadic_naturalist
+			}
+			set_country_flag = hired_nomadic_naturalist
+			country_event = {
+				id = nomads.1522
+				days = 1
+			}
+			set_global_flag = hired_nomadic_paragon_3
+		}
+	}
+}
+
+# Hidden Event to trigger Leader UI Popup and a Toast Thereafter
+# Fired by on_survey_planet
+# Scope = Ship
+# From = Planet
+
+# Adds Green Ethic to options -- Sage (August 6, 2026)
+
+country_event = {
+	id = nomads.1525
+	title = "nomads.1525.name"
+	desc = "nomads.1525.desc"
+	picture = GFX_evt_animal_wildlife
+	show_sound = event_dangerous_animals
+	event_window_type = leader_story
+
+	picture_event_data = {
+		portrait = event_target:nomadic_naturalist
+		room = root.owner
+	}
+
+	is_triggered_only = yes
+
+	option = {
+		trigger = {
+			OR = {
+				is_green = yes
+				is_xenophile = yes
+			}
+		}
+		name = nomads.1525.a
+		capital_scope = {
+			create_pop_group = {
+				species = event_target:nomadic_naturalist_presapients
+			}
+		}
+	}
+	option = {
+		trigger = {
+			OR = {
+				is_green = no
+				is_xenophile = no
+			}
+		}
+		name = nomads.1525.b
+		capital_scope = {
+			create_pop_group = {
+				species = event_target:nomadic_naturalist_presapients
+			}
+		}
+	}
+}
+
+##############################
+### Contract Functionality ###
+##############################
+
+# Non-nomad AI contract issuer
+# Fired by: nomads.3000
+# this = country
+# Added weights for EaC Ethics -- Sage (August 06, 2026)
+country_event = {
+	id = nomads.3001
+	hide_window = yes
+	is_triggered_only = yes
+
+	trigger = {
+		is_ai = yes
+		can_issue_contracts_trigger = yes
+		any_relation = {
+			is_nomadic = yes
+			has_communications = prev
+			NOT = {
+				is_at_war_with = prev
+			}
+			root = { #check that ai likes at least one nomad enough
+				opinion_level = {
+					who = prev
+					level >= neutral
+				}
+			}
+		}
+	}
+
+	immediate = {
+		if = {
+			limit = {
+				if = {
+					limit = {
+						count_country = {
+							count >= 15
+							limit = { is_country_type = default }
+						}
+					}
+					count_issued_contracts = 0
+				}
+				else_if = {
+					limit = {
+						count_country = {
+							count >= 10
+							limit = { is_country_type = default }
+						}
+					}
+					count_issued_contracts <= 1
+				}
+				else = {
+					count_issued_contracts <= 2
+				}
+			}
+			random_list = {
+				10 = { # Chance of nothing
+					modifier = {
+						factor = 3
+						is_xenophobe = yes
+					}
+					modifier = {
+						factor = 5
+						is_fanatic_xenophobe = yes
+					}
+					modifier = {
+						factor = 2
+						has_civic = civic_pompous_purists
+					}
+					modifier = {
+						factor = 4
+						is_gestalt = yes
+					}
+					modifier = {
+						factor = 0.1
+						is_megacorp = yes
+					}
+				}
+				20 = { # Harvest
+					modifier = { # skip if a harvest contract is already issued/picked up
+						factor = 0
+						has_country_flag = harvest_contract_active
+					}
+					modifier = { #more likely if deficit
+						factor = 5
+						OR = {
+							has_deficit = minerals
+							has_deficit = energy
+							has_deficit = alloys
+							has_deficit = exotic_gases
+							has_deficit = rare_crystals
+							has_deficit = volatile_motes
+						}
+					}
+					modifier = {	# More likely if empire has Industrialist ethic -- Sage
+						factor = 1.3
+						is_industrial = yes
+					}
+					random_system_within_border = {
+						limit = {
+							NOT = {
+								has_star_flag = issued_harvest_contract
+								any_system_planet = {
+									is_star = no
+									has_modifier = harvested_resources_mining
+								}
+							}
+							if = {
+								limit = {
+									root = {
+										has_deficit = exotic_gases
+									}
+									any_system_planet = {
+										is_star = no
+										has_resource = {
+											type = exotic_gases
+											amount > 0
+										}
+									}
+								}
+								any_system_planet = {
+									is_star = no
+									has_resource = {
+										type = exotic_gases
+										amount > 0
+									}
+								}
+							}
+							else_if = {
+								limit = {
+									root = {
+										has_deficit = rare_crystals
+									}
+									any_system_planet = {
+										is_star = no
+										has_resource = {
+											type = rare_crystals
+											amount > 0
+										}
+									}
+								}
+								any_system_planet = {
+									is_star = no
+									has_resource = {
+										type = rare_crystals
+										amount > 0
+									}
+								}
+							}
+							else_if = {
+								limit = {
+									root = {
+										has_deficit = volatile_motes
+									}
+									any_system_planet = {
+										is_star = no
+										has_resource = {
+											type = volatile_motes
+											amount > 0
+										}
+									}
+								}
+								any_system_planet = {
+									is_star = no
+									has_resource = {
+										type = volatile_motes
+										amount > 0
+									}
+								}
+							}
+							else_if = {
+								limit = {
+									root = {
+										has_deficit = minerals
+									}
+									any_system_planet = {
+										is_star = no
+										has_resource = {
+											type = minerals
+											amount > 0
+										}
+									}
+								}
+								any_system_planet = {
+									is_star = no
+									has_resource = {
+										type = minerals
+										amount > 0
+									}
+								}
+							}
+							else_if = {
+								limit = {
+									root = {
+										has_deficit = energy
+									}
+									any_system_planet = {
+										is_star = no
+										has_resource = {
+											type = energy
+											amount > 0
+										}
+									}
+								}
+								any_system_planet = {
+									is_star = no
+									has_resource = {
+										type = energy
+										amount > 0
+									}
+								}
+							}
+							else_if = {
+								limit = {
+									root = {
+										has_deficit = alloys
+									}
+									any_system_planet = {
+										is_star = no
+										has_resource = {
+											type = alloys
+											amount > 0
+										}
+									}
+								}
+								any_system_planet = {
+									is_star = no
+									has_resource = {
+										type = alloys
+										amount > 0
+									}
+								}
+							}
+						}
+						save_event_target_as = contract_system
+						#Resource Type picker
+						random_list = {
+							inline_script = {
+								script = contracts/AIHarvestOption
+								RESOURCE = minerals
+							}
+							inline_script = {
+								script = contracts/AIHarvestOption
+								RESOURCE = energy
+							}
+							inline_script = {
+								script = contracts/AIHarvestOption
+								RESOURCE = consumer_goods
+							}
+							inline_script = {
+								script = contracts/AIHarvestOption
+								RESOURCE = alloys
+							}
+							inline_script = {
+								script = contracts/AIHarvestOption
+								RESOURCE = volatile_motes
+							}
+							inline_script = {
+								script = contracts/AIHarvestOption
+								RESOURCE = exotic_gases
+							}
+							inline_script = {
+								script = contracts/AIHarvestOption
+								RESOURCE = rare_crystals
+							}
+							inline_script = {
+								script = contracts/AIHarvestOption
+								RESOURCE = sr_living_metal
+							}
+							inline_script = {
+								script = contracts/AIHarvestOption
+								RESOURCE = nanites
+							}
+						}
+						set_timed_star_flag = {
+							flag = issued_harvest_contract
+							days = 1800
+						}
+					}
+				}
+				10 = { # Espionage
+					modifier = { # skip if an espionage support contract is already issued/picked up
+						factor = 0
+						has_country_flag = espionage_support_contract_active
+					}
+					modifier = { #check for valid spynets
+						factor = 0
+						NOT = {
+							any_spynetwork = {
+								NOT = { has_spynetwork_flag = issued_spy_support_contract }
+							}
+						}
+						NOT = {
+							any_envoy = {
+								has_envoy_task = {
+									task = spy_network
+								}
+							}
+						}
+					}
+					#reduced for nice guys
+					modifier = {
+						factor = 0.5
+						NOT = { has_tradition = tr_subterfuge_adopt }
+						is_xenophile = yes
+						has_civic = civic_warrior_culture #tis dishonorable
+						has_origin = origin_heirs_of_the_khan
+					}
+					#increases for sneaky people
+					modifier = {
+						factor = 2.5
+						OR = {
+							has_civic = civic_cutthroat_politics
+							has_civic = civic_shadow_council
+							has_civic = civic_secret_societies
+							has_civic = civic_criminal_heritage
+							has_civic = civic_secret_societies_corporate
+							has_civic = civic_hive_bodysnatcher
+							has_civic = civic_hive_familiar_face
+							has_civic = civic_machine_spybots
+
+							has_tradition = tr_subterfuge_adopt # Why isn't this in vanilla?
+						}
+					}
+					#increased for weak empire
+					modifier = {
+						factor = 1.5
+						any_neighbor_country = {
+							is_country_type = default #don't count FE's
+							relative_power = {
+								who = root
+								category = all
+								value = overwhelming
+							}
+						}
+					}
+
+					random_spynetwork = {
+						limit = {
+							NOT = { has_spynetwork_flag = issued_spy_support_contract }
+							has_spy_power > 9
+							target = { is_country_type = default }
+						}
+						save_event_target_as = espionage_support_spynetwork
+						target = { save_event_target_as = espionage_support_target }
+						random_list = {
+							10 = {
+								modifier = { #always a chance for simple contract
+									factor = 0.1
+									target = {
+										num_owned_planets > 3
+									}
+								}
+								create_espionage_contract = { CONTRACT = contract_espionage_support }
+							}
+							10 = {
+								modifier = {
+									factor = 0
+									target = {
+										OR = {
+											num_owned_planets < 3
+											num_owned_planets > 7
+										}
+									}
+								}
+								create_espionage_contract = { CONTRACT = contract_espionage_support_2 }
+							}
+							10 = {
+								modifier = {
+									factor = 0
+									target = {
+										OR = {
+											num_owned_planets < 7
+											num_owned_planets > 13
+										}
+									}
+								}
+								create_espionage_contract = { CONTRACT = contract_espionage_support_3 }
+							}
+							10 = {
+								modifier = {
+									factor = 0
+									target = {
+										num_owned_planets <= 13
+									}
+								}
+								create_espionage_contract = { CONTRACT = contract_espionage_support_4 }
+							}
+						}
+					}
+				}
+				20 = { # Deep Scan
+					modifier = { # skip if a deep scan contract is already issued/picked up
+						factor = 0
+						has_country_flag = deep_scan_contract_active
+					}
+					modifier = { #increased for materialists and explorers
+						factor = 2
+						OR = {
+							is_materialist = yes
+							has_tradition = tr_discovery_adopt
+							has_civic = civic_eager_explorers
+							has_civic = civic_hive_stargazers
+							has_civic = civic_privatized_exploration
+							has_civic = civic_machine_exploration_protocol
+						}
+					}
+					modifier = { #increased if boxed in -won't catch all edge cases like xenophobe FE or leviathans, but good enough.
+						factor = 3
+						NOT = {
+							any_system_within_border = {
+								any_neighbor_system = {
+									NOT = { exists = owner }
+								}
+							}
+						}
+					}
+					modifier = { #decrease if everything that can be deep scanned has been deep scanned
+						factor = 0.25
+						NOT = {
+							any_planet_within_border = {
+								has_anomaly = no
+								is_artificial = no
+								is_ringworld = no
+								NOT = {
+									is_planet_class = pc_astral_scar
+								}
+								if = {
+									limit = {
+										habitable_planet = yes
+									}
+									root = {
+										any_owned_leader = {
+											has_leader_flag = nomadic_naturalist
+										}
+									}
+								}
+								NOT = { is_variable_set = times_deep_scanned }
+							}
+						}
+					}
+					modifier = { #blocked if no possible contractor
+						factor = 0
+						NOT = {
+							any_relation = {
+								is_nomadic = yes
+								has_communications = prev
+								has_deep_scan_capability = yes
+							}
+						}
+					}
+					random_system_within_border = {
+						limit = {
+							NOT = { has_star_flag = issued_deep_scan_contract }
+						}
+						save_event_target_as = contract_system
+						owner = {
+							issue_contract = {
+								contract = contract_deep_scan
+								location = event_target:contract_system
+							}
+							prev = {
+								set_timed_star_flag = {
+									flag = issued_deep_scan_contract
+									days = 3600
+								}
+							}
+						}
+					}
+				}
+				5 = { # Raid Planet
+					modifier = { # skip if a raid planet contract is already issued/picked up
+						factor = 0
+						has_country_flag = raid_planet_contract_active
+					}
+					modifier = { #check for valid targets (rival or war)
+						factor = 0
+						num_rivals < 1
+						count_war = {
+							count < 1
+						}
+					}
+					#reduced for pacifists
+					modifier = {
+						factor = 0.1
+						is_pacifist = yes
+					}
+					#increased for militarists
+					modifier = {
+						factor = 3
+						is_militarist = yes
+					}
+					modifier = {
+						factor = 1.5
+						is_fanatic_militarist = yes
+					}
+					# Increased for pirates -- Sage
+					modifier = {
+						factor = 2
+						is_pirate_empire = yes
+					}
+					#increased for weaker empires
+					modifier = {
+						factor = 1.5
+						any_neighbor_country = {
+							is_country_type = default #don't count FE's
+							OR = {
+								is_rival = root
+								is_at_war_with = root
+							}
+							relative_power = {
+								who = root
+								category = all
+								value >= superior
+							}
+						}
+					}
+					#increased for enmity empires
+					modifier = {
+						factor = 2
+						has_tradition = tr_enmity_adopt
+					}
+
+					#War Case (takes priority over being petty)
+					if = {
+						limit = {
+							count_war = {
+								count < 0
+							}
+						}
+						ordered_country = {
+							limit = {
+								is_at_war_with = root
+							}
+							position = 0
+							order_by = fleet_power
+							save_event_target_as = raid_target
+							random_owned_planet = {
+								save_event_target_as = contract_planet
+							}
+						}
+						issue_contract = {
+							contract = contract_raid_planet_small
+							location = event_target:contract_planet
+						}
+					}
+					#Rival Case
+					else_if = {
+						limit = {
+							num_rivals > 0
+						}
+						random_rival_country = {
+							limit = {
+								is_country_type = default
+							}
+							save_event_target_as = raid_target
+							random_owned_planet = {
+								save_event_target_as = contract_planet
+							}
+						}
+						issue_contract = {
+							contract = contract_raid_planet_small
+							location = event_target:contract_planet
+						}
+					}
+				}
+				50 = { # Megastructure Support (this supports megastructure upgrades, their base construction is handled in nomads.3025)
+					modifier = { # skip if a megastructure support contract is already issued/picked up
+						factor = 0
+						has_country_flag = megastructure_support_contract_active
+					}
+					#Higher Prio than other contracts due the limited timeframe where its relevant
+					modifier = {
+						factor = 0
+						NOT = {
+							any_owned_megastructure = {
+								is_upgrading = yes
+							}
+						}
+					}
+					random_system_within_border = {
+						limit = {
+							any_system_megastructure = {
+								is_upgrading = yes
+							}
+						}
+						save_event_target_as = contract_system
+						owner = {
+							issue_contract = {
+								contract = contract_megastructure_support
+								location = event_target:contract_system
+							}
+						}
+					}
+				}
+				10 = { # Diplomatic Support
+					modifier = { # skip if already has an active diplomatic support contract
+						factor = 0
+						has_country_flag = diplomatic_support_contract_active
+					}
+					modifier = { # xenophiles and diplomacy bonus
+						factor = 4
+						OR = {
+							is_xenophile = yes
+							has_tradition = tr_diplomacy_adopt
+						}
+					}
+					modifier = { # xenophobe penalty
+						factor = 0.25
+						is_xenophobe = yes
+					}
+					modifier = { #increased for weak empire
+						factor = 1.5
+						any_neighbor_country = {
+							is_country_type = default #don't count FE's
+							relative_power = {
+								who = root
+								category = all
+								value = overwhelming
+							}
+						}
+					}
+					modifier = { #check for valid targets (not rival or war)
+						factor = 0
+						NOT = {
+							any_playable_country = {
+								is_country_type = default
+								has_communications = root
+								NOT = {
+									is_at_war_with = root
+									is_rival = root
+									is_same_value = root
+									is_nomadic = yes
+								}
+							}
+						}
+					}
+					random_country = {
+						limit = {
+							is_country_type = default
+							has_communications = root
+							NOT = {
+								is_at_war_with = root
+								is_rival = root
+								is_same_value = root
+								is_nomadic = yes
+							}
+						}
+						capital_scope = {
+							root.owner = {
+								issue_contract = {
+									contract = contract_diplomatic_support
+									location = prev
+								}
+							}
+						}
+					}
+				}
+				10 = { # Scan Debris
+					modifier = { # skip if a scan debris contract is already issued/picked up
+						factor = 0
+						has_country_flag = scan_debris_contract_active
+					}
+					modifier = {
+						factor = 0
+						count_available_debris = { count = 0 }
+					}
+					# Increased weight for Green empires -- sage
+					modifier = {
+						factor = 3
+						is_green = yes
+					}
+					modifier = {
+						factor = 1.5
+						is_fanatic_green = yes
+					}
+					random_available_debris = {
+						solar_system = {
+							set_star_flag = debris_contract_system@root
+							save_event_target_as = debris_contract_system
+						}
+					}
+					issue_contract = {
+						contract = contract_scan_debris
+						location = event_target:debris_contract_system
+					}
+				}
+				10 = { # Clear Blockers
+					modifier = { # skip if a clear blockers contract is already issued/picked up
+						factor = 0
+						has_country_flag = clear_blockers_contract_active
+					}
+					modifier = {
+						factor = 0
+						any_owned_planet = {
+							is_colony = no
+							num_uncleared_blockers = 0
+						}
+					}
+					# Add weights for Green and Industrial -- Sage
+					modifier = {
+						factor = 0.5
+						is_green = yes
+					}
+					modifier = {
+						factor = 2
+						is_industrial = yes
+					}
+					random_owned_planet = {
+						limit = {
+							is_colony = yes
+							num_uncleared_blockers > 0
+						}
+						root = {
+							issue_contract = {
+								contract = contract_clear_blockers
+								location = prev
+							}
+						}
+					}
+				}
+				10 = { # Build Waystation
+					modifier = { # skip if a build waystation contract is already issued/picked up
+						factor = 0
+						has_country_flag = build_waystation_contract_active
+					}
+					modifier = {
+						factor = 0
+						NOT = {
+							benefits_from_waystation_network = {
+								NOMAD = from
+								SYSTEM_OWNER = this
+							}
+						}
+					}
+					modifier = {
+						factor = 2
+						is_megacorp = yes
+					}
+					# Increased weight for Capitalist empires -- Sage
+					modifier = {
+						factor = 3
+						is_capitalism = yes
+					}
+					modifier = {
+						factor = 1.5
+						is_fanatic_capitalism = yes
+					}
+					modifier = {
+						factor = 0.25
+						is_xenophobe = yes
+					}
+					random_system_within_border = {
+						limit = {
+							NOT = {
+								any_ship_in_system = {
+									is_waystation_ship = yes
+								}
+							}
+						}
+						save_event_target_as = build_waystation_contract_system
+						owner = {
+							issue_contract = {
+								contract = contract_build_waystation
+								location = event_target:build_waystation_contract_system
+							}
+						}
+						set_star_flag = waystation_contract_system@this
+					}
+				}
+				10 = { # Prisoner Disposal
+					modifier = { # skip if a prisoner disposal contract is already issued/picked up
+						factor = 0
+						has_country_flag = prisoner_disposal_contract_active
+					}
+					modifier = {
+						factor = 0
+						OR = {
+							NOT = {
+								any_owned_colony = {
+									num_assigned_jobs = {
+										job = criminal
+										value > 0
+									}
+								}
+							}
+							is_gestalt = yes
+						}
+					}
+					# increase for authoritarians
+					modifier = {
+						factor = 2
+						is_authoritarian = yes
+					}
+					modifier = {
+						factor = 5
+						is_fanatic_authoritarian = yes
+					}
+					# increase for police state or gene ID or oppressive autocracy
+					modifier = {
+						factor = 2
+						OR = {
+							has_valid_civic = civic_police_state
+							has_valid_civic = civic_genetic_identification
+							has_valid_civic = civic_corporate_genetic_identification
+						}
+					}
+					# decrease for experimental sentencing or civil education civic or slavers
+					# decrease for xenophiles
+
+					random_owned_colony = {
+						limit = {
+							num_assigned_jobs = {
+								job = criminal
+								value > 0
+							}
+						}
+						save_event_target_as = contract_system
+						owner = {
+							issue_contract = {
+								contract = contract_prisoner_disposal
+								location = event_target:contract_system
+							}
+						}
+					}
+				}
+				10 = { # Pest Control
+					modifier = { # skip if a pest control contract is already issued/picked up
+						factor = 0
+						has_country_flag = pest_control_contract_active
+					}
+					modifier = {
+						factor = 0
+						NOT = {
+							any_system_within_border = {
+								any_neighbor_system = {
+									can_pest_control_system = yes
+								}
+							}
+						}
+					}
+					# Reduced weight for Green nomads -- Sage
+					modifier = {
+						factor = 0.1
+						OR = {
+							is_green = yes
+							is_xenophile = yes
+						}
+					}
+					random_system_within_border = {
+						limit = {
+							any_neighbor_system = {
+								can_pest_control_system = yes
+							}
+						}
+						random_neighbor_system = {
+							limit = {
+								can_pest_control_system = yes
+							}
+							save_event_target_as = pest_control_contract_target
+						}
+						if = {
+							limit = {
+								exists = event_target:pest_control_contract_target
+							}
+							owner = {
+								issue_contract = {
+									contract = contract_pest_control
+									location = event_target:pest_control_contract_target
+								}
+							}
+						}
+					}
+				}
+				5 = { # Sightseeing Tour
+					modifier = { # skip if a sightseeing tour contract is already issued/picked up
+						factor = 0
+						has_country_flag = sightseeing_tour_contract_active
+					}
+					modifier = {
+						factor = 0
+						NOT = {
+							any_owned_planet = {
+								is_colony = yes
+								NOT = {	has_modifier = nomad_contract_sightseeing }
+							}
+						}
+					}
+					modifier = {
+						factor = 1.5
+						AND = {
+							NOT = { is_authoritarian = yes }
+							any_owned_planet = {
+								happiness_planet < 0.5
+							}
+						}
+					}
+					modifier = {
+						factor = 2
+						OR = {
+							is_egalitarian = yes
+							is_xenophile = yes
+						}
+					}
+					# Greatly increased for Green -- Sage
+					modifier = {
+						factor = 3
+						is_green = yes
+					}
+					modifier = {
+						factor = 1.5
+						is_fanatic_green = yes
+					}
+					random_owned_planet = {
+						limit = {
+							is_colony = yes
+							NOT = {	has_modifier = nomad_contract_sightseeing }
+							solar_system = {
+								NOT = { has_star_flag = sightseeing_tour_start_system@root }
+							}
+						}
+						root = {
+							if = {
+								limit = { exists = prev.solar_system }
+								issue_contract = {
+									contract = contract_sightseeing_tour
+									location = prev
+								}
+							}
+						}
+					}
+				}
+				10 = { # Join Wars
+					modifier = { # skip if a join war contract is already issued/picked up
+						factor = 0
+						has_country_flag = join_war_contract_active
+					}
+					modifier = { #check for war
+						factor = 0
+						count_war = {
+							count < 1
+						}
+					}
+					modifier = { #check for war exhaustion (to limit cases of contract issued just when a war would end)
+						factor = 0
+						NOT = {
+							any_war = {
+								AND = {
+									defender_war_exhaustion < 0.6
+									attacker_war_exhaustion < 0.6
+								}
+							}
+						}
+					}
+					modifier = { #increased if multiple wars
+						factor = 3
+						count_war = {
+							count > 1
+						}
+					}
+					#reduced for pacifists
+					modifier = {
+						factor = 0.1
+						is_pacifist = yes
+					}
+					#increased for militarists
+					modifier = {
+						factor = 3
+						is_militarist = yes
+					}
+					#increased for corpos
+					modifier = {
+						factor = 5
+						is_megacorp = yes
+					}
+					#increased for weaker empires
+					modifier = {
+						factor = 1.5
+						any_neighbor_country = {
+							is_country_type = default #don't count FE's
+							OR = {
+								is_rival = root
+								is_at_war_with = root
+							}
+							relative_power = {
+								who = root
+								category = all
+								value >= superior
+							}
+						}
+					}
+					if = {
+						limit = { exists = capital_scope }
+						issue_contract = {
+							contract = contract_join_war
+							location = capital_scope
+						}
+					}
+				}
+				50 = { # Colony Startup
+					modifier = { # skip if a colony startup contract is already issued/picked up
+						factor = 0
+						has_country_flag = colony_startup_contract_active
+					}
+					#Higher Prio than other contracts due the limited timeframe where its relevant
+					modifier = {
+						factor = 0
+						NOT = {
+							any_owned_planet = {
+								is_colony = yes
+								is_under_colonization = no
+								colony_age_years < 10
+								NOR = {
+									is_homeworld = yes
+									has_carrier_flag = colony_startup_planet@root
+									has_modifier = nomad_contract_colony_support_civilian
+									has_modifier = nomad_contract_colony_support_scientific
+									has_modifier = nomad_contract_colony_support_military
+								}
+							}
+						}
+					}
+					# reduced for xenophobes
+					modifier = {
+						factor = 0.1
+						is_xenophobe = yes
+					}
+					# Increased for Socialists -- Sage
+					modifier = {
+						factor = 3
+						is_socialism = yes
+					}
+					modifier = {
+						factor = 1.5
+						is_fanatic_socialism = yes
+					}
+					random_system_within_border = {
+						limit = {
+							any_system_planet = {
+								is_colony = yes
+								is_under_colonization = no
+								colony_age_years < 10
+								NOR = {
+									is_homeworld = yes
+									has_carrier_flag = colony_startup_planet@root
+									has_modifier = nomad_contract_colony_support_civilian
+									has_modifier = nomad_contract_colony_support_scientific
+									has_modifier = nomad_contract_colony_support_military
+								}
+							}
+						}
+						save_event_target_as = contract_system
+						owner = {
+							issue_contract = {
+								contract = contract_colony_startup
+								location = event_target:contract_system
+							}
+						}
+					}
+				}
+				10 = { # Stellar Ignition
+					modifier = { # skip if a stellar ignition contract is already issued/picked up
+						factor = 0
+						has_country_flag = stellar_ignition_contract_active
+					}
+					modifier = {
+						factor = 0
+						NOT = {
+							any_system_within_border = {
+								any_system_planet = {
+									contract_gas_giant_can_be_ignited = yes
+								}
+							}
+						}
+					}
+					# never for Green -- Sage
+					modifier = {
+						factor = 0
+						is_green = yes
+					}
+					# increased for militarists
+					modifier = {
+						factor = 2
+						is_militarist = yes
+					}
+					# Increased for Industrialists -- Sage
+					modifier = {
+						factor = 2
+						is_industrial = yes
+					}
+					# increased for megacorp
+					modifier = {
+						factor = 2
+						is_megacorp = yes
+					}
+					# increased for planescapers
+					modifier = {
+						factor = 2
+						is_planetscaper_empire = yes
+					}
+
+					random_system_within_border = {
+						limit = {
+							any_system_planet = {
+								contract_gas_giant_can_be_ignited = yes
+							}
+						}
+						save_event_target_as = contract_system
+						owner = {
+							issue_contract = {
+								contract = contract_stellar_ignition
+								location = event_target:contract_system
+							}
+						}
+					}
+				}
+				20 = { # Onboard Physics Research
+					modifier = { # skip if an onboard physics research contract is already issued/picked up
+						factor = 0
+						has_country_flag = onboard_physics_research_contract_active
+					}
+					modifier = {
+						factor = 2
+						is_materialist = yes
+					}
+					modifier = {
+						factor = 2
+						is_fanatic_materialist = yes
+					}
+					modifier = {
+						factor = 0.5
+						is_spiritualist = yes
+					}
+					modifier = {
+						factor = 2
+						has_valid_civic = civic_technocracy
+					}
+					issue_contract = {
+						contract = contract_onboard_physics_research
+						location = capital_scope
+					}
+				}
+				20 = { # Onboard Society Research
+					modifier = { # skip if an onboard society research contract is already issued/picked up
+						factor = 0
+						has_country_flag = onboard_society_research_contract_active
+					}
+					modifier = {
+						factor = 2
+						is_materialist = yes
+					}
+					modifier = {
+						factor = 2
+						is_xenophile = yes
+					}
+					# Increased for Green -- Sage
+					modifier = {
+						factor = 2
+						is_green = yes
+					}
+					modifier = {
+						factor = 0.5
+						is_xenophobe = yes
+					}
+					# Reduced for Industrial -- Sage
+					modifier = {
+						factor = 0.5
+						is_industrial = yes
+					}
+					modifier = {
+						factor = 0.5
+						has_valid_civic = civic_pompous_purists
+					}
+					issue_contract = {
+						contract = contract_onboard_society_research
+						location = capital_scope
+					}
+				}
+				20 = { # Onboard Engineering Research
+					modifier = { # skip if an onboard engineering research contract is already issued/picked up
+						factor = 0
+						has_country_flag = onboard_engineering_research_contract_active
+					}
+					modifier = {
+						factor = 2
+						is_materialist = yes
+					}
+					modifier = {
+						factor = 2
+						is_militarist = yes
+					}
+					# Increased for Industrial -- Sage
+					modifier = {
+						factor = 2
+						is_industrial = yes
+					}
+					modifier = {
+						factor = 2
+						has_valid_civic = civic_distinguished_admiralty
+					}
+					modifier = {
+						factor = 0.5
+						is_pacifist = yes
+					}
+					# Reduced for Green -- Sage
+					modifier = {
+						factor = 0.5
+						is_green = yes
+					}
+					issue_contract = {
+						contract = contract_onboard_engineering_research
+						location = capital_scope
+					}
+				}
+				20 = { # Onboard Minerals Resource
+					modifier = { # skip if an onboard minerals resource contract is already issued/picked up
+						factor = 0
+						has_country_flag = onboard_minerals_resource_contract_active
+					}
+					modifier = {
+						factor = 0
+						NOT = {
+							any_planet_within_border = {
+								mineral_candidate = yes
+								OR = {
+									has_deposit = d_minerals_1
+									has_deposit = d_minerals_2
+									has_deposit = d_minerals_3
+									has_deposit = d_minerals_4
+									has_deposit = d_minerals_5
+									has_deposit = d_minerals_6
+									has_deposit = d_minerals_7
+									has_deposit = d_minerals_8
+									has_deposit = d_minerals_9
+									has_deposit = d_minerals_10
+								}
+							}
+						}
+					}
+					# Adjust weights for Socialists and Industrialists -- Sage
+					modifier = {
+						factor = 1.5
+						is_megacorp = yes
+					}
+					modifier = {
+						factor = 2
+						is_industrial = yes
+					}
+					modifier = {
+						factor = 1.5
+						is_socialism = yes
+					}
+					modifier = {
+						factor = 2
+						has_valid_civic = civic_mining_guilds
+					}
+					modifier = {
+						factor = 0.5
+						is_xenophobe = yes
+					}
+					# Reduce weights for Green -- Sage
+					modifier = {
+						factor = 0.5
+						is_green = yes
+					}
+					random_system_within_border = {
+						limit = {
+							any_system_planet = {
+								mineral_candidate = yes
+								OR = {
+									has_deposit = d_minerals_1
+									has_deposit = d_minerals_2
+									has_deposit = d_minerals_3
+									has_deposit = d_minerals_4
+									has_deposit = d_minerals_5
+									has_deposit = d_minerals_6
+									has_deposit = d_minerals_7
+									has_deposit = d_minerals_8
+									has_deposit = d_minerals_9
+									has_deposit = d_minerals_10
+								}
+								NOT = { has_carrier_flag = contract_onboard_minerals_resource }
+							}
+						}
+						save_event_target_as = contract_system
+						owner = {
+							issue_contract = {
+								contract = contract_onboard_minerals_resource
+								location = event_target:contract_system
+							}
+						}
+					}
+				}
+				20 = { # Onboard Energy Resource
+					modifier = { # skip if an onboard energy resource contract is already issued/picked up
+						factor = 0
+						has_country_flag = onboard_energy_resource_contract_active
+					}
+					modifier = {
+						factor = 0
+						NOT = {
+							any_planet_within_border = {
+								energy_candidate = yes
+								OR = {
+									has_deposit = d_energy_1
+									has_deposit = d_energy_2
+									has_deposit = d_energy_3
+									has_deposit = d_energy_4
+									has_deposit = d_energy_5
+									has_deposit = d_energy_6
+									has_deposit = d_energy_7
+									has_deposit = d_energy_8
+									has_deposit = d_energy_9
+									has_deposit = d_energy_10
+								}
+							}
+						}
+					}
+					modifier = {
+						factor = 1.5
+						is_megacorp = yes
+					}
+					# Make Capitalists more likely to get this.
+					modifier = {
+						factor = 1.5
+						is_capitalism = yes
+					}
+					modifier = {
+						factor = 2
+						is_materialist = yes
+					}
+					modifier = {
+						factor = 0.5
+						is_xenophobe = yes
+					}
+					random_system_within_border = {
+						limit = {
+							any_system_planet = {
+								energy_candidate = yes
+								OR = {
+									has_deposit = d_energy_1
+									has_deposit = d_energy_2
+									has_deposit = d_energy_3
+									has_deposit = d_energy_4
+									has_deposit = d_energy_5
+									has_deposit = d_energy_6
+									has_deposit = d_energy_7
+									has_deposit = d_energy_8
+									has_deposit = d_energy_9
+									has_deposit = d_energy_10
+								}
+								NOT = { has_carrier_flag = contract_onboard_energy_resource }
+							}
+						}
+						save_event_target_as = contract_system
+						owner = {
+							issue_contract = {
+								contract = contract_onboard_energy_resource
+								location = event_target:contract_system
+							}
+						}
+					}
+				}
+				20 = { # Onboard Food Resource
+					modifier = { # skip if an onboard food resource contract is already issued/picked up
+						factor = 0
+						has_country_flag = onboard_food_resource_contract_active
+					}
+					modifier = {
+						factor = 0
+						NOT = {
+							any_planet_within_border = {
+								food_candidate = yes
+								OR = {
+									has_deposit = d_food_3
+									has_deposit = d_food_4
+									has_deposit = d_food_5
+									has_deposit = d_food_6
+									has_deposit = d_food_7
+									has_deposit = d_food_10
+								}
+							}
+						}
+					}
+					modifier = {
+						factor = 2
+						is_pacifist = yes
+					}
+					# Increased for Green -- Sage
+					modifier = {
+						factor = 2
+						is_green = yes
+					}
+					modifier = {
+						factor = 2
+						has_valid_civic = civic_agrarian_idyll
+					}
+					modifier = {
+						factor = 0.5
+						is_xenophobe = yes
+					}
+					# Reduced for Industrial -- Sage
+					modifier = {
+						factor = 0.5
+						is_industrial = yes
+					}
+					random_system_within_border = {
+						limit = {
+							any_system_planet = {
+								food_candidate = yes
+								OR = {
+									has_deposit = d_food_3
+									has_deposit = d_food_4
+									has_deposit = d_food_5
+									has_deposit = d_food_6
+									has_deposit = d_food_7
+									has_deposit = d_food_10
+								}
+								NOT = { has_carrier_flag = contract_onboard_food_resource }
+							}
+						}
+						save_event_target_as = contract_system
+						owner = {
+							issue_contract = {
+								contract = contract_onboard_food_resource
+								location = event_target:contract_system
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+##############################
+### Arkships Functionality ###
+##############################
+
+# Fired by on_arkship_strip_mine
+# Adds timed flag to make Green faction angry and Industrial faction happy. -- Sage (August 06, 2026)
+carrier_event = {
+	id = nomads.4200
+	hide_window = yes
+	is_triggered_only = yes
+
+	immediate = {
+		from = {
+			every_owned_ship = {
+				save_event_target_as = arkship
+			}
+		}
+		arkship_strip_mine_effect = yes
+		# Decrease opinion of system owner
+		if = {
+			limit = {
+				exempt_from_harvest_resources_opinion_reduction_trigger = no
+				has_deposit = yes
+			}
+			space_owner? = {
+				add_opinion_modifier = {
+					modifier = opinion_arkship_strip_mine
+					who = event_target:arkship.controller
+				}
+			}
+		}
+		# Timed faction approval flag -- Sage
+		from = {
+			set_timed_country_flag = { flag = recently_stripmined_planet days = 1825 }
+		}
+	}
+}
+
+# Fired by on_arkship_reprocess_planet
+# Adds timed flag to make Green faction angry and Industrial faction happy. -- Sage (August 06, 2026)
+planet_event = {
+	id = nomads.4400
+	hide_window = yes
+	is_triggered_only = yes
+
+	immediate = {
+		from = {
+			every_owned_ship = {
+				save_event_target_as = arkship
+			}
+		}
+		arkship_planetary_reprocessor_effect = yes
+		# Decrease opinion of system owner
+		if = {
+			limit = {
+				exempt_from_harvest_resources_opinion_reduction_trigger = no
+			}
+			space_owner? = {
+				add_opinion_modifier = {
+					modifier = opinion_arkship_reprocess_planet
+					who = event_target:arkship.controller
+				}
+			}
+		}
+		# Timed faction approval flag -- Sage
+		from = {
+			set_timed_country_flag = { flag = recently_reprocessed_planet days = 3600 }
+		}
+	}
+}
+
+# Fired by on_arkship_stellar_ignition
+# THIS = planet
+# FROM = triggering fleet
+# Adds timed flag to make Green faction angry and Industrial faction happy. -- Sage (August 06, 2026)
+carrier_event = {
+	id = nomads.4500
+	hide_window = yes
+	is_triggered_only = yes
+
+	immediate = {
+		if = {
+			limit = {
+				is_star = yes
+			}
+			arkship_stellar_ignition_effect = yes
+		}
+		else = {
+			arkship_protostar_effect = yes
+		}
+		apply_stellar_ignition_habitability_penalties = yes
+		from = {
+			random_owned_ship = {
+				save_event_target_as = arkship
+			}
+		}
+		from.controller = {
+			create_message = {
+				type = TOAST_STELLAR_IGNITION_COMPLETE
+				localization = TOAST_STELLAR_IGNITION_COMPLETE_DESC
+				days = @toast_message_days
+				variable = {
+					type = name
+					localization = ARKSHIP
+					scope = event_target:arkship
+				}
+				variable = {
+					type = name
+					localization = PLANET
+					scope = root
+				}
+			}
+			if = {
+				limit = {
+					OR = {
+						is_active_resolution = "resolution_ecology_environmental_control_board"
+						is_active_resolution = "resolution_ecology_paradise_initiative"
+					}
+				}
+				set_timed_country_flag = { flag = resolution_breached_terraformed days = 3600 }
+			}
+			save_event_target_as = nomad_country
+			if = {
+				limit = {
+					has_event_chain = contract_stellar_ignition_chain
+					root = {
+						has_planet_flag = stellar_ignition_planet@event_target:nomad_country
+					}
+				}
+				add_mission_counter = {
+					mission = contract_stellar_ignition
+					counter = contract_progress_counter
+					amount = 1
+				}
+				set_country_flag = successful_stellar_ignition@root.solar_system
+				# Timed faction approval flag -- Sage
+				set_timed_country_flag = { flag = recent_stellar_ignition days = 3600 }
+			}
+		}
+	}
+}
+
+####################
+### Civic Events ###
+####################
+
+#Reavers plunder resources while bombing a planet - FROM = Bombarder
+# Adds extra weight for Pirate Lord civic -- Sage
+carrier_event = {
+	id = nomads.5005
+	hide_window = yes
+	is_triggered_only = yes
+
+	trigger = {
+		NOT = { has_carrier_flag = recently_plundered }
+		has_orbital_bombardment_stance = plundering
+		planet_devastation <= 70
+	}
+
+	immediate = {
+		log = "booty plundered"
+		set_timed_carrier_flag = {
+			flag = recently_plundered
+			days = 30
+		}
+		random_list = {
+			2.5 = { #No Booty
+				#  Increased by armies on the planet
+				modifier = {
+					factor = trigger:num_armies
+				}
+			}
+			50 = { #Steal 40% of a month of prod
+				modifier = {
+					factor = 1.1
+					any_fleet_in_orbit = {
+						controller = {
+							is_same_value = from
+						}
+						leader? = {
+							has_trait = leader_trait_plunderer
+						}
+					}
+				}
+				modifier = {
+					factor = 1.15
+					any_fleet_in_orbit = {
+						controller = {
+							is_same_value = from
+						}
+						leader? = {
+							has_trait = leader_trait_plunderer_2
+						}
+					}
+				}
+				modifier = {
+					factor = 1.2
+					from = {
+						has_valid_civic = civic_military_dictatorship_corporate
+					}
+				}
+				steal_planet_output = {
+					planet = this
+					who = FROM
+					resource = all
+					percentage = 0.4
+					mode = steal
+					notification_mode = both
+				}
+			}
+		}
+	}
+}
+
+starbase_event = {
+	id = nomads.5010
+	hide_window = yes
+	is_triggered_only = yes
+
+	trigger = {
+		# waystation still exists and still has module
+		exists = root
+		solar_system = {
+			any_fleet_in_system = {
+				is_waystation_ship = yes
+				starbase = {
+					has_starbase_module = waystation_pirate_hideout
+				}
+			}
+		}
+		NOR = {
+			has_starbase_flag = piracy_collected
+			solar_system = {
+				space_owner = { is_same_value = root.owner }
+			}
+		}
+	}
+
+	immediate = {
+		set_timed_starbase_flag = {
+			flag = piracy_collected
+			days = 29
+		}
+		if = {
+			limit = { root.fleet = { is_cloaked = no } }
+			solar_system = {
+				every_system_planet = {
+					limit = { is_colony = yes }
+					owner = {
+						add_opinion_modifier = {
+							who = root.owner
+							modifier = opinion_waystation_piracy
+						}
+					}
+				}
+			}
+		}
+	}
+
+	after = {
+		starbase_event = { id = nomads.5010 days = 30 }
+	}
+}

@@ -4114,6 +4114,254 @@ ship_event = {
 		}
 	}
 }
+
+# Makes Solarpunks compatible with EaC civics and ethics -- Sage
+ship_event = {
+	id = fircon.5010
+	title = fircon.5010.name
+	desc = fircon.5010.desc
+	picture = GFX_evt_vortex
+	show_sound = event_mystic_reveal_light
+	is_triggered_only = yes
+
+	location = from
+
+	option = {
+		name = fircon.5010.a
+		owner = {
+			add_monthly_resource_mult = {
+				resource = physics_research
+				value = @tier4researchreward
+				min = @tier4researchmin
+				max = @tier4researchmax
+			}
+		}
+		hidden_effect = {
+			if = {
+				limit = {
+					NOT = { has_global_flag = solarpunk_discovered }
+				}
+				set_global_flag = solarpunk_discovered
+				from.solar_system = {
+					spawn_system = {
+						min_distance = 5
+						max_distance = 8
+						max_jumps = 0
+						initializer = "solarpunk_02"
+					}
+					set_star_flag = solarpunk_system_revealed
+					last_created_system = {
+						random_system_planet = {
+							limit = {
+								has_carrier_flag = solarpunk_capital
+							}
+							if = {
+								limit = {
+									NOT = {
+										any_galaxy_species = {
+											species_portrait = mol7
+										}
+									}
+								}
+								create_species = {
+									name = "NAME_Habinte"
+									plural = "NAME_Habinte_plural"
+									adjective = "NAME_Habinte_adj"
+									class = MOL
+									portrait = mol7
+									traits = random
+									homeworld = this
+								}
+							}
+							else_if = {
+								limit = {
+									NOT = {
+										any_galaxy_species = {
+											species_portrait = fun3
+										}
+									}
+								}
+								create_species = {
+									name = "NAME_Habinte"
+									plural = "NAME_Habinte_plural"
+									adjective = "NAME_Habinte_adj"
+									class = FUN
+									portrait = fun3
+									traits = random
+									homeworld = this
+								}
+							}
+							else = {
+								create_species = {
+									name = "NAME_Habinte"
+									plural = "NAME_Habinte_plural"
+									adjective = "NAME_Habinte_adj"
+									class = AVI
+									traits = random
+									homeworld = this
+								}
+							}
+							create_country = {
+								name = "NAME_Habinte_Unified_Worlds"
+								authority = auth_direct_democratic
+								civics = {
+									civic = civic_life_seeded
+									civic = civic_naturalism
+									civic = civic_primitive_enthusiasts
+								}
+								species = last_created_species
+								ethos = {
+									ethic = ethic_fanatic_egalitarian
+									ethic = ethic_socialism
+									ethic = ethic_pacifist
+									ethic = ethic_green
+								}
+								flag = random
+								origin = "origin_life_seeded_ai_only"
+								type = primitive
+								effect = {
+									set_graphical_culture = solarpunk_01
+									set_country_flag = early_space_age
+									set_pre_ftl_age = early_space_age
+									set_country_flag = solarpunk_country
+									set_country_flag = tech_frozen
+									save_global_event_target_as = solarpunk_country
+								}
+							}
+							set_owner = last_created_country
+							set_capital = yes
+
+							populate_solarpunk_planet = yes
+						}
+						every_system_planet = {
+							limit = {
+								has_carrier_flag = solarpunk_colony
+							}
+							populate_solarpunk_planet = yes
+						}
+					}
+				}
+			}
+		}
+	}
+	option = {
+		name = fircon.5010.b
+		owner = {
+			add_monthly_resource_mult = {
+				resource = physics_research
+				value = @tier4researchreward
+				min = @tier4researchmin
+				max = @tier4researchmax
+			}
+		}
+	}
+}
+
+# Makes the Solarpunks actual solarpunks -- Sage
+country_event = { #Upgrading Solarpunk to a real empire and letting them do their thing.
+	id = fircon.5045
+	hide_window = yes
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	immediate = {
+		set_country_type = default
+		remove_country_flag = early_space_age
+		change_country_flag = random
+		set_origin = origin_life_seeded
+		clear_ethos = yes
+		country_add_ethic = ethic_fanatic_egalitarian
+		country_add_ethic = ethic_militarist
+		country_add_ethic = ethic_socialism
+		country_add_ethic = ethic_green
+		change_government = {
+			authority = auth_direct_democratic
+			remove_invalid_civics = yes
+			civics = {
+				civic = civic_anarchy_ideals
+				civic = civic_eco_warfare
+				civic = civic_primitive_enthusiasts
+			}
+		}
+		copy_techs_from = {
+			target = from
+			except = {
+				# Horizon Signal
+				tech_akx_worm_1
+				tech_akx_worm_2
+				tech_akx_worm_3
+			}
+		}
+		IF = {
+			limit = {
+				from = {
+					has_technology = tech_maulers
+				}
+			}
+			give_technology = { tech = tech_corvettes }
+			give_technology = { tech = tech_torpedoes_1 }
+
+		}
+		IF = {
+			limit = {
+				from = {
+					has_technology = tech_weavers
+				}
+			}
+			give_technology = { tech = tech_destroyers }
+		}
+		IF = {
+			limit = {
+				from = {
+					has_technology = tech_stingers
+				}
+			}
+			give_technology = { tech = tech_battleships }
+		}
+		IF = {
+			limit = {
+				from = {
+					has_technology = tech_harbingers
+				}
+			}
+			give_technology = { tech = tech_cruisers }
+		}
+		add_resource = { minerals = 10000 }
+		add_resource = { energy = 10000 }
+		add_resource = { food = 3000 }
+		add_resource = { consumer_goods = 3000 }
+		add_resource = { alloys = 7000 }
+		add_resource = { influence = 1000 }
+		add_resource = { unity = 27000 }
+		add_resource = { exotic_gases = 500 }
+		add_resource = { rare_crystals = 500 }
+		add_resource = { volatile_motes = 500 }
+		add_modifier = {
+			modifier = angered_solarpunk
+			days = -1
+		}
+		capital_scope.solar_system = {
+			every_system_planet_colony = {
+				limit = {
+					exists = owner
+				}
+				# Modified script at scripted_effects/first_contact_dlc_effects_EaC.txt
+				# Adds buildings and blockers that reflect new civics
+				industrialize_solarpunk = yes
+			}
+		}
+		from = {
+			create_balanced_fleet = {
+				size = from.value:solarpunk_script_value
+				effect = {
+					set_owner = root
+					set_location = root.capital_scope
+				}
+			}
+		}
+	}
+}
+
 ###################################################################################################################################################
 ###################################################################################################################################################
 ###################################################################################################################################################

@@ -48,8 +48,7 @@ unifier = {
 
 	triggered_planet_modifier = {
 		potential = {
-			exists = owner
-			owner = { is_gestalt = no }
+			owner? = { is_gestalt = no }
 		}
 		modifier = {
 			pop_government_ethic_attraction = 0.15
@@ -58,8 +57,7 @@ unifier = {
 
 	triggered_planet_modifier = {
 		potential = {
-			exists = owner
-			owner = { has_valid_civic = civic_byzantine_bureaucracy }
+			owner? = { has_valid_civic = civic_byzantine_bureaucracy }
 		}
 		modifier = {
 			planet_stability_add = 1
@@ -68,8 +66,7 @@ unifier = {
 
 	triggered_country_modifier = {
 		potential = {
-			exists = owner
-			owner = { has_valid_civic = civic_efficient_bureaucracy }
+			owner? = { has_valid_civic = civic_efficient_bureaucracy }
 		}
 		country_edict_fund_add = 2
 		mult = value:job_total_output_modifier|JOB|unifier|RESOURCE|unity|
@@ -85,7 +82,7 @@ unifier = {
 
 	triggered_planet_modifier = {
 		potential = {
-			planet = {
+			colony = {
 				exists = owner
 				owner = {
 					has_tradition = tr_modularity_4
@@ -113,7 +110,7 @@ unifier = {
 		# modifier = {	# No Longer Used in Stellaris 4.0
 		#	factor = 2
 		#	exists = planet
-		#	planet = {
+		#	colony = {
 		#		any_owned_pop_group = {
 		#			NOT = { has_job_type = unifier }
 		#		}
@@ -203,12 +200,7 @@ broken_shackles_scavenger = {
 hunter_gatherer = {
 	category = worker
 	is_capped_by_modifier = no
-	#swappable_data = {
-		#default = {
-			# clothes_texture_index = 2
-		#}
-	#}
-	
+
 	tags = { }
 
 	possible_pre_triggers = {
@@ -229,11 +221,6 @@ hunter_gatherer = {
 					has_country_flag = stone_age
 				}
 				has_origin = origin_primitive_player_pre_industrial_age
-				# has_origin = origin_primitive_player_industrial_age
-				# has_origin = origin_primitive_player_machine_age
-				# has_origin = origin_primitive_player_atomic_age
-				# has_origin = origin_primitive_player_early_space_age
-				# any_situation = { is_situation_type = PrimPlayer_situation } # Much more efficient trigger
 			}
 		}
 		is_lithoid = no
@@ -284,11 +271,6 @@ hunter_gatherer_lithoid = {
 					has_country_flag = stone_age
 				}
 				has_origin = origin_primitive_player_pre_industrial_age
-				# has_origin = origin_primitive_player_industrial_age
-				# has_origin = origin_primitive_player_machine_age
-				# has_origin = origin_primitive_player_atomic_age
-				# has_origin = origin_primitive_player_early_space_age
-				# any_situation = { is_situation_type = PrimPlayer_situation } # Much more efficient trigger
 			}
 		}
 		is_lithoid = yes
@@ -321,7 +303,6 @@ peasant = {	# Cog Note: for player-primitives maybe this doesn't make sense for 
 	swappable_data = {
 		default = {
 			building_icon = building_primitive_farm
-			# clothes_texture_index = 2
 		}
 	}
 
@@ -334,39 +315,33 @@ peasant = {	# Cog Note: for player-primitives maybe this doesn't make sense for 
 		is_sapient = yes
 	}
 
-	#possible_precalc = can_fill_worker_job
-
 	possible = {
 		owner = {
 			is_hive_empire = no
 			OR = {
-				# has_origin = origin_primitive_player_pre_industrial_age
-				# has_origin = origin_primitive_player_industrial_age
-				# has_origin = origin_primitive_player_machine_age
-				# has_origin = origin_primitive_player_atomic_age
-				# has_origin = origin_primitive_player_early_space_age
 				is_primitive = yes
-				#AND = {
-					any_situation = { is_situation_type = PrimPlayer_situation } # Much more efficient trigger
-					#OR = {
-					#	is_authoritarian = yes
-					#	has_ethic = ethic_capitalism
-					#	has_ethic = ethic_fanatic_capitalism
-					#}
-				#}
+				any_situation = { is_situation_type = PrimPlayer_situation } # Much more efficient trigger
 				has_civic = civic_primitive_enthusiasts
 			}
 		}
+		NOT = {
+			has_citizenship_type = {
+				type = citizenship_cruise_passenger
+				country = owner
+			}
+		}
+		OR = {
+			NOT = {
+				owner = {
+					has_active_tradition = tr_virtuality_finish
+				}
+			}
+			has_virtual_species_trait = no
+		}
+		colony? = { NOT = { is_planet_class = pc_cosmogenesis_world }  }
 		is_lithoid = no
 	}
 
-	#resources = {
-	#	category = planet_farmers
-	#	produces = {
-	#		food = 2
-	#	}
-	#}
-	
 	resources = {
 		category = planet_civilians
 		produces = {
@@ -375,8 +350,9 @@ peasant = {	# Cog Note: for player-primitives maybe this doesn't make sense for 
 		}
 		produces = {
 			trigger = {
-				exists = owner
-				has_modifier = resort_colony
+				colony? = {
+					has_modifier = resort_colony
+				}
 			}
 			trade = 1
 		}
@@ -385,8 +361,7 @@ peasant = {	# Cog Note: for player-primitives maybe this doesn't make sense for 
 		# Spiritual Seekers
 		produces = {
 			trigger = {
-				exists = owner
-				owner = {
+				owner? = {
 					is_spiritual_seeker_empire = yes
 				}
 			}
@@ -397,8 +372,7 @@ peasant = {	# Cog Note: for player-primitives maybe this doesn't make sense for 
 		}
 		upkeep = {
 			trigger = {
-				exists = owner
-				owner = {
+				owner? = {
 					is_spiritual_seeker_empire = yes
 				}
 			}
@@ -407,9 +381,8 @@ peasant = {	# Cog Note: for player-primitives maybe this doesn't make sense for 
 	}
 	triggered_planet_modifier = {
 		potential = {
-			exists = owner
-			owner = { has_tradition = tr_mercantile_trickle_up_economics }
-			planet = { 
+			owner? = { has_tradition = tr_mercantile_trickle_up_economics }
+			colony = { 
 				NOR = {
 					has_modifier = resort_colony 
 					has_modifier = resort_colony_branch
@@ -423,9 +396,8 @@ peasant = {	# Cog Note: for player-primitives maybe this doesn't make sense for 
 	# NOT Hedonists & Resort World
 	triggered_planet_modifier = {
 		potential = {
-			exists = owner
-			owner = { is_pleasure_seeker_empire = no }
-			planet = { 
+			owner? = { is_pleasure_seeker_empire = no }
+			colony = { 
 				NOR = {
 					has_modifier = resort_colony 
 					has_modifier = resort_colony_branch
@@ -438,8 +410,7 @@ peasant = {	# Cog Note: for player-primitives maybe this doesn't make sense for 
 	# Resort World
 	triggered_planet_modifier = {
 		potential = {
-			exists = owner
-			planet = { has_modifier = resort_colony }
+			colony = { has_modifier = resort_colony }
 		}
 		planet_amenities_add = -100
 		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
@@ -447,8 +418,7 @@ peasant = {	# Cog Note: for player-primitives maybe this doesn't make sense for 
 	# Resort World Branch
 	triggered_planet_modifier = {
 		potential = {
-			exists = owner
-			planet = { has_modifier = resort_colony_branch }
+			colony? = { has_modifier = resort_colony_branch }
 		}
 		planet_amenities_add = -50
 		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
@@ -457,8 +427,7 @@ peasant = {	# Cog Note: for player-primitives maybe this doesn't make sense for 
 	# Spiritual Seekers
 	triggered_planet_modifier = {
 		potential = {
-			exists = owner
-			owner = {
+			owner? = {
 				is_spiritual_seeker_empire = yes
 			}
 		}
@@ -467,8 +436,7 @@ peasant = {	# Cog Note: for player-primitives maybe this doesn't make sense for 
 
 	triggered_country_modifier = {
 		potential = {
-			exists = owner
-			owner = {
+			owner? = {
 				is_spiritual_seeker_empire = yes
 			}
 		}
@@ -477,43 +445,9 @@ peasant = {	# Cog Note: for player-primitives maybe this doesn't make sense for 
 
 	triggered_country_modifier = {
 		potential = {
-			exists = owner
-			owner = { has_modifier = paragon_origin_strengthened_government_iii }
+			owner? = { has_modifier = paragon_origin_strengthened_government_iii }
 		}
 		country_edict_fund_add = 1
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = {
-				has_policy_flag = computation_core_production
-			}
-		}
-		foundry_jobs_bonus_workforce_mult = 0.005
-		artisan_jobs_bonus_workforce_mult = 0.005
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = {
-				has_policy_flag = computation_core_stability
-			}
-		}
-		bureaucrat_jobs_bonus_workforce_mult = 0.005
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = {
-				has_policy_flag = computation_core_research
-			}
-		}
-		physicist_jobs_bonus_workforce_mult = 0.005
-		biologist_jobs_bonus_workforce_mult = 0.005
-		engineer_jobs_bonus_workforce_mult = 0.005
 	}
 
 	inline_script = "jobs/ethic_job_modifiers"
@@ -546,20 +480,8 @@ peasant_lithoid = {
 		owner = {
 			is_hive_empire = no
 			OR = {
-				# has_origin = origin_primitive_player_pre_industrial_age
-				# has_origin = origin_primitive_player_industrial_age
-				# has_origin = origin_primitive_player_machine_age
-				# has_origin = origin_primitive_player_atomic_age
-				# has_origin = origin_primitive_player_early_space_age
 				is_primitive = yes
-				#AND = {
-					any_situation = { is_situation_type = PrimPlayer_situation } # Much more efficient trigger
-					#OR = {
-					#	is_authoritarian = yes
-					#	has_ethic = ethic_capitalism
-					#	has_ethic = ethic_fanatic_capitalism
-					#}
-				#}
+				any_situation = { is_situation_type = PrimPlayer_situation } # Much more efficient trigger
 				has_civic = civic_primitive_enthusiasts
 			}
 		}
@@ -574,8 +496,7 @@ peasant_lithoid = {
 		}
 		produces = {
 			trigger = {
-				exists = owner
-				has_modifier = resort_colony
+				colony = { has_modifier = resort_colony }
 			}
 			trade = 1
 		}
@@ -584,20 +505,18 @@ peasant_lithoid = {
 		# Spiritual Seekers
 		produces = {
 			trigger = {
-				exists = owner
-				owner = {
+				owner? = {
 					is_spiritual_seeker_empire = yes
 				}
 			}
-			unity = 0.75
-			society_research = 0.5
-			physics_research = 0.5
-			engineering_research = 0.25
+			unity = 0.3
+			society_research = 0.1
+			physics_research = 0.1
+			engineering_research = 0.05
 		}
 		upkeep = {
 			trigger = {
-				exists = owner
-				owner = {
+				owner? = {
 					is_spiritual_seeker_empire = yes
 				}
 			}
@@ -606,9 +525,8 @@ peasant_lithoid = {
 	}
 	triggered_planet_modifier = {
 		potential = {
-			exists = owner
-			owner = { has_tradition = tr_mercantile_trickle_up_economics }
-			planet = { 
+			owner? = { has_tradition = tr_mercantile_trickle_up_economics }
+			colony = { 
 				NOR = {
 					has_modifier = resort_colony 
 					has_modifier = resort_colony_branch
@@ -622,9 +540,8 @@ peasant_lithoid = {
 	# NOT Hedonists & Resort World
 	triggered_planet_modifier = {
 		potential = {
-			exists = owner
-			owner = { is_pleasure_seeker_empire = no }
-			planet = { 
+			owner? = { is_pleasure_seeker_empire = no }
+			colony = { 
 				NOR = {
 					has_modifier = resort_colony 
 					has_modifier = resort_colony_branch
@@ -637,8 +554,7 @@ peasant_lithoid = {
 	# Resort World
 	triggered_planet_modifier = {
 		potential = {
-			exists = owner
-			planet = { has_modifier = resort_colony }
+			colony? = { has_modifier = resort_colony }
 		}
 		planet_amenities_add = -100
 		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
@@ -646,8 +562,7 @@ peasant_lithoid = {
 	# Resort World Branch
 	triggered_planet_modifier = {
 		potential = {
-			exists = owner
-			planet = { has_modifier = resort_colony_branch }
+			colony? = { has_modifier = resort_colony_branch }
 		}
 		planet_amenities_add = -50
 		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
@@ -656,8 +571,7 @@ peasant_lithoid = {
 	# Spiritual Seekers
 	triggered_planet_modifier = {
 		potential = {
-			exists = owner
-			owner = {
+			owner? = {
 				is_spiritual_seeker_empire = yes
 			}
 		}
@@ -666,53 +580,18 @@ peasant_lithoid = {
 
 	triggered_country_modifier = {
 		potential = {
-			exists = owner
-			owner = {
+			owner? = {
 				is_spiritual_seeker_empire = yes
 			}
 		}
-		country_edict_fund_add = 1.25
+		country_edict_fund_add = 0.75
 	}
 
 	triggered_country_modifier = {
 		potential = {
-			exists = owner
-			owner = { has_modifier = paragon_origin_strengthened_government_iii }
+			owner? = { has_modifier = paragon_origin_strengthened_government_iii }
 		}
 		country_edict_fund_add = 1
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = {
-				has_policy_flag = computation_core_production
-			}
-		}
-		foundry_jobs_bonus_workforce_mult = 0.005
-		artisan_jobs_bonus_workforce_mult = 0.005
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = {
-				has_policy_flag = computation_core_stability
-			}
-		}
-		bureaucrat_jobs_bonus_workforce_mult = 0.005
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = {
-				has_policy_flag = computation_core_research
-			}
-		}
-		physicist_jobs_bonus_workforce_mult = 0.005
-		biologist_jobs_bonus_workforce_mult = 0.005
-		engineer_jobs_bonus_workforce_mult = 0.005
 	}
 
 	inline_script = "jobs/ethic_job_modifiers"
@@ -730,7 +609,6 @@ primitive_warrior = {
 	swappable_data = {
 		default = {
 			building_icon = building_primitive_dwellings
-			# clothes_texture_index = 2
 		}
 	}
 
@@ -747,21 +625,12 @@ primitive_warrior = {
 	possible = {
 		owner = {
 			OR = {
-				# has_origin = origin_primitive_player_pre_industrial_age
-				# has_origin = origin_primitive_player_industrial_age
-				# has_origin = origin_primitive_player_machine_age
-				# has_origin = origin_primitive_player_atomic_age
-				# has_origin = origin_primitive_player_early_space_age
 				any_situation = { is_situation_type = PrimPlayer_situation } # Much more efficient trigger
 				is_primitive = yes
 				has_civic = civic_primitive_enthusiasts
 			}
 		}
 	}
-
-	# pop_group_modifier = {	# No Longer Used in Stellaris 4.0
-	#	pop_defense_armies_add = 3
-	#}
 
 	planet_modifier = {
 		planet_defense_armies_add = 3
@@ -1018,7 +887,7 @@ primitive_laborer = {
 
 	possible = {
 		OR = {
-			planet = {
+			colony = {
 				has_building = building_primitive_factory
 			}
 			owner = {
@@ -1089,7 +958,7 @@ primitive_laborer = {
 		modifier = {
 			factor = 1.2
 			exists = planet
-			planet = {
+			colony = {
 				has_available_jobs = "artisan"
 			}
 			exists = owner
@@ -1128,7 +997,7 @@ primitive_foundry = {
 
 	possible = {
 		#OR = {
-			#planet = {
+			#colony = {
 			#	has_building = building_primitive_factory
 			#}
 			owner = {
@@ -1156,7 +1025,7 @@ primitive_foundry = {
 	
 	triggered_planet_modifier = {
 		potential = {
-			planet = {
+			colony = {
 				has_owner = yes
 				#NOT = { has_building = building_generator_generic }
 			}
@@ -1196,7 +1065,7 @@ primitive_foundry = {
 		modifier = {
 			factor = 1.2
 			exists = planet
-			planet = {
+			colony = {
 				has_available_jobs = "artisan"
 			}
 			exists = owner
@@ -1300,7 +1169,7 @@ primitive_technician = {
 
 	triggered_planet_modifier = {
 		potential = {
-			planet = {
+			colony = {
 				has_owner = yes
 				NOT = { has_building = building_generator_generic }
 			}
@@ -1310,7 +1179,7 @@ primitive_technician = {
 	
 	triggered_planet_modifier = {
 		potential = {
-			planet = {
+			colony = {
 				has_owner = yes
 				#Voltaic Production Yards (Solar) supplements grid
 				num_buildings = {  type = building_generator_generic  value = 1  disabled = no }
@@ -1321,7 +1190,7 @@ primitive_technician = {
 	
 	triggered_planet_modifier = {
 		potential = {
-			planet = {
+			colony = {
 				has_owner = yes
 				#Voltaic Production Yards (Solar) supplements grid
 				num_buildings = {  type = building_generator_generic  value = 2  disabled = no }
@@ -1382,7 +1251,7 @@ primitive_technician = {
 		modifier = {
 			factor = 3
 			exists = planet
-			planet = {
+			colony = {
 				has_available_jobs = technician
 			}
 			exists = owner
@@ -1451,8 +1320,7 @@ nuclear_technician = {
 		}
 		produces = {
 			trigger = {
-				exists = owner
-				owner = { 
+				owner? = { 
 					is_nomadic = yes
 				}
 			}
@@ -1512,7 +1380,7 @@ nuclear_technician = {
 		modifier = {
 			factor = 3
 			exists = planet
-			planet = {
+			colony = {
 				has_available_jobs = technician
 			}
 			exists = owner
@@ -1601,7 +1469,7 @@ primitive_researcher_2 = {
 
 	possible = {
 		OR = {
-			planet = {
+			colony = {
 				has_building = building_primitive_research
 			}
 			owner = {
@@ -2024,7 +1892,7 @@ primitive_warrior_2 = {
 
 	triggered_planet_modifier = {
 		potential = {
-			planet = {
+			colony = {
 				exists = owner
 				owner = { has_tradition = "tr_modularity_3" }
 			}
@@ -2038,7 +1906,7 @@ primitive_warrior_2 = {
 		potential = {
 			soldier_is_templar = yes
 			exists = planet
-			planet = { has_modifier = witch_hunt }
+			colony = { has_modifier = witch_hunt }
 		}
 		modifier = {
 			planet_stability_add = 2
@@ -2066,8 +1934,7 @@ primitive_warrior_2 = {
 		category = planet_soldiers
 		produces = {
 			trigger = {
-				exists = owner
-				owner = {
+				owner? = {
 					has_valid_civic = civic_martial_brotherhood
 				}
 			}
@@ -2096,7 +1963,7 @@ primitive_warrior_2 = {
 			trigger = {
 				soldier_is_templar = yes
 				exists = planet
-				planet = { has_modifier = witch_hunt }
+				colony = { has_modifier = witch_hunt }
 			}
 			unity = 2
 		}
@@ -2198,17 +2065,18 @@ primitive_bureaucrat = {
 
 }
 
+# reflects added Anarchy civics from country creation event in events/Z_ethic_first_contact_dlc_events.txt at fircon.5045 -- Sage
 solarpunk_anarchist = {
-	category = ruler
+	category = specialist
 	is_capped_by_modifier = yes
 	swappable_data = {
 		default = {
 			building_icon = building_paradise_dome
-			icon = ranger
+			icon = pre_sapient
 		}
 	}
 
-	tags = { }
+	tags = { unity }
 
 	possible_pre_triggers = {
 		has_owner = yes
@@ -2218,10 +2086,10 @@ solarpunk_anarchist = {
 		is_sapient = yes
 	}
 
-	possible_precalc = can_fill_ruler_job
+	possible_precalc = can_fill_specialist_job
 
 	resources = {
-		category = planet_politicians
+		category = planet_bureaucrats
 		produces = {
 			unity = 3
 		}
@@ -2242,11 +2110,6 @@ solarpunk_anarchist = {
 	possible = {
 		owner = {
 			OR = {
-				# has_origin = origin_primitive_player_pre_industrial_age
-				# has_origin = origin_primitive_player_industrial_age
-				# has_origin = origin_primitive_player_machine_age
-				# has_origin = origin_primitive_player_atomic_age
-				# has_origin = origin_primitive_player_early_space_age
 				any_situation = { is_situation_type = PrimPlayer_situation } # Much more efficient trigger
 				AND = {
 					is_primitive = yes
@@ -2281,16 +2144,11 @@ primitive_administrator = {
 
 	possible = {
 		OR = {
-			planet = {
+			colony? = {
 				has_building = building_primitive_offices
 			}
 			owner = {
 				OR = {
-					# has_origin = origin_primitive_player_pre_industrial_age
-					# has_origin = origin_primitive_player_industrial_age
-					# has_origin = origin_primitive_player_machine_age
-					# has_origin = origin_primitive_player_atomic_age
-					# has_origin = origin_primitive_player_early_space_age
 					any_situation = { is_situation_type = PrimPlayer_situation } # Much more efficient trigger
 					AND = {
 						is_primitive = yes
@@ -2332,6 +2190,8 @@ primitive_roboticist = {
 		}
 	}
 
+	tags = { }
+
 	possible_pre_triggers = {
 		has_owner = yes
 		is_being_purged = no
@@ -2342,11 +2202,6 @@ primitive_roboticist = {
 	possible = {
 		owner = {
 			OR = {
-				# has_origin = origin_primitive_player_pre_industrial_age
-				# has_origin = origin_primitive_player_industrial_age
-				# has_origin = origin_primitive_player_machine_age
-				# has_origin = origin_primitive_player_atomic_age
-				# has_origin = origin_primitive_player_early_space_age
 				any_situation = { is_situation_type = PrimPlayer_situation } # Much more efficient trigger
 				AND = {
 					is_primitive = yes
@@ -2366,8 +2221,7 @@ primitive_roboticist = {
 
 	triggered_planet_modifier = {
 		potential = {
-			exists = owner
-			owner = {
+			owner? = {
 				exists = ruler
 				ruler = {
 					has_trait = leader_trait_legendary_great_inventor
@@ -2379,8 +2233,7 @@ primitive_roboticist = {
 	}
 	triggered_planet_modifier = {
 		potential = {
-			exists = owner
-			owner = {
+			owner? = {
 				exists = ruler
 				ruler = {
 					has_trait = leader_trait_legendary_great_inventor_2
@@ -2392,8 +2245,7 @@ primitive_roboticist = {
 	}
 	triggered_planet_modifier = {
 		potential = {
-			exists = owner
-			owner = {
+			owner? = {
 				exists = ruler
 				ruler = {
 					has_trait = leader_trait_legendary_great_inventor_3
@@ -2405,8 +2257,7 @@ primitive_roboticist = {
 	}
 	triggered_planet_modifier = {
 		potential = {
-			exists = owner
-			owner = {
+			owner? = {
 				has_tradition = tr_modularity_2
 			}
 		}
@@ -2415,8 +2266,7 @@ primitive_roboticist = {
 
 	triggered_planet_modifier = {
 		potential = {
-			exists = owner
-			owner = {
+			owner? = {
 				has_active_tradition = tr_synthetics_prefabricated_components
 			}
 		}
@@ -2440,8 +2290,7 @@ primitive_roboticist = {
 		}
 		upkeep = {
 			trigger = {
-				exists = owner
-				owner = {
+				owner? = {
 					has_country_flag = synth_unscheduled_updates
 				}
 			}
@@ -2506,14 +2355,6 @@ hive_sustenance_drone = {
 
 	weight = {
 		weight = 0.01
-		# modifier = {
-		#	factor = value:job_weights_modifier|JOB|hive_sustenance_drone|RESOURCE|minerals|
-		#	is_lithoid = yes
-		#}
-		# modifier = {
-		#	factor = value:job_weights_modifier|JOB|hive_sustenance_drone|RESOURCE|food|
-		#	is_lithoid = no
-		#}
 	}
 
 }
@@ -2527,6 +2368,8 @@ hive_sustenance_drone_lithoid = {
 			icon = hunter_gatherer
 		}
 	}
+
+	tags = { }
 
 	possible_pre_triggers = {
 		has_owner = yes
@@ -2586,14 +2429,14 @@ hive_basic_agri_drone = {
 		}
 	}
 
+	tags = { farmer }
+
 	possible_pre_triggers = {
 		has_owner = yes
 		is_being_purged = no
 		is_being_assimilated = no
 		is_sapient = yes
 	}
-
-	possible_precalc = can_fill_drone_job
 
 	possible = {
 		owner = {
@@ -2605,9 +2448,13 @@ hive_basic_agri_drone = {
 				has_country_flag = late_medieval_age
 				has_country_flag = renaissance_age
 				has_country_flag = steam_age
+				has_origin = origin_primitive_player_pre_industrial_age
 			}
 		}
+		is_lithoid = no
 	}
+
+	possible_precalc = can_fill_drone_job
 
 	resources = {
 		category = planet_farmers
@@ -2619,11 +2466,9 @@ hive_basic_agri_drone = {
 	weight = {
 		weight = @simple_drone_job_weight
 		modifier = {
-			factor = value:job_weights_modifier|JOB|hive_basic_agri_drone|RESOURCE|minerals|
 			is_lithoid = yes
 		}
 		modifier = {
-			factor = value:job_weights_modifier|JOB|hive_basic_agri_drone|RESOURCE|food|
 			is_lithoid = no
 		}
 	}
@@ -2641,6 +2486,8 @@ hive_basic_agri_drone_lithoid = {
 		}
 	}
 
+	tags = { farmer }
+
 	possible_pre_triggers = {
 		has_owner = yes
 		is_being_purged = no
@@ -2660,6 +2507,7 @@ hive_basic_agri_drone_lithoid = {
 				has_country_flag = late_medieval_age
 				has_country_flag = renaissance_age
 				has_country_flag = steam_age
+				has_origin = origin_primitive_player_pre_industrial_age
 			}
 		}
 		is_lithoid = yes
@@ -2675,11 +2523,9 @@ hive_basic_agri_drone_lithoid = {
 	weight = {
 		weight = @simple_drone_job_weight
 		modifier = {
-			factor = value:job_weights_modifier|JOB|hive_basic_agri_drone|RESOURCE|minerals|
 			is_lithoid = yes
 		}
 		modifier = {
-			factor = value:job_weights_modifier|JOB|hive_basic_agri_drone|RESOURCE|food|
 			is_lithoid = no
 		}
 	}
@@ -2716,13 +2562,10 @@ primitive_hive_warrior = {
 				has_country_flag = late_medieval_age
 				has_country_flag = renaissance_age
 				has_country_flag = steam_age
+				has_origin = origin_primitive_player_pre_industrial_age
 			}
 		}
 	}
-
-	# pop_group_modifier = {	# No Longer Used in Stellaris 4.0
-	#	pop_defense_armies_add = 3
-	#}
 
 	planet_modifier = {
 		planet_defense_armies_add = 3
@@ -3728,8 +3571,7 @@ primitive_replicator = {
 	}
 	triggered_planet_modifier = {
 		potential = {
-			exists = owner
-			owner = {
+			owner? = {
 				has_tradition = tr_modularity_2
 			}
 		}

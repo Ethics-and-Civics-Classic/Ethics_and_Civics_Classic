@@ -17,10 +17,12 @@ building_storm_resistant_production = { # see also 'building_wilderness_storm_re
 
 	potential = {
 		exists = owner
-		owner = { is_wilderness_empire = no }
+		owner = {
+			is_wilderness_empire = no
+		}
 		OR = {
 			owner = { is_ai = no }
-			solar_system = {
+			solar_system? = {
 				system_has_storm_repelling_tech = no
 			}
 		}
@@ -28,8 +30,12 @@ building_storm_resistant_production = { # see also 'building_wilderness_storm_re
 
 	resources = {
 		category = planet_buildings_storm_tech
-		cost = {
-			minerals = @b1_minerals
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = alloys
+			COST = @b1_minerals
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
 		}
 		upkeep = {
 			energy = @b1_upkeep
@@ -60,7 +66,7 @@ building_storm_resistant_production = { # see also 'building_wilderness_storm_re
 	triggered_planet_modifier = {
 		potential = {
 			exists = owner
-			solar_system = {
+			solar_system? = {
 				has_star_flag = storm_system
 			}
 		}
@@ -125,7 +131,7 @@ building_wilderness_storm_relief = {
 		owner = { is_wilderness_empire = yes }
 		OR = {
 			owner = { is_ai = no }
-			solar_system = { system_has_storm_repelling_tech = no }
+			solar_system? = { system_has_storm_repelling_tech = no }
 		}
 	}
 	destroy_trigger = {
@@ -144,8 +150,15 @@ building_wilderness_storm_relief = {
 	resources = {
 		category = planet_buildings_storm_tech
 		# Basic Building costs (inherited from 'building_storm_resistant_production')
+		category = planet_buildings_storm_tech
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = rare_crystals
+			COST = @b2_minerals
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
+		}
 		cost = {
-			minerals = @b2_minerals
 			biomass = @b2_biomass
 		}
 		upkeep = {
@@ -369,7 +382,7 @@ building_storm_summoning_theater = {
 	}
 
 	allow = {
-		solar_system = {
+		solar_system? = {
 			system_has_storm_repelling_tech = no
 		}
 	}
@@ -381,19 +394,18 @@ building_storm_summoning_theater = {
 		}
 	}
 
-
 	resources = {
 		category = planet_buildings_storm_tech
-		cost = {
-			minerals = @b1_minerals
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = alloys
+			COST = @b1_minerals
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
 		}
 		upkeep = {
 			energy = @b1_upkeep
 		}
-	}
-
-	upgrades = {
-		"building_storm_holo_theater"
 	}
 
 	triggered_planet_modifier = {
@@ -436,36 +448,13 @@ building_storm_summoning_theater = {
 	}
 
 	inline_script = {
-		script = cosmic_storms/StormBuildingModifiers
+		script = jobs/entertainers_add
+		AMOUNT = @building_static_jobs
 	}
 
-	#triggered_desc = {
-	#	trigger = {
-	#		owner = {
-	#			is_industrial = yes
-	#		}
-	#	}
-	#	text = "job_storm_technician_effect_desc"
-	#}
-	
-	#triggered_desc = {
-	#	trigger = {
-	#		owner = { 
-	#			is_green = yes
-	#		}
-	#	}
-	#	text = "job_storm_dancer_effect_desc"
-	#}
-	
-	#triggered_desc = {
-	#	trigger = {
-	#		owner = { 
-	#			
-	#			is_spiritualist = yes
-	#		}
-	#	}
-	#	text = "job_storm_chanter_effect_desc"
-	#}
+	inline_script = {
+		script = cosmic_storms/StormBuildingModifiers
+	}
 
 	on_built = {
 		create_influence_field_if_needed = yes
@@ -513,7 +502,7 @@ building_storm_holo_theater = {
 		owner = {
 			is_storm_callers_empire = yes
 		}
-		solar_system = {
+		solar_system? = {
 			system_has_storm_repelling_tech = no
 		}
 	}
@@ -527,8 +516,14 @@ building_storm_holo_theater = {
 
 	resources = {
 		category = planet_buildings_storm_tech
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = alloys
+			COST = @b2_minerals
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
+		}
 		cost = {
-			minerals = @b2_minerals
 			volatile_motes = @b2_rare_cost
 		}
 		upkeep = {
@@ -579,34 +574,6 @@ building_storm_holo_theater = {
 		# planet_entertainers_physics_research_produces_add = 4
 		planet_entertainers_consumer_goods_upkeep_add = 2
 	}
-
-	#triggered_desc = {
-	#	trigger = {
-	#		owner = {
-	#			is_industrial = yes
-	#		}
-	#	}
-	#	text = "job_storm_technician_effect_desc"
-	#}
-	
-	#triggered_desc = {
-	#	trigger = {
-	#		owner = { 
-	#			is_green = yes
-	#		}
-	#	}
-	#	text = "job_storm_dancer_effect_desc"
-	#}
-	
-	#triggered_desc = {
-	#	trigger = {
-	#		owner = { 
-	#			
-	#			is_spiritualist = yes
-	#		}
-	#	}
-	#	text = "job_storm_chanter_effect_desc"
-	#}
 
 	inline_script = {
 		script = cosmic_storms/StormBuildingModifiers
@@ -666,7 +633,7 @@ building_storm_grand_theater = {
 		owner = {
 			is_storm_callers_empire = yes
 		}
-		solar_system = {
+		solar_system? = {
 			system_has_storm_repelling_tech = no
 		}
 	}
@@ -680,8 +647,14 @@ building_storm_grand_theater = {
 
 	resources = {
 		category = planet_buildings_storm_tech
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = alloys
+			COST = @b3_minerals
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
+		}
 		cost = {
-			minerals = @b3_minerals
 			volatile_motes = @b3_rare_cost
 		}
 		upkeep = {
@@ -730,36 +703,13 @@ building_storm_grand_theater = {
 	}
 
 	inline_script = {
-		script = cosmic_storms/StormBuildingModifiers
+		script = jobs/entertainers_add
+		AMOUNT = @building_static_jobs
 	}
 
-	#triggered_desc = {
-	#	trigger = {
-	#		owner = {
-	#			is_industrial = yes
-	#		}
-	#	}
-	#	text = "job_storm_technician_effect_desc"
-	#}
-	
-	#triggered_desc = {
-	#	trigger = {
-	#		owner = { 
-	#			is_green = yes
-	#		}
-	#	}
-	#	text = "job_storm_dancer_effect_desc"
-	#}
-	
-	#triggered_desc = {
-	#	trigger = {
-	#		owner = { 
-	#			
-	#			is_spiritualist = yes
-	#		}
-	#	}
-	#	text = "job_storm_chanter_effect_desc"
-	#}
+	inline_script = {
+		script = cosmic_storms/StormBuildingModifiers
+	}
 
 	custom_storm_ai_weight = {
 		weight = 0
@@ -779,7 +729,7 @@ building_storm_grand_theater = {
 
 	custom_tooltip = "building_cosmic_storm_storm_grand_theater_tt"
 
-	desc = {
+	triggered_desc = {
 		trigger = {
 			owner = {
 				OR = {
