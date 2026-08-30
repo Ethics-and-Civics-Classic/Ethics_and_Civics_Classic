@@ -1,8 +1,8 @@
-############################
-#
-# Clone Army Origin Events
-#
-############################
+
+
+
+
+
 
 namespace = clones
 
@@ -20,7 +20,7 @@ event = {
 					has_civic = civic_barbaric_despoilers_khan
 				}
 			}
-			# Create a backup leader, to remember what Portrait this Species had before we overwrite it.
+
 			create_saved_leader = {
 				creator = this
 				name = "Backup Portrait"
@@ -39,7 +39,7 @@ event = {
 	}
 }
 
-# Give techs
+
 country_event = {
 	id = clones.2
 	hide_window = yes
@@ -62,7 +62,7 @@ country_event = {
 	}
 }
 
-# Pop creation event for Clone Army's Ancient Cloning Vats
+
 country_event = {
 	id = clones.3
 	hide_window = yes
@@ -94,7 +94,7 @@ carrier = {
 					}
 					variable = num_ancient_clone_vats
 				}
-				# If there are no ancient clone vats, set the variable to 1 to prevent a divide by 0 later on
+
 				if = {
 					limit = {
 						check_variable = { which = num_ancient_clone_vats value = 0 }
@@ -102,15 +102,15 @@ carrier = {
 					set_variable = { which = num_ancient_clone_vats value = 1 }
 				}
 
-				# Figure out Clone Army Population
+
 				set_variable = { which = num_clone_pops value = 0 }
 				set_variable = {
 					which = num_clone_pops
 					value = value:clone_pops_value
 				}
 
-				### Variable 'clone_pops_missing' read by 'should_force_decline_species' and must be updated.
-				### clone_pops_missing = clone_soldiers_sustained - num_clone_pops
+
+
 				set_variable = { which = clone_pops_missing value = 0 }
 				colony? = {
 					export_modifier_to_variable = {
@@ -126,8 +126,8 @@ carrier = {
 				}
 				subtract_variable = { which = clone_pops_missing value = num_clone_pops }
 
-				### Override it to -1 if there are no pops on the planet, but the planet could not sustain them
-				### Only applies after colonization. Prevents pops from auto-migrating and immediately being purged
+
+
 				if = {
 					limit = {
 						check_variable = { which = num_clone_pops value = 0 }
@@ -138,10 +138,10 @@ carrier = {
 					set_variable = { which = clone_pops_missing value = -1 }
 				}
 
-				### Variable 'clone_pops_missing_per_vat' is read by 'building_clone_army_clone_vat' and must be updated.
+
 				set_variable = { which = clone_pops_missing_per_vat value = 0 }
 
-				# Always remove modifier. Reapply further down if still needed.
+
 				remove_modifier = modifier_clone_pops_decline
 
 				if = {
@@ -149,8 +149,8 @@ carrier = {
 						check_variable = { which = clone_pops_missing value > 0 }
 					}
 
-					### Growing.
-					### clone_pops_missing_per_vat = clone_pops_missing / num_ancient_clone_vats, don't divide by 0.
+
+
 					set_variable = { which = clone_pops_missing_per_vat value = clone_pops_missing }
 					divide_variable = { which = clone_pops_missing_per_vat value = num_ancient_clone_vats }
 				}
@@ -158,10 +158,10 @@ carrier = {
 					limit = {
 						check_variable = { which = clone_pops_missing value = 0 }
 					}
-					### Pop stable.
+
 				}
 				else_if = {
-					limit = { ### No need to set modifier if no declining pops present
+					limit = {
 						check_variable = { which = num_clone_pops value > 0 }
 						OR = {
 							NOT = { exists = declining_species }
@@ -173,14 +173,14 @@ carrier = {
 							}
 						}
 					}
-					### Pop above max, should decline. Variable 'clone_pops_missing' is negative:
-					# Divide clone_pops_missing by 100 to renormalise
+
+
 					divide_variable = { which = clone_pops_missing value = 100 }
-					### clone_pops_decline_factor = ( 4 % per month - clone_pops_missing ) / BASE_POP_DECLINE
+
 					set_variable = { which = clone_pops_decline_factor value = 4 }
 					subtract_variable = { which = clone_pops_decline_factor value = clone_pops_missing }
-					divide_variable = { which = clone_pops_decline_factor value = 5 } # 5 should match BASE_POP_DECLINE.
-					subtract_variable = { which = clone_pops_decline_factor value = 1 } # Subtract base decline.
+					divide_variable = { which = clone_pops_decline_factor value = 5 }
+					subtract_variable = { which = clone_pops_decline_factor value = 1 }
 
 					add_modifier = {
 						modifier = modifier_clone_pops_decline
@@ -196,14 +196,14 @@ carrier = {
 					}
 				}
 
-				# Debug growth/decline.
-				#log = "Clones on '[This.GetName]'. clone_pops_missing is: [This.clone_pops_missing], clone_pops_missing_per_vat: [This.clone_pops_missing_per_vat], clone_pops_decline_factor: [This.clone_pops_decline_factor]"
+
+
 			}
 		}
 	}
 }
 
-#Make sure that, if you colonise with another species, your clone army pops don't migrate there and immediately start dying
+
 carrier_event = {
 	id = clones.5
 	is_triggered_only = yes
@@ -219,7 +219,7 @@ carrier_event = {
 			}
 			NOT = { has_country_flag = clone_army_fertility_unlocked }
 		}
-		check_modifier_value = { modifier = clone_soldiers_sustained value = 0 } #just in case
+		check_modifier_value = { modifier = clone_soldiers_sustained value = 0 }
 	}
 
 	immediate = {
@@ -230,13 +230,13 @@ carrier_event = {
 	}
 }
 
-####################################################################
-#
-# Archaeology Site Chain	#Debated Origin & Homeworld Excavation
-#
-####################################################################
 
-# Debated Origin & Homeworld Excavation
+
+
+
+
+
+
 carrier_event = {
 	id = clones.10
 	title = clones.10.name
@@ -292,7 +292,7 @@ carrier_event = {
 		if = {
 			limit = { owner = { is_nomadic = yes } }
 			owner.capital_scope = {
-				#change_pc = pc_relic	#Should be a relic world but this should be investigated further
+
 				create_archaeological_site = clone_army_digsite
 			}
 		}
@@ -300,7 +300,7 @@ carrier_event = {
 			create_archaeological_site = clone_army_digsite
 		}
 	}
-	
+
 	option = {
 		name = clones_barbaric_despoiler.10.a
 		trigger = {
@@ -322,7 +322,7 @@ carrier_event = {
 		if = {
 			limit = { owner = { is_nomadic = yes } }
 			owner.capital_scope = {
-				#change_pc = pc_relic	#Should be a relic world but this should be investigated further
+
 				create_archaeological_site = clone_army_digsite
 			}
 		}
@@ -332,7 +332,7 @@ carrier_event = {
 	}
 }
 
-# Stage 1
+
 fleet_event = {
 	id = clones.11
 	title = clones.11.name
@@ -383,7 +383,7 @@ fleet_event = {
 	}
 }
 
-# Stage 2 # Also triggers Clone Fertility chain
+
 fleet_event = {
 	id = clones.12
 	title = clones.12.name
@@ -445,7 +445,7 @@ fleet_event = {
 			}
 		}
 	}
-	
+
 	option = {
 		name = INTERESTING
 		trigger = {
@@ -461,7 +461,7 @@ fleet_event = {
 		custom_tooltip = clones_barbaric_despoiler.12.tooltip
 		owner = {
 			custom_tooltip = clones_barbaric_despoiler.12.vats
-			hidden_effect = { 
+			hidden_effect = {
 				set_country_flag = civic_barbaric_despoilers_vats
 			}
 			add_resource = {
@@ -477,7 +477,7 @@ fleet_event = {
 	}
 }
 
-# Post-excavation
+
 country_event = {
 	id = clones.13
 	title = clones.13.name
@@ -544,7 +544,7 @@ country_event = {
 			}
 		}
 	}
-	
+
 	option = {
 		name = clones_barbaric_despoiler.13.a
 		trigger = {
@@ -564,7 +564,7 @@ country_event = {
 	}
 }
 
-# Post-excavation: Unearthed Records
+
 country_event = {
 	id = clones.14
 	title = clones.14.name
@@ -597,7 +597,7 @@ country_event = {
 	}
 }
 
-# Post-excavation: Public Apology
+
 country_event = {
 	id = clones.15
 	title = clones.15.name
@@ -613,7 +613,7 @@ country_event = {
 	}
 }
 
-# Post-excavation: Honor Before Greatness
+
 country_event = {
 	id = clones.16
 	title = clones.16.name
@@ -656,7 +656,7 @@ country_event = {
 		}
 		add_modifier = { modifier = honorable_leadership days = 3600 }
 	}
-	
+
 	option = {
 		name = ASTOUNDING
 		trigger = {
@@ -671,7 +671,7 @@ country_event = {
 	}
 }
 
-# Clone Fertility research project
+
 country_event = {
 	id = clones.4
 	title = clones.4.name
@@ -691,7 +691,7 @@ country_event = {
 	}
 }
 
-# "The Ancient Clone Vats" Special Project complete
+
 country_event = {
 	id = clones.20
 	title = clones.20.name
@@ -791,7 +791,7 @@ country_event = {
 			name = "CLONE_SOLDIER_UNLOCK_FERTILITY"
 			owner = root
 		}
-		if = { #limit the AI from going full clone - because limiting pops to max 100 is something the AI can't handle, colonizing new planets mindlessly that will just die because of dying clone pops
+		if = {
 			limit = {
 				is_ai = no
 			}
@@ -801,7 +801,7 @@ country_event = {
 			}
 		}
 	}
-	
+
 	option = {
 		name = clones_barbaric_despoiler.21.a
 		trigger = {
@@ -820,7 +820,7 @@ country_event = {
 			name = "CLONE_PRECURSOR_KHAN_UNLOCK_FERTILITY"
 			owner = root
 		}
-		if = { #limit the AI from going full clone - because limiting pops to max 100 is something the AI can't handle, colonizing new planets mindlessly that will just die because of dying clone pops
+		if = {
 			limit = {
 				is_ai = no
 			}
@@ -832,7 +832,7 @@ country_event = {
 	}
 }
 
-# Clone Fertility reclaimed
+
 country_event = {
 	id = clones.22
 	title = clones.22.name
@@ -877,7 +877,7 @@ country_event = {
 				add_traits_at_start_of_list = yes
 				effect = {
 					root = {
-						# Use the Saved leader to restore Portraits (then kill them off).
+
 						activate_saved_leader = {
 							key = "clone_army_main_species_generic_portrait"
 							add_to_owned = yes
@@ -955,7 +955,7 @@ country_event = {
 					trait = leader_trait_clone_army_fertile_commander
 				}
 			}
-			# Dismantle all Ancient Clone Vats
+
 			every_owned_planet = {
 				limit = {
 					is_colony = yes
@@ -973,7 +973,7 @@ country_event = {
 	}
 }
 
-# Clone Potential
+
 country_event = {
 	id = clones.23
 	title = clones.23.name
@@ -1058,7 +1058,7 @@ country_event = {
 			}
 		}
 	}
-	
+
 	option = {
 		name = clones_barbaric_despoiler.23.a
 		trigger = {
@@ -1117,7 +1117,7 @@ country_event = {
 	}
 }
 
-#Admiral trait added
+
 country_event = {
 	id = clones.24
 	hide_window = yes
@@ -1199,7 +1199,7 @@ country_event = {
 	}
 }
 
-#Cleanup on losing a planet
+
 carrier_event = {
 	id = clones.30
 	hide_window = yes
