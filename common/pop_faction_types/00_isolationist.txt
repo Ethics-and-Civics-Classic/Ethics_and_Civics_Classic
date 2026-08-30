@@ -1,6 +1,6 @@
-
-
-
+##############################
+# Isolationist Faction
+##############################
 
 isolationist = {
 	election_header = "GFX_faction_header_yellow"
@@ -16,16 +16,16 @@ isolationist = {
 			trigger = {
 				owner = {
 					NOT = { has_edict = civic_crowdsourcing_edict }
-
-
-
-
-
+					#NOR = {
+					#	has_civic = civic_anarchy_utopia
+					#	has_civic = civic_crowdsourcing
+					#	has_civic = civic_corporate_crowdsourcing
+					#}
 				}
 			}
 			unity = @faction_base_output
 		}
-
+		#Anarchy Ideals
 		produces = {
 			trigger = {
 				owner = {
@@ -36,7 +36,7 @@ isolationist = {
 			unity = @faction_base_output
 			mult = @faction_anarchy_unity_ratio
 		}
-
+		#Crowdsourcing
 		produces = {
 			trigger = {
 				owner = {
@@ -48,7 +48,7 @@ isolationist = {
 			engineering_research = @faction_minor_output
 			mult = @crowdsourcing_multiplier
 		}
-
+		#Anarchy Ideals
 		produces = {
 			trigger = {
 				owner = {
@@ -74,7 +74,7 @@ isolationist = {
 			minerals = @faction_base_output
 			mult = @faction_extortion_minerals_ratio
 		}
-
+		#Anarchy Ideals
 		produces = {
 			trigger = {
 				owner = {
@@ -85,7 +85,7 @@ isolationist = {
 			minerals = @faction_base_output
 			mult = @faction_extortion_minerals_anarchy_ratio
 		}
-
+		#Crowdsourcing
 		produces = {
 			trigger = {
 				owner = {
@@ -97,7 +97,7 @@ isolationist = {
 			engineering_research = @faction_minor_output
 			mult = @faction_extortion_crowdsourcing_ratio
 		}
-
+		#Anarchy Ideals
 		produces = {
 			trigger = {
 				owner = {
@@ -167,15 +167,15 @@ isolationist = {
 		}
 
 		modifier = {
-			factor = 0.25
+			factor = 0.25			
 			is_militarist = yes
 		}
 
-
-
-
-
-
+		# Should really check for citizenship instead
+		# modifier = {
+		#	factor = 1.25
+		#	NOT = { is_same_species = owner_species }
+		#}
 	}
 
 	leader = {
@@ -186,20 +186,20 @@ isolationist = {
 			is_event_leader = yes
 		}
 	}
-
-
+	
+	# DEMAND: Faction Outraged (by a GalCom Resolution)
 	inline_script = {
 		script = pop_faction_types/demand_faction_outraged
 		FLAG = galcom_resolution_passed_anti_isolationist
 	}
 
-
+	# DEMAND: Faction Pleased (by a GalCom Resolution)
 	inline_script = {
 		script = pop_faction_types/demand_faction_pleased
 		FLAG = galcom_resolution_passed_pro_isolationist
 	}
 
-	demand = {
+	demand = { # "ISOLATIONIST_PHILOSOPHY"
 		title = "ISOLATIONIST_PHILOSOPHY"
 		unfulfilled_title = "ISOLATIONIST_NO_PHILOSOPHY"
 		desc = "ISOLATIONIST_PHILOSOPHY_DESC"
@@ -225,7 +225,7 @@ isolationist = {
 		}
 	}
 
-	demand = {
+	demand = { # "ISOLATIONIST_NO_AGGRESSIVE_WAR"
 		title = "ISOLATIONIST_NO_AGGRESSIVE_WAR"
 		unfulfilled_title = "ISOLATIONIST_AGGRESSIVE_WAR"
 		desc = "ISOLATIONIST_NO_AGGRESSIVE_WAR_DESC"
@@ -288,7 +288,7 @@ isolationist = {
 		trigger = {
 			owner = {
 				NOR = {
-					num_migration_pacts > 0
+					num_migration_pacts > 0 #doesn't check all the stuff below, but early exclude if it is true
 					has_policy_flag = refugees_allowed
 					any_relation = {
 						has_communications = root.owner
@@ -550,7 +550,7 @@ isolationist = {
 		}
 	}
 
-	demand = {
+	demand = { # Unplugged: De-Cyberize (Machine Cult Exemption)
 		title = ISOLATIONIST_UNPLUGGED_DECYBERIZE
 		unfulfilled_title = ISOLATIONIST_UNPLUGGED_NOT_DECYBERIZE
 		desc = ISOLATIONIST_UNPLUGGED_DECYBERIZE_DESC
@@ -574,11 +574,11 @@ isolationist = {
 				any_situation = {
 					is_situation_type = situation_unplugged_identity
 					OR = {
-						AND = {
+						AND = { # safely in the De-Cyberize stage
 							current_stage = unplugged_identity_stage_1
 							situation_monthly_progress < 0
 						}
-						AND = {
+						AND = { # trending towards De-Cyberization and our Approach is aligned
 							situation_monthly_progress < 0.05
 							OR = {
 								current_situation_approach = situation_unplugged_identity_discourage_change
@@ -591,7 +591,7 @@ isolationist = {
 		}
 	}
 
-
+	# Faction Demands for Ruler and Council positions.
 	inline_script = {
 		script = "pop_faction_types/global_faction_demands"
 		ETHIC = ethic_xenophobe
@@ -599,7 +599,7 @@ isolationist = {
 		ETHIC_OPPOSED = ethic_xenophile
 	}
 
-	demand = {
+	demand = { # "ISOLATIONIST_NO_NOMAD_ATROCITIES"
 		title = "ISOLATIONIST_NO_NOMAD_ATROCITIES"
 		unfulfilled_title = "ISOLATIONIST_NOMAD_ATROCITIES"
 		desc = "ISOLATIONIST_NO_NOMAD_ATROCITIES_DESC"
@@ -682,7 +682,7 @@ isolationist = {
 				parameter:empire = {
 					shift_ethic = ethic_xenophobe
 					hidden_effect = {
-						every_pop_faction = {
+						every_pop_faction = { # embraces xenophobe ethos
 							limit = { is_pop_faction_type = supremacist }
 							add_modifier = { modifier = embraced_faction days = 3600 }
 						}
@@ -841,7 +841,7 @@ isolationist = {
 				base = 0
 			}
 		}
-
+		# Faction Extortion Buttons
 		extort_faction = {
 			title = "EXTORT_FACTION"
 			description = "EXTORT_FACTION_DESC"
@@ -870,7 +870,7 @@ isolationist = {
 				base = 0
 			}
 		}
-		extort_faction_crowdsourcing = {
+		extort_faction_crowdsourcing = { #Crowdsourcing version
 			title = "EXTORT_FACTION"
 			description = "EXTORT_FACTION_DESC"
 

@@ -1,16 +1,16 @@
 namespace = distar
 
+#################################
+#
+# Anomaly Events
+# By Dee Majek
+#
+#################################
 
+# root = ship scope
+# from = planet scope
 
-
-
-
-
-
-
-
-
-country_event = {
+country_event = { # Spawn Ratlings # Root = Global Event Country
 	id = distar.232
 	hide_window = yes
 
@@ -39,7 +39,7 @@ country_event = {
 				ethic = ethic_materialist
 				ethic = ethic_egalitarian
 				ethic = ethic_pacifist
-				ethic = ethic_fanatic_industrial
+				ethic = ethic_fanatic_industrial # E&CC Compatibility
 			}
 			authority = auth_oligarchic
 			civics = {
@@ -107,7 +107,7 @@ country_event = {
 					picture = pc_nuked
 				}
 				set_carrier_flag = changed_planetview_image
-				switch = {
+				switch = { # Planets get renamed in the create_colony effect, we want to maintain names
 					trigger = is_same_value
 					event_target:ratling_capital = {
 						set_name = "NAME_Ruinous_Core"
@@ -132,7 +132,7 @@ country_event = {
 		}
 		set_country_flag = spawned_pre_space_ratlings
 
-		every_country = {
+		every_country = { # Fire notif event
 			limit = { has_country_flag = discovered_ratlings }
 			country_event = { id = distar.233 days = 1 }
 		}
@@ -143,7 +143,7 @@ country_event = {
 	}
 }
 
-country_event = {
+country_event = { # Create Full Ratling Empire # Root = Global Event Country
 	id = distar.236
 	hide_window = yes
 
@@ -158,7 +158,7 @@ country_event = {
 		exists = event_target:ratling_pre_space_country
 		any_system = {
 			has_star_flag = ratling_system
-			NOT = {
+			NOT = { # At least one Ratling system does not have ongoing starbase construction
 				any_ship_in_system = {
 					is_ship_size = constructor
 					is_constructing = starbase
@@ -184,14 +184,14 @@ country_event = {
 			limit = { has_country_flag = discovered_ratlings }
 			country_event = { id = distar.237 days = 1 }
 		}
-
+		# Create the proper country
 		create_country = {
 			name = "NAME_Ketling_Multitude"
 			ethos = {
 				ethic = ethic_materialist
 				ethic = ethic_egalitarian
 				ethic = ethic_pacifist
-				ethic = ethic_fanatic_industrial
+				ethic = ethic_fanatic_industrial # E&CC Compatibility
 			}
 			authority = auth_oligarchic
 			civics = {
@@ -222,7 +222,7 @@ country_event = {
 				set_graphical_culture = mammalian_01
 				save_global_event_target_as = ratling_country
 				set_country_flag = ratling_country
-
+				## Copy technology
 				if = {
 					limit = {
 						any_playable_country = { is_ai = no }
@@ -234,7 +234,7 @@ country_event = {
 					copy_techs_from = {
 						target = event_target:tech_country
 						except = {
-
+							# Horizon Signal
 							tech_akx_worm_1
 							tech_akx_worm_2
 							tech_akx_worm_3
@@ -249,7 +249,7 @@ country_event = {
 					copy_techs_from = {
 						target = event_target:tech_country
 						except = {
-
+							# Horizon Signal
 							tech_akx_worm_1
 							tech_akx_worm_2
 							tech_akx_worm_3
@@ -277,7 +277,7 @@ country_event = {
 			}
 		}
 
-
+		## Prepare the planets
 		every_system = {
 			limit = {
 				has_star_flag = ratling_system
@@ -352,7 +352,7 @@ country_event = {
 				add_building = building_bureaucratic_1
 			}
 
-
+			## Build Starbases
 			create_starbase = {
 				size = starbase_starhold
 				owner = event_target:ratling_country
@@ -375,12 +375,12 @@ country_event = {
 			}
 		}
 
-
+		##Destroy old country
 		event_target:ratling_pre_space_country = {
 			destroy_country = yes
 		}
 
-
+		#So we don't get "orphaned" pops with no job categories in case of non-Ketling system owners
 		every_system = {
 			limit = {
 				has_star_flag = ratling_system
@@ -412,8 +412,8 @@ country_event = {
 			}
 		}
 
-
-		IF = {
+		#Create a Capital
+		IF = { #If the old capital belongs to Ratlings, use it
 			limit = {
 				exists = event_target:ratling_capital
 				event_target:ratling_capital = {
@@ -427,7 +427,7 @@ country_event = {
 				set_capital = yes
 			}
 		}
-		ELSE = {
+		ELSE = { #Otherwise, make a new Capital
 			random_system = {
 				limit = { has_star_flag = ratling_system }
 				random_system_planet = {
@@ -448,7 +448,7 @@ country_event = {
 
 		event_target:ratling_country = {
 
-
+			##Add resources
 			add_resource = { minerals = 7000 }
 			add_resource = { energy = 7000 }
 			add_resource = { food = 3000 }
@@ -458,14 +458,14 @@ country_event = {
 			add_resource = { unity = 27000 }
 
 			event_target:ratling_country = {
-
+				## Create Mining Stations
 				every_planet_within_border = {
 					limit = {
 						has_deposit_for = shipclass_mining_station
 					}
 					create_mining_station = { owner = event_target:ratling_country }
 				}
-
+				## Create fleets
 				create_fleet = {
 					effect = {
 						set_owner = event_target:ratling_country
@@ -534,7 +534,7 @@ country_event = {
 				}
 			}
 
-
+			## Add leaders
 			while = {
 				count = 4
 				create_leader = {
@@ -565,7 +565,7 @@ country_event = {
 	}
 }
 
-country_event = {
+country_event = { #Death of the Matriarch
 	id = distar.212
 	title = "distar.212.name"
 	desc = "distar.212.desc"
@@ -583,7 +583,7 @@ country_event = {
 	}
 
 	immediate = {
-		set_country_flag = tiyanki_killed
+		set_country_flag = tiyanki_killed # Achievement flag
 		create_ambient_object = {
 			type = "elderly_tiyanki_dead_object"
 			location = fromfromfrom

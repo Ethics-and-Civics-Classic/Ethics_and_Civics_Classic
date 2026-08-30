@@ -1,17 +1,17 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+#	Example:
+#
+#	example_trigger = {
+#		is_country_type = default
+#		free_leader_slots > 0
+#	}
+#
+#
+#	In a script file:
+#
+#	trigger = {
+#		example_trigger = yes
+#	}
+#
 
 has_non_hostile_origin_dragon_trigger = {
 	OR = {
@@ -25,7 +25,7 @@ has_non_hostile_origin_dragon_trigger = {
 				}
 			}
 		}
-
+		#For Primitive Player compatibility
 		capital_scope.solar_system = {
 			has_star_flag = here_be_dragons_system
 			any_fleet_in_system = {
@@ -79,22 +79,22 @@ has_ecc_classic = { always = yes }
 
 ship_uses_starbase_components = {
 	OR = {
-
+		# Starbases
 		is_ship_size = starbase_outpost
 		is_ship_size = starbase_starport
 		is_ship_size = starbase_starhold
 		is_ship_size = starbase_starfortress
 		is_ship_size = starbase_citadel
-
-		is_ship_size = orbital_ring_tier_0
+		# Orbital Rings
+		is_ship_size = orbital_ring_tier_0	#Modded for compatibility	#PrimPlayer Orbital Station Kilostructure
 		is_ship_size = orbital_ring_tier_1
 		is_ship_size = orbital_ring_tier_2
 		is_ship_size = orbital_ring_tier_3
-
+		# Deep Space Citadel
 		is_ship_size = starbase_deep_space_citadel_1
 		is_ship_size = starbase_deep_space_citadel_2
 		is_ship_size = starbase_deep_space_citadel_3
-
+		# Waystations
 		is_ship_size = starbase_waystation_1
 		is_ship_size = starbase_waystation_2
 		is_ship_size = starbase_waystation_3
@@ -114,9 +114,9 @@ has_subspecies_civic_or_origin = {
 			has_valid_civic = civic_machine_assimilator
 			has_valid_civic = civic_machine_servitor
 			has_valid_civic = civic_hive_bodysnatcher
-			has_valid_civic = civic_machine_cult_machine
-			has_valid_civic = civic_slave_race
-			has_valid_civic = civic_symbiotic_race
+			has_valid_civic = civic_machine_cult_machine	#Modded
+			has_valid_civic = civic_slave_race				#Modded
+			has_valid_civic = civic_symbiotic_race			#Modded
 			has_origin = origin_syncretic_evolution
 			has_origin = origin_necrophage
 			is_guided_sapience_empire = yes
@@ -124,7 +124,7 @@ has_subspecies_civic_or_origin = {
 	}
 }
 
-
+# determines valid blockers for Ecocentrist jobs
 has_eco_blocker = {
 	OR = {
 		has_deposit = d_active_volcano
@@ -169,13 +169,13 @@ is_barbaric_despoiler = {
 	}
 }
 
+##########
+# Traits #
+##########
 
+#Cog Note - Machine Spirits can ADD cybernetic Traits, but not remove... that would be sacrilegious!
 
-
-
-
-
-
+#this = species, from = country
 can_add_cybernetic_traits = {
 	hidden_trigger = { exists = from }
 	OR = {
@@ -194,7 +194,7 @@ can_add_cybernetic_traits = {
 	}
 }
 
-
+#Cog Note - Needed to condition for Priest Jobs for Machine Spirit
 
 can_fill_specialist_job_trigger = {
 	custom_tooltip = SPECIALIST_JOB_TRIGGER
@@ -208,16 +208,16 @@ can_fill_specialist_job_trigger = {
 			is_enslaved = no
 			has_slavery_type = { type = slavery_indentured }
 		}
-		is_being_purged = no
+		is_being_purged = no 
 		is_being_assimilated = no
 		NOR = {
 			has_trait = trait_syncretic_proles
 			has_trait = trait_slave_gene
 		}
-
+		# Rule out Traits for servitude & lack of free will
 		can_think = yes
 		NOT = {	has_pop_group_flag = cant_work }
-
+		# Rule out Disconnected Drones
 		has_disconnected_drone_citizenship_type = no
 		OR = {
 			NOT = { has_trait = trait_mechanical }
@@ -242,40 +242,40 @@ can_fill_specialist_job_trigger = {
 	}
 }
 
-
-
-
+###################
+# Treasure Troves #
+###################
 
 is_planet_eligible_for_treasure_planet = {
 	is_colony = yes
 	has_upgraded_capital = yes
 	has_orbital_bombardment = no
-
+	# system isn't occupied
 	exists = starbase
 	starbase = { controller = { is_same_value = prev.owner } }
-	is_occupied_flag = no
+	is_occupied_flag = no	 # planet isn't occupied
 	has_ground_combat = no
 	is_under_colonization = no
-	any_owned_pop_group = { has_citizenship_rights = yes }
+	any_owned_pop_group = { has_citizenship_rights = yes } # pops weren't purged
 	NOT = { has_modifier = slave_colony }
-	planet_stability >= @stabilitylevel2
+	planet_stability >= @stabilitylevel2	# Planet doesn't have a revolt situation brewing
 	OR = {
-		planet_crime < 20
-		has_modifier = crime_lord_deal
+		planet_crime < 20	# Planet doesn't have a rebellion situation brewing
+		has_modifier = crime_lord_deal #Cog Note - Rebellion dealt with? Not sure what rebellion situation is... but pirates have crime lord deals for crime
 	}
 }
 
 should_use_increased_treasure_trove_drops = {
 	OR = {
 		has_origin = origin_treasure_hunters
-		has_civic = civic_military_dictatorship_corporate
+		has_civic = civic_military_dictatorship_corporate	# Modded
 		has_all_treasure_troves_specimens = yes
 	}
 }
 
-
-
-
+#######################
+# END Treasure Troves #
+#######################
 
 is_faction_allowed = {
 	OR = {
@@ -310,7 +310,7 @@ is_faction_allowed = {
 	}
 }
 
-
+# Starbase scope
 has_nonshipyard_starbase_buildings = {
 	OR = {
 		has_starbase_building = art_college
@@ -321,7 +321,7 @@ has_nonshipyard_starbase_buildings = {
 		has_starbase_building = curator_think_tank
 		has_starbase_building = deep_space_black_site
 		has_starbase_building = disruption_field
-
+		# has_starbase_building = dragon_hatchery # Too disruptive
 		has_starbase_building = fleet_academy
 		has_starbase_building = hydroponics_bay
 		has_starbase_building = ice_mining_station
@@ -334,7 +334,7 @@ has_nonshipyard_starbase_buildings = {
 		has_starbase_building = offworld_trading_company
 		has_starbase_building = resource_silo
 		has_starbase_building = salvager_workshop
-
+		# has_starbase_building = shroud_beacon # Too disruptive
 		has_starbase_building = target_uplink_computer
 		has_starbase_building = trader_proxy_office
 		has_starbase_building = transit_hub
@@ -361,7 +361,7 @@ has_nonshipyard_starbase_buildings = {
 	}
 }
 
-
+# Fleet scope
 is_merc_enclave_founding_allowed = {
 	owner = {
 		NOR = {
@@ -379,7 +379,7 @@ is_merc_enclave_founding_allowed = {
 	}
 }
 
-
+# This = Fleet
 is_enclave_founding_allowed = {
 	custom_tooltip = {
 		fail_text = enclave.2.tooltip.a
@@ -511,7 +511,7 @@ has_murderous_civic_or_origin = {
 		has_valid_civic = civic_sovereign_guardianship
 		has_valid_civic = civic_cutthroat_politics
 		has_valid_civic = civic_death_cult
-		has_origin = origin_khan_successor
+		has_origin = origin_khan_successor # Dunno why this isn't in vanilla. This whole origin is nothing BUT murder. --Sage
 		has_civic = PrimPlayer_civic_heirs_of_the_khan
 		has_civic = civic_heirs_of_the_khan
 		has_origin = origin_necrophage
@@ -641,14 +641,14 @@ has_synthetic_age_anti_synergy = {
 	}
 }
 
-
+# Compatibility Trigger
 has_ecc_slave_gene = { has_trait = trait_slave_gene }
 has_ecc_symbio_gene = {	has_trait = trait_symbiotic }
 
-
+# Compatibility Trigger
 is_ecc_direct_democracy = { has_authority = auth_direct_democratic }
 
-
+# Nomad Faction Demands
 
 is_industrial_megastructure = {
 	OR = {
@@ -696,8 +696,8 @@ industrial_megastructures_in_habitable_systems = {
 		limit = {
 			is_waystation_starbase = yes
 			solar_system = {
-				any_system_megastructure = {
-					is_industrial_megastructure = yes
+				any_system_megastructure = { 
+					is_industrial_megastructure = yes 
 					owner = { is_same_value = root }
 				}
 			}
@@ -710,9 +710,9 @@ industrial_megastructures_in_habitable_systems = {
 	}
 }
 
-
-
-
+##############################
+# National Identity Triggers #
+##############################
 
 is_pirate_lord = {
 	exists = owner

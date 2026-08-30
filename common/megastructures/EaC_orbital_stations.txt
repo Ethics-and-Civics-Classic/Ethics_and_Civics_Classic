@@ -19,14 +19,14 @@ orbital_stations = {
 		cost = {
 			trigger = {
 				country_uses_bio_ships = no
-
+				#has_country_flag = PrimPlayer_first_orbital_station_is_free
 			}
 			minerals = 1000
 		}
 		cost = {
 			trigger = {
 				country_uses_bio_ships = yes
-
+				#has_country_flag = PrimPlayer_first_orbital_station_is_free
 			}
 			minerals = 1000
 			mult = 0.5
@@ -34,8 +34,8 @@ orbital_stations = {
 		cost = {
 			trigger = {
 				country_uses_bio_ships = yes
-
-
+				#has_country_flag = PrimPlayer_first_orbital_station_is_free
+				
 			}
 			food = 1000
 			mult = @halved_alloy_to_food_cost_ratio
@@ -45,36 +45,36 @@ orbital_stations = {
 	construction_blocks_and_blocked_by = none
 	custom_tooltip_requirements = "MEGASTRUCTURE_TOOLTIP_REQUIREMENTS_ORBITAL_RING"
 
-	potential = {
-		has_technology = tech_space_international_space_station
+	potential = { 
+		has_technology = tech_space_international_space_station 
 		OR = {
 			has_origin = origin_primitive_player_atomic_age
 			has_origin = origin_primitive_player_early_space_age
 		}
-		is_nomadic = no
+		is_nomadic = no #They have arkships instead
 	}
-
+	
 	possible = {
-
-
-
-
-
-
-
-
-		any_system_planet = {
+		#hidden_trigger = {
+		#	exists = starbase
+		#}
+		#custom_tooltip = {
+		#	fail_text = "requires_inside_border"
+		#	is_inside_border = from
+		#}
+		#is_colony = yes
+		any_system_planet = { 
 			is_colony = yes
-			is_owned_by = from
+			is_owned_by = from 
 		}
-
+		#from = { any_owned_starbase = { NOT = { is_starbase_type = starbase_level_orbital_ring_tier_0 } } } #Limits orbital stations to 1 per empire
 	}
 
 	placement_rules = {
 		planet_possible = {
 			custom_tooltip = {
 				fail_text = "requires_surveyed_planet"
-				is_surveyed = {
+				is_surveyed = { # prevent leaking habitability information
 					who = prev.from
 					status = yes
 				}
@@ -104,7 +104,7 @@ orbital_stations = {
 			}
 			custom_tooltip = {
 				fail_text = "requires_no_existing_megastructure"
-
+				#can_build_megastructure_on_planet = yes
 				NOR = {
 					has_carrier_flag = megastructure
 					AND = {
@@ -112,7 +112,7 @@ orbital_stations = {
 							has_carrier_flag = has_megastructure
 							has_carrier_flag = orbital_stations_planet
 						}
-
+						# Special exception so you can build an orbital ring even if you have MSI's warship as a habitat.
 						NOR = {
 							has_carrier_flag = has_payback_habitat
 							any_megastructure = {
@@ -142,8 +142,8 @@ orbital_stations = {
 		}
 	}
 
-
-
+	# root = system
+	# from = country
 	ai_weight = {
 		factor = 5
 
@@ -183,8 +183,8 @@ orbital_stations = {
 
 	on_build_complete = {
 		fromfrom.planet = {
-
-
+			#set_carrier_flag = has_megastructure
+			#set_carrier_flag = orbital_stations_planet
 			save_event_target_as = orbital_stations_planet
 		}
 		remove_megastructure = fromfrom
@@ -289,7 +289,7 @@ orbital_stations_restored = {
 	on_build_complete = {
 		random_system_planet = {
 			limit = { has_carrier_flag = ruined_orbital_stations_planet }
-
+			#set_carrier_flag = has_megastructure
 			set_carrier_flag = orbital_stations_planet
 			remove_carrier_flag = ruined_orbital_stations_planet
 			save_event_target_as = orbital_stations_planet
@@ -304,8 +304,8 @@ orbital_stations_restored = {
 			create_starbase = {
 				size = orbital_ring_tier_0
 				owner = FROM
-
-
+				#module = <starbase_module>
+				#building = <starbase_building>
 				effect = { }
 			}
 		}

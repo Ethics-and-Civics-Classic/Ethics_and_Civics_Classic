@@ -1,14 +1,14 @@
-
-
-
-
-
-
-
+############################
+#
+# Subject Events
+#
+# Written by Joachim Holmsen
+#
+############################
 
 namespace = subject
 
-country_event = {
+country_event = { # SUBJECT - The outcome of the bickering between the admirals and their sides
 	id = subject.1145
 	title = subject.1145.title
 	desc = subject.1145.desc
@@ -19,8 +19,8 @@ country_event = {
 
 	immediate = {
 		admirals_bickering_replacement_effect = yes
-		random_list = {
-			1 = {
+		random_list = { # Random chance for which side wins, based on choices in previous events
+			1 = { # Democratic side
 				modifier = {
 					factor = overlord_admirals_bickering_democratic_side
 				}
@@ -32,7 +32,7 @@ country_event = {
 					save_event_target_as = admiral_winner
 				}
 			}
-			1 = {
+			1 = { # Oligarchic side
 				modifier = {
 					factor = overlord_admirals_bickering_oligarchic_side
 				}
@@ -45,8 +45,8 @@ country_event = {
 				}
 			}
 		}
-		random_list = {
-			30 = {
+		random_list = { # Random chance for what happened to the losers
+			30 = { # They killed their opponents
 				modifier = {
 					factor = 2
 					has_country_flag = admirals_bickering_oligarchic_victory
@@ -56,7 +56,7 @@ country_event = {
 					years = 1
 				}
 			}
-			30 = {
+			30 = { # Their opponents were released after their faction was dismantled
 				modifier = {
 					factor = 2
 					has_country_flag = admirals_bickering_democratic_victory
@@ -66,7 +66,7 @@ country_event = {
 					years = 1
 				}
 			}
-			10 = {
+			10 = { # Their opponents ran off to form their own country
 				modifier = {
 					factor = 0
 					NOT = {
@@ -81,8 +81,8 @@ country_event = {
 				}
 			}
 		}
-		random_list = {
-			50 = {
+		random_list = { # Random chance for how serious they are about their demands
+			50 = { # Just instituting their leadership (be it democratic or oligarchic)
 				modifier = {
 					factor = 0
 					OR = {
@@ -101,7 +101,7 @@ country_event = {
 					years = 1
 				}
 			}
-			50 = {
+			50 = { # Their side is already in charge (e.g democracy won in a democracy), so they'll leave it at that
 				modifier = {
 					factor = 0
 					OR = {
@@ -120,7 +120,7 @@ country_event = {
 					years = 1
 				}
 			}
-			25 = {
+			25 = { # Side won, and demands for their leader to be put in charge of the government
 				modifier = {
 					factor = 0.25
 					OR = {
@@ -140,7 +140,7 @@ country_event = {
 				}
 			}
 		}
-		if = {
+		if = { # Separatist movement happens on Immediate, while the rest is checked in option
 			limit = {
 				has_country_flag = admirals_bickering_separatist_opponents
 				any_owned_planet = {
@@ -154,7 +154,7 @@ country_event = {
 						is_capital = no
 					}
 					save_event_target_as = separatist_home
-					if = {
+					if = { # Democratic victory
 						limit = {
 							root = { has_country_flag = admirals_bickering_democratic_victory }
 						}
@@ -170,7 +170,7 @@ country_event = {
 							}
 							ethos = {
 								ethic = ethic_authoritarian
-								ethic = ethic_fanatic_militarist
+								ethic = ethic_fanatic_militarist # ethic_militarist  # E&CC Compatibility
 								ethic = ethic_materialist
 							}
 							effect = {
@@ -179,7 +179,7 @@ country_event = {
 							}
 						}
 					}
-					else_if = {
+					else_if = { # Oligarchic victory
 						limit = {
 							root = { has_country_flag = admirals_bickering_oligarchic_victory }
 						}
@@ -195,7 +195,7 @@ country_event = {
 							}
 							ethos = {
 								ethic = ethic_egalitarian
-								ethic = ethic_fanatic_militarist
+								ethic = ethic_fanatic_militarist # ethic_militarist  # E&CC Compatibility
 								ethic = ethic_materialist
 							}
 							effect = {
@@ -243,8 +243,8 @@ country_event = {
 
 	option = {
 		name = subject.1145.a
-
-		if = {
+		### FIRST - Check if you are changing government type
+		if = { # Democratic victory
 			limit = {
 				is_democracy = no
 				has_country_flag = admirals_bickering_democratic_victory
@@ -266,7 +266,7 @@ country_event = {
 				remove_invalid_civics = yes
 			}
 		}
-		else_if = {
+		else_if = { # Oligarchic Victory
 			limit = {
 				is_oligarchy = no
 				has_country_flag = admirals_bickering_oligarchic_victory
@@ -291,30 +291,30 @@ country_event = {
 				remove_invalid_civics = yes
 			}
 		}
-
+		### SECOND - Check if you are changing leadership
 		if = {
 			limit = {
 				has_country_flag = admirals_bickering_imposed_leadership
 			}
-			if = {
+			if = { # Democratic
 				limit = {
 					has_country_flag = admirals_bickering_democratic_victory
 				}
 				set_leader = event_target:admiral_democracy
 			}
-			else_if = {
+			else_if = { # Oligarchic
 				limit = {
 					has_country_flag = admirals_bickering_oligarchic_victory
 				}
 				set_leader = event_target:admiral_oligarchy
 			}
 		}
-
-		if = {
+		### THIRDLY - Check if you are killing/exiling old rivals
+		if = { # Killing rivals
 			limit = {
 				has_country_flag = admirals_bickering_killed_opponents
 			}
-			if = {
+			if = { # Democrats killing Oligarchs
 				limit = {
 					has_country_flag = admirals_bickering_democratic_victory
 				}
@@ -322,7 +322,7 @@ country_event = {
 					kill_leader = { show_notification = no }
 				}
 			}
-			else_if = {
+			else_if = { # Oligarchs killing Democrats
 				limit = {
 					has_country_flag = admirals_bickering_oligarchic_victory
 				}
@@ -331,11 +331,11 @@ country_event = {
 				}
 			}
 		}
-		else_if = {
+		else_if = { # Exiling rivals
 			limit = {
 				has_country_flag = admirals_bickering_released_opponents
 			}
-			if = {
+			if = { # Democrats exiling Oligarchs
 				limit = {
 					has_country_flag = admirals_bickering_democratic_victory
 				}
@@ -343,7 +343,7 @@ country_event = {
 					exile_leader_as = missing_admiral_rival
 				}
 			}
-			else_if = {
+			else_if = { # Oligarchs exiling Democrats
 				limit = {
 					has_country_flag = admirals_bickering_oligarchic_victory
 				}

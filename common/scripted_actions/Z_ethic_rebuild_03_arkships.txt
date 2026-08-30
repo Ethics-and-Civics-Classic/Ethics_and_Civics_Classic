@@ -161,12 +161,12 @@ arkship_strip_mine = {
 	completion_message_localization = TOAST_STRIP_MINE_COMPLETE_DESC
 
 	ai = {
-
-
+		#This - Target Planet
+		#From - Acting Fleet
 		weight = {
 			base = @ai_action_weight_20
 			modifier = {
-				factor = 0
+				factor = 0 #cannot afford
 				FROM.controller = {
 					resource_stockpile_compare = {
 						resource = energy
@@ -176,13 +176,13 @@ arkship_strip_mine = {
 				}
 			}
 			modifier = {
-				factor = 0
+				factor = 0 # Bad for the environment
 				FROM.controller = {
 					is_green = yes
 				}
 			}
 			modifier = {
-				factor = 1.5
+				factor = 1.5 # They don't give a shit about other peoples' planets
 				FROM.controller = {
 					is_industrial = yes
 					resource_stockpile_compare = {
@@ -271,7 +271,7 @@ arkship_subspace_image = {
 				has_starbase_module = arkship_system_scanner
 			}
 		}
-
+		# A system can only have subspace imaging done once.
 		custom_tooltip = {
 			fail_text = has_not_been_subspace_imaged_tt
 			NOT = {
@@ -324,12 +324,12 @@ arkship_subspace_image = {
 	slot = 5
 
 	ai = {
-
-
+		#This - Target System
+		#From - Acting Fleet
 		weight = {
 			base = @ai_action_weight_20
 			modifier = {
-				factor = 0
+				factor = 0 #cannot afford
 				FROM.controller = {
 					resource_stockpile_compare = {
 						resource = energy
@@ -343,7 +343,7 @@ arkship_subspace_image = {
 				LOCAL_SYSTEM_CHECK = "is_same_value = ROOT"
 			}
 			modifier = {
-				factor = @ai_action_weight_100
+				factor = @ai_action_weight_100 #system has a deep scan contract target
 				any_system_planet = {
 					is_point_of_interest = {
 						id = deep_scan_poi@this
@@ -447,16 +447,16 @@ arkship_reprocess_planet = {
 	completion_message_localization = TOAST_REPROCESS_PLANET_COMPLETE_DESC
 
 	ai = {
-
-
+		#This - Target Planet
+		#From - Acting Fleet
 		weight = {
 			base = @ai_action_weight_15
 			modifier = {
-				factor = 0
+				factor = 0 #only reprocess in unowned systems
 				exists = space_owner
 			}
 			modifier = {
-				factor = 0
+				factor = 0 #cannot afford
 				FROM.controller = {
 					resource_stockpile_compare = {
 						resource = energy
@@ -466,13 +466,13 @@ arkship_reprocess_planet = {
 				}
 			}
 			modifier = {
-				factor = 0
+				factor = 0 # REALLY Bad for the environment
 				FROM.controller = {
 					is_green = yes
 				}
 			}
 			modifier = {
-				factor = 1.5
+				factor = 1.5 # They don't give a shit about other peoples' planets
 				FROM.controller = {
 					is_industrial = yes
 					resource_stockpile_compare = {
@@ -512,11 +512,11 @@ arkship_stellar_ignition = {
 			}
 		}
 		has_anomaly = no
-
+		# If you have a Stellar Ignition contract in this system, only allow that gas giant
 		custom_tooltip = {
 			fail_text = arkship_target_contract_target_fail_tt
 			OR = {
-
+				# Either there's no contract POI in this system...
 				NOT = {
 					solar_system = {
 						any_system_planet = {
@@ -528,7 +528,7 @@ arkship_stellar_ignition = {
 						}
 					}
 				}
-
+				# ... or this planet is the contract POI
 				is_point_of_interest = {
 					id = stellar_ignition_poi@this
 					event_chain = contract_stellar_ignition_chain
@@ -536,13 +536,13 @@ arkship_stellar_ignition = {
 				}
 			}
 		}
-
+		# Either the target is a Gas Giant..
 		if = {
 			limit = {
 				is_planet_class = pc_gas_giant
 				is_moon = no
 			}
-
+			# If a moon is a colony of a space-faring empire, we must be hostile to them.
 			custom_tooltip = {
 				fail_text = arkship_target_moon_is_colony_fail_tt
 				count_moon = {
@@ -566,8 +566,8 @@ arkship_stellar_ignition = {
 					}
 				}
 			}
-
-
+			# If a moon is home to a pre-FTL civilization
+			# it must either be in hostile or unowned space...
 			custom_tooltip = {
 				fail_text = arkship_target_moon_is_pre_ftl_colony_fail_tt
 				count_moon = {
@@ -591,7 +591,7 @@ arkship_stellar_ignition = {
 					}
 				}
 			}
-
+			# And our pre-FTL policy must allow thier extermination
 			custom_tooltip = {
 				fail_text = arkship_target_pre_ftl_planet_interference_fail_tt
 				if = {
@@ -612,7 +612,7 @@ arkship_stellar_ignition = {
 				}
 			}
 		}
-
+		# Or a Star...
 		else_if = {
 			limit = {
 				is_star = yes
@@ -623,7 +623,7 @@ arkship_stellar_ignition = {
 			custom_tooltip = {
 				fail_text = arkship_target_contract_target_fail_tt
 				OR = {
-
+					# Either there's no contract POI in this system...
 					NOT = {
 						solar_system = {
 							any_system_planet = {
@@ -635,7 +635,7 @@ arkship_stellar_ignition = {
 							}
 						}
 					}
-
+					# ... or this planet is the contract POI
 					is_point_of_interest = {
 						id = stellar_ignition_poi@this
 						event_chain = contract_stellar_ignition_chain
@@ -644,7 +644,7 @@ arkship_stellar_ignition = {
 				}
 			}
 		}
-
+		# And we inform the player if otherwise
 		else = {
 			custom_tooltip = {
 				fail_text = arkship_target_not_gas_giant_or_star_fail_tt
@@ -691,12 +691,12 @@ arkship_stellar_ignition = {
 	slot = 5
 
 	ai = {
-
-
+		#This - Target Planet
+		#From - Acting Fleet
 		weight = {
 			base = @ai_action_weight_15
 			modifier = {
-				factor = 0
+				factor = 0 #cannot afford energy
 				FROM.controller = {
 					resource_stockpile_compare = {
 						resource = energy
@@ -706,7 +706,7 @@ arkship_stellar_ignition = {
 				}
 			}
 			modifier = {
-				factor = 0
+				factor = 0 #cannot afford dark matter
 				FROM.controller = {
 					resource_stockpile_compare = {
 						resource = sr_dark_matter
@@ -716,13 +716,13 @@ arkship_stellar_ignition = {
 				}
 			}
 			modifier = {
-				factor = 0
+				factor = 0 # Bad for the environment
 				FROM.controller = {
 					is_green = yes
 				}
 			}
 			modifier = {
-				factor = 1.5
+				factor = 1.5 # They don't give a shit about other peoples' stars
 				FROM.controller = {
 					is_industrial = yes
 					resource_stockpile_compare = {
@@ -737,7 +737,7 @@ arkship_stellar_ignition = {
 				LOCAL_SYSTEM_CHECK = "any_system_planet = { is_same_value = ROOT }"
 			}
 			modifier = {
-				factor = @ai_action_weight_100
+				factor = @ai_action_weight_100 #strongly prioritize targets of a stellar ignition contract
 				is_point_of_interest = {
 					id = stellar_ignition_poi@this
 					event_chain = contract_stellar_ignition_chain
@@ -798,7 +798,7 @@ arkship_exodus_jump = {
 		is_system_locked = no
 	}
 
-
+	# This behaves as a Quantum Catapult, using the ship as the bypass.
 	specific_behavior = scripted_catapult_order
 
 	activity_key = arkship_exodus_jump_activity_key
