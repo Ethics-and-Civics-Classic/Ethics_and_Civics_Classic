@@ -1,39 +1,27 @@
-# Monthly Technological Progress of pre-FTL civilizations.
-@early_progress_rate	= 1		# 160 years to tech up.
-@mid_progress_rate		= 2		# 80 years to tech up.
-@late_progress_rate		= 4		# 40 years to tech up.
+@early_progress_rate	= 1
+@mid_progress_rate		= 2
+@late_progress_rate		= 4
 @low_awareness			= 0.5
 @partial_awareness		= 1.0
 @high_awareness			= 1.5
 @full_awareness			= 2
-
-##################################
-# Mercenary Enclave Reward Patron
-##################################
-# Scale profit with enclave size.
-# Scope it on the enclave then when resolving fire an event aiming at the patron
-
-@dividend_base_rate = 1 # 20 years to completion with no other modifiers.
-@dividend_hire_rate = 1 # Adds an extra month of progress if the fleet is hired.
-@dividend_non_patron_hire_rate = 2 # Adds two extra months of progress if the fleet is hired by a non-patron.
-@dividend_rank_rate = 0.4 # Adds 0.4 months of progress at per Rank.
-@dividend_resolution_1_rate = 0.5 # Adds an extra half a month of progress with every GalCom resolution.
+@dividend_base_rate = 1
+@dividend_hire_rate = 1
+@dividend_non_patron_hire_rate = 2
+@dividend_rank_rate = 0.4
+@dividend_resolution_1_rate = 0.5
 @dividend_resolution_2_rate = 1.0
 @dividend_resolution_3_rate = 1.5
 @dividend_resolution_4_rate = 2.0
 @dividend_resolution_5_rate = 2.5
-@dividend_financial_trouble_rate = -5 # Subtracts five months of progress during financial troubles.
-@dividend_lord_of_war_rate = 2.5 # Adds an extra two and a half months of progress if the Patron has Lord of War.
-
-# Values above are set so that a Rank 5 Merc Enclave will pay out every 2 years assuming GalCom Resolution up to Level 3 are passed, their patron has the Lord of War AP and their fleet is constantly hired by a non-patron.
-
+@dividend_financial_trouble_rate = -5
+@dividend_lord_of_war_rate = 2.5
 pirate_mercenary_dividends = {
 	picture = GFX_evt_acquire_asset
 	complete_icon_frame = GFX_situation_outcome_frame_blue
 	complete_icon = GFX_situation_outcome_meh
 	on_progress_complete = {
-		# Figure out Patron and give resources
-		custom_tooltip = situation_unknown_outcome_approach # Not really necessary except to silence the error log
+		custom_tooltip = situation_unknown_outcome_approach
 		owner = { country_event = { id = EaC_civic_mechanic_events.275 } }
 	}
 	on_fail = {
@@ -43,13 +31,6 @@ pirate_mercenary_dividends = {
 	on_monthly = {
 		random_events = {
 			5 = 0
-			# Cut, potentially revisit later
-			# 1 = Mercenaries poaching military
-			# 1 = Joint research project
-			# 1 = Joint officer drills
-			# 1 = Competing Mercenaries
-			# 1 = Small scale reward
-			# 1 = A once per game rare event chain?
 		}
 	}
 	stages = {
@@ -60,7 +41,6 @@ pirate_mercenary_dividends = {
 		}
 	}
 	monthly_progress = {
-		# total: 240 Can use scripted variable above to fine tune progress
 		base = @dividend_base_rate
 		modifier = {
 			add = @dividend_hire_rate
@@ -71,7 +51,6 @@ pirate_mercenary_dividends = {
 				}
 			}
 		}
-
 		modifier = {
 			add = @dividend_non_patron_hire_rate
 			desc = fleet_hired
@@ -97,7 +76,6 @@ pirate_mercenary_dividends = {
 				}
 			}
 		}
-		
 		modifier = {
 			add = @dividend_non_patron_hire_rate
 			desc = fleet_hired
@@ -123,7 +101,6 @@ pirate_mercenary_dividends = {
 				}
 			}
 		}
-
 		modifier = {
 			add = @dividend_rank_rate
 			desc = enclave_rank
@@ -153,9 +130,8 @@ pirate_mercenary_dividends = {
 			add = @dividend_financial_trouble_rate
 			desc = enclave_rank
 			owner = { has_modifier = merc_financial_troubles }
-			situation_progress > 3 # We don't want total situation progress to ever go below 0
+			situation_progress > 3
 		}
-
 		modifier = {
 			add = @dividend_resolution_1_rate
 			desc = RESOLUTIONS
@@ -181,7 +157,6 @@ pirate_mercenary_dividends = {
 			desc = RESOLUTIONS
 			is_active_resolution = resolution_defenseprivatization_corporate_warlords
 		}
-
 		modifier = {
 			add = @dividend_lord_of_war_rate
 			desc = lord_of_war
@@ -197,7 +172,6 @@ pirate_mercenary_dividends = {
 				}
 			}
 		}
-		
 		modifier = {
 			add = @dividend_lord_of_war_rate
 			desc = lord_of_war
@@ -214,7 +188,7 @@ pirate_mercenary_dividends = {
 			}
 		}
 	}
-	approach = { # Actually, the player will never see this Situations. Just adding one in in case one is required
+	approach = {
 		name = approach_revolt_do_nothing
 		icon = GFX_situation_approach_this_is_fine
 		icon_background = GFX_situation_approach_bg_yellow

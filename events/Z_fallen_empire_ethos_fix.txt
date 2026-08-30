@@ -3,26 +3,16 @@ namespace = fallen_empires
 namespace = federations
 namespace = crisis
 namespace = origin
-
-@scionRewardTimer = 9000 # minimum time between rewards from the Scion, in days (currently 25 years)
-@scionRewardTimerDelay = 9000 # randomized delay added to 'scionRewardTimer', in days (currently 25 years)
-@scionRefusalsCap = 2 # number of times a Scion may refuse their Overlord before they think it rude
-
-########
-# SCION
-########
-
-# Setup
+@scionRewardTimer = 9000
+@scionRewardTimerDelay = 9000
+@scionRefusalsCap = 2
 country_event = {
 	id = origin.5
 	hide_window = yes
-
 	is_triggered_only = yes
-
 	immediate = {
 		set_country_flag = first_contact_event
-		set_country_flag = Story2 # Already encountered spacefarers
-		# Spawn mini-FE if player turned off Fallen Empires but picked this Origin anyway...
+		set_country_flag = Story2
 		if = {
 			limit = {
 				NOT = {
@@ -36,8 +26,8 @@ country_event = {
 			}
 			set_country_flag = scion_needs_fe
 			if = {
-				limit = { 
-					is_spiritualist = yes 
+				limit = {
+					is_spiritualist = yes
 					OR = {
 						has_civic = PrimPlayer_civic_scion_spiritualist
 						has_civic = civic_scion_spiritualist
@@ -49,8 +39,8 @@ country_event = {
 				}
 			}
 			else_if = {
-				limit = { 
-					is_materialist = yes 
+				limit = {
+					is_materialist = yes
 					OR = {
 						has_civic = PrimPlayer_civic_scion_materialist
 						has_civic = civic_scion_materialist
@@ -79,7 +69,6 @@ country_event = {
 			}
 			add_extra_hyperlane_to_spawned_system_effect = yes
 		}
-
 		else_if = {
 			limit = {
 				OR = {
@@ -178,17 +167,13 @@ country_event = {
 				exists = event_target:scion_master
 				is_nomadic = no
 			}
-			#create_scion_wormhole_link = yes	#Removed Vanilla Code
 			create_scion_lgate_link = yes
 		}
 	}
 }
-
-# Intro Diplomatic Message	#Scion
 country_event = {
 	id = origin.10
 	title = TRANSMISSION
-
 	desc = {
 		trigger = {
 			event_target:scion_master = { has_country_flag = fallen_empire_2 }
@@ -225,7 +210,6 @@ country_event = {
 	}
 	diplomatic = yes
 	is_triggered_only = yes
-
 	picture_event_data = {
 		portrait = event_target:scion_master
 		planet_background = event_target:scion_master
@@ -233,11 +217,9 @@ country_event = {
 		city_level = event_target:scion_master
 		room = event_target:scion_master
 	}
-
 	immediate = {
 		overlord = { save_event_target_as = scion_master }
 	}
-
 	option = {
 		name = origin.10.a
 		trigger = {
@@ -297,14 +279,10 @@ country_event = {
 		}
 	}
 }
-
-# Surveyed a Holy World (via on_survey): gatekeeper event
-# this = Science vessel | from = planet
 ship_event = {
 	id = origin.11
 	hide_window = yes
 	is_triggered_only = yes
-
 	trigger = {
 		exists = owner
 		owner = {
@@ -321,11 +299,7 @@ ship_event = {
 			}
 			exists = overlord
 			overlord = {
-				is_country_type = fallen_empire # excludes 'awakened_fallen_empire'
-				# OR = {
-				# 	has_country_flag = fallen_empire_1 # Materialist
-				# 	has_country_flag = fallen_empire_2 # Spiritualist
-				# }
+				is_country_type = fallen_empire
 			}
 		}
 		from = {
@@ -333,7 +307,6 @@ ship_event = {
 			is_colony = no
 		}
 	}
-
 	immediate = {
 		owner = {
 			set_country_flag = encountered_holy_world
@@ -343,23 +316,18 @@ ship_event = {
 						has_country_flag = fallen_empire_2
 					}
 				}
-				country_event = { id = origin.12 } # Spiritualist Overlord's Holy World
+				country_event = { id = origin.12 }
 			}
 			else = {
-				country_event = { id = origin.13 } # Another FE's Holy World
+				country_event = { id = origin.13 }
 			}
 		}
 	}
 }
-
-# Gift (HIDDEN)
 country_event = {
 	id = origin.20
 	hide_window = yes
 	is_triggered_only = yes
-
-	# Note that applying a trigger here (such as to mirror the 'limit' below) may not be desirable, as it would break the cycle of "Scion" rewards should the subject empire ever be temporarily stolen from the FE.
-
 	immediate = {
 		every_playable_country = {
 			limit = {
@@ -376,31 +344,26 @@ country_event = {
 				}
 			}
 			random_list = {
-				50 = { # Technologies
+				50 = {
 					modifier = {
 						factor = 0
 						scion_has_techs = yes
 					}
 					country_event = { id = origin.21 }
 				}
-				50 = { # Resources
+				50 = {
 					country_event = { id = origin.24 }
 				}
 			}
 		}
-		# Repeat
 		country_event = { id = origin.20 days = @scionRewardTimer random = @scionRewardTimerDelay }
 	}
 }
-
-# via on_yearly_pulse
 event = {
 	id = origin.200
 	hide_window = yes
 	is_triggered_only = yes
-
 	trigger = {
-		# FE are too busy to care about their scions when the Synth Queen is around
 		NOT = { has_global_flag = synth_queen_happened }
 		any_playable_country = {
 			is_ai = no
@@ -417,7 +380,6 @@ event = {
 			}
 		}
 	}
-
 	immediate = {
 		random_playable_country = {
 			limit = {
@@ -428,7 +390,7 @@ event = {
 				}
 			}
 			random_list = {
-				250 = { # no Intervention
+				250 = {
 					modifier = {
 						factor = 2
 						OR = {
@@ -442,7 +404,7 @@ event = {
 						}
 					}
 				}
-				10 = { # FE requests a Leader
+				10 = {
 					modifier = {
 						factor = 0
 						OR = {
@@ -461,7 +423,7 @@ event = {
 						change_variable = { which = scion_intervention value = 1 }
 					}
 				}
-				10 = { # FE gives a Leader
+				10 = {
 					modifier = {
 						factor = 0
 						has_country_flag = scion_gave_leader
@@ -475,7 +437,7 @@ event = {
 						change_variable = { which = scion_intervention value = 1 }
 					}
 				}
-				10 = { # FE gives ships
+				10 = {
 					modifier = {
 						factor = 0
 						has_country_flag = scion_gave_ships
@@ -485,10 +447,10 @@ event = {
 						change_variable = { which = scion_intervention value = 1 }
 					}
 				}
-				10 = { # FE gives propulsion tech boost
+				10 = {
 					modifier = {
 						factor = 0
-						NOT = { has_technology = "tech_hyper_drive_theory" } #No Hyperdrive Theory to expand upon
+						NOT = { has_technology = "tech_hyper_drive_theory" }
 					}
 					modifier = {
 						factor = 0
@@ -513,10 +475,10 @@ event = {
 						change_variable = { which = scion_intervention value = 1 }
 					}
 				}
-				10 = { # FE gives colonization supplies
+				10 = {
 					modifier = {
 						factor = 0
-						NOT = { has_technology = "tech_hyper_drive_1" } #No Hyperdrive Tech to expand
+						NOT = { has_technology = "tech_hyper_drive_1" }
 					}
 					modifier = {
 						factor = 0
@@ -542,14 +504,10 @@ event = {
 		}
 	}
 }
-
-
-# Has Researched a Fallen Empire tech. FEs are displeased. (unless Scion)
 country_event = {
 	id = crisis.7275
 	hide_window = yes
 	is_triggered_only = yes
-
 	trigger = {
 		is_country_type = default
 		just_researched_fe_tech = yes
@@ -561,7 +519,6 @@ country_event = {
 			has_civic = civic_scion_spiritualist
 		}
 	}
-
 	immediate = {
 		every_country = {
 			limit = {
@@ -586,13 +543,10 @@ country_event = {
 		}
 	}
 }
-
-# Scion FE is instead proud of their pupil.
 country_event = {
 	id = crisis.7280
 	title = TRANSMISSION
 	desc = crisis.7280.desc
-
 	picture_event_data = {
 		portrait = event_target:scion_master
 		planet_background = event_target:scion_master
@@ -600,11 +554,9 @@ country_event = {
 		city_level = event_target:scion_master
 		room = event_target:scion_master
 	}
-
 	diplomatic = yes
 	is_triggered_only = yes
 	fire_only_once = yes
-
 	trigger = {
 		is_country_type = default
 		just_researched_fe_tech = yes
@@ -617,16 +569,14 @@ country_event = {
 		}
 		exists = overlord
 		overlord = {
-			is_country_type = fallen_empire # excludes 'awakened_fallen_empire'
+			is_country_type = fallen_empire
 		}
 	}
-
 	immediate = {
 		overlord = { save_event_target_as = scion_master }
 	}
-
 	option = {
-		name = origin.4150.a #Thank you
+		name = origin.4150.a
 		add_monthly_resource_mult = {
 			resource = unity
 			value = @tier4unityreward
@@ -635,7 +585,6 @@ country_event = {
 		}
 	}
 }
-
 event = {
 	id = ethos_fix.1
 	hide_window = yes
@@ -663,13 +612,9 @@ event = {
 		}
     }
 }
-
-# Encountered Holy World (via on_survey)
-# this = Science vessel | from = planet
 ship_event = {
 	id = fallen_empires.100
 	title = fallen_empires.100.name
-	# Owner has yet to make contact with the FE (string type A)
 	desc = {
 		trigger = {
 			owner = {
@@ -698,7 +643,6 @@ ship_event = {
 		}
 		text = fallen_empires.100.A.desc.gestalt
 	}
-	# Owner has met the Spiritualist Fallen Empire (string type B)
 	desc = {
 		trigger = {
 			owner = {
@@ -736,14 +680,13 @@ ship_event = {
 	show_sound = event_mystic_reveal_light
 	location = from
 	is_triggered_only = yes
-
 	trigger = {
 		exists = owner
 		owner = {
 			NOR = {
 				is_ai = yes
 				has_country_flag = encountered_holy_world
-				has_origin = origin_scion # see 'origin.11'
+				has_origin = origin_scion
 				has_civic = PrimPlayer_civic_scion_materialist
 				has_civic = PrimPlayer_civic_scion_spiritualist
 				has_civic = civic_scion_materialist
@@ -751,7 +694,7 @@ ship_event = {
 			}
 		}
 		any_country = {
-			is_country_type = fallen_empire # excludes 'awakened_fallen_empire'
+			is_country_type = fallen_empire
 			has_country_flag = fallen_empire_2
 		}
 		from = {
@@ -759,7 +702,6 @@ ship_event = {
 			is_colony = no
 		}
 	}
-
 	immediate = {
 		random_country = {
 			limit = {
@@ -772,8 +714,7 @@ ship_event = {
 			set_country_flag = encountered_holy_world
 		}
 	}
-
-	option = { # "Curious."
+	option = {
 		name = CURIOUS
 		owner = {
 			add_monthly_resource_mult = {
@@ -784,7 +725,7 @@ ship_event = {
 			}
 		}
 	}
-	option = { # Respectful
+	option = {
 		name = fallen_empires.100.a
 		trigger = {
 			owner = {
@@ -803,7 +744,7 @@ ship_event = {
 			}
 		}
 	}
-	option = { # "Ours for the taking."
+	option = {
 		name = fallen_empires.100.b
 		trigger = {
 			owner = {
@@ -823,7 +764,7 @@ ship_event = {
 			}
 		}
 	}
-	option = { # "We could thrive there."
+	option = {
 		name = fallen_empires.100.c
 		trigger = {
 			owner = {
@@ -840,7 +781,7 @@ ship_event = {
 			}
 		}
 	}
-	option = { # Insult
+	option = {
 		name = fallen_empires.100.d
 		trigger = {
 			owner = {
@@ -861,7 +802,7 @@ ship_event = {
 			}
 		}
 	}
-	option = { # Spiritualist insult
+	option = {
 		name = fallen_empires.100.e
 		trigger = {
 			owner = {
@@ -883,8 +824,6 @@ ship_event = {
 		}
 	}
 }
-
-
 country_event = {
 	id = federations.10401
 	title = federations.10400.title
@@ -892,11 +831,9 @@ country_event = {
 	picture = GFX_evt_signing
 	show_sound = event_factions
 	is_triggered_only = yes
-
 	trigger = {
 		is_galactic_community_member = yes
 		is_in_breach_of_any = yes
-		# Need to check if you are in breach of a pre-FTL Resolution due to Policies not event flags.
 		if = {
 			limit = {
 				is_active_resolution = resolution_pre_ftl_stances_equal_standing
@@ -926,7 +863,6 @@ country_event = {
 		}
 		NOT = { has_country_flag = fed_10400_ignore }
 	}
-
 	immediate = {
 		if = {
 			limit = {
@@ -942,7 +878,6 @@ country_event = {
 				owner_species = { save_event_target_as = defined_purpose_random_species }
 			}
 		}
-
 		random_relation = {
 			limit = {
 				any_owned_leader = {
@@ -957,13 +892,10 @@ country_event = {
 			}
 		}
 	}
-
-	# Refuse to comply
 	option = {
 		name = federations.10400.refuse
 		custom_tooltip = FED_WE_WILL_BE_IN_BREACH
 	}
-	# Agree to comply
 	option = {
 		name = federations.10400.comply
 		allow = {
@@ -1009,12 +941,12 @@ country_event = {
 						OR = {
 							has_valid_civic = civic_slaver_guilds
 							has_origin = origin_heirs_of_the_khan
-							has_valid_civic = PrimPlayer_civic_heirs_of_the_khan	# Due to Slavery
-							has_valid_civic = civic_heirs_of_the_khan	# Due to Slavery
-							has_civic = civic_barbaric_despoilers			 # Cog Note - This civic is an upgrade of Slaver Guilds
-							has_civic = civic_barbaric_despoilers_corporate	 # Cog Note - This civic is an upgrade of Slaver Guilds
-							has_civic = PrimPlayer_civic_barbaric_despoilers_khan # Cog Note - This civic is an upgrade of Slaver Guilds
-							has_civic = civic_barbaric_despoilers_khan 			  # Cog Note - This civic is an upgrade of Slaver Guilds
+							has_valid_civic = PrimPlayer_civic_heirs_of_the_khan
+							has_valid_civic = civic_heirs_of_the_khan
+							has_civic = civic_barbaric_despoilers
+							has_civic = civic_barbaric_despoilers_corporate
+							has_civic = PrimPlayer_civic_barbaric_despoilers_khan
+							has_civic = civic_barbaric_despoilers_khan
 							has_valid_civic = civic_indentured_assets
 						}
 					}
@@ -1057,14 +989,10 @@ country_event = {
 					}
 					is_active_resolution = resolution_galactic_focus_war_in_heaven_denounce_both
 				}
-
 			}
 		}
-
 		breach_fix_resolution_galacticstudies_advanced_xenostudies = yes
 		breach_fix_resolution_galacticstudies_ethical_guideline_refactoring = yes
-
-		# The Greater Good is way too complicated. We can go from the most extreme down.
 		if = {
 			limit = {
 				is_active_resolution = resolution_greatergood_universal_prosperity_mandate
@@ -1158,24 +1086,19 @@ country_event = {
 			}
 			breach_fix_resolution_greatergood_five_year_plans_normal = yes
 		}
-
 		breach_fix_resolution_rulesofwar_reverence_for_life = yes
 		breach_fix_resolution_rulesofwar_independent_tribunals = yes
 		breach_fix_resolution_rulesofwar_last_resort_doctrine = yes
 		breach_fix_resolution_rulesofwar_demobilization_initiative = yes
-
 		breach_fix_resolution_divinity_a_defined_purpose_nonsynthetic = yes
 		breach_fix_resolution_divinity_a_defined_purpose_machine = yes
-
 		breach_fix_resolution_resolution_pre_ftl_stances_equal_standing = yes
 		breach_fix_resolution_resolution_pre_ftl_stances_non_interference = yes
 		breach_fix_resolution_resolution_pre_ftl_stances_exploitation = yes
-
 		ai_chance = {
 			factor = 5
 		}
 	}
-	# Discard and permanently ignore this
 	option = {
 		name = federations.10400.refuse_2
 		custom_tooltip = FED_WE_WILL_BE_IN_BREACH
@@ -1187,7 +1110,6 @@ country_event = {
 			factor = 0
 		}
 	}
-	# Execute the Envoys
 	option = {
 		name = federations.10400.execute
 		trigger = {
@@ -1217,18 +1139,15 @@ country_event = {
 		allow = {
 			NOT = { has_valid_civic = civic_hive_empath }
 		}
-
 		custom_tooltip = FED_WE_WILL_BE_IN_BREACH
 		custom_tooltip = federations.10400.refuse_2_tooltip
 		custom_tooltip = federations.10400.execute_tooltip
-
 		add_monthly_resource_mult = {
 			resource = unity
 			value = @tier3unityreward
 			min = @tier3unitymin
 			max = @tier3unitymax
 		}
-
 		if = {
 			limit = {
 				exists = event_target:executed_envoy
@@ -1239,7 +1158,6 @@ country_event = {
 				}
 			}
 		}
-
 		hidden_effect = {
 			set_country_flag = fed_10400_ignore
 			set_country_flag = executed_galcom_envoys
@@ -1257,7 +1175,6 @@ country_event = {
 				}
 			}
 		}
-
 		if = {
 			limit = {
 				is_active_resolution = resolution_galacticstudies_advanced_xenostudies
@@ -1270,7 +1187,6 @@ country_event = {
 			}
 			set_policy_cooldown = artificial_intelligence_policy
 		}
-
 		if = {
 			limit = {
 				is_active_resolution = resolution_galacticstudies_advanced_xenostudies
@@ -1283,7 +1199,6 @@ country_event = {
 			}
 			set_policy_cooldown = interference
 		}
-
 		if = {
 			limit = {
 				is_active_resolution = resolution_galacticstudies_ethical_guideline_refactoring
@@ -1309,7 +1224,6 @@ country_event = {
 			}
 			set_policy_cooldown = leader_enhancement
 		}
-
 		if = {
 			limit = {
 				is_active_resolution = resolution_rulesofwar_reverence_for_life
@@ -1321,7 +1235,6 @@ country_event = {
 			}
 			set_policy_cooldown = purge
 		}
-
 		if = {
 			limit = {
 				is_active_resolution = resolution_rulesofwar_independent_tribunals
@@ -1333,7 +1246,6 @@ country_event = {
 			}
 			set_policy_cooldown = orbital_bombardment
 		}
-
 		if = {
 			limit = {
 				is_active_resolution = resolution_rulesofwar_last_resort_doctrine
@@ -1357,7 +1269,6 @@ country_event = {
 			}
 			set_policy_cooldown = war_philosophy
 		}
-
 		if = {
 			limit = {
 				is_active_resolution = resolution_rulesofwar_demobilization_initiative
@@ -1369,7 +1280,6 @@ country_event = {
 			}
 			set_policy_cooldown = economic_policy
 		}
-
 		if = {
 			limit = {
 				is_active_resolution = resolution_divinity_a_defined_purpose
@@ -1382,7 +1292,6 @@ country_event = {
 			}
 			set_policy_cooldown = artificial_intelligence_policy
 		}
-
 		if = {
 			limit = {
 				is_active_resolution = resolution_pre_ftl_stances_equal_standing
@@ -1405,7 +1314,6 @@ country_event = {
 			}
 			set_policy_cooldown = interference
 		}
-
 		if = {
 			limit = {
 				is_active_resolution = resolution_pre_ftl_stances_non_interference
@@ -1421,7 +1329,6 @@ country_event = {
 			}
 			set_policy_cooldown = interference
 		}
-
 		if = {
 			limit = {
 				is_active_resolution = resolution_pre_ftl_stances_exploitation
@@ -1444,12 +1351,10 @@ country_event = {
 			}
 			set_policy_cooldown = interference
 		}
-
 		ai_chance = {
 			factor = 0
 		}
 	}
-	# Eat the Envoys
 	option = {
 		name = federations.10400.eat
 		trigger = {
@@ -1471,26 +1376,21 @@ country_event = {
 				}
 			}
 		}
-
 		allow = {
 			NOT = { has_valid_civic = civic_hive_empath }
 		}
-
 		custom_tooltip = FED_WE_WILL_BE_IN_BREACH
 		custom_tooltip = federations.10400.refuse_2_tooltip
 		custom_tooltip = federations.10400.execute_tooltip
-
 		add_monthly_resource_mult = {
 			resource = unity
 			value = @tier3unityreward
 			min = @tier3unitymin
 			max = @tier3unitymax
 		}
-
 		add_resource = {
 			food = 1
 		}
-
 		if = {
 			limit = {
 				exists = event_target:executed_envoy
@@ -1501,7 +1401,6 @@ country_event = {
 				}
 			}
 		}
-
 		hidden_effect = {
 			set_country_flag = fed_10400_ignore
 			set_country_flag = executed_galcom_envoys
@@ -1519,7 +1418,6 @@ country_event = {
 				}
 			}
 		}
-
 		if = {
 			limit = {
 				is_active_resolution = resolution_galacticstudies_advanced_xenostudies
@@ -1532,7 +1430,6 @@ country_event = {
 			}
 			set_policy_cooldown = artificial_intelligence_policy
 		}
-
 		if = {
 			limit = {
 				is_active_resolution = resolution_galacticstudies_advanced_xenostudies
@@ -1548,7 +1445,6 @@ country_event = {
 			}
 			set_policy_cooldown = interference
 		}
-
 		if = {
 			limit = {
 				is_active_resolution = resolution_galacticstudies_ethical_guideline_refactoring
@@ -1574,7 +1470,6 @@ country_event = {
 			}
 			set_policy_cooldown = leader_enhancement
 		}
-
 		if = {
 			limit = {
 				is_active_resolution = resolution_rulesofwar_reverence_for_life
@@ -1586,7 +1481,6 @@ country_event = {
 			}
 			set_policy_cooldown = purge
 		}
-
 		if = {
 			limit = {
 				is_active_resolution = resolution_rulesofwar_independent_tribunals
@@ -1598,7 +1492,6 @@ country_event = {
 			}
 			set_policy_cooldown = orbital_bombardment
 		}
-
 		if = {
 			limit = {
 				is_active_resolution = resolution_rulesofwar_last_resort_doctrine
@@ -1622,7 +1515,6 @@ country_event = {
 			}
 			set_policy_cooldown = war_philosophy
 		}
-
 		if = {
 			limit = {
 				is_active_resolution = resolution_rulesofwar_demobilization_initiative
@@ -1634,7 +1526,6 @@ country_event = {
 			}
 			set_policy_cooldown = economic_policy
 		}
-
 		if = {
 			limit = {
 				is_active_resolution = resolution_divinity_a_defined_purpose
@@ -1647,7 +1538,6 @@ country_event = {
 			}
 			set_policy_cooldown = artificial_intelligence_policy
 		}
-
 		if = {
 			limit = {
 				is_active_resolution = resolution_pre_ftl_stances_equal_standing
@@ -1670,7 +1560,6 @@ country_event = {
 			}
 			set_policy_cooldown = interference
 		}
-
 		if = {
 			limit = {
 				is_active_resolution = resolution_pre_ftl_stances_non_interference
@@ -1686,7 +1575,6 @@ country_event = {
 			}
 			set_policy_cooldown = interference
 		}
-
 		if = {
 			limit = {
 				is_active_resolution = resolution_pre_ftl_stances_exploitation
@@ -1709,7 +1597,6 @@ country_event = {
 			}
 			set_policy_cooldown = interference
 		}
-
 		ai_chance = {
 			factor = 0
 		}
