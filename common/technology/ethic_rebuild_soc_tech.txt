@@ -1118,6 +1118,202 @@ tech_global_production_strategy = {
 	}
 }
 
+#Colonial Centralization
+tech_colonial_centralization = {
+	cost = @tier2cost2
+	area = society
+	tier = 2
+	category = { new_worlds }
+	prerequisites = { "tech_planetary_unification" }
+	weight = @tier2weight2
+
+	gateway = capital
+
+	# unlocks Planetary Capital
+	# unlocks production-targets edict
+
+	technology_swap = { # Wilderness icon swap
+		name = tech_wilderness_colonial_centralization
+		inherit_icon = no
+		inherit_effects = yes
+		trigger = {
+			is_wilderness_empire = yes
+		}
+	}
+
+	modifier = {
+		country_official_cap_add = 1
+		country_commander_cap_add = 1
+		country_scientist_cap_add = 1
+	}
+
+	weight_modifier = {
+		factor = 4
+	}
+
+	ai_weight = {
+		factor = @capital_tech_ai_factor
+		modifier = {
+			factor = 1000
+			has_valid_civic = civic_machine_cult
+		}
+	}
+}
+
+#Psionic Theory
+tech_psionic_theory = {
+	cost = @tier3cost1
+	area = society
+	tier = 3
+	category = { psionics }
+	is_rare = yes
+	weight = @tier3weight1
+	is_reverse_engineerable = no
+
+	gateway = psionics
+
+	potential = {
+		OR = { #The OR is so that Gestalts can get Zro Distillation with that Resolution
+			has_shroud_dlc = yes # Shroud allows everyone to become psionic
+			NOT = { has_ethic = ethic_gestalt_consciousness }
+			is_active_resolution = resolution_galacticstudies_extradimensional_experimentation
+			has_relic = r_zro_crystal
+		}
+		NOT = { has_origin = origin_mindwardens } # Except Mindwardens since they can't psionically ascend
+	}
+
+	modifier = {
+		empire_size_pops_mult = -0.05
+		army_morale_damage_taken_mult = -0.10
+	}
+
+	weight_modifier = {
+		factor = 0.5
+		modifier = {
+			factor = 0
+			has_shroud_dlc = no
+			has_ethic = ethic_gestalt_consciousness
+		}
+		modifier = {
+			factor = 0.5
+			is_spiritualist = no
+		}
+		modifier = {
+			factor = 2
+			has_ethic = "ethic_fanatic_spiritualist"
+		}
+		modifier = {
+			factor = 2
+			any_country = {
+				has_origin = origin_mindwardens
+				NOT = { is_same_value = prev }
+			}
+		}
+		modifier = {
+			factor = 2
+			OR = {
+				has_trait_in_council = { TRAIT = leader_trait_maniacal }
+				has_trait_in_council = { TRAIT = leader_trait_maniacal_2 }
+				has_trait_in_council = { TRAIT = leader_trait_maniacal_3 }
+			}
+		}
+		modifier = {
+			factor = 2
+			OR = {
+				has_trait_in_council = { TRAIT = leader_trait_psionic }
+				has_trait_in_council = { TRAIT = leader_trait_chosen }
+				has_trait_in_council = { TRAIT = leader_trait_composer_chosen }
+				has_trait_in_council = { TRAIT = leader_trait_instrument_chosen }
+				has_trait_in_council = { TRAIT = leader_trait_whisperers_chosen }
+			}
+		}
+		inline_script = {
+			script = technologies/rare_technologies_weight_modifiers
+			TECHNOLOGY = tech_psionic_theory
+		}
+		modifier = {
+			factor = 2
+			any_owned_pop_group = {
+				is_psionic_species = yes
+			}
+		}
+		modifier = {
+			factor = 1.25
+			any_owned_pop_group = {
+				is_latent_psionic_species = yes
+			}
+			NOT = {
+				any_owned_pop_group = {
+					is_psionic_species = yes
+				}
+			}
+		}
+		modifier = {
+			factor = 2
+			has_paragon_dlc = no
+			any_owned_leader = {
+				has_trait = leader_trait_shroudwalker
+			}
+		}
+		modifier = {
+			factor = 0
+			AND = {
+				is_materialist = yes
+				NOR = {
+					has_tier1or2or3_in_council = { TRAIT = leader_trait_expertise_psionics }
+					has_councilor = { COUNCILOR = "councilor_shroudwalker_teacher" }
+					any_owned_pop_group = {
+						has_psionic_species_trait = yes
+					}
+				}
+			}
+		}
+		modifier = {
+			factor = 0
+			has_origin = origin_endbringers
+		}
+		modifier = {
+			factor = @ap_pending_tech_boost
+			has_ascension_perk = ap_mind_over_matter
+		}
+		modifier = {
+			factor = 1.25
+			has_valid_civic = civic_machine_cult_machine
+		}
+		modifier = {
+			factor = 7
+			has_valid_civic = civic_spiritual_seekers
+		}
+		modifier = {
+			factor = 0
+			has_valid_civic = civic_machine_cult
+		}
+	}
+
+	ai_weight = {
+		modifier = {
+			factor = 5
+			is_spiritualist = yes
+		}
+
+		modifier = {
+			factor = 2
+			is_ai = no #auto-research
+		}
+
+		modifier = {
+			factor = 10
+			any_country = {
+				has_origin = origin_mindwardens
+			}
+		}
+		modifier = {
+			factor = @ap_pending_tech_boost
+			has_ascension_perk = ap_mind_over_matter
+		}
+	}
+}
+
 # 00_soc_tech_repeatable.txt
 tech_repeatable_improved_core_system_cap = {
 	area = society
