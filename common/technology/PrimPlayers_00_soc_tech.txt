@@ -964,7 +964,7 @@ tech_solarpunk_sapling = {
 	# Unlocks solarpunk sapling building
 }
 
-# Eco Simulation
+#Eco Simulation
 tech_eco_simulation = {
 	cost = @tier1cost1
 	area = society
@@ -974,9 +974,10 @@ tech_eco_simulation = {
 	#weight = @tier1weight1
 	weight = 1000
 
+	gateway = zone
+
 	modifier = {
-		planet_farmers_food_produces_mult = 0.2
-		starbase_constructions_food_produces_mult = 0.10
+		planet_farmers_food_produces_mult = 0.05
 	}
 
 	weight_modifier = {
@@ -986,6 +987,7 @@ tech_eco_simulation = {
 				is_machine_empire = yes
 				is_lithoid_empire = yes
 				is_individual_machine = yes
+				is_infernal_empire = yes
 				has_origin = origin_synthetic_fertility
 			}
 			NOR = {
@@ -995,8 +997,8 @@ tech_eco_simulation = {
 				has_valid_civic = civic_machine_assimilator
 				any_owned_planet = {
 					OR = {
-						num_districts = { type = district_farming value > 0 }
-						num_districts = { type = district_rw_farming value > 0 }
+						has_any_capped_planet_farming_district = yes
+						has_any_agriculture_zone = yes
 					}
 				}
 			}
@@ -1006,6 +1008,7 @@ tech_eco_simulation = {
 			OR = {
 				is_machine_empire = yes
 				is_lithoid_empire = yes
+				is_infernal_empire = yes
 				AND = {
 					is_individual_machine = yes
 					NOT = { has_country_flag = non_lithoid_subspecies }
@@ -1023,17 +1026,6 @@ tech_eco_simulation = {
 		modifier = {
 			factor = 2
 			has_relic = r_pox_sample
-		}
-	}
-
-	ai_weight = {
-		modifier = {
-			factor = 1.25
-			has_ethic = ethic_pacifist
-		}
-		modifier = {
-			factor = 1.5
-			has_ethic = ethic_fanatic_pacifist
 		}
 		modifier = {
 			factor = 2
@@ -1053,10 +1045,20 @@ tech_eco_simulation = {
 			any_owned_planet = {
 				OR = {
 					has_any_capped_planet_farming_district = yes
-					has_any_uncapped_farming_district = yes
 					has_any_agriculture_zone = yes
 				}
 			}
+		}
+	}
+
+	ai_weight = {
+		modifier = {
+			factor = 1.25
+			has_ethic = ethic_pacifist
+		}
+		modifier = {
+			factor = 1.5
+			has_ethic = ethic_fanatic_pacifist
 		}
 	}
 }
@@ -1074,14 +1076,7 @@ tech_bio_reactor = {
 	#weight = @tier1weight1
 	weight = 1000
 	is_rare = yes
-	
-	#starting_potential = {
-	#	OR = {
-	#		has_civic = civic_catalytic_processing
-	#		has_civic = civic_corporate_catalytic_processing
-	#	}
-	#}
-	
+
 	potential = {
 		is_wilderness_empire = no
 	}
@@ -1880,7 +1875,6 @@ tech_cultural_heritage = {
 	start_tech = yes
 	category = { statecraft }
 	tier = 0
-	#weight = @tier0weight1
 	weight = 1000
 	prerequisites = { "tech_primitive_universities" "tech_basic_industry" }
 	
@@ -1911,14 +1905,18 @@ tech_cultural_heritage = {
 	}
 
 	potential = {
-		OR = {
-			is_hive_empire = no
-			is_memorialist_empire = yes
-		}
+		is_wilderness_empire = no
 	}
 
 	weight_modifier = {
-
+		modifier = {
+			factor = 2
+			is_memorialist_empire = yes
+		}
+		modifier = {
+			factor = 2
+			is_entropy_drinkers_empire = yes
+		}
 	}
 
 	ai_weight = {
@@ -2117,7 +2115,7 @@ tech_hive_node = {
 # Biolab and Colonization
 # ##################
 
-# New Worlds Protocol
+#New Worlds Protocol
 tech_colonization_1 = {
 	cost = @tier0cost3
 	area = society
@@ -2128,7 +2126,7 @@ tech_colonization_1 = {
 	category = { new_worlds }
 	prerequisites = { "tech_primitive_generation_ship" }
 	start_tech = yes
-	
+
 	technology_swap = {
 		name = tech_colonization_1_wilderness
 		inherit_icon = yes
@@ -2138,7 +2136,12 @@ tech_colonization_1 = {
 		}
 	}
 
+	potential = {
+		is_nomadic = no
+	}
+
 	starting_potential = {
+		is_nomadic = no
 		has_origin_primitive_player = no # So primitive players don't start with it unlocked
 	}
 
@@ -2167,8 +2170,17 @@ tech_terrestrial_sculpting = {
 	area = society
 	tier = 1	#Cog Note lowered this from Vanilla's tier = 2 so Primitive Players can get this easier
 	category = { new_worlds }
-	prerequisites = { "tech_colonization_1" }
+	prerequisites = {
+		OR = {
+			tech_colonization_1
+			tech_planetary_engineering
+		}
+	}
 	weight = @tier2weight3
+
+	potential = {
+		is_nomadic = no
+	}
 
 	feature_flags = {
 		build_terraform_station

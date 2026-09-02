@@ -10,6 +10,7 @@ solar_panel_network = {
 	icon = "GFX_solar_panel_network"
 	section = "SCIENCE_STARBASE_SECTION"
 	construction_days = 180
+	category = sm_economy_cat
 	initial = yes
 
 	potential = {
@@ -43,6 +44,10 @@ solar_panel_network = {
 
 	show_in_tech = "tech_solar_panel_network"
 
+	show_tech_unlock_if = {
+		is_nomadic = yes
+	}
+
 	resources = {
 		category = starbase_modules
 		cost = {
@@ -75,16 +80,15 @@ solar_panel_network = {
 	}
 }
 
-
 trading_hub = {
 	icon = "GFX_starbase_trading_hub"
 	section = "REFINERY_STARBASE_SECTION"
 	construction_days = 180
+	category = sm_economy_cat
 	initial = yes
 
 	potential = {
 		is_normal_starbase = yes
-		exists = owner
 	}
 
 	resources = {
@@ -93,7 +97,7 @@ trading_hub = {
 			alloys = 50
 		}
 		upkeep = {
-			energy = 1
+			energy = 2
 		}
 		produces = {
 			trigger = {
@@ -107,6 +111,20 @@ trading_hub = {
 		}
 		produces = {
 			trade = 8
+		}
+		produces = {
+			trigger = {
+				exists = this
+				has_starbase_building = offworld_trading_company
+			}
+			trade = 4
+		}
+		produces = {
+			trigger = {
+				exists = this
+				has_starbase_building = warp_fluctuator
+			}
+			trade = 2
 		}
 		produces = {
 			trigger = {
@@ -128,41 +146,8 @@ trading_hub = {
 		}
 	}
 
-	# station_modifier = {
-	#	starbase_trade_collection_range_add = 1
-	#}
-
-	#triggered_station_modifier = {
-	#	potential = {
-	#		hidden_trigger = { exists = this }
-	#		owner = {
-	#			has_councilor = { COUNCILOR = "councilor_trading_posts" }
-	#		}
-	#	}
-	#	planet_jobs_trade_produces_add = 0.5
-	#	mult = value:councilor_level|TYPE|councilor_trading_posts|
-	#}
-
-	# triggered_station_modifier = {
-	#	potential = {
-	#		exists = owner
-	#		owner = { has_valid_civic = civic_beacon_of_liberty }
-	#	}
-	#
-	#	starbase_trade_collection_range_add = 1
-	#}
-
-	# triggered_station_modifier = {
-	#	potential = {
-	#		exists = owner
-	#		owner = { has_valid_civic = civic_corporate_dominion }
-	#	}
-	#
-	#	starbase_trade_protection_range_add = 1
-	#}
-
 	ai_weight = {
-		weight = 100 # use same weight here - ai weighting is done in starbase_types.txt
+		weight = 100 #use same weight here - ai weighting is done in starbase_types.txt
 		modifier = {
 			factor = 5
 			NOT = { has_starbase_module = trading_hub }
@@ -320,7 +305,7 @@ waystation_treasure_vault = {
 			owner? = {
 				OR = {
 					has_origin = origin_heirs_of_the_khan
-					has_origin = civic_heirs_of_the_khan
+					has_civic = civic_heirs_of_the_khan
 				}
 			}
 		}
@@ -361,7 +346,11 @@ waystation_treasure_vault = {
 	triggered_station_modifier = {
 		potential = {
 			owner? = {
-				has_valid_civic = civic_barbaric_despoilers
+				OR = {
+					has_civic = civic_barbaric_despoilers			
+					has_civic = civic_barbaric_despoilers_corporate
+					has_civic = civic_barbaric_despoilers_khan
+				}
 			}
 		}
 		custom_tooltip = waystation_treasure_vault_despoilers_tt
@@ -429,8 +418,7 @@ shipyard = {
 		#	}
 		#}
 	}
-	
-	
+
 	possible = {
 		solar_system = {
 			count_starbase_modules = {

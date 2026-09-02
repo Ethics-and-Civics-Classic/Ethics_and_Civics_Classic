@@ -32,7 +32,7 @@ the_chosen_home_initializer = {
 	}
 
 
-	# 3 gaia worlds!
+	#3 gaia worlds!
 
 	planet = {
 		class = pc_molten
@@ -93,21 +93,34 @@ the_chosen_home_initializer = {
 				adjective = NAME_ADJ_Chosen
 				type = default
 				origin = origin_life_seeded_ai_only
-				ethos = { 
+				ethos = {
 					ethic = ethic_fanatic_xenophobe
 					ethic = ethic_militarist
 					ethic = ethic_fanatic_spiritualist
 				}
 				authority = auth_oligarchic
-				civics = { 
+				civics = {
 					civic = civic_chosen_people
 					civic = civic_fanatic_purifiers
-					civic = civic_exalted_priesthood
+					civic = civic_divine_council
 				}
+				authority = random
 				effect = {
 					save_global_event_target_as = chosen_empire
 					set_country_flag = chosen_empire
 					give_starting_resources_effect = yes
+
+					# A bit extra
+					add_resource = {
+						energy = 2000
+						minerals = 2000
+						alloys = 2000
+						consumer_goods = 2000
+						trade = 2000
+						influence = 1000
+						unity = 500
+					}
+
 					create_leader = {
 						class = official
 						species = event_target:chosen_species
@@ -120,15 +133,26 @@ the_chosen_home_initializer = {
 						}
 					}
 				}
-				day_zero_contact = no # Otherwise enclaves and FEs get instant comms
+				day_zero_contact = no #otherwise enclaves and FEs get instant comms
 			}
 			create_colony = {
 				owner = event_target:chosen_empire
 			}
-			generate_start_deposits_and_blockers = yes
+			create_life_seeded_planet = yes
 			clear_blockers = yes
-			generate_start_buildings_and_districts = yes
-			generate_start_pops = yes
+			colony = {
+				generate_start_buildings_and_districts = yes
+				generate_start_pops = yes
+			}
+
+			while = { # To make up for the disadvantage of being stuck behind the wormhole
+				count = 5
+				weighted_random_owned_pop_group = {
+					add_pop_amount = {
+						amount = 1200
+					}
+				}
+			}
 		}
 	}
 
@@ -143,7 +167,9 @@ the_chosen_home_initializer = {
 			create_colony = {
 				owner = event_target:chosen_empire
 			}
-			fire_on_action = { on_action = on_initialize_advanced_colony }
+			colony = {
+				fire_on_action = { on_action = on_initialize_advanced_colony }
+			}
 		}
 	}
 
@@ -165,7 +191,9 @@ the_chosen_home_initializer = {
 				create_colony = {
 					owner = event_target:chosen_empire
 				}
-				fire_on_action = { on_action = on_initialize_advanced_colony }
+				colony = {
+					fire_on_action = { on_action = on_initialize_advanced_colony }
+				}
 			}
 		}
 	}
@@ -233,7 +261,7 @@ the_chosen_home_initializer = {
 
 		generate_home_system_resources = yes
 		event_target:chosen_empire = {
-			country_event = { id = game_start.6 } # Advanced start init
+			country_event = { id = game_start.6 } #advanced start init
 		}
 
 		create_starbase = {

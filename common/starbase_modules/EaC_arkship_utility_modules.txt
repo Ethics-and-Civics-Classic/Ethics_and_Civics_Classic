@@ -137,3 +137,113 @@ arkship_docking_bay = {
 		weight = 100 #use same weight here - ai weighting is done in starbase_types.txt
 	}
 }
+
+arkship_pirate_mercenary_garrison = { # See Z_EaC_civic_mechanic_events.205 
+	icon = "GFX_waystation_pirate_hideout"
+	section = "ARKSHIP_LIVING_SPACE_MODULE"
+	construction_days = 360
+	starbase_type = arkship
+	category = sm_utility_cat
+
+	starbase_limit = {
+		base = 1
+	}
+
+	potential = {
+		owner? = {
+			is_homicidal = no
+			has_country_flag = mercenary_enclave_diplomacy_engaged
+		}
+		is_arkship_starbase = yes
+	}
+
+	show_tech_unlock_if = {
+		is_nomadic = yes
+	}
+
+	cannot_fit_on_slots = { spinal_mount_1 }
+
+	possible = {
+		custom_tooltip = {
+			fail_text = "requires_pirate_mercenary_agreement"
+			owner = {
+				has_country_flag = pirate_mercenary_enclave_bought_pirate_mercenary_garrison
+			}
+		}
+	}
+
+	equipped_component = "STARBASE_AURA_MERCENARY_GARRISON"
+
+	triggered_country_modifier = {
+		potential = {
+			hidden_trigger = { exists = this }
+
+			exists = owner
+			owner = {
+				is_galactic_community_member = yes
+			}
+			OR = {
+				is_active_resolution = "resolution_galacticstudies_advanced_xenostudies"
+				is_active_resolution = "resolution_galacticstudies_ethical_guideline_refactoring"
+				is_active_resolution = "resolution_galacticstudies_extradimensional_experimentation"
+			}
+		}
+
+		country_naval_cap_add = 5
+	}
+
+	inline_script = {
+		script = jobs/arkship_module_soldiers_add
+		ZONE = zone_ark_shipwright
+		AMOUNT = @arkship_module_jobs
+	}
+
+	# Pirate Lord and Criminal Heritage
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				OR = {
+					has_valid_civic = civic_military_dictatorship_corporate 
+					has_valid_civic = civic_criminal_heritage
+				}
+			}
+		}
+		planet_stability_add = 10
+	}
+
+	# Not Pirate Lord or Criminal Heritage
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				NOR = {
+					has_valid_civic = civic_military_dictatorship_corporate 
+					has_valid_civic = civic_criminal_heritage
+				}
+			}
+		}
+		planet_stability_add = -5
+	}
+
+	resources = {
+		category = starbase_arkship_upgrades
+		cost = {
+			alloys = @arkship_cost_alloys_50
+		}
+
+		upkeep = {
+			energy = @arkship_upkeep_energy_1
+			alloys = @arkship_upkeep_strategic_1
+			trade = @arkship_upkeep_trade_4
+		}
+	}
+
+	ai_weight = {
+		weight = 50
+		modifier = {
+			factor = 1000
+			is_pirate_empire = yes
+		}
+	}
+}

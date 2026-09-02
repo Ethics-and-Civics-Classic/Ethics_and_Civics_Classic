@@ -1,0 +1,167 @@
+#root = starbase
+#from = player
+
+# Weights in the ai_design part are multiplied with the base weight of 00_starbase_buildings.txt and 00_starbase_modules.txt
+# Then, a random number between that value and and extra 50% of that it is ADDED to it
+# F.e. 100 base weight multiplies with 2.00 = 200. Then we take a random number between 0 and 100 (50% of 200) and ADD it to 200. 235 then, for example
+# This is done for ALL starbase modules and buildings in the list every time an evaluation is made
+# And the building or module with the highest value will be chosen to being built
+# The implication of that is that you can not balance the weights TOO FAR from each other - otherwise some modules will never be chosen, unless they are the only thing on the evaluation
+# Due to the progression of the game and the unlocking of tech, though, it is often the case that there will only be 1 item on the list at any given time anyway
+
+# How the AI/game selects which type to use:
+# First of all, it will try to find one which fulfils both the potential trigger and has a positive weight_modifier
+# If this succeeds, the starbase already has a type.
+# If it fails, it will go through each starbase type that fulfils the potential trigger. Then it will check the ratio it has built (total of this type / total upgraded starbases) compared to the desired ratio. If it is set to desire a minimum value and owns less than that, it multiplies its ratio desire by * 100. Then it build according to that type's template.
+
+# Trading Hub - Switch Xenophile ethic to Capitalism ethic
+strading_hub = {
+	potential = {
+		has_starbase_size > starbase_outpost
+		exists = owner
+		owner = { NOT = { has_ethic = ethic_gestalt_consciousness } }
+	}
+
+	weight_modifier = {
+		base = 0
+		complex_trigger_modifier = { #+100 for each trading_hub
+			trigger = count_starbase_modules
+			parameters = {
+				type = trading_hub
+			}
+			mode = add
+			mult = 100
+		}
+	}
+
+	ai_design = {
+		min = {
+			base = 0
+		}
+
+		ratio = {
+			base = 0.05
+			modifier = {
+				add = 0.05
+				exists = owner
+				owner = {
+					OR = {
+						has_ethic = ethic_capitalism
+						is_megacorp = yes
+					}
+				}
+			}
+			modifier = {
+				add = 0.10
+				exists = owner
+				owner = {
+					OR = {
+						has_ethic = ethic_fanatic_capitalism
+						is_megacorp = yes
+					}
+				}
+			}
+		}
+
+		# token followed by priority
+		buildings = {
+			offworld_trading_company = {
+				base = 1.00
+			}
+
+			nebula_refinery = {
+				base = 1.00
+			}
+
+			resource_silo = {
+				base = 0.25
+			}
+
+			art_college = {
+				base = 1.00
+			}
+
+			curator_think_tank = {
+				base = 1.00
+			}
+
+			ice_mining_station = {
+				base = 1.00
+			}
+
+			dragon_hatchery = {
+				base = 1.00
+			}
+
+			hydroponics_bay = {
+				base = 1.00
+			}
+
+			dimensional_shrine = {
+				base = 1.00
+			}
+
+			yuht_detection_array = {
+				base = 1.25
+				modifier = {
+					factor = 0
+					exists = owner
+					owner = {
+						OR = {
+							has_megastructure = spy_orb_1
+							has_megastructure = spy_orb_2
+							has_megastructure = spy_orb_3
+							has_megastructure = spy_orb_4
+						}
+					}
+				}
+				modifier = {
+					factor = 0.10
+					exists = owner
+					owner = {
+						any_owned_starbase = {
+							count_starbase_buildings = {
+								type = yuht_detection_array
+								count > 0
+							}
+						}
+					}
+				}
+			}
+
+			hyperlane_detailer = {
+				base = 1.00
+			}
+
+			recruitment_office = {
+				base = 0.50
+			}
+
+			black_hole_observatory = {
+				base = 2.00
+			}
+
+			deep_space_black_site = {
+				base = 2.00
+			}
+
+			shroud_beacon = {
+				base = 0.50
+			}
+
+			nanite_harvester = {
+				base = 3.00
+			}
+
+			trader_proxy_office = {
+				base = 2.00
+			}
+		}
+
+		modules = {
+			trading_hub = {
+				base = 1.0
+			}
+		}
+	}
+}

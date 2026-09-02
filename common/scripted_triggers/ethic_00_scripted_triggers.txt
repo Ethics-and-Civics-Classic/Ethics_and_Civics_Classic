@@ -56,7 +56,9 @@ has_shroud_syndaw_and_machine_age = {
 	host_has_dlc = "Synthetic Dawn Story Pack"
 	host_has_dlc = "The Machine Age"
 }
-
+##################
+# Game Variables #
+##################
 has_encountered_other_species = {
 	OR = {
 		has_origin = origin_syncretic_evolution
@@ -93,30 +95,6 @@ is_democratic = {
 	OR = {
 		has_authority = auth_democratic
 		has_authority = auth_direct_democratic
-	}
-}
-
-# Country scope trigger
-# NOTE: Any time you update this trigger, update the can_nomad_settle game rule as well
-nomad_can_settle_trigger = {
-	has_nomads_dlc = yes
-	OR = {
-		AND = {
-			OR = {
-				has_tradition = tr_adaptability_finish
-				has_tradition = tr_versatility_finish
-			}
-			NOR = {
-				has_origin = origin_sacred_path
-				has_origin = origin_heirs_of_the_khan
-				has_origin = origin_heirs_of_the_khan_corporate
-				has_origin = origin_forever_cruise
-			}
-		}
-		AND = {
-			has_origin = origin_forever_cruise
-			has_country_flag = forever_cruise_planetfall
-		}
 	}
 }
 
@@ -446,5 +424,147 @@ subject_overlord_opposing_ethics = {
 		subject_industrial_overlord_opposing = yes
 		subject_socialism_overlord_opposing = yes
 		subject_capitalism_overlord_opposing = yes
+	}
+}
+
+##################
+# Nomad Triggers #
+##################
+
+# Country scope trigger
+# NOTE: Any time you update this trigger, update the can_nomad_settle game rule as well
+nomad_can_settle_trigger = {
+	has_nomads_dlc = yes
+	OR = {
+		AND = {
+			OR = {
+				has_tradition = tr_adaptability_finish
+				has_tradition = tr_versatility_finish
+			}
+			NOR = {
+				has_origin = origin_sacred_path
+				has_origin = origin_heirs_of_the_khan
+				has_origin = origin_heirs_of_the_khan_corporate
+				has_origin = origin_forever_cruise
+			}
+		}
+		AND = {
+			has_origin = origin_forever_cruise
+			has_country_flag = forever_cruise_planetfall
+		}
+	}
+}
+
+# Country scope.
+prefers_civilian_arkship = {
+	OR = {
+		# Scripted Triggers
+		is_caravan_masters_empire = yes
+		is_deep_sleep_country = yes
+		is_scavenger = yes
+		is_relentless_industrialist_empire = yes
+		is_utopic_gov = yes
+		AND = {
+			is_plutocracy = yes
+			is_materialist = no
+			is_militarist = no
+		}
+		AND = {
+			is_anarchist_empire = yes
+			is_pacifist = yes
+		}
+		AND = {
+			is_theocracy = yes
+			is_militarist = no
+		}
+		# Machine
+		has_valid_civic = civic_machine_astromining_drones
+	}
+}
+
+prefers_science_arkship = {
+	OR = {
+		# Scripted Triggers
+		is_hyperspace_specialty_empire = yes
+		is_dimensional_worship_empire = yes
+		is_dark_consortium_empire = yes
+		is_astrometeorologist_empire = yes
+		is_galactic_curators_empire = yes
+		is_star_seeker_empire = yes
+		is_technocracy = yes
+		AND = {
+			is_plutocracy = yes
+			is_materialist = yes
+			is_militarist = no
+		}
+		# Standard
+		has_valid_civic = civic_individual_machine_predictive_analysis
+		# Hive
+		has_valid_civic = civic_hive_subspace_ephapse
+		has_valid_civic = civic_hive_natural_neural_network
+		# Machine
+		has_valid_civic = civic_machine_predictive_analysis
+	}
+}
+
+prefers_military_arkship = {
+	OR = {
+		# Scripted Triggers
+		is_unfriendly = yes # Includes Genocidal civics & Barbaric Despoilers
+		is_crusader_empire = yes
+		is_flight_schools_empire = yes
+		is_hired_guns_empire = yes
+		is_pirate_empire = yes
+		is_stratocracy = yes
+		AND = {
+			is_plutocracy = yes
+			is_materialist = no
+			is_militarist = yes
+		}
+		AND = {
+			is_anarchist_empire = yes
+			is_pacifist = no
+		}
+		AND = {
+			is_theocracy = yes
+			is_militarist = yes
+		}
+		# Standard
+		has_valid_civic = civic_nationalistic_zeal
+		has_valid_civic = civic_warrior_culture
+		has_valid_civic = civic_distinguished_admiralty
+		# Corporate
+		has_valid_civic = civic_naval_contractors
+		has_valid_civic = civic_private_military_companies
+		# Hive
+		has_valid_civic = civic_hive_strength_of_legions
+		# Machine
+		has_valid_civic = civic_machine_warbots
+	}
+}
+
+can_build_defensive_waystation_module = { #scope = starbase
+	owner = {
+		OR = {
+			is_pirate_empire = yes
+			is_stratocracy = yes
+			has_country_flag = sacred_path_embrace_chaos
+		}
+	}
+}
+
+can_build_pirate_waystation_module = { #scope = starbase
+	owner = {
+		is_pirate_empire = yes
+	}
+}
+
+can_build_hostile_waystation_module = { #scope = starbase
+	owner = {
+		OR = {
+			is_pirate_empire = yes
+			is_stratocracy = yes
+			has_country_flag = sacred_path_embrace_chaos
+		}
 	}
 }

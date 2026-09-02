@@ -1,9 +1,50 @@
+crew_quarters = {
+	icon = "GFX_spaceport_module_crew_quarters"
+	construction_days = 180
+	category = sm_naval_support_cat
+
+	initial = yes
+
+	potential = {
+		owner = { has_technology = tech_primitive_space_age_weapons }
+		OR = {
+			is_normal_starbase = yes
+			is_orbital_ring = yes
+			is_space_citadel = yes
+		}
+	}
+
+	resources = {
+		category = starbase_buildings
+		cost = {
+			alloys = 50
+		}
+
+		upkeep = {
+			energy = 1
+		}
+	}
+
+	orbit_modifier = {
+		ship_orbit_upkeep_mult = -0.25
+	}
+	
+	show_in_tech = "tech_primitive_space_age_weapons"
+
+	ai_weight = {
+		weight = 100 #use same weight here - ai weighting is done in starbase_types.txt
+	}
+}
+
 resource_silo = {
 	icon = "GFX_spaceport_module_resource_silo"
 	construction_days = 180
 
 	potential = {
-		is_space_citadel = no
+		OR = {
+			is_normal_starbase = yes
+			is_orbital_ring = yes
+		}
 		owner = { has_technology = tech_space_international_space_station }
 	}
 
@@ -33,40 +74,8 @@ resource_silo = {
 		}
 		country_resource_max_add = 10000
 	}
-	
+
 	show_in_tech = "tech_space_international_space_station"
-
-	ai_weight = {
-		weight = 100 #use same weight here - ai weighting is done in starbase_types.txt
-	}
-}
-
-crew_quarters = {
-	icon = "GFX_spaceport_module_crew_quarters"
-	construction_days = 180
-
-	initial = yes
-	
-	potential = {
-		owner = { has_technology = tech_primitive_space_age_weapons }
-	}
-
-	resources = {
-		category = starbase_buildings
-		cost = {
-			alloys = 50
-		}
-
-		upkeep = {
-			energy = 1
-		}
-	}
-
-	orbit_modifier = {
-		ship_orbit_upkeep_mult = -0.25
-	}
-	
-	show_in_tech = "tech_primitive_space_age_weapons"
 
 	ai_weight = {
 		weight = 100 #use same weight here - ai weighting is done in starbase_types.txt
@@ -76,10 +85,15 @@ crew_quarters = {
 communications_jammer = {
 	icon = "GFX_starbase_communication_jammer"
 	construction_days = 180
+	category = sm_aura_cat
 
 	potential = {
-		is_space_citadel = no
+		exists = owner
 		owner = { has_technology = tech_primitive_quantum_electronics_theory }
+		OR = {
+			is_normal_starbase = yes
+			is_orbital_ring = yes
+		}
 	}
 
 	possible = {
@@ -132,10 +146,15 @@ communications_jammer = {
 disruption_field = {
 	icon = "GFX_spaceport_module_orbital_mind_control_lazer"
 	construction_days = 180
+	category = sm_aura_cat
 
 	potential = {
-		is_space_citadel = no
+		exists = owner
 		owner = { has_technology = tech_primitive_quantum_electronics_theory }
+		OR = {
+			is_normal_starbase = yes
+			is_orbital_ring = yes
+		}
 	}
 
 	possible = {
@@ -188,10 +207,16 @@ disruption_field = {
 target_uplink_computer = {
 	icon = "GFX_spaceport_synchronized_defenses"
 	construction_days = 360
+	category = sm_defense_cat
 
 	potential = {
 		exists = owner
 		owner = { has_technology = tech_primitive_ai_computing_technology }
+		OR = {
+			is_normal_starbase = yes
+			is_orbital_ring = yes
+			is_space_citadel = yes
+		}
 	}
 
 	possible = {
@@ -234,6 +259,7 @@ target_uplink_computer = {
 mercenary_garrison = {
 	icon = "GFX_starbase_mercenary_garrison"
 	construction_days = 360
+	category = sm_enclave_cat
 
 	potential = {
 		exists = owner
@@ -241,8 +267,10 @@ mercenary_garrison = {
 			is_homicidal = no
 			has_country_flag = mercenary_enclave_diplomacy_engaged
 		}
-		is_normal_starbase = yes
-		is_space_citadel = no
+		OR = {
+			is_normal_starbase = yes
+			is_orbital_ring = yes
+		}
 	}
 
 	possible = {
@@ -307,7 +335,8 @@ mercenary_garrison = {
 		}
 
 		upkeep = {
-			energy = 20
+			energy = 10
+			trade = 5
 		}
 	}
 
@@ -316,25 +345,25 @@ mercenary_garrison = {
 	}
 }
 
-pirate_mercenary_garrison = {
-	icon = "GFX_starbase_mercenary_garrison"
+pirate_mercenary_garrison = { # See Z_EaC_civic_mechanic_events.205 
+	icon = "GFX_waystation_pirate_hideout"
 	construction_days = 360
+	category = sm_enclave_cat
 
 	potential = {
 		exists = owner
 		owner = {
 			is_homicidal = no
+			is_nomadic = no
 			has_country_flag = mercenary_enclave_diplomacy_engaged
 		}
-		is_normal_starbase = yes
-		is_space_citadel = no
+		OR = {
+			is_normal_starbase = yes
+			is_orbital_ring = yes
+		}
 	}
 
 	possible = {
-		custom_tooltip = {
-			fail_text = "requires_starport"
-			has_starbase_size >= starbase_starport
-		}
 		custom_tooltip = {
 			fail_text = "requires_starport"
 			has_starbase_size >= starbase_starport
@@ -414,29 +443,29 @@ pirate_mercenary_garrison = {
 				solar_system = {
 					has_star_flag = EaC_civic_mechanic_events.pirate_enclave.star_flag
 				}
+				is_nomadic = no
 			}
 		}
-		planet_stability_add = 20
+		planet_stability_add = 10
 	}
-	
+
 	# Not Pirate Lord or Criminal Heritage
 	triggered_system_modifier = {
 		potential = {
 			exists = owner
 			owner = {
-				NOT = {
+				NOR = {
 					has_valid_civic = civic_military_dictatorship_corporate 
 					has_valid_civic = civic_criminal_heritage
 				}
 				solar_system = {
 					NOT = { has_star_flag = EaC_civic_mechanic_events.pirate_enclave.star_flag }
 				}
+				is_nomadic = no
 			}
 		}
-		planet_stability_add = -10
+		planet_stability_add = -5
 	}
-	
-	
 
 	resources = {
 		category = starbase_buildings
@@ -445,13 +474,16 @@ pirate_mercenary_garrison = {
 		}
 
 		upkeep = {
-			energy = 20
+			trade = 10
+			alloys = 3
+			energy = 5
 		}
 		
 		produces = {
 			trigger = {
 				hidden_trigger = { exists = this }
 				has_starbase_module = trading_hub
+				is_nomadic = no
 			}
 			trade = 2
 			mult = value:num_starbase_modules_of_type|TYPE|trading_hub|
@@ -466,6 +498,7 @@ pirate_mercenary_garrison = {
 offworld_trading_company = {
 	icon = "GFX_starbase_offworld_trading_company"
 	construction_days = 360
+	category = sm_economy_cat
 	
 	potential = {
 		exists = owner
@@ -474,7 +507,6 @@ offworld_trading_company = {
 			is_gestalt = no
 		}
 		is_normal_starbase = yes
-		is_space_citadel = no
 	}
 
 	possible = {
@@ -495,6 +527,9 @@ offworld_trading_company = {
 		category = starbase_buildings
 		cost = {
 			alloys = 100
+		}
+		upkeep = {
+			energy = 1
 		}
 
 		produces = {
@@ -519,96 +554,6 @@ offworld_trading_company = {
 		}
 	}
 
-	#triggered_station_modifier = {		#All of the following modifiers are covered by the above resource multipliers
-	#	potential = {
-	#		exists = owner
-	#		owner = {
-	#			has_valid_civic = civic_corporate_dominion
-	#		}
-	#	}
-	#	planet_jobs_trade_produces_add = 4
-	#}
-	#
-	#triggered_station_modifier = {
-	#	potential = {
-	#		hidden_trigger = { exists = this }
-	#		count_starbase_modules = {
-	#			type = trading_hub
-	#			count >= 1
-	#		}
-	#		count_starbase_modules = {
-	#			type = trading_hub
-	#			count < 2
-	#		}
-	#	}
-	#	planet_jobs_trade_produces_add = 2
-	#}
-	#triggered_station_modifier = {
-	#	potential = {
-	#		hidden_trigger = { exists = this }
-	#		count_starbase_modules = {
-	#			type = trading_hub
-	#			count >= 2
-	#		}
-	#		count_starbase_modules = {
-	#			type = trading_hub
-	#			count < 3
-	#		}
-	#	}
-	#	planet_jobs_trade_produces_add = 4
-	#}
-	#triggered_station_modifier = {
-	#	potential = {
-	#		hidden_trigger = { exists = this }
-	#		count_starbase_modules = {
-	#			type = trading_hub
-	#			count >= 3
-	#		}
-	#		count_starbase_modules = {
-	#			type = trading_hub
-	#			count < 4
-	#		}
-	#	}
-	#	planet_jobs_trade_produces_add = 6
-	#}
-	#triggered_station_modifier = {
-	#	potential = {
-	#		hidden_trigger = { exists = this }
-	#		count_starbase_modules = {
-	#			type = trading_hub
-	#			count >= 4
-	#		}
-	#		count_starbase_modules = {
-	#			type = trading_hub
-	#			count < 5
-	#		}
-	#	}
-	#	planet_jobs_trade_produces_add = 8
-	#}
-	#triggered_station_modifier = {
-	#	potential = {
-	#		hidden_trigger = { exists = this }
-	#		count_starbase_modules = {
-	#			type = trading_hub
-	#			count >= 5
-	#		}
-	#		count_starbase_modules = {
-	#			type = trading_hub
-	#			count < 6
-	#		}
-	#	}
-	#	planet_jobs_trade_produces_add = 10
-	#}
-	#triggered_station_modifier = {
-	#	potential = {
-	#		hidden_trigger = { exists = this }
-	#		count_starbase_modules = {
-	#			type = trading_hub
-	#			count >= 6
-	#		}
-	#	}
-	#	planet_jobs_trade_produces_add = 12
-	#}
 	# Pirate Enclave
 	triggered_system_modifier = {
 		potential = {
@@ -624,7 +569,7 @@ offworld_trading_company = {
 			}
 		}
 		show_only_custom_tooltip = no
-		pop_ethic_xenophile_attraction_mult = 0.10
+		pop_ethic_capitalism_attraction_mult = 0.10
 		custom_tooltip = "EaC_civic_mechanic_events.pirate_enclave.offworld_trading_company.desc"
 		
 	}
@@ -641,7 +586,13 @@ offworld_trading_company = {
 		}
 		custom_tooltip = "sm_offworld_trading_company_desc_modifier"
 	}
-	
+
+	show_in_tech = "tech_space_trading"
+
+	show_tech_unlock_if = {
+		is_nomadic = no
+	}
+
 	on_finished = {
 		fleet = {
 			fleet_event = { id = EaC_civic_mechanic_events.2090 }
@@ -662,9 +613,17 @@ offworld_trading_company = {
 		weight = 100 # use same weight here - ai weighting is done in starbase_types.txt
 		modifier = {
 			factor = 0
-			count_starbase_modules = {
-				type = trading_hub
-				count < 3
+			OR = {
+				count_starbase_modules = {
+					type = trading_hub
+					count < 3
+				}
+				solar_system = {
+					any_system_planet_colony = {
+						exists = owner
+						NOT = { has_trade_designation = yes }
+					}
+				}
 			}
 		}
 	}

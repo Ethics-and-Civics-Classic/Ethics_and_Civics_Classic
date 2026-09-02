@@ -12,7 +12,6 @@ ethic_fanatic_authoritarian = {
 		job_enforcer_per_pop = 0.06
 		ruler_skill_levels = 2
 		country_energy_produces_mult = -0.05
-		# planet_jobs_worker_produces_mult = 0.1		# Vanilla
 		add_attunement_the_instrument_of_desire = @ethic_attunement2
 	}
 
@@ -72,7 +71,6 @@ ethic_authoritarian = {
 		desc = POP_ATTRACTION_FACTION_POS
 		trigger = {
 			is_authoritarian = no
-
 			has_faction = totalitarian
 		}
 	}
@@ -100,7 +98,8 @@ ethic_authoritarian = {
 		desc = POP_ATTRACTION_XENO_SLAVES_POS
 		trigger = {
 			any_enslaved_species = {
-				NOR = { is_same_species = root is_robotic = yes }
+				NOT = { is_same_species = root }
+				is_robotic = no
 			}
 			NOT = {
 				any_enslaved_species = {
@@ -249,14 +248,18 @@ ethic_authoritarian = {
 			factor = 0
 			NOR = {
 				is_country_type = default
-				is_authoritarian = yes
+				has_ethic = ethic_authoritarian
+				has_ethic = ethic_fanatic_authoritarian
 				AND = {
-					is_primitive = yes
+					is_country_type = primitive
 					has_country_flag = preftl_societal_enlightenment_pact
 					capital_scope = {
 						has_observation_outpost = yes
 						observation_outpost_owner = {
-							is_authoritarian = yes
+							OR = {
+								has_ethic = ethic_fanatic_authoritarian
+								has_ethic = ethic_authoritarian
+							}
 						}
 					}
 				}
@@ -364,7 +367,8 @@ ethic_authoritarian = {
 			is_enslaved = no
 			from = {
 				any_enslaved_species = {
-					NOR = { is_same_species = root is_robotic = yes }
+					NOT = { is_same_species = root }
+					is_robotic = no
 				}
 				NOT = {
 					any_enslaved_species = {
@@ -389,7 +393,8 @@ ethic_authoritarian = {
 		}
 		modifier = {
 			factor = 1.25
-			NOR = { is_enslaved = yes is_pop_category = worker }
+			is_enslaved = no
+			NOT = { is_pop_category = worker }
 			OR = {
 				AND = {
 					NOT = { is_pop_category = worker }
@@ -409,12 +414,9 @@ ethic_authoritarian = {
 				has_living_standard = { type = living_standard_good }
 				has_living_standard = { type = living_standard_shared_burden }
 				has_living_standard = { type = living_standard_worker_ownership }
+				has_living_standard = { type = living_standard_community_labor }
 			}
 		}
-		# modifier = {
-		#	factor = 2
-		#	has_job_type = noble		# No Longer Used in Stellaris 4.0
-		#}
 	}
 }
 
@@ -437,10 +439,8 @@ ethic_fanatic_egalitarian = {
 	country_modifier = {
 		pop_factions_produces_mult = 0.5				# Vanilla
 		empire_size_systems_mult = -0.5
-		# country_leader_pool_size = 2
 		pop_ethics_shift_speed_mult = 0.2
 		planet_stability_add = -5
-		# planet_jobs_specialist_produces_mult = 0.1		# Vanilla
 		add_attunement_the_composer_of_strands = @ethic_attunement2
 	}
 
@@ -484,9 +484,7 @@ ethic_egalitarian = {
 	country_modifier = {
 		pop_factions_produces_mult = 0.25				# Vanilla
 		empire_size_systems_mult = -0.25
-		# country_leader_pool_size = 1
 		pop_ethics_shift_speed_mult = 0.1
-		# planet_jobs_specialist_produces_mult = 0.05	# Vanilla
 		add_attunement_the_composer_of_strands = @ethic_attunement1
 	}
 
@@ -519,6 +517,7 @@ ethic_egalitarian = {
 					has_living_standard = { type = living_standard_good country = root }
 					has_living_standard = { type = living_standard_shared_burden country = root }
 					has_living_standard = { type = living_standard_worker_ownership country = root }
+					has_living_standard = { type = living_standard_community_labor country = root }
 				}
 			}
 		}
@@ -546,10 +545,10 @@ ethic_egalitarian = {
 		desc = POP_ATTRACTION_UTOPIAN_CITIZENSHIP_POS
 		trigger = {
 			any_owned_species = {
-				NOR = { is_robotic = yes is_same_species = root }
+				is_robotic = no
+				NOT = { is_same_species = root }
 			}
 			count_owned_species = {
-				count = 0
 				limit = {
 					is_sapient = yes
 					is_robotic = no
@@ -557,6 +556,7 @@ ethic_egalitarian = {
 						has_citizenship_type = { type = citizenship_full country = root }
 					}
 				}
+				count = 0
 			}
 		}
 	}
@@ -597,8 +597,10 @@ ethic_egalitarian = {
 		desc = POP_ATTRACTION_DECADENT_NEG
 		trigger = {
 			any_owned_species = {
-				has_trait = "trait_decadent"
-				has_trait = "trait_robot_decadent"
+				OR = {
+					has_trait = "trait_decadent"
+					has_trait = "trait_robot_decadent"
+				}
 			}
 		}
 	}
@@ -656,14 +658,18 @@ ethic_egalitarian = {
 			factor = 0
 			NOR = {
 				is_country_type = default
-				is_egalitarian = yes
+				has_ethic = ethic_egalitarian
+				has_ethic = ethic_fanatic_egalitarian
 				AND = {
 					is_primitive = yes
 					has_country_flag = preftl_societal_enlightenment_pact
 					capital_scope = {
 						has_observation_outpost = yes
 						observation_outpost_owner = {
-							is_egalitarian = yes
+							OR = {
+								has_ethic = ethic_fanatic_egalitarian
+								has_ethic = ethic_egalitarian
+							}
 						}
 					}
 				}
@@ -720,10 +726,10 @@ ethic_egalitarian = {
 		modifier = {
 			factor = 1.25
 			any_owned_species = {
-				NOR = { is_robotic = yes is_same_species = root }
+				is_robotic = no
+				NOT = { is_same_species = root }
 			}
 			count_owned_species = {
-				count = 0
 				limit = {
 					is_sapient = yes
 					is_robotic = no
@@ -731,6 +737,7 @@ ethic_egalitarian = {
 						has_citizenship_type = { type = citizenship_full country = root }
 					}
 				}
+				count = 0
 			}
 		}
 
@@ -791,12 +798,9 @@ ethic_egalitarian = {
 				has_living_standard = { type = living_standard_good }
 				has_living_standard = { type = living_standard_shared_burden }
 				has_living_standard = { type = living_standard_worker_ownership }
+				has_living_standard = { type = living_standard_community_labor }
 			}
 		}
-		# modifier = {
-		#	factor = 0.1
-		#	has_job_type = noble		# No Longer Used in Stellaris 4.0
-		#}
 	}
 }
 
@@ -805,7 +809,7 @@ ethic_fanatic_xenophobe = {
 	category = "xen"
 	category_value = 0
 
-	xenophobe = yes # Used for a few hardcoded checks (mainly tooltips)
+	xenophobe = yes #used for a few hardcoded checks (mainly tooltips)
 
 	use_for_pops = no
 
@@ -818,7 +822,6 @@ ethic_fanatic_xenophobe = {
 		ETHIC_NEVER_ALIEN_CITIZENSHIP
 		ETHIC_NEVER_ALIEN_MILITARY_SERVICE
 		ETHIC_NO_REFUGEES
-		# NATIONAL_SECURITY
 	}
 
 	country_modifier = {
@@ -826,30 +829,24 @@ ethic_fanatic_xenophobe = {
 		rivalries_influence_produces_mult = 0.3
 		tradition_cost_empire_size_mult = -0.4
 		diplomacy_upkeep_mult = 0.25
-		# country_starbase_influence_cost_mult = -0.4	# Vanilla
 		add_attunement_the_eater_of_worlds = @ethic_attunement2
 		refugee_attraction = -0.30
 	}
-    triggered_country_modifier = {
-        potential = {
-            is_nomadic = no
-        }
-        country_starbase_influence_cost_mult = -0.4
-		ship_home_territory_fire_rate_mult = 0.2
-    }
-    triggered_country_modifier = {
-        potential = {
-            is_nomadic = yes
-        }
-        megastructures_arkships_influence_cost_mult = -0.1
-    }
-    random_weight = {
-        base = 150
-        modifier = {
-            factor = 0.2
-            blocks_disruptive_gameplay = yes
-        }
-    }
+
+	triggered_country_modifier = {
+		potential = {
+			is_nomadic = no
+		}
+		country_starbase_influence_cost_mult = -0.4
+	}
+
+	triggered_country_modifier = {
+		potential = {
+			is_nomadic = yes
+		}
+		megastructures_arkships_influence_cost_mult = -0.1
+	}
+
 	random_weight = {
 		base = 150
 		modifier = {
@@ -864,7 +861,7 @@ ethic_xenophobe = {
 	category = "xen"
 	category_value = 1
 
-	xenophobe = yes # Used for a few hardcoded checks (mainly tooltips)
+	xenophobe = yes #used for a few hardcoded checks (mainly tooltips)
 
 	fanatic_variant = ethic_fanatic_xenophobe
 
@@ -875,14 +872,12 @@ ethic_xenophobe = {
 		ETHIC_NEVER_ALIEN_CITIZENSHIP
 		ETHIC_NEVER_ALIEN_MILITARY_SERVICE
 		ETHIC_NO_REFUGEES
-		# NATIONAL_SECURITY
 	}
 
 	country_modifier = {
 		founder_species_growth_mult = 0.10				# Vanilla
 		rivalries_influence_produces_mult = 0.15
 		tradition_cost_empire_size_mult = -0.2
-		# country_starbase_influence_cost_mult = -0.2	# Vanilla
 		add_attunement_the_eater_of_worlds = @ethic_attunement1
 		refugee_attraction = -0.15
 	}
@@ -892,7 +887,6 @@ ethic_xenophobe = {
 			is_nomadic = no
 		}
 		country_starbase_influence_cost_mult = -0.2
-		ship_home_territory_fire_rate_mult = 0.1
 	}
 
 	triggered_country_modifier = {
@@ -962,7 +956,8 @@ ethic_xenophobe = {
 					has_trait = "trait_repugnant"
 				}
 				any_owned_pop_group = {
-					NOR = { has_trait = "trait_repugnant" is_non_sapient_robot = yes }
+					NOT = { has_trait = "trait_repugnant" }
+					is_non_sapient_robot = no
 				}
 			}
 		}
@@ -976,7 +971,8 @@ ethic_xenophobe = {
 					has_trait = "trait_noxious"
 				}
 				any_owned_pop_group = {
-					NOR = { has_trait = "trait_noxious" is_non_sapient_robot = yes }
+					NOT = { has_trait = "trait_noxious" }
+					is_non_sapient_robot = no
 				}
 			}
 		}
@@ -986,7 +982,8 @@ ethic_xenophobe = {
 		desc = POP_ATTRACTION_XENO_SLAVES_POS
 		trigger = {
 			any_enslaved_species = {
-				NOR = { is_same_species = root is_robotic = yes }
+				not = { is_same_species = root }
+				is_robotic = no
 			}
 		}
 	}
@@ -1058,13 +1055,11 @@ ethic_xenophobe = {
 		desc = POP_ATTRACTION_FREE_XENOS_NEG
 		trigger = {
 			any_owned_pop_group = {
+				not = { is_same_species = root }
+				is_enslaved = no
+				is_being_purged = no
 				is_sapient = yes
-				NOR = {
-					is_same_species = root
-					is_enslaved = yes
-					is_being_purged = yes
-					is_robot_pop_group = yes
-				}
+				is_robot_pop_group = no
 			}
 		}
 	}
@@ -1124,14 +1119,18 @@ ethic_xenophobe = {
 			factor = 0
 			NOR = {
 				is_country_type = default
-				is_xenophobe = yes
+				has_ethic = ethic_xenophobe
+				has_ethic = ethic_fanatic_xenophobe
 				AND = {
-					is_primitive = yes
+					is_country_type = primitive
 					has_country_flag = preftl_societal_enlightenment_pact
 					capital_scope = {
 						has_observation_outpost = yes
 						observation_outpost_owner = {
-							is_xenophobe = yes
+							OR = {
+								has_ethic = ethic_fanatic_xenophobe
+								has_ethic = ethic_xenophobe
+							}
 						}
 					}
 				}
@@ -1225,7 +1224,7 @@ ethic_xenophobe = {
 		}
 		modifier = {
 			factor = 10
-			is_primitive = yes
+			is_country_type = primitive
 			has_country_flag = preftl_societal_enlightenment_pact
 			capital_scope = {
 				has_observation_outpost = yes
@@ -1239,7 +1238,7 @@ ethic_xenophobe = {
 		}
 	}
 
-	# from = planet
+	#from = planet
 	pop_attraction = {
 		base = 1
 
@@ -1264,7 +1263,8 @@ ethic_xenophobe = {
 			is_being_purged = no
 			from = {
 				any_enslaved_species = {
-					NOR = { is_same_species = root is_robotic = yes }
+					not = { is_same_species = root }
+					is_robotic = no
 				}
 			}
 		}
@@ -1274,13 +1274,11 @@ ethic_xenophobe = {
 			is_being_purged = no
 			from = {
 				any_owned_pop_group = {
+					not = { is_same_species = root }
+					is_enslaved = no
+					is_being_purged = no
 					is_sapient = yes
-					NOR = {
-						is_same_species = root
-						is_enslaved = yes
-						is_being_purged = yes
-						is_robot_pop_group = yes
-					}
+					is_robot_pop_group = no
 				}
 			}
 		}
@@ -1311,7 +1309,7 @@ ethic_fanatic_xenophile = {
 	category = "xen"
 	category_value = 4
 
-	xenophile = yes # Used for a few hardcoded checks (mainly tooltips)
+	xenophile = yes #used for a few hardcoded checks (mainly tooltips)
 
 	category_opposite = yes
 
@@ -1349,7 +1347,7 @@ ethic_xenophile = {
 	category = "xen"
 	category_value = 3
 
-	xenophile = yes # Used for a few hardcoded checks (mainly tooltips)
+	xenophile = yes #used for a few hardcoded checks (mainly tooltips)
 
 	category_opposite = yes
 
@@ -1402,13 +1400,14 @@ ethic_xenophile = {
 		trigger = {
 			any_owned_planet = {
 				any_owned_pop_group = {
+					not = { is_same_species = root }
+					is_enslaved = no
+					is_being_purged = no
 					is_sapient = yes
-					NOR = {
-						is_same_species = root
-						is_enslaved = yes
-						is_being_purged = yes
-						is_robot_pop_group = yes
-						has_trait = trait_syncretic_proles
+					is_robot_pop_group = no
+					NOR = { 
+						has_trait = trait_syncretic_proles 
+						has_trait = trait_slave_gene
 					}
 				}
 			}
@@ -1419,7 +1418,8 @@ ethic_xenophile = {
 		desc = POP_ATTRACTION_XENO_DIPLOMACY_POS
 		trigger = {
 			any_relation = {
-				NOR = { is_same_species = root is_subject = yes }
+				NOT = { is_same_species = root }
+				is_subject = no
 				OR = {
 					is_in_federation_with = root
 					has_defensive_pact = root
@@ -1448,7 +1448,8 @@ ethic_xenophile = {
 					has_trait = "trait_charismatic"
 				}
 				any_owned_pop_group = {
-					NOR = { has_trait = "trait_charismatic" is_non_sapient_robot = yes }
+					NOT = { has_trait = "trait_charismatic" }
+					is_non_sapient_robot = no
 				}
 			}
 		}
@@ -1586,14 +1587,18 @@ ethic_xenophile = {
 			factor = 0
 			NOR = {
 				is_country_type = default
-				is_xenophile = yes
+				has_ethic = ethic_xenophile
+				has_ethic = ethic_fanatic_xenophile
 				AND = {
-					is_primitive = yes
+					is_country_type = primitive
 					has_country_flag = preftl_societal_enlightenment_pact
 					capital_scope = {
 						has_observation_outpost = yes
 						observation_outpost_owner = {
-							is_xenophile = yes
+							OR = {
+								has_ethic = ethic_fanatic_xenophile
+								has_ethic = ethic_xenophile
+							}
 						}
 					}
 				}
@@ -1602,7 +1607,7 @@ ethic_xenophile = {
 		modifier = {
 			factor = 2
 			is_country_type = default
-				is_xenophile = no
+			is_xenophile = no
 			has_faction = xenoist
 		}
 		modifier = {
@@ -1708,20 +1713,23 @@ ethic_xenophile = {
 		}
 		modifier = {
 			factor = 2
-			NOR = { is_same_species = root has_citizenship_rights = yes is_enslaved = yes }
+			NOT = { is_same_species = root }
+			has_citizenship_rights = no
+			is_enslaved = no
 		}
 		modifier = {
 			factor = 2.0
 			is_enslaved = no
 			fromfrom = {
 				any_owned_pop_group = {
+					NOT = { is_same_species = root }
+					is_enslaved = no
+					is_being_purged = no
 					is_sapient = yes
+					is_robot_pop_group = no
 					NOR = {
-						is_same_species = root
-						is_enslaved = yes
-						is_being_purged = yes
-						is_robot_pop_group = yes
-						has_trait = trait_syncretic_proles
+						has_trait = trait_syncretic_proles 
+						has_trait = trait_slave_gene
 					}
 				}
 			}
@@ -1773,20 +1781,21 @@ ethic_fanatic_militarist = {
 		add_attunement_the_eater_of_worlds = @ethic_attunement2
 	}
 
-    triggered_country_modifier = {
-        potential = {
-            is_nomadic = no
-        }
-        country_claim_influence_cost_mult = -0.2
-    }
-    triggered_country_modifier = {
-        potential = {
-            is_nomadic = yes
-        }
-        scavenge_debris_mult = 0.1
-    }
+	triggered_country_modifier = {
+		potential = {
+			is_nomadic = no
+		}
+		country_claim_influence_cost_mult = -0.2
+	}
 
-	# More common ethic
+	triggered_country_modifier = {
+		potential = {
+			is_nomadic = yes
+		}
+		scavenge_debris_mult = 0.1
+	}
+
+	# more common ethic
 	random_weight = {
 		base = 250
 	}
@@ -1817,19 +1826,22 @@ ethic_militarist = {
 		max_rivalries = 1
 		add_attunement_the_eater_of_worlds = @ethic_attunement1
 	}
+
 	triggered_country_modifier = {
 		potential = {
 			is_nomadic = no
 		}
 		country_claim_influence_cost_mult = -0.1
 	}
+
 	triggered_country_modifier = {
 		potential = {
 			is_nomadic = yes
 		}
 		scavenge_debris_mult = 0.05
 	}
-	# More common ethic
+
+	# more common ethic
 	random_weight = {
 		base = 150
 	}
@@ -2046,7 +2058,7 @@ ethic_militarist = {
 		}
 	}
 
-	# Cybercreed War
+	#Cybercreed War
 	pop_attraction_tag = {
 		desc = POP_ATTRACTION_CYBER_CREED_WAR
 		trigger = {
@@ -2063,14 +2075,18 @@ ethic_militarist = {
 			factor = 0
 			NOR = {
 				is_country_type = default
-				is_militarist = yes
+				has_ethic = ethic_militarist
+				has_ethic = ethic_fanatic_militarist
 				AND = {
-					is_primitive = yes
+					is_country_type = primitive
 					has_country_flag = preftl_societal_enlightenment_pact
 					capital_scope = {
 						has_observation_outpost = yes
 						observation_outpost_owner = {
-							is_militarist = yes
+							OR = {
+								has_ethic = ethic_fanatic_militarist
+								has_ethic = ethic_militarist
+							}
 						}
 					}
 				}
@@ -2214,7 +2230,7 @@ ethic_militarist = {
 			}
 		}
 		modifier = {
-			factor = 2 # If the empire is losing planets, militarism should increase
+			factor = 2 #If the empire is losing planets, militarism should increase
 			any_relation = {
 				any_owned_planet = {
 					is_original_owner = root
@@ -2231,7 +2247,7 @@ ethic_militarist = {
 			factor = value:count_councilors_with_ethic|ETHIC|militarist|
 		}
 
-		# Cyber Creed War
+		#Cyber Creed War
 		modifier = {
 			factor = 1
 			is_country_type = default
@@ -2276,14 +2292,6 @@ ethic_militarist = {
 				NOT = { is_controlled_by = from.owner }
 			}
 		}
-		# modifier = {
-		#	factor = 2
-		#	has_job_type = duelist	# No Longer Used in Stellaris 4.0
-		#}
-		# modifier = {
-		#	factor = 1.25
-		#	has_job_type = soldier	# No Longer Used in Stellaris 4.0
-		#}
 	}
 }
 
@@ -2311,11 +2319,10 @@ ethic_fanatic_pacifist = {
 		country_naval_cap_mult = -0.15
 		add_attunement_the_cradle_of_souls = @ethic_attunement2
 		the_eater_of_worlds_attunement_mult = -0.35
-
 	}
 
 	random_weight = {
-		base = 33		# Rare ethic
+		base = 33		# rare ethic
 	}
 }
 
@@ -2333,6 +2340,7 @@ ethic_pacifist = {
 		unifier = 25
 		entertainer = 25
 		artisan = 25
+		educator = 100
 	}
 
 	country_modifier = {
@@ -2342,7 +2350,6 @@ ethic_pacifist = {
 		country_border_friction_mult = -0.2
 		add_attunement_the_cradle_of_souls = @ethic_attunement1
 		the_eater_of_worlds_attunement_mult = -0.25
-
 	}
 
 	tags = {
@@ -2351,7 +2358,7 @@ ethic_pacifist = {
 	}
 
 	random_weight = {
-		base = 66	# Uncommon ethic
+		base = 66	# uncommon ethic
 	}
 
 	pop_attraction_tag = {
@@ -2493,14 +2500,18 @@ ethic_pacifist = {
 			factor = 0
 			NOR = {
 				is_country_type = default
-				is_pacifist = yes
+				has_ethic = ethic_pacifist
+				has_ethic = ethic_fanatic_pacifist
 				AND = {
-					is_primitive = yes
+					is_country_type = primitive
 					has_country_flag = preftl_societal_enlightenment_pact
 					capital_scope = {
 						has_observation_outpost = yes
 						observation_outpost_owner = {
-							is_pacifist = yes
+							OR = {
+								has_ethic = ethic_fanatic_pacifist
+								has_ethic = ethic_pacifist
+							}
 						}
 					}
 				}
@@ -2631,7 +2642,7 @@ ethic_pacifist = {
 			factor = 0.5
 			OR = {
 				has_citizenship_rights = yes
-				can_be_military_leader = yes
+				# can_be_military_leader = yes #
 			}
 			from = {
 				owner = {
@@ -2646,10 +2657,6 @@ ethic_pacifist = {
 				}
 			}
 		}
-		# modifier = {
-		#	factor = 0.1
-		#	has_job_type = duelist	# No Longer Used in Stellaris 4.0
-		#}
 	}
 }
 
@@ -2697,9 +2704,6 @@ ethic_spiritualist = {
 
 	leader_background_job_weight = {
 		high_priest = 25
-		priest = 25
-		death_priest = 25
-		druid = 25
 		telepath = 25
 		death_chronicler = 25
 		necro_apprentice = 25
@@ -2707,6 +2711,7 @@ ethic_spiritualist = {
 		mortal_initiate = 25
 		haruspex = 25
 		technophant = 25
+		bureaucrat = 25
 	}
 
 	country_modifier = {
@@ -2834,30 +2839,10 @@ ethic_spiritualist = {
 	pop_attraction_tag = {
 		desc = POP_ATTRACTION_PRIESTS_POS
 		trigger = {
-			OR = {
-				num_assigned_jobs = {
-					job = priest
-					value > 0
-				}
-				num_assigned_jobs = {
-					job = high_priest
-					value > 0
-				}
-				num_assigned_jobs = {
-					job = death_priest
-					value > 0
-				}
-				num_assigned_jobs = {
-					job = preacher
-					value > 0
-				}
-				AND = {			# Enriad - 4.0 priests are bureaucrats, but previous code can be useful
-					is_spiritualist = yes
-					num_assigned_jobs = {
-						job = bureaucrat
-						value > 0
-					}
-				}
+			is_spiritualist = yes
+			num_assigned_jobs = {
+				job = bureaucrat
+				value > 0
 			}
 		}
 	}
@@ -2929,14 +2914,18 @@ ethic_spiritualist = {
 			factor = 0
 			NOR = {
 				is_country_type = default
-				is_spiritualist = yes
+				has_ethic = ethic_spiritualist
+				has_ethic = ethic_fanatic_spiritualist
 				AND = {
 					is_primitive = yes
 					has_country_flag = preftl_societal_enlightenment_pact
 					capital_scope = {
 						has_observation_outpost = yes
 						observation_outpost_owner = {
-							is_spiritualist = yes
+							OR = {
+								has_ethic = ethic_fanatic_spiritualist
+								has_ethic = ethic_spiritualist
+							}
 						}
 					}
 				}
@@ -3008,7 +2997,7 @@ ethic_spiritualist = {
 			is_country_type = default
 			OR = {
 				has_tradition = tr_psionics_psionic_assimilation
-				has_tradition = tr_psionics_shroud_great_awakening	
+				has_tradition = tr_psionics_shroud_great_awakening
 			}
 		}
 		modifier = {
@@ -3110,7 +3099,6 @@ ethic_fanatic_materialist = {
 		country_physics_tech_research_speed	= 0.15
 		country_engineering_tech_research_speed	= 0.15
 		pop_happiness = -0.05
-		# all_technology_research_speed = 0.10				# Vanilla
 		add_attunement_the_instrument_of_desire = @ethic_attunement2
 	}
 
@@ -3137,7 +3125,9 @@ ethic_materialist = {
 	leader_background_job_weight = {
 		head_researcher = 25
 		merchant = 25
-		researcher = 25
+		physicist = 25
+		biologist = 25
+		engineer = 25
 		chemist = 25
 		translucer = 25
 		gas_refiner = 25
@@ -3153,7 +3143,6 @@ ethic_materialist = {
 		planet_pops_robotics_upkeep_mult = -0.1				# Vanilla
 		country_physics_tech_research_speed	= 0.075
 		country_engineering_tech_research_speed	= 0.075
-		# all_technology_research_speed = 0.05				# Vanilla
 		add_attunement_the_instrument_of_desire = @ethic_attunement1
 	}
 
@@ -3266,30 +3255,10 @@ ethic_materialist = {
 	pop_attraction_tag = {
 		desc = POP_ATTRACTION_PRIESTS_NEG
 		trigger = {
-			OR = {
-				num_assigned_jobs = {
-					job = priest
-					value > 0
-				}
-				num_assigned_jobs = {
-					job = high_priest
-					value > 0
-				}
-				num_assigned_jobs = {
-					job = death_priest
-					value > 0
-				}
-				num_assigned_jobs = {
-					job = preacher
-					value > 0
-				}
-				AND = {			# Enriad - 4.0 priests are bureaucrats, but previous code can be useful
-					is_spiritualist = yes
-					num_assigned_jobs = {
-						job = bureaucrat
-						value > 0
-					}
-				}
+			is_spiritualist = yes
+			num_assigned_jobs = {
+				job = bureaucrat
+				value > 0
 			}
 		}
 	}
@@ -3341,7 +3310,7 @@ ethic_materialist = {
 		}
 	}
 
-	# Cybercreed Research
+	#Cybercreed Research
 	pop_attraction_tag = {
 		desc = POP_ATTRACTION_CYBER_CREED_RESEARCH
 		trigger = {
@@ -3357,14 +3326,18 @@ ethic_materialist = {
 			factor = 0
 			NOR = {
 				is_country_type = default
-				is_materialist = yes
+				has_ethic = ethic_materialist
+				has_ethic = ethic_fanatic_materialist
 				AND = {
 					is_primitive = yes
 					has_country_flag = preftl_societal_enlightenment_pact
 					capital_scope = {
 						has_observation_outpost = yes
 						observation_outpost_owner = {
-							is_materialist = yes
+							OR = {
+								has_ethic = ethic_fanatic_materialist
+								has_ethic = ethic_materialist
+							}
 						}
 					}
 				}
@@ -3392,7 +3365,7 @@ ethic_materialist = {
 		modifier = {
 			factor = 2
 			is_country_type = default
-				is_materialist = no
+			is_materialist = no
 			has_faction = technologist
 		}
 
@@ -3430,7 +3403,7 @@ ethic_materialist = {
 			factor = value:count_councilors_with_ethic|ETHIC|materialist|
 		}
 
-		# Cyber Creed Research
+		#Cyber Creed Research
 		modifier = {
 			factor = 1
 			is_country_type = default
@@ -3458,16 +3431,6 @@ ethic_materialist = {
 			factor = 0
 			has_trait = trait_hive_mind
 		}
-		# modifier = {
-		#	factor = 0.1
-		#	OR = {
-		#		has_job_type = priest		# No Longer Used in Stellaris 4.0
-		#		has_job_type = high_priest
-		#		has_job_type = death_priest
-		#		has_job_type = mortal_initiate
-		#		has_job_type = preacher
-		#	}
-		#}
 		modifier = {
 			factor = 2.0
 			is_robot_pop_group = yes
@@ -3503,7 +3466,7 @@ ethic_materialist = {
 }
 
 ethic_gestalt_consciousness = {
-	cost = 4	#Reduced to 3 to allow 2 "defining" Ethics # Cog Note - Reducing this to only allowing 1 defining ethic as a test to see how people feel.
+	cost = 3
 	category = "hive"
 	category_value = 0
 	use_for_pops = no

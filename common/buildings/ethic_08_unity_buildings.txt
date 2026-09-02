@@ -28,9 +28,6 @@ building_temple = {
 			num_buildings = { type = building_temple value < 2 }
 		}
 	}
-	
-	allow = {
-	}
 
 	destroy_trigger = {
 		exists = owner
@@ -73,7 +70,7 @@ building_temple = {
 	}
 
 	inline_script = {
-		script = jobs/priests_add			# Enriad - gives bureaucrats and their reskins in 4.0
+		script = jobs/priests_add
 		AMOUNT = @building_static_jobs
 	}
 
@@ -81,14 +78,9 @@ building_temple = {
 		potential = {
 			exists = owner
 			owner = {
-				NOT = { has_valid_civic = civic_defenders_faith }
 				NOT = { has_technology = tech_cultural_heritage }
 				OR = {
-					has_origin = origin_primitive_player_pre_industrial_age
-					has_origin = origin_primitive_player_industrial_age
-					has_origin = origin_primitive_player_machine_age
-					has_origin = origin_primitive_player_atomic_age
-					has_origin = origin_primitive_player_early_space_age
+					has_origin_primitive_player = yes
 					AND = {
 						OR = {
 							has_country_flag = steam_age
@@ -134,13 +126,13 @@ building_holotemple = {
 
 	potential = {
 		exists = owner
-		NOT = { has_modifier = slave_colony }
 		owner = {
 			OR = {
 				is_spiritualist = yes
 				has_make_spiritualist_perk = yes
 			}
 		}
+		NOT = { has_modifier = slave_colony }
 	}
 
 	allow = {
@@ -182,7 +174,7 @@ building_holotemple = {
 	}
 
 	planet_modifier = {
-		pop_ethic_spiritualist_attraction_mult = 0.10	# Cog Note - No jobs exist for this building, so this modifier is OK
+		pop_ethic_spiritualist_attraction_mult = 0.10
 		planet_bureaucrats_upkeep_mult = -0.10
 	}
 
@@ -295,7 +287,7 @@ building_sacred_nexus = {
 	inline_script = {
 		script = "jobs/politician_add"
 		AMOUNT = @building_static_jobs_low
-		ADDITIONAL_TRIGGER = "exists = owner owner = { OR = { has_valid_civic = civic_imperial_cult		has_valid_civic = civic_divine_council		has_valid_civic = civic_spiritual_democracy		has_valid_civic = civic_exalted_priesthood	}	}"
+		ADDITIONAL_TRIGGER = "exists = owner owner = { is_theocracy = yes }"
 	}
 
 	prerequisites = {
@@ -305,10 +297,7 @@ building_sacred_nexus = {
 	show_tech_unlock_if = {
 		OR = {
 			is_spiritualist = yes
-			AND = {
-				is_gestalt = no
-				has_make_spiritualist_perk = yes
-			}
+			has_make_spiritualist_perk = yes
 		}
 	}
 }

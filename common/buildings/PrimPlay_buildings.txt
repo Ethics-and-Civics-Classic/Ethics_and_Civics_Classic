@@ -4195,104 +4195,6 @@ building_machine_primitive_node = {
 #	 OTHER BUILDINGS	#
 #########################
 
-# building_primitive_clinic = {		# Cog Note - This is some AI shinanigans, We get gene clinics after "Genetic Healthcare" tech... way later than primitive. Story Event Suggestion, hive mind created by understanding genes?
-#	base_buildtime = @b1_time
-#	base_cap_amount = 1
-#	can_build = yes
-#	can_demolish = yes
-#	can_be_ruined = no
-#
-#	category = amenity
-#
-#	building_sets = {
-#		pre_ftl
-#	}
-#
-#	potential = {
-#		exists = owner
-#		owner = {
-#			is_hive_empire = yes
-#			OR = {
-#				# has_origin = origin_primitive_player_pre_industrial_age
-#				# has_origin = origin_primitive_player_industrial_age
-#				# has_origin = origin_primitive_player_machine_age
-#				# has_origin = origin_primitive_player_atomic_age
-#				# has_origin = origin_primitive_player_early_space_age
-#				any_situation = { is_situation_type = PrimPlayer_situation } # Much more efficient trigger
-#				AND = {
-#					OR = {
-#						has_country_flag = machine_age
-#						has_country_flag = industrial_age
-#						has_country_flag = atomic_age
-#						has_country_flag = early_space_age
-#					}
-#					is_primitive = yes
-#				}
-#			}
-#		}
-#	}
-#
-#	destroy_trigger = {
-#		exists = owner
-#		owner = {
-#			OR = {
-#				NOT = {
-#					# has_origin = origin_primitive_player_pre_industrial_age
-#					# has_origin = origin_primitive_player_industrial_age
-#					# has_origin = origin_primitive_player_machine_age
-#					# has_origin = origin_primitive_player_atomic_age
-#					# has_origin = origin_primitive_player_early_space_age
-#					any_situation = { is_situation_type = PrimPlayer_situation } # Much more efficient trigger
-#					is_primitive = yes
-#				}
-#				is_hive_empire = no
-#			}
-#		}
-#	}
-#
-#	planet_modifier = {
-#		job_healthcare_add = 200
-#		job_primitive_researcher_add = 100
-#	}
-#
-#	resources = {
-#		category = planet_buildings
-#		cost = {
-#			minerals = @b1_minerals
-#		}
-#		upkeep = {
-#			energy =@primitive_upkeep
-#		}
-#	}
-#
-#	prerequisites = {
-#		"tech_primitive_adv_genetic_theory"
-#	}
-#	
-#	show_tech_unlock_if = {
-#		is_machine_empire = no
-#	}
-#
-#	upgrades = {
-#	}
-#
-#	convert_to = {
-#		building_clinic
-#	}
-#
-#	triggered_desc = {
-#		text = job_healthcare_effect_desc
-#	}
-#
-#	on_destroy = {
-#
-#	}
-#
-#	on_repaired = {
-#
-#	}
-#}
-
 building_solarpunk_gaiaseeder = {
 	icon = building_gaiaseeders_4
 	base_buildtime = @b1_time
@@ -4301,7 +4203,7 @@ building_solarpunk_gaiaseeder = {
 	can_be_ruined = no
 
 	category = amenity
-	
+
 	building_sets = {
 		pre_ftl
 	}
@@ -4316,9 +4218,7 @@ building_solarpunk_gaiaseeder = {
 	destroy_trigger = {
 		exists = owner
 		owner = {
-			NOT = {
-				is_primitive = yes
-			}
+			is_primitive = no
 		}
 	}
 
@@ -4359,7 +4259,7 @@ building_solarpunk_ranger_lodge = {
 	can_be_ruined = no
 
 	category = amenity
-	
+
 	building_sets = {
 		pre_ftl
 	}
@@ -4374,9 +4274,7 @@ building_solarpunk_ranger_lodge = {
 	destroy_trigger = {
 		exists = owner
 		owner = {
-			NOT = {
-				is_primitive = yes
-			}
+			is_primitive = no
 		}
 	}
 
@@ -4386,8 +4284,12 @@ building_solarpunk_ranger_lodge = {
 
 	resources = {
 		category = planet_buildings
-		cost = {
-			minerals = @b1_minerals
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = alloys
+			COST = @b1_minerals
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
 		}
 		upkeep = {
 			energy =@primitive_upkeep
@@ -4415,10 +4317,9 @@ building_solarpunk_sapling = {
 	can_build = yes
 	can_demolish = yes
 	can_be_ruined = no
-	planet_limit = 1
 
 	category = amenity
-	
+
 	building_sets = {
 		pre_ftl
 	}
@@ -4426,22 +4327,14 @@ building_solarpunk_sapling = {
 	potential = {
 		exists = owner
 		owner = {
-			OR = {
-				any_situation = { is_situation_type = PrimPlayer_situation } # Much more efficient trigger
-				is_primitive = yes
-			}
+			is_primitive = yes
 		}
 	}
 
 	destroy_trigger = {
 		exists = owner
 		owner = {
-			OR = {
-				NOT = {
-					any_situation = { is_situation_type = PrimPlayer_situation } # Much more efficient trigger
-					is_primitive = yes
-				}
-			}
+			is_primitive = no
 		}
 	}
 
@@ -4453,11 +4346,15 @@ building_solarpunk_sapling = {
 
 	resources = {
 		category = planet_buildings
-		cost = {
-			minerals = @b1_minerals
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = exotic_gases
+			COST = @b1_minerals
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
 		}
 		upkeep = {
-			energy =@primitive_upkeep
+			energy = @b1_upkeep
 		}
 	}
 
@@ -4466,7 +4363,6 @@ building_solarpunk_sapling = {
 	}
 
 	upgrades = {
-		
 	}
 
 	on_destroy = {
@@ -4486,7 +4382,7 @@ building_solarpunk_organic_paradise = {
 	can_be_ruined = no
 
 	category = amenity
-	
+
 	building_sets = {
 		pre_ftl
 	}
@@ -4501,9 +4397,7 @@ building_solarpunk_organic_paradise = {
 	destroy_trigger = {
 		exists = owner
 		owner = {
-			NOT = {
-				is_primitive = yes
-			}
+			is_primitive = no
 		}
 	}
 
@@ -4514,8 +4408,12 @@ building_solarpunk_organic_paradise = {
 
 	resources = {
 		category = planet_buildings
-		cost = {
-			minerals = @b1_minerals
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = alloys
+			COST = @b1_minerals
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
 		}
 		upkeep = {
 			energy =@primitive_upkeep

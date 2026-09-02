@@ -26,6 +26,12 @@ une_deneb_system = {
 	usage_odds = {
 		base = 0
 		modifier = {
+			NOT = { has_global_flag = human_lost_colony_is_grs }
+			NOT = {
+				any_country = {
+					has_country_flag = human_3
+				}
+			}
 			any_country = {
 				has_country_flag = human_1
 				is_human_species = yes
@@ -134,19 +140,14 @@ une_deneb_system = {
 
 					civics = {
 						civic = civic_nationalistic_zeal
-						civic = civic_military_dictatorship
-						civic = civic_police_state
+						civic = civic_distinguished_admiralty
 					}
 					species = event_target:human_species
 					name_list = "HUMAN2"
 					ship_prefix = "CNS"
 					ethos = {
-						ethic = "ethic_authoritarian"
 						ethic = "ethic_xenophobe"
 						ethic = "ethic_fanatic_militarist"
-						ethic = "ethic_capitalism"
-
-
 					}
 					flag = {
 						icon= {
@@ -201,7 +202,9 @@ une_deneb_system = {
 				}
 				generate_start_deposits_and_blockers = yes
 				clear_blockers = yes
-				generate_start_buildings_and_districts = yes
+				colony = {
+					generate_start_buildings_and_districts = yes
+				}
 				generate_start_pops = yes
 				event_target:npc_CoM = {
 					set_country_flag = human_2
@@ -330,129 +333,636 @@ deneb_neighbor_t1 = {
 	}
 }
 
-# Neighbor Tier 1 First Colony
-deneb_neighbor_t1_first_colony = {
-	class = "rl_standard_stars"
-	flags = { neighbor_t1_first_colony }
+### Hyacinth System - UNE start
+une_vela_system = {
+	name = "NAME_Vela"
+	class = "sc_binary_1"
+	asteroid_belt = {
+		type = rocky_asteroid_belt
+		radius = 110
+	}
+	asteroid_belt = {
+		type = rocky_asteroid_belt
+		radius = 230
+	}
 
 	init_effect = {
-		every_neighbor_system = { set_star_flag = empire_cluster }
+		every_neighbor_system = {
+			set_star_flag = empire_cluster
+			every_neighbor_system = {
+				set_star_flag = empire_cluster
+			}
+		}
+		generate_home_system_resources = yes
 	}
 
+	flags = { empire_home_system vela_system }
+
+	usage = misc_system_init
+
+	usage_odds = {
+		base = 0
+		modifier = {
+			has_global_flag = human_lost_colony_is_grs
+			any_country = {
+				has_country_flag = human_1
+				is_human_species = yes
+				NOT = { has_origin = origin_lost_colony }
+			}
+			NOR = {
+				any_system = { has_star_flag = vela_system }
+				has_star_flag = empire_cluster
+			}
+			num_ai_empires_setting >= 1
+			add = 99999
+		}
+	}
+
+	max_instances = 1
+
 	planet = {
-		count = 1
-		class = star
-		orbit_distance = 0
+		name = "NAME_Vela"
+		class = "pc_pulsar"
+		orbit_distance = 38
 		orbit_angle = 1
-		size = { min = 20 max = 30 }
+		size = 8
 		has_ring = no
-	}
-
-	change_orbit = 45
-
-	planet = {
-		count = { min = 0 max = 2 }
-		orbit_distance = 20
-
-		change_orbit = @base_moon_distance
-
-		moon = {
-			count = { min = 0 max = 1 }
-			orbit_distance = 5
+		init_effect = {
+			random_list = {
+				20 = {
+					clear_deposits = yes
+					clear_planet_modifiers = yes
+					add_deposit = d_dark_matter_deposit_1
+					add_deposit = d_physics_3
+					set_planet_flag = ignore_startup_effect
+				}
+				20 = {
+					clear_deposits = yes
+					clear_planet_modifiers = yes
+					add_deposit = d_physics_5
+					set_planet_flag = ignore_startup_effect
+				}
+				60 = {
+					# leave to generate_home_system_resources
+				}
+			}
 		}
 	}
 
 	planet = {
-		count = 1
-		orbit_distance = 25
-		class = "pc_continental"
-		modifiers = none
-		anomaly = none
-		orbit_angle = { min = 90 max = 270 }
-		size = { min = 12 max = 18 }
+		name = "NAME_GP_Velorum"
+		class = "pc_b_star"
+		orbit_distance = -38
+		orbit_angle = 0
+		size = 33
+		has_ring = no
+		init_effect = {
+			random_list = {
+				20 = {
+					clear_deposits = yes
+					clear_planet_modifiers = yes
+					add_deposit = d_energy_5
+					set_planet_flag = ignore_startup_effect
+				}
+				20 = {
+					clear_deposits = yes
+					clear_planet_modifiers = yes
+					add_deposit = d_physics_2
+					add_deposit = d_engineering_2
+					set_planet_flag = ignore_startup_effect
+				}
+				60 = {
+					# leave to generate_home_system_resources
+				}
+			}
+		}
 	}
 
 	planet = {
-		count = { min = 2 max = 5 }
-		orbit_distance = 25
+		name = "NAME_VX-455"
+		class = "pc_asteroid"
+		orbit_distance = 110
+		orbit_angle = 40
+		size = 5
+		has_ring = no
+		init_effect = {
+			random_list = {
+				20 = {
+					clear_deposits = yes
+					clear_planet_modifiers = yes
+					add_deposit = d_minerals_2
+					add_deposit = d_alloys_1
+					set_planet_flag = ignore_startup_effect
+				}
+				20 = {
+					clear_deposits = yes
+					clear_planet_modifiers = yes
+					add_deposit = d_volatile_motes_1
+					add_deposit = d_exotic_gases_1
+					set_planet_flag = ignore_startup_effect
+				}
+				60 = {
+					# leave to generate_home_system_resources
+				}
+			}
+		}
+	}
 
-		change_orbit = @base_moon_distance
+	planet = {
+		name = "NAME_VX-129"
+		class = "pc_asteroid"
+		orbit_distance = 0
+		orbit_angle = 165
+		size = 5
+		has_ring = no
+		init_effect = {
+			random_list = {
+				20 = {
+					clear_deposits = yes
+					clear_planet_modifiers = yes
+					add_deposit = d_minerals_2
+					add_deposit = d_alloys_1
+					set_planet_flag = ignore_startup_effect
+				}
+				20 = {
+					clear_deposits = yes
+					clear_planet_modifiers = yes
+					add_deposit = d_volatile_motes_1
+					add_deposit = d_exotic_gases_1
+					set_planet_flag = ignore_startup_effect
+				}
+				60 = {
+					# leave to generate_home_system_resources
+				}
+			}
+		}
+	}
 
-		moon = {
-			count = { min = 0 max = 1 }
-			orbit_distance = 5
+	planet = {
+		name = "NAME_VX-033"
+		class = "pc_asteroid"
+		orbit_distance = 0
+		orbit_angle = 290
+		size = 5
+		has_ring = no
+		flags = { hyacinth_start }
+	}
+
+	planet = {
+		class = "pc_asteroid"
+		flags = { delete_me }
+		init_effect = {
+			prevent_anomaly = yes
+			save_event_target_as = vela_start_planet
+			random_country = {
+				limit = { has_country_flag = human_1 }
+				save_event_target_as = une
+				owner_species = {
+					save_event_target_as = human_species
+				}
+			}
+			create_country = {
+				name = "EMPIRE_DESIGN_humans3"
+				adjective = "PRESCRIPTED_adjective_humans3"
+				authority = "auth_imperial"
+				civics = {
+					civic = civic_philosopher_king
+					civic = civic_star_seekers
+					civic = civic_memory_vault
+				}
+				species = event_target:human_species
+				name_list = "HUMAN2"
+				ship_prefix = "PRESCRIPTED_ship_prefix_humans3"
+				ethos = {
+					ethic = "ethic_authoritarian"
+					ethic = "ethic_xenophile"
+					ethic = "ethic_materialist"
+					ethic = "ethic_fanatic_pacifist"
+				}
+				flag = {
+					icon = {
+						category = "domination"
+						file = "domination_9.dds"
+					}
+					background = {
+						category = "backgrounds"
+						file = "flag_BG_20.dds"
+					}
+					colors = {
+						"dark_purple"
+						"pink_purple"
+						"black"
+						"null"
+					}
+				}
+				type = default
+				origin = "origin_lost_colony"
+				ignore_initial_colony_error = yes
+				nomadic = yes
+				effect = {
+					save_event_target_as = npc_GRS
+					set_country_flag = parent_system_spawned
+					set_country_as_nomad_effect = { IS_NOMAD = yes }
+					nomad_country_initial_setup_effect = yes
+					give_technology = { tech = tech_science_arkship message = no }
+					refresh_auto_generated_ship_designs = yes
+					add_resource = {
+						minerals = 800
+						energy = 800
+						food = 800
+						alloys = 400
+						consumer_goods = 400
+						influence = 200
+					}
+				}
+			}
+			event_target:npc_GRS = {
+				create_fleet = {
+					name = "NAME_Hyacinth"
+					effect = {
+						set_owner = prev
+						create_ship = {
+							name = "NAME_Hyacinth"
+							random_existing_design = science_arkship_tier_1
+							effect = {
+								initialize_arkship_starbase_effect = yes
+								home_arkship_initial_setup = yes
+								colony = {
+									upgrade_colony_shelter = yes
+									generate_start_buildings_and_districts = yes
+									generate_start_pops = yes
+									set_capital = yes
+								}
+							}
+						}
+						set_fleet_stance = evasive
+						set_fleet_flag = hyacinth_fleet
+						set_location = {
+							target = event_target:vela_start_planet
+							distance = 0
+							angle = random
+						}
+					}
+				}
+				set_country_flag = human_3
+				set_country_flag = special_intro_for@event_target:une
+				create_starting_leaders = yes
+				country_event = { id = game_start.9 }
+				country_event = { id = game_start.33 days = 1 }
+				country_event = { id = nomads.9030 }
+			}
+			event_target:une = {
+				set_country_flag = special_intro_for@event_target:npc_GRS
+			}
+		}
+	}
+
+	planet = {
+		name = "NAME_VX-884"
+		class = "pc_asteroid"
+		orbit_distance = 120
+		orbit_angle = 80
+		size = 5
+		has_ring = no
+		init_effect = {
+			random_list = {
+				20 = {
+					clear_deposits = yes
+					clear_planet_modifiers = yes
+					add_deposit = d_minerals_2
+					add_deposit = d_alloys_1
+					set_planet_flag = ignore_startup_effect
+				}
+				20 = {
+					clear_deposits = yes
+					clear_planet_modifiers = yes
+					add_deposit = d_volatile_motes_1
+					add_deposit = d_exotic_gases_1
+					set_planet_flag = ignore_startup_effect
+				}
+				60 = {
+					# leave to generate_home_system_resources
+				}
+			}
+		}
+	}
+
+	planet = {
+		name = "NAME_VX-217"
+		class = "pc_asteroid"
+		orbit_distance = 0
+		orbit_angle = 200
+		size = 5
+		has_ring = no
+		init_effect = {
+			random_list = {
+				20 = {
+					clear_deposits = yes
+					clear_planet_modifiers = yes
+					add_deposit = d_minerals_2
+					add_deposit = d_alloys_1
+					set_planet_flag = ignore_startup_effect
+				}
+				20 = {
+					clear_deposits = yes
+					clear_planet_modifiers = yes
+					add_deposit = d_volatile_motes_1
+					add_deposit = d_exotic_gases_1
+					set_planet_flag = ignore_startup_effect
+				}
+				60 = {
+					# leave to generate_home_system_resources
+				}
+			}
+		}
+	}
+
+	planet = {
+		name = "NAME_VX-091"
+		class = "pc_frozen"
+		orbit_distance = 50
+		orbit_angle = 310
+		size = 12
+		has_ring = no
+		init_effect = {
+			random_list = {
+				20 = {
+					clear_deposits = yes
+					clear_planet_modifiers = yes
+					add_deposit = d_minerals_2
+					add_deposit = d_rare_crystals_1
+					set_planet_flag = ignore_startup_effect
+				}
+				20 = {
+					clear_deposits = yes
+					clear_planet_modifiers = yes
+					add_deposit = d_engineering_3
+					set_planet_flag = ignore_startup_effect
+				}
+				60 = {
+					# leave to generate_home_system_resources
+				}
+			}
 		}
 	}
 
 	neighbor_system = {
+		trigger = { num_guaranteed_colonies >= 2 }
 		hyperlane_jumps = { min = 1 max = @jumps }
-		initializer = "neighbor_t2"
+		initializer = "neighbor_t1"
+	}
+	neighbor_system = {
+		trigger = { num_guaranteed_colonies >= 1 }
+		hyperlane_jumps = { min = 1 max = @jumps }
+		initializer = "neighbor_t1_first_colony"
 	}
 }
 
-# Neighbor Tier 2 Second Colony
-deneb_neighbor_t2_second_colony = {
-	class = "rl_standard_stars"
-	flags = { neighbor_t2_second_colony }
+# u Andromedae
+ai_titawin_init = {
+	class = "rl_binary_starting_stars"
+	name = "NAME_Titawin"
+	usage = misc_system_init
 
-	init_effect = {
-		every_neighbor_system = { set_star_flag = empire_cluster }
+	flags = { empire_home_system theian_system }
+
+	asteroid_belt = {
+		type = rocky_asteroid_belt
+		radius = 160
 	}
 
 	planet = {
 		count = 1
-		class = star
+		class = pc_f_star
 		orbit_distance = 0
-		orbit_angle = 1
-		size = { min = 20 max = 30 }
+		orbit_angle = 0
+		name = "NAME_Titawin_A"
+		size = 32
+		has_ring = no
+		planet = {
+			name = "NAME_Saffar"
+			class = "pc_gas_giant"
+			orbit_distance = 210
+			orbit_angle = { min = 30 max = 270 }
+			size = 20
+			has_ring = no
+			change_orbit = 4
+
+			moon = {
+				orbit_angle = { min = 90 max = 270 }
+				size = 7
+				class = "pc_barren_cold"
+				orbit_distance = 12
+			}
+		}
+		planet = {
+			name = "NAME_Samh"
+			class = "pc_gas_giant"
+			orbit_distance = 35
+			orbit_angle = { min = 30 max = 270 }
+			size = 20
+			has_ring = no
+			change_orbit = 4
+		}
+		planet = {
+			name = "NAME_Majriti"
+			class = "pc_gas_giant"
+			orbit_distance = 35
+			orbit_angle = { min = 30 max = 270 }
+			size = 20
+			has_ring = no
+			change_orbit = 4
+
+			moon = {
+				count = 2
+				size = 7
+				class = "pc_frozen"
+				orbit_angle = { min = 90 max = 270 }
+				orbit_distance = 7
+			}
+		}
+		planet = {
+			class = "pc_gas_giant"
+			name = "NAME_Curiel"
+			orbit_distance = 35
+			orbit_angle = { min = 30 max = 270 }
+			size = 20
+			has_ring = no
+			change_orbit = 4
+		}
+	}
+	planet = {
+		name = "NAME_PHS_03"
+		class = "pc_asteroid"
+		orbit_distance = 160
+		orbit_angle = -230
+		size = 5
 		has_ring = no
 	}
 
-	change_orbit = 25
-
 	planet = {
-		count = 2
-		orbit_angle = { min = 90 max = 270 }
-		orbit_distance = 20
+		name = "NAME_PHS_02"
+		class = "pc_asteroid"
+		orbit_distance = 0
+		orbit_angle = -95
+		size = 5
+		has_ring = no
 	}
 
+	planet = {
+		name = "NAME_PHS_04"
+		class = "pc_asteroid"
+		orbit_distance = 0
+		orbit_angle = 285
+		size = 5
+		has_ring = no
+	}
+
+	planet = {
+		name = "NAME_PHS_01"
+		class = "pc_asteroid"
+		orbit_distance = 0
+		orbit_angle = -80
+		size = 5
+		has_ring = no
+	}
 	planet = {
 		count = 1
-		orbit_distance = 25
-		class = "pc_continental"
-		modifiers = none
-		anomaly = none
-		orbit_angle = { min = 90 max = 270 }
-		size = { min = 14 max = 24 }
+		name = "NAME_Titawin_B"
+		class = pc_m_star
+		orbit_distance = -70
+		orbit_angle = 250
+		size = 16
+		has_ring = no
+		satellite_naming_policy = upper_case_roman_numerals
+		change_orbit = 25
 
-		change_orbit = @base_moon_distance
+		planet = {
+			count = 1
+			orbit_distance = 20
+			home_planet = yes
+			class = pc_desert
+			orbit_angle = 190
+			size = 20
+			deposit_blockers = none
+			modifiers = none
 
-		moon = {
-			count = { min = 0 max = 1 }
-			class = random_non_colonizable
-			orbit_angle = { min = 90 max = 270 }
-			orbit_distance = 5
+			init_effect = {
+				create_species = {
+					class = "LITHOID"
+					homeworld = this
+					portrait = "lith_human"
+					name = "PRESCRIPTED_species_name_lithoid_humans"
+					plural = "PRESCRIPTED_species_plural_lithoid_humans"
+					adjective = "PRESCRIPTED_species_adjective_lithoid_humans"
+					name_list = "LITHOID4"
+					gender = indeterminable
+					traits = {
+						trait = "trait_lithoid"
+						trait = "trait_wasteful"
+						trait = "trait_industrious"
+						trait = "trait_lithoid_gaseous_byproducts"
+						trait = "trait_deviants"
+					}
+				}
+				last_created_species = {
+					save_event_target_as = lith_human
+				}
+				create_country = {
+					name = "EMPIRE_DESIGN_lithoid_humans"
+					adjective = "PRESCRIPTED_adjective_lithoid_humans"
+					authority = "auth_oligarchic"
+					civics = {
+						civic = civic_mining_guilds
+						civic = civic_meritocracy
+						civic = civic_efficient_bureaucracy
+					}
+					species = event_target:lith_human
+					name_list = "LITHOID4"
+					ship_prefix = "TPC"
+					ethos = {
+						ethic = "ethic_pacifist"
+						ethic = "ethic_materialist"
+						ethic = "ethic_fanatic_industrial"
+						ethic = "ethic_xenophile"
+					}
+					flag = {
+						icon = {
+							category = "lithoid"
+							file = "lithoid_03.dds"
+						}
+						background = {
+							category = "backgrounds"
+							file = "circle.dds"
+						}
+						colors = {
+							"black"
+							"dark_red"
+							"null"
+							"null"
+						}
+					}
+					type = default
+					origin = "origin_lithoid"
+					effect = {
+						save_global_event_target_as = npc_TPC
+						add_resource = {
+							minerals = 1200
+							energy = 800
+							alloys = 400
+							consumer_goods = 400
+							influence = 200
+						}
+					}
+				}
+				create_colony = {
+					owner = event_target:npc_TPC
+				}
+				generate_start_deposits_and_blockers = yes
+				colony = {
+					generate_start_buildings_and_districts = yes
+					generate_start_pops = yes
+					generate_home_planet_final_pass = yes
+				}
+				event_target:npc_TPC = {
+					set_country_flag = human_lithoid
+					create_starting_leaders = yes
+					country_event = { id = game_start.9 }
+					country_event = { id = game_start.33 days = 1 } # needs delay for system ownership to settle
+				}
+			}
+
+			change_orbit = @base_moon_distance
+
+			moon = {
+				class = pc_barren
+				name = "NAME_Akal_Amectuh"
+				size = 4
+				orbit_angle = 120
+				orbit_distance = 5
+			}
+		}
+
+		planet = {
+			class = pc_molten
+			name = "NAME_Yessefsi"
+			size = 7
+			orbit_angle = 90
+			orbit_distance = 15
+			satellite_naming_policy = lower_case_latin_letters
 		}
 	}
 
-	planet = {
-		count = 2
-		orbit_angle = { min = 90 max = 270 }
-		orbit_distance = 20
+	change_orbit = -245
 
-		change_orbit = @base_moon_distance
-
-		moon = {
-			count = { min = 0 max = 1 }
-			class = random_non_colonizable
-			orbit_angle = { min = 90 max = 270 }
-			orbit_distance = 5
-		}
+	neighbor_system = {
+		trigger = { num_guaranteed_colonies >= 2 }
+		hyperlane_jumps = { min = 1 max = @jumps }
+		initializer = "neighbor_t1"
 	}
-
-	planet = {
-		count = { min = 0 max = 2 }
-		orbit_angle = { min = 90 max = 270 }
-		orbit_distance = 20
+	neighbor_system = {
+		trigger = { num_guaranteed_colonies >= 1 }
+		hyperlane_jumps = { min = 1 max = @jumps }
+		initializer = "neighbor_t1_first_colony"
 	}
 }

@@ -34,9 +34,9 @@ building_colosseum = {
 			has_upgraded_capital = yes
 			hidden_trigger = {
 				OR = {
-					has_building =building_primitive_capital
-					has_building =building_machine_primitive_capital
-					has_building =building_hive_primitive_capital
+					has_building = building_primitive_capital
+					has_building = building_machine_primitive_capital
+					has_building = building_hive_primitive_capital
 				}
 			}
 		}
@@ -155,7 +155,6 @@ building_colosseum = {
 #############
 # Permanent Employment Building
 #############
-
 building_posthumous_employment_center = {
 	base_buildtime = @b1_time
 	planet_limit = 1
@@ -223,7 +222,7 @@ building_posthumous_employment_center = {
 		inline_script = {
 			script = buildings/nomadic_cost_switcher
 			REGULAR_RESOURCE = minerals
-			NOMADIC_RESOURCE = alloys
+			NOMADIC_RESOURCE = rare_crystals
 			COST = @b1_minerals
 			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
 		}
@@ -233,29 +232,26 @@ building_posthumous_employment_center = {
 	}
 }
 
-
-
 #####################
 # Galactic Paragons Buildings
 #####################
-
 building_paragon_memory_vaults = {
 	base_buildtime = @b2_time
 	planet_limit = 1
 	category = unity
-	can_demolish = no
+	can_demolish = yes
 	can_be_ruined = yes
-	can_be_disabled = no
+	can_be_disabled = yes
 	is_essential = yes
-	
+
 	empire_limit = 1
-	
+
 	building_sets = {
 		government
 		urban
 		unity
 	}
-	
+
 	destroy_trigger = {
 		exists = owner
 		owner = {
@@ -288,7 +284,11 @@ building_paragon_memory_vaults = {
 		}
 		text = building_paragon_memory_vaults_hive_desc
 	}
-	
+
+	triggered_desc = {
+		text = memory_vault_tooltip
+	}
+
 	allow = {
 		OR = {
 			has_upgraded_capital = yes
@@ -297,7 +297,6 @@ building_paragon_memory_vaults = {
 					has_building = building_primitive_capital
 					has_building = building_machine_primitive_capital
 					has_building = building_hive_primitive_capital
-
 				}
 			}
 		}
@@ -339,29 +338,6 @@ building_paragon_memory_vaults = {
 			biomass = 200
 		}
 
-		produces = {
-			trigger = {
-				exists = owner
-			}
-			unity = 5
-		}
-		produces = {
-			trigger = {
-				exists = owner
-				planet = { is_variable_set = paragon_memory_vault }
-			}
-			unity = 5
-			multiplier = planet.paragon_memory_vault
-		}
-		produces = {
-			trigger = {
-				exists = owner
-				owner = { has_civic = civic_memory_vault_corporate }
-				planet = { is_variable_set = paragon_memory_vault }
-			}
-			trade = 10
-			multiplier = planet.paragon_memory_vault
-		}
 		upkeep = {
 			energy = @b2_upkeep
 		}
@@ -394,7 +370,7 @@ building_paragon_memory_vaults = {
 			}
 		}
 		species_leader_exp_gain = 0.01
-		mult = planet.paragon_memory_vault
+		mult = owner.paragon_memory_vault
 	}
 
 	triggered_country_modifier = {
@@ -420,16 +396,5 @@ building_paragon_memory_vaults = {
 
 	inline_script = {
 		script = buildings/on_all_wilderness_buildings_districts
-	}
-
-	on_built = {
-		set_variable = {
-			which = paragon_memory_vault
-			value = 0
-		}
-	}
-
-	on_destroy = {
-		clear_variable = paragon_memory_vault
 	}
 }
