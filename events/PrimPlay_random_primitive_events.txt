@@ -4325,14 +4325,72 @@ fleet_event = {
 	}
 	
 	desc = {
+		trigger = {
+			owner = {
+				has_void_dweller_origin = no
+			}
+		}
 		text = "random_primitive_events.3.desc"
+	}
+	desc = {
+		trigger = {
+			owner = {
+				has_void_dweller_origin = yes
+			}
+		}
+		text = "random_primitive_events.3.void_dweller_desc"
 	}
 	
 	option = {
-		name = "random_primitive_events.3.a"	
+		name = "random_primitive_events.3.a"
+		trigger = {
+			owner = {
+				has_void_dweller_origin = no
+			}
+		}
 		owner = { add_resource = { minerals = 1000 } }
 		custom_tooltip = random_primitive_events.3.tooltip
 		
+	}
+	
+	option = {
+		name = "random_primitive_events.3.void_dweller"	
+		trigger = {
+			owner = {
+				has_void_dweller_origin = yes
+			}
+		}
+		owner = { 
+			add_resource = { minerals = 1000 } 
+			add_resource = { unity = 500 }
+			create_fleet = {
+				name = "NAME_Pre_FTL_Chemical_Ship"
+				effect = {
+					set_owner = PREV
+					create_ship = {
+						name = random
+						design = "NAME_Early_Explorer_Vessel_NoDrive"
+					}
+					set_fleet_flag = inteplanetary_flight_fleet
+					set_location = prev.capital_scope
+					set_fleet_stance = passive
+					last_created_ship = { set_ship_flag = inteplanetary_flight_fleet }
+				}
+			}
+			random_owned_leader = {
+				limit = { leader_class = scientist }
+				last_created_fleet = { assign_leader = PREV }	#Assigns Scientist to Ship
+			}
+			hidden_effect = {
+				last_created_fleet = { 
+					fleet_event = { id = random_primitive_events.1 }	#Exploration Mission
+				}
+			}
+			if = {
+				limit = { NOT = { has_technology = tech_primitive_generation_ship } }
+				add_research_option = tech_primitive_generation_ship 
+			}
+		}
 	}
 }
 
