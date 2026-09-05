@@ -359,66 +359,17 @@ bio_trophy_unemployment = {
 }
 
 bio_trophy_unprocessing = {
+	# Keep the saved job key, but release Pops from its obsolete transition.
 	category = bio_trophy
-	first_come_first_served = yes
-	is_capped_by_modifier = no
-
-	swappable_data = {
-		default = {
-			building_icon = building_organic_sanctuary
-			icon = bio_trophy
-		}
-	}
-
-	#demotion = {
-	#	time = 0
-	#	effect = {
-	#		pop_amount_change_category = {
-	#			CATEGORY = specialist
-	#			AMOUNT = local_pop_amount
-	#		}
-	#	}
-	#}
-
-	possible_pre_triggers = {
-		has_owner = yes
-		is_being_purged = no
-		is_being_assimilated = no
-	}
+	is_capped_by_modifier = yes
+	can_set_priority = no
 
 	possible = {
-		OR = {
-			is_pop_category = bio_trophy
-			is_pop_category = bio_trophy_unemployment
-		}
-		OR = {
-			NOR = { 
-				has_citizenship_type = { type = citizenship_organic_trophy }	#Cog Note - Works!! Jobs switch between Bio-Trophy & Normal Citizenship
-				has_citizenship_type = { type = citizenship_organic_civilian }
-			}
-			AND = {
-				planet = { has_available_jobs = "techno_priest" }	#Cog Note - When job available, downgrade a bio-trophy into a specialist job
-				is_pop_category = bio_trophy_unemployment
-			}
-		}
-		# Sort for Machine Cult civics
-		#if = {
-		#	limit = { OWNER = { has_valid_civic = civic_machine_cult_machine } }
-		#	planet = { has_available_jobs = "techno_priest" } 
-		#}
-		#else = { 
-		#	OR = {
-		#		#has_trait = trait_machine_cult_cybernetic
-		#		planet = { has_available_jobs = "techno_priest" } 
-		#	}
-		#}
-		#owner = {
-		#	NOR = {
-		#		has_valid_civic = civic_machine_servitor
-		#		has_valid_civic = civic_machine_cult_machine
-		#	}
-		#}
-		colony? = { NOT = { is_planet_class = pc_cosmogenesis_world } }
+		always = no
+	}
+
+	weight = {
+		weight = 0
 	}
 }
 
@@ -4548,6 +4499,139 @@ techno_priest = { 	#Used in Mecha Monestary
 
 	inline_script = "jobs/automodding_priority_unity"
 	
+}
+
+# Machine Spirit organics work without leaving the Bio-Trophy category.
+machine_spirit_techno_priest = {
+	category = bio_trophy
+	swappable_data = {
+		default = {
+			condition_string = SPECIALIST_JOB_TRIGGER
+			building_icon = building_mecha_monastery
+			icon = techno_priest
+		}
+	}
+
+	possible_pre_triggers = {
+		has_owner = yes
+		is_being_purged = no
+		is_being_assimilated = no
+		is_sapient = yes
+	}
+
+	possible = {
+		can_fill_specialist_job_trigger = yes
+		owner = { has_valid_civic = civic_machine_cult_machine }
+		has_trait = trait_machine_cult_cybernetic
+		OR = {
+			is_pop_category = bio_trophy
+			is_pop_category = bio_trophy_unemployment
+		}
+		OR = {
+			has_citizenship_type = { type = citizenship_organic_trophy country = owner }
+			has_citizenship_type = { type = citizenship_organic_civilian country = owner }
+		}
+		colony? = { NOT = { is_planet_class = pc_cosmogenesis_world } }
+		complex_specialist_job_check_trigger = yes
+		OR = {
+			is_robot_pop = no
+			owner = { is_individual_machine = yes }
+		}
+	}
+
+	resources = {
+		category = planet_pop_assemblers
+		produces = {
+			unity = 3
+			engineering_research = 2
+		}
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					OR = {
+						has_valid_civic = civic_imperial_cult
+						has_valid_civic = civic_divine_council
+						has_valid_civic = civic_spiritual_democracy
+						has_valid_civic = civic_exalted_priesthood
+					}
+				}
+			}
+			unity = 1
+			engineering_research = 1
+		}
+		upkeep = {
+			trigger = {
+				exists = owner
+				owner = { is_gestalt = no }
+			}
+			consumer_goods = 1
+		}
+		produces = {
+			trigger = {
+				owner = { has_valid_civic = civic_distributism }
+			}
+			trade = 1
+		}
+	}
+
+	planet_modifier = {
+		planet_pops_robotics_upkeep_mult = -0.025
+	}
+
+	weight = {
+		weight = @specialist_job_weight
+		modifier = {
+			factor = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
+			OR = {
+				has_trait = trait_robot_domestic_protocols
+				has_trait = trait_charismatic
+			}
+		}
+		modifier = {
+			factor = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
+			has_trait = trait_repugnant
+		}
+
+		modifier = {
+			factor = 0.2
+			NOR = { has_citizenship_rights = yes has_trait = trait_mechanical }
+		}
+		modifier = {
+			factor = 2
+			owner = {
+				OR = {
+					has_valid_civic = civic_machine_cult
+					has_valid_civic = civic_machine_cult_machine
+				}
+			}
+		}
+		modifier = {
+			factor = 1.5
+			OR = {
+				has_trait = trait_traditional
+			}
+		}
+		modifier = {
+			factor = 1.2
+			has_ethic = ethic_spiritualist
+		}
+		modifier = {
+			factor = 0.5
+			has_trait = trait_quarrelsome
+		}
+		modifier = {
+			factor = 0.1
+			can_take_servant_job = yes
+		}
+		modifier = {
+			factor = 1.1
+			has_trait = trait_natural_engineers
+		}
+	}
+
+	inline_script = "jobs/automodding_priority_unity"
+
 }
 
 ############

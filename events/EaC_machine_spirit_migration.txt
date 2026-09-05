@@ -1,0 +1,172 @@
+namespace = eac_machine_spirit
+
+# No-scope entry point used only by on_single_player_save_game_load.
+event = {
+	id = eac_machine_spirit.1
+	hide_window = yes
+	is_triggered_only = yes
+
+	immediate = {
+		every_country = {
+			country_event = { id = eac_machine_spirit.2 }
+		}
+	}
+}
+
+# Country sweep for old Techno-Priest assignments and Trophy groups whose
+# Trophy-style rights are both absent.
+country_event = {
+	id = eac_machine_spirit.2
+	hide_window = yes
+	is_triggered_only = yes
+
+	trigger = {
+		OR = {
+			AND = {
+				has_valid_civic = civic_machine_cult_machine
+				NOT = { has_country_flag = eac_machine_spirit_legacy_categories_migrated }
+			}
+			any_owned_pop_group = { eac_machine_spirit_rights_away_group = yes }
+		}
+	}
+
+	immediate = {
+		# First move only the workforce assigned to the old Techno Priest. A Pop
+		# Group may simultaneously supply many unrelated Specialist jobs.
+		if = {
+			limit = {
+				has_valid_civic = civic_machine_cult_machine
+				NOT = { has_country_flag = eac_machine_spirit_legacy_categories_migrated }
+			}
+			remove_country_flag = eac_machine_spirit_category_migration_retry
+			every_owned_pop_job = {
+				limit = { has_job_type = techno_priest }
+				save_event_target_as = eac_machine_spirit_legacy_job
+				every_job_pop_group = {
+					limit = { eac_machine_spirit_legacy_job_group = yes }
+					save_event_target_as = eac_machine_spirit_change_group
+					if = {
+						limit = {
+							event_target:eac_machine_spirit_legacy_job = {
+								num_pops_assigned_to_job = {
+									pop_group = event_target:eac_machine_spirit_change_group
+									value > 0
+								}
+							}
+						}
+						colony = {
+							create_pop_group = {
+								pop_group = event_target:eac_machine_spirit_change_group
+								category = bio_trophy
+								size = 0
+								effect = {
+									transfer_pop_amount = {
+										source = event_target:eac_machine_spirit_change_group
+										target = this
+										amount = event_target:eac_machine_spirit_legacy_job.value:eac_machine_spirit_assigned_legacy_job_amount|POP_GROUP|event_target:eac_machine_spirit_change_group|
+										growth_category = "GROWTH_CAT_PROMOTION"
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		# Use the same one-way Pop Group event as future rights changes.
+		every_owned_pop_group = {
+			limit = { eac_machine_spirit_rights_away_group = yes }
+			pop_group_event = { id = eac_machine_spirit.3 }
+		}
+
+		# Re-evaluate only after both transfers. This fires serialized assignments
+		# from the disabled transition job and lets the new Trophy-category job take vacancies.
+		every_owned_colony = {
+			check_planet_employment = yes
+		}
+
+		# Set completion only after post-transfer employment proves no eligible
+		# old Techno-Priest assignment remains.
+		if = {
+			limit = {
+				has_valid_civic = civic_machine_cult_machine
+				NOT = { has_country_flag = eac_machine_spirit_legacy_categories_migrated }
+			}
+			every_owned_pop_job = {
+				limit = { has_job_type = techno_priest }
+				save_event_target_as = eac_machine_spirit_legacy_job
+				every_job_pop_group = {
+					save_event_target_as = eac_machine_spirit_change_group
+					if = {
+						limit = {
+							eac_machine_spirit_legacy_job_group = yes
+							event_target:eac_machine_spirit_legacy_job = {
+								num_pops_assigned_to_job = {
+									pop_group = event_target:eac_machine_spirit_change_group
+									value > 0
+								}
+							}
+						}
+						root = { set_country_flag = eac_machine_spirit_category_migration_retry }
+					}
+				}
+			}
+			if = {
+				limit = { NOT = { has_country_flag = eac_machine_spirit_category_migration_retry } }
+				set_country_flag = eac_machine_spirit_legacy_categories_migrated
+			}
+		}
+	}
+}
+
+# Give every country one versioned catch-up sweep, then retry only while old
+# Machine Spirit Techno-Priest categories remain unresolved.
+country_event = {
+	id = eac_machine_spirit.4
+	hide_window = yes
+	is_triggered_only = yes
+
+	trigger = {
+		OR = {
+			NOT = { has_country_flag = eac_machine_spirit_category_reconciliation_v1 }
+			AND = {
+				has_valid_civic = civic_machine_cult_machine
+				NOT = { has_country_flag = eac_machine_spirit_legacy_categories_migrated }
+			}
+		}
+	}
+
+	immediate = {
+		country_event = { id = eac_machine_spirit.2 }
+		if = {
+			limit = { NOT = { has_country_flag = eac_machine_spirit_category_reconciliation_v1 } }
+			set_country_flag = eac_machine_spirit_category_reconciliation_v1
+		}
+	}
+}
+
+# Immediate one-way path for future rights losses and country sweeps. Once a
+# group becomes Specialist, E&C's own forward path owns later transitions.
+# Save the logical colony before the complete transfer because the source Pop
+# Group may cease to exist.
+pop_group_event = {
+	id = eac_machine_spirit.3
+	hide_window = yes
+	is_triggered_only = yes
+
+	trigger = { eac_machine_spirit_rights_away_group = yes }
+
+	immediate = {
+		colony = { save_event_target_as = eac_machine_spirit_rights_change_colony }
+		save_event_target_as = eac_machine_spirit_rights_change_group
+		pop_percentage_change_category = {
+			POP_GROUP = event_target:eac_machine_spirit_rights_change_group
+			CATEGORY = specialist
+			PERCENTAGE = 1
+		}
+		event_target:eac_machine_spirit_rights_change_colony = {
+			check_planet_employment = yes
+		}
+	}
+}
