@@ -2,6 +2,223 @@
 # Basic Jobs
 ###################
 
+miner = {
+	category = worker
+	swappable_data = {
+		default = {
+			icon = miner
+			condition_string = WORKER_JOB_TRIGGER
+			building_icon = building_mineral_purification_plant
+		}
+		swap_type = {
+			trigger = {
+				miner_is_scrap_miner_trigger = yes
+			}
+			name = scrap_miner
+			desc = scrap_miner
+			weight = 5
+		}
+		swap_type = {
+			trigger = {
+				miner_is_cave_cleaner_trigger = yes
+			}
+			name = cave_cleaner
+			desc = cave_cleaner
+			weight = 10
+		}
+		swap_type = {
+			trigger = {
+				miner_is_turtle_miner_trigger = yes
+			}
+			name = turtle_miner
+			desc = turtle_miner
+			weight = 20
+		}
+		swap_type = {
+			trigger = {
+				miner_is_crystal_miner_trigger = yes
+			}
+			icon = crystal_miner
+			name = crystal_miner
+			desc = crystal_miner
+			building_icon = building_crystal_mines
+			weight = 20
+		}
+		swap_type = {
+			trigger = {
+				miner_is_thermoforger_trigger = yes
+			}
+			icon = miner
+			name = melt_extractor
+			desc = melt_extractor
+			weight = 35
+		}
+		swap_type = {
+			trigger = {
+				has_primitive_artificial_planet_modifier =yes
+			}
+			name = archaeo_strike_crafts_miner
+			desc = archaeo_strike_crafts_miner
+			weight = 40
+		}
+	}
+
+	tags = { minerals strategic_resource }
+
+	possible_pre_triggers = {
+		has_owner = yes
+		is_being_purged = no
+		is_being_assimilated = no
+		is_sapient = yes
+	}
+
+	possible_precalc = can_fill_worker_job
+	possible = {
+		hidden_trigger = { exists = owner }
+		owner = {
+			is_gestalt = no
+		}
+	}
+
+	resources = {
+		category = planet_miners
+		produces = {
+			minerals = 4
+		}
+		# Job Swap - Scrap Miners
+		produces = {
+			trigger = {
+				colony? = {
+					miner_is_scrap_miner_trigger = yes
+				}
+			}
+			minerals = -2
+			alloys = 1
+		}
+		# Job Swap - Cave Cleaners
+		produces = {
+			trigger = {
+				colony? = {
+					miner_is_cave_cleaner_trigger = yes
+				}
+			}
+			minerals = 2
+		}
+		# Job Swap - Turtle
+		produces = {
+			trigger = {
+				colony? = {
+					miner_is_turtle_miner_trigger = yes
+				}
+			}
+			minerals = -1
+			food = 3
+		}
+		produces = {
+			trigger = {
+				has_carrier_flag = has_material_requisitorium
+			}
+			minerals = @requisitorium_minerals_reduction
+		}
+		# Job Swap - Thermoforger
+		produces = {
+			trigger = {
+				colony? = {
+					miner_is_thermoforger_trigger = yes
+				}
+			}
+			minerals = 1
+			alloys = 0.5
+		}
+		# Job Swap - Thermoforger
+		produces = {
+			trigger = {
+				colony? = {
+					has_primitive_artificial_planet_modifier =yes
+				}
+			}
+			alloys = 0.25
+		}
+		upkeep = {
+			trigger = {
+				colony? = {
+					miner_is_thermoforger_trigger = yes
+				}
+			}
+			energy = 1
+		}
+		upkeep = {
+			trigger = {
+				colony? = {
+					has_primitive_artificial_planet_modifier =yes
+				}
+			}
+			minor_artifacts = 0.05
+		}
+	}
+
+	triggered_planet_modifier = {
+		# Gives some Stability per "Mining Guild" Councilor level.
+		potential = {
+			has_councilor = { COUNCILOR = "councilor_mining_guilds" }
+		}
+		planet_stability_add = @councilor_mining_guilds_miner_stability
+		mult = value:councilor_level|TYPE|councilor_mining_guilds|
+	}
+
+	overlord_resources = {
+		category = planet_requisitioned_minerals
+		produces = {
+			trigger = {
+				colony = {
+					has_carrier_flag = has_material_requisitorium
+				}
+			}
+			minerals = @requisitorium_minerals_overlord
+		}
+	}
+
+	weight = {
+		weight = @worker_job_weight
+		modifier = {
+			factor = 10
+			is_enslaved = yes
+			can_take_servant_job = no
+			NOT = { has_slavery_type = { type = slavery_indentured } }
+		}
+		modifier = {
+			factor = 3
+			OR = {
+				is_non_sapient_robot = yes
+				is_shackled_robot = yes
+			}
+			can_take_servant_job = no
+			owner = { has_technology = tech_droid_workers }
+		}
+		modifier = {
+			factor = 200
+			OR = {
+				is_non_sapient_robot = yes
+				is_shackled_robot = yes
+			}
+			can_take_servant_job = no
+			owner = { NOT = { has_technology = tech_droid_workers } }
+		}
+		modifier = {
+			factor = 0.25
+			can_take_servant_job = yes
+		}
+
+		modifier = {
+			factor = 5
+			has_trait = trait_cyborg_creed_of_labor
+		}
+	}
+
+	inline_script = "jobs/automodding_priority_minerals"
+
+}
+
 technician = {
 	category = worker
 	swappable_data = {

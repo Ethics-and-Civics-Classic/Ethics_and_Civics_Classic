@@ -1705,15 +1705,7 @@ country_event = {
 				limit = { root = { is_nomadic = no } }
 				### Runaway Greenhouse Effect
 				if = {
-					limit = { any_system_planet = { is_same_value = event_target:PrimPlayer_Industrialists_Folly } }
-					random_system_planet = {
-						limit = {
-							is_same_value = event_target:PrimPlayer_Industrialists_Folly
-						}
-						set_carrier_flag = anomaly_685_flag					#Allows for anomaly.685	Runaway Greenhouse Effect
-					}
-				}
-				else = {
+					limit = { any_system_planet = { NOT = { has_carrier_flag = anomaly_685_flag	} } }
 					random_system_planet = {
 						limit = {
 							is_planet_class = pc_toxic 
@@ -1847,7 +1839,13 @@ country_event = {
 				}
 				if = {
 					limit = { is_artificial = yes }
-					owner = { add_research_option = tech_archaeostudies }
+					owner = {
+						if = {
+							limit = { has_ancrel = yes }
+							add_research_option = tech_archaeostudies 
+							add_research_option = tech_archaeo_strike_crafts
+						}
+					}
 					if = {
 						limit = { is_ringworld = yes }
 						add_modifier = {
@@ -1875,8 +1873,38 @@ country_event = {
 								orbit_angle_offset = 0
 								size = random
 								init_effect = {
+									if = {
+										limit = { planet_size < 12 }	#To make sure it's not too small for colonization
+										set_planet_size = 12
+									}
 									save_event_target_as = PrimPlayer_Industrialists_Folly
+									set_carrier_flag = anomaly_685_flag	#Allows for anomaly.685	Runaway Greenhouse Effect
 									set_name = "Industrialists' Folly"
+								}
+							}
+							create_ambient_object = {
+								type = "medium_debris_02_object"
+								location = this
+								entity_offset_height = -2
+							}
+							last_created_ambient_object = {
+								set_location = {
+									target = event_target:Primitive_home_planet
+									distance = 0
+									angle = random
+								}
+							}
+							create_ambient_object = {
+								type = "primitive_habitat_planet_entity"
+								scale = 2
+								location = this
+								entity_offset_height = 0
+							}
+							last_created_ambient_object = {
+								set_location = {
+									target = event_target:Primitive_home_planet
+									distance = 0
+									angle = random
 								}
 							}
 						}
@@ -1894,7 +1922,13 @@ country_event = {
 				add_modifier = {
 					modifier = primitive_arkship_planet_modifier
 				}
-				owner = { add_research_option = tech_archaeostudies }
+				owner = { 
+					if = {
+						limit = { has_ancrel = yes }
+						add_research_option = tech_archaeostudies 
+						add_research_option = tech_archaeo_strike_crafts
+					}
+				}
 			}
 			######################
 			# Add nation blockers#
