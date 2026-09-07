@@ -4360,36 +4360,30 @@ fleet_event = {
 				has_void_dweller_origin = yes
 			}
 		}
+		solar_system = {
+			random_system_planet = {
+				limit = { 
+					has_owner = yes
+					is_capital = yes
+				}
+				save_event_target_as = Primitive_home_planet
+				PREV = {
+					spawn_megastructure = {
+						type = orbital_stations
+						name = Station
+						owner = root.owner
+						planet = event_target:Primitive_home_planet
+						coords_from = event_target:Primitive_home_planet
+						graphical_culture = root.owner
+						orbit_distance = 50
+						orbit_angle = 50
+					}
+				}
+			}
+		}
 		owner = { 
 			add_resource = { minerals = 1000 } 
 			add_resource = { unity = 500 }
-			create_fleet = {
-				name = "NAME_Pre_FTL_Chemical_Ship"
-				effect = {
-					set_owner = PREV
-					create_ship = {
-						name = random
-						design = "NAME_Early_Explorer_Vessel_NoDrive"
-					}
-					set_fleet_flag = inteplanetary_flight_fleet
-					set_location = prev.capital_scope
-					set_fleet_stance = passive
-					last_created_ship = { set_ship_flag = inteplanetary_flight_fleet }
-				}
-			}
-			random_owned_leader = {
-				limit = { leader_class = scientist }
-				last_created_fleet = { assign_leader = PREV }	#Assigns Scientist to Ship
-			}
-			hidden_effect = {
-				last_created_fleet = { 
-					fleet_event = { id = random_primitive_events.1 days = 10 }	#Exploration Mission
-				}
-			}
-			if = {
-				limit = { NOT = { has_technology = tech_primitive_generation_ship } }
-				add_research_option = tech_primitive_generation_ship 
-			}
 		}
 	}
 }
