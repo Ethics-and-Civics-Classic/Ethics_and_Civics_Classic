@@ -64,7 +64,7 @@ d_forgotten_level_blocker = {
 				owner = {
 					OR = {
 						has_origin = origin_heirs_of_the_khan
-						has_origin = civic_heirs_of_the_khan
+						has_civic = civic_heirs_of_the_khan
 					}
 				}
 			}
@@ -221,36 +221,14 @@ d_mountain_range = {
 		cost = {
 			energy = 1000
 		}
-		cost = {
-			trigger = {
-				exists = planet
-				planet = { has_building = building_national_park }
-			}
-			influence = @natl_park_influence_cost_heavy
-		}
-		produces = {
-			trigger = {
-				owner? = { is_green = yes }
-			}
-			unity = @green_blocker_production_med
-			society_research = @green_blocker_production_med
-		}
-		produces = {
-			trigger = {
-				owner? = { has_valid_civic = civic_environmentalist }
-			}
-			unity = @green_blocker_production_med
-		}
-		produces = {
-			trigger = {
-				owner? = {
-					OR = {
-						has_valid_civic = civic_natural_capitalism
-						has_valid_civic = civic_natural_capitalism_corporate
-					}
-				}
-			}
-			minerals = @green_blocker_production_large
+		inline_script = {
+			script = deposits/blocker_resources_single
+			INFLUENCE = @natl_park_influence_cost_heavy
+			GREEN_UNITY = @green_blocker_production_med
+			GREEN_SOCIETY = @green_blocker_production_med
+			UNITY = @green_blocker_production_med
+			NATURAL_CAPITALISM_RESOURCE = minerals
+			NATURAL_CAPITALISM_AMOUNT = @green_blocker_production_large
 		}
 	}
 
@@ -273,115 +251,15 @@ d_mountain_range = {
 
 	inline_script = deposits/environmental_architects_natural_blocker_pops
 
+	inline_script = deposits/blocker_large_geological
+
 	inline_script = deposits/ai_weight_natural_blocker
 
-	triggered_planet_modifier = {
-		potential = {
-			owner? = {
-				is_regular_empire = yes
-				has_valid_civic = civic_eco_warfare
-			}
-		}
-		modifier = {
-			planet_housing_add = @green_housing_heavy
-			planet_orbital_bombardment_damage = @eco_warfare_orbital_reduction_heavy
-			job_biologist_add = @building_static_jobs_low	#Steam: Triggers ranger job swap, since ranger is not a job as of 4.0
-			job_foundry_add = @building_static_jobs_low
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = {
-				is_regular_empire = yes
-				has_valid_civic = civic_naturalism
-			}
-		}
-		modifier = {
-			planet_housing_add = @green_housing_heavy
-			job_bureaucrat_add = @building_static_jobs_low	#Steam: Triggers culture worker job swap, since culture worker is not a job as of 4.0
-			job_artisan_add = @building_static_jobs_low
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { 
-				is_regular_empire = yes
-				has_valid_civic = civic_keepers_harmony 
-			}
-		}
-		modifier = {
-			planet_housing_add = @green_housing_heavy
-			pop_environment_tolerance = @keeper_harmony_hab_med
-			job_bureaucrat_add = @building_static_jobs	#Steam: Triggers druid job swap, since druid is not a job as of 4.0
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { 
-				is_regular_empire = yes
-				has_valid_civic = civic_terraforming 
-			}
-		}
-		modifier = {
-			planet_housing_add = @green_housing_heavy
-			planet_max_districts_add = 1
-			job_engineer_add = @building_static_jobs	#Steam: Triggers Geo-Engineer worker job swap, since Geo-Engineer is not a job as of 4.0
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { 
-				is_regular_empire = yes
-				has_valid_civic = civic_environmentalist 
-			}
-		}
-		modifier = {
-			planet_housing_add = @green_housing_heavy
-			planet_amenities_add = @green_amenities_med
-			job_miner_add = @building_static_jobs
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { is_green = yes }
-		}
-		modifier = {
-			planet_amenities_add = @green_amenities_low
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = {
-				OR = {
-					has_valid_civic = civic_natural_capitalism
-					has_valid_civic = civic_natural_capitalism_corporate
-				}
-			}
-		}
-		modifier = {
-			planet_housing_add = @green_housing_heavy
-			planet_jobs_trade_produces_mult = 0.025
-			job_trader_add = @building_static_jobs_low
-		}
-	}
-
 	on_cleared = {
-		hidden_effect = {
-			if = {
-				limit = {
-					exists = owner
-					owner = {
-						has_civic = civic_terraforming
-					}
-				}
-				owner = { add_resource = { minerals = @terraform_clear_reward_heavy } }
-			}
+		inline_script = {
+			script = deposits/on_cleared_resource
+			RESOURCE = minerals
+			AMOUNT = @terraform_clear_reward_heavy
 		}
 	}
 
@@ -431,37 +309,7 @@ d_active_volcano = {
 		cost = {
 			energy = 1000
 		}
-		cost = {
-			trigger = {
-				colony? = { has_building = building_national_park }
-			}
-			influence = @natl_park_influence_cost_heavy
-		}
-		produces = {
-			trigger = {
-				owner? = { is_green = yes }
-			}
-			unity = @green_blocker_production_med
-			society_research = @green_blocker_production_med
-		}
-		produces = {
-			trigger = {
-				owner? = { has_valid_civic = civic_environmentalist }
-			}
-			unity = @green_blocker_production_med
-		}
-		produces = {
-			trigger = {
-				owner? = {
-					OR = {
-						has_valid_civic = civic_natural_capitalism
-						has_valid_civic = civic_natural_capitalism_corporate
-					}
-				}
-			}
-			minerals = @green_blocker_production_med
-			energy = @green_blocker_production_med
-		}
+		inline_script = deposits/blocker_resources_volcanic
 	}
 
 	potential = {
@@ -483,107 +331,12 @@ d_active_volcano = {
 
 	inline_script = deposits/environmental_architects_natural_blocker_pops
 
+	inline_script = deposits/blocker_large_volcanic
+
 	inline_script = deposits/ai_weight_natural_blocker
 
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { has_valid_civic = civic_eco_warfare }
-		}
-		modifier = {
-			planet_housing_add = @green_housing_heavy
-			planet_orbital_bombardment_damage = @eco_warfare_orbital_reduction_heavy
-			job_biologist_add = @building_static_jobs_low		#Steam: Triggers ranger job swap, since ranger is not a job as of 4.0
-			job_foundry_add = @building_static_jobs_low
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { has_valid_civic = civic_naturalism }
-		}
-		modifier = {
-			planet_housing_add = @green_housing_heavy
-			job_bureaucrat_add = @building_static_jobs_low	#Steam: Triggers culture worker job swap, since culture worker is not a job as of 4.0
-			job_artisan_add = @building_static_jobs_low
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { has_valid_civic = civic_keepers_harmony }
-		}
-		modifier = {
-			planet_housing_add = @green_housing_heavy
-			pop_environment_tolerance = @keeper_harmony_hab_med
-			job_bureaucrat_add = @building_static_jobs	#Steam: Triggers druid job swap, since druid is not a job as of 4.0
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { has_valid_civic = civic_terraforming }
-		}
-		modifier = {
-			planet_housing_add = @green_housing_heavy
-			planet_max_districts_add = 1
-			job_engineer_add = @building_static_jobs		#Steam: Triggers Geo-Engineer worker job swap, since Geo-Engineer is not a job as of 4.0
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { has_valid_civic = civic_environmentalist }
-		}
-		modifier = {
-			planet_housing_add = @green_housing_heavy
-			planet_amenities_add = @green_amenities_med
-			job_miner_add = @building_static_jobs_low
-			job_technician_add = @building_static_jobs_low
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { is_green = yes }
-		}
-		modifier = {
-			planet_amenities_add = @green_amenities_low
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = {
-				OR = {
-					has_valid_civic = civic_natural_capitalism
-					has_valid_civic = civic_natural_capitalism_corporate
-				}
-			}
-		}
-		modifier = {
-			planet_housing_add = @green_housing_heavy
-			planet_jobs_trade_produces_mult = 0.025
-			job_trader_add = @building_static_jobs_low
-		}
-	}
-
 	on_cleared = {
-		hidden_effect = {
-			if = {
-				limit = {
-					exists = owner
-					owner = {
-						has_civic = civic_terraforming
-					}
-				}
-				owner = { 
-					add_resource = { 
-						minerals = @terraform_clear_reward_heavy
-						energy = @terraform_clear_reward_heavy
-					} 
-				}
-			}
-		}
+		inline_script = deposits/on_cleared_volcanic
 	}
 
 	drop_weight = {
@@ -628,36 +381,14 @@ d_dangerous_wildlife_blocker = {
 		cost = {
 			energy = 500
 		}
-		cost = {
-			trigger = {
-				exists = planet
-				planet = { has_building = building_national_park }
-			}
-			influence = @natl_park_influence_cost_heavy
-		}
-		produces = {
-			trigger = {
-				owner? = { is_green = yes }
-			}
-			unity = @green_blocker_production_med
-			society_research = @green_blocker_production_med
-		}
-		produces = {
-			trigger = {
-				owner? = { has_valid_civic = civic_environmentalist }
-			}
-			unity = @green_blocker_production_med
-		}
-		produces = {
-			trigger = {
-				owner? = {
-					OR = {
-						has_valid_civic = civic_natural_capitalism
-						has_valid_civic = civic_natural_capitalism_corporate
-					}
-				}
-			}
-			food = @green_blocker_production_large
+		inline_script = {
+			script = deposits/blocker_resources_single
+			INFLUENCE = @natl_park_influence_cost_heavy
+			GREEN_UNITY = @green_blocker_production_med
+			GREEN_SOCIETY = @green_blocker_production_med
+			UNITY = @green_blocker_production_med
+			NATURAL_CAPITALISM_RESOURCE = food
+			NATURAL_CAPITALISM_AMOUNT = @green_blocker_production_large
 		}
 	}
 
@@ -669,130 +400,11 @@ d_dangerous_wildlife_blocker = {
 		planet_max_districts_add = -2
 	}
 
-	triggered_planet_modifier = {
-		potential = {
-			biologist_is_ranger_trigger = yes
-		}
-		planet_biologists_society_research_produces_add = @ranger_large_production
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { has_valid_civic = civic_eco_warfare }
-		}
-		modifier = {
-			planet_orbital_bombardment_damage = @eco_warfare_orbital_reduction_heavy
-			job_biologist_add = @building_static_jobs		#Steam: Triggers ranger job swap, since ranger is not a job as of 4.0
-			job_entertainer_add = @building_static_jobs
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { has_valid_civic = civic_naturalism }
-		}
-		modifier = {
-			job_bureaucrat_add = @building_static_jobs	#Steam: Triggers culture worker job swap, since culture worker is not a job as of 4.0
-			job_entertainer_add = @building_static_jobs
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { has_valid_civic = civic_keepers_harmony }
-		}
-		modifier = {
-			pop_environment_tolerance = @keeper_harmony_hab_med
-			job_bureaucrat_add = @building_static_jobs	#Steam: Triggers druid job swap, since druid is not a job as of 4.0
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { has_valid_civic = civic_terraforming }
-		}
-		modifier = {
-			planet_max_districts_add = 1
-			job_biologist_add = @building_static_jobs		#Steam: Triggers Xeno-Biologist worker job swap, since Xeno-Biologist is not a job as of 4.0
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = {
-				has_civic = civic_environmentalist
-				country_uses_food = yes
-			}
-		}
-		modifier = {
-			planet_amenities_add = @green_amenities_high
-			job_farmer_add = @building_static_jobs
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = {
-				has_civic = civic_environmentalist
-				country_uses_food = no
-			}
-		}
-		modifier = {
-			planet_amenities_add = @green_amenities_special
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { is_green = yes }
-		}
-		modifier = {
-			planet_amenities_add = @green_amenities_low
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = {
-				OR = {
-					has_valid_civic = civic_natural_capitalism
-					has_valid_civic = civic_natural_capitalism_corporate
-				}
-			}
-		}
-		modifier = {
-			planet_jobs_trade_produces_mult = 0.05
-			job_trader_add = @building_static_jobs_high
-		}
-	}
-
 	inline_script = deposits/environmental_architects_natural_blocker_modifier
 
 
 	on_cleared = {
-		hidden_effect = {
-			if = {
-				limit = {
-					exists = owner
-					owner = {
-						has_civic = civic_hive_devouring_swarm
-					}
-				}
-				owner = { add_resource = { food = 200 } }
-			}
-			give_bio_repurposing_reward_on_organic_deposit_cleared = yes
-			if = {
-				limit = {
-					exists = owner
-					owner = {
-						has_civic = civic_terraforming
-					}
-				}
-				owner = { add_resource = { society_research = @terraform_clear_reward_heavy } }
-			}
-		}
-		planetscaper_pop_effect = yes
-		give_evolutionary_predator_situation_progress = { PROGRESS = @evopred_large_blocker_progress }
+		inline_script = deposits/on_cleared_wildlife
 	}
 
 	inline_script = deposits/ai_weight_natural_blocker
@@ -836,36 +448,14 @@ d_lethal_ecosphere_blocker = {
 		cost = {
 			energy = 50000
 		}
-		cost = {
-			trigger = {
-				exists = planet
-				planet = { has_building = building_national_park }
-			}
-			influence = @natl_park_influence_cost_special
-		}
-		produces = {
-			trigger = {
-				owner? = { is_green = yes }
-			}
-			unity = @green_blocker_production_special
-			society_research = @green_blocker_production_special
-		}
-		produces = {
-			trigger = {
-				owner? = { has_valid_civic = civic_environmentalist }
-			}
-			unity = @green_blocker_production_large
-		}
-		produces = {
-			trigger = {
-				owner? = {
-					OR = {
-						has_valid_civic = civic_natural_capitalism
-						has_valid_civic = civic_natural_capitalism_corporate
-					}
-				}
-			}
-			society_research = @green_blocker_production_special
+		inline_script = {
+			script = deposits/blocker_resources_single
+			INFLUENCE = @natl_park_influence_cost_special
+			GREEN_UNITY = @green_blocker_production_special
+			GREEN_SOCIETY =@green_blocker_production_special
+			UNITY = @green_blocker_production_large
+			NATURAL_CAPITALISM_RESOURCE = society_research
+			NATURAL_CAPITALISM_AMOUNT = @green_blocker_production_special
 		}
 	}
 
@@ -1022,35 +612,14 @@ d_dense_jungle = {
 		cost = {
 			energy = 500
 		}
-		cost = {
-			trigger = {
-				colony? = { has_building = building_national_park }
-			}
-			influence = @natl_park_influence_cost_normal
-		}
-		produces = {
-			trigger = {
-				owner? = { is_green = yes }
-			}
-			unity = @green_blocker_production_small
-			society_research = @green_blocker_production_small
-		}
-		produces = {
-			trigger = {
-				owner? = { has_valid_civic = civic_environmentalist }
-			}
-			unity = @green_blocker_production_small
-		}
-		produces = {
-			trigger = {
-				owner? = {
-					OR = {
-						has_valid_civic = civic_natural_capitalism
-						has_valid_civic = civic_natural_capitalism_corporate
-					}
-				}
-			}
-			food = @green_blocker_production_med
+		inline_script = {
+			script = deposits/blocker_resources_single
+			INFLUENCE = @natl_park_influence_cost_normal
+			GREEN_UNITY = @green_blocker_production_small
+			GREEN_SOCIETY = @green_blocker_production_small
+			UNITY = @green_blocker_production_small
+			NATURAL_CAPITALISM_RESOURCE = food
+			NATURAL_CAPITALISM_AMOUNT = @green_blocker_production_med
 		}
 	}
 
@@ -1062,128 +631,19 @@ d_dense_jungle = {
 		planet_max_districts_add = -1
 	}
 
-	triggered_planet_modifier = {
-		potential = {
-			biologist_is_ranger_trigger = yes
-		}
-		planet_biologists_food_produces_add = @ranger_small_production
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { is_green = yes }
-		}
-		modifier = {
-			planet_amenities_add = @green_amenities_low
-		}
-	}
-
 	inline_script = deposits/environmental_architects_natural_blocker_modifier
 
 	inline_script = deposits/environmental_architects_natural_blocker_pops
 
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { has_valid_civic = civic_eco_warfare }
-		}
-		modifier = {
-			planet_housing_add = @green_housing_normal
-			planet_orbital_bombardment_damage = @eco_warfare_orbital_reduction_normal
-			job_biologist_add = @building_static_jobs_low		#Steam: Triggers ranger job swap, since ranger is not a job as of 4.0
-		}
-	}
+	inline_script = deposits/blocker_small_biological
 
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { has_valid_civic = civic_naturalism }
-		}
-		modifier = {
-			planet_housing_add = @green_housing_heavy
-			job_naturalist_add = @building_static_jobs_low
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { has_valid_civic = civic_keepers_harmony }
-		}
-		modifier = {
-			planet_housing_add = @green_housing_normal
-			pop_environment_tolerance = @keeper_harmony_hab_small
-			job_bureaucrat_add = @building_static_jobs_low	#Steam: Triggers druid job swap, since druid is not a job as of 4.0
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { has_valid_civic = civic_terraforming }
-		}
-		modifier = {
-			planet_housing_add = @green_housing_normal
-			job_biologist_add = @building_static_jobs_low		#Steam: Triggers Xeno-Biologist worker job swap, since Xeno-Biologist is not a job as of 4.0
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = {
-				has_civic = civic_environmentalist
-				country_uses_food = yes
-			}
-		}
-		modifier = {
-			planet_housing_add = @green_housing_normal
-			planet_amenities_add = @green_amenities_med
-			job_farmer_add = @building_static_jobs_low
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = {
-				has_civic = civic_environmentalist
-				country_uses_food = no
-			}
-		}
-		modifier = {
-			planet_housing_add = @green_housing_normal
-			planet_amenities_add = @green_amenities_high
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = {
-				OR = {
-					has_valid_civic = civic_natural_capitalism
-					has_valid_civic = civic_natural_capitalism_corporate
-				}
-			}
-		}
-		modifier = {
-			planet_housing_add = @green_housing_normal
-			job_trader_add = @building_static_jobs_low
-		}
-	}
+	inline_script = deposits/ai_weight_natural_blocker
 
 	on_cleared = {
-		hidden_effect = {
-			if = {
-				limit = {
-					exists = owner
-					owner = { has_valid_civic = civic_terraforming }
-				}
-				owner = { add_resource = { food = @terraform_clear_reward_normal } }
-				give_bio_repurposing_reward_on_organic_deposit_cleared = yes
-			}
-		}
-		planetscaper_pop_effect = yes
-		give_evolutionary_predator_situation_progress = { PROGRESS = @evopred_large_blocker_progress }
+		inline_script = deposits/on_cleared_wildlife
 	}
 
 	all_blocker_swap_types = yes
-
-	inline_script = deposits/ai_weight_natural_blocker
 
 	drop_weight = {
 		weight = @blocker_high
@@ -1226,35 +686,14 @@ d_toxic_kelp = {
 		cost = {
 			energy = 500
 		}
-		cost = {
-			trigger = {
-				colony? = { has_building = building_national_park }
-			}
-			influence = @natl_park_influence_cost_normal
-		}
-		produces = {
-			trigger = {
-				owner? = { is_green = yes }
-			}
-			unity = @green_blocker_production_small
-			society_research = @green_blocker_production_small
-		}
-		produces = {
-			trigger = {
-				owner? = { has_valid_civic = civic_environmentalist }
-			}
-			unity = @green_blocker_production_small
-		}
-		produces = {
-			trigger = {
-				owner? = {
-					OR = {
-						has_valid_civic = civic_natural_capitalism
-						has_valid_civic = civic_natural_capitalism_corporate
-					}
-				}
-			}
-			food = @green_blocker_production_med
+		inline_script = {
+			script = deposits/blocker_resources_single
+			INFLUENCE = @natl_park_influence_cost_normal
+			GREEN_UNITY = @green_blocker_production_small
+			GREEN_SOCIETY = @green_blocker_production_small
+			UNITY = @green_blocker_production_small
+			NATURAL_CAPITALISM_RESOURCE = food
+			NATURAL_CAPITALISM_AMOUNT = @green_blocker_production_med
 		}
 	}
 
@@ -1266,107 +705,11 @@ d_toxic_kelp = {
 		planet_max_districts_add = -1
 	}
 
-	triggered_planet_modifier = {
-		potential = {
-			biologist_is_ranger_trigger = yes
-		}
-		planet_biologists_food_produces_add = @ranger_small_production
-	}
-
 	inline_script = deposits/environmental_architects_natural_blocker_modifier
 
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { is_green = yes }
-		}
-		modifier = {
-			planet_amenities_add = @green_amenities_low
-		}
-	}
+	inline_script = deposits/blocker_small_biological
 
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { has_valid_civic = civic_eco_warfare }
-		}
-		modifier = {
-			planet_housing_add = @green_housing_normal
-			planet_orbital_bombardment_damage = @eco_warfare_orbital_reduction_normal
-			job_biologist_add = @building_static_jobs_low		#Steam: Triggers ranger job swap, since ranger is not a job as of 4.0
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { has_valid_civic = civic_naturalism }
-		}
-		modifier = {
-			planet_housing_add = @green_housing_heavy
-			job_naturalist_add = @building_static_jobs_low
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { has_valid_civic = civic_keepers_harmony }
-		}
-		modifier = {
-			planet_housing_add = @green_housing_normal
-			pop_environment_tolerance = @keeper_harmony_hab_small
-			job_bureaucrat_add = @building_static_jobs_low	#Steam: Triggers druid job swap, since druid is not a job as of 4.0
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { has_valid_civic = civic_terraforming }
-		}
-		modifier = {
-			planet_housing_add = @green_housing_normal
-			job_biologist_add = @building_static_jobs_low		#Steam: Triggers Xeno-Biologist worker job swap, since Xeno-Biologist is not a job as of 4.0
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = {
-				has_civic = civic_environmentalist
-				country_uses_food = yes
-			}
-		}
-		modifier = {
-			planet_housing_add = @green_housing_normal
-			planet_amenities_add = @green_amenities_med
-			job_farmer_add = @building_static_jobs_low
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = {
-				has_civic = civic_environmentalist
-				country_uses_food = no
-			}
-		}
-		modifier = {
-			planet_housing_add = @green_housing_normal
-			planet_amenities_add = @green_amenities_med
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = {
-				OR = {
-					has_valid_civic = civic_natural_capitalism
-					has_valid_civic = civic_natural_capitalism_corporate
-				}
-			}
-		}
-		modifier = {
-			planet_housing_add = @green_housing_normal
-			job_trader_add = @building_static_jobs_low
-		}
-	}
+	inline_script = deposits/ai_weight_natural_blocker
 
 	on_cleared = {
 		hidden_effect = {
@@ -1386,8 +729,6 @@ d_toxic_kelp = {
 	}
 
 	all_blocker_swap_types = yes
-
-	inline_script = deposits/ai_weight_natural_blocker
 
 	drop_weight = {
 		weight = @blocker_high
@@ -1427,35 +768,14 @@ d_deep_sinkhole = {
 		cost = {
 			energy = 500
 		}
-		cost = {
-			trigger = {
-				colony? = { has_building = building_national_park }
-			}
-			influence = @natl_park_influence_cost_normal
-		}
-		produces = {
-			trigger = {
-				owner? = { is_green = yes }
-			}
-			unity = @green_blocker_production_small
-			society_research = @green_blocker_production_small
-		}
-		produces = {
-			trigger = {
-				owner? = { has_valid_civic = civic_environmentalist }
-			}
-			unity = @green_blocker_production_small
-		}
-		produces = {
-			trigger = {
-				owner? = {
-					OR = {
-						has_valid_civic = civic_natural_capitalism
-						has_valid_civic = civic_natural_capitalism_corporate
-					}
-				}
-			}
-			minerals = @green_blocker_production_med
+		inline_script = {
+			script = deposits/blocker_resources_single
+			INFLUENCE = @natl_park_influence_cost_normal
+			GREEN_UNITY = @green_blocker_production_small
+			GREEN_SOCIETY = @green_blocker_production_small
+			UNITY = @green_blocker_production_small
+			NATURAL_CAPITALISM_RESOURCE = food
+			NATURAL_CAPITALISM_AMOUNT = @green_blocker_production_med
 		}
 	}
 
@@ -1478,98 +798,17 @@ d_deep_sinkhole = {
 
 	inline_script = deposits/environmental_architects_natural_blocker_pops
 
-	all_blocker_swap_types = yes
+	inline_script = deposits/blocker_small_geological
 
 	inline_script = deposits/ai_weight_natural_blocker
 
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { is_green = yes }
-		}
-		modifier = {
-			planet_amenities_add = @green_amenities_low
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { has_valid_civic = civic_eco_warfare }
-		}
-		modifier = {
-			planet_housing_add = @green_housing_normal
-			planet_orbital_bombardment_damage = @eco_warfare_orbital_reduction_normal
-			job_biologist_add = @building_static_jobs_low		#Steam: Triggers ranger job swap, since ranger is not a job as of 4.0
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { has_valid_civic = civic_naturalism }
-		}
-		modifier = {
-			planet_housing_add = @green_housing_heavy
-			job_naturalist_add = @building_static_jobs_low
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { has_valid_civic = civic_keepers_harmony }
-		}
-		modifier = {
-			planet_housing_add = @green_housing_normal
-			pop_environment_tolerance = @keeper_harmony_hab_small
-			job_bureaucrat_add = @building_static_jobs_low	#Steam: Triggers druid job swap, since druid is not a job as of 4.0
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { has_valid_civic = civic_terraforming }
-		}
-		modifier = {
-			planet_housing_add = @green_housing_normal
-			job_engineer_add = @building_static_jobs_low		#Steam: Triggers Geo-Engineer worker job swap, since Geo-Engineer is not a job as of 4.0
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { has_valid_civic = civic_environmentalist }
-		}
-		modifier = {
-			planet_housing_add = @green_housing_normal
-			planet_amenities_add = @green_amenities_med
-			job_miner_add = @building_static_jobs_low
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = {
-				OR = {
-					has_valid_civic = civic_natural_capitalism
-					has_valid_civic = civic_natural_capitalism_corporate
-				}
-			}
-		}
-		modifier = {
-			planet_housing_add = @green_housing_normal
-			job_trader_add = @building_static_jobs_low
-		}
-	}
+	all_blocker_swap_types = yes
 
 	on_cleared = {
-		hidden_effect = {
-			if = {
-				limit = {
-					exists = owner
-					owner = {
-						has_civic = civic_terraforming
-					}
-				}
-				owner = { add_resource = { minerals = @terraform_clear_reward_normal } }
-			}
+		inline_script = { 
+			script = deposits/on_cleared_resource
+			RESOURCE = minerals
+			AMOUNT = @terraform_clear_reward_normal
 		}
 	}
 
@@ -1614,35 +853,14 @@ d_quicksand_basin = {
 		cost = {
 			energy = 500
 		}
-		cost = {
-			trigger = {
-				colony? = { has_building = building_national_park }
-			}
-			influence = @natl_park_influence_cost_normal
-		}
-		produces = {
-			trigger = {
-				owner? = { is_green = yes }
-			}
-			unity = @green_blocker_production_small
-			society_research = @green_blocker_production_small
-		}
-		produces = {
-			trigger = {
-				owner? = { has_valid_civic = civic_environmentalist }
-			}
-			unity = @green_blocker_production_small
-		}
-		produces = {
-			trigger = {
-				owner? = {
-					OR = {
-						has_valid_civic = civic_natural_capitalism
-						has_valid_civic = civic_natural_capitalism_corporate
-					}
-				}
-			}
-			minerals = @green_blocker_production_med
+		inline_script = {
+			script = deposits/blocker_resources_single
+			INFLUENCE = @natl_park_influence_cost_normal
+			GREEN_UNITY = @green_blocker_production_small
+			GREEN_SOCIETY = @green_blocker_production_small
+			UNITY = @green_blocker_production_small
+			NATURAL_CAPITALISM_RESOURCE = minerals
+			NATURAL_CAPITALISM_AMOUNT = @green_blocker_production_med
 		}
 	}
 
@@ -1665,99 +883,17 @@ d_quicksand_basin = {
 
 	inline_script = deposits/environmental_architects_natural_blocker_pops
 
-	all_blocker_swap_types = yes
+	inline_script = deposits/blocker_small_geological
 
 	inline_script = deposits/ai_weight_natural_blocker
 
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { is_green = yes }
-		}
-		modifier = {
-			planet_amenities_add = @green_amenities_low
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { has_valid_civic = civic_eco_warfare }
-		}
-		modifier = {
-			planet_housing_add = @green_housing_normal
-			planet_orbital_bombardment_damage = @eco_warfare_orbital_reduction_normal
-			job_biologist_add = @building_static_jobs_low		#Steam: Triggers ranger job swap, since ranger is not a job as of 4.0
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { has_valid_civic = civic_naturalism }
-		}
-		modifier = {
-			planet_housing_add = @green_housing_heavy
-			job_naturalist_add = @building_static_jobs_low
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { has_valid_civic = civic_keepers_harmony }
-		}
-		modifier = {
-			planet_housing_add = @green_housing_normal
-			pop_environment_tolerance = @keeper_harmony_hab_small
-			job_bureaucrat_add = @building_static_jobs_low	#Steam: Triggers druid job swap, since druid is not a job as of 4.0
-
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { has_valid_civic = civic_terraforming }
-		}
-		modifier = {
-			planet_housing_add = @green_housing_normal
-			job_engineer_add = @building_static_jobs_low		#Steam: Triggers Geo-Engineer worker job swap, since Geo-Engineer is not a job as of 4.0
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { has_valid_civic = civic_environmentalist }
-		}
-		modifier = {
-			planet_housing_add = @green_housing_normal
-			planet_amenities_add = @green_amenities_med
-			job_miner_add = @building_static_jobs_low
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = {
-				OR = {
-					has_valid_civic = civic_natural_capitalism
-					has_valid_civic = civic_natural_capitalism_corporate
-				}
-			}
-		}
-		modifier = {
-			planet_housing_add = @green_housing_normal
-			job_trader_add = @building_static_jobs_low
-		}
-	}
+	all_blocker_swap_types = yes
 
 	on_cleared = {
-		hidden_effect = {
-			if = {
-				limit = {
-					exists = owner
-					owner = {
-						has_civic = civic_terraforming
-					}
-				}
-				owner = { add_resource = { minerals = @terraform_clear_reward_normal } }
-			}
+		inline_script = { 
+			script = deposits/on_cleared_resource
+			RESOURCE = minerals
+			AMOUNT = @terraform_clear_reward_normal
 		}
 	}
 
@@ -1799,35 +935,14 @@ d_noxious_swamp = {
 		cost = {
 			energy = 500
 		}
-		cost = {
-			trigger = {
-				colony? = { has_building = building_national_park }
-			}
-			influence = @natl_park_influence_cost_normal
-		}
-		produces = {
-			trigger = {
-				owner? = { is_green = yes }
-			}
-			unity = @green_blocker_production_small
-			society_research = @green_blocker_production_small
-		}
-		produces = {
-			trigger = {
-				owner? = { has_valid_civic = civic_environmentalist }
-			}
-			unity = @green_blocker_production_small
-		}
-		produces = {
-			trigger = {
-				owner? = {
-					OR = {
-						has_valid_civic = civic_natural_capitalism
-						has_valid_civic = civic_natural_capitalism_corporate
-					}
-				}
-			}
-			food = @green_blocker_production_med
+		inline_script = {
+			script = deposits/blocker_resources_single
+			INFLUENCE = @natl_park_influence_cost_normal
+			GREEN_UNITY = @green_blocker_production_small
+			GREEN_SOCIETY = @green_blocker_production_small
+			UNITY = @green_blocker_production_small
+			NATURAL_CAPITALISM_RESOURCE = food
+			NATURAL_CAPITALISM_AMOUNT = @green_blocker_production_med
 		}
 	}
 
@@ -1848,98 +963,11 @@ d_noxious_swamp = {
 
 	inline_script = deposits/environmental_architects_natural_blocker_modifier
 
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { is_green = yes }
-		}
-		modifier = {
-			planet_amenities_add = @green_amenities_low
-		}
-	}
+	inline_script = deposits/blocker_small_biological
 
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { has_valid_civic = civic_eco_warfare }
-		}
-		modifier = {
-			planet_housing_add = @green_housing_normal
-			planet_orbital_bombardment_damage = @eco_warfare_orbital_reduction_normal
-			job_biologist_add = @building_static_jobs_low		#Steam: Triggers ranger job swap, since ranger is not a job as of 4.0
-		}
-	}
+	inline_script = deposits/ai_weight_natural_blocker
 
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { has_valid_civic = civic_naturalism }
-		}
-		modifier = {
-			planet_housing_add = @green_housing_heavy
-			job_naturalist_add = @building_static_jobs_low
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { has_valid_civic = civic_keepers_harmony }
-		}
-		modifier = {
-			planet_housing_add = @green_housing_normal
-			pop_environment_tolerance = @keeper_harmony_hab_small	
-			job_bureaucrat_add = @building_static_jobs_low	#Steam: Triggers druid job swap, since druid is not a job as of 4.0
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { has_valid_civic = civic_terraforming }
-		}
-		modifier = {
-			planet_housing_add = @green_housing_normal
-			job_biologist_add = @building_static_jobs_low		#Steam: Triggers Xeno-Biologist worker job swap, since Xeno-Biologist is not a job as of 4.0
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = {
-				has_civic = civic_environmentalist
-				country_uses_food = yes
-			}
-		}
-		modifier = {
-			planet_housing_add = @green_housing_normal
-			planet_amenities_add = @green_amenities_med
-			job_farmer_add = @building_static_jobs_low
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = {
-				has_civic = civic_environmentalist
-				country_uses_food = no
-			}
-		}
-		modifier = {
-			planet_housing_add = @green_housing_normal
-			planet_amenities_add = @green_amenities_med
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = {
-				OR = {
-					has_valid_civic = civic_natural_capitalism
-					has_valid_civic = civic_natural_capitalism_corporate
-				}
-			}
-		}
-		modifier = {
-			planet_housing_add = @green_housing_normal
-			job_trader_add = @building_static_jobs_low
-		}
-	}
+	all_blocker_swap_types = yes
 
 	on_cleared = {
 		hidden_effect = {
@@ -1957,10 +985,6 @@ d_noxious_swamp = {
 		planetscaper_pop_effect = yes
 		give_evolutionary_predator_situation_progress = { PROGRESS = @evopred_large_blocker_progress }
 	}
-
-	all_blocker_swap_types = yes
-
-	inline_script = deposits/ai_weight_natural_blocker
 
 	drop_weight = {
 		weight = @blocker_high
@@ -2000,35 +1024,14 @@ d_massive_glacier = {
 		cost = {
 			energy = 500
 		}
-		cost = {
-			trigger = {
-				colony? = { has_building = building_national_park }
-			}
-			influence = @natl_park_influence_cost_normal
-		}
-		produces = {
-			trigger = {
-				owner? = { is_green = yes }
-			}
-			unity = @green_blocker_production_small
-			society_research = @green_blocker_production_small
-		}
-		produces = {
-			trigger = {
-				owner? = { has_valid_civic = civic_environmentalist }
-			}
-			unity = @green_blocker_production_small
-		}
-		produces = {
-			trigger = {
-				owner? = {
-					OR = {
-						has_valid_civic = civic_natural_capitalism
-						has_valid_civic = civic_natural_capitalism_corporate
-					}
-				}
-			}
-			minerals = @green_blocker_production_med
+		inline_script = {
+			script = deposits/blocker_resources_single
+			INFLUENCE = @natl_park_influence_cost_normal
+			GREEN_UNITY = @green_blocker_production_small
+			GREEN_SOCIETY = @green_blocker_production_small
+			UNITY = @green_blocker_production_small
+			NATURAL_CAPITALISM_RESOURCE = minerals
+			NATURAL_CAPITALISM_AMOUNT = @green_blocker_production_med
 		}
 	}
 
@@ -2051,98 +1054,17 @@ d_massive_glacier = {
 
 	inline_script = deposits/environmental_architects_natural_blocker_pops
 
-	all_blocker_swap_types = yes
+	inline_script = deposits/blocker_small_geological
 
 	inline_script = deposits/ai_weight_natural_blocker
 
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { is_green = yes }
-		}
-		modifier = {
-			planet_amenities_add = @green_amenities_low
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { has_valid_civic = civic_eco_warfare }
-		}
-		modifier = {
-			planet_housing_add = @green_housing_normal
-			planet_orbital_bombardment_damage = @eco_warfare_orbital_reduction_normal
-			job_biologist_add = @building_static_jobs_low		#Steam: Triggers ranger job swap, since ranger is not a job as of 4.0
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { has_valid_civic = civic_naturalism }
-		}
-		modifier = {
-			planet_housing_add = @green_housing_heavy
-			job_naturalist_add = @building_static_jobs_low
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { has_valid_civic = civic_keepers_harmony }
-		}
-		modifier = {
-			planet_housing_add = @green_housing_normal
-			pop_environment_tolerance = @keeper_harmony_hab_small
-			job_bureaucrat_add = @building_static_jobs_low	#Steam: Triggers druid job swap, since druid is not a job as of 4.0
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { has_valid_civic = civic_terraforming }
-		}
-		modifier = {
-			planet_housing_add = @green_housing_normal
-			job_engineer_add = @building_static_jobs_low		#Steam: Triggers Geo-Engineer worker job swap, since Geo-Engineer is not a job as of 4.0
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { has_valid_civic = civic_environmentalist }
-		}
-		modifier = {
-			planet_housing_add = @green_housing_normal
-			planet_amenities_add = @green_amenities_med
-			job_miner_add = @building_static_jobs_low
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = {
-				OR = {
-					has_valid_civic = civic_natural_capitalism
-					has_valid_civic = civic_natural_capitalism_corporate
-				}
-			}
-		}
-		modifier = {
-			planet_housing_add = @green_housing_normal
-			job_trader_add = @building_static_jobs_low
-		}
-	}
-
+	all_blocker_swap_types = yes
+	
 	on_cleared = {
-		hidden_effect = {
-			if = {
-				limit = {
-					exists = owner
-					owner = {
-						has_civic = civic_terraforming
-					}
-				}
-				owner = { add_resource = { minerals = @terraform_clear_reward_normal } }
-			}
+		inline_script = { 
+			script = deposits/on_cleared_resource
+			RESOURCE = minerals
+			AMOUNT = @terraform_clear_reward_normal
 		}
 	}
 
@@ -2178,29 +1100,10 @@ d_wandering_forests = {
 	}
 
 	resources = {
-		produces = {
-			trigger = {
-				owner? = { is_green = yes }
-			}
-			unity = 5
-			society_research = 5
-		}
-		produces = {
-			trigger = {
-				owner? = { has_valid_civic = civic_environmentalist }
-			}
-			unity = 5
-		}
-		produces = {
-			trigger = {
-				owner? = {
-					OR = {
-						has_valid_civic = civic_natural_capitalism
-						has_valid_civic = civic_natural_capitalism_corporate
-					}
-				}
-			}
-			trade = 8
+		inline_script = {
+			script = deposits/blocker_resources_special
+			UNITY = 5
+			TRADE = 8
 		}
 	}
 
@@ -2208,75 +1111,8 @@ d_wandering_forests = {
 		planet_max_districts_add = -1
 	}
 
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { has_valid_civic = civic_eco_warfare }
-		}
-		modifier = {
-			planet_housing_add = @green_housing_heavy
-			planet_orbital_bombardment_damage = @eco_warfare_orbital_reduction_heavy
-			job_biologist_add = @building_static_jobs_high		#Steam: Triggers ranger job swap, since ranger is not a job as of 4.0
-		}
-	}
+	inline_script = deposits/blocker_special
 
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { has_valid_civic = civic_naturalism }
-		}
-		modifier = {
-			planet_housing_add = @green_housing_heavy
-			job_bureaucrat_add = @building_static_jobs_high	#Steam: Triggers culture worker job swap, since culture worker is not a job as of 4.0
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { has_valid_civic = civic_keepers_harmony }
-		}
-		modifier = {
-			planet_housing_add = @green_housing_heavy
-			pop_environment_tolerance = @keeper_harmony_hab_large
-			job_bureaucrat_add = @building_static_jobs_high	#Steam: Triggers druid job swap, since druid is not a job as of 4.0
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { has_valid_civic = civic_terraforming }
-		}
-		modifier = {
-			planet_housing_add = @green_housing_normal
-			planet_jobs_society_research_produces_mult = 0.05
-			job_biologist_add = @building_static_jobs_low		#Steam: Triggers Xeno-Biologist worker job swap, since Xeno-Biologist is not a job as of 4.0
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { has_valid_civic = civic_environmentalist }
-		}
-		modifier = {
-			planet_housing_add = @green_housing_heavy
-			job_entertainer_add = @building_static_jobs_high
-			pop_citizen_happiness = 0.05
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = {
-				OR = {
-					has_valid_civic = civic_natural_capitalism
-					has_valid_civic = civic_natural_capitalism_corporate
-				}
-			}
-		}
-		modifier = {
-			planet_housing_add = @green_housing_heavy
-			planet_jobs_trade_produces_mult = 0.05
-			job_trader_add = @building_static_jobs_high
-		}
-	}
 }
 
 d_titanic_life_blocker = {# Added via event
@@ -2290,29 +1126,10 @@ d_titanic_life_blocker = {# Added via event
 		produces = {
 			society_research = 8
 		}
-		produces = {
-			trigger = {
-				owner? = { is_green = yes }
-			}
-			unity = 5
-			society_research = 3
-		}
-		produces = {
-			trigger = {
-				owner? = { has_valid_civic = civic_environmentalist }
-			}
-			unity = 10
-		}
-		produces = {
-			trigger = {
-				owner? = {
-					OR = {
-						has_valid_civic = civic_natural_capitalism
-						has_valid_civic = civic_natural_capitalism_corporate
-					}
-				}
-			}
-			trade = 8
+		inline_script = {
+			script = deposits/blocker_resources_special
+			UNITY = 5
+			TRADE = 8
 		}
 	}
 
@@ -2320,77 +1137,8 @@ d_titanic_life_blocker = {# Added via event
 		planet_max_districts_add = -1
 	}
 
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { has_valid_civic = civic_eco_warfare }
-		}
-		modifier = {
-			planet_housing_add = @green_housing_heavy
-			planet_orbital_bombardment_damage = -0.25
-			job_biologist_add = @building_static_jobs_high		#Steam: Triggers ranger job swap, since ranger is not a job as of 4.0
-		}
-	}
+	inline_script = deposits/blocker_special
 
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { has_valid_civic = civic_naturalism }
-		}
-		modifier = {
-			planet_housing_add = @green_housing_heavy
-			pop_citizen_happiness = 0.05
-			job_bureaucrat_add = @building_static_jobs_high	#Steam: Triggers culture worker job swap, since culture worker is not a job as of 4.0
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { has_valid_civic = civic_keepers_harmony }
-		}
-		modifier = {
-			planet_housing_add = @green_housing_heavy
-			pop_environment_tolerance = @keeper_harmony_hab_large
-			planet_jobs_unity_produces_mult = 0.05
-			job_bureaucrat_add = @building_static_jobs_high	#Steam: Triggers druid job swap, since druid is not a job as of 4.0
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { has_valid_civic = civic_terraforming }
-		}
-		modifier = {
-			planet_housing_add = @green_housing_heavy
-			planet_jobs_society_research_produces_mult = 0.05
-			job_biologist_add = @building_static_jobs_high		#Steam: Triggers Xeno-Biologist worker job swap, since Xeno-Biologist is not a job as of 4.0
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { has_valid_civic = civic_environmentalist }
-		}
-		modifier = {
-			planet_housing_add = @green_housing_heavy
-			job_entertainer_add = @building_static_jobs_high
-			pop_citizen_happiness = 0.05
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = {
-				OR = {
-					has_valid_civic = civic_natural_capitalism
-					has_valid_civic = civic_natural_capitalism_corporate
-				}
-			}
-		}
-		modifier = {
-			planet_housing_add = @green_housing_heavy
-			planet_jobs_trade_produces_mult = 0.05
-			job_trader_add = @building_static_jobs_high
-		}
-	}
 }
 
 # 01_planetary_deposits.txt#
@@ -2413,29 +1161,10 @@ d_alien_pets_deposit = {
 	}
 
 	resources = {
-		produces = {
-			trigger = {
-				owner? = { is_green = yes }
-			}
-			unity = 5
-			society_research = 5
-		}
-		produces = {
-			trigger = {
-				owner? = { has_valid_civic = civic_environmentalist }
-			}
-			unity = 5
-		}
-		produces = {
-			trigger = {
-				owner? = {
-					OR = {
-						has_valid_civic = civic_natural_capitalism
-						has_valid_civic = civic_natural_capitalism_corporate
-					}
-				}
-			}
-			trade = 8
+		inline_script = {
+			script = deposits/blocker_resources_special
+			UNITY = 5
+			TRADE = 8
 		}
 	}
 
@@ -2452,67 +1181,7 @@ d_alien_pets_deposit = {
 		}
 	}
 
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { has_valid_civic = civic_eco_warfare }
-		}
-		modifier = {
-			job_biologist_add = @building_static_jobs_low		#Steam: Triggers ranger job swap, since ranger is not a job as of 4.0
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { has_valid_civic = civic_naturalism }
-		}
-		modifier = {
-			pop_citizen_happiness = 0.05
-			job_bureaucrat_add = @building_static_jobs_low	#Steam: Triggers culture worker job swap, since culture worker is not a job as of 4.0
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { has_valid_civic = civic_keepers_harmony }
-		}
-		modifier = {
-			pop_environment_tolerance = @keeper_harmony_hab_large
-			job_bureaucrat_add = @building_static_jobs_low	#Steam: Triggers druid job swap, since druid is not a job as of 4.0
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { has_valid_civic = civic_terraforming }
-		}
-		modifier = {
-			job_biologist_add = @building_static_jobs_low		#Steam: Triggers Xeno-Biologist worker job swap, since Xeno-Biologist is not a job as of 4.0
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { has_valid_civic = civic_environmentalist }
-		}
-		modifier = {
-			job_entertainer_add = @building_static_jobs_low
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = {
-				OR = {
-					has_valid_civic = civic_natural_capitalism
-					has_valid_civic = civic_natural_capitalism_corporate
-				}
-			}
-		}
-		modifier = {
-			planet_jobs_trade_produces_mult = 0.05
-			job_trader_add = @building_static_jobs_low
-		}
-	}
+	inline_script = deposits/blocker_special
 
 	drop_weight = {
 		weight = @mid_rare
@@ -2542,29 +1211,10 @@ d_migrating_forests = {
 	icon = d_huge_tree
 
 	resources = {
-		produces = {
-			trigger = {
-				owner? = { is_green = yes }
-			}
-			unity = 5
-			society_research = 5
-		}
-		produces = {
-			trigger = {
-				owner? = { has_valid_civic = civic_environmentalist }
-			}
-			unity = 10
-		}
-		produces = {
-			trigger = {
-				owner? = {
-					OR = {
-						has_valid_civic = civic_natural_capitalism
-						has_valid_civic = civic_natural_capitalism_corporate
-					}
-				}
-			}
-			trade = 8
+		inline_script = {
+			script = deposits/blocker_resources_special
+			UNITY = 10
+			TRADE = 8
 		}
 	}
 
@@ -2574,70 +1224,7 @@ d_migrating_forests = {
 		district_generator_max_add = -1
 	}
 
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { has_valid_civic = civic_eco_warfare }
-		}
-		modifier = {
-			planet_orbital_bombardment_damage = @eco_warfare_orbital_reduction_heavy
-			job_biologist_add = @building_static_jobs_low		#Steam: Triggers ranger job swap, since ranger is not a job as of 4.0
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { has_valid_civic = civic_naturalism }
-		}
-		modifier = {
-			pop_citizen_happiness = 0.05
-			job_bureaucrat_add = @building_static_jobs_low	#Steam: Triggers culture worker job swap, since culture worker is not a job as of 4.0
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { has_valid_civic = civic_keepers_harmony }
-		}
-		modifier = {
-			pop_environment_tolerance = @keeper_harmony_hab_large
-			planet_jobs_unity_produces_mult = 0.05
-			job_bureaucrat_add = @building_static_jobs_low	#Steam: Triggers druid job swap, since druid is not a job as of 4.0
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { has_valid_civic = civic_terraforming }
-		}
-		modifier = {
-			planet_jobs_society_research_produces_mult = 0.05
-			job_biologist_add = @building_static_jobs_low		#Steam: Triggers Xeno-Biologist worker job swap, since Xeno-Biologist is not a job as of 4.0
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { has_valid_civic = civic_environmentalist }
-		}
-		modifier = {
-			job_entertainer_add = @building_static_jobs
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = {
-				OR = {
-					has_valid_civic = civic_natural_capitalism
-					has_valid_civic = civic_natural_capitalism_corporate
-				}
-			}
-		}
-		modifier = {
-			planet_jobs_trade_produces_mult = 0.05
-			job_trader_add = @building_static_jobs_low
-		}
-	}
+	inline_script = deposits/blocker_special
 
 	drop_weight = {
 		weight = 0
@@ -2651,29 +1238,10 @@ d_migrating_forest_reserve = {
 	icon = d_huge_tree
 
 	resources = {
-		produces = {
-			trigger = {
-				owner? = { is_green = yes }
-			}
-			unity = 5
-			society_research = 5
-		}
-		produces = {
-			trigger = {
-				owner? = { has_valid_civic = civic_environmentalist }
-			}
-			unity = 10
-		}
-		produces = {
-			trigger = {
-				owner? = {
-					OR = {
-						has_valid_civic = civic_natural_capitalism
-						has_valid_civic = civic_natural_capitalism_corporate
-					}
-				}
-			}
-			trade = 12
+		inline_script = {
+			script = deposits/blocker_resources_special
+			UNITY = 10
+			TRADE = 12
 		}
 	}
 
@@ -2707,70 +1275,7 @@ d_migrating_forest_reserve = {
 		job_calculator_biologist_add = 200
 	}
 
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { has_valid_civic = civic_eco_warfare }
-		}
-		modifier = {
-			planet_orbital_bombardment_damage = @eco_warfare_orbital_reduction_heavy
-			job_biologist_add = @building_static_jobs_high		#Steam: Triggers ranger job swap, since ranger is not a job as of 4.0
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { has_valid_civic = civic_naturalism }
-		}
-		modifier = {
-			pop_citizen_happiness = 0.05
-			job_bureaucrat_add = @building_static_jobs_high	#Steam: Triggers culture worker job swap, since culture worker is not a job as of 4.0
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { has_valid_civic = civic_keepers_harmony }
-		}
-		modifier = {
-			pop_environment_tolerance = @keeper_harmony_hab_large
-			planet_jobs_unity_produces_mult = 0.05
-			job_bureaucrat_add = @building_static_jobs_high	#Steam: Triggers druid job swap, since druid is not a job as of 4.0
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { has_valid_civic = civic_terraforming }
-		}
-		modifier = {
-			planet_jobs_society_research_produces_mult = 0.05
-			job_biologist_add = @building_static_jobs_high		#Steam: Triggers Xeno-Biologist worker job swap, since Xeno-Biologist is not a job as of 4.0
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { has_valid_civic = civic_environmentalist }
-		}
-		modifier = {
-			job_entertainer_add = @building_static_jobs_high
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = {
-				OR = {
-					has_valid_civic = civic_natural_capitalism
-					has_valid_civic = civic_natural_capitalism_corporate
-				}
-			}
-		}
-		modifier = {
-			planet_jobs_trade_produces_mult = 0.05
-			job_trader_add = @building_static_jobs_high
-		}
-	}
+	inline_script = deposits/blocker_special
 
 	drop_weight = {
 		weight = 0
@@ -2784,29 +1289,10 @@ d_valley_of_zanaam = {
 	icon = d_alien_pets_deposit
 
 	resources = {
-		produces = {
-			trigger = {
-				owner? = { is_green = yes }
-			}
-			unity = 5
-			society_research = 5
-		}
-		produces = {
-			trigger = {
-				owner? = { has_valid_civic = civic_environmentalist }
-			}
-			unity = 10
-		}
-		produces = {
-			trigger = {
-				owner? = {
-					OR = {
-						has_valid_civic = civic_natural_capitalism
-						has_valid_civic = civic_natural_capitalism_corporate
-					}
-				}
-			}
-			trade = 12
+		inline_script = {
+			script = deposits/blocker_resources_special
+			UNITY = 10
+			TRADE = 12
 		}
 	}
 
@@ -2836,70 +1322,7 @@ d_valley_of_zanaam = {
 		job_calculator_engineer_add = 200
 	}
 
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { has_valid_civic = civic_eco_warfare }
-		}
-		modifier = {
-			planet_orbital_bombardment_damage = @eco_warfare_orbital_reduction_heavy
-			job_biologist_add = @building_static_jobs_high		#Steam: Triggers ranger job swap, since ranger is not a job as of 4.0
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { has_valid_civic = civic_naturalism }
-		}
-		modifier = {
-			pop_citizen_happiness = 0.05
-			job_bureaucrat_add = @building_static_jobs_high	#Steam: Triggers culture worker job swap, since culture worker is not a job as of 4.0
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { has_valid_civic = civic_keepers_harmony }
-		}
-		modifier = {
-			pop_environment_tolerance = @keeper_harmony_hab_large
-			planet_jobs_unity_produces_mult = 0.05
-			job_bureaucrat_add = @building_static_jobs_high	#Steam: Triggers druid job swap, since druid is not a job as of 4.0
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { has_valid_civic = civic_terraforming }
-		}
-		modifier = {
-			planet_jobs_society_research_produces_mult = 0.05
-			job_biologist_add = @building_static_jobs_high		#Steam: Triggers Xeno-Biologist worker job swap, since Xeno-Biologist is not a job as of 4.0
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { has_valid_civic = civic_environmentalist }
-		}
-		modifier = {
-			job_entertainer_add = @building_static_jobs_high
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = {
-				OR = {
-					has_valid_civic = civic_natural_capitalism
-					has_valid_civic = civic_natural_capitalism_corporate
-				}
-			}
-		}
-		modifier = {
-			planet_jobs_trade_produces_mult = 0.05
-			job_trader_add = @building_static_jobs_high
-		}
-	}
+	inline_script = deposits/blocker_special
 
 	drop_weight = {
 		weight = 0
@@ -2913,30 +1336,7 @@ d_savage_wildlands = {
 	icon = d_dangerous_wildlife_blocker
 
 	resources = {
-		produces = {
-			trigger = {
-				owner? = { is_green = yes }
-			}
-			unity = 5
-			society_research = 5
-		}
-		produces = {
-			trigger = {
-				owner? = { has_valid_civic = civic_environmentalist }
-			}
-			unity = 5
-		}
-		produces = {
-			trigger = {
-				owner? = {
-					OR = {
-						has_valid_civic = civic_natural_capitalism
-						has_valid_civic = civic_natural_capitalism_corporate
-					}
-				}
-			}
-			trade = 8
-		}
+		inline_script = deposits/blocker_resources_special
 	}
 
 	planet_modifier = {
@@ -2956,70 +1356,7 @@ d_savage_wildlands = {
 		AMOUNT = 30
 	}
 
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { has_valid_civic = civic_eco_warfare }
-		}
-		modifier = {
-			planet_orbital_bombardment_damage = @eco_warfare_orbital_reduction_heavy
-			job_biologist_add = @building_static_jobs_high		#Steam: Triggers ranger job swap, since ranger is not a job as of 4.0
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { has_valid_civic = civic_naturalism }
-		}
-		modifier = {
-			pop_citizen_happiness = 0.05
-			job_bureaucrat_add = @building_static_jobs_high	#Steam: Triggers culture worker job swap, since culture worker is not a job as of 4.0
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { has_valid_civic = civic_keepers_harmony }
-		}
-		modifier = {
-			pop_environment_tolerance = @keeper_harmony_hab_large
-			planet_jobs_unity_produces_mult = 0.05
-			job_bureaucrat_add = @building_static_jobs_high	#Steam: Triggers druid job swap, since druid is not a job as of 4.0
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { has_valid_civic = civic_terraforming }
-		}
-		modifier = {
-			planet_jobs_society_research_produces_mult = 0.05
-			job_biologist_add = @building_static_jobs_high		#Steam: Triggers Xeno-Biologist worker job swap, since Xeno-Biologist is not a job as of 4.0
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { has_valid_civic = civic_environmentalist }
-		}
-		modifier = {
-			job_entertainer_add = @building_static_jobs_high
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = {
-				OR = {
-					has_valid_civic = civic_natural_capitalism
-					has_valid_civic = civic_natural_capitalism_corporate
-				}
-			}
-		}
-		modifier = {
-			planet_jobs_trade_produces_mult = 0.05
-			job_trader_add = @building_static_jobs_high
-		}
-	}
+	inline_script = deposits/blocker_special
 
 	drop_weight = {
 		weight = 0
@@ -3037,100 +1374,17 @@ d_house_turtle = {
 
 	resources = {
 		category = planet_deposits
-		produces = {
-			trigger = {
-				owner? = { is_green = yes }
-			}
-			unity = 5
-			society_research = 5
-		}
-		produces = {
-			trigger = {
-				owner? = { has_valid_civic = civic_environmentalist }
-			}
-			unity = 10
-		}
-		produces = {
-			trigger = {
-				owner? = {
-					OR = {
-						has_valid_civic = civic_natural_capitalism
-						has_valid_civic = civic_natural_capitalism_corporate
-					}
-				}
-			}
-			trade = 12
+		inline_script = {
+			script = deposits/blocker_resources_special
+			UNITY = 10
+			TRADE = 12
 		}
 		upkeep = {
 			food = 3
 		}
 	}
 
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { has_valid_civic = civic_eco_warfare }
-		}
-		modifier = {
-			planet_orbital_bombardment_damage = @eco_warfare_orbital_reduction_heavy
-			job_biologist_add = @building_static_jobs_high		#Steam: Triggers ranger job swap, since ranger is not a job as of 4.0
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { has_valid_civic = civic_naturalism }
-		}
-		modifier = {
-			pop_citizen_happiness = 0.05
-			job_bureaucrat_add = @building_static_jobs_high	#Steam: Triggers culture worker job swap, since culture worker is not a job as of 4.0
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { has_valid_civic = civic_keepers_harmony }
-		}
-		modifier = {
-			pop_environment_tolerance = @keeper_harmony_hab_large
-			planet_jobs_unity_produces_mult = 0.05
-			job_bureaucrat_add = @building_static_jobs_high	#Steam: Triggers druid job swap, since druid is not a job as of 4.0
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { has_valid_civic = civic_terraforming }
-		}
-		modifier = {
-			planet_jobs_society_research_produces_mult = 0.05
-			job_biologist_add = @building_static_jobs_high		#Steam: Triggers Xeno-Biologist worker job swap, since Xeno-Biologist is not a job as of 4.0
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { has_valid_civic = civic_environmentalist }
-		}
-		modifier = {
-			job_entertainer_add = @building_static_jobs_high
-			pop_citizen_happiness = 0.05
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = {
-				OR = {
-					has_valid_civic = civic_natural_capitalism
-					has_valid_civic = civic_natural_capitalism_corporate
-				}
-			}
-		}
-		modifier = {
-			planet_jobs_trade_produces_mult = 0.05
-			job_trader_add = @building_static_jobs_high
-		}
-	}
+	inline_script = deposits/blocker_special
 
 	drop_weight = {
 		weight = 0
@@ -3168,29 +1422,10 @@ d_living_snow_reserve = {
 	icon = d_massive_glacier
 
 	resources = {
-		produces = {
-			trigger = {
-				owner? = { is_green = yes }
-			}
-			unity = 5
-			society_research = 5
-		}
-		produces = {
-			trigger = {
-				owner? = { has_valid_civic = civic_environmentalist }
-			}
-			unity = 5
-		}
-		produces = {
-			trigger = {
-				owner? = {
-					OR = {
-						has_valid_civic = civic_natural_capitalism
-						has_valid_civic = civic_natural_capitalism_corporate
-					}
-				}
-			}
-			trade = 8
+		inline_script = {
+			script = deposits/blocker_resources_special
+			UNITY = 5
+			TRADE = 8
 		}
 	}
 
@@ -3199,72 +1434,8 @@ d_living_snow_reserve = {
 		planet_jobs_society_research_produces_mult = 0.2
 		planet_max_districts_add = -2
 	}
-	
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { has_valid_civic = civic_eco_warfare }
-		}
-		modifier = {
-			planet_orbital_bombardment_damage = @eco_warfare_orbital_reduction_heavy
-			job_biologist_add = @building_static_jobs_high		#Steam: Triggers ranger job swap, since ranger is not a job as of 4.0
-		}
-	}
 
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { has_valid_civic = civic_naturalism }
-		}
-		modifier = {
-			pop_citizen_happiness = 0.05
-			job_bureaucrat_add = @building_static_jobs_high	#Steam: Triggers culture worker job swap, since culture worker is not a job as of 4.0
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { has_valid_civic = civic_keepers_harmony }
-		}
-		modifier = {
-			pop_environment_tolerance = @keeper_harmony_hab_large
-			planet_jobs_unity_produces_mult = 0.05
-			job_bureaucrat_add = @building_static_jobs_high	#Steam: Triggers druid job swap, since druid is not a job as of 4.0
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { has_valid_civic = civic_terraforming }
-		}
-		modifier = {
-			planet_jobs_society_research_produces_mult = 0.05
-			job_biologist_add = @building_static_jobs_high		#Steam: Triggers Xeno-Biologist worker job swap, since Xeno-Biologist is not a job as of 4.0
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { has_valid_civic = civic_environmentalist }
-		}
-		modifier = {
-			job_entertainer_add = @building_static_jobs_high
-			pop_citizen_happiness = 0.05
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = {
-				OR = {
-					has_valid_civic = civic_natural_capitalism
-					has_valid_civic = civic_natural_capitalism_corporate
-				}
-			}
-		}
-		modifier = {
-			planet_jobs_trade_produces_mult = 0.05
-			job_trader_add = @building_static_jobs_high
-		}
-	}
+	inline_script = deposits/blocker_special
 
 	triggered_planet_modifier = {
 		potential = {
@@ -3428,29 +1599,10 @@ d_avian_reserve = {
 	category = deposit_cat_rare
 
 	resources = {
-		produces = {
-			trigger = {
-				owner? = { is_green = yes }
-			}
-			unity = 5
-			society_research = 5
-		}
-		produces = {
-			trigger = {
-				owner? = { has_valid_civic = civic_environmentalist }
-			}
-			unity = 5
-		}
-		produces = {
-			trigger = {
-				owner? = {
-					OR = {
-						has_valid_civic = civic_natural_capitalism
-						has_valid_civic = civic_natural_capitalism_corporate
-					}
-				}
-			}
-			trade = 8
+		inline_script = {
+			script = deposits/blocker_resources_special
+			UNITY = 5
+			TRADE = 8
 		}
 	}
 
@@ -3537,38 +1689,7 @@ d_rugged_landscape = {
 
 	resources = {
 		category = deposit_blockers_natural
-		
-		cost = {
-			trigger = {
-				colony? = { has_building = building_national_park }
-			}
-			influence = @natl_park_influence_cost_heavy
-		}
-		produces = {
-			trigger = {
-				owner? = { is_green = yes }
-			}
-			unity = @green_blocker_production_med
-			society_research = @green_blocker_production_med
-		}
-		produces = {
-			trigger = {
-				owner? = { has_valid_civic = civic_environmentalist }
-			}
-			unity = @green_blocker_production_med
-		}
-		produces = {
-			trigger = {
-				owner? = {
-					OR = {
-						has_valid_civic = civic_natural_capitalism
-						has_valid_civic = civic_natural_capitalism_corporate
-					}
-				}
-			}
-			minerals = @green_blocker_production_med
-			energy = @green_blocker_production_med
-		}
+		inline_script = deposits/blocker_resources_volcanic
 	}
 
 	potential = { is_planet_class = pc_volcanic }
@@ -3585,138 +1706,15 @@ d_rugged_landscape = {
 	}
 
 	inline_script = deposits/environmental_architects_natural_blocker_modifier
+
 	inline_script = deposits/environmental_architects_natural_blocker_pops
+
+	inline_script = deposits/blocker_large_volcanic
+
 	inline_script = deposits/ai_weight_natural_blocker
 
-	triggered_planet_modifier = {
-		potential = {
-			owner? = {
-				is_regular_empire = yes
-				has_valid_civic = civic_eco_warfare
-			}
-		}
-		modifier = {
-			planet_housing_add = @green_housing_normal
-			planet_orbital_bombardment_damage = @eco_warfare_orbital_reduction_heavy
-			job_biologist_add = @building_static_jobs_low		#Steam: Triggers ranger job swap, since ranger is not a job as of 4.0
-			job_foundry_add = @building_static_jobs_low	
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = {
-				is_gestalt = yes
-				has_valid_civic = civic_eco_warfare
-			}
-		}
-		modifier = {
-			planet_housing_add = @green_housing_normal
-			planet_orbital_bombardment_damage = @eco_warfare_orbital_reduction_heavy
-			job_biologist_add = @building_static_jobs_low			#Steam: Triggers ranger job swap, since ranger is not a job as of 4.0
-			job_fabricator_add = @building_static_jobs_low
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = {
-				is_regular_empire = yes
-				has_valid_civic = civic_naturalism
-			}
-		}
-		modifier = {
-			planet_housing_add = 600
-			job_bureaucrat_add = @building_static_jobs_low	#Steam: Triggers culture worker job swap, since culture worker is not a job as of 4.0
-			job_artisan_add = @building_static_jobs_low
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = {
-				is_gestalt = yes
-				has_valid_civic = civic_naturalism
-			}
-		}
-		modifier = {
-			planet_housing_add = 600
-			job_bureaucrat_add = @building_static_jobs_low	#Steam: Triggers culture worker job swap, since culture worker is not a job as of 4.0
-			job_artisan_add = @building_static_jobs_low
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { has_valid_civic = civic_keepers_harmony }
-		}
-		modifier = {
-			planet_housing_add = @green_housing_normal
-			pop_environment_tolerance = 0.03
-			job_bureaucrat_add = @building_static_jobs	#Steam: Triggers druid job swap, since druid is not a job as of 4.0
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { has_valid_civic = civic_terraforming }
-		}
-		modifier = {
-			planet_housing_add = @green_housing_normal
-			planet_max_districts_add = 1
-			job_engineer_add = @building_static_jobs		#Steam: Triggers Geo-Engineer worker job swap, since Geo-Engineer is not a job as of 4.0
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { has_valid_civic = civic_environmentalist }
-		}
-		modifier = {
-			planet_housing_add = @green_housing_normal
-			planet_amenities_add = @green_amenities_med
-			job_miner_add = @building_static_jobs_low
-			job_technician_add = @building_static_jobs_low
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { is_green = yes }
-		}
-		modifier = {
-			planet_amenities_add = 200
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = {
-				OR = {
-					has_valid_civic = civic_natural_capitalism
-					has_valid_civic = civic_natural_capitalism_corporate
-				}
-			}
-		}
-		modifier = {
-			planet_housing_add = @green_housing_heavy
-			planet_jobs_trade_produces_mult = 0.025
-			job_trader_add = @building_static_jobs_low
-		}
-	}
-
 	on_cleared = {
-		hidden_effect = {
-			if = {
-				limit = {
-					exists = owner
-					owner = {
-						has_civic = civic_terraforming
-					}
-				}
-				owner = { add_resource = { alloys = 50 minerals = 200 } }
-			}
-		}
+		inline_script = deposits/on_cleared_volcanic
 	}
 
 	drop_weight = {
@@ -3753,37 +1751,7 @@ d_raging_lavafalls = {
 		cost = {
 			energy = 1000
 		}
-		cost = {
-			trigger = {
-				colony? = { has_building = building_national_park }
-			}
-			influence = @natl_park_influence_cost_heavy
-		}
-		produces = {
-			trigger = {
-				owner? = { is_green = yes }
-			}
-			unity = @green_blocker_production_med
-			society_research = @green_blocker_production_med
-		}
-		produces = {
-			trigger = {
-				owner? = { has_valid_civic = civic_environmentalist }
-			}
-			unity = @green_blocker_production_med
-		}
-		produces = {
-			trigger = {
-				owner? = {
-					OR = {
-						has_valid_civic = civic_natural_capitalism
-						has_valid_civic = civic_natural_capitalism_corporate
-					}
-				}
-			}
-			minerals = @green_blocker_production_med
-			alloys = @green_blocker_production_small
-		}
+		inline_script = deposits/blocker_resources_volcanic
 	}
 
 	potential = { is_planet_class = pc_volcanic }
@@ -3800,138 +1768,15 @@ d_raging_lavafalls = {
 	}
 
 	inline_script = deposits/environmental_architects_natural_blocker_modifier
+
 	inline_script = deposits/environmental_architects_natural_blocker_pops
+
+	inline_script = deposits/blocker_large_volcanic
+
 	inline_script = deposits/ai_weight_natural_blocker
 
-	triggered_planet_modifier = {
-		potential = {
-			owner? = {
-				is_regular_empire = yes
-				has_valid_civic = civic_eco_warfare
-			}
-		}
-		modifier = {
-			planet_housing_add = @green_housing_normal
-			planet_orbital_bombardment_damage = @eco_warfare_orbital_reduction_heavy
-			job_biologist_add = @building_static_jobs_low		#Steam: Triggers ranger job swap, since ranger is not a job as of 4.0
-			job_foundry_add = @building_static_jobs_low
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = {
-				is_gestalt = yes
-				has_valid_civic = civic_eco_warfare
-			}
-		}
-		modifier = {
-			planet_housing_add = @green_housing_normal
-			planet_orbital_bombardment_damage = @eco_warfare_orbital_reduction_heavy
-			job_biologist_add = @building_static_jobs_low		#Steam: Triggers ranger job swap, since ranger is not a job as of 4.0
-			job_fabricator_add = @building_static_jobs_low
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = {
-				is_regular_empire = yes
-				has_valid_civic = civic_naturalism
-			}
-		}
-		modifier = {
-			planet_housing_add = 600
-			job_bureaucrat_add = @building_static_jobs_low	#Steam: Triggers culture worker job swap, since culture worker is not a job as of 4.0
-			job_artisan_add = @building_static_jobs_low
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = {
-				is_gestalt = yes
-				has_valid_civic = civic_naturalism
-			}
-		}
-		modifier = {
-			planet_housing_add = 600
-			job_bureaucrat_add = @building_static_jobs_low	#Steam: Triggers culture worker job swap, since culture worker is not a job as of 4.0
-			job_artisan_add = @building_static_jobs_low
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { has_valid_civic = civic_keepers_harmony }
-		}
-		modifier = {
-			planet_housing_add = @green_housing_normal
-			pop_environment_tolerance = 0.03
-			job_bureaucrat_add = @building_static_jobs	#Steam: Triggers druid job swap, since druid is not a job as of 4.0
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { has_valid_civic = civic_terraforming }
-		}
-		modifier = {
-			planet_housing_add = @green_housing_normal
-			planet_max_districts_add = 1
-			job_engineer_add = @building_static_jobs		#Steam: Triggers Geo-Engineer worker job swap, since Geo-Engineer is not a job as of 4.0
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { has_valid_civic = civic_environmentalist }
-		}
-		modifier = {
-			planet_housing_add = @green_housing_normal
-			planet_amenities_add = @green_amenities_med
-			job_miner_add = @building_static_jobs_low
-			job_technician_add = @building_static_jobs_low
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = { is_green = yes }
-		}
-		modifier = {
-			planet_amenities_add = 200
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner? = {
-				OR = {
-					has_valid_civic = civic_natural_capitalism
-					has_valid_civic = civic_natural_capitalism_corporate
-				}
-			}
-		}
-		modifier = {
-			planet_housing_add = @green_housing_heavy
-			planet_jobs_trade_produces_mult = 0.025
-			job_trader_add = @building_static_jobs_low
-		}
-	}
-
 	on_cleared = {
-		hidden_effect = {
-			if = {
-				limit = {
-					exists = owner
-					owner = {
-						has_civic = civic_terraforming
-					}
-				}
-				owner = { add_resource = { alloys = 50 minerals = 200 } }
-			}
-		}
+		inline_script = deposits/on_cleared_volcanic
 	}
 
 	drop_weight = {
@@ -3959,10 +1804,16 @@ d_ark_nature_preserve_blocker = {
 		custom_tooltip = {
 			fail_text = has_nomad_conservatory
 			planet = {
-				NOR = { 
-					has_building = building_nomad_conservatory 
-					has_building = building_nature_sanctuary_nomad
-					has_building = building_national_park_nomad
+				OR = {
+					NOR = {
+						has_building = building_national_park_nomad
+						has_building = building_nature_sanctuary_nomad
+						has_building = building_nomad_conservatory
+					}
+					count_deposits = {
+						category = deposit_cat_blockers_natural
+						count > 1
+					}
 				}
 			}
 		}
@@ -3970,6 +1821,9 @@ d_ark_nature_preserve_blocker = {
 
 	resources = {
 		category = deposit_blockers_natural
+		cost = {
+			influence = 100
+		}
 		produces = {
 			trigger = {
 				owner? = { is_green = yes }
