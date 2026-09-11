@@ -75,34 +75,11 @@ physicist = {
 	possible_precalc = can_fill_specialist_job
 	possible = {
 		complex_specialist_job_check_trigger = yes
-		if = {
-			limit = {
-				planet = {
-					physicist_is_astrometeorologist_trigger = yes
-				}
-			}
-			OR = {
-				has_ethic = ethic_green
-				has_ethic = ethic_industrial
-				owner = { is_individual_machine = yes }
-				owner = { is_gestalt = yes }
-			}
-		}
 	}
 
 	inline_script = "jobs/academia_recruiter_naval_cap_add"
 
 	inline_script = "jobs/inf_navalcap_jobs"
-
-	#triggered_country_modifier = {
-	#	potential = {
-	#		local_or_sector_governor_has_trait = {
-	#			TRAIT = leader_trait_academia_recruiter
-	#		}
-	#	}
-	#	country_naval_cap_add = 1
-	#	mult = planet.modifier:job_researcher_naval_cap_add
-	#}
 
 	resources = {
 		category = planet_physicists
@@ -462,13 +439,20 @@ biologist = {
 		}
 		inline_script = "output/researcher_output"
 		produces = {
-			trigger = {
-				exists = owner										# Modded
-				owner = {
+			trigger = {												# Modded
+				owner? = {
 					is_technocracy = yes
 				}
 			}
 			unity = 1												# Modded
+		}
+		produces = {
+			trigger = {
+				owner? = {
+					has_valid_civic = civic_eco_warfare
+				}
+			}
+			unity = 0.5
 		}
 		#Distributism
 		produces = {
@@ -513,7 +497,19 @@ biologist = {
 	}
 
 	# Job Swap - Rangers
-	# Rangers amenity bonus not included. OP, plz nerf! -- Sage
+	triggered_planet_modifier = {
+		potential = {
+			biologist_is_ranger_trigger = yes
+			owner? = { 
+				NOR = { 
+					has_valid_civic = civic_dystopian_society
+					has_valid_civic = civic_eco_warfare
+				}
+			}
+		}
+		planet_amenities_add = 300
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	}
 
 	# Job Swap - Vent Researchers
 	triggered_planet_modifier = {
@@ -665,16 +661,6 @@ engineer = {
 
 	inline_script = "jobs/inf_navalcap_jobs"
 
-	#triggered_country_modifier = {
-	#	potential = {
-	#		local_or_sector_governor_has_trait = {
-	#			TRAIT = leader_trait_academia_recruiter
-	#		}
-	#	}
-	#	country_naval_cap_add = 1
-	#	mult = planet.modifier:job_researcher_naval_cap_add
-	#}
-
 	#Innovative Economy Trade
 	triggered_planet_modifier = {
 		potential = {
@@ -704,9 +690,8 @@ engineer = {
 			consumer_goods = 1.5
 		}
 		produces = {
-			trigger = {
-				exists = owner										# Modded
-				owner = {
+			trigger = {												# Modded
+				owner? = {
 					is_technocracy = yes
 				}
 			}
@@ -1184,28 +1169,8 @@ entertainer = {
 		if = {
 			limit = {
 				entertainer_is_duelist_trigger = yes
-				entertainer_is_storm_interpreter_trigger = yes
 			}
 			battle_thrall_job_check_trigger = yes
-			OR = {
-				has_ethic = ethic_militarist
-				has_ethic = ethic_pacifist
-				owner = { is_individual_machine = yes }
-				owner = { is_gestalt = yes }
-			}
-		}
-		else_if = {
-			limit = {
-				entertainer_is_duelist_trigger = yes
-				entertainer_is_storm_interpreter_trigger = no
-			}
-			battle_thrall_job_check_trigger = yes
-			OR = {
-				has_ethic = ethic_militarist
-				has_ethic = ethic_pacifist
-				owner = { is_individual_machine = yes }
-				owner = { is_gestalt = yes }
-			}
 		}
 		else = {
 			entertainer_job_check_trigger = yes
@@ -1215,7 +1180,7 @@ entertainer = {
 	resources = {
 		category = planet_entertainers
 		produces = {
-			unity = 1
+			unity = 0.5
 		}
 		upkeep = {
 			trigger = {
@@ -1249,7 +1214,7 @@ entertainer = {
 			trigger = {
 				entertainer_is_duelist_trigger = yes
 			}
-			unity = 1
+			unity = 0.5
 		}
 		upkeep = {
 			trigger = {
@@ -1258,21 +1223,25 @@ entertainer = {
 			}
 			alloys = 0.5
 		}
-		# Job Swap - Storm Duelists
-		upkeep = {
-			trigger = {
-				entertainer_is_duelist_trigger = yes
-				entertainer_is_storm_interpreter_trigger = yes
-			}
-			alloys = 0.5
-			energy = 0.5
-		}
 		# Job Swap - Storm Interpreter
 		produces = {
 			trigger = {
 				entertainer_is_storm_interpreter_trigger = yes
 			}
 			unity = 1.5
+		}
+		upkeep = {
+			trigger = {
+				entertainer_is_storm_interpreter_trigger = yes
+			}
+			consumer_goods = 0.5
+		}
+		upkeep = {
+			trigger = {
+				entertainer_is_duelist_trigger = yes
+				entertainer_is_storm_interpreter_trigger = yes
+			}
+			alloys = 1
 		}
 		#Distributism
 		produces = {
@@ -1372,35 +1341,6 @@ entertainer = {
 		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|	# Modded
 	}
 
-	#triggered_planet_modifier = {	#Steam: Moved these two together for simplicity, but these effects aren't indicated anywhere so I'm tagging them
-	#	potential = {
-	#		exists = owner
-	#		owner = {
-	#			is_pleasure_seeker_empire = yes
-	#			is_individual_machine = no
-	#		}
-	#	}
-	#	modifier = {
-	#		logistic_growth_mult = 0.01
-	#	}
-	#}
-	#
-	#triggered_planet_modifier = {
-	#	potential = {
-	#		exists = owner
-	#		owner = {
-	#			is_pleasure_seeker_empire = yes
-	#			OR = {
-	#				is_individual_machine = yes
-	#				is_synthetic_empire = yes
-	#			}
-	#		}
-	#	}
-	#	modifier = {
-	#		planet_pop_assembly_mult = 0.01
-	#	}
-	#}
-
 	weight = {
 		weight = @high_prio_specialist_job_weight
 		mult = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
@@ -1434,9 +1374,21 @@ entertainer = {
 		}
 
 		modifier = {	#Due to this being an ethic-based job
-			add = 500
+			factor = 5
+			OR = {
+				has_ethic = ethic_militarist
+				has_ethic = ethic_pacifist
+			}
 			entertainer_is_duelist_trigger = yes
-			owner = { is_individual_machine = no }
+		}
+
+		modifier = {
+			factor = 5
+			OR = {
+				has_ethic = ethic_green
+				has_ethic = ethic_industrial
+			}
+			entertainer_is_storm_interpreter_trigger = yes
 		}
 	}
 
@@ -1683,39 +1635,6 @@ bureaucrat = {
 			building_icon = building_temple
 			condition_string = SPECIALIST_JOB_TRIGGER
 			weight = 400
-		}
-		swap_type = {
-			trigger = {
-				bureaucrat_is_sacred_path_specialist = yes
-			}
-			name = sacred_path_specialist
-			desc = job_sacred_path_specialist_desc
-			icon = sacred_path_specialist
-			building_icon = building_temple
-			condition_string = SPECIALIST_JOB_TRIGGER
-			weight = 500
-		}
-		swap_type = {
-			trigger = {
-				bureaucrat_is_sacred_path_specialist = yes
-			}
-			name = sacred_path_specialist
-			desc = job_sacred_path_specialist_desc
-			icon = sacred_path_specialist
-			building_icon = building_temple
-			condition_string = SPECIALIST_JOB_TRIGGER
-			weight = 500
-		}
-		swap_type = {
-			trigger = {
-				bureaucrat_is_sacred_path_specialist = yes
-			}
-			name = sacred_path_specialist
-			desc = job_sacred_path_specialist_desc
-			icon = sacred_path_specialist
-			building_icon = building_temple
-			condition_string = SPECIALIST_JOB_TRIGGER
-			weight = 500
 		}
 		swap_type = {
 			trigger = {
