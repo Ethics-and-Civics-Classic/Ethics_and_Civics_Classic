@@ -262,7 +262,8 @@ situation_event = {
 					is_eager_explorer_empire = yes
 				}
 				host_has_dlc = "Apocalypse"
-				capital_scope = { is_planet_class = pc_nuked }	#Default origin if Nuclear Winter happens, everything else has priority
+				has_country_flag = atomic_ascension	#Cog Note - Only locks origin if you go this bonus ascension path
+				#capital_scope = { is_planet_class = pc_nuked }	#Default origin if Nuclear Winter happens, everything else has priority
 			}
 		}
 		owner = {
@@ -513,6 +514,18 @@ situation_event = {
 			destroy_situation = this 
 			hidden_effect = { 
 				owner = { 
+					if = { 
+						limit = { 
+							any_planet_within_border = { 
+								is_planet_class = pc_nuked
+								has_deposit = d_PrimPlayer_nation_deposit
+							}
+						}
+						random_planet_within_border = { 
+							limit = { has_deposit = d_PrimPlayer_nation_deposit }
+							carrier_event = { id = EaC_civic_mechanic_events.7155 days = 5 }
+						}
+					}
 					if = {
 						limit = { has_country_flag = origin_separatists_flag }
 						remove_country_flag = origin_separatists_flag 
@@ -1933,6 +1946,7 @@ country_event = {
 		trigger = { capital_scope = { is_planet_class = pc_nuked } }
 		start_situation = { type = PrimPlayer_unified_planet_situation target = this }
 		random_situation = { limit = { is_situation_type = PrimPlayer_unified_planet_situation } set_situation_approach = PrimPlayer_post_apocalyptic_approach }
+		country_event = { id = EaC_civic_mechanic_events.7158 }
 	}
 }
 
