@@ -16,7 +16,7 @@ can_nomad_settle = {
 			NOR = {
 				has_origin = origin_sacred_path
 				has_origin = origin_heirs_of_the_khan
-				has_origin = civic_heirs_of_the_khan
+				has_civic = civic_heirs_of_the_khan
 				AND = {
 					has_origin = origin_forever_cruise
 					NOT = {
@@ -36,7 +36,7 @@ can_nomad_settle = {
 						has_origin = origin_forever_cruise
 						has_origin = origin_sacred_path
 						has_origin = origin_heirs_of_the_khan
-						has_origin = civic_heirs_of_the_khan
+						has_civic = civic_heirs_of_the_khan
 					}
 				}
 			}
@@ -772,6 +772,61 @@ can_orbitable_repair_ships = {
 	}
 }
 
+#this/root = pop
+#checked if job's possible_precalc = can_fill_worker_job
+can_fill_worker_job = {
+	custom_tooltip = WORKER_JOB_TRIGGER
+	hidden_trigger = {
+		if = {
+			limit = {
+				planet = {
+					is_planet_class = pc_cosmogenesis_world #Everyone can become a chip slave
+				}
+			}
+			always = yes
+		}
+		else = {
+			NOT = { has_ethic = ethic_gestalt_consciousness }
+			NOT = { pop_group_has_trait = trait_tankbound }
+			exists = owner
+			is_being_purged = no
+			is_being_assimilated = no
+			NOR = {
+				has_citizenship_type = {
+					type = citizenship_organic_trophy
+					country = owner
+				}
+				has_citizenship_type = {
+					type = citizenship_organic_civilian
+					country = owner
+				}
+				has_citizenship_type = {
+					type = citizenship_cruise_passenger
+					country = owner
+				}
+			}
+			NAND = {
+				has_citizenship_type = { type = citizenship_slavery }
+				OR = {
+					has_slavery_type = { type = slavery_livestock }
+					has_slavery_type = { type = slavery_matrix }
+				}
+			}
+			if = {
+				limit = {
+					has_disconnected_drone_citizenship_type = yes
+				}
+				disconnected_drone_can_be_worker = yes
+			}
+			if = {
+				limit = {
+					divinity_right_to_work_job_check_trigger_exempt = no
+				}
+				divinity_right_to_work_job_check_trigger_worker = yes
+			}
+		}
+	}
+}
 
 can_fill_ruler_job = {
 	if = {
@@ -817,6 +872,10 @@ can_fill_ruler_job = {
 			NOR = {
 				has_citizenship_type = {
 					type = citizenship_organic_trophy
+					country = owner
+				}
+				has_citizenship_type = {
+					type = citizenship_organic_civilian
 					country = owner
 				}
 				has_citizenship_type = {
