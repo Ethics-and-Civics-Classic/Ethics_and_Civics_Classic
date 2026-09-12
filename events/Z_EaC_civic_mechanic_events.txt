@@ -13108,3 +13108,173 @@ country_event = {
 	}
 }
 
+############################
+#
+# 	.7000's are random origin/civic event mechanics
+#
+############################
+
+# Nuclear Bomb
+carrier_event = {
+	id = EaC_civic_mechanic_events.7155
+	title = "EaC_civic_mechanic_events.7155.name"
+	desc = "EaC_civic_mechanic_events.7155.desc"
+	picture = GFX_evt_crisis_declared
+	show_sound = event_air_raid_siren
+	location = ROOT
+	trackable = yes
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			set_carrier_flag = wasteland_nuclear_bomb
+			owner = {
+				set_country_flag = had_colony_155
+			}
+		}
+	}
+
+	option = {
+		name = EaC_civic_mechanic_events.7155.a
+		enable_special_project = {
+			name = "EAC_NUCLEAR_BOMB_PROJECT"
+			location = this
+			owner = root
+		}
+	}
+}
+
+# Special Project Completed
+carrier_event = {
+	id = EaC_civic_mechanic_events.7156
+	title = "PROJECT_COMPLETE"
+	desc = "EaC_civic_mechanic_events.7156.desc"
+	picture = GFX_evt_crisis_defeated
+	show_sound = event_activating_unknown_technology
+	location = ROOT
+
+	is_triggered_only = yes
+	
+	option = {
+		name = EaC_civic_mechanic_events.7156.pacifist
+		trigger = {
+			is_pacifist = yes
+		}
+		owner = {
+			give_specimen = {
+				key = origin_post_apocalyptic_specimen
+				origin = EAC_NUCLEAR_BOMB_PROJECT
+				targets = { root }
+			}
+			if = { 
+				limit = { 
+					is_apocalyptic_empire = yes
+					not = { has_country_flag = atomic_ascension } 
+				}
+				country_event = { id = EaC_civic_mechanic_events.7158 }
+			}
+		}
+	}
+
+	option = {
+		name = EaC_civic_mechanic_events.7156.a
+		owner = {
+			give_specimen = {
+				key = origin_post_apocalyptic_specimen
+				origin = EAC_NUCLEAR_BOMB_PROJECT
+				targets = { root }
+			}
+			if = { 
+				limit = { 
+					is_apocalyptic_empire = yes
+					not = { has_country_flag = atomic_ascension } 
+				}
+				country_event = { id = EaC_civic_mechanic_events.7158 }
+			}
+		}
+	}
+}
+
+# Special Project Failed
+carrier_event = {
+	id = EaC_civic_mechanic_events.7157
+	title = "PROJECT_FAILURE"
+	desc = "EaC_civic_mechanic_events.7157.desc"
+	picture = GFX_evt_nuclear_explosion
+	show_sound = event_super_explosion
+	location = ROOT
+
+	is_triggered_only = yes
+
+	option = {
+		name = EaC_civic_mechanic_events.7157.a
+		random_owned_pop_group = {
+			kill_single_pop = yes
+		}
+		add_planet_devastation = 20
+		owner = {
+			if = { 
+				limit = { 
+					is_apocalyptic_empire = yes
+					not = { has_country_flag = atomic_ascension } 
+				}
+				country_event = { id = EaC_civic_mechanic_events.7158 }
+			}
+		}
+	}
+}
+
+# Atomic Ascension
+country_event = {
+	id = EaC_civic_mechanic_events.7158
+	title = EaC_civic_mechanic_events.7158.title
+	desc = EaC_civic_mechanic_events.7158.desc
+	picture = GFX_evt_cosmic_storms_calibration
+
+	is_triggered_only = yes
+
+	option = {
+		name = EaC_civic_mechanic_events.7158.a
+		trigger = { is_apocalyptic_empire = yes }
+		custom_tooltip = embrace_atomic_ascension
+		custom_tooltip = PrimPlayer_ascension_tooltip
+		set_country_flag = atomic_ascension
+		capital_scope = {
+			if = {
+				limit = { has_building = building_primitive_nuclear_plant }
+				remove_building = building_primitive_nuclear_plant
+				add_building = building_primitive_nuclear_plant_apocalyptic
+			}
+			else_if = { 
+				limit = { free_building_slots > 0 }
+				add_building = building_primitive_nuclear_plant_apocalyptic
+			}
+		}
+	}
+	
+	option = {
+		name = EaC_civic_mechanic_events.7158.a
+		trigger = { is_apocalyptic_empire = no }
+		custom_tooltip = embrace_atomic_ascension
+		custom_tooltip = PrimPlayer_ascension_tooltip
+		custom_tooltip = PrimPlayer_embrace_atomic_ascension
+		set_country_flag = atomic_ascension
+		capital_scope = {
+			if = {
+				limit = { has_building = building_primitive_nuclear_plant }
+				remove_building = building_primitive_nuclear_plant
+				add_building = building_primitive_nuclear_plant_apocalyptic
+			}
+			else_if = { 
+				limit = { free_building_slots > 0 }
+				add_building = building_primitive_nuclear_plant_apocalyptic
+			}
+		}
+	}
+	
+	option = {
+		name = EaC_civic_mechanic_events.7158.b
+	}
+}
+
