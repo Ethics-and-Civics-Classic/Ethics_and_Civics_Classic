@@ -12744,21 +12744,48 @@ fleet_event = {
 		OR = {
 			is_ship_size = civilian_resort_colony_cruise
 			is_ship_size = civilian_local_colony_cruise
+			AND = {
+				is_arkship_ship = yes
+				any_owned_ship = { has_component = "forever_cruise_BRANCH_OFFICE" }
+			}
 		}
 		FROM = { 
 			is_colony = yes
 			NOT = { has_modifier = resort_colony } 
-			is_owned_by = root.owner
+			OR = {
+				is_owned_by = root.owner
+				root.owner = { is_nomadic = yes }
+			}
 		}
 	}
 
 	immediate = {
-		FROM = {
-			add_modifier = {
-				modifier = resort_colony_branch
-				days = -1
-				clear_on_owner_change = yes
+		if = {
+			limit = { 
+				any_owned_ship = { has_component = "forever_cruise_BRANCH_OFFICE" }
 			}
+			FROM = {
+				add_modifier = {
+					modifier = forever_cruise_branch
+					days = -1
+					clear_on_owner_change = yes
+				}
+			}
+			if = {
+				limit = { NOT = { has_fleet_flag = EaC_civic_mechanic_events_5004_flag } }
+				fleet_event = { id = EaC_civic_mechanic_events.5004 days = 30 }
+			}
+		}
+		else = {
+			FROM = {
+				add_modifier = {
+					modifier = resort_colony_branch
+					days = -1
+					clear_on_owner_change = yes
+				}
+			}
+		}
+		FROM = {
 			if = {
 				limit = { NOT = { has_modifier = planet_luxuries_boost } }
 				add_modifier = { modifier = "planet_luxuries_boost" days = 720 }
@@ -12781,7 +12808,12 @@ country_event = {
 	immediate = {
 		every_system_within_border = {
 			limit = { 
-				any_system_planet = { has_modifier = resort_colony_branch }
+				any_system_planet = { 
+					OR ={
+						has_modifier = resort_colony_branch 
+						has_modifier = forever_cruise_branch
+					}
+				}
 			}
 			if = {
 				limit = {
@@ -12796,7 +12828,9 @@ country_event = {
 					}
 				}
 				random_system_planet = {
-					limit = { has_modifier = resort_colony_branch }
+					limit = { 
+						has_modifier = resort_colony_branch 
+					}
 					remove_modifier = resort_colony_branch
 				}
 			}
@@ -12809,10 +12843,29 @@ country_event = {
 				}
 				random_system_planet = {
 					limit = { 
-						has_modifier = resort_colony_branch 
+						has_modifier = resort_colony_branch #Removes branches from Resort Worlds, as that is redundant
 						has_modifier = resort_colony	
 					}
 					remove_modifier = resort_colony_branch
+				}
+			}
+			if = {
+				limit = {
+					count_fleet_in_system = {
+						count = 0
+						limit = { 
+							AND = {
+								is_arkship_ship = yes
+								any_owned_ship = { has_component = "forever_cruise_BRANCH_OFFICE" }
+							}
+						}
+					}
+				}
+				random_system_planet = {
+					limit = { 
+						has_modifier = forever_cruise_branch
+					}
+					remove_modifier = forever_cruise_branch
 				}
 			}
 		}
@@ -12872,6 +12925,52 @@ fleet_event = {
 				root = { auto_move_to_planet = { target = PREV clear_auto_move_on_arrival = yes } }
 			}
 		}
+	}
+}
+
+# Forever Cruise Travels Randomly in System
+fleet_event = {
+	id = EaC_civic_mechanic_events.5004
+	hide_window = yes
+
+	is_triggered_only = yes
+	
+	trigger = { 
+		NOT = { has_fleet_flag = EaC_civic_mechanic_events_5004_flag }
+		owner = { has_edict = civilian_resort_colony_cruise_roam_edict } 
+		solar_system = {
+			any_system_planet = {
+				any_fleet_in_orbit = { is_same_value = root }
+			}
+		}
+	}
+	
+	immediate = {
+		set_timed_fleet_flag = {
+			flag = EaC_civic_mechanic_events_5004_flag
+			days = 58
+		}
+		solar_system = {
+			random_system_planet = {
+				limit = { 
+					NOT = { is_same_value = root.orbit }
+					distance = {
+						source = root
+						same_solar_system = yes
+					}
+				}
+				weights = {
+					base = 1
+					modifier = { 
+						add = 100
+						is_colony = yes 
+						NOT = { has_modifier = planet_luxuries_boost }
+					}
+				}
+				root = { auto_move_to_planet = { target = PREV clear_auto_move_on_arrival = yes } }
+			}
+		}
+		fleet_event = { id = EaC_civic_mechanic_events.5004 days = 60 }
 	}
 }
 
