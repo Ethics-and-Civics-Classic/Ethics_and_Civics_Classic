@@ -1010,7 +1010,7 @@ ship_event = {
 			OWNER = { capital_scope = { is_planet_class = pc_nuked } }
 			FROM = { is_planet_class = pc_nuked } 
 		}
-		text = "random_primitive_events.2.desc.home_pc_nuked"
+		text = "random_primitive_events.2.desc.home_nuked_planet"
 	}
 	
 	desc = {
@@ -1018,7 +1018,7 @@ ship_event = {
 			NOT = { OWNER = { capital_scope = { is_planet_class = pc_nuked } } }
 			FROM = { is_planet_class = pc_nuked } 
 		}
-		text = "random_primitive_events.2.desc.pc_nuked"
+		text = "random_primitive_events.2.desc.nuked_planet"
 	}
 	
 	trigger = { 
@@ -1251,15 +1251,10 @@ ship_event = {
 		trigger = { 
 			FROM = { 
 				is_colonizable = yes #Not Habitable
-				NOR = {
-					is_planet_class = pc_asteroid
-					is_planet_class = pc_gas_giant
-					is_planet_class = pc_molten
-					is_planet_class = pc_barren
-					is_planet_class = pc_barren_cold
-					is_planet_class = pc_toxic
-					is_planet_class = pc_frozen
-					is_planet_class = pc_nuked
+				NOT = { is_planet_class = pc_nuked }
+				is_ideal_planet_class = {
+					who = owner
+					status = no
 				}
 			}
 		} 
@@ -1279,6 +1274,10 @@ ship_event = {
 			FROM = { 
 				is_colonizable = yes #Habitable
 				NOT = { is_planet_class = pc_nuked }
+				is_ideal_planet_class = {
+					who = owner
+					status = yes
+				}
 			}
 		}
 		owner = {
@@ -1668,10 +1667,21 @@ ship_event = {
 			}
 		}
 		if = {
-			limit = { from = { has_carrier_flag = anomaly_685_flag } }
+			limit = { 
+				from = { has_carrier_flag = anomaly_685_flag } 
+				has_toxoids = yes
+			}
 			### Runaway Greenhouse Effect
 			from = { add_modifier = { modifier = "toxic_terraforming_candidate" days = -1 } }
 			owner = { start_situation = { type = PrimPlayer_terraform_toxic_situation target = from } }
+			ship_event = { id = anomaly.685 scopes = { FROM = FROM } }
+			hidden_effect = { from = { remove_carrier_flag = anomaly_685_flag } }
+		}
+		else_if = {
+			limit = {
+				from = { has_carrier_flag = anomaly_685_flag }
+			}
+			### Runaway Greenhouse Effect
 			ship_event = { id = anomaly.685 scopes = { FROM = FROM } }
 			hidden_effect = { from = { remove_carrier_flag = anomaly_685_flag } }
 		}
@@ -1702,7 +1712,7 @@ ship_event = {
 	}
 	
 	option = {
-		name = "random_primitive_events.2.option.home_pc_nuked"	
+		name = "random_primitive_events.2.option.home_nuked_planet"	
 		trigger = { 
 			OWNER = { capital_scope = { is_planet_class = pc_nuked } }
 			FROM = { is_planet_class = pc_nuked } 
@@ -1719,7 +1729,7 @@ ship_event = {
 	}
 	
 	option = {
-		name = "random_primitive_events.2.option.pc_nuked"	
+		name = "random_primitive_events.2.option.nuked_planet"	
 		trigger = { 
 			NOT = { OWNER = { capital_scope = { is_planet_class = pc_nuked } } }
 			FROM = { is_planet_class = pc_nuked } 
@@ -1767,9 +1777,7 @@ country_event = {
 			}
 		}
 	}
-	
-	#immediate = { country_event = { id = random_primitive_events.2002 days = 30 } }
-	
+
 	option = {
 		name = "random_primitive_events.2001.option.fruitful_partnership"	
 		trigger = { 
@@ -1818,34 +1826,6 @@ country_event = {
 	}
 }
 
-country_event = {
-	id = random_primitive_events.2002
-	title = "random_primitive_events.2002.title"
-	is_triggered_only = yes
-	location = from
-	picture = GFX_evt_fruitful_partnership
-	show_sound = event_space_amoeba
-	
-	#trigger = { any_country = { is_country_type = tiyanki } }
-	
-	desc = {
-		text = "random_primitive_events.2002.desc"
-	}
-	
-	option = {
-		name = "random_primitive_events.2002.option"	
-		establish_communications = event_target:tiyanki_country
-	}
-	
-	option = {
-		name = "random_primitive_events.2002.works"	
-		trigger = { any_country = { is_country_type = tiyanki } }
-		establish_communications = event_target:tiyanki_country
-	}
-}
-
-
-
 carrier_event = {
 	id = random_primitive_events.211
 	title = "random_primitive_events.212.title"
@@ -1859,6 +1839,7 @@ carrier_event = {
 		}
 	}
 }
+
 country_event = {
 	id = random_primitive_events.212
 	title = "random_primitive_events.212.title"
@@ -4160,7 +4141,11 @@ carrier_event = {
 
 	option = {
 		name = random_primitive_events.274.a
-		trigger = { is_xenophobe = no }
+		trigger = { 
+			owner = { 
+				is_xenophobe = no 
+			} 
+		}
 		hidden_effect = {
 			change_variable = {
 				which = "angry_subterraneans"
@@ -4171,7 +4156,11 @@ carrier_event = {
 	}
 	option = {
 		name = random_primitive_events.274.xenophobe
-		trigger = { is_xenophobe = yes }
+		trigger = { 
+			owner = {
+				is_xenophobe = yes 
+			}
+		}
 		hidden_effect = {
 			change_variable = {
 				which = "angry_subterraneans"
@@ -4184,7 +4173,9 @@ carrier_event = {
 		name = random_primitive_events.274.b
 		trigger = { 
 			OR = {
-				is_xenophile = yes 	#So the xenophile ethic appears
+				owner = {
+					is_xenophile = yes 	#So the xenophile ethic appears
+				}
 				always = yes
 			}
 		}
