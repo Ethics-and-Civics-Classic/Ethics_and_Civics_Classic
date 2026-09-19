@@ -12,31 +12,7 @@ traditionalist = {
 
 	resources = {
 		category = pop_factions
-		produces = {
-			trigger = {
-				owner = {
-					NOT = { has_edict = civic_crowdsourcing_edict }
-					#NOR = {
-					#	has_civic = civic_anarchy_utopia
-					#	has_civic = civic_crowdsourcing
-					#	has_civic = civic_corporate_crowdsourcing
-					#}
-				}
-			}
-			unity = @faction_base_output
-		}
-		#Anarchy Ideals
-		produces = {
-			trigger = {
-				owner = {
-					has_edict = civic_crowdsourcing_edict
-					has_civic = civic_anarchy_utopia
-				}
-			}
-			unity = @faction_base_output
-			mult = @faction_anarchy_unity_ratio
-		}
-		#Crowdsourcing
+		inline_script = pop_faction_types/shared_unity_production
 		produces = {
 			trigger = {
 				owner = {
@@ -68,11 +44,6 @@ traditionalist = {
 			trigger = {
 				owner = {
 					NOT = { has_edict = civic_crowdsourcing_edict }
-					#NOR = {
-					#	has_civic = civic_anarchy_utopia
-					#	has_civic = civic_crowdsourcing
-					#	has_civic = civic_corporate_crowdsourcing
-					#}
 				}
 				is_lithoid_or_infernal_empire = no
 			}
@@ -83,11 +54,6 @@ traditionalist = {
 			trigger = {
 				owner = {
 					NOT = { has_edict = civic_crowdsourcing_edict }
-					#NOR = {
-					#	has_civic = civic_anarchy_utopia
-					#	has_civic = civic_crowdsourcing
-					#	has_civic = civic_corporate_crowdsourcing
-					#}
 				}
 				is_lithoid_empire = yes
 			}
@@ -98,54 +64,13 @@ traditionalist = {
 			trigger = {
 				owner = {
 					NOT = { has_edict = civic_crowdsourcing_edict }
-					#NOR = {
-					#	has_civic = civic_anarchy_utopia
-					#	has_civic = civic_crowdsourcing
-					#	has_civic = civic_corporate_crowdsourcing
-					#}
 				}
 				is_infernal_empire = yes
 			}
 			alloys = @faction_base_output
 			mult = @faction_extortion_alloys_ratio
 		}
-		#Anarchy Ideals
-		produces = {
-			trigger = {
-				owner = {
-					has_edict = civic_crowdsourcing_edict
-					has_civic = civic_anarchy_utopia
-				}
-				is_lithoid_or_infernal_empire = no
-			}
-			food = @faction_base_output
-			mult = @faction_extortion_food_anarchy_ratio
-		}
-		#Anarchy Ideals
-		produces = {
-			trigger = {
-				owner = {
-					has_edict = civic_crowdsourcing_edict
-					has_civic = civic_anarchy_utopia
-				}
-				is_lithoid_empire = yes
-			}
-			minerals = @faction_base_output
-			mult = @faction_extortion_minerals_anarchy_ratio
-		}
-		#Anarchy Ideals
-		produces = {
-			trigger = {
-				owner = {
-					has_edict = civic_crowdsourcing_edict
-					has_civic = civic_anarchy_utopia
-				}
-				is_infernal_empire = yes
-			}
-			minerals = @faction_base_output
-			mult = @faction_extortion_alloys_anarchy_ratio
-		}
-		#Crowdsourcing
+		# Crowdsourcing
 		produces = {
 			trigger = {
 				owner = {
@@ -157,7 +82,7 @@ traditionalist = {
 			society_research = @faction_minor_output
 			mult = @faction_extortion_crowdsourcing_ratio
 		}
-		#Anarchy Ideals
+		# Anarchy Ideals
 		produces = {
 			trigger = {
 				owner = {
@@ -167,7 +92,7 @@ traditionalist = {
 			}
 			physics_research = @faction_major_output
 			society_research = @faction_minor_output
-			mult = @faction_extortion_crowdsourcing_ratio
+			mult = @faction_extortion_crowdsourcing_anarchy_ratio
 		}
 	}
 
@@ -179,44 +104,22 @@ traditionalist = {
 		}
 	}
 
-	parameters = {
-		empire = {
-			type = country
-			valid_objects = {
-				is_same_value = root
-			}
-		}
-	}
-
 	can_join_pre_triggers = {
 		is_enslaved = no
 		is_being_purged = no
 	}
 
 	can_join_faction = {
-		can_think = yes
-		is_interlink_cyborg_pop = no
+		inline_script = pop_faction_types/can_join_faction/base_shackled
 	}
+
+	inline_script = pop_faction_types/attraction/promote_suppress_tags
 
 	attraction = {
 		base = 150
 
-		modifier = {
-			factor = 1.25
-			exists = from
-			from = {
-				exists = leader
-				leader = { is_ruler = yes }
-			}
-		}
-
-		modifier = {
-			factor = 0.75
-			exists = from
-			from = {
-				NOT = { exists = leader }
-			}
-		}
+		inline_script = pop_faction_types/attraction/promote_suppress_attraction
+		inline_script = pop_faction_types/attraction/leader_attraction
 	}
 
 	leader = {
@@ -450,38 +353,7 @@ traditionalist = {
 		}
 	}
 
-	demand = { # "TRADITIONALIST_GAIA_WORLDS"
-		title = "TRADITIONALIST_GAIA_WORLDS"
-		unfulfilled_title = "TRADITIONALIST_NO_GAIA_WORLDS"
-		desc = "TRADITIONALIST_GAIA_WORLDS_DESC"
-
-		fulfilled_effect = 5
-		unfulfilled_effect = -0.001
-
-		potential = {
-			exists = owner
-			owner = {
-				is_nomadic = no
-				has_surveyed_class = pc_gaia
-				has_ascension_perk = ap_consecrated_worlds
-			}
-		}
-
-		trigger = {
-			owner = {
-				any_planet_within_border = {
-					is_planet_class = pc_gaia
-					is_colony = no
-					OR = {
-						has_modifier = consecrated_quality_1
-						has_modifier = consecrated_quality_2
-						has_modifier = consecrated_quality_3
-						has_modifier = consecrated_quality_4
-					}
-				}
-			}
-		}
-	}
+	inline_script = pop_faction_types/demand_consecration
 
 	demand = { # "TRADITIONALIST_PSIONIC_PURSUIT"
 		title = "TRADITIONALIST_PSIONIC_PURSUIT"
@@ -536,13 +408,13 @@ traditionalist = {
 		}
 	}
 
-	# THE FLESH IS STRONG/WEAK (LIMITED)
+	# THE FLESH IS STRONG/WEAK (FULL)
 	demand = { # Standard Traditionalist variant: reject full cyberization
 		title = "TRADITIONALIST_FLESH_IS_STRONG"
 		unfulfilled_title = "TRADITIONALIST_FLESH_IS_WEAK"
-		desc = "TRADITIONALIST_FLESH_IS_STRONG_LIMITED_DESC"
+		desc = "TRADITIONALIST_FLESH_IS_STRONG_DESC"
 
-		unfulfilled_effect = -5
+		unfulfilled_effect = -15
 		fulfilled_effect = 0.001
 
 		potential = {
@@ -800,13 +672,13 @@ traditionalist = {
 		trigger = {
 			exists = owner
 			owner = {
-				count_owned_pop_amount = {
+				pop_ethic_amount = {
 					limit = {
-						has_ethic = ethic_materialist
+						is_robotic_species = yes
 					}
-					count < 1000
+					percentage < 0.1
+					ethic = ethic_materialist
 				}
-
 			}
 		}
 	}
@@ -824,17 +696,13 @@ traditionalist = {
 	}
 
 	on_destroy = {
-		if = {
-			limit = {
-				has_modifier = promoted_spiritualist
-			}
-			remove_modifier = promoted_spiritualist
+		inline_script = {
+			script = pop_faction_types/effect/promote_on_destroy
+			ETHIC = spiritualist
 		}
-		if = {
-			limit = {
-				has_modifier = suppressed_spiritualist
-			}
-			remove_modifier = suppressed_spiritualist
+		inline_script = {
+			script = pop_faction_types/effect/suppress_on_destroy
+			ETHIC = spiritualist
 		}
 	}
 
@@ -860,20 +728,20 @@ traditionalist = {
 			valid = {
 				custom_tooltip = {
 					fail_text = EMBRACE_FACTION_COOLDOWN
-					parameter:empire = {
+					owner = {
 						NOT = { has_modifier = embraced_faction_timer }
 					}
 				}
 				support > 0.20
-				parameter:empire = {
+				owner = {
 					NOT = { has_ethic = "ethic_fanatic_spiritualist" }
 				}
 			}
 
 			effect = {
 				add_modifier = { modifier = embraced_faction days = 3600 }
-				owner = { set_country_flag = has_embraced_faction }
-				parameter:empire = {
+				owner = {
+					set_country_flag = has_embraced_faction
 					shift_ethic = ethic_spiritualist
 					hidden_effect = {
 						add_modifier = { modifier = embraced_faction_timer days = 3600 }
@@ -885,7 +753,7 @@ traditionalist = {
 				}
 				hidden_effect = {
 					save_event_target_as = TargetFaction
-					parameter:empire = {
+					owner = {
 						every_relation = {
 							limit = {
 								is_ai = no
@@ -926,99 +794,16 @@ traditionalist = {
 				}
 			}
 		}
-		promote_faction = {
-			title = "PROMOTE_FACTION"
-			description = "PROMOTE_FACTION_DESC"
-
-			potential = {
-				exists = owner
-				parameter:empire = {
-					NOR = {
-						has_modifier = suppressed_spiritualist
-						has_modifier = promoted_spiritualist
-					}
-				}
-			}
-
-			effect = {
-				owner = { set_country_flag = has_promoted_faction }
-				parameter:empire = {
-					add_modifier = { modifier = promoted_spiritualist days = -1 }
-				}
-			}
-
-			ai_weight = {
-				base = 0
-			}
-		}
-		cancel_promote_faction = {
-			title = "CANCEL_PROMOTE_FACTION"
-			description = "CANCEL_PROMOTE_FACTION_DESC"
-
-			potential = {
-				exists = owner
-				parameter:empire = {
-					has_modifier = promoted_spiritualist
-				}
-			}
-
-			effect = {
-				parameter:empire = {
-					remove_modifier = promoted_spiritualist
-				}
-			}
-
-			ai_weight = {
-				base = 0
-			}
-		}
-		suppress_faction = {
-			title = "SUPPRESS_FACTION"
-			description = "SUPPRESS_FACTION_DESC"
-
-			potential = {
-				exists = owner
-				parameter:empire = {
-					NOR = {
-						has_modifier = suppressed_spiritualist
-						has_modifier = promoted_spiritualist
-					}
-				}
-			}
-
-			effect = {
-				add_modifier = { modifier = suppressed_faction days = -1 }
-				parameter:empire = {
-					add_modifier = { modifier = suppressed_spiritualist days = -1 }
-				}
-			}
-
-			ai_weight = {
-				base = 0
-			}
-		}
-		cancel_suppress_faction = {
-			title = "CANCEL_SUPPRESS_FACTION"
-			description = "CANCEL_SUPPRESS_FACTION_DESC"
-
-			potential = {
-				exists = owner
-				parameter:empire = {
-					has_modifier = suppressed_spiritualist
-				}
-			}
-
-			effect = {
-				remove_modifier = suppressed_faction
-				parameter:empire = {
-					remove_modifier = suppressed_spiritualist
-				}
-			}
-
-			ai_weight = {
-				base = 0
-			}
-		}
+	}
+	inline_script = {
+		script = pop_faction_types/actions/promote_faction
+		ETHIC = spiritualist
+	}
+	inline_script = {
+		script = pop_faction_types/actions/suppress_faction
+		ETHIC = spiritualist
+	}
+	actions = {
 		# Faction Extortion Buttons
 		extort_faction = {
 			title = "EXTORT_FACTION"
@@ -1031,8 +816,7 @@ traditionalist = {
 					has_country_flag = cyber_collectivist
 					NOR = {
 						has_valid_civic = civic_anarchy_utopia
-						has_valid_civic = civic_crowdsourcing
-						has_valid_civic = civic_corporate_crowdsourcing
+						has_edict = civic_crowdsourcing_edict
 					}
 				}
 				is_faction_extorted = no
@@ -1059,8 +843,7 @@ traditionalist = {
 					has_country_flag = cyber_collectivist
 					OR = {
 						has_valid_civic = civic_anarchy_utopia
-						has_valid_civic = civic_crowdsourcing
-						has_valid_civic = civic_corporate_crowdsourcing
+						has_edict = civic_crowdsourcing_edict
 					}
 				}
 				is_faction_extorted = no

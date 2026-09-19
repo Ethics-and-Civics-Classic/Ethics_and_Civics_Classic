@@ -12,30 +12,7 @@ manufacturers = {
 
 	resources = {
 		category = pop_factions
-		produces = {
-			trigger = {
-				owner = {
-					NOT = { has_edict = civic_crowdsourcing_edict }
-					#NOR = {
-					#	has_civic = civic_anarchy_utopia
-					#	has_civic = civic_crowdsourcing
-					#	has_civic = civic_corporate_crowdsourcing
-					#}
-				}
-			}
-			unity = @faction_base_output
-		}
-		#Anarchy Ideals
-		produces = {
-			trigger = {
-				owner = {
-					has_edict = civic_crowdsourcing_edict
-					has_civic = civic_anarchy_utopia
-				}
-			}
-			unity = @faction_base_output
-			mult = @faction_anarchy_unity_ratio
-		}
+		inline_script = pop_faction_types/shared_unity_production
 		#Crowdsourcing
 		produces = {
 			trigger = {
@@ -91,58 +68,58 @@ manufacturers = {
 		}
 	}
 
-	is_potential = {
-		is_faction_allowed = yes
-		is_nomadic = no
-	}
-
-	parameters = {
-		empire = {
-			type = country
-			valid_objects = {
-				is_same_value = root
-			}
-		}
-	}
-
 	can_join_pre_triggers = {
 		is_enslaved = no
 		is_being_purged = no
 	}
 
 	can_join_faction = {
-		is_shackled_robot = no
-		can_think = yes
-		is_interlink_cyborg_pop = no
+		inline_script = pop_faction_types/can_join_faction/base
 	}
 
+	inline_script = pop_faction_types/attraction/promote_suppress_tags
+
 	attraction = {
-		base = 100
-		
+		base = 150
+
+		inline_script = pop_faction_types/attraction/promote_suppress_attraction
+		inline_script = pop_faction_types/attraction/leader_attraction
+
 		modifier = {
-			factor = 1.25
-			exists = from
-			from = {
-				exists = leader
-				leader = { is_ruler = yes }
-			}
-		}
-		
-		modifier = {
-			factor = 0.75
-			exists = from
-			from = {
-				NOT = { exists = leader }
+			factor = 2
+			desc = RELENTLESS_INDUSTRIALISTS
+			owner? = {
+				is_relentless_industrialist_empire = yes
 			}
 		}
 	}
-	
+
 	leader = {
 		base = 100
+		modifier = {
+			factor = 1.25
+			leader_class = official
+		}
+
+		modifier = {
+			factor = 2
+			has_trait = leader_trait_private_mines
+		}
+
 		modifier = {
 			factor = 0.0
 			is_event_leader = yes
 		}
+	}
+
+	inline_script = {
+		script = pop_faction_types/demand_faction_outraged
+		FLAG = galactic_community_resolution_passed_ecology
+	}
+
+	inline_script = {
+		script = pop_faction_types/demand_faction_pleased
+		FLAG = galactic_community_resolution_passed_industry
 	}
 
     inline_script = {
@@ -632,8 +609,7 @@ manufacturers = {
 					has_country_flag = cyber_collectivist
 					NOR = {
 						has_valid_civic = civic_anarchy_utopia
-						has_valid_civic = civic_crowdsourcing
-						has_valid_civic = civic_corporate_crowdsourcing
+						has_edict = civic_crowdsourcing_edict
 					}
 				}
 				is_faction_extorted = no
@@ -660,8 +636,7 @@ manufacturers = {
 					has_country_flag = cyber_collectivist
 					OR = {
 						has_valid_civic = civic_anarchy_utopia
-						has_valid_civic = civic_crowdsourcing
-						has_valid_civic = civic_corporate_crowdsourcing
+						has_edict = civic_crowdsourcing_edict
 					}
 				}
 				is_faction_extorted = no

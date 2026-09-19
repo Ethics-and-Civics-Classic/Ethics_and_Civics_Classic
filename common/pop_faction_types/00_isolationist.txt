@@ -12,30 +12,7 @@ isolationist = {
 
 	resources = {
 		category = pop_factions
-		produces = {
-			trigger = {
-				owner = {
-					NOT = { has_edict = civic_crowdsourcing_edict }
-					#NOR = {
-					#	has_civic = civic_anarchy_utopia
-					#	has_civic = civic_crowdsourcing
-					#	has_civic = civic_corporate_crowdsourcing
-					#}
-				}
-			}
-			unity = @faction_base_output
-		}
-		#Anarchy Ideals
-		produces = {
-			trigger = {
-				owner = {
-					has_edict = civic_crowdsourcing_edict
-					has_civic = civic_anarchy_utopia
-				}
-			}
-			unity = @faction_base_output
-			mult = @faction_anarchy_unity_ratio
-		}
+		inline_script = pop_faction_types/shared_unity_production
 		#Crowdsourcing
 		produces = {
 			trigger = {
@@ -115,27 +92,29 @@ isolationist = {
 		is_faction_allowed = yes
 	}
 
-	parameters = {
-		empire = {
-			type = country
-			valid_objects = {
-				is_same_value = root
-			}
-		}
-	}
-
 	can_join_pre_triggers = {
 		is_enslaved = no
 		is_being_purged = no
 	}
 
 	can_join_faction = {
-		is_shackled_robot = no
-		can_think = yes
-		is_interlink_cyborg_pop = no
+		inline_script = pop_faction_types/can_join_faction/base
 		OR = {
 			NOT = { is_same_species = owner_species }
-			owner = {
+			custom_tooltip_icon = {
+				text = OWNER_IS_PACIFIST
+				owner? = {
+					is_pacifist = yes
+				}
+			}
+		}
+	}
+
+	inline_script = pop_faction_types/attraction/promote_suppress_tags
+	pop_attraction_tag = {
+		desc = POP_ATTRACTION_PACIFIST_POS
+		trigger = {
+			owner? = {
 				is_pacifist = yes
 			}
 		}
@@ -144,38 +123,14 @@ isolationist = {
 	attraction = {
 		base = 100
 
+		inline_script = pop_faction_types/attraction/promote_suppress_attraction
+		inline_script = pop_faction_types/attraction/leader_attraction
+
 		modifier = {
 			factor = 1.25
-			exists = from
-			from = {
-				exists = leader
-				leader = { is_ruler = yes }
-			}
+			desc = OWNER_IS_PACIFIST
+			owner? = { is_pacifist = yes }
 		}
-
-		modifier = {
-			factor = 0.75
-			exists = from
-			from = {
-				NOT = { exists = leader }
-			}
-		}
-
-		modifier = {
-			factor = 1.5
-			is_xenophobe = yes
-		}
-
-		modifier = {
-			factor = 0.25			
-			is_militarist = yes
-		}
-
-		# Should really check for citizenship instead
-		# modifier = {
-		#	factor = 1.25
-		#	NOT = { is_same_species = owner_species }
-		#}
 	}
 
 	leader = {
@@ -186,7 +141,7 @@ isolationist = {
 			is_event_leader = yes
 		}
 	}
-	
+
 	# DEMAND: Faction Outraged (by a GalCom Resolution)
 	inline_script = {
 		script = pop_faction_types/demand_faction_outraged
@@ -550,7 +505,7 @@ isolationist = {
 		}
 	}
 
-	demand = { # Unplugged: De-Cyberize (Machine Cult Exemption)
+	demand = { # Unplugged: De-Cyberize
 		title = ISOLATIONIST_UNPLUGGED_DECYBERIZE
 		unfulfilled_title = ISOLATIONIST_UNPLUGGED_NOT_DECYBERIZE
 		desc = ISOLATIONIST_UNPLUGGED_DECYBERIZE_DESC
@@ -630,17 +585,13 @@ isolationist = {
 	}
 
 	on_destroy = {
-		if = {
-			limit = {
-				has_modifier = promoted_xenophobe
-			}
-			remove_modifier = promoted_xenophobe
+		inline_script = {
+			script = pop_faction_types/effect/promote_on_destroy
+			ETHIC = xenophobe
 		}
-		if = {
-			limit = {
-				has_modifier = suppressed_xenophobe
-			}
-			remove_modifier = suppressed_xenophobe
+		inline_script = {
+			script = pop_faction_types/effect/suppress_on_destroy
+			ETHIC = xenophobe
 		}
 	}
 
@@ -666,20 +617,20 @@ isolationist = {
 			valid = {
 				custom_tooltip = {
 					fail_text = EMBRACE_FACTION_COOLDOWN
-					parameter:empire = {
+					owner = {
 						NOT = { has_modifier = embraced_faction_timer }
 					}
 				}
 				support > 0.20
-				parameter:empire = {
+				owner = {
 					NOT = { has_ethic = "ethic_fanatic_xenophobe" }
 				}
 			}
 
 			effect = {
 				add_modifier = { modifier = embraced_faction days = 3600 }
-				owner = { set_country_flag = has_embraced_faction }
-				parameter:empire = {
+				owner = {
+					set_country_flag = has_embraced_faction
 					shift_ethic = ethic_xenophobe
 					hidden_effect = {
 						every_pop_faction = { # embraces xenophobe ethos
@@ -695,7 +646,7 @@ isolationist = {
 				}
 				hidden_effect = {
 					save_event_target_as = TargetFaction
-					parameter:empire = {
+					owner = {
 						every_relation = {
 							limit = {
 								is_ai = no
@@ -736,111 +687,17 @@ isolationist = {
 				}
 			}
 		}
-		promote_faction = {
-			title = "PROMOTE_FACTION"
-			description = "PROMOTE_FACTION_DESC"
+	}
 
-			potential = {
-				exists = owner
-				parameter:empire = {
-					NOR = {
-						has_modifier = suppressed_xenophobe
-						has_modifier = promoted_xenophobe
-					}
-				}
-			}
-
-			effect = {
-				owner = { set_country_flag = has_promoted_faction }
-				parameter:empire = {
-					add_modifier = { modifier = promoted_xenophobe days = -1 }
-				}
-			}
-
-			ai_weight = {
-				base = 0
-			}
-		}
-		cancel_promote_faction = {
-			title = "CANCEL_PROMOTE_FACTION"
-			description = "CANCEL_PROMOTE_FACTION_DESC"
-
-			potential = {
-				exists = owner
-				parameter:empire = {
-					has_modifier = promoted_xenophobe
-				}
-			}
-
-			effect = {
-				parameter:empire = {
-					remove_modifier = promoted_xenophobe
-				}
-			}
-
-			ai_weight = {
-				base = 0
-			}
-		}
-		suppress_faction = {
-			title = "SUPPRESS_FACTION"
-			description = "SUPPRESS_FACTION_DESC"
-
-			potential = {
-				exists = owner
-				parameter:empire = {
-					NOR = {
-						has_modifier = suppressed_xenophobe
-						has_modifier = promoted_xenophobe
-					}
-				}
-			}
-
-			effect = {
-				add_modifier = { modifier = suppressed_faction days = -1 }
-				parameter:empire = {
-					hidden_effect = {
-						every_pop_faction = {
-							limit = { is_pop_faction_type = supremacist }
-							add_modifier = { modifier = suppressed_faction days = -1 }
-						}
-					}
-					add_modifier = { modifier = suppressed_xenophobe days = -1 }
-				}
-			}
-
-			ai_weight = {
-				base = 0
-			}
-		}
-		cancel_suppress_faction = {
-			title = "CANCEL_SUPPRESS_FACTION"
-			description = "CANCEL_SUPPRESS_FACTION_DESC"
-
-			potential = {
-				exists = owner
-				parameter:empire = {
-					has_modifier = suppressed_xenophobe
-				}
-			}
-
-			effect = {
-				remove_modifier = suppressed_faction
-				parameter:empire = {
-					remove_modifier = suppressed_xenophobe
-					hidden_effect = {
-						every_pop_faction = {
-							limit = { is_pop_faction_type = supremacist }
-							remove_modifier = suppressed_faction
-						}
-					}
-				}
-			}
-
-			ai_weight = {
-				base = 0
-			}
-		}
+	inline_script = {
+		script = pop_faction_types/actions/promote_faction
+		ETHIC = xenophobe
+	}
+	inline_script = {
+		script = pop_faction_types/actions/suppress_faction
+		ETHIC = xenophobe
+	}
+	actions = {
 		# Faction Extortion Buttons
 		extort_faction = {
 			title = "EXTORT_FACTION"
@@ -853,8 +710,7 @@ isolationist = {
 					has_country_flag = cyber_collectivist
 					NOR = {
 						has_valid_civic = civic_anarchy_utopia
-						has_valid_civic = civic_crowdsourcing
-						has_valid_civic = civic_corporate_crowdsourcing
+						has_edict = civic_crowdsourcing_edict
 					}
 				}
 				is_faction_extorted = no
@@ -881,8 +737,7 @@ isolationist = {
 					has_country_flag = cyber_collectivist
 					OR = {
 						has_valid_civic = civic_anarchy_utopia
-						has_valid_civic = civic_crowdsourcing
-						has_valid_civic = civic_corporate_crowdsourcing
+						has_edict = civic_crowdsourcing_edict
 					}
 				}
 				is_faction_extorted = no

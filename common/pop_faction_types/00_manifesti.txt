@@ -5,7 +5,9 @@
 manifesti = {
 	election_header = "GFX_faction_header_yellow"
 	guiding_ethic = ethic_egalitarian
-	use_guiding_ethic_as_pop_filter = no #this means that the faction will let pops that aren't egalitarian in too
+	use_guiding_ethic_as_pop_filter = yes
+	pop_ethics_filter = { ethic_pacifist ethic_xenophile }
+	use_guiding_ethic_as_growth_factor = no
 	can_rename = no
 
 	visual_ethic = "manifesti_visual_ethic"
@@ -15,29 +17,7 @@ manifesti = {
 
 	resources = {
 		category = pop_factions
-		produces = {
-			trigger = {
-				owner = {
-					NOT = { has_edict = civic_crowdsourcing_edict }
-					#NOR = {
-					#	has_civic = civic_anarchy_utopia
-					#	has_civic = civic_crowdsourcing
-					#	has_civic = civic_corporate_crowdsourcing
-					#}
-				}
-			}
-			unity = @faction_base_output
-		}
-		produces = {	# Anarchy Ideals
-			trigger = {
-				owner = {
-					has_edict = civic_crowdsourcing_edict
-					has_civic = civic_anarchy_utopia
-				}
-			}
-			unity = @faction_base_output
-			mult = @faction_anarchy_unity_ratio
-		}
+		inline_script = pop_faction_types/shared_unity_production
 		#Crowdsourcing
 		produces = {
 			trigger = {
@@ -119,33 +99,22 @@ manifesti = {
 		produces = {
 			trigger = {
 				owner = {
-					NOT = { has_edict = civic_crowdsourcing_edict }
-					#NOR = {
-					#	has_civic = civic_anarchy_utopia
-					#	has_civic = civic_crowdsourcing
-					#	has_civic = civic_corporate_crowdsourcing
-					#}
+					NOR = {
+						has_valid_civic = civic_crowdsourcing
+						has_valid_civic = civic_corporate_crowdsourcing
+					}
 				}
 			}
 			consumer_goods = @faction_base_output
 			mult = @faction_extortion_consumer_goods_ratio
 		}
-		produces = {	#Anarchy Ideals
-			trigger = {
-				owner = {
-					has_edict = civic_crowdsourcing_edict
-					has_civic = civic_anarchy_utopia
-				}
-			}
-			consumer_goods = @faction_base_output
-			mult = @faction_extortion_consumer_goods_anarchy_ratio
-		}
-		#Crowdsourcing
 		produces = {
 			trigger = {
 				owner = {
-					has_edict = civic_crowdsourcing_edict
-					NOT = { has_civic = civic_anarchy_utopia }
+					OR = {
+						has_valid_civic = civic_crowdsourcing
+						has_valid_civic = civic_corporate_crowdsourcing
+					}
 					has_country_flag = manifesti_engineering
 				}
 			}
@@ -156,8 +125,10 @@ manifesti = {
 		produces = {
 			trigger = {
 				owner = {
-					has_edict = civic_crowdsourcing_edict
-					NOT = { has_civic = civic_anarchy_utopia }
+					OR = {
+						has_valid_civic = civic_crowdsourcing
+						has_valid_civic = civic_corporate_crowdsourcing
+					}
 					has_country_flag = manifesti_society
 				}
 			}
@@ -168,51 +139,16 @@ manifesti = {
 		produces = {
 			trigger = {
 				owner = {
-					has_edict = civic_crowdsourcing_edict
-					NOT = { has_civic = civic_anarchy_utopia }
+					OR = {
+						has_valid_civic = civic_crowdsourcing
+						has_valid_civic = civic_corporate_crowdsourcing
+					}
 					has_country_flag = manifesti_physics
 				}
 			}
 			physics_research = @faction_major_output
 			engineering_research = @faction_minor_output
 			mult = @faction_extortion_research_ratio
-		}
-		#Anarchy Ideals
-		produces = {
-			trigger = {
-				owner = {
-					has_edict = civic_crowdsourcing_edict
-					has_civic = civic_anarchy_utopia
-					has_country_flag = manifesti_engineering
-				}
-			}
-			engineering_research = @faction_major_output
-			society_research = @faction_minor_output
-			mult = @faction_extortion_research_anarchy_ratio #Extorting Manifesti is not worth it.
-		}
-		produces = {
-			trigger = {
-				owner = {
-					has_edict = civic_crowdsourcing_edict
-					has_civic = civic_anarchy_utopia
-					has_country_flag = manifesti_society
-				}
-			}
-			society_research = @faction_major_output
-			physics_research = @faction_minor_output
-			mult = @faction_extortion_research_anarchy_ratio
-		}
-		produces = {
-			trigger = {
-				owner = {
-					has_edict = civic_crowdsourcing_edict
-					has_civic = civic_anarchy_utopia
-					has_country_flag = manifesti_physics
-				}
-			}
-			physics_research = @faction_major_output
-			engineering_research = @faction_minor_output
-			mult = @faction_extortion_research_anarchy_ratio
 		}
 	}
 
@@ -231,61 +167,67 @@ manifesti = {
 		}
 	}
 
-	parameters = {
-		empire = {
-			type = country
-			valid_objects = {
-				is_same_value = root
-			}
-		}
-	}
-
 	can_join_pre_triggers = {
 		is_enslaved = no
 		is_being_purged = no
 	}
 
 	can_join_faction = {
-		OR = {
-			has_ethic = ethic_egalitarian
-			has_ethic = ethic_xenophile
-			has_ethic = ethic_pacifist
+		inline_script = pop_faction_types/can_join_faction/base
+		custom_tooltip_icon = {
+			fail_text = POP_NOT_MANIFESTI_BORED
+			NOT = { has_pop_group_flag = manifesti_bored }
 		}
-		is_shackled_robot = no
-		can_think = yes
-		NOT = {
-			has_pop_group_flag = manifesti_bored
+	}
+
+	inline_script = pop_faction_types/attraction/promote_suppress_tags
+	pop_attraction_tag = {
+		desc = POP_FACTION_ATTRACTION_CONFORMIST_TRAITS_NEG
+		trigger = {
+			owner? = {
+				any_owned_species = {
+					has_conformists_thrifty_or_traditional_trait = yes
+				}
+			}
+		}
+	}
+	pop_attraction_tag = {
+		desc = POP_FACTION_ATTRACTION_OUTCAST_POS
+		trigger = {
+			owner? = {
+				any_owned_species = {
+					OR = {
+						NOT = {
+							is_same_species = prev
+						}
+						NOT = {
+							has_citizenship_type = {
+								type = citizenship_full
+								country = prev
+							}
+						}
+						has_trait = trait_unruly
+					}
+				}
+			}
 		}
 	}
 
 	attraction = {
 		base = 160
 
-		modifier = {
-			factor = 1.25
-			exists = from
-			from = {
-				exists = leader
-				leader = { is_ruler = yes }
-			}
-		}
-		modifier = {
-			factor = 0.75
-			exists = from
-			from = {
-				NOT = { exists = leader }
-			}
-		}
+		inline_script = pop_faction_types/attraction/promote_suppress_attraction
+		inline_script = pop_faction_types/attraction/leader_attraction
+
 		modifier = {
 			factor = 0.25
-			OR = {
-				has_trait = trait_conformists
-				has_trait = trait_thrifty
-				has_trait = trait_traditional
-			}
+			desc = HAS_CONFORMISTS_THRIFTY_OR_TRADITIONAL_TRAIT
+			has_conformists_thrifty_or_traditional_trait = yes
 		}
-		modifier = { #Outcasts and radicals
+
+		modifier = { # Outcasts and radicals
 			factor = 1.5
+			desc = POP_OUTCAST_OR_RADICAL
 			OR = {
 				NOT = { is_same_species = owner_species }
 				NOT = { has_citizenship_type = { type = citizenship_full country = owner } }
@@ -341,7 +283,7 @@ manifesti = {
 						any_owned_planet = { has_deposit = d_noxious_swamp }
 					}
 					any_owned_planet = {
-						has_carrier_flag = planet_earth
+						has_planet_flag = planet_earth
 						NOT = { has_deposit = d_great_pacific_garbage_patch }
 					}
 				}
@@ -537,20 +479,20 @@ manifesti = {
 			valid = {
 				custom_tooltip = {
 					fail_text = EMBRACE_FACTION_COOLDOWN
-					parameter:empire = {
+					owner = {
 						NOT = { has_modifier = embraced_faction_timer }
 					}
 				}
 				support > 0.20
-				parameter:empire = {
+				owner = {
 					NOT = { has_ethic = "ethic_fanatic_egalitarian" }
 				}
 			}
 
 			effect = {
 				add_modifier = { modifier = embraced_faction days = 3600 }
-				owner = { set_country_flag = has_embraced_faction }
-				parameter:empire = {
+				owner = {
+					set_country_flag = has_embraced_faction
 					shift_ethic = ethic_egalitarian
 					hidden_effect = {
 						add_modifier = { modifier = embraced_faction_timer days = 3600 }
@@ -562,7 +504,7 @@ manifesti = {
 				}
 				hidden_effect = {
 					save_event_target_as = TargetFaction
-					parameter:empire = {
+					owner = {
 						every_relation = {
 							limit = {
 								is_ai = no
@@ -603,99 +545,16 @@ manifesti = {
 				}
 			}
 		}
-		promote_faction = {
-			title = "PROMOTE_FACTION"
-			description = "PROMOTE_FACTION_DESC"
-
-			potential = {
-				exists = owner
-				parameter:empire = {
-					NOR = {
-						has_modifier = suppressed_egalitarian
-						has_modifier = promoted_egalitarian
-					}
-				}
-			}
-
-			effect = {
-				owner = { set_country_flag = has_promoted_faction }
-				parameter:empire = {
-					add_modifier = { modifier = promoted_egalitarian days = -1 }
-				}
-			}
-
-			ai_weight = {
-				base = 0
-			}
-		}
-		cancel_promote_faction = {
-			title = "CANCEL_PROMOTE_FACTION"
-			description = "CANCEL_PROMOTE_FACTION_DESC"
-
-			potential = {
-				exists = owner
-				parameter:empire = {
-					has_modifier = promoted_egalitarian
-				}
-			}
-
-			effect = {
-				parameter:empire = {
-					remove_modifier = promoted_egalitarian
-				}
-			}
-
-			ai_weight = {
-				base = 0
-			}
-		}
-		suppress_faction = {
-			title = "SUPPRESS_FACTION"
-			description = "SUPPRESS_FACTION_DESC"
-
-			potential = {
-				exists = owner
-				parameter:empire = {
-					NOR = {
-						has_modifier = suppressed_egalitarian
-						has_modifier = promoted_egalitarian
-					}
-				}
-			}
-
-			effect = {
-				add_modifier = { modifier = suppressed_faction days = -1 }
-				parameter:empire = {
-					add_modifier = { modifier = suppressed_egalitarian days = -1 }
-				}
-			}
-
-			ai_weight = {
-				base = 0
-			}
-		}
-		cancel_suppress_faction = {
-			title = "CANCEL_SUPPRESS_FACTION"
-			description = "CANCEL_SUPPRESS_FACTION_DESC"
-
-			potential = {
-				exists = owner
-				parameter:empire = {
-					has_modifier = suppressed_egalitarian
-				}
-			}
-
-			effect = {
-				remove_modifier = suppressed_faction
-				parameter:empire = {
-					remove_modifier = suppressed_egalitarian
-				}
-			}
-
-			ai_weight = {
-				base = 0
-			}
-		}
+	}
+	inline_script = {
+		script = pop_faction_types/actions/promote_faction
+		ETHIC = egalitarian
+	}
+	inline_script = {
+		script = pop_faction_types/actions/suppress_faction
+		ETHIC = egalitarian
+	}
+	actions = {
 		# Faction Extortion Buttons
 		extort_faction = {
 			title = "EXTORT_FACTION"
@@ -706,12 +565,10 @@ manifesti = {
 				owner = {
 					is_oligarchic_authority = yes
 					has_country_flag = cyber_collectivist
-					NOT = { has_edict = civic_crowdsourcing_edict }
-					#NOR = {
-					#	has_civic = civic_anarchy_utopia
-					#	has_civic = civic_crowdsourcing
-					#	has_civic = civic_corporate_crowdsourcing
-					#}
+					NOR = {
+						has_valid_civic = civic_anarchy_utopia
+						has_edict = civic_crowdsourcing_edict
+					}
 				}
 				is_faction_extorted = no
 			}
@@ -735,12 +592,10 @@ manifesti = {
 				owner = {
 					is_oligarchic_authority = yes
 					has_country_flag = cyber_collectivist
-					NOT = { has_edict = civic_crowdsourcing_edict }
-					#NOR = {
-					#	has_civic = civic_anarchy_utopia
-					#	has_civic = civic_crowdsourcing
-					#	has_civic = civic_corporate_crowdsourcing
-					#}
+					OR = {
+						has_valid_civic = civic_anarchy_utopia
+						has_edict = civic_crowdsourcing_edict
+					}
 				}
 				is_faction_extorted = no
 			}
