@@ -9,33 +9,10 @@ environmentalists_nomads = {
 	
 	unique = yes
 	support_multiplier = 1
-	
+
 	resources = {
 		category = pop_factions
-		produces = {
-			trigger = {
-				owner = {
-					NOT = { has_edict = civic_crowdsourcing_edict }
-					#NOR = {
-					#	has_civic = civic_anarchy_utopia
-					#	has_civic = civic_crowdsourcing
-					#	has_civic = civic_corporate_crowdsourcing
-					#}
-				}
-			}
-			unity = @faction_base_output
-		}
-		#Anarchy Ideals
-		produces = {
-			trigger = {
-				owner = {
-					has_edict = civic_crowdsourcing_edict
-					has_civic = civic_anarchy_utopia
-				}
-			}
-			unity = @faction_base_output
-			mult = @faction_anarchy_unity_ratio
-		}
+		inline_script = pop_faction_types/shared_unity_production
 		#Crowdsourcing
 		produces = {
 			trigger = {
@@ -68,11 +45,6 @@ environmentalists_nomads = {
 			trigger = {
 				owner = {
 					NOT = { has_edict = civic_crowdsourcing_edict }
-					#NOR = {
-					#	has_civic = civic_anarchy_utopia
-					#	has_civic = civic_crowdsourcing
-					#	has_civic = civic_corporate_crowdsourcing
-					#}
 				}
 			}
 			society_research = @faction_base_output
@@ -82,26 +54,29 @@ environmentalists_nomads = {
 			trigger = {
 				owner = {
 					has_edict = civic_crowdsourcing_edict
+					NOT = { has_civic = civic_anarchy_utopia }
 				}
 			}
 			society_research = @faction_major_output
 			physics_research = @faction_minor_output
-			mult = @faction_extortion_crowdsourcing_ratio	#Cog Note - # Because they have no unity income split, they get 100% of what crowdsourcing gets, instead of splitting 50%/50%
+			mult = @faction_extortion_crowdsourcing_ratio
+		}
+		produces = {
+			trigger = {
+				owner = {
+					has_edict = civic_crowdsourcing_edict
+					has_civic = civic_anarchy_utopia
+				}
+			}
+			society_research = @faction_major_output
+			physics_research = @faction_minor_output
+			mult = @faction_extortion_crowdsourcing_anarchy_ratio
 		}
 	}
-	
+
 	is_potential = {
 		is_faction_allowed = yes
-		is_nomadic = yes
-	}
-	
-	parameters = {
-		empire = {
-			type = country
-			valid_objects = {
-				is_same_value = root
-			}
-		}
+		is_nomadic = no
 	}
 
 	can_join_pre_triggers = {
@@ -110,38 +85,40 @@ environmentalists_nomads = {
 	}
 
 	can_join_faction = {
-		is_shackled_robot = no
-		can_think = yes
-		is_interlink_cyborg_pop = no
+		inline_script = pop_faction_types/can_join_faction/base
 	}
-	
+
+	inline_script = pop_faction_types/attraction/promote_suppress_tags
+
 	attraction = {
-		base = 100
-		
+		base = 150
+
+		inline_script = pop_faction_types/attraction/promote_suppress_attraction
+		inline_script = pop_faction_types/attraction/leader_attraction
+
 		modifier = {
-			factor = 1.25
-			exists = from
-			from = {
-				exists = leader
-				leader = { is_ruler = yes }
-			}
-		}
-		
-		modifier = {
-			factor = 0.75
-			exists = from
-			from = {
-				NOT = { exists = leader }
+			factor = 2
+			desc = DEVELOPED_ENVIRONMENTALISM
+			owner? = {
+				OR = {
+					has_civic = civic_environmentalist
+					has_civic = civic_keepers_harmony
+					has_civic = civic_naturalism
+				}
 			}
 		}
 	}
-	
+
 	leader = {
 		base = 100
-
 		modifier = {
 			factor = 1.25
 			leader_class = scientist
+		}
+
+		modifier = {
+			factor = 2
+			has_trait = leader_trait_homesteader
 		}
 
 		modifier = {
@@ -372,35 +349,6 @@ environmentalists_nomads = {
 		}
 	}
 
-	demand = { # "WAYSTATION_IN_GAIA_SYSTEM"
-		title = "WAYSTATION_IN_GAIA_SYSTEM"
-		unfulfilled_title = "WAYSTATION_IN_GAIA_SYSTEM"
-		desc = "WAYSTATION_IN_GAIA_SYSTEM_DESC"
-
-		fulfilled_effect = 10
-		unfulfilled_effect = -0.001
-
-		potential = {
-			exists = owner
-			owner = {
-				has_surveyed_class = pc_gaia
-			}
-		}
-
-		trigger = {
-			owner = {
-				any_owned_nonprimary_starbase = {
-					is_waystation_starbase = yes
-					solar_system? = {
-						any_system_planet = {
-							is_planet_class = pc_gaia
-						}
-					}
-				}
-			}
-		}
-	}
-	
 	demand = { # Unplugged: De-Cyberize (Machine Cult Exempt)
 		title = TRADITIONALIST_UNPLUGGED_DECYBERIZE
 		unfulfilled_title = TRADITIONALIST_UNPLUGGED_NOT_DECYBERIZE
@@ -455,17 +403,13 @@ environmentalists_nomads = {
 	}
 
 	on_destroy = {
-		if = {
-			limit = {
-				has_modifier = promoted_green
-			}
-			remove_modifier = promoted_green
+		inline_script = {
+			script = pop_faction_types/effect/promote_on_destroy
+			ETHIC = green
 		}
-		if = {
-			limit = {
-				has_modifier = suppressed_green
-			}
-			remove_modifier = suppressed_green
+		inline_script = {
+			script = pop_faction_types/effect/suppress_on_destroy
+			ETHIC = green
 		}
 	}
 
@@ -491,20 +435,20 @@ environmentalists_nomads = {
 			valid = {
 				custom_tooltip = {
 					fail_text = EMBRACE_FACTION_COOLDOWN
-					parameter:empire = {
+					owner = {
 						NOT = { has_modifier = embraced_faction_timer }
 					}
 				}
 				support > 0.20
-				parameter:empire = {
+				owner = {
 					is_fanatic_green = no
 				}
 			}
 
 			effect = {
 				add_modifier = { modifier = embraced_faction days = 3600 }
-				owner = { set_country_flag = has_embraced_faction }
-				parameter:empire = {
+				owner = {
+					set_country_flag = has_embraced_faction 
 					shift_ethic = ethic_green
 					hidden_effect = {
 						add_modifier = { modifier = embraced_faction_timer days = 3600 }
@@ -516,7 +460,7 @@ environmentalists_nomads = {
 				}
 				hidden_effect = {
 					save_event_target_as = TargetFaction
-					parameter:empire = {
+					owner = {
 						every_relation = {
 							limit = {
 								is_ai = no
@@ -533,7 +477,6 @@ environmentalists_nomads = {
 					}
 				}
 			}
-
 			ai_weight = {
 				base = 1
 				modifier = {
@@ -557,99 +500,16 @@ environmentalists_nomads = {
 				}
 			}
 		}
-		promote_faction = {
-			title = "PROMOTE_FACTION"
-			description = "PROMOTE_FACTION_DESC"
-
-			potential = {
-				exists = owner
-				parameter:empire = {
-					NOR = {
-						has_modifier = suppressed_green
-						has_modifier = promoted_green
-					}
-				}
-			}
-
-			effect = {
-				owner = { set_country_flag = has_promoted_faction }
-				parameter:empire = {
-					add_modifier = { modifier = promoted_green days = -1 }
-				}
-			}
-
-			ai_weight = {
-				base = 0
-			}
-		}
-		cancel_promote_faction = {
-			title = "CANCEL_PROMOTE_FACTION"
-			description = "CANCEL_PROMOTE_FACTION_DESC"
-
-			potential = {
-				exists = owner
-				parameter:empire = {
-					has_modifier = promoted_green
-				}
-			}
-
-			effect = {
-				parameter:empire = {
-					remove_modifier = promoted_green
-				}
-			}
-
-			ai_weight = {
-				base = 0
-			}
-		}
-		suppress_faction = {
-			title = "SUPPRESS_FACTION"
-			description = "SUPPRESS_FACTION_DESC"
-
-			potential = {
-				exists = owner
-				parameter:empire = {
-					NOR = {
-						has_modifier = suppressed_green
-						has_modifier = promoted_green
-					}
-				}
-			}
-
-			effect = {
-				add_modifier = { modifier = suppressed_faction days = -1 }
-				parameter:empire = {
-					add_modifier = { modifier = suppressed_green days = -1 }
-				}
-			}
-
-			ai_weight = {
-				base = 0
-			}
-		}
-		cancel_suppress_faction = {
-			title = "CANCEL_SUPPRESS_FACTION"
-			description = "CANCEL_SUPPRESS_FACTION_DESC"
-
-			potential = {
-				exists = owner
-				parameter:empire = {
-					has_modifier = suppressed_green
-				}
-			}
-
-			effect = {
-				remove_modifier = suppressed_faction
-				parameter:empire = {
-					remove_modifier = suppressed_green
-				}
-			}
-
-			ai_weight = {
-				base = 0
-			}
-		}
+	}
+	inline_script = {
+		script = pop_faction_types/actions/promote_faction
+		ETHIC = green
+	}
+	inline_script = {
+		script = pop_faction_types/actions/suppress_faction
+		ETHIC = green
+	}
+	actions = {
 		# Faction Extortion Buttons
 		extort_faction = {
 			title = "EXTORT_FACTION"
@@ -662,8 +522,7 @@ environmentalists_nomads = {
 					has_country_flag = cyber_collectivist
 					NOR = {
 						has_valid_civic = civic_anarchy_utopia
-						has_valid_civic = civic_crowdsourcing
-						has_valid_civic = civic_corporate_crowdsourcing
+						has_edict = civic_crowdsourcing_edict
 					}
 				}
 				is_faction_extorted = no
@@ -690,8 +549,7 @@ environmentalists_nomads = {
 					has_country_flag = cyber_collectivist
 					OR = {
 						has_valid_civic = civic_anarchy_utopia
-						has_valid_civic = civic_crowdsourcing
-						has_valid_civic = civic_corporate_crowdsourcing
+						has_edict = civic_crowdsourcing_edict
 					}
 				}
 				is_faction_extorted = no

@@ -1,19 +1,19 @@
 ##############################
-# Industrialist Manufacturers Faction
+# Pyrolatry Civic - Fire Cult
 ##############################
 
-manufacturers_nomads = {
+fire_cult = {
 	election_header = "GFX_faction_header_yellow"
-	guiding_ethic = ethic_industrial
-	visual_ethic = "manufacturers_visual_ethic"
-	
+	guiding_ethic = ethic_spiritualist
+	visual_ethic = "traditionalist_visual_ethic"
+	use_guiding_ethic_as_pop_filter = yes
+	can_rename = no
 	unique = yes
-	support_multiplier = 1
+	support_multiplier = 1.2
 
 	resources = {
 		category = pop_factions
 		inline_script = pop_faction_types/shared_unity_production
-		#Crowdsourcing
 		produces = {
 			trigger = {
 				owner = {
@@ -21,8 +21,8 @@ manufacturers_nomads = {
 					NOT = { has_civic = civic_anarchy_utopia }
 				}
 			}
-			engineering_research = @faction_major_output
-			physics_research = @faction_minor_output
+			physics_research = @faction_major_output
+			society_research = @faction_minor_output
 			mult = @crowdsourcing_multiplier
 		}
 		#Anarchy Ideals
@@ -33,8 +33,8 @@ manufacturers_nomads = {
 					has_civic = civic_anarchy_utopia
 				}
 			}
-			engineering_research = @faction_major_output
-			physics_research = @faction_minor_output
+			physics_research = @faction_major_output
+			society_research = @faction_minor_output
 			mult = @crowdsourcing_anarchy_multiplier
 		}
 	}
@@ -46,10 +46,32 @@ manufacturers_nomads = {
 				owner = {
 					NOT = { has_edict = civic_crowdsourcing_edict }
 				}
+				is_lithoid_or_infernal_empire = no
 			}
-			engineering_research = @faction_base_output
-			mult = @faction_extortion_research_ratio
+			food = @faction_base_output
+			mult = @faction_extortion_food_ratio
 		}
+		produces = {
+			trigger = {
+				owner = {
+					NOT = { has_edict = civic_crowdsourcing_edict }
+				}
+				is_lithoid_empire = yes
+			}
+			minerals = @faction_base_output
+			mult = @faction_extortion_minerals_ratio
+		}
+		produces = {
+			trigger = {
+				owner = {
+					NOT = { has_edict = civic_crowdsourcing_edict }
+				}
+				is_infernal_empire = yes
+			}
+			alloys = @faction_base_output
+			mult = @faction_extortion_alloys_ratio
+		}
+		# Crowdsourcing
 		produces = {
 			trigger = {
 				owner = {
@@ -57,10 +79,11 @@ manufacturers_nomads = {
 					NOT = { has_civic = civic_anarchy_utopia }
 				}
 			}
-			engineering_research = @faction_major_output
-			physics_research = @faction_minor_output
+			physics_research = @faction_major_output
+			society_research = @faction_minor_output
 			mult = @faction_extortion_crowdsourcing_ratio
 		}
+		# Anarchy Ideals
 		produces = {
 			trigger = {
 				owner = {
@@ -68,11 +91,13 @@ manufacturers_nomads = {
 					has_civic = civic_anarchy_utopia
 				}
 			}
-			engineering_research = @faction_major_output
-			physics_research = @faction_minor_output
+			physics_research = @faction_major_output
+			society_research = @faction_minor_output
 			mult = @faction_extortion_crowdsourcing_anarchy_ratio
 		}
 	}
+
+	is_potential = { has_valid_civic = civic_pyrolatry }
 
 	can_join_pre_triggers = {
 		is_enslaved = no
@@ -84,170 +109,65 @@ manufacturers_nomads = {
 	}
 
 	inline_script = pop_faction_types/attraction/promote_suppress_tags
+	pop_attraction_tag = {
+		desc = POP_FACTION_ATTRACTION_CONFORMIST_TRAITS_POS
+		trigger = {
+			owner? = {
+				any_owned_species = {
+					has_conformists_thrifty_or_traditional_trait = yes
+				}
+			}
+		}
+	}
 
 	attraction = {
-		base = 150
+		base = 200
 
 		inline_script = pop_faction_types/attraction/promote_suppress_attraction
 		inline_script = pop_faction_types/attraction/leader_attraction
 
 		modifier = {
-			factor = 2
-			desc = RELENTLESS_INDUSTRIALISTS
-			owner? = {
-				is_relentless_industrialist_empire = yes
-			}
+			factor = 1.5
+			desc = HAS_CONFORMISTS_THRIFTY_OR_TRADITIONAL_TRAIT
+			has_conformists_thrifty_or_traditional_trait = yes
 		}
 	}
 
 	leader = {
 		base = 100
 		modifier = {
-			factor = 1.25
-			leader_class = official
+			factor = 0
+			is_ruler = yes
+			owner = {
+				OR = {
+					is_imperial_authority = yes
+					is_dictatorial_authority = yes
+				}
+			}
 		}
-
 		modifier = {
-			factor = 2
-			has_trait = leader_trait_private_mines
-		}
-
-		modifier = {
-			factor = 0.0
+			factor = 0
 			is_event_leader = yes
 		}
 	}
 
+	# DEMAND: Faction Outraged (by a GalCom Resolution)
 	inline_script = {
-	    script = pop_faction_types/demand_faction_outraged
-	    FLAG = galactic_community_resolution_passed_ecology
+		script = pop_faction_types/demand_faction_outraged
+		FLAG = galcom_resolution_passed_anti_traditionalist
 	}
-	
+
+	# DEMAND: Faction Pleased (by a GalCom Resolution)
 	inline_script = {
-	    script = pop_faction_types/demand_faction_pleased
-	    FLAG = galactic_community_resolution_passed_industry
+		script = pop_faction_types/demand_faction_pleased
+		FLAG = galcom_resolution_passed_pro_traditionalist
 	}
 
-	demand = { # POLITICAL_PLURALISM
-		title = "POLITICAL_PLURALISM"
-		unfulfilled_title = "POLITICAL_PLURALISM"
-		desc = "POLITICAL_PLURALISM_DESC"
-
-		fulfilled_effect = 10
-
-		potential = {
-			exists = owner
-			owner = {
-				has_valid_civic = civic_parliamentary_system
-			}
-		}
-
-		trigger = {
-			owner = {
-				has_valid_civic = civic_parliamentary_system
-			}
-		}
-	}
-
-	demand = { # CONSUMER_MARKETS
-		title = "CONSUMER_MARKETS"
-		unfulfilled_title = "CONSUMER_MARKETS"
-		desc = "CONSUMER_MARKETS_DESC"
-
-		fulfilled_effect = 10
-
-		potential = {
-			exists = owner			
-		}
-
-		trigger = {
-			owner = {
-				OR = {
-					has_policy_flag = trade_conversion_consumer_goods
-				}
-			}
-		}
-	}
-	
-	demand = { # INDUSTRIAL_INFRASTRUCTURE
-		title = "INDUSTRIAL_INFRASTRUCTURE"
-		unfulfilled_title = "NO_INDUSTRIAL_INFRASTRUCTURE"
-		desc = "INDUSTRIAL_INFRASTRUCTURE_DESC"
-		
-		unfulfilled_effect = -5
-		fulfilled_effect = 10
-		
-		potential = {
-			exists = owner
-			owner = {
-				OR = {
-					has_technology = tech_global_production_strategy
-				}
-			}
-		}
-		
-		trigger = {
-			owner = { 
-				any_owned_planet = {
-					has_building = "building_system_capital"
-					has_building = "building_ministry_production"
-				}
-			}
-		}
-	}
-
-	demand = { # INDUSTRY_ASCENSION_1
-		title = "INDUSTRY_ASCENSION_1"
-		unfulfilled_title = "NO_INDUSTRY_ASCENSION_1"
-		desc = "INDUSTRY_ASCENSION_1_DESC"
-
-		fulfilled_effect = 10
-
-		potential = {
-			exists = owner
-			owner = {
-				years_passed > 20
-				has_technology = tech_mega_engineering
-			}
-		}
-
-		trigger = {
-			owner = {
-				OR = {
-					has_ascension_perk = ap_galactic_wonders_utopia
-					has_ascension_perk = ap_galactic_wonders_megacorp
-					has_ascension_perk = ap_galactic_wonders_utopia_and_megacorp
-				}
-			}
-		}
-	}
-	
-	demand = { # INDUSTRY_ASCENSION_2
-		title = "INDUSTRY_ASCENSION_2"
-		unfulfilled_title = "NO_INDUSTRY_ASCENSION_2"
-		desc = "INDUSTRY_ASCENSION_2_DESC"
-
-		fulfilled_effect = 10
-
-		potential = {
-			exists = owner
-			owner = {
-				years_passed > 50
-				has_technology = tech_mega_engineering
-			}
-		}
-
-		trigger = {
-			owner = {
-				has_ascension_perk = ap_master_builders
-			}
-		}
-	}
-
-	demand = { # RESOURCE_ACCUMULATION
-		title = "RESOURCE_ACCUMULATION"
-		unfulfilled_title = "LOW_RESOURCE_ACCUMULATION"
-		desc = "RESOURCE_ACCUMULATION_DESC"
+	# Used Blazing Scourge in the last 10 Years
+	demand = {
+		title = "FIRE_CULT_RECENT_BLAZING_DECISION"
+		unfulfilled_title = "FIRE_CULT_NO_RECENT_BLAZING_DECISION"
+		desc = "FIRE_CULT_RECENT_BLAZING_DECISION_DESC"
 
 		fulfilled_effect = 10
 		unfulfilled_effect = -0.001
@@ -258,111 +178,167 @@ manufacturers_nomads = {
 
 		trigger = {
 			owner = {
-				has_country_flag = operation_reserves_high
+				has_country_flag = recent_blazing_decision_timed
 			}
 		}
 	}
 
-	demand = { # "NO_STRIP_MINING"
-		title = "NO_STRIP_MINING"
-		unfulfilled_title = "MANUFACTURERS_NO_STRIP_MINING"
-		desc = "MANUFACTURERS_NO_STRIP_MINING_DESC"
+	# Terraformed to Volcanic World in the last 5 years
+	demand = {
+		title = "FIRE_CULT_VOLCANIC_TERRAFORM"
+		unfulfilled_title = "FIRE_CULT_NO_VOLCANIC_TERRAFORM"
+		desc = "FIRE_CULT_VOLCANIC_TERRAFORM_DESC"
 
-		unfulfilled_effect = -5
-		fulfilled_effect = 10
-
-		potential = {
-			exists = owner
-		}
-
-		trigger = {
-			owner = {
-				has_country_flag = recently_stripmined_planet
-			}
-		}
-	}
-
-    demand = { # "NO_STELLAR_IGNITION"
-    	title = "NO_STELLAR_IGNITION"
-		unfulfilled_title = "MANUFACTURERS_NO_STELLAR_IGNITION"
-		desc = "MANUFACTURERS_NO_STELLAR_IGNITION_DESC"
-
-		unfulfilled_effect = -5
-		fulfilled_effect = 50
-
-        potential = {
-            exists = owner
-            owner = {
-			    has_technology = tech_arkship_stellar_igniter
-		
-            }
-        }
-
-		trigger = {
-			owner = {
-				has_country_flag = recent_stellar_ignition_planet
-			}
-		}
-    }
-
-    demand = { # "NO_REPROCESS_PLANET"
-		title = "NO_REPROCESS_PLANET"
-		unfulfilled_title = "MANUFACTURERS_NO_REPROCESS_PLANET"
-		desc = "MANUFACTURERS_NO_REPROCESS_PLANET_DESC"
-
-		unfulfilled_effect = -5
-		fulfilled_effect = 20
-
-		potential = {
-			exists = owner
-			owner = {
-                has_technology = tech_arkship_planetary_refinery
-			}
-		}
-
-		trigger = {
-			owner = {
-				has_country_flag = recently_reprocessed_planet
-			}
-		}
-    }
-
-	demand = { # Unplugged: Cyberize (Machine Cult Exempt)
-		title = IMPERIALIST_UNPLUGGED_CYBERIZE
-		unfulfilled_title = IMPERIALIST_UNPLUGGED_NOT_CYBERIZE
-		desc = IMPERIALIST_UNPLUGGED_CYBERIZE_DESC
-
-		unfulfilled_effect = -10
 		fulfilled_effect = 5
+		unfulfilled_effect = -0.001
 
 		potential = {
 			exists = owner
+		}
+
+		trigger = {
 			owner = {
-				has_origin = origin_unplugged
-				NOT = { has_civic = civic_machine_cult }
-				any_situation = {
-					is_situation_type = situation_unplugged_identity
+				has_country_flag = recent_volcanic_terraform_timed
+			}
+		}
+	}
+
+	demand = { # Allow Forced Resettlement
+		title = "FIRE_CULT_RESETTLEMENT"
+		unfulfilled_title = "FIRE_CULT_NO_RESETTLEMENT"
+		desc = "FIRE_CULT_RESETTLEMENT_DESC"
+
+		fulfilled_effect = 5
+		unfulfilled_effect = -5
+
+		potential = {
+			exists = owner
+		}
+
+		trigger = {
+			owner = {
+				OR = {
+					has_policy_flag = resettlement_allowed
+					any_owned_pop_group = {
+						has_migration_control = { type = yes }
+						is_sapient = yes
+						is_enslaved = no
+						is_being_purged = no
+						is_shackled_robot = no
+						is_robot_pop_group = no
+					}
 				}
 			}
 		}
+	}
+
+	demand = { # Have a planet with <20% habitability:
+		title = "FIRE_CULT_LOW_HABITABILITY"
+		unfulfilled_title = "FIRE_CULT_HIGH_HABITABILITY"
+		desc = "FIRE_CULT_LOW_HABITABILITY_DESC"
+
+		fulfilled_effect = 15
+		unfulfilled_effect = -5
+
+		potential = {
+			exists = owner
+		}
 
 		trigger = {
 			owner = {
-				any_situation = {
-					is_situation_type = situation_unplugged_identity
-					OR = {
-						AND = { # safely in the Cyberize stage
-							current_stage = unplugged_identity_stage_3
-							situation_monthly_progress > 0
-						}
-						AND = { # trending towards Cyberization and our Approach is aligned
-							situation_monthly_progress > 0.05
-							OR = {
-								current_situation_approach = situation_unplugged_identity_discourage_change
-								current_situation_approach = situation_unplugged_identity_embrace_opinion
-							}
-						}
+				any_owned_planet = {
+					any_owned_species = {
+						prev = { habitability = { who = prev value <= 0.2 } }
 					}
+				}
+			}
+		}
+	}
+
+	demand = { # "VOLCANIC_WORLDS"
+		title = "FIRE_CULT_VOLCANIC_WORLDS"
+		unfulfilled_title = "FIRE_CULT_NO_VOLCANIC_WORLDS"
+		desc = "FIRE_CULT_VOLCANIC_WORLDS_DESC"
+
+		fulfilled_effect = 5
+		unfulfilled_effect = -5
+
+		potential = {
+			exists = owner
+		}
+
+		trigger = {
+			owner = {
+				count_owned_planet = {
+					count <= value:count_volcanic_planet_ratio
+				}
+			}
+		}
+	}
+
+
+	inline_script = pop_faction_types/demand_consecration
+
+	demand = { # "TRADITIONALIST_SPIRITUALIST_GOVERNMENT"
+		title = "TRADITIONALIST_SPIRITUALIST_GOVERNMENT"
+		unfulfilled_title = "TRADITIONALIST_SECULAR_GOVERNMENT"
+		desc = "TRADITIONALIST_SPIRITUALIST_GOVERNMENT_DESC"
+
+		fulfilled_effect = 5
+		unfulfilled_effect = -5
+
+		potential = {
+			exists = owner
+		}
+
+		trigger = {
+			owner = {
+				is_spiritualist = yes
+			}
+		}
+	}
+
+	demand = { # councillor check: pyro priest
+		title = "FIRE_CULT_PYROMANIC_PRIEST"
+		unfulfilled_title = "FIRE_CULT_NO_PYROMANIC_PRIEST"
+		desc = "FIRE_CULT_PYROMANIC_PRIEST_DESC"
+
+		fulfilled_effect = 5
+		unfulfilled_effect = -5
+
+		potential = {
+			years_passed > 5 # No penalty unless 5 years passed.
+		}
+
+		trigger = {
+			exists = owner
+			owner = {
+				any_owned_leader = {
+					is_councilor_type = councilor_pyromanic_priest
+				}
+			}
+		}
+	}
+
+
+	demand = { # 5 years grace period to get 1000 Fire Dancers
+		title = "FIRE_CULT_FIRE_DANCERS"
+		unfulfilled_title = "FIRE_CULT_NO_FIRE_DANCERS"
+		desc = "FIRE_CULT_FIRE_DANCERS_DESC"
+
+		fulfilled_effect = 5
+		unfulfilled_effect = -5
+
+		potential = {
+			years_passed > 5 # No penalty unless 5 years passed.
+		}
+
+		trigger = {
+			exists = owner
+			owner = {
+				num_assigned_jobs = {
+					job = bureaucrat
+					value > 1000
 				}
 			}
 		}
@@ -371,23 +347,24 @@ manufacturers_nomads = {
 	# Faction Demands for Ruler and Council positions.
 	inline_script = {
 		script = "pop_faction_types/global_faction_demands"
-		ETHIC = ethic_industrial
-		ETHIC_FANATIC = ethic_fanatic_industrial
-		ETHIC_OPPOSED = ethic_green
+		ETHIC = ethic_spiritualist
+		ETHIC_FANATIC = ethic_fanatic_spiritualist
+		ETHIC_OPPOSED = ethic_materialist
 	}
 
 	on_create = {
 		pop_faction_event = { id = factions.1 }
 	}
 
+	# Should never happen, just in case
 	on_destroy = {
 		inline_script = {
 			script = pop_faction_types/effect/promote_on_destroy
-			ETHIC = industrial
+			ETHIC = spiritualist
 		}
 		inline_script = {
 			script = pop_faction_types/effect/suppress_on_destroy
-			ETHIC = industrial
+			ETHIC = spiritualist
 		}
 	}
 
@@ -419,15 +396,14 @@ manufacturers_nomads = {
 				}
 				support > 0.20
 				owner = {
-					is_fanatic_industrial = no
+					NOT = { has_ethic = "ethic_fanatic_spiritualist" }
 				}
 			}
 
 			effect = {
 				add_modifier = { modifier = embraced_faction days = 3600 }
 				owner = {
-					set_country_flag = has_embraced_faction
-					shift_ethic = ethic_industrial
+					shift_ethic = ethic_spiritualist
 					hidden_effect = {
 						add_modifier = { modifier = embraced_faction_timer days = 3600 }
 						every_pop_faction = {
@@ -462,7 +438,7 @@ manufacturers_nomads = {
 					factor = 0
 					support < 0.50
 					owner = {
-						has_ethic = ethic_industrial
+						has_ethic = ethic_spiritualist
 					}
 				}
 				modifier = {
@@ -482,11 +458,7 @@ manufacturers_nomads = {
 	}
 	inline_script = {
 		script = pop_faction_types/actions/promote_faction
-		ETHIC = industrial
-	}
-	inline_script = {
-		script = pop_faction_types/actions/suppress_faction
-		ETHIC = industrial
+		ETHIC = spiritualist
 	}
 	actions = {
 		# Faction Extortion Buttons
@@ -509,7 +481,7 @@ manufacturers_nomads = {
 
 			effect = {
 				set_faction_extorted = yes
-				custom_tooltip = physics_research_extortion_tt
+				custom_tooltip = alloys_extortion_tt
 				custom_tooltip = ONLY_ONE_EXTORTED_FACTION_TT
 			}
 

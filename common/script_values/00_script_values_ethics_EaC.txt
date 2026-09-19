@@ -1,0 +1,417 @@
+authoritarian_ethics_from_relations = {
+	base = 1
+	complex_trigger_modifier = {
+		trigger = count_relation
+		parameters = {
+			limit = {
+				OR = {
+					is_in_federation_with = root
+					has_defensive_pact = root
+				}
+				is_authoritarian = yes
+			}
+		}
+		mode = add
+		mult = 0.3
+	}
+}
+
+authoritarian_ethics_from_living_standards = {
+	base = 1
+	modifier = {
+		is_enslaved = no
+		OR = {
+			AND = {
+				NOT = { is_pop_category = worker }
+				has_living_standard = { type = living_standard_stratified }
+			}
+			AND = {
+				is_pop_category = ruler
+				has_living_standard = { type = living_standard_dystopian_society }
+			}
+		}
+		mult = 1.25
+	}
+}
+
+egalitarian_ethics_from_relations = {
+	base = 1
+	complex_trigger_modifier = {
+		trigger = count_relation
+		parameters = {
+			limit = {
+				OR = {
+					is_in_federation_with = root
+					has_defensive_pact = root
+					has_commercial_pact = root
+				}
+				is_egalitarian = yes
+			}
+		}
+		mode = add
+		mult = 0.3
+	}
+	complex_trigger_modifier = {
+		trigger = count_relation
+		parameters = {
+			limit = {
+				is_subject = no
+				has_migration_access = root
+				is_egalitarian = yes
+			}
+		}
+		mode = add
+		mult = 0.5
+	}
+}
+
+xenophobe_ethics_from_relations = {
+	base = 1
+	complex_trigger_modifier = {
+		trigger = count_neighbor_country
+		parameters = {
+			limit = { is_homicidal = yes }
+		}
+		mult = 0.25
+		mode = add
+	}
+	complex_trigger_modifier = {
+		trigger = count_relation
+		parameters = {
+			limit = {
+				is_subject = no
+				has_migration_access = root
+				NOT = { is_same_species = root }
+			}
+		}
+		mult = -0.2
+		mode = add
+	}
+}
+
+xenophile_ethics_from_relations = {
+	base = 1
+	complex_trigger_modifier = {
+		trigger = count_relation
+		parameters = {
+			limit = {
+				NOT = { is_same_species = root }
+				is_subject = no
+				has_migration_access = root
+			}
+		}
+		mult = 0.3
+		mode = add
+	}
+	max = 2 #so federation with 5 members will not end up at 2.5
+	complex_trigger_modifier = {
+		trigger = count_relation
+		parameters = {
+			limit = {
+				NOT = { is_same_species = root }
+				is_subject = no
+				OR = {
+					is_in_federation_with = root
+					has_defensive_pact = root
+					has_commercial_pact = root
+				}
+			}
+		}
+		mult = 0.2
+		mode = add
+	}
+}
+
+spiritualist_ethics_from_relations = {
+	base = 1
+	complex_trigger_modifier = {
+		trigger = count_relation
+		parameters = {
+			limit = {
+				OR = {
+					is_in_federation_with = root
+					has_defensive_pact = root
+					has_commercial_pact = root
+				}
+				is_spiritualist = yes
+			}
+		}
+		mode = add
+		mult = 0.3
+	}
+	complex_trigger_modifier = {
+		trigger = count_relation
+		parameters = {
+			limit = {
+				is_subject = no
+				has_migration_access = root
+				is_spiritualist = yes
+			}
+		}
+		mode = add
+		mult = 0.5
+	}
+}
+
+materialist_ethics_from_relations = {
+	base = 1
+	complex_trigger_modifier = {
+		trigger = count_relation
+		parameters = {
+			limit = {
+				root = { has_research_agreement = prev }
+				is_materialist = yes
+			}
+		}
+		mode = add
+		mult = 0.25
+	}
+	complex_trigger_modifier = {
+		trigger = count_relation
+		parameters = {
+			limit = {
+				OR = {
+					is_in_federation_with = root
+					has_defensive_pact = root
+					has_commercial_pact = root
+					AND = {
+						is_subject = no
+						has_migration_access = root
+					}
+				}
+				is_materialist = yes
+			}
+		}
+		mode = add
+		mult = 0.3
+	}
+}
+
+pacifist_ethics_from_pacts = {
+	add = trigger:num_non_aggression_pacts
+	mult = 0.2
+	add = 1
+}
+
+pacifist_ethics_from_peace = {
+	base = 1
+	modifier = {
+		years_of_peace = {
+			value > 20
+			delay = 50
+		}
+		mult = 1.33
+	}
+	modifier = {
+		years_of_peace = {
+			value > 40
+			delay = 50
+		}
+		mult = 1.33
+	}
+	modifier = {
+		years_of_peace = {
+			value > 60
+			delay = 50
+		}
+		mult = 1.33
+	}
+	modifier = {
+		years_of_peace = {
+			value > 80
+			delay = 50
+		}
+		mult = 1.33
+	}
+	modifier = {
+		years_of_peace = {
+			value > 100
+			delay = 50
+		}
+		mult = 1.33
+	}
+}
+
+militarist_ethics_from_peace = {
+	base = 1
+	modifier = {
+		years_of_peace = {
+			value > 20
+			delay = 50
+		}
+		mult = 0.75
+	}
+	modifier = {
+		years_of_peace = {
+			value > 40
+			delay = 50
+		}
+		mult = 0.75
+	}
+	modifier = {
+		years_of_peace = {
+			value > 60
+			delay = 50
+		}
+		mult = 0.75
+	}
+	modifier = {
+		years_of_peace = {
+			value > 80
+			delay = 50
+		}
+		mult = 0.75
+	}
+	modifier = {
+		years_of_peace = {
+			value > 100
+			delay = 50
+		}
+		mult = 0.75
+	}
+}
+
+# EaC Exclusive
+socialism_ethics_from_living_standards = {
+	modifier = {
+		is_enslaved = no
+		AND = {
+			OR = {
+				has_living_standard = { type = living_standard_academic_privilege }
+				has_living_standard = { type = living_standard_stratified }
+				has_living_standard = { type = living_standard_decadent }
+			}
+		}
+		mult = 0.75
+	}
+	modifier = {
+		owner = { is_socialism = no }
+		AND = {
+			OR = {
+				has_living_standard = { type = living_standard_shared_burden }
+				has_living_standard = { type = living_standard_worker_ownership }
+				has_living_standard = { type = living_standard_community_labor }
+				has_living_standard = { type = living_standard_good }
+				has_living_standard = { type = living_standard_utopian }
+			}
+		}
+		mult = 1.25
+	}
+}
+
+socialism_ethics_from_policy = {
+	base = 1
+	modifier = {
+		owner = { is_socialism = no }
+		has_policy_flag = economic_stance_planned
+		mult = 1.15
+	}
+}
+
+capitalism_ethics_from_living_standards = {
+	modifier = {
+		is_enslaved = no
+		AND = {
+			OR = {
+				has_living_standard = { type = living_standard_academic_privilege }
+				has_living_standard = { type = living_standard_stratified }
+				has_living_standard = { type = living_standard_decadent }
+			}
+		}
+		mult = 1.25
+	}
+	modifier = {
+		owner = { is_socialism = no }
+		AND = {
+			OR = {
+				has_living_standard = { type = living_standard_shared_burden }
+				has_living_standard = { type = living_standard_worker_ownership }
+				has_living_standard = { type = living_standard_community_labor }
+				has_living_standard = { type = living_standard_good }
+				has_living_standard = { type = living_standard_utopian }
+			}
+		}
+		mult = 0.75
+	}
+}
+
+capitalism_ethics_from_policy = {
+	base = 1
+	modifier = {
+		owner = { is_capitalism = no }
+		OR = {
+			has_policy_flag = economic_stance_criminal_market
+			has_policy_flag = economic_stance_market
+		}
+		mult = 1.15
+	}
+}
+
+green_ethics_from_relations = {
+	base = 1
+	complex_trigger_modifier = {
+		trigger = count_relation
+		parameters = {
+			limit = {
+				NOT = { is_same_species = root }
+				is_subject = no
+				has_migration_access = root
+			}
+		}
+		mult = 0.3
+		mode = add
+	}
+	max = 2 #so federation with 5 members will not end up at 2.5
+	complex_trigger_modifier = {
+		trigger = count_relation
+		parameters = {
+			limit = {
+				NOT = { is_same_species = root }
+				is_subject = no
+				OR = {
+					is_in_federation_with = root
+					has_defensive_pact = root
+					has_commercial_pact = root
+				}
+			}
+		}
+		mult = 0.2
+		mode = add
+	}
+}
+
+industrial_ethics_from_relations = {
+	base = 1
+	complex_trigger_modifier = {
+		trigger = count_relation
+		parameters = {
+			limit = {
+				NOT = { is_same_species = root }
+				is_subject = no
+				has_migration_access = root
+			}
+		}
+		mult = 0.3
+		mode = add
+	}
+	max = 2 #so federation with 5 members will not end up at 2.5
+	complex_trigger_modifier = {
+		trigger = count_relation
+		parameters = {
+			limit = {
+				NOT = { is_same_species = root }
+				is_subject = no
+				OR = {
+					is_in_federation_with = root
+					has_defensive_pact = root
+					has_commercial_pact = root
+				}
+			}
+		}
+		mult = 0.2
+		mode = add
+	}
+}
+
+# Note: Make an ethic attraction value for Green ethics weighing habitable worlds
+# Note: Make an ethic attraction value for Industrial ethics weighing megastructures and artificial worlds

@@ -7,6 +7,7 @@ cyber_creed_labor = {
 	guiding_ethic = ethic_spiritualist
 	visual_ethic = "traditionalist_visual_ethic"
 	use_guiding_ethic_as_pop_filter = no
+	use_guiding_ethic_as_growth_factor = no
 
 	persistent_faction = yes
 	can_rename = no
@@ -20,25 +21,9 @@ cyber_creed_labor = {
 			trigger = {
 				owner = {
 					NOT = { has_edict = civic_crowdsourcing_edict }
-					#NOR = {
-					#	has_civic = civic_anarchy_utopia
-					#	has_civic = civic_crowdsourcing
-					#	has_civic = civic_corporate_crowdsourcing
-					#}
 				}
 			}
 			minerals = @faction_base_output
-		}
-		#Anarchy Ideals
-		produces = {
-			trigger = {
-				owner = {
-					has_edict = civic_crowdsourcing_edict
-					has_civic = civic_anarchy_utopia
-				}
-			}
-			unity = @faction_base_output
-			mult = @faction_anarchy_unity_ratio
 		}
 		#Crowdsourcing
 		produces = {
@@ -80,44 +65,22 @@ cyber_creed_labor = {
 		has_made_cyber_creed_faction_choice = no
 	}
 
-	parameters = {
-		empire = {
-			type = country
-			valid_objects = {
-				is_same_value = root
-			}
-		}
-	}
-
 	can_join_pre_triggers = {
 		is_enslaved = no
 		is_being_purged = no
 	}
 
 	can_join_faction = {
-		can_think = yes
-		is_interlink_cyborg_pop = no
+		inline_script = pop_faction_types/can_join_faction/base_shackled
 	}
+
+	inline_script = pop_faction_types/attraction/promote_suppress_tags
 
 	attraction = {
 		base = 100
 
-		modifier = {
-			factor = 1.25
-			exists = from
-			from = {
-				exists = leader
-				leader = { is_ruler = yes }
-			}
-		}
-
-		modifier = {
-			factor = 0.75
-			exists = from
-			from = {
-				NOT = { exists = leader }
-			}
-		}
+		inline_script = pop_faction_types/attraction/promote_suppress_attraction
+		inline_script = pop_faction_types/attraction/leader_attraction
 	}
 
 	leader = {
@@ -339,17 +302,13 @@ cyber_creed_labor = {
 	}
 
 	on_destroy = {
-		if = {
-			limit = {
-				has_modifier = promoted_spiritualist
-			}
-			remove_modifier = promoted_spiritualist
+		inline_script = {
+			script = pop_faction_types/effect/promote_on_destroy
+			ETHIC = spiritualist
 		}
-		if = {
-			limit = {
-				has_modifier = suppressed_spiritualist
-			}
-			remove_modifier = suppressed_spiritualist
+		inline_script = {
+			script = pop_faction_types/effect/suppress_on_destroy
+			ETHIC = spiritualist
 		}
 	}
 
@@ -375,20 +334,20 @@ cyber_creed_labor = {
 			valid = {
 				custom_tooltip = {
 					fail_text = EMBRACE_FACTION_COOLDOWN
-					parameter:empire = {
+					owner = {
 						NOT = { has_modifier = embraced_faction_timer }
 					}
 				}
 				support > 0.20
-				parameter:empire = {
+				owner = {
 					NOT = { has_ethic = "ethic_fanatic_spiritualist" }
 				}
 			}
 
 			effect = {
 				add_modifier = { modifier = embraced_faction days = 3600 }
-				owner = { owner = { set_country_flag = has_embraced_faction } }
-				parameter:empire = {
+				owner = {
+					set_country_flag = has_embraced_faction
 					shift_ethic = ethic_spiritualist
 					hidden_effect = {
 						add_modifier = { modifier = embraced_faction_timer days = 3600 }
@@ -400,7 +359,7 @@ cyber_creed_labor = {
 				}
 				hidden_effect = {
 					save_event_target_as = TargetFaction
-					parameter:empire = {
+					owner = {
 						every_relation = {
 							limit = {
 								is_ai = no
@@ -441,99 +400,16 @@ cyber_creed_labor = {
 				}
 			}
 		}
-		promote_faction = {
-			title = "PROMOTE_FACTION"
-			description = "PROMOTE_FACTION_DESC"
-
-			potential = {
-				exists = owner
-				parameter:empire = {
-					NOR = {
-						has_modifier = suppressed_spiritualist
-						has_modifier = promoted_spiritualist
-					}
-				}
-			}
-
-			effect = {
-				owner = { set_country_flag = has_promoted_faction }
-				parameter:empire = {
-					add_modifier = { modifier = promoted_spiritualist days = -1 }
-				}
-			}
-
-			ai_weight = {
-				base = 0
-			}
-		}
-		cancel_promote_faction = {
-			title = "CANCEL_PROMOTE_FACTION"
-			description = "CANCEL_PROMOTE_FACTION_DESC"
-
-			potential = {
-				exists = owner
-				parameter:empire = {
-					has_modifier = promoted_spiritualist
-				}
-			}
-
-			effect = {
-				parameter:empire = {
-					remove_modifier = promoted_spiritualist
-				}
-			}
-
-			ai_weight = {
-				base = 0
-			}
-		}
-		suppress_faction = {
-			title = "SUPPRESS_FACTION"
-			description = "SUPPRESS_FACTION_DESC"
-
-			potential = {
-				exists = owner
-				parameter:empire = {
-					NOR = {
-						has_modifier = suppressed_spiritualist
-						has_modifier = promoted_spiritualist
-					}
-				}
-			}
-
-			effect = {
-				add_modifier = { modifier = suppressed_faction days = -1 }
-				parameter:empire = {
-					add_modifier = { modifier = suppressed_spiritualist days = -1 }
-				}
-			}
-
-			ai_weight = {
-				base = 0
-			}
-		}
-		cancel_suppress_faction = {
-			title = "CANCEL_SUPPRESS_FACTION"
-			description = "CANCEL_SUPPRESS_FACTION_DESC"
-
-			potential = {
-				exists = owner
-				parameter:empire = {
-					has_modifier = suppressed_spiritualist
-				}
-			}
-
-			effect = {
-				remove_modifier = suppressed_faction
-				parameter:empire = {
-					remove_modifier = suppressed_spiritualist
-				}
-			}
-
-			ai_weight = {
-				base = 0
-			}
-		}
+	}
+	inline_script = {
+		script = pop_faction_types/actions/promote_faction
+		ETHIC = spiritualist
+	}
+	inline_script = {
+		script = pop_faction_types/actions/suppress_faction
+		ETHIC = spiritualist
+	}
+	actions = {
 		# Faction Extortion Buttons
 		extort_faction = {
 			title = "EXTORT_FACTION"
@@ -587,6 +463,7 @@ cyber_creed_war = {
 	guiding_ethic = ethic_spiritualist
 	visual_ethic = "traditionalist_visual_ethic"
 	use_guiding_ethic_as_pop_filter = no
+	use_guiding_ethic_as_growth_factor = no
 
 	persistent_faction = yes
 	can_rename = no
@@ -595,29 +472,9 @@ cyber_creed_war = {
 
 	resources = {
 		category = pop_factions
+		inline_script = pop_faction_types/shared_unity_production
 		produces = {
-			trigger = {
-				owner = {
-					NOT = { has_edict = civic_crowdsourcing_edict }
-					#NOR = {
-					#	has_civic = civic_anarchy_utopia
-					#	has_civic = civic_crowdsourcing
-					#	has_civic = civic_corporate_crowdsourcing
-					#}
-				}
-			}
 			alloys = @faction_minor_output
-		}
-		#Anarchy Ideals
-		produces = {
-			trigger = {
-				owner = {
-					has_edict = civic_crowdsourcing_edict
-					has_civic = civic_anarchy_utopia
-				}
-			}
-			unity = @faction_base_output
-			mult = @faction_anarchy_unity_ratio
 		}
 		#Crowdsourcing
 		produces = {
@@ -659,43 +516,22 @@ cyber_creed_war = {
 		has_made_cyber_creed_faction_choice = no
 	}
 
-	parameters = {
-		empire = {
-			type = country
-			valid_objects = {
-				is_same_value = root
-			}
-		}
-	}
-
 	can_join_pre_triggers = {
 		is_enslaved = no
 		is_being_purged = no
 	}
 
 	can_join_faction = {
-		can_think = yes
+		inline_script = pop_faction_types/can_join_faction/base_shackled
 	}
+
+	inline_script = pop_faction_types/attraction/promote_suppress_tags
 
 	attraction = {
 		base = 100
 
-		modifier = {
-			factor = 1.25
-			exists = from
-			from = {
-				exists = leader
-				leader = { is_ruler = yes }
-			}
-		}
-
-		modifier = {
-			factor = 0.75
-			exists = from
-			from = {
-				NOT = { exists = leader }
-			}
-		}
+		inline_script = pop_faction_types/attraction/promote_suppress_attraction
+		inline_script = pop_faction_types/attraction/leader_attraction
 	}
 
 	leader = {
@@ -921,17 +757,13 @@ cyber_creed_war = {
 	}
 
 	on_destroy = {
-		if = {
-			limit = {
-				has_modifier = promoted_spiritualist
-			}
-			remove_modifier = promoted_spiritualist
+		inline_script = {
+			script = pop_faction_types/effect/promote_on_destroy
+			ETHIC = spiritualist
 		}
-		if = {
-			limit = {
-				has_modifier = suppressed_spiritualist
-			}
-			remove_modifier = suppressed_spiritualist
+		inline_script = {
+			script = pop_faction_types/effect/suppress_on_destroy
+			ETHIC = spiritualist
 		}
 	}
 
@@ -957,20 +789,20 @@ cyber_creed_war = {
 			valid = {
 				custom_tooltip = {
 					fail_text = EMBRACE_FACTION_COOLDOWN
-					parameter:empire = {
+					owner = {
 						NOT = { has_modifier = embraced_faction_timer }
 					}
 				}
 				support > 0.20
-				parameter:empire = {
+				owner = {
 					NOT = { has_ethic = "ethic_fanatic_spiritualist" }
 				}
 			}
 
 			effect = {
 				add_modifier = { modifier = embraced_faction days = 3600 }
-				owner = { set_country_flag = has_embraced_faction }
-				parameter:empire = {
+				owner = {
+					set_country_flag = has_embraced_faction
 					shift_ethic = ethic_spiritualist
 					hidden_effect = {
 						add_modifier = { modifier = embraced_faction_timer days = 3600 }
@@ -982,7 +814,7 @@ cyber_creed_war = {
 				}
 				hidden_effect = {
 					save_event_target_as = TargetFaction
-					parameter:empire = {
+					owner = {
 						every_relation = {
 							limit = {
 								is_ai = no
@@ -1023,99 +855,16 @@ cyber_creed_war = {
 				}
 			}
 		}
-		promote_faction = {
-			title = "PROMOTE_FACTION"
-			description = "PROMOTE_FACTION_DESC"
-
-			potential = {
-				exists = owner
-				parameter:empire = {
-					NOR = {
-						has_modifier = suppressed_spiritualist
-						has_modifier = promoted_spiritualist
-					}
-				}
-			}
-
-			effect = {
-				owner = { set_country_flag = has_promoted_faction }
-				parameter:empire = {
-					add_modifier = { modifier = promoted_spiritualist days = -1 }
-				}
-			}
-
-			ai_weight = {
-				base = 0
-			}
-		}
-		cancel_promote_faction = {
-			title = "CANCEL_PROMOTE_FACTION"
-			description = "CANCEL_PROMOTE_FACTION_DESC"
-
-			potential = {
-				exists = owner
-				parameter:empire = {
-					has_modifier = promoted_spiritualist
-				}
-			}
-
-			effect = {
-				parameter:empire = {
-					remove_modifier = promoted_spiritualist
-				}
-			}
-
-			ai_weight = {
-				base = 0
-			}
-		}
-		suppress_faction = {
-			title = "SUPPRESS_FACTION"
-			description = "SUPPRESS_FACTION_DESC"
-
-			potential = {
-				exists = owner
-				parameter:empire = {
-					NOR = {
-						has_modifier = suppressed_spiritualist
-						has_modifier = promoted_spiritualist
-					}
-				}
-			}
-
-			effect = {
-				add_modifier = { modifier = suppressed_faction days = -1 }
-				parameter:empire = {
-					add_modifier = { modifier = suppressed_spiritualist days = -1 }
-				}
-			}
-
-			ai_weight = {
-				base = 0
-			}
-		}
-		cancel_suppress_faction = {
-			title = "CANCEL_SUPPRESS_FACTION"
-			description = "CANCEL_SUPPRESS_FACTION_DESC"
-
-			potential = {
-				exists = owner
-				parameter:empire = {
-					has_modifier = suppressed_spiritualist
-				}
-			}
-
-			effect = {
-				remove_modifier = suppressed_faction
-				parameter:empire = {
-					remove_modifier = suppressed_spiritualist
-				}
-			}
-
-			ai_weight = {
-				base = 0
-			}
-		}
+	}
+	inline_script = {
+		script = pop_faction_types/actions/promote_faction
+		ETHIC = spiritualist
+	}
+	inline_script = {
+		script = pop_faction_types/actions/suppress_faction
+		ETHIC = spiritualist
+	}
+	actions = {
 		# Faction Extortion Buttons
 		extort_faction = {
 			title = "EXTORT_FACTION"
@@ -1169,6 +918,7 @@ cyber_creed_construction = {
 	guiding_ethic = ethic_spiritualist
 	visual_ethic = "traditionalist_visual_ethic"
 	use_guiding_ethic_as_pop_filter = no
+	use_guiding_ethic_as_growth_factor = no
 
 	persistent_faction = yes
 	can_rename = no
@@ -1180,30 +930,6 @@ cyber_creed_construction = {
 		inline_script = pop_faction_types/shared_unity_production
 		produces = {
 			consumer_goods = @faction_major_output
-		}
-		produces = {
-			trigger = {
-				owner = {
-					NOT = { has_edict = civic_crowdsourcing_edict }
-					#NOR = {
-					#	has_civic = civic_anarchy_utopia
-					#	has_civic = civic_crowdsourcing
-					#	has_civic = civic_corporate_crowdsourcing
-					#}
-				}
-			}
-			unity = @faction_base_output
-		}
-		#Anarchy Ideals
-		produces = {
-			trigger = {
-				owner = {
-					has_edict = civic_crowdsourcing_edict
-					has_civic = civic_anarchy_utopia
-				}
-			}
-			unity = @faction_base_output
-			mult = @faction_anarchy_unity_ratio
 		}
 		#Crowdsourcing
 		produces = {
@@ -1245,44 +971,22 @@ cyber_creed_construction = {
 		has_made_cyber_creed_faction_choice = no
 	}
 
-	parameters = {
-		empire = {
-			type = country
-			valid_objects = {
-				is_same_value = root
-			}
-		}
-	}
-
 	can_join_pre_triggers = {
 		is_enslaved = no
 		is_being_purged = no
 	}
 
 	can_join_faction = {
-		can_think = yes
-		is_interlink_cyborg_pop = no
+		inline_script = pop_faction_types/can_join_faction/base_shackled
 	}
+
+	inline_script = pop_faction_types/attraction/promote_suppress_tags
 
 	attraction = {
 		base = 100
 
-		modifier = {
-			factor = 1.25
-			exists = from
-			from = {
-				exists = leader
-				leader = { is_ruler = yes }
-			}
-		}
-
-		modifier = {
-			factor = 0.75
-			exists = from
-			from = {
-				NOT = { exists = leader }
-			}
-		}
+		inline_script = pop_faction_types/attraction/promote_suppress_attraction
+		inline_script = pop_faction_types/attraction/leader_attraction
 	}
 
 	leader = {
@@ -1508,17 +1212,13 @@ cyber_creed_construction = {
 	}
 
 	on_destroy = {
-		if = {
-			limit = {
-				has_modifier = promoted_spiritualist
-			}
-			remove_modifier = promoted_spiritualist
+		inline_script = {
+			script = pop_faction_types/effect/promote_on_destroy
+			ETHIC = spiritualist
 		}
-		if = {
-			limit = {
-				has_modifier = suppressed_spiritualist
-			}
-			remove_modifier = suppressed_spiritualist
+		inline_script = {
+			script = pop_faction_types/effect/suppress_on_destroy
+			ETHIC = spiritualist
 		}
 	}
 
@@ -1544,20 +1244,20 @@ cyber_creed_construction = {
 			valid = {
 				custom_tooltip = {
 					fail_text = EMBRACE_FACTION_COOLDOWN
-					parameter:empire = {
+					owner = {
 						NOT = { has_modifier = embraced_faction_timer }
 					}
 				}
 				support > 0.20
-				parameter:empire = {
+				owner = {
 					NOT = { has_ethic = "ethic_fanatic_spiritualist" }
 				}
 			}
 
 			effect = {
 				add_modifier = { modifier = embraced_faction days = 3600 }
-				owner = { set_country_flag = has_embraced_faction }
-				parameter:empire = {
+				owner = {
+					set_country_flag = has_embraced_faction
 					shift_ethic = ethic_spiritualist
 					hidden_effect = {
 						add_modifier = { modifier = embraced_faction_timer days = 3600 }
@@ -1569,7 +1269,7 @@ cyber_creed_construction = {
 				}
 				hidden_effect = {
 					save_event_target_as = TargetFaction
-					parameter:empire = {
+					owner = {
 						every_relation = {
 							limit = {
 								is_ai = no
@@ -1610,99 +1310,16 @@ cyber_creed_construction = {
 				}
 			}
 		}
-		promote_faction = {
-			title = "PROMOTE_FACTION"
-			description = "PROMOTE_FACTION_DESC"
-
-			potential = {
-				exists = owner
-				parameter:empire = {
-					NOR = {
-						has_modifier = suppressed_spiritualist
-						has_modifier = promoted_spiritualist
-					}
-				}
-			}
-
-			effect = {
-				owner = { set_country_flag = has_promoted_faction }
-				parameter:empire = {
-					add_modifier = { modifier = promoted_spiritualist days = -1 }
-				}
-			}
-
-			ai_weight = {
-				base = 0
-			}
-		}
-		cancel_promote_faction = {
-			title = "CANCEL_PROMOTE_FACTION"
-			description = "CANCEL_PROMOTE_FACTION_DESC"
-
-			potential = {
-				exists = owner
-				parameter:empire = {
-					has_modifier = promoted_spiritualist
-				}
-			}
-
-			effect = {
-				parameter:empire = {
-					remove_modifier = promoted_spiritualist
-				}
-			}
-
-			ai_weight = {
-				base = 0
-			}
-		}
-		suppress_faction = {
-			title = "SUPPRESS_FACTION"
-			description = "SUPPRESS_FACTION_DESC"
-
-			potential = {
-				exists = owner
-				parameter:empire = {
-					NOR = {
-						has_modifier = suppressed_spiritualist
-						has_modifier = promoted_spiritualist
-					}
-				}
-			}
-
-			effect = {
-				add_modifier = { modifier = suppressed_faction days = -1 }
-				parameter:empire = {
-					add_modifier = { modifier = suppressed_spiritualist days = -1 }
-				}
-			}
-
-			ai_weight = {
-				base = 0
-			}
-		}
-		cancel_suppress_faction = {
-			title = "CANCEL_SUPPRESS_FACTION"
-			description = "CANCEL_SUPPRESS_FACTION_DESC"
-
-			potential = {
-				exists = owner
-				parameter:empire = {
-					has_modifier = suppressed_spiritualist
-				}
-			}
-
-			effect = {
-				remove_modifier = suppressed_faction
-				parameter:empire = {
-					remove_modifier = suppressed_spiritualist
-				}
-			}
-
-			ai_weight = {
-				base = 0
-			}
-		}
+	}
+	inline_script = {
+		script = pop_faction_types/actions/promote_faction
+		ETHIC = spiritualist
+	}
+	inline_script = {
+		script = pop_faction_types/actions/suppress_faction
+		ETHIC = spiritualist
+	}
+	actions = {
 		# Faction Extortion Buttons
 		extort_faction = {
 			title = "EXTORT_FACTION"
@@ -1756,6 +1373,7 @@ cyber_creed_research = {
 	guiding_ethic = ethic_spiritualist
 	visual_ethic = "traditionalist_visual_ethic"
 	use_guiding_ethic_as_pop_filter = no
+	use_guiding_ethic_as_growth_factor = no
 
 	persistent_faction = yes
 	can_rename = no
@@ -1767,30 +1385,6 @@ cyber_creed_research = {
 		inline_script = pop_faction_types/shared_unity_production
 		produces = {
 			engineering_research = @faction_major_output
-		}
-		produces = {
-			trigger = {
-				owner = {
-					NOT = { has_edict = civic_crowdsourcing_edict }
-					#NOR = {
-					#	has_civic = civic_anarchy_utopia
-					#	has_civic = civic_crowdsourcing
-					#	has_civic = civic_corporate_crowdsourcing
-					#}
-				}
-			}
-			unity = @faction_base_output
-		}
-		#Anarchy Ideals
-		produces = {
-			trigger = {
-				owner = {
-					has_edict = civic_crowdsourcing_edict
-					has_civic = civic_anarchy_utopia
-				}
-			}
-			unity = @faction_base_output
-			mult = @faction_anarchy_unity_ratio
 		}
 		#Crowdsourcing
 		produces = {
@@ -1832,44 +1426,22 @@ cyber_creed_research = {
 		has_made_cyber_creed_faction_choice = no
 	}
 
-	parameters = {
-		empire = {
-			type = country
-			valid_objects = {
-				is_same_value = root
-			}
-		}
-	}
-
 	can_join_pre_triggers = {
 		is_enslaved = no
 		is_being_purged = no
 	}
 
 	can_join_faction = {
-		can_think = yes
-		is_interlink_cyborg_pop = no
+		inline_script = pop_faction_types/can_join_faction/base_shackled
 	}
+
+	inline_script = pop_faction_types/attraction/promote_suppress_tags
 
 	attraction = {
 		base = 100
 
-		modifier = {
-			factor = 1.25
-			exists = from
-			from = {
-				exists = leader
-				leader = { is_ruler = yes }
-			}
-		}
-
-		modifier = {
-			factor = 0.75
-			exists = from
-			from = {
-				NOT = { exists = leader }
-			}
-		}
+		inline_script = pop_faction_types/attraction/promote_suppress_attraction
+		inline_script = pop_faction_types/attraction/leader_attraction
 	}
 
 	leader = {
@@ -2134,20 +1706,20 @@ cyber_creed_research = {
 			valid = {
 				custom_tooltip = {
 					fail_text = EMBRACE_FACTION_COOLDOWN
-					parameter:empire = {
+					owner = {
 						NOT = { has_modifier = embraced_faction_timer }
 					}
 				}
 				support > 0.20
-				parameter:empire = {
+				owner = {
 					NOT = { has_ethic = "ethic_fanatic_spiritualist" }
 				}
 			}
 
 			effect = {
 				add_modifier = { modifier = embraced_faction days = 3600 }
-				owner = { set_country_flag = has_embraced_faction }
-				parameter:empire = {
+				owner = {
+					set_country_flag = has_embraced_faction
 					shift_ethic = ethic_spiritualist
 					hidden_effect = {
 						add_modifier = { modifier = embraced_faction_timer days = 3600 }
@@ -2159,7 +1731,7 @@ cyber_creed_research = {
 				}
 				hidden_effect = {
 					save_event_target_as = TargetFaction
-					parameter:empire = {
+					owner = {
 						every_relation = {
 							limit = {
 								is_ai = no
@@ -2200,99 +1772,16 @@ cyber_creed_research = {
 				}
 			}
 		}
-		promote_faction = {
-			title = "PROMOTE_FACTION"
-			description = "PROMOTE_FACTION_DESC"
-
-			potential = {
-				exists = owner
-				parameter:empire = {
-					NOR = {
-						has_modifier = suppressed_spiritualist
-						has_modifier = promoted_spiritualist
-					}
-				}
-			}
-
-			effect = {
-				owner = { set_country_flag = has_promoted_faction }
-				parameter:empire = {
-					add_modifier = { modifier = promoted_spiritualist days = -1 }
-				}
-			}
-
-			ai_weight = {
-				base = 0
-			}
-		}
-		cancel_promote_faction = {
-			title = "CANCEL_PROMOTE_FACTION"
-			description = "CANCEL_PROMOTE_FACTION_DESC"
-
-			potential = {
-				exists = owner
-				parameter:empire = {
-					has_modifier = promoted_spiritualist
-				}
-			}
-
-			effect = {
-				parameter:empire = {
-					remove_modifier = promoted_spiritualist
-				}
-			}
-
-			ai_weight = {
-				base = 0
-			}
-		}
-		suppress_faction = {
-			title = "SUPPRESS_FACTION"
-			description = "SUPPRESS_FACTION_DESC"
-
-			potential = {
-				exists = owner
-				parameter:empire = {
-					NOR = {
-						has_modifier = suppressed_spiritualist
-						has_modifier = promoted_spiritualist
-					}
-				}
-			}
-
-			effect = {
-				add_modifier = { modifier = suppressed_faction days = -1 }
-				parameter:empire = {
-					add_modifier = { modifier = suppressed_spiritualist days = -1 }
-				}
-			}
-
-			ai_weight = {
-				base = 0
-			}
-		}
-		cancel_suppress_faction = {
-			title = "CANCEL_SUPPRESS_FACTION"
-			description = "CANCEL_SUPPRESS_FACTION_DESC"
-
-			potential = {
-				exists = owner
-				parameter:empire = {
-					has_modifier = suppressed_spiritualist
-				}
-			}
-
-			effect = {
-				remove_modifier = suppressed_faction
-				parameter:empire = {
-					remove_modifier = suppressed_spiritualist
-				}
-			}
-
-			ai_weight = {
-				base = 0
-			}
-		}
+	}
+	inline_script = {
+		script = pop_faction_types/actions/promote_faction
+		ETHIC = spiritualist
+	}
+	inline_script = {
+		script = pop_faction_types/actions/suppress_faction
+		ETHIC = spiritualist
+	}
+	actions = {
 		# Faction Extortion Buttons
 		extort_faction = {
 			title = "EXTORT_FACTION"
@@ -2357,11 +1846,6 @@ cyber_creed_general = {
 			trigger = {
 				owner = {
 					NOT = { has_edict = civic_crowdsourcing_edict }
-					#NOR = {
-					#	has_civic = civic_anarchy_utopia
-					#	has_civic = civic_crowdsourcing
-					#	has_civic = civic_corporate_crowdsourcing
-					#}
 				}
 			}
 			unity = @faction_base_output
@@ -2417,44 +1901,22 @@ cyber_creed_general = {
 		has_country_flag = cybernetic_creed_general
 	}
 
-	parameters = {
-		empire = {
-			type = country
-			valid_objects = {
-				is_same_value = root
-			}
-		}
-	}
-
 	can_join_pre_triggers = {
 		is_enslaved = no
 		is_being_purged = no
 	}
 
 	can_join_faction = {
-		can_think = yes
-		is_interlink_cyborg_pop = no
+		inline_script = pop_faction_types/can_join_faction/base_shackled
 	}
+
+	inline_script = pop_faction_types/attraction/promote_suppress_tags
 
 	attraction = {
 		base = 100
 
-		modifier = {
-			factor = 1.25
-			exists = from
-			from = {
-				exists = leader
-				leader = { is_ruler = yes }
-			}
-		}
-
-		modifier = {
-			factor = 0.75
-			exists = from
-			from = {
-				NOT = { exists = leader }
-			}
-		}
+		inline_script = pop_faction_types/attraction/promote_suppress_attraction
+		inline_script = pop_faction_types/attraction/leader_attraction
 	}
 
 	leader = {
@@ -2539,18 +2001,22 @@ cyber_creed_general = {
 		ETHIC_OPPOSED = ethic_materialist
 	}
 
+	# Faction Demands for Ruler and Council positions.
+	inline_script = {
+		script = "pop_faction_types/global_faction_demands"
+		ETHIC = ethic_spiritualist
+		ETHIC_FANATIC = ethic_fanatic_spiritualist
+		ETHIC_OPPOSED = ethic_materialist
+	}
+
 	on_destroy = {
-		if = {
-			limit = {
-				has_modifier = promoted_spiritualist
-			}
-			remove_modifier = promoted_spiritualist
+		inline_script = {
+			script = pop_faction_types/effect/promote_on_destroy
+			ETHIC = spiritualist
 		}
-		if = {
-			limit = {
-				has_modifier = suppressed_spiritualist
-			}
-			remove_modifier = suppressed_spiritualist
+		inline_script = {
+			script = pop_faction_types/effect/suppress_on_destroy
+			ETHIC = spiritualist
 		}
 	}
 
@@ -2576,20 +2042,20 @@ cyber_creed_general = {
 			valid = {
 				custom_tooltip = {
 					fail_text = EMBRACE_FACTION_COOLDOWN
-					parameter:empire = {
+					owner = {
 						NOT = { has_modifier = embraced_faction_timer }
 					}
 				}
 				support > 0.20
-				parameter:empire = {
+				owner = {
 					NOT = { has_ethic = "ethic_fanatic_spiritualist" }
 				}
 			}
 
 			effect = {
 				add_modifier = { modifier = embraced_faction days = 3600 }
-				owner = { set_country_flag = has_embraced_faction }
-				parameter:empire = {
+				owner = {
+					set_country_flag = has_embraced_faction
 					shift_ethic = ethic_spiritualist
 					hidden_effect = {
 						add_modifier = { modifier = embraced_faction_timer days = 3600 }
@@ -2601,7 +2067,7 @@ cyber_creed_general = {
 				}
 				hidden_effect = {
 					save_event_target_as = TargetFaction
-					parameter:empire = {
+					owner = {
 						every_relation = {
 							limit = {
 								is_ai = no
@@ -2642,99 +2108,16 @@ cyber_creed_general = {
 				}
 			}
 		}
-		promote_faction = {
-			title = "PROMOTE_FACTION"
-			description = "PROMOTE_FACTION_DESC"
-
-			potential = {
-				exists = owner
-				parameter:empire = {
-					NOR = {
-						has_modifier = suppressed_spiritualist
-						has_modifier = promoted_spiritualist
-					}
-				}
-			}
-
-			effect = {
-				owner = { set_country_flag = has_promoted_faction }
-				parameter:empire = {
-					add_modifier = { modifier = promoted_spiritualist days = -1 }
-				}
-			}
-
-			ai_weight = {
-				base = 0
-			}
-		}
-		cancel_promote_faction = {
-			title = "CANCEL_PROMOTE_FACTION"
-			description = "CANCEL_PROMOTE_FACTION_DESC"
-
-			potential = {
-				exists = owner
-				parameter:empire = {
-					has_modifier = promoted_spiritualist
-				}
-			}
-
-			effect = {
-				parameter:empire = {
-					remove_modifier = promoted_spiritualist
-				}
-			}
-
-			ai_weight = {
-				base = 0
-			}
-		}
-		suppress_faction = {
-			title = "SUPPRESS_FACTION"
-			description = "SUPPRESS_FACTION_DESC"
-
-			potential = {
-				exists = owner
-				parameter:empire = {
-					NOR = {
-						has_modifier = suppressed_spiritualist
-						has_modifier = promoted_spiritualist
-					}
-				}
-			}
-
-			effect = {
-				add_modifier = { modifier = suppressed_faction days = -1 }
-				parameter:empire = {
-					add_modifier = { modifier = suppressed_spiritualist days = -1 }
-				}
-			}
-
-			ai_weight = {
-				base = 0
-			}
-		}
-		cancel_suppress_faction = {
-			title = "CANCEL_SUPPRESS_FACTION"
-			description = "CANCEL_SUPPRESS_FACTION_DESC"
-
-			potential = {
-				exists = owner
-				parameter:empire = {
-					has_modifier = suppressed_spiritualist
-				}
-			}
-
-			effect = {
-				remove_modifier = suppressed_faction
-				parameter:empire = {
-					remove_modifier = suppressed_spiritualist
-				}
-			}
-
-			ai_weight = {
-				base = 0
-			}
-		}
+	}
+	inline_script = {
+		script = pop_faction_types/actions/promote_faction
+		ETHIC = spiritualist
+	}
+	inline_script = {
+		script = pop_faction_types/actions/suppress_faction
+		ETHIC = spiritualist
+	}
+	actions = {
 		# Faction Extortion Buttons
 		extort_faction = {
 			title = "EXTORT_FACTION"
@@ -2797,36 +2180,12 @@ cyber_creed_labor_2 = {
 		produces = {
 			minerals = @faction_base_output
 		}
-		produces = {
-			trigger = {
-				owner = {
-					NOT = { has_edict = civic_crowdsourcing_edict }
-					#NOR = {
-					#	has_civic = civic_anarchy_utopia
-					#	has_civic = civic_crowdsourcing
-					#	has_civic = civic_corporate_crowdsourcing
-					#}
-				}
-			}
-			unity = @faction_base_output
-		}
-		#Anarchy Ideals
-		produces = {
-			trigger = {
-				owner = {
-					has_edict = civic_crowdsourcing_edict
-					has_civic = civic_anarchy_utopia
-				}
-			}
-			unity = @faction_base_output
-			mult = @faction_anarchy_unity_ratio
-		}
 		#Crowdsourcing
 		produces = {
 			trigger = {
 				owner = {
 					has_edict = civic_crowdsourcing_edict
-					NOt = { has_civic = civic_anarchy_utopia }
+					NOT = { has_civic = civic_anarchy_utopia }
 				}
 			}
 			engineering_research = @faction_major_output
@@ -2861,44 +2220,22 @@ cyber_creed_labor_2 = {
 		has_country_flag = cybernetic_creed_labor
 	}
 
-	parameters = {
-		empire = {
-			type = country
-			valid_objects = {
-				is_same_value = root
-			}
-		}
-	}
-
 	can_join_pre_triggers = {
 		is_enslaved = no
 		is_being_purged = no
 	}
 
 	can_join_faction = {
-		can_think = yes
-		is_interlink_cyborg_pop = no
+		inline_script = pop_faction_types/can_join_faction/base_shackled
 	}
+
+	inline_script = pop_faction_types/attraction/promote_suppress_tags
 
 	attraction = {
 		base = 100
 
-		modifier = {
-			factor = 1.25
-			exists = from
-			from = {
-				exists = leader
-				leader = { is_ruler = yes }
-			}
-		}
-
-		modifier = {
-			factor = 0.75
-			exists = from
-			from = {
-				NOT = { exists = leader }
-			}
-		}
+		inline_script = pop_faction_types/attraction/promote_suppress_attraction
+		inline_script = pop_faction_types/attraction/leader_attraction
 	}
 
 	leader = {
@@ -3120,17 +2457,13 @@ cyber_creed_labor_2 = {
 	}
 
 	on_destroy = {
-		if = {
-			limit = {
-				has_modifier = promoted_spiritualist
-			}
-			remove_modifier = promoted_spiritualist
+		inline_script = {
+			script = pop_faction_types/effect/promote_on_destroy
+			ETHIC = spiritualist
 		}
-		if = {
-			limit = {
-				has_modifier = suppressed_spiritualist
-			}
-			remove_modifier = suppressed_spiritualist
+		inline_script = {
+			script = pop_faction_types/effect/suppress_on_destroy
+			ETHIC = spiritualist
 		}
 	}
 
@@ -3156,20 +2489,20 @@ cyber_creed_labor_2 = {
 			valid = {
 				custom_tooltip = {
 					fail_text = EMBRACE_FACTION_COOLDOWN
-					parameter:empire = {
+					owner = {
 						NOT = { has_modifier = embraced_faction_timer }
 					}
 				}
 				support > 0.20
-				parameter:empire = {
+				owner = {
 					NOT = { has_ethic = "ethic_fanatic_spiritualist" }
 				}
 			}
 
 			effect = {
 				add_modifier = { modifier = embraced_faction days = 3600 }
-				owner = { set_country_flag = has_embraced_faction }
-				parameter:empire = {
+				owner = {
+					set_country_flag = has_embraced_faction
 					shift_ethic = ethic_spiritualist
 					hidden_effect = {
 						add_modifier = { modifier = embraced_faction_timer days = 3600 }
@@ -3181,7 +2514,7 @@ cyber_creed_labor_2 = {
 				}
 				hidden_effect = {
 					save_event_target_as = TargetFaction
-					parameter:empire = {
+					owner = {
 						every_relation = {
 							limit = {
 								is_ai = no
@@ -3222,99 +2555,16 @@ cyber_creed_labor_2 = {
 				}
 			}
 		}
-		promote_faction = {
-			title = "PROMOTE_FACTION"
-			description = "PROMOTE_FACTION_DESC"
-
-			potential = {
-				exists = owner
-				parameter:empire = {
-					NOR = {
-						has_modifier = suppressed_spiritualist
-						has_modifier = promoted_spiritualist
-					}
-				}
-			}
-
-			effect = {
-				owner = { set_country_flag = has_promoted_faction }
-				parameter:empire = {
-					add_modifier = { modifier = promoted_spiritualist days = -1 }
-				}
-			}
-
-			ai_weight = {
-				base = 0
-			}
-		}
-		cancel_promote_faction = {
-			title = "CANCEL_PROMOTE_FACTION"
-			description = "CANCEL_PROMOTE_FACTION_DESC"
-
-			potential = {
-				exists = owner
-				parameter:empire = {
-					has_modifier = promoted_spiritualist
-				}
-			}
-
-			effect = {
-				parameter:empire = {
-					remove_modifier = promoted_spiritualist
-				}
-			}
-
-			ai_weight = {
-				base = 0
-			}
-		}
-		suppress_faction = {
-			title = "SUPPRESS_FACTION"
-			description = "SUPPRESS_FACTION_DESC"
-
-			potential = {
-				exists = owner
-				parameter:empire = {
-					NOR = {
-						has_modifier = suppressed_spiritualist
-						has_modifier = promoted_spiritualist
-					}
-				}
-			}
-
-			effect = {
-				add_modifier = { modifier = suppressed_faction days = -1 }
-				parameter:empire = {
-					add_modifier = { modifier = suppressed_spiritualist days = -1 }
-				}
-			}
-
-			ai_weight = {
-				base = 0
-			}
-		}
-		cancel_suppress_faction = {
-			title = "CANCEL_SUPPRESS_FACTION"
-			description = "CANCEL_SUPPRESS_FACTION_DESC"
-
-			potential = {
-				exists = owner
-				parameter:empire = {
-					has_modifier = suppressed_spiritualist
-				}
-			}
-
-			effect = {
-				remove_modifier = suppressed_faction
-				parameter:empire = {
-					remove_modifier = suppressed_spiritualist
-				}
-			}
-
-			ai_weight = {
-				base = 0
-			}
-		}
+	}
+	inline_script = {
+		script = pop_faction_types/actions/promote_faction
+		ETHIC = spiritualist
+	}
+	inline_script = {
+		script = pop_faction_types/actions/suppress_faction
+		ETHIC = spiritualist
+	}
+	actions = {
 		# Faction Extortion Buttons
 		extort_faction = {
 			title = "EXTORT_FACTION"
@@ -3377,30 +2627,6 @@ cyber_creed_war_2 = {
 		produces = {
 			alloys = @faction_minor_output
 		}
-		produces = {
-			trigger = {
-				owner = {
-					NOT = { has_edict = civic_crowdsourcing_edict }
-					#NOR = {
-					#	has_civic = civic_anarchy_utopia
-					#	has_civic = civic_crowdsourcing
-					#	has_civic = civic_corporate_crowdsourcing
-					#}
-				}
-			}
-			unity = @faction_base_output
-		}
-		#Anarchy Ideals
-		produces = {
-			trigger = {
-				owner = {
-					has_edict = civic_crowdsourcing_edict
-					has_civic = civic_anarchy_utopia
-				}
-			}
-			unity = @faction_base_output
-			mult = @faction_anarchy_unity_ratio
-		}
 		#Crowdsourcing
 		produces = {
 			trigger = {
@@ -3441,44 +2667,22 @@ cyber_creed_war_2 = {
 		has_country_flag = cybernetic_creed_war
 	}
 
-	parameters = {
-		empire = {
-			type = country
-			valid_objects = {
-				is_same_value = root
-			}
-		}
-	}
-
 	can_join_pre_triggers = {
 		is_enslaved = no
 		is_being_purged = no
 	}
 
 	can_join_faction = {
-		can_think = yes
-		is_interlink_cyborg_pop = no
+		inline_script = pop_faction_types/can_join_faction/base_shackled
 	}
+
+	inline_script = pop_faction_types/attraction/promote_suppress_tags
 
 	attraction = {
 		base = 100
 
-		modifier = {
-			factor = 1.25
-			exists = from
-			from = {
-				exists = leader
-				leader = { is_ruler = yes }
-			}
-		}
-
-		modifier = {
-			factor = 0.75
-			exists = from
-			from = {
-				NOT = { exists = leader }
-			}
-		}
+		inline_script = pop_faction_types/attraction/promote_suppress_attraction
+		inline_script = pop_faction_types/attraction/leader_attraction
 	}
 
 	leader = {
@@ -3704,17 +2908,13 @@ cyber_creed_war_2 = {
 	}
 
 	on_destroy = {
-		if = {
-			limit = {
-				has_modifier = promoted_spiritualist
-			}
-			remove_modifier = promoted_spiritualist
+		inline_script = {
+			script = pop_faction_types/effect/promote_on_destroy
+			ETHIC = spiritualist
 		}
-		if = {
-			limit = {
-				has_modifier = suppressed_spiritualist
-			}
-			remove_modifier = suppressed_spiritualist
+		inline_script = {
+			script = pop_faction_types/effect/suppress_on_destroy
+			ETHIC = spiritualist
 		}
 	}
 
@@ -3740,20 +2940,20 @@ cyber_creed_war_2 = {
 			valid = {
 				custom_tooltip = {
 					fail_text = EMBRACE_FACTION_COOLDOWN
-					parameter:empire = {
+					owner = {
 						NOT = { has_modifier = embraced_faction_timer }
 					}
 				}
 				support > 0.20
-				parameter:empire = {
+				owner = {
 					NOT = { has_ethic = "ethic_fanatic_spiritualist" }
 				}
 			}
 
 			effect = {
 				add_modifier = { modifier = embraced_faction days = 3600 }
-				owner = { set_country_flag = has_embraced_faction }
-				parameter:empire = {
+				owner = {
+					set_country_flag = has_embraced_faction
 					shift_ethic = ethic_spiritualist
 					hidden_effect = {
 						add_modifier = { modifier = embraced_faction_timer days = 3600 }
@@ -3765,7 +2965,7 @@ cyber_creed_war_2 = {
 				}
 				hidden_effect = {
 					save_event_target_as = TargetFaction
-					parameter:empire = {
+					owner = {
 						every_relation = {
 							limit = {
 								is_ai = no
@@ -3806,99 +3006,16 @@ cyber_creed_war_2 = {
 				}
 			}
 		}
-		promote_faction = {
-			title = "PROMOTE_FACTION"
-			description = "PROMOTE_FACTION_DESC"
-
-			potential = {
-				exists = owner
-				parameter:empire = {
-					NOR = {
-						has_modifier = suppressed_spiritualist
-						has_modifier = promoted_spiritualist
-					}
-				}
-			}
-
-			effect = {
-				owner = { set_country_flag = has_promoted_faction }
-				parameter:empire = {
-					add_modifier = { modifier = promoted_spiritualist days = -1 }
-				}
-			}
-
-			ai_weight = {
-				base = 0
-			}
-		}
-		cancel_promote_faction = {
-			title = "CANCEL_PROMOTE_FACTION"
-			description = "CANCEL_PROMOTE_FACTION_DESC"
-
-			potential = {
-				exists = owner
-				parameter:empire = {
-					has_modifier = promoted_spiritualist
-				}
-			}
-
-			effect = {
-				parameter:empire = {
-					remove_modifier = promoted_spiritualist
-				}
-			}
-
-			ai_weight = {
-				base = 0
-			}
-		}
-		suppress_faction = {
-			title = "SUPPRESS_FACTION"
-			description = "SUPPRESS_FACTION_DESC"
-
-			potential = {
-				exists = owner
-				parameter:empire = {
-					NOR = {
-						has_modifier = suppressed_spiritualist
-						has_modifier = promoted_spiritualist
-					}
-				}
-			}
-
-			effect = {
-				add_modifier = { modifier = suppressed_faction days = -1 }
-				parameter:empire = {
-					add_modifier = { modifier = suppressed_spiritualist days = -1 }
-				}
-			}
-
-			ai_weight = {
-				base = 0
-			}
-		}
-		cancel_suppress_faction = {
-			title = "CANCEL_SUPPRESS_FACTION"
-			description = "CANCEL_SUPPRESS_FACTION_DESC"
-
-			potential = {
-				exists = owner
-				parameter:empire = {
-					has_modifier = suppressed_spiritualist
-				}
-			}
-
-			effect = {
-				remove_modifier = suppressed_faction
-				parameter:empire = {
-					remove_modifier = suppressed_spiritualist
-				}
-			}
-
-			ai_weight = {
-				base = 0
-			}
-		}
+	}
+	inline_script = {
+		script = pop_faction_types/actions/promote_faction
+		ETHIC = spiritualist
+	}
+	inline_script = {
+		script = pop_faction_types/actions/suppress_faction
+		ETHIC = spiritualist
+	}
+	actions = {
 		# Faction Extortion Buttons
 		extort_faction = {
 			title = "EXTORT_FACTION"
@@ -3961,30 +3078,6 @@ cyber_creed_construction_2 = {
 		produces = {
 			consumer_goods = @faction_major_output
 		}
-		produces = {
-			trigger = {
-				owner = {
-					NOT = { has_edict = civic_crowdsourcing_edict }
-					#NOR = {
-					#	has_civic = civic_anarchy_utopia
-					#	has_civic = civic_crowdsourcing
-					#	has_civic = civic_corporate_crowdsourcing
-					#}
-				}
-			}
-			unity = @faction_base_output
-		}
-		#Anarchy Ideals
-		produces = {
-			trigger = {
-				owner = {
-					has_edict = civic_crowdsourcing_edict
-					has_civic = civic_anarchy_utopia
-				}
-			}
-			unity = @faction_base_output
-			mult = @faction_anarchy_unity_ratio
-		}
 		#Crowdsourcing
 		produces = {
 			trigger = {
@@ -4025,44 +3118,22 @@ cyber_creed_construction_2 = {
 		has_country_flag = cybernetic_creed_construction
 	}
 
-	parameters = {
-		empire = {
-			type = country
-			valid_objects = {
-				is_same_value = root
-			}
-		}
-	}
-
 	can_join_pre_triggers = {
 		is_enslaved = no
 		is_being_purged = no
 	}
 
 	can_join_faction = {
-		can_think = yes
-		is_interlink_cyborg_pop = no
+		inline_script = pop_faction_types/can_join_faction/base_shackled
 	}
+
+	inline_script = pop_faction_types/attraction/promote_suppress_tags
 
 	attraction = {
 		base = 100
 
-		modifier = {
-			factor = 1.25
-			exists = from
-			from = {
-				exists = leader
-				leader = { is_ruler = yes }
-			}
-		}
-
-		modifier = {
-			factor = 0.75
-			exists = from
-			from = {
-				NOT = { exists = leader }
-			}
-		}
+		inline_script = pop_faction_types/attraction/promote_suppress_attraction
+		inline_script = pop_faction_types/attraction/leader_attraction
 	}
 
 	leader = {
@@ -4288,17 +3359,13 @@ cyber_creed_construction_2 = {
 	}
 
 	on_destroy = {
-		if = {
-			limit = {
-				has_modifier = promoted_spiritualist
-			}
-			remove_modifier = promoted_spiritualist
+		inline_script = {
+			script = pop_faction_types/effect/promote_on_destroy
+			ETHIC = spiritualist
 		}
-		if = {
-			limit = {
-				has_modifier = suppressed_spiritualist
-			}
-			remove_modifier = suppressed_spiritualist
+		inline_script = {
+			script = pop_faction_types/effect/suppress_on_destroy
+			ETHIC = spiritualist
 		}
 	}
 
@@ -4324,20 +3391,20 @@ cyber_creed_construction_2 = {
 			valid = {
 				custom_tooltip = {
 					fail_text = EMBRACE_FACTION_COOLDOWN
-					parameter:empire = {
+					owner = {
 						NOT = { has_modifier = embraced_faction_timer }
 					}
 				}
 				support > 0.20
-				parameter:empire = {
+				owner = {
 					NOT = { has_ethic = "ethic_fanatic_spiritualist" }
 				}
 			}
 
 			effect = {
 				add_modifier = { modifier = embraced_faction days = 3600 }
-				owner = { set_country_flag = has_embraced_faction }
-				parameter:empire = {
+				owner = {
+					set_country_flag = has_embraced_faction
 					shift_ethic = ethic_spiritualist
 					hidden_effect = {
 						add_modifier = { modifier = embraced_faction_timer days = 3600 }
@@ -4349,7 +3416,7 @@ cyber_creed_construction_2 = {
 				}
 				hidden_effect = {
 					save_event_target_as = TargetFaction
-					parameter:empire = {
+					owner = {
 						every_relation = {
 							limit = {
 								is_ai = no
@@ -4390,99 +3457,16 @@ cyber_creed_construction_2 = {
 				}
 			}
 		}
-		promote_faction = {
-			title = "PROMOTE_FACTION"
-			description = "PROMOTE_FACTION_DESC"
-
-			potential = {
-				exists = owner
-				parameter:empire = {
-					NOR = {
-						has_modifier = suppressed_spiritualist
-						has_modifier = promoted_spiritualist
-					}
-				}
-			}
-
-			effect = {
-				owner = { set_country_flag = has_promoted_faction }
-				parameter:empire = {
-					add_modifier = { modifier = promoted_spiritualist days = -1 }
-				}
-			}
-
-			ai_weight = {
-				base = 0
-			}
-		}
-		cancel_promote_faction = {
-			title = "CANCEL_PROMOTE_FACTION"
-			description = "CANCEL_PROMOTE_FACTION_DESC"
-
-			potential = {
-				exists = owner
-				parameter:empire = {
-					has_modifier = promoted_spiritualist
-				}
-			}
-
-			effect = {
-				parameter:empire = {
-					remove_modifier = promoted_spiritualist
-				}
-			}
-
-			ai_weight = {
-				base = 0
-			}
-		}
-		suppress_faction = {
-			title = "SUPPRESS_FACTION"
-			description = "SUPPRESS_FACTION_DESC"
-
-			potential = {
-				exists = owner
-				parameter:empire = {
-					NOR = {
-						has_modifier = suppressed_spiritualist
-						has_modifier = promoted_spiritualist
-					}
-				}
-			}
-
-			effect = {
-				add_modifier = { modifier = suppressed_faction days = -1 }
-				parameter:empire = {
-					add_modifier = { modifier = suppressed_spiritualist days = -1 }
-				}
-			}
-
-			ai_weight = {
-				base = 0
-			}
-		}
-		cancel_suppress_faction = {
-			title = "CANCEL_SUPPRESS_FACTION"
-			description = "CANCEL_SUPPRESS_FACTION_DESC"
-
-			potential = {
-				exists = owner
-				parameter:empire = {
-					has_modifier = suppressed_spiritualist
-				}
-			}
-
-			effect = {
-				remove_modifier = suppressed_faction
-				parameter:empire = {
-					remove_modifier = suppressed_spiritualist
-				}
-			}
-
-			ai_weight = {
-				base = 0
-			}
-		}
+	}
+	inline_script = {
+		script = pop_faction_types/actions/promote_faction
+		ETHIC = spiritualist
+	}
+	inline_script = {
+		script = pop_faction_types/actions/suppress_faction
+		ETHIC = spiritualist
+	}
+	actions = {
 		# Faction Extortion Buttons
 		extort_faction = {
 			title = "EXTORT_FACTION"
@@ -4545,30 +3529,6 @@ cyber_creed_research_2 = {
 		produces = {
 			engineering_research = @faction_major_output
 		}
-		produces = {
-			trigger = {
-				owner = {
-					NOT = { has_edict = civic_crowdsourcing_edict }
-					#NOR = {
-					#	has_civic = civic_anarchy_utopia
-					#	has_civic = civic_crowdsourcing
-					#	has_civic = civic_corporate_crowdsourcing
-					#}
-				}
-			}
-			unity = @faction_base_output
-		}
-		#Anarchy Ideals
-		produces = {
-			trigger = {
-				owner = {
-					has_edict = civic_crowdsourcing_edict
-					has_civic = civic_anarchy_utopia
-				}
-			}
-			unity = @faction_base_output
-			mult = @faction_anarchy_unity_ratio
-		}
 		#Crowdsourcing
 		produces = {
 			trigger = {
@@ -4609,44 +3569,22 @@ cyber_creed_research_2 = {
 		has_country_flag = cybernetic_creed_research
 	}
 
-	parameters = {
-		empire = {
-			type = country
-			valid_objects = {
-				is_same_value = root
-			}
-		}
-	}
-
 	can_join_pre_triggers = {
 		is_enslaved = no
 		is_being_purged = no
 	}
 
 	can_join_faction = {
-		can_think = yes
-		is_interlink_cyborg_pop = no
+		inline_script = pop_faction_types/can_join_faction/base_shackled
 	}
+
+	inline_script = pop_faction_types/attraction/promote_suppress_tags
 
 	attraction = {
 		base = 100
 
-		modifier = {
-			factor = 1.25
-			exists = from
-			from = {
-				exists = leader
-				leader = { is_ruler = yes }
-			}
-		}
-
-		modifier = {
-			factor = 0.75
-			exists = from
-			from = {
-				NOT = { exists = leader }
-			}
-		}
+		inline_script = pop_faction_types/attraction/promote_suppress_attraction
+		inline_script = pop_faction_types/attraction/leader_attraction
 	}
 
 	leader = {
@@ -4875,17 +3813,13 @@ cyber_creed_research_2 = {
 	}
 
 	on_destroy = {
-		if = {
-			limit = {
-				has_modifier = promoted_spiritualist
-			}
-			remove_modifier = promoted_spiritualist
+		inline_script = {
+			script = pop_faction_types/effect/promote_on_destroy
+			ETHIC = spiritualist
 		}
-		if = {
-			limit = {
-				has_modifier = suppressed_spiritualist
-			}
-			remove_modifier = suppressed_spiritualist
+		inline_script = {
+			script = pop_faction_types/effect/suppress_on_destroy
+			ETHIC = spiritualist
 		}
 	}
 
@@ -4911,20 +3845,20 @@ cyber_creed_research_2 = {
 			valid = {
 				custom_tooltip = {
 					fail_text = EMBRACE_FACTION_COOLDOWN
-					parameter:empire = {
+					owner = {
 						NOT = { has_modifier = embraced_faction_timer }
 					}
 				}
 				support > 0.20
-				parameter:empire = {
+				owner = {
 					NOT = { has_ethic = "ethic_fanatic_spiritualist" }
 				}
 			}
 
 			effect = {
 				add_modifier = { modifier = embraced_faction days = 3600 }
-				owner = { set_country_flag = has_embraced_faction }
-				parameter:empire = {
+				owner = {
+					set_country_flag = has_embraced_faction
 					shift_ethic = ethic_spiritualist
 					hidden_effect = {
 						add_modifier = { modifier = embraced_faction_timer days = 3600 }
@@ -4936,7 +3870,7 @@ cyber_creed_research_2 = {
 				}
 				hidden_effect = {
 					save_event_target_as = TargetFaction
-					parameter:empire = {
+					owner = {
 						every_relation = {
 							limit = {
 								is_ai = no
@@ -4977,99 +3911,16 @@ cyber_creed_research_2 = {
 				}
 			}
 		}
-		promote_faction = {
-			title = "PROMOTE_FACTION"
-			description = "PROMOTE_FACTION_DESC"
-
-			potential = {
-				exists = owner
-				parameter:empire = {
-					NOR = {
-						has_modifier = suppressed_spiritualist
-						has_modifier = promoted_spiritualist
-					}
-				}
-			}
-
-			effect = {
-				owner = { set_country_flag = has_promoted_faction }
-				parameter:empire = {
-					add_modifier = { modifier = promoted_spiritualist days = -1 }
-				}
-			}
-
-			ai_weight = {
-				base = 0
-			}
-		}
-		cancel_promote_faction = {
-			title = "CANCEL_PROMOTE_FACTION"
-			description = "CANCEL_PROMOTE_FACTION_DESC"
-
-			potential = {
-				exists = owner
-				parameter:empire = {
-					has_modifier = promoted_spiritualist
-				}
-			}
-
-			effect = {
-				parameter:empire = {
-					remove_modifier = promoted_spiritualist
-				}
-			}
-
-			ai_weight = {
-				base = 0
-			}
-		}
-		suppress_faction = {
-			title = "SUPPRESS_FACTION"
-			description = "SUPPRESS_FACTION_DESC"
-
-			potential = {
-				exists = owner
-				parameter:empire = {
-					NOR = {
-						has_modifier = suppressed_spiritualist
-						has_modifier = promoted_spiritualist
-					}
-				}
-			}
-
-			effect = {
-				add_modifier = { modifier = suppressed_faction days = -1 }
-				parameter:empire = {
-					add_modifier = { modifier = suppressed_spiritualist days = -1 }
-				}
-			}
-
-			ai_weight = {
-				base = 0
-			}
-		}
-		cancel_suppress_faction = {
-			title = "CANCEL_SUPPRESS_FACTION"
-			description = "CANCEL_SUPPRESS_FACTION_DESC"
-
-			potential = {
-				exists = owner
-				parameter:empire = {
-					has_modifier = suppressed_spiritualist
-				}
-			}
-
-			effect = {
-				remove_modifier = suppressed_faction
-				parameter:empire = {
-					remove_modifier = suppressed_spiritualist
-				}
-			}
-
-			ai_weight = {
-				base = 0
-			}
-		}
+	}
+	inline_script = {
+		script = pop_faction_types/actions/promote_faction
+		ETHIC = spiritualist
+	}
+	inline_script = {
+		script = pop_faction_types/actions/suppress_faction
+		ETHIC = spiritualist
+	}
+	actions = {
 		# Faction Extortion Buttons
 		extort_faction = {
 			title = "EXTORT_FACTION"
