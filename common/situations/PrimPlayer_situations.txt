@@ -1142,7 +1142,99 @@ situation_primitive_uranium_deficit = {
 		}
 	}
 }
-
+###################################
+# Nuclear Warhead Situation
+###################################
+situation_primitive_uranium_warhead = {
+	picture = GFX_evt_landing_ship
+	category = positive
+	#fail_icon_frame = GFX_situation_outcome_frame_blue
+	#fail_icon = GFX_situation_outcome_unknown
+	#complete_icon_frame = GFX_situation_outcome_frame_blue
+	#complete_icon = GFX_situation_outcome_positive
+	abort_trigger = {
+		
+	}
+	modifier = {
+		
+	}
+	stages = {
+		situation_primitive_uranium_warhead_stage_1 = {
+			icon = GFX_situation_stage_1
+			icon_background = GFX_situation_stage_frame_blue
+			end = 100
+			#custom_tooltip = awareness_unaware_tt
+		}
+	}
+	on_progress_complete = {
+		owner = { change_variable = { which = primitive_uranium_warhead value = 1 } }	#Increases stockpile value by 1
+		set_situation_progress = 0	#Situation restarts to build next warhead
+	}
+	monthly_progress = {
+		base = 0 # total: 100
+	monthly_progress = {
+		base = 0
+		modifier = {
+			desc = situation_primitive_uranium_deficit
+			mult = 0
+			owner = {
+				any_situation = { is_situation_type = situation_primitive_uranium_deficit }
+			}
+		}
+	}
+	approach = {
+		name = situation_primitive_uranium_warhead_approach_halt
+		icon = GFX_situation_approach_research
+		icon_background = GFX_situation_approach_bg_red
+		default = yes
+		on_select = {
+			#set_situation_locked = yes
+			#custom_tooltip = 
+		}
+	}
+	approach = {
+		name = situation_primitive_uranium_warhead_approach_enrich
+		icon = GFX_situation_approach_research
+		icon_background = GFX_situation_approach_bg_green
+		default = no
+		allow = { 
+			
+		} 
+		resources = {
+			category = situations
+			upkeep = {
+				energy = 10
+				primitive_uranium = 10
+			}
+		}
+		modifier = {
+			add = 0.5
+			desc = situation_primitive_uranium_warhead_approach_enrich
+			current_situation_approach = situation_primitive_uranium_warhead_approach_enrich
+		}
+	}
+	approach = {
+		name = situation_primitive_uranium_warhead_approach_enrich_boosted
+		icon = GFX_situation_approach_research
+		icon_background = GFX_situation_approach_bg_green
+		default = no
+		allow = { 
+			owner = { not = { has_ethic = ethic_fanatic_pacifist } }
+		} 
+		resources = {
+			category = situations
+			upkeep = {
+				energy = 25
+				primitive_uranium = 20
+			}
+		}
+		modifier = {
+			add = 1
+			desc = situation_primitive_uranium_warhead_approach_enrich_boosted
+			current_situation_approach = situation_primitive_uranium_warhead_approach_enrich_boosted
+		}
+	}
+}
 ###################################
 # Terraform Situation
 ###################################
