@@ -11,185 +11,14 @@
 #
 ##########################################################################+
 
-war_philosophy = {
-
-	potential = {
-		OR = {
-			is_country_type = default
-			is_country_type = fallen_empire
-			is_country_type = awakened_fallen_empire
-		}
-	}
-
-	allow = {
-		is_at_war = no # Not allowed to change policies in this group while at war
-	}
-
-	option = {
-		name = "unrestricted_wars"
-
-		policy_flags = {
-			unrestricted_wars
-		}
-
-		in_breach_of = {
-			{
-				key = resolution_rulesofwar_last_resort_doctrine
-			}
-			{
-				key = resolution_rulesofwar_demobilization_initiative
-			}
-		}
-
-		valid = {
-			NOR = {
-				has_ethic = "ethic_pacifist"
-				has_ethic = "ethic_fanatic_pacifist"
-				has_valid_civic = "civic_inwards_perfection"
-				#has_civic = "civic_crusader_spirit"		#Cog Note - This feels out of character for the present description - Oct 10th, 2025
-				has_valid_civic = "civic_anarchy_utopia"
-			}
-		}
-
-		ai_weight = {
-			modifier = {
-				factor = 10
-				OR = {
-					has_valid_ai_personality = no
-					is_ai = no
-				}
-				NOT = {
-					has_ethic = "ethic_pacifist"
-					has_ethic = "ethic_fanatic_pacifist"
-				}
-			}
-			modifier = {
-				factor = 10
-				has_valid_ai_personality = yes
-				is_ai = yes
-				OR = {
-					has_ai_personality_behaviour = conqueror
-					has_ai_personality_behaviour = subjugator
-					has_ai_personality_behaviour = purger
-				}
-			}
-			modifier = {
-				factor = 10
-				has_ascension_perk = ap_become_the_crisis
-			}
-			modifier = {
-				factor = 0.1
-				has_valid_ai_personality = yes
-				is_ai = yes
-				is_galactic_community_member = yes
-				OR = {
-					is_active_resolution = "resolution_rulesofwar_last_resort_doctrine"
-					is_active_resolution = "resolution_rulesofwar_demobilization_initiative"
-				}
-			}
-			modifier = {
-				factor = 0
-				OR = {
-					has_ethic = "ethic_pacifist"
-					has_ethic = "ethic_fanatic_pacifist"
-				}
-			}
-		}
-	}
-
-	option = {
-		name = "liberation_wars"
-
-		policy_flags = {
-			liberation_wars
-		}
-
-		potential = {
-			NOT = { has_ethic = ethic_gestalt_consciousness }
-		}
-
-		valid = {
-			NOR = {
-				has_ethic = "ethic_fanatic_pacifist"
-				is_homicidal = yes
-			}
-		}
-
-		on_enabled = {
-			hidden_effect = {
-				check_casus_belli_valid = {
-					type = cb_ideology
-				}
-			}
-		}
-
-		on_disabled = {
-			hidden_effect = {
-				check_casus_belli_valid = {
-					type = cb_ideology
-				}
-			}
-		}
-
-		ai_weight = {
-			modifier = {
-				factor = 2
-				OR = {
-					has_valid_ai_personality = no
-					is_ai = no
-				}
-				has_ethic = "ethic_pacifist"
-			}
-			modifier = {
-				factor = 2
-				has_valid_ai_personality = yes
-				is_ai = yes
-				OR = {
-					has_ai_personality_behaviour = conqueror
-					has_ai_personality_behaviour = subjugator
-					has_ai_personality_behaviour = liberator
-				}
-			}
-		}
-	}
-
-	option = {
-		name = "no_wars"
-
-		policy_flags = {
-			no_wars
-		}
-
-		valid = {
-			NOR = {
-				is_fanatic_militarist = yes
-				has_valid_civic = "civic_fanatic_purifiers"
-				has_valid_civic = "civic_hive_devouring_swarm"
-				has_valid_civic = "civic_machine_terminator"
-				has_civic = "civic_crusader_spirit"
-			}
-		}
-
-		ai_weight = {
-			modifier = {
-				factor = 5
-				has_ethic = "ethic_fanatic_pacifist"
-			}
-			modifier = {
-				factor = 0
-				NOT = { has_ethic = "ethic_fanatic_pacifist" }
-			}
-		}
-	}
-}
-
 diplomatic_stance = {
+	category = diplomacy
 	potential = {
 		OR = {
 			is_country_type = default
 			is_country_type = fallen_empire
 			is_country_type = awakened_fallen_empire
-			is_primitive = yes
+			is_country_type = primitive
 			is_country_type = PrimPlayer_ethic_fanatic_nation 
 			is_country_type = PrimPlayer_ethic_fanatic_nation_nomadic
 			is_country_type = awakened_marauders
@@ -220,7 +49,7 @@ diplomatic_stance = {
 			NOR = { 
 				has_civic = civic_inwards_perfection # They have their own variants of this
 				is_homicidal = yes 	# They have their own variants of this
-				has_origin = "origin_slavers"
+				hidden_trigger = { NOT = { has_origin = "origin_slavers" } }
 			} 
 		}
 
@@ -460,12 +289,6 @@ diplomatic_stance = {
 				factor = 200.0
 				has_origin = "origin_broken_shackles"
 			}
-			
-			#modifier = {
-			#	factor = 1000
-			#	has_civic = PrimPlayer_civic_internationalism
-			#	OR = { is_country_type = PrimPlayer_ethic_fanatic_nation is_country_type = PrimPlayer_ethic_fanatic_nation_nomadic }
-			#}
 		}
 	}
 
@@ -478,7 +301,6 @@ diplomatic_stance = {
 				is_country_type = default
 				is_country_type = awakened_fallen_empire
 				is_country_type = exiled
-				#is_country_type = mirrored_country	
 				is_country_type = PrimPlayer_ethic_fanatic_nation 
 				is_country_type = PrimPlayer_ethic_fanatic_nation_nomadic	
 			}
@@ -543,12 +365,6 @@ diplomatic_stance = {
 				is_militarist = no
 				is_authoritarian = no
 			}
-			
-			#modifier = {
-			#	factor = 1000
-			#	has_civic = PrimPlayer_civic_isolationism
-			#	OR = { is_country_type = PrimPlayer_ethic_fanatic_nation is_country_type = PrimPlayer_ethic_fanatic_nation_nomadic }
-			#}
 		}
 	}
 
@@ -675,8 +491,8 @@ diplomatic_stance = {
 			}
 			else = { 
 				OR = {
-					has_civic = civic_corporate_dominion 
-					has_origin = "origin_slavers"
+					has_civic = civic_corporate_dominion
+					hidden_trigger = { has_origin = "origin_slavers" }
 				}
 			}
 		}
@@ -720,12 +536,6 @@ diplomatic_stance = {
 					has_valid_civic = civic_private_military_companies
 				}
 			}
-			
-			#modifier = {
-			#	factor = 2000
-			#	has_authority = auth_corporate
-			#	OR = { is_country_type = PrimPlayer_ethic_fanatic_nation is_country_type = PrimPlayer_ethic_fanatic_nation_nomadic }
-			#}
 		}
 	}
 
@@ -870,12 +680,6 @@ diplomatic_stance = {
 					}
 				}
 			}
-			
-			#modifier = {
-			#	factor = 2000
-			#	has_ethic = ethic_fanatic_xenophobe
-			#	OR = { is_country_type = PrimPlayer_ethic_fanatic_nation is_country_type = PrimPlayer_ethic_fanatic_nation_nomadic }
-			#}
 		}
 	}
 	option = {
@@ -1076,13 +880,11 @@ diplomatic_stance = {
 		icon = "GFX_diplomatic_stance_isolationist"
 
 		potential = {
-			#OR = {
-				is_primitive = yes
-				#is_country_type = PrimPlayer_ethic_fanatic_nation 
-				#is_country_type = PrimPlayer_ethic_fanatic_nation_nomadic
-			#}
+			is_country_type = primitive
 			current_awareness_level < medium
-			any_owned_planet = { NOT = { has_modifier = culture_shock_diplomacy } }
+			capital_scope = {
+				NOT = { has_modifier = culture_shock_diplomacy }
+			}
 		}
 
 		policy_flags = {
@@ -1102,13 +904,11 @@ diplomatic_stance = {
 		icon = "GFX_diplomatic_stance_expansionist"
 
 		potential = {
-			#OR = {
-				is_primitive = yes
-				#is_country_type = PrimPlayer_ethic_fanatic_nation 
-				#is_country_type = PrimPlayer_ethic_fanatic_nation_nomadic
-			#}
+			is_country_type = primitive
 			current_awareness_level = medium
-			any_owned_planet = { NOT = { has_modifier = culture_shock_diplomacy } }
+			capital_scope = {
+				NOT = { has_modifier = culture_shock_diplomacy }
+			}
 		}
 
 		policy_flags = {
@@ -1128,14 +928,12 @@ diplomatic_stance = {
 		icon = "GFX_diplomatic_stance_cooperative"
 
 		potential = {
-			#OR = {
-				is_primitive = yes
-				#is_country_type = PrimPlayer_ethic_fanatic_nation 
-				#is_country_type = PrimPlayer_ethic_fanatic_nation_nomadic
-			#}
+			is_country_type = primitive
 			current_awareness_level >= high
 			is_xenophile = yes
-			any_owned_planet = { NOT = { has_modifier = culture_shock_diplomacy } }
+			capital_scope = {
+				NOT = { has_modifier = culture_shock_diplomacy }
+			}
 		}
 
 		policy_flags = {
@@ -1155,14 +953,12 @@ diplomatic_stance = {
 		icon = "GFX_diplomatic_stance_withdrawn"
 
 		potential = {
-			#OR = {
-				is_primitive = yes
-				#is_country_type = PrimPlayer_ethic_fanatic_nation 
-				#is_country_type = PrimPlayer_ethic_fanatic_nation_nomadic
-			#}
+			is_country_type = primitive
 			current_awareness_level >= high
 			is_xenophobe = yes
-			any_owned_planet = { NOT = { has_modifier = culture_shock_diplomacy } }
+			capital_scope = {
+				NOT = { has_modifier = culture_shock_diplomacy }
+			}
 		}
 
 		policy_flags = {
@@ -1182,15 +978,13 @@ diplomatic_stance = {
 		icon = "GFX_diplomatic_stance_isolationist"
 
 		potential = {
-			#OR = {
-				is_primitive = yes
-				#is_country_type = PrimPlayer_ethic_fanatic_nation 
-				#is_country_type = PrimPlayer_ethic_fanatic_nation_nomadic
-			#}
+			is_country_type = primitive
 			current_awareness_level >= high
 			is_xenophile = no
 			is_xenophobe = no
-			any_owned_planet = { NOT = { has_modifier = culture_shock_diplomacy } }
+			capital_scope = {
+				NOT = { has_modifier = culture_shock_diplomacy }
+			}
 		}
 
 		policy_flags = {
@@ -1210,12 +1004,10 @@ diplomatic_stance = {
 		icon = "GFX_diplomatic_stance_belligerent"
 
 		potential = {
-			#OR = {
-				is_primitive = yes
-				#is_country_type = PrimPlayer_ethic_fanatic_nation 
-				#is_country_type = PrimPlayer_ethic_fanatic_nation_nomadic
-			#}
-			any_owned_planet = { has_modifier = culture_shock_diplomacy }
+			is_country_type = primitive
+			capital_scope = {
+				has_modifier = culture_shock_diplomacy
+			}
 		}
 
 		policy_flags = {
@@ -1227,7 +1019,7 @@ diplomatic_stance = {
 		}
 
 		ai_weight = {
-			weight = 1000
+			weight = 100
 		}
 	}
 
@@ -1260,9 +1052,719 @@ diplomatic_stance = {
 			weight = 100
 		}
 	}
+	#Nomadic stance variants because triggered modifiers arent supported:
+
+	option = {
+		name = "diplo_stance_belligerent_nomad"
+		icon = "GFX_diplomatic_stance_belligerent"
+
+		potential = {
+			is_nomadic = yes
+		}
+
+		valid = {
+			NOT = { has_valid_civic = civic_inwards_perfection }
+			is_homicidal = no # They have their own variants of this
+		}
+
+		policy_flags = {
+			diplo_stance_belligerent
+		}
+
+		modifier = {
+			country_war_exhaustion_mult = -0.1
+			country_naval_cap_mult = 0.1
+			starbase_waystations_upkeep_mult = -0.2
+			starbase_waystations_modules_upkeep_mult = -0.2
+			external_leader_pool_add = -1
+		}
+
+		ai_weight = {
+			weight = 10
+
+			modifier = {
+				factor = 0
+				NOT = { has_country_flag = has_encountered_other_empire }
+			}
+
+			# Pacifists
+			modifier = { # Fanatic Pacifists will *only* go belligerent if there's a rival neighbor...
+				factor = 0
+				has_ethic = ethic_fanatic_pacifist
+				NOT = {
+					any_neighbor_country = {
+						is_rival = root
+					}
+				}
+			}
+			modifier = { # Regular Pacifists have only a small chance to go belligerent unless there's a rival neighbor...
+				factor = 0.5
+				has_ethic = ethic_pacifist
+				NOT = {
+					any_neighbor_country = {
+						is_rival = root
+					}
+				}
+			}
+			modifier = {
+				factor = 0.5 # ...but they're still less likely to.
+				is_pacifist = yes
+			}
+
+			# Angry people like to be belligerent
+			modifier = {
+				factor = 2.0
+				has_ethic = ethic_fanatic_militarist
+			}
+			modifier = {
+				factor = 1.5
+				has_ethic = ethic_militarist
+			}
+			modifier = {
+				factor = 1.5
+				has_ethic = ethic_fanatic_authoritarian
+			}
+			modifier = {
+				factor = 1.25
+				has_ethic = ethic_authoritarian
+			}
+			modifier = {
+				factor = 5.0 # Intentionally high value for despoilers/Nihilistic Acquisition
+				is_slaver = yes
+			}
+			modifier = {
+				factor = 1.5
+				has_valid_civic = civic_nationalistic_zeal
+			}
+			modifier = {
+				factor = 1.5
+				OR = {
+					has_valid_civic = civic_hive_strength_of_legions
+					has_valid_civic = civic_machine_warbots
+					has_valid_civic = civic_private_militaries
+					has_valid_civic = civic_private_military_companies
+					has_valid_civic = civic_warrior_culture
+				}
+			}
+
+			modifier = {
+				factor = 1.5
+				has_ai_personality_behaviour = conqueror
+			}
+			modifier = {
+				factor = 1.5
+				has_ai_personality_behaviour = subjugator
+			}
+
+			modifier = {
+				factor = 3.0 # Blocked in propagators get ANGRY
+				has_ai_expansion_plan = no
+				has_ai_personality_behaviour = propagator
+			}
+		}
+	}
+
+	option = {
+		name = "diplo_stance_cooperative_nomad"
+		icon = "GFX_diplomatic_stance_cooperative"
+
+		potential = {
+			is_nomadic = yes
+		}
+
+		valid = {
+			NOT = { has_valid_civic = civic_inwards_perfection }
+			is_unfriendly = no # Not homicidal or barbaric despoilers
+		}
+
+		policy_flags = {
+			diplo_stance_cooperative
+		}
+
+		modifier = {
+			diplo_weight_mult = 0.25
+			envoy_improve_relations_mult = 0.5
+			unlicensed_waystations_scaling_mult = -0.5
+			operations_cost_mult = 0.25
+			operations_upkeep_mult = 0.25
+			external_leader_pool_add = 1
+		}
+
+		ai_weight = {
+			weight = 10
+
+			modifier = {
+				factor = 0.01
+				has_ascension_perk = ap_become_the_crisis
+			}
+
+			modifier = {
+				factor = 0
+				NOT = { has_country_flag = has_encountered_other_empire }
+			}
+
+			# Tons of Ethics modifiers!
+			# Cranky people:
+			modifier = {
+				factor = 0
+				is_fanatic_xenophobe = yes
+			}
+			modifier = {
+				factor = 0.1
+				has_ethic = ethic_xenophobe
+			}
+			modifier = {
+				factor = 0.5
+				has_ethic = ethic_fanatic_authoritarian
+			}
+			modifier = {
+				factor = 0.75
+				has_ethic = ethic_authoritarian
+			}
+
+			# Nice people:
+			modifier = {
+				factor = 2.0
+				has_ethic = ethic_fanatic_xenophile
+			}
+			modifier = {
+				factor = 1.5
+				has_ethic = ethic_xenophile
+			}
+			modifier = {
+				factor = 1.3
+				has_valid_civic = civic_machine_exploration_protocol
+			}
+			modifier = {
+				factor = 1.3
+				has_ethic = ethic_fanatic_pacifist
+			}
+			modifier = {
+				factor = 1.15
+				has_ethic = ethic_pacifist
+			}
+			modifier = {
+				factor = 1.3
+				has_ethic = ethic_fanatic_egalitarian
+			}
+			modifier = {
+				factor = 1.15
+				has_ethic = ethic_egalitarian
+			}
+			modifier = {
+				factor = 1.1
+				has_ethic = ethic_fanatic_materialist
+			}
+			modifier = {
+				factor = 1.05
+				has_ethic = ethic_materialist
+			}
+
+			modifier = {
+				factor = 1.25
+				has_ai_personality_behaviour = multispecies
+			}
+
+			modifier = {
+				factor = 3.0
+				has_ai_personality = federation_builders
+			}
+
+			modifier = {
+				factor = 3.0
+				has_ai_personality = hive_mind_friend
+			}
+
+			modifier = {
+				factor = 3.0
+				has_country_flag = fallen_empire_hive_control
+			}
+		}
+	}
+
+	option = {
+		name = "diplo_stance_isolationist_nomad"
+		icon = "GFX_diplomatic_stance_isolationist"
+
+		potential = {
+			is_nomadic = yes
+		}
+
+		valid = {
+			is_megacorp = no # "NO! YOU CAN'T BUY OUR STUFF!" makes the shareholders sad
+			is_homicidal = no # Homicidal variants below
+		}
+
+		policy_flags = {
+			diplo_stance_isolationist
+		}
+
+		modifier = {
+			country_unity_produces_mult = 0.10
+			diplo_weight_mult = -0.25
+			diplomacy_upkeep_mult = 1
+			pop_government_ethic_attraction = 0.25
+			unlicensed_waystations_scaling_mult = 2
+			external_leader_pool_add = -2
+		}
+
+		ai_weight = {
+			weight = 10
+
+			modifier = {
+				factor = 0.01
+				has_ascension_perk = ap_become_the_crisis
+			}
+
+			modifier = {
+				factor = 0.25 # Let the isolationists start in this if they want
+				NOT = { has_country_flag = has_encountered_other_empire }
+			}
+
+			modifier = {
+				factor = 0
+				OR = {
+					has_ai_personality = federation_builders
+					has_ai_personality = fanatic_befrienders
+				}
+			}
+
+			modifier = {
+				factor = 100.0 # Inwards Perfection should almost always go isolationist
+				has_valid_civic = civic_inwards_perfection
+			}
+
+			modifier = {
+				factor = 3.0
+				has_ai_personality_behaviour = isolationist
+			}
+
+			modifier = {
+				factor = 2.0
+				is_xenophobe = yes
+				is_militarist = no
+				is_authoritarian = no
+			}
+		}
+	}
+
+	option = {
+		name = "diplo_stance_supremacist_nomad"
+		icon = "GFX_diplomatic_stance_supremacy"
+
+		potential = {
+			OR = {
+				is_country_type = awakened_fallen_empire
+				is_country_type = awakened_marauders
+				is_country_type = default
+				is_country_type = mirrored_country
+			}
+			is_nomadic = yes
+		}
+		valid = {
+			NOR = {
+				has_valid_civic = civic_inwards_perfection
+				has_modifier = humiliated
+			}
+			is_homicidal = no
+			custom_tooltip = {
+				fail_text = "requires_supremacy_traditions"
+				OR = {
+					has_tradition = tr_supremacy_finish
+					NOT = { is_country_type = default }
+				}
+			}
+			is_subject = no
+		}
+
+		policy_flags = {
+			diplo_stance_supremacist
+		}
+
+		modifier = {
+			diplo_weight_naval_mult = 1.00
+			diplo_weight_economy_mult = -0.5
+			diplo_weight_technology_mult = -0.5
+			country_war_exhaustion_mult = -0.20
+			country_naval_cap_mult = 0.20
+			starbase_waystations_upkeep_mult = -0.2
+			starbase_waystations_modules_upkeep_mult = -0.2
+		}
+
+		ai_weight = {
+			weight = 10
+
+			modifier = {
+				factor = 0
+				NOT = { has_country_flag = has_encountered_other_empire }
+			}
+
+			modifier = {
+				factor = 0
+				is_pacifist = yes
+			}
+
+			modifier = {
+				factor = 10
+				OR = {
+					is_country_type = awakened_fallen_empire
+					is_country_type = awakened_marauders
+				}
+			}
+
+			# Angry people want to be Supreme
+			modifier = {
+				factor = 2.0
+				has_ethic = ethic_fanatic_militarist
+			}
+			modifier = {
+				factor = 1.5
+				has_ethic = ethic_militarist
+			}
+			modifier = {
+				factor = 1.5
+				has_ethic = ethic_fanatic_authoritarian
+			}
+			modifier = {
+				factor = 1.25
+				has_ethic = ethic_authoritarian
+			}
+			modifier = {
+				factor = 1.25 # Despoilers/Nihilistic Acquisition intentionally get a higher multiplier for Belligerent than Supremacist
+				is_slaver = yes
+			}
+			modifier = {
+				factor = 2
+				has_valid_civic = civic_nationalistic_zeal
+			}
+			modifier = {
+				factor = 3
+				OR = {
+					has_valid_civic = civic_hive_strength_of_legions
+					has_valid_civic = civic_machine_warbots
+					has_valid_civic = civic_private_militaries
+					has_valid_civic = civic_private_military_companies
+					has_valid_civic = civic_warrior_culture
+					has_country_flag = fallen_empire_hive_war
+				}
+			}
+
+			modifier = {
+				factor = 1.5
+				has_ai_personality_behaviour = conqueror
+			}
+			modifier = {
+				factor = 1.5
+				has_ai_personality_behaviour = subjugator
+			}
+
+			modifier = { # Don't be suicidal
+				factor = 0
+				any_relation = {
+					has_communications = root
+					has_policy_flag = diplo_stance_supremacist
+					is_country_type = default
+					is_subject = no
+					relative_power = {
+						who = root
+						category = fleet
+						value = overwhelming
+					}
+				}
+			}
+			modifier = {
+				factor = 0.25
+				any_neighbor_country = {
+					has_communications = root
+					is_country_type = default
+					is_subject = no
+					relative_power = {
+						who = root
+						category = fleet
+						value > equivalent
+					}
+				}
+			}
+		}
+	}
+	option = {
+		name = "diplo_stance_animosity_nomad"
+		icon = "GFX_diplomatic_stance_animosity"
+
+		potential = {
+			is_country_type = default
+			is_nomadic = yes
+		}
+		valid = {
+			is_homicidal = no
+			custom_tooltip = {
+				fail_text = "requires_enmity_traditions"
+				OR = {
+					has_tradition = tr_enmity_finish
+					NOT = { is_country_type = default }
+				}
+			}
+			is_subject = no
+		}
+
+		policy_flags = {
+			diplo_stance_animosity
+		}
+
+		modifier = {
+			max_rivalries = 2
+			rivalries_unity_produces_add = 10
+			unlicensed_waystations_scaling_mult = 1
+			diplo_weight_rivals_mult = 0.05
+		}
+
+		ai_weight = {
+			weight = 10
+
+			modifier = {
+				factor = 0
+				NOT = { has_country_flag = has_encountered_other_empire }
+			}
+
+			modifier = {
+				factor = 0
+				OR = {
+					is_fanatic_xenophile = yes
+					has_valid_civic = civic_hive_empath
+				}
+			}
+
+			modifier = {
+				factor = 0
+				num_rivals = 0
+			}
+
+			# Ambitious people who want to be rivals
+			modifier = {
+				factor = 2.0
+				is_fanatic = yes
+			}
+			modifier = {
+				factor = 1.5
+				has_ethic = ethic_militarist
+			}
+			modifier = {
+				factor = 1.25
+				has_ethic = ethic_authoritarian
+			}
+			modifier = {
+				factor = 2
+				OR = {
+					has_valid_civic = civic_nationalistic_zeal
+					has_valid_civic = civic_pompous_purists
+				}
+			}
+			modifier = {
+				factor = 3
+				OR = {
+					has_valid_civic = civic_hive_strength_of_legions
+					has_valid_civic = civic_machine_warbots
+					has_valid_civic = civic_private_militaries
+					has_valid_civic = civic_private_military_companies
+					has_valid_civic = civic_warrior_culture
+					has_origin = origin_payback
+				}
+			}
+
+			modifier = {
+				factor = 1.5
+				OR = {
+					has_ai_personality_behaviour = subjugator
+					has_ai_personality_behaviour = opportunist
+					has_ai_personality_behaviour = propagator
+				}
+			}
+			modifier = {
+				factor = 20
+				has_ai_personality = metalhead
+			}
+		}
+	}
+}
+
+war_philosophy = {
+	category = {
+		diplomacy
+		military
+	}
+
+	potential = {
+		OR = {
+			is_country_type = default
+			is_country_type = fallen_empire
+			is_country_type = awakened_fallen_empire
+		}
+	}
+
+	allow = {
+		is_at_war = no # Not allowed to change policies in this group while at war
+	}
+
+	option = {
+		name = "unrestricted_wars"
+
+		policy_flags = {
+			unrestricted_wars
+		}
+
+		in_breach_of = {
+			{
+				key = resolution_rulesofwar_last_resort_doctrine
+			}
+			{
+				key = resolution_rulesofwar_demobilization_initiative
+			}
+		}
+
+		valid = {
+			NOR = {
+				has_ethic = "ethic_pacifist"
+				has_ethic = "ethic_fanatic_pacifist"
+				has_valid_civic = "civic_inwards_perfection"
+				#has_civic = "civic_crusader_spirit"		#Cog Note - This feels out of character for the present description - Oct 10th, 2025
+				has_valid_civic = "civic_anarchy_utopia"
+			}
+		}
+
+		ai_weight = {
+			modifier = {
+				factor = 10
+				OR = {
+					has_valid_ai_personality = no
+					is_ai = no
+				}
+				NOT = {
+					has_ethic = "ethic_pacifist"
+					has_ethic = "ethic_fanatic_pacifist"
+				}
+			}
+			modifier = {
+				factor = 10
+				has_valid_ai_personality = yes
+				is_ai = yes
+				OR = {
+					has_ai_personality_behaviour = conqueror
+					has_ai_personality_behaviour = subjugator
+					has_ai_personality_behaviour = purger
+				}
+			}
+			modifier = {
+				factor = 10
+				has_ascension_perk = ap_become_the_crisis
+			}
+			modifier = {
+				factor = 0.1
+				has_valid_ai_personality = yes
+				is_ai = yes
+				is_galactic_community_member = yes
+				OR = {
+					is_active_resolution = "resolution_rulesofwar_last_resort_doctrine"
+					is_active_resolution = "resolution_rulesofwar_demobilization_initiative"
+				}
+			}
+			modifier = {
+				factor = 0
+				OR = {
+					has_ethic = "ethic_pacifist"
+					has_ethic = "ethic_fanatic_pacifist"
+				}
+			}
+		}
+	}
+
+	option = {
+		name = "liberation_wars"
+
+		policy_flags = {
+			liberation_wars
+		}
+
+		potential = {
+			NOT = { has_ethic = ethic_gestalt_consciousness }
+		}
+
+		valid = {
+			NOR = {
+				has_ethic = "ethic_fanatic_pacifist"
+				has_valid_civic = "civic_fanatic_purifiers"
+			}
+		}
+
+		on_enabled = {
+			hidden_effect = {
+				check_casus_belli_valid = {
+					type = cb_ideology
+				}
+			}
+		}
+
+		on_disabled = {
+			hidden_effect = {
+				check_casus_belli_valid = {
+					type = cb_ideology
+				}
+			}
+		}
+
+		ai_weight = {
+			modifier = {
+				factor = 2
+				OR = {
+					has_valid_ai_personality = no
+					is_ai = no
+				}
+				has_ethic = "ethic_pacifist"
+			}
+			modifier = {
+				factor = 2
+				has_valid_ai_personality = yes
+				is_ai = yes
+				OR = {
+					has_ai_personality_behaviour = conqueror
+					has_ai_personality_behaviour = subjugator
+					has_ai_personality_behaviour = liberator
+				}
+			}
+		}
+	}
+
+	option = {
+		name = "no_wars"
+
+		policy_flags = {
+			no_wars
+		}
+
+		valid = {
+			NOR = {
+				is_fanatic_militarist = yes
+				has_valid_civic = "civic_fanatic_purifiers"
+				has_valid_civic = "civic_hive_devouring_swarm"
+				has_valid_civic = "civic_machine_terminator"
+				has_civic = "civic_crusader_spirit"
+			}
+		}
+
+		ai_weight = {
+			modifier = {
+				factor = 5
+				has_ethic = "ethic_fanatic_pacifist"
+			}
+			modifier = {
+				factor = 0
+				NOT = { has_ethic = "ethic_fanatic_pacifist" }
+			}
+		}
+	}
 }
 
 subjugation_war_terms = {
+	category = diplomacy
 	potential = {
 		is_subject = no
 		OR = {
@@ -1689,6 +2191,7 @@ subjugation_war_terms = {
 }
 
 orbital_bombardment = {
+	category = military
 
 	potential = {
 		OR = {
@@ -1701,6 +2204,12 @@ orbital_bombardment = {
 		name = "orbital_bombardment_selective"
 		policy_flags = {
 			orbital_bombardment_selective
+		}
+
+		valid = {
+			NOT = {
+				has_event_chain = contract_raid_planet_chain
+			}
 		}
 
 		ai_weight = {
@@ -1885,6 +2394,7 @@ orbital_bombardment = {
 }
 
 interference = {
+	category = diplomacy
 
 	potential = {
 		OR = {
@@ -1955,7 +2465,6 @@ interference = {
 			}
 		}
 	}
-
 	option = {
 		name = "interference_subtle"
 
@@ -2003,7 +2512,6 @@ interference = {
 			}
 		}
 	}
-
 	option = {
 		name = "interference_active"
 
@@ -2150,9 +2658,14 @@ interference = {
 }
 
 enlightenment = {
+	category = diplomacy
 
 	potential = {
-		has_met_primitives = yes
+		OR = {
+			has_met_primitives = yes
+			has_origin_primitive_player = yes
+
+		}
 	}
 
 	option = {
@@ -2171,7 +2684,6 @@ enlightenment = {
 			modifier = {
 				factor = 100
 				has_civic = civic_primitive_enthusiasts
-				is_primitive = no
 			}
 		}
 	}
@@ -2216,7 +2728,7 @@ enlightenment = {
 					has_valid_civic = "civic_hive_devouring_swarm"
 					has_valid_civic = "civic_machine_terminator"
 				}
-				has_origin = "origin_slavers"
+				hidden_trigger = { has_origin = "origin_slavers" }
 			}
 		}
 
@@ -2244,6 +2756,7 @@ enlightenment = {
 }
 
 resettlement = {
+	category = society
 	potential = {
 		NOT = { has_ethic = "ethic_gestalt_consciousness" }
 	}
@@ -2295,6 +2808,7 @@ resettlement = {
 }
 
 leader_enhancement = {
+	category = society
 
 	potential = {
 		has_technology = tech_selected_lineages
@@ -2414,6 +2928,7 @@ leader_enhancement = {
 }
 
 first_contact_protocol = {
+	category = diplomacy
 
 	potential = {
 		always = yes
@@ -2541,6 +3056,7 @@ first_contact_protocol = {
 }
 
 border_policy = {
+	category = diplomacy
 
 	potential = {
 		always = yes
@@ -2557,7 +3073,7 @@ border_policy = {
 			OR = {
 				is_country_type = default
 				is_country_type = mirrored_country
-				is_primitive = yes
+				is_country_type = primitive
 			}
 		}
 
@@ -2569,7 +3085,7 @@ border_policy = {
 					has_valid_civic = civic_fanatic_purifiers
 					has_valid_civic = civic_inwards_perfection
 				}
-				is_primitive = yes
+				is_country_type = primitive
 			}
 		}
 	}
@@ -2620,6 +3136,7 @@ border_policy = {
 }
 
 food_policy = {
+	category = economy
 	potential = {
 		always = no
 	}
@@ -2675,6 +3192,7 @@ food_policy = {
 }
 
 economic_policy = {
+	category = economy
 	potential = {
 		is_gestalt = no
 	}
@@ -2800,6 +3318,7 @@ economic_policy = {
 }
 
 trade_policy = {
+	category = economy
 	potential = {
 		is_gestalt = no
 	}
@@ -3264,6 +3783,7 @@ trade_policy = {
 }
 
 artificial_intelligence_policy = {
+	category = society
 	potential = {
 		is_gestalt = no
 		OR = {
@@ -3459,6 +3979,7 @@ artificial_intelligence_policy = {
 }
 
 robot_pop_policy = {
+	category = society
 
 	potential = {
 		OR = {
@@ -3553,168 +4074,8 @@ robot_pop_policy = {
 	}
 }
 
-purge = {
-	option = {
-		name = "purge_not_allowed"
-
-		valid = {
-			NOT = { has_ethic = ethic_gestalt_consciousness }
-			NOR = {
-				has_valid_civic = "civic_fanatic_purifiers"
-				has_valid_civic = "civic_scorched_earth"
-				has_origin = origin_nomadic_purger
-			}
-		}
-
-		policy_flags = {
-			purge_not_allowed
-		}
-	}
-
-	option = {
-		name = "purge_displacement_only"
-
-		policy_flags = {
-			purge_displacement_only
-		}
-
-		modifier = {
-			refugee_attraction = -0.25
-		}
-
-		valid = {
-			is_xenophile = no
-			is_homicidal = no
-			NAND = {
-				has_origin = origin_nomadic_purger
-				overlord? = {
-					has_policy_flag = nomad_total_war_purge
-				}
-			}
-			NOT = { has_valid_civic = civic_anarchy_utopia }
-		}
-
-		ai_weight = {
-			factor = 5
-			modifier = {
-				factor = 10
-				has_ethic = ethic_gestalt_consciousness
-				values_others = yes
-			}
-			modifier = {
-				factor = 0
-				has_valid_ai_personality = yes
-				has_ai_personality_behaviour = multispecies
-			}
-		}
-	}
-
-	option = {
-		name = "purge_allowed"
-
-		in_breach_of = {
-			{
-				key = resolution_rulesofwar_reverence_for_life
-			}
-			{
-				key = resolution_rulesofwar_independent_tribunals
-			}
-			{
-				key = resolution_rulesofwar_last_resort_doctrine
-			}
-			{
-				key = resolution_rulesofwar_demobilization_initiative
-			}
-		}
-
-		policy_flags = {
-			purge_allowed
-		}
-		modifier = {
-			refugee_attraction = -0.90
-		}
-
-		valid = {
-			custom_tooltip = {
-				success_text = is_not_a_signatory_vassal_success
-				fail_text = is_not_a_signatory_vassal_fail
-				NOT = { any_agreement = { agreement_preset = preset_signatory } }
-			}
-			custom_tooltip = {
-				fail_text = is_broken_shackles_origin
-				NOT = { has_origin = origin_broken_shackles }
-			}
-			NOT = { has_valid_civic = civic_anarchy_utopia }
-			OR = {
-				has_ethic = ethic_gestalt_consciousness
-				is_xenophobe = yes
-				has_crisis_perk = menp_undertaker	# Unlocked with Crisis Level 1
-				AND = {
-					custom_tooltip = {
-						text = civic_tooltip_not_xenophile
-						is_xenophile = no
-					}
-					has_purity_imperfection_remediation_tradition = yes
-				}
-			}
-			NAND = {
-				has_origin = origin_nomadic_purger
-				overlord? = {
-					has_policy_flag = nomad_total_war_displace
-				}
-			}
-		}
-
-		ai_weight = {
-			factor = 10
-			modifier = {
-				factor = 40
-				has_ethic = ethic_gestalt_consciousness
-				values_others = no
-			}
-			modifier = {
-				factor = 0
-				is_pacifist = yes
-			}
-			modifier = {
-				factor = 0
-				has_valid_ai_personality = yes
-				NOR = {
-					has_ai_personality_behaviour = purger
-					has_ethic = ethic_gestalt_consciousness
-					AND = {
-						has_origin = origin_necrophage
-						is_xenophobe = yes
-					}
-				}
-			}
-			modifier = {
-				factor = 0.1
-				has_valid_ai_personality = yes
-				is_ai = yes
-				is_galactic_community_member = yes
-				OR = {
-					is_active_resolution = "resolution_rulesofwar_reverence_for_life"
-					is_active_resolution = "resolution_rulesofwar_independent_tribunals"
-					is_active_resolution = "resolution_rulesofwar_last_resort_doctrine"
-					is_active_resolution = "resolution_rulesofwar_demobilization_initiative"
-				}
-			}
-			modifier = {
-				factor = 10
-				has_ascension_perk = ap_become_the_crisis
-			}
-			modifier = {
-				factor = 1000
-				has_origin = origin_necrophage
-				is_xenophobe = yes
-			}
-		}
-	}
-}
-
-
 pre_sapients = {
+	category = society
 	potential = {
 		OR = {
 			has_country_flag = found_presapients
@@ -3877,6 +4238,7 @@ pre_sapients = {
 }
 
 refugees = {
+	category = society
 	potential = {
 		has_encountered_other_species = yes
 		is_country_type = default
@@ -3959,6 +4321,7 @@ refugees = {
 }
 
 population_controls = {
+	category = society
 	potential = {
 		NOT = { has_ethic = "ethic_gestalt_consciousness" }
 	}
@@ -4009,6 +4372,7 @@ population_controls = {
 }
 
 slavery = {
+	category = society
 	potential = {
 		NOT = { has_ethic = "ethic_gestalt_consciousness" }
 	}
@@ -4187,8 +4551,170 @@ slavery = {
 	}
 }
 
+purge = {
+	category = society
+	option = {
+		name = "purge_not_allowed"
+
+		valid = {
+			NOT = { has_ethic = ethic_gestalt_consciousness }
+			NOR = {
+				has_valid_civic = "civic_fanatic_purifiers"
+				has_valid_civic = "civic_scorched_earth"
+				has_origin = origin_nomadic_purger
+			}
+		}
+
+		policy_flags = {
+			purge_not_allowed
+		}
+	}
+
+	option = {
+		name = "purge_displacement_only"
+
+		policy_flags = {
+			purge_displacement_only
+		}
+
+		modifier = {
+			refugee_attraction = -0.25
+		}
+
+		valid = {
+			is_xenophile = no
+			is_homicidal = no
+			NAND = {
+				has_origin = origin_nomadic_purger
+				overlord? = {
+					has_policy_flag = nomad_total_war_purge
+				}
+			}
+			NOT = { has_valid_civic = civic_anarchy_utopia }
+		}
+
+		ai_weight = {
+			factor = 5
+			modifier = {
+				factor = 10
+				has_ethic = ethic_gestalt_consciousness
+				values_others = yes
+			}
+			modifier = {
+				factor = 0
+				has_valid_ai_personality = yes
+				has_ai_personality_behaviour = multispecies
+			}
+		}
+	}
+
+	option = {
+		name = "purge_allowed"
+
+		in_breach_of = {
+			{
+				key = resolution_rulesofwar_reverence_for_life
+			}
+			{
+				key = resolution_rulesofwar_independent_tribunals
+			}
+			{
+				key = resolution_rulesofwar_last_resort_doctrine
+			}
+			{
+				key = resolution_rulesofwar_demobilization_initiative
+			}
+		}
+
+		policy_flags = {
+			purge_allowed
+		}
+		modifier = {
+			refugee_attraction = -0.90
+		}
+
+		valid = {
+			custom_tooltip = {
+				success_text = is_not_a_signatory_vassal_success
+				fail_text = is_not_a_signatory_vassal_fail
+				NOT = { any_agreement = { agreement_preset = preset_signatory } }
+			}
+			custom_tooltip = {
+				fail_text = is_broken_shackles_origin
+				NOT = { has_origin = origin_broken_shackles }
+			}
+			NOT = { has_valid_civic = civic_anarchy_utopia }
+			OR = {
+				has_ethic = ethic_gestalt_consciousness
+				is_xenophobe = yes
+				has_crisis_perk = menp_undertaker	# Unlocked with Crisis Level 1
+				AND = {
+					custom_tooltip = {
+						text = civic_tooltip_not_xenophile
+						is_xenophile = no
+					}
+					has_purity_imperfection_remediation_tradition = yes
+				}
+			}
+			NAND = {
+				has_origin = origin_nomadic_purger
+				overlord? = {
+					has_policy_flag = nomad_total_war_displace
+				}
+			}
+		}
+
+		ai_weight = {
+			factor = 10
+			modifier = {
+				factor = 40
+				has_ethic = ethic_gestalt_consciousness
+				values_others = no
+			}
+			modifier = {
+				factor = 0
+				is_pacifist = yes
+			}
+			modifier = {
+				factor = 0
+				has_valid_ai_personality = yes
+				NOR = {
+					has_ai_personality_behaviour = purger
+					has_ethic = ethic_gestalt_consciousness
+					AND = {
+						has_origin = origin_necrophage
+						is_xenophobe = yes
+					}
+				}
+			}
+			modifier = {
+				factor = 0.1
+				has_valid_ai_personality = yes
+				is_ai = yes
+				is_galactic_community_member = yes
+				OR = {
+					is_active_resolution = "resolution_rulesofwar_reverence_for_life"
+					is_active_resolution = "resolution_rulesofwar_independent_tribunals"
+					is_active_resolution = "resolution_rulesofwar_last_resort_doctrine"
+					is_active_resolution = "resolution_rulesofwar_demobilization_initiative"
+				}
+			}
+			modifier = {
+				factor = 10
+				has_ascension_perk = ap_become_the_crisis
+			}
+			modifier = {
+				factor = 1000
+				has_origin = origin_necrophage
+				is_xenophobe = yes
+			}
+		}
+	}
+}
+
 # E&CC Exclusive
 economic_stance = {
+	category = economy
 	potential = {
 		is_country_type = default
 		is_gestalt = no
@@ -4382,6 +4908,7 @@ economic_stance = {
 }
 
 conscription_stance = {
+	category = military
 	potential = {
 		OR = {
 			is_country_type = default
@@ -4613,6 +5140,7 @@ conscription_stance = {
 }
 
 healthcare = {
+	category = society
 	potential = {
 		is_gestalt = no
 	}
@@ -4711,6 +5239,7 @@ healthcare = {
 }
 
 education = {
+	category = society
 
 	potential = {
 		is_gestalt = no
@@ -4802,6 +5331,7 @@ education = {
 }
 
 transportation_logistics = {
+	category = military
 
 	potential = {
 	}
@@ -4907,6 +5437,7 @@ transportation_logistics = {
 }
 
 interstellar_telecom = {
+	category = military
 
 	potential = {
 	}
@@ -5009,6 +5540,7 @@ interstellar_telecom = {
 }
 
 bureaucracy = {
+	category = society
 
 	potential = {
 	}
