@@ -7,22 +7,45 @@
 @ascension_path_anti_synergy_weight = 0.25
 @ascension_path_mindwardens_present = 0.3
 
-# Psionic Ascension
-ap_mind_over_matter = {
+# Genetic Ascension  (regular empires & Hive Minds)
+ap_engineered_evolution = {
 	on_enabled = {
-		custom_tooltip = "mind_over_matter_tooltip"
+		if = {
+			limit = {
+				has_biogenesis_dlc = yes
+				is_wilderness_empire = no
+			}
+			hidden_effect = {
+				country_event = { id = bio.1 }
+			}
+			custom_tooltip = "engineered_evolution_biogenesis_tt"
+			set_country_flag = genomic_research_facility_unlocked
+		}
+		else_if = {
+			limit = {
+				has_biogenesis_dlc = yes
+				is_wilderness_empire = yes
+			}
+			hidden_effect = {
+				country_event = { id = bio.1 }
+			}
+			custom_tooltip = "engineered_evolution_wilderness_tt"
+		}
+		else = {
+			custom_tooltip = "engineered_evolution_tooltip"
+		}
 	}
 	possible = {
 		custom_tooltip = {
-			fail_text = "synthetic_empire_psionic_ascension"
+			fail_text = "synthetic_empire_biological_ascension"
 			NOT = { has_trait = trait_mechanical }
 		}
 		if = {
 			limit = {
-				OR = {
-					is_synthetic_empire = no
-					has_origin = origin_shroud_forged
-					is_chosen_empire = yes
+				NOR = { 
+					has_origin = origin_clone_army
+					has_civic = PrimPlayer_civic_barbaric_despoilers_khan
+					has_civic = civic_barbaric_despoilers_khan
 				}
 			}
 			custom_tooltip = {
@@ -30,34 +53,21 @@ ap_mind_over_matter = {
 				num_ascension_perks > 1
 			}
 		}
-		else_if = {
-			custom_tooltip = {
-				fail_text = "requires_ascension_perks_3"
-				num_ascension_perks > 2
-			}
-		}
-		custom_tooltip = {
-			fail_text = "requires_not_ap_engineered_evolution"
-			NOT = { has_ascension_perk = ap_engineered_evolution }
-		}
 		custom_tooltip = {
 			fail_text = "requires_not_ap_the_flesh_is_weak"
 			NOT = { has_ascension_perk = ap_the_flesh_is_weak }
 		}
 		custom_tooltip = {
-			fail_text = "requires_not_ap_synthetic_evolution"
-			NOT = { has_ascension_perk = ap_synthetic_evolution }
-		}
-		custom_tooltip = {
-			fail_text = "requires_not_ap_synthetic_age"
-			NOT = { has_ascension_perk = ap_synthetic_age }
-		}
-		custom_tooltip = {
 			fail_text = "requires_not_ap_organo_machine_interfacing"
-			NOR = {
-				has_ascension_perk = ap_organo_machine_interfacing
-				has_ascension_perk = ap_organo_machine_interfacing_assimilator
-			}
+			NOT = { has_ascension_perk = ap_organo_machine_interfacing }
+		}
+		custom_tooltip = {
+			fail_text = "requires_not_ap_mind_over_matter"
+			has_psionic_ascension = no
+		}
+		custom_tooltip = {
+			fail_text = "requires_not_ap_synthetic_evolution"
+			has_synthetic_ascension = no
 		}
 		custom_tooltip = {
 			fail_text = "requires_free_tradition_tree"
@@ -65,38 +75,25 @@ ap_mind_over_matter = {
 		}
 		if = {
 			limit = {
-				has_origin = origin_unplugged
+				OR = { 
+					has_origin = origin_clone_army
+					has_civic = PrimPlayer_civic_barbaric_despoilers_khan
+					has_civic = civic_barbaric_despoilers_khan
+				}
 			}
 			custom_tooltip = {
-				fail_text = "requires_unplugged_decyberized"
-				has_country_flag = is_decyberized
-			}
-		}
-		if = {
-			limit = { has_origin = origin_shroud_forged }
-			if = {
-				limit = {
-					any_situation = {
-						is_situation_type = situation_shroud_forged
-					}
-				}
-				custom_tooltip = {
-					fail_text = "shroud_forged_situation_ongoing"
-					always = no
-				}
-			}
-			else = {
-				custom_tooltip = {
-					fail_text = "shroud_forged_liberation_acquired"
-					NOT = { has_country_flag = finish_shroud_forged_liberation_flag }
+				fail_text = "clone_soldier_locked_genes"
+				OR = {
+					has_country_flag = clone_army_fertility_unlocked
+					has_country_flag = clone_army_full_potential
 				}
 			}
 		}
 	}
 
 	potential = {
+
 		NOR = {
-			has_country_flag = ratling_country
 			has_ascension_perk = ap_engineered_evolution
 			has_ascension_perk = ap_the_flesh_is_weak 
 			has_ascension_perk = ap_organo_machine_interfacing
@@ -104,94 +101,41 @@ ap_mind_over_matter = {
 			has_ascension_perk = ap_synthetic_evolution
 			has_ascension_perk = ap_mind_over_matter
 			has_ascension_perk = ap_synthetic_age
+			is_machine_empire = yes
 			has_origin = origin_shroudwalker_apprentice
 			has_origin = origin_cybernetic_creed
 			has_origin = origin_synthetic_fertility
-			has_origin = origin_evolutionary_predators
-			has_origin = origin_wilderness
-			has_valid_civic = civic_augmentation_bazaars
-			has_origin = origin_mindwardens
 			has_origin = origin_endbringers
 		}
-		OR = {
-			has_shroud_dlc = yes # Shroud DLC allows gestalt/machines to become Psionic
-			AND = {
-				is_gestalt = no
-				is_mechanical_empire = no
-				OR = {
-					is_cyborg_empire = no
-					AND = {
-						has_origin = origin_unplugged
-						NOT = { has_country_flag = is_cyberized }
-					}
-				}
-				is_individual_machine = no
-			}
-		}
+		is_mechanical_empire = no
+		is_individual_machine = no
+		is_cyborg_empire = no
 		is_natural_design_empire = no
-		if = {
-			limit = { has_origin = origin_shroud_forged }
-			NOT = { has_country_flag = finish_shroud_forged_control_flag }
-		}
+		NOT = { has_valid_civic = civic_augmentation_bazaars }
+		is_chosen_empire = no
+		is_entropy_drinkers_empire = no
 	}
 
 	tradition_swap = {
-		name = ap_interdimensional_processing
-		inherit_name = no
-		inherit_icon = no
 		inherit_effects = yes
+		inherit_icon = yes
+		name = ap_engineered_evolution_wilderness
 		trigger = {
-			has_shroud_dlc = yes
-			is_synthetic_empire = yes
+			is_wilderness_empire = yes
 		}
-		weight = { factor = 1 }
 	}
 
 	ai_weight = {
 		factor = @ascension_path_base_weight
 		modifier = {
 			factor = @ascension_path_synergy_weight
-			is_spiritualist = yes
+			has_engineered_evolution_synergy = yes
 		}
 		modifier = {
-			factor = @ascension_path_synergy_weight
-			OR = {
-				has_mind_over_matter_synergy = yes
-				any_country = {
-					has_origin = origin_mindwardens
-					NOT = { is_same_value = prev }
-				}
-			}
-		}
-		modifier = {
-			factor = @ascension_path_synergy_weight
-			# We want more psionic AIs when someone's playing Mindwardens, so you should ascend if at least you're not materialist
-			is_materialist = no
+			factor = @ascension_path_mindwardens_present
 			any_country = {
 				has_origin = origin_mindwardens
 			}
-		}
-		modifier = {
-			factor = @ascension_path_anti_synergy_weight
-			has_mind_over_matter_anti_synergy = yes
-		}
-		modifier = {
-			factor = value:psionic_offices_mind_over_matter_mult
-			any_owned_planet = {
-				exists = branch_office_owner
-				has_holding = {
-					holding = building_psionic_offices
-					owner = branch_office_owner
-				}
-			}
-		}
-		modifier = {
-			factor = 0
-			has_origin = origin_mindwardens
-		}
-		modifier = {
-			factor = 0
-			has_civic = civic_machine_cult
 		}
 	}
 }
@@ -406,45 +350,22 @@ ap_synthetic_evolution = {
 	}
 }
 
-# Genetic Ascension  (regular empires & Hive Minds)
-ap_engineered_evolution = {
+# Psionic Ascension
+ap_mind_over_matter = {
 	on_enabled = {
-		if = {
-			limit = {
-				has_biogenesis_dlc = yes
-				is_wilderness_empire = no
-			}
-			hidden_effect = {
-				country_event = { id = bio.1 }
-			}
-			custom_tooltip = "engineered_evolution_biogenesis_tt"
-			set_country_flag = genomic_research_facility_unlocked
-		}
-		else_if = {
-			limit = {
-				has_biogenesis_dlc = yes
-				is_wilderness_empire = yes
-			}
-			hidden_effect = {
-				country_event = { id = bio.1 }
-			}
-			custom_tooltip = "engineered_evolution_wilderness_tt"
-		}
-		else = {
-			custom_tooltip = "engineered_evolution_tooltip"
-		}
+		custom_tooltip = "mind_over_matter_tooltip"
 	}
 	possible = {
 		custom_tooltip = {
-			fail_text = "synthetic_empire_biological_ascension"
+			fail_text = "synthetic_empire_psionic_ascension"
 			NOT = { has_trait = trait_mechanical }
 		}
 		if = {
 			limit = {
-				NOR = { 
-					has_origin = origin_clone_army
-					has_civic = PrimPlayer_civic_barbaric_despoilers_khan
-					has_civic = civic_barbaric_despoilers_khan
+				OR = {
+					is_synthetic_empire = no
+					has_origin = origin_shroud_forged
+					is_chosen_empire = yes
 				}
 			}
 			custom_tooltip = {
@@ -452,21 +373,34 @@ ap_engineered_evolution = {
 				num_ascension_perks > 1
 			}
 		}
+		else_if = {
+			custom_tooltip = {
+				fail_text = "requires_ascension_perks_3"
+				num_ascension_perks > 2
+			}
+		}
+		custom_tooltip = {
+			fail_text = "requires_not_ap_engineered_evolution"
+			NOT = { has_ascension_perk = ap_engineered_evolution }
+		}
 		custom_tooltip = {
 			fail_text = "requires_not_ap_the_flesh_is_weak"
 			NOT = { has_ascension_perk = ap_the_flesh_is_weak }
 		}
 		custom_tooltip = {
-			fail_text = "requires_not_ap_organo_machine_interfacing"
-			NOT = { has_ascension_perk = ap_organo_machine_interfacing }
-		}
-		custom_tooltip = {
-			fail_text = "requires_not_ap_mind_over_matter"
-			has_psionic_ascension = no
-		}
-		custom_tooltip = {
 			fail_text = "requires_not_ap_synthetic_evolution"
-			has_synthetic_ascension = no
+			NOT = { has_ascension_perk = ap_synthetic_evolution }
+		}
+		custom_tooltip = {
+			fail_text = "requires_not_ap_synthetic_age"
+			NOT = { has_ascension_perk = ap_synthetic_age }
+		}
+		custom_tooltip = {
+			fail_text = "requires_not_ap_organo_machine_interfacing"
+			NOR = {
+				has_ascension_perk = ap_organo_machine_interfacing
+				has_ascension_perk = ap_organo_machine_interfacing_assimilator
+			}
 		}
 		custom_tooltip = {
 			fail_text = "requires_free_tradition_tree"
@@ -474,25 +408,38 @@ ap_engineered_evolution = {
 		}
 		if = {
 			limit = {
-				OR = { 
-					has_origin = origin_clone_army
-					has_civic = PrimPlayer_civic_barbaric_despoilers_khan
-					has_civic = civic_barbaric_despoilers_khan
-				}
+				has_origin = origin_unplugged
 			}
 			custom_tooltip = {
-				fail_text = "clone_soldier_locked_genes"
-				OR = {
-					has_country_flag = clone_army_fertility_unlocked
-					has_country_flag = clone_army_full_potential
+				fail_text = "requires_unplugged_decyberized"
+				has_country_flag = is_decyberized
+			}
+		}
+		if = {
+			limit = { has_origin = origin_shroud_forged }
+			if = {
+				limit = {
+					any_situation = {
+						is_situation_type = situation_shroud_forged
+					}
+				}
+				custom_tooltip = {
+					fail_text = "shroud_forged_situation_ongoing"
+					always = no
+				}
+			}
+			else = {
+				custom_tooltip = {
+					fail_text = "shroud_forged_liberation_acquired"
+					NOT = { has_country_flag = finish_shroud_forged_liberation_flag }
 				}
 			}
 		}
 	}
 
 	potential = {
-
 		NOR = {
+			has_country_flag = ratling_country
 			has_ascension_perk = ap_engineered_evolution
 			has_ascension_perk = ap_the_flesh_is_weak 
 			has_ascension_perk = ap_organo_machine_interfacing
@@ -500,41 +447,94 @@ ap_engineered_evolution = {
 			has_ascension_perk = ap_synthetic_evolution
 			has_ascension_perk = ap_mind_over_matter
 			has_ascension_perk = ap_synthetic_age
-			is_machine_empire = yes
 			has_origin = origin_shroudwalker_apprentice
 			has_origin = origin_cybernetic_creed
 			has_origin = origin_synthetic_fertility
+			has_origin = origin_evolutionary_predators
+			has_origin = origin_wilderness
+			has_valid_civic = civic_augmentation_bazaars
+			has_origin = origin_mindwardens
 			has_origin = origin_endbringers
 		}
-		is_mechanical_empire = no
-		is_individual_machine = no
-		is_cyborg_empire = no
+		OR = {
+			has_shroud_dlc = yes # Shroud DLC allows gestalt/machines to become Psionic
+			AND = {
+				is_gestalt = no
+				is_mechanical_empire = no
+				OR = {
+					is_cyborg_empire = no
+					AND = {
+						has_origin = origin_unplugged
+						NOT = { has_country_flag = is_cyberized }
+					}
+				}
+				is_individual_machine = no
+			}
+		}
 		is_natural_design_empire = no
-		NOT = { has_valid_civic = civic_augmentation_bazaars }
-		is_chosen_empire = no
-		is_entropy_drinkers_empire = no
+		if = {
+			limit = { has_origin = origin_shroud_forged }
+			NOT = { has_country_flag = finish_shroud_forged_control_flag }
+		}
 	}
 
 	tradition_swap = {
+		name = ap_interdimensional_processing
+		inherit_name = no
+		inherit_icon = no
 		inherit_effects = yes
-		inherit_icon = yes
-		name = ap_engineered_evolution_wilderness
 		trigger = {
-			is_wilderness_empire = yes
+			has_shroud_dlc = yes
+			is_synthetic_empire = yes
 		}
+		weight = { factor = 1 }
 	}
 
 	ai_weight = {
 		factor = @ascension_path_base_weight
 		modifier = {
 			factor = @ascension_path_synergy_weight
-			has_engineered_evolution_synergy = yes
+			is_spiritualist = yes
 		}
 		modifier = {
-			factor = @ascension_path_mindwardens_present
+			factor = @ascension_path_synergy_weight
+			OR = {
+				has_mind_over_matter_synergy = yes
+				any_country = {
+					has_origin = origin_mindwardens
+					NOT = { is_same_value = prev }
+				}
+			}
+		}
+		modifier = {
+			factor = @ascension_path_synergy_weight
+			# We want more psionic AIs when someone's playing Mindwardens, so you should ascend if at least you're not materialist
+			is_materialist = no
 			any_country = {
 				has_origin = origin_mindwardens
 			}
+		}
+		modifier = {
+			factor = @ascension_path_anti_synergy_weight
+			has_mind_over_matter_anti_synergy = yes
+		}
+		modifier = {
+			factor = value:psionic_offices_mind_over_matter_mult
+			any_owned_planet = {
+				exists = branch_office_owner
+				has_holding = {
+					holding = building_psionic_offices
+					owner = branch_office_owner
+				}
+			}
+		}
+		modifier = {
+			factor = 0
+			has_origin = origin_mindwardens
+		}
+		modifier = {
+			factor = 0
+			has_civic = civic_machine_cult
 		}
 	}
 }
