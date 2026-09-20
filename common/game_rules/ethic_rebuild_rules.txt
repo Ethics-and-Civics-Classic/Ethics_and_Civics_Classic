@@ -11,6 +11,13 @@ can_nomad_settle = {
 		root = { is_nomadic = yes }
 	}
 	custom_tooltip = {
+		fail_text = "SETTLE_BLOCKED_BY_CONSECRATION"
+		NOT = {
+			has_modifier = consecrated_world
+		}
+	}
+
+	custom_tooltip = {
 		fail_text = "SETTLE_BLOCKED_BY_ORIGIN"
 		root = {
 			NOR = {
@@ -171,22 +178,31 @@ can_excavate_outside_borders = {
 	exists = from
 	OR = {
 		has_tradition = tr_archivism_frontier_archaeology
-		NOT = { has_technology = "tech_starbase_1" }	# Modded for PrimPlayer Compatibility so they can do archaeology
 		is_nomadic = yes
+		NOT = { has_technology = "tech_starbase_1" }	# Modded for PrimPlayer Compatibility so they can do archaeology
 	}
 	OR = {
 		from = { # regular case
 			solar_system = { NOT = { exists = owner } }
 		}
 		AND = { # Nomadic with Research Agreement
-			from = {
-				solar_system = { exists = owner }
+			OR = {
+				AND = {
+					is_ai = no
+					from = {
+						solar_system = { exists = owner }
+					}
+				}
+				from.solar_system.owner? = { # AI nomads will only poach sites from other AI empires
+					is_ai = yes
+				}
 			}
 			is_nomadic = yes
 			has_research_agreement = from.solar_system.owner
 		}
 		# Nomadic empire with Archivism - will upset the system owner
 		AND = {
+			is_ai = no
 			from = {
 				solar_system = { exists = owner }
 			}
@@ -207,6 +223,7 @@ species_can_live_on_planet = {
 				has_trait = trait_machine_unit
 				has_trait = trait_mechanical
 				has_trait = trait_cybernetic
+				has_trait = trait_machine_cult_cybernetic
 				has_unplugged_positive_trait = yes
 			}
 		}
@@ -222,6 +239,14 @@ species_can_live_on_planet = {
 						is_hive_empire = yes
 						has_origin = origin_necrophage
 						prev = { species_can_be_necrophaged = yes }
+					}
+				}
+				AND = {
+					exists = root.owner
+					root.owner = {
+						is_hive_empire = yes
+						has_ethic = ethic_xenophile
+						prev = { NOT = { has_trait = trait_hive_mind } }
 					}
 				}
 			}
@@ -317,21 +342,6 @@ should_force_decline_species = {
 		}
 	}
 }
-
-# This = country
-#can_build_branch_offices = {
-#	has_megacorp = yes
-#	OR = {
-#		custom_tooltip = {
-#			fail_text = BRANCH_OFFICE_NOT_MEGACORP
-#			OR = {
-#				is_megacorp = yes
-#				has_civic = civic_galactic_sovereign_megacorp
-#			}
-#		}
-#		has_technology = tech_resort_colonies
-#	}
-#}
 
 #Root = target country
 #This = country
@@ -486,12 +496,11 @@ can_modify_species = {
 # Root = country
 can_build_branch_office_on_colony = {
 	custom_tooltip = {
-		text = close_branch_office_flag
-		NOT = { has_carrier_flag = close_branch_office_flag@ROOT }
-	}
-	if = {
-		limit = { ROOT = { has_civic = civic_ruthless_competition } }
-		ROOT = { intel_level = { level > low system = PREV.solar_system } }
+		fail_text = INTEL_INFO_intel_economy_systems_low
+		if = {
+			limit = { ROOT = { has_civic = civic_ruthless_competition } }
+			ROOT = { intel_level = { level > low system = PREV.solar_system } }
+		}
 	}
 	custom_tooltip = {
 		fail_text = requires_recipient_not_fanatic_purifiers
@@ -559,71 +568,68 @@ can_build_branch_office_on_colony = {
 	custom_tooltip = {
 		fail_text = BRANCH_OFFICE_NOT_COMMERCIAL_PACT
 		exists = owner
-		if = {
-			limit = { owner = { NOT = { is_same_value = root } } }
-			OR = {
-				root = { is_criminal_syndicate = yes }
-				root = { has_civic = civic_ruthless_competition }
-				AND = {
-					root = { is_worker_coop_empire = yes }
-					#this = { any_owned_pop_group = { is_enslaved = yes } }
-					OWNER = {
-						OR = {
-							has_policy_flag = slavery_allowed
-							any_owned_pop_group = {
-								has_living_standard = { type = living_standard_stratified }
-							}
+		OR = {
+			root = { is_criminal_syndicate = yes }
+			root = { has_civic = civic_ruthless_competition }
+			owner = { has_commercial_pact = root }
+			owner = { is_in_federation_with = root }
+			AND = {
+				has_observation_outpost = yes
+				observation_outpost = {
+					has_modifier = preftl_action_trade_pact
+				}
+			}
+			AND = {
+				root = { is_worker_coop_empire = yes }
+				#this = { any_owned_pop_group = { is_enslaved = yes } }
+				OWNER = {
+					OR = {
+						has_policy_flag = slavery_allowed
+						any_owned_pop_group = {
+							has_living_standard = { type = living_standard_stratified }
 						}
 					}
 				}
-				owner = { has_commercial_pact = root }
-				owner = { is_in_federation_with = root }
-				AND = {
-					has_observation_outpost = yes
-					observation_outpost = {
-						has_modifier = preftl_action_trade_pact
+			}
+			AND = {
+				ROOT = { has_origin = origin_slavers }	#MSI Branch Offices
+				owner = { has_modifier = preftl_action_trade_pact_msi }
+				has_modifier = PrimPlayer_the_obelisk
+			}
+			# Allow branch offices in subsidiaries and vice versa (and fellow subjects)
+			root = {
+				is_subject = yes
+				OR = {
+					is_megacorp = yes
+					has_civic = civic_galactic_sovereign_megacorp
+				}
+				overlord = {
+					OR = {
+						is_same_empire = prevprev.owner
+						is_same_empire = prevprev.owner.overlord
 					}
 				}
-				AND = {
-					ROOT = { has_origin = origin_slavers }	#MSI Branch Offices
-					owner = { has_modifier = preftl_action_trade_pact_msi }
-					has_modifier = PrimPlayer_the_obelisk
-				}
-				# Allow branch offices in subsidiaries and vice versa (and fellow subjects)
-				root = {
-					is_subject = yes
+			}
+			owner = {
+				is_subject = yes
+				overlord = {
+					OR = {
+						is_same_value = root
+						is_same_value = root.overlord
+					}
 					OR = {
 						is_megacorp = yes
 						has_civic = civic_galactic_sovereign_megacorp
 					}
-					overlord = {
-						OR = {
-							is_same_empire = prevprev.owner
-							is_same_empire = prevprev.owner.overlord
-						}
-					}
 				}
-				owner = {
-					is_subject = yes
-					overlord = {
-						OR = {
-							is_same_value = root
-							is_same_value = root.overlord
-						}
-						OR = {
-							is_megacorp = yes
-							has_civic = civic_galactic_sovereign_megacorp
-						}
-					}
-				}
-				AND = {
-					root = { has_civic = civic_galactic_sovereign_megacorp }
-					owner = { is_galactic_community_member = yes }
-				}
-				AND = {
-					root = { has_modifier = imperial_charter }
-					owner = { is_galactic_community_member = yes }
-				}
+			}
+			AND = {
+				root = { has_civic = civic_galactic_sovereign_megacorp }
+				owner = { is_galactic_community_member = yes }
+			}
+			AND = {
+				root = { has_modifier = imperial_charter }
+				owner = { is_galactic_community_member = yes }
 			}
 		}
 	}
@@ -712,22 +718,10 @@ can_build_branch_office_on_colony = {
 		fail_text = NO_BRANCH_OFFICE_ON_SYNAPTIC_LATHE
 		NOT = { is_planet_class = pc_cosmogenesis_world }
 	}
-	#OR = {
 	custom_tooltip = {
 		fail_text = NO_BRANCH_OFFICE_ON_SELF
 		owner = { NOT = { is_same_value = root } }
 	}
-	#AND = {
-	#	has_modifier = resort_colony_branch
-	#	owner = { is_same_value = root }
-	#}
-	#}
-}
-
-# Root = country
-# This = pop
-can_generate_leader_from_pop_group = {
-	can_be_leader = yes
 }
 
 # This = country
@@ -905,7 +899,6 @@ can_colonize_with_species = {
 	}
 	NOR = {
 		has_trait = trait_pathogenic_genes
-		has_trait = trait_limited_cybernetic
 		has_trait = trait_slave_gene
 		has_trait = trait_symbiotic
 		has_trait = trait_machine_cult_cybernetic
