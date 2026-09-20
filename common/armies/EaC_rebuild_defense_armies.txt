@@ -45,13 +45,114 @@ defense_army = {
 			}
 		}
 		owner = {
-			is_primitive = no	#Primitives seem to have defense armies... this will fix that
-			has_technology = tech_primitive_space_age_weapons
+			OR = {
+				is_primitive = no
+				has_technology = tech_primitive_space_age_weapons
+			}
 			OR = {
 				is_machine_empire = no
 				has_valid_civic = civic_machine_assimilator
 			}
+			is_wilderness_empire = no
 		}
+	}
+}
+
+# Undead Armies
+undead_defense_army = {
+	defensive = yes
+	is_pop_spawned = yes
+	health = 1.75
+	damage = 1.50
+	collateral_damage = 0.0
+	has_morale = no
+	morale_damage = 1.75
+	war_exhaustion = 0.0
+	icon = GFX_army_type_undead
+	use_armynames_from = undead_army
+
+	potential = {
+		owner = {
+			OR = {
+				is_primitive = no
+				has_technology = tech_primitive_space_age_weapons
+			}
+		}
+		from = {
+			NOR = {
+				has_trait = "trait_mechanical"
+				has_trait = "trait_machine_unit"
+				is_sapient = no
+			}
+		}
+		planet = {
+			OR = {
+				has_active_building = building_dread_encampment
+				has_carrier_flag = active_dread_outpost
+			}
+		}
+	}
+
+	resources = {
+		category = armies
+		produces = {
+			trigger = {
+				exists = owner
+				owner = { has_active_tradition = tr_unyielding_resistance_is_frugal }
+			}
+			unity = 0.5
+		}
+	}
+
+	spawn_chance = {
+		factor = 100
+	}
+}
+
+shroud_forged_defense_army = {
+	defensive = yes
+	is_pop_spawned = yes
+	damage = 1.25
+	health = 1.25
+	morale = 1.50
+	morale_damage = 1.00
+	collateral_damage = 0.0
+	war_exhaustion = 0.0 # No WE from defense armies
+	icon = GFX_army_type_robot
+	has_species = yes
+	use_armynames_from = robotic_defense_army
+	prerequisites = { "tech_primitive_space_age_weapons" }
+
+	show_tech_unlock_if = {
+		has_origin = origin_shroud_forged
+	}
+
+	potential = {
+		from = {
+			has_trait = trait_shroud_forged
+		}
+		owner = {
+			OR = {
+				is_primitive = no
+				has_technology = tech_primitive_space_age_weapons
+			}
+			has_origin = origin_shroud_forged
+		}
+	}
+
+	resources = {
+		category = armies
+		produces = {
+			trigger = {
+				exists = owner
+				owner = { has_active_tradition = tr_unyielding_resistance_is_frugal }
+			}
+			unity = 0.5
+		}
+	}
+
+	spawn_chance = {
+		factor = 2
 	}
 }
 
@@ -75,15 +176,15 @@ machine_defense = {
 
 	potential = {
 		owner = {
-			is_primitive = no	#Primitives seem to have defense armies... this will fix that
+			OR = {
+				is_primitive = no
+				has_technology = tech_primitive_space_age_weapons
+			}
 			is_machine_empire = yes
 		}
 		from = {
-            OR = {
-                has_trait = "trait_mechanical"
-                has_trait = "trait_machine_unit"
-            }
-        }
+			has_trait = "trait_machine_unit"
+		}
 	}
 
 	resources = {
@@ -118,7 +219,10 @@ individual_machine_defense = {
 
 	potential = {
 		owner = {
-			is_primitive = no	#Primitives seem to have defense armies... this will fix that
+			OR = {
+				is_primitive = no
+				has_technology = tech_primitive_space_age_weapons
+			}
 			is_individual_machine = yes
 		}
 		from = {
