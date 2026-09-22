@@ -8,6 +8,184 @@
 
 namespace = factions
 
+pop_faction_event = {
+	hide_window = yes
+	id = factions.0
+	is_triggered_only = yes
+
+	trigger = {
+		NOT = {
+			owner = {
+				has_origin = origin_broken_shackles
+			}
+		}
+	}
+
+	immediate = {
+
+		owner = {
+			every_owned_planet = {
+				every_owned_pop_group = {
+					force_faction_evaluation = yes
+				}
+			}
+			if = {
+				limit = {
+					NOT = {
+						has_country_flag = first_faction
+					}
+				}
+				set_country_flag = first_faction
+				from = { pop_faction_event = { id = factions.1 } }
+			}
+			else = {
+				from = {
+					switch = {
+						trigger = is_pop_faction_type
+						interventionists = {
+							root.owner = {
+								create_faction_formed_message = {
+									FACTION_TYPE = MESSAGE_FACTION_INTERVENTIONIST
+									FACTION_INTRO = factions.1.desc.start_short
+								}
+							}
+						}
+						environmentalists = {
+							root.owner = {
+								create_faction_formed_message = {
+									FACTION_TYPE = MESSAGE_FACTION_ENVIRONMENTALIST
+									FACTION_INTRO = factions.1.desc.start_short
+								}
+							}
+						}
+						environmentalists_nomads = {
+							root.owner = {
+								create_faction_formed_message = {
+									FACTION_TYPE = MESSAGE_FACTION_ENVIRONMENTALIST_NOMADS
+									FACTION_INTRO = factions.1.desc.start_short
+								}
+							}
+						}
+						manufacturers = {
+							root.owner = {
+								create_faction_formed_message = {
+									FACTION_TYPE = MESSAGE_FACTION_MANUFACTURER
+									FACTION_INTRO = factions.1.desc.start_short
+								}
+							}
+						}
+						manufacturers_nomads = {
+							root.owner = {
+								create_faction_formed_message = {
+									FACTION_TYPE = MESSAGE_FACTION_MANUFACTURER_NOMADS
+									FACTION_INTRO = factions.1.desc.start_short
+								}
+							}
+						}
+						socialists = {
+							root.owner = {
+								create_faction_formed_message = {
+									FACTION_TYPE = MESSAGE_FACTION_SOCIALIST
+									FACTION_INTRO = factions.1.desc.start_short
+								}
+							}
+						}
+						bankers = {
+							root.owner = {
+								create_faction_formed_message = {
+									FACTION_TYPE = MESSAGE_FACTION_BANKER
+									FACTION_INTRO = factions.1.desc.start_short
+								}
+							}
+						}
+						traditionalist = {
+							root.owner = {
+								create_faction_formed_message = {
+									FACTION_TYPE = MESSAGE_FACTION_TRADITIONALIST
+									FACTION_INTRO = factions.1.desc.start_short
+								}
+							}
+						}
+						imperialist = {
+							root.owner = {
+								create_faction_formed_message = {
+									FACTION_TYPE = MESSAGE_FACTION_IMPERIALIST
+									FACTION_INTRO = factions.1.desc.start_short
+								}
+							}
+						}
+						supremacist = {
+							root.owner = {
+								create_faction_formed_message = {
+									FACTION_TYPE = MESSAGE_FACTION_SUPREMACIST
+									FACTION_INTRO = factions.1.desc.start_short
+								}
+							}
+						}
+						isolationist = {
+							root.owner = {
+								create_faction_formed_message = {
+									FACTION_TYPE = MESSAGE_FACTION_ISOLATIONIST
+									FACTION_INTRO = factions.1.desc.start_short
+								}
+							}
+						}
+						totalitarian = {
+							root.owner = {
+								create_faction_formed_message = {
+									FACTION_TYPE = MESSAGE_FACTION_TOTALITARIAN
+									FACTION_INTRO = factions.1.desc.start_short
+								}
+							}
+						}
+						progressive = {
+							root.owner = {
+								create_faction_formed_message = {
+									FACTION_TYPE = MESSAGE_FACTION_PROGRESSIVE
+									FACTION_INTRO = factions.1.desc.start_short
+								}
+							}
+						}
+						prosperity = {
+							root.owner = {
+								create_faction_formed_message = {
+									FACTION_TYPE = MESSAGE_FACTION_PROSPERITY
+									FACTION_INTRO = factions.1.desc.start_short
+								}
+							}
+						}
+						technologist = {
+							root.owner = {
+								create_faction_formed_message = {
+									FACTION_TYPE = MESSAGE_FACTION_TECHNOLOGIST
+									FACTION_INTRO = factions.1.desc.start_short
+								}
+							}
+						}
+						xenoist = {
+							root.owner = {
+								create_faction_formed_message = {
+									FACTION_TYPE = MESSAGE_FACTION_XENOIST
+									FACTION_INTRO = factions.1.desc.start_short
+								}
+							}
+						}
+						manifesti = {
+							root.owner = {
+								create_faction_formed_message = {
+									FACTION_TYPE = MESSAGE_FACTION_MANIFESTI
+									FACTION_INTRO = factions.1.desc.start_short
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+	}
+}
+
 # A faction is formed
 pop_faction_event = {
 	id = factions.1
@@ -40,6 +218,10 @@ pop_faction_event = {
 			success_text = {
 				text = factions.1.desc.manufacturers_nomads
 				is_pop_faction_type = manufacturers_nomads
+			}
+			success_text = {
+				text = factions.1.desc.interventionists
+				is_pop_faction_type = interventionists
 			}
 			success_text = {
 				text = factions.1.desc.imperialist
@@ -305,77 +487,238 @@ carrier_event = {
 	}
 }
 
+## Notification event - other empire shifts ethics
+#country_event = {
+#	id = factions.2000
+#	title = factions.2000.title
+#	location = event_target:TargetFaction.Owner.capital_scope
+#	desc = {
+#		trigger = {
+#			text = factions.2000.desc.start
+#			text = newline
+#
+#			 success_text = {
+#				text = factions.2000.desc.bankers
+#				event_target:TargetFaction = { is_pop_faction_type = bankers }
+#			}
+#			success_text = {
+#				text = factions.2000.desc.socialists
+#				event_target:TargetFaction = { is_pop_faction_type = socialists }
+#			}
+#			 success_text = {
+#			 	text = factions.2000.desc.environmentalists
+#			 	event_target:TargetFaction = { is_pop_faction_type = environmentalists }
+#			 }
+#			 success_text = {
+#			 	text = factions.2000.desc.manufacturers
+#			 	event_target:TargetFaction = { is_pop_faction_type = manufacturers }
+#			 }
+#			success_text = {
+#				text = factions.2000.desc.environmentalists_noamds
+#				event_target:TargetFaction = { is_pop_faction_type = environmentalists_nomads }
+#			}
+#			success_text = {
+#				text = factions.2000.desc.manufacturers
+#				event_target:TargetFaction = { is_pop_faction_type = manufacturers_nomads }
+#			}
+#			success_text = {
+#				text = factions.2000.desc.interventionists
+#				event_target:TargetFaction = { is_pop_faction_type = interventionists }
+#			}
+#			success_text = {
+#				text = factions.2000.desc.imperialist
+#				event_target:TargetFaction = { is_pop_faction_type = imperialist }
+#			}
+#			success_text = {
+#				text = factions.2000.desc.isolationist
+#				event_target:TargetFaction = { is_pop_faction_type = isolationist }
+#			}
+#			success_text = {
+#				text = factions.2000.desc.progressive
+#				event_target:TargetFaction = { is_pop_faction_type = progressive }
+#			}
+#			success_text = {
+#				text = factions.2000.desc.prosperity
+#				event_target:TargetFaction = { is_pop_faction_type = prosperity }
+#			}
+#			success_text = {
+#				text = factions.2000.desc.supremacist
+#				event_target:TargetFaction = { is_pop_faction_type = supremacist }
+#			}
+#			success_text = {
+#				text = factions.2000.desc.technologist
+#				event_target:TargetFaction = { is_pop_faction_type = technologist }
+#			}
+#			success_text = {
+#				text = factions.2000.desc.totalitarian
+#				event_target:TargetFaction = { is_pop_faction_type = totalitarian }
+#			}
+#			success_text = {
+#				text = factions.2000.desc.traditionalist
+#				event_target:TargetFaction = { is_pop_faction_type = traditionalist }
+#			}
+#			success_text = {
+#				text = factions.2000.desc.xenoist
+#				event_target:TargetFaction = { is_pop_faction_type = xenoist }
+#			}
+#		}
+#	}
+#
+#	picture = GFX_evt_alien_propaganda
+#	show_sound = event_factions
+#
+#	is_triggered_only = yes
+#
+#	option = {
+#		name = OK
+#	}
+#}
+
 # Notification event - other empire shifts ethics
 country_event = {
 	id = factions.2000
 	title = factions.2000.title
 	location = event_target:TargetFaction.Owner.capital_scope
-	desc = {
-		trigger = {
-			text = factions.2000.desc.start
-			text = newline
-
-			 success_text = {
-				text = factions.2000.desc.bankers
-				event_target:TargetFaction = { is_pop_faction_type = bankers }
-			}
-			success_text = {
-				text = factions.2000.desc.socialists
-				event_target:TargetFaction = { is_pop_faction_type = socialists }
-			}
-			 success_text = {
-			 	text = factions.2000.desc.environmentalists
-			 	event_target:TargetFaction = { is_pop_faction_type = environmentalists }
-			 }
-			 success_text = {
-			 	text = factions.2000.desc.manufacturers
-			 	event_target:TargetFaction = { is_pop_faction_type = manufacturers }
-			 }
-			success_text = {
-				text = factions.2000.desc.imperialist
-				event_target:TargetFaction = { is_pop_faction_type = imperialist }
-			}
-			success_text = {
-				text = factions.2000.desc.isolationist
-				event_target:TargetFaction = { is_pop_faction_type = isolationist }
-			}
-			success_text = {
-				text = factions.2000.desc.progressive
-				event_target:TargetFaction = { is_pop_faction_type = progressive }
-			}
-			success_text = {
-				text = factions.2000.desc.prosperity
-				event_target:TargetFaction = { is_pop_faction_type = prosperity }
-			}
-			success_text = {
-				text = factions.2000.desc.supremacist
-				event_target:TargetFaction = { is_pop_faction_type = supremacist }
-			}
-			success_text = {
-				text = factions.2000.desc.technologist
-				event_target:TargetFaction = { is_pop_faction_type = technologist }
-			}
-			success_text = {
-				text = factions.2000.desc.totalitarian
-				event_target:TargetFaction = { is_pop_faction_type = totalitarian }
-			}
-			success_text = {
-				text = factions.2000.desc.traditionalist
-				event_target:TargetFaction = { is_pop_faction_type = traditionalist }
-			}
-			success_text = {
-				text = factions.2000.desc.xenoist
-				event_target:TargetFaction = { is_pop_faction_type = xenoist }
-			}
-		}
-	}
 
 	picture = GFX_evt_alien_propaganda
 	show_sound = event_factions
-
+	hide_window = yes
 	is_triggered_only = yes
 
-	option = {
-		name = OK
+	immediate = {
+
+		event_target:TargetFaction = {
+			switch = {
+				trigger = is_pop_faction_type
+				interventionists = {
+					root = {
+						create_faction_shifted_message = {
+							FACTION_TYPE = MESSAGE_FACTION_INTERVENTIONIST
+							FACTION_INTRO = factions.1.desc.start_short
+						}
+					}
+				}
+				environmentalists = {
+					root = {
+						create_faction_shifted_message = {
+							FACTION_TYPE = MESSAGE_FACTION_ENVIRONMENTALIST
+							FACTION_INTRO = factions.1.desc.start_short
+						}
+					}
+				}
+				environmentalists_nomads = {
+					root = {
+						create_faction_shifted_message = {
+							FACTION_TYPE = MESSAGE_FACTION_ENVIRONMENTALIST_NOMADS
+							FACTION_INTRO = factions.1.desc.start_short
+						}
+					}
+				}
+				manufacturers = {
+					root = {
+						create_faction_shifted_message = {
+							FACTION_TYPE = MESSAGE_FACTION_MANUFACTURER
+							FACTION_INTRO = factions.1.desc.start_short
+						}
+					}
+				}
+				manufacturers_nomads = {
+					root = {
+						create_faction_shifted_message = {
+							FACTION_TYPE = MESSAGE_FACTION_MANUFACTURER_NOMADS
+							FACTION_INTRO = factions.1.desc.start_short
+						}
+					}
+				}
+				socialists = {
+					root = {
+						create_faction_shifted_message = {
+							FACTION_TYPE = MESSAGE_FACTION_SOCIALIST
+							FACTION_INTRO = factions.1.desc.start_short
+						}
+					}
+				}
+				bankers = {
+					root = {
+						create_faction_shifted_message = {
+							FACTION_TYPE = MESSAGE_FACTION_BANKER
+							FACTION_INTRO = factions.1.desc.start_short
+						}
+					}
+				}
+				imperialist = {
+					root = {
+						create_faction_shifted_message = {
+							FACTION_TYPE = MESSAGE_FACTION_EMBRACED_IMPERIALIST
+							FACTION_INTRO = factions.2000.desc_short
+						}
+					}
+				}
+				supremacist = {
+					root = {
+						create_faction_shifted_message = {
+							FACTION_TYPE = MESSAGE_FACTION_EMBRACED_SUPREMACIST
+							FACTION_INTRO = factions.2000.desc_short
+						}
+					}
+				}
+				isolationist = {
+					root = {
+						create_faction_shifted_message = {
+							FACTION_TYPE = MESSAGE_FACTION_EMBRACED_ISOLATIONIST
+							FACTION_INTRO = factions.2000.desc_short
+						}
+					}
+				}
+				totalitarian = {
+					root = {
+						create_faction_shifted_message = {
+							FACTION_TYPE = MESSAGE_FACTION_EMBRACED_TOTALITARIAN
+							FACTION_INTRO = factions.2000.desc_short
+						}
+					}
+				}
+				progressive = {
+					root = {
+						create_faction_shifted_message = {
+							FACTION_TYPE = MESSAGE_FACTION_EMBRACED_PROGRESSIVE
+							FACTION_INTRO = factions.2000.desc_short
+						}
+					}
+				}
+				prosperity = {
+					root = {
+						create_faction_shifted_message = {
+							FACTION_TYPE = MESSAGE_FACTION_EMBRACED_PROSPERITY
+							FACTION_INTRO = factions.2000.desc_short
+						}
+					}
+				}
+				technologist = {
+					root = {
+						create_faction_shifted_message = {
+							FACTION_TYPE = MESSAGE_FACTION_EMBRACED_TECHNOLOGIST
+							FACTION_INTRO = factions.2000.desc_short
+						}
+					}
+				}
+				xenoist = {
+					root = {
+						create_faction_shifted_message = {
+							FACTION_TYPE = MESSAGE_FACTION_EMBRACED_XENOIST
+							FACTION_INTRO = factions.2000.desc_short
+						}
+					}
+				}
+				fire_cult = {
+					root = {
+						create_faction_shifted_message = {
+							FACTION_TYPE = MESSAGE_FACTION_EMBRACED_FIRE_CULT
+							FACTION_INTRO = factions.2000.desc_short
+						}
+					}
+				}
+			}
+		}
 	}
 }
