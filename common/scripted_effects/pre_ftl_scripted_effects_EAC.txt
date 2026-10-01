@@ -1927,3 +1927,336 @@ set_pre_ftl_age_effect = {
 		}
 	}
 }
+
+achieve_ftl_effect = {
+	# Skip if a Nomad is mid-Settle in this pre-FTL's home system; they retry once the flag clears.
+	if = {
+		limit = {
+			NOT = {
+				capital_scope = {
+					solar_system = { has_star_flag = nomad_settling_in_progress }
+				}
+			}
+		}
+		country_event = { id = game_start.8 }
+		remove_country_flag = early_space_age
+		set_country_flag = primitives_can_into_space
+		set_country_type = default
+		if = {
+			limit = {
+				has_country_flag = humans_early_space_age
+				AND = {
+					has_ethic = "ethic_fanatic_xenophile"
+					has_ethic = "ethic_socialism"
+					has_ethic = "ethic_materialist"
+					has_ethic = "ethic_egalitarian"
+				}
+			}
+			remove_country_flag = humans_early_space_age
+			set_country_flag = human_1
+			change_country_flag = {
+				icon = {
+					category = "human"
+					file = "flag_human_9.dds"
+				}
+				background= {
+					category = "backgrounds"
+					file = "00_solid.dds"
+				}
+				colors={
+					"blue"
+					"black"
+					"null"
+					"null"
+				}
+			}
+			set_species_graphical_culture = yes
+			change_government = {
+				authority = "auth_democratic"
+				civics = { 
+					civic = "civic_welfare_state"
+					civic = "civic_free_haven"
+					civic = "civic_research_cooperatives"
+				}
+			}
+			set_name = "NAME_United_Nations_of_Earth"
+		}
+		else = {
+			change_country_flag = random
+			set_species_graphical_culture = yes
+			change_government = {
+				authority = random
+				civics = random
+			}
+			set_name = random
+		}
+
+		if = {
+			limit = {
+				has_country_flag = was_enlightened
+				has_origin = origin_default_pre_ftl
+			}
+			set_origin = origin_enlightened
+		}
+
+		if = {
+			limit = {
+				has_origin = origin_default_pre_ftl
+			}
+			set_origin = origin_default
+			if = {
+				limit = {
+					is_gestalt = no
+				}
+				capital_scope = {
+					add_modifier = { modifier = prosp_uni_mod days = 7200 }
+				}
+			}
+			else = {
+				capital_scope = {
+					add_modifier = { modifier = prosp_uni_mod_gestalt days = 7200 }
+				}
+			}
+			capital_scope = {
+				while = {
+					count = 4
+					create_pop_group = {
+						species = owner
+					}
+				}
+			}
+		}
+
+		add_resource = {
+			energy = 500
+			minerals = 500
+			alloys = 125
+			influence = 50
+			unity = 250
+			volatile_motes = 50
+			exotic_gases = 50
+			rare_crystals = 50
+			mult = trigger:years_passed
+		}
+		if = {
+			limit = {
+				is_hive_empire = no
+			}
+			add_resource = {
+				consumer_goods = 250
+				mult = trigger:years_passed
+			}
+		}
+		if = {
+			limit = {
+				NOR = {
+					is_lithoid_empire = yes
+					is_infernal_empire = yes
+				}
+			}
+			add_resource = {
+				food = 500
+				mult = trigger:years_passed
+			}
+		}
+		else_if = {
+			limit = {
+				is_infernal_empire = yes
+			}
+			add_resource = {
+				alloys = 250
+				mult = trigger:years_passed
+			}
+		}
+		else = {
+			add_resource = {
+				minerals = 500
+				mult = trigger:years_passed
+			}
+		}
+
+		create_fleet = {
+			effect = {
+				set_owner = prev
+
+				create_ship = {
+					name = random
+					random_existing_design = science
+				}
+
+				set_fleet_stance = evasive
+				set_location = prev.capital_scope.star
+
+				owner = {
+					create_leader = {
+						class = scientist
+						sub_type = survey
+						name = random
+						species = owner_main_species
+					}
+				}
+				set_leader = last_created_leader
+			}
+		}
+
+		if = {
+			limit = {
+				is_gestalt = yes
+			}
+			country_event = { id = game_start.70 } #Sets up gestalt council
+		}
+		else = {
+			country_event = { id = game_start.72 } #Sets up regular council
+		}
+		country_event = { id = game_start.71 } #Sets up planet governor
+
+		create_fleet = {
+			effect = {
+				set_owner = prev
+
+				create_ship = {
+					name = random
+					random_existing_design = constructor
+				}
+
+				set_fleet_stance = evasive
+				set_location = prev.capital_star
+			}
+		}
+
+		capital_scope = {
+			clear_blockers = yes
+			remove_all_buildings = yes
+			if = {
+				limit = {
+					NOT = {
+						is_planet_class = pc_habitat
+					}
+				}
+				generate_start_buildings_and_districts = yes
+			}
+			else_if = {
+				limit = {
+					is_planet_class = pc_habitat
+				}
+				owner = {
+					give_technology = {
+						tech = tech_habitat_1
+						message = no
+					}
+					add_research_option = tech_habitat_2
+				}
+				add_building = building_hab_major_capital
+				# 2 jobs
+				if = {
+					limit = {
+						owner = {
+							NOR = {
+								is_lithoid_empire = yes
+								is_infernal_empire = yes
+							}
+						}
+					}
+					add_building = building_hydroponics_farm
+				}
+				# 2 jobs
+				add_district = district_hab_science
+				# 2 jobs
+				if = {
+					limit = { owner = { is_spiritualist = no } }
+					add_building = building_bureaucratic_1
+				}
+				# 2 jobs
+				if = {
+					limit = {
+						owner = {
+							is_spiritualist = yes
+							OR = {
+								has_valid_civic = civic_death_cult
+								has_valid_civic = civic_death_cult_corporate
+							}
+						}
+					}
+					add_building = building_sacrificial_temple_1
+				}
+				# 2 jobs
+				if = {
+					limit = {
+						owner = {
+							is_spiritualist = yes
+							NOT = { has_valid_civic = civic_death_cult }
+						}
+					}
+					add_building = building_temple
+				}
+			}
+
+			while = {
+				limit = {
+					pop_amount < 800
+					#free_housing > 0
+				}
+				create_pop_group = {
+					species = owner
+				}
+			}
+			if = {
+				limit = {
+					is_planet_class = pc_desert
+				}
+				set_carrier_flag = tasty_desert
+			}
+			remove_all_armies = yes
+			solar_system = {
+				save_event_target_as = enlightened_system
+				if = {
+					limit = {
+						exists = owner
+					}
+					owner = {
+						save_event_target_as = previous_system_owner
+					}
+				}
+				if = {
+					limit = {
+						NOT = { exists = starbase }
+					}
+					create_starbase = {
+						size = starbase_starport
+						module = shipyard
+						module = shipyard
+						owner = root
+					}
+				}
+			}
+		}
+		random_controlled_ship = {
+			limit = { is_ship_size = primitive_space_station }
+			fleet = { destroy_fleet = THIS }
+		}
+		# countries with intel on this system get a notification and establish communications
+		every_country = {
+			limit = {
+				is_country_type_with_subjects = yes
+				NOR = {
+					AND = {
+						exists = event_target:previous_system_owner
+						is_same_value = event_target:previous_system_owner
+					}
+					is_same_value = $OWNER$
+				}
+				intel_level = {
+					level > medium
+					system = event_target:enlightened_system
+				}
+			}
+			country_event = { id = preftl.1111 days = 1 scopes = { from = $PRE_FTL$ } }
+		}
+		if = {
+			limit  = {
+				exists = event_target:previous_system_owner
+			}
+			establish_communications_no_message = event_target:previous_system_owner
+		}
+	}
+}
