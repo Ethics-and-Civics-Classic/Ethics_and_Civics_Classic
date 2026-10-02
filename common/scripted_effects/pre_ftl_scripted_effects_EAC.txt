@@ -1954,22 +1954,6 @@ achieve_ftl_effect = {
 			}
 			remove_country_flag = humans_early_space_age
 			set_country_flag = human_1
-			change_country_flag = {
-				icon = {
-					category = "human"
-					file = "flag_human_9.dds"
-				}
-				background= {
-					category = "backgrounds"
-					file = "00_solid.dds"
-				}
-				colors={
-					"blue"
-					"black"
-					"null"
-					"null"
-				}
-			}
 			set_species_graphical_culture = yes
 			change_government = {
 				authority = "auth_democratic"
@@ -1979,7 +1963,69 @@ achieve_ftl_effect = {
 					civic = "civic_research_cooperatives"
 				}
 			}
-			set_name = "NAME_United_Nations_of_Earth"
+		}
+		else_if = {
+			limit = {
+				has_country_flag = humans_early_space_age
+				NAND = {
+					has_ethic = "ethic_fanatic_xenophile"
+					has_ethic = "ethic_socialism"
+					has_ethic = "ethic_materialist"
+					has_ethic = "ethic_egalitarian"
+				}
+			}
+			remove_country_flag = humans_early_space_age
+			set_country_flag = human_1
+			change_country_flag = random
+			set_species_graphical_culture = yes
+			change_government = {
+				authority = random
+				civics = random
+			}
+			set_name = random
+		}
+		else_if = {
+			limit = {
+				has_country_flag = com_early_space_age
+				AND = {
+					has_ethic = "ethic_authoritarian"
+					has_ethic = "ethic_xenophobe"
+					has_ethic = "ethic_fanatic_militarist"
+					has_ethic = "ethic_capitalism"
+				}
+			}
+			remove_country_flag = com_early_space_age
+			set_country_flag = human_2
+			set_species_graphical_culture = yes
+			change_government = {
+				authority = "auth_dictatorial"
+				civics = {
+					civic = "civic_nationalistic_zeal" 
+					civic = "civic_military_dictatorship"
+					civic = "civic_police_state"
+				}
+			}
+			set_origin = "origin_lost_colony"
+		}
+		else_if = {
+			limit = {
+				has_country_flag = com_early_space_age
+				NAND = {
+					has_ethic = "ethic_authoritarian"
+					has_ethic = "ethic_xenophobe"
+					has_ethic = "ethic_fanatic_militarist"
+					has_ethic = "ethic_capitalism"
+				}
+			}
+			remove_country_flag = com_early_space_age
+			set_country_flag = human_2
+			change_country_flag = random
+			set_species_graphical_culture = yes
+			change_government = {
+				authority = random
+				civics = random
+			}
+			set_name = random
 		}
 		else = {
 			change_country_flag = random
@@ -2258,5 +2304,244 @@ achieve_ftl_effect = {
 			}
 			establish_communications_no_message = event_target:previous_system_owner
 		}
+		give_post_ftl_tech = yes
+	}
+}
+
+spawn_pre_ftl_com_effect = {
+	optimize_memory
+	random_system = {
+		limit = {
+			has_star_flag = deneb_system
+		}
+		random_system_planet = {
+			limit = {
+				has_planet_flag = planet_unity
+				exists = owner
+				owner = {
+					is_country_type = primitive
+				}
+			}
+
+			remove_all_armies = yes
+			remove_all_buildings = yes
+			clear_blockers = yes
+			destroy_colony = yes
+
+			random_country = {
+				limit = { has_country_flag = humans_early_space_age }
+				save_event_target_as = une
+				owner_species = {
+					save_event_target_as = human_species
+				}
+			}
+			create_country = {
+				name = "NAME_Commonwealth_of_Man"
+				adjective = "PRESCRIPTED_adjective_humans2"
+				authority = "auth_dictatorial"
+				day_zero_contact = no
+				civics = {
+					civic = civic_increasing_urbanization
+					civic = civic_atmospheric_pollution
+					civic = civic_private_militaries
+				}
+				species = event_target:human_species
+				name_list = "HUMAN2"
+				ship_prefix = "PRESCRIPTED_ship_prefix_humans2"
+				ethos = {
+					ethic = "ethic_authoritarian"
+					ethic = "ethic_xenophobe"
+					ethic = "ethic_fanatic_militarist"
+					ethic = "ethic_capitalism"
+				}
+				origin = "origin_lost_colony_ai_only"
+				flag = {
+					icon= {
+						category = "human"
+						file = "flag_human_4.dds"
+					}
+					background= {
+						category = "backgrounds"
+						file = "stripe.dds"
+					}
+					colors={
+						"red"
+						"black"
+						"null"
+						"null"
+					}
+				}
+				type = primitive
+			}
+			last_created_country = {
+				set_graphical_culture = industrial_01
+				set_country_flag = early_space_age
+				set_country_flag = com_early_space_age
+				set_pre_ftl_age = early_space_age
+			}
+			setup_pre_ftl_planet = yes
+			while = {
+				count = 5
+				create_army = {
+					name = random
+					owner = last_created_country
+					species = event_target:human_species
+					type = "postatomic_army"
+				}
+			}
+			create_fleet = {
+				name = "chrysanthemum_object"
+				effect = {
+					set_owner = last_created_country
+					create_ship = {
+						name = "chrysanthemum_object"
+						design = "NAME_Space_Station"
+					}
+					set_location = PREV
+				}
+			}
+			create_pop_group = {
+				species = event_target:human_species
+				size = @early_space_age_pops
+			}
+			event_target:npc_CoM = {
+				set_country_flag = special_intro_for@event_target:une
+			}
+			last_created_country = {
+				capital_scope = { 
+					set_name = "NAME_Unity" 
+					add_modifier = {
+						modifier = colonial_spirit_mod
+					}
+				}
+				add_awareness = 100
+				add_tech_progress_situation = yes
+				random_situation = {
+					limit = { is_situation_type = pre_ftl_tech_progress_situation }
+					set_situation_progress = 1500
+				}
+				set_country_flag = physics_insight
+			}
+			pre_ftl_clean_up_effect = yes
+		}
+		random_system_planet = {
+			limit = {
+				has_planet_flag = planet_inferno
+			}
+			set_name = "NAME_Inferno"
+		}
+		random_system_planet = {
+			limit = {
+				has_planet_flag = planet_olympus
+			}
+			set_name = "NAME_Olympus"
+		}
+		random_system_planet = {
+			limit = {
+				has_planet_flag = moon_new_luna
+			}
+			set_name = "NAME_New_Luna"
+		}
+		random_system_planet = {
+			limit = {
+				has_planet_flag = planet_marble
+			}
+			set_name = "NAME_Marble"
+		}
+		random_system_planet = {
+			limit = {
+				has_planet_flag = planet_hyperion
+			}
+			set_name = "NAME_Hyperion"
+		}
+		random_system_planet = {
+			limit = {
+				has_planet_flag = moon_helios
+			}
+			set_name = "NAME_Helios"
+		}
+		random_system_planet = {
+			limit = {
+				has_planet_flag = planet_tumbleweed
+			}
+			set_name = "NAME_Tumbleweed"
+		}
+		random_system_planet = {
+			limit = {
+				has_planet_flag = planet_jacksons_planet
+			}
+			set_name = "NAME_Jackson's_Planet"
+		}
+	}
+}
+
+give_post_ftl_tech = {
+	# Gives freshly FTL NPC primitives a little bit of a leg up where the PrimPlayer mechanics would otherwise nerf them.
+	if = {
+		limit = {
+			country_uses_bio_ships = yes
+		}
+		give_technology = {
+			tech = tech_maulers
+		}
+		give_technology = {
+			tech = tech_weavers
+		}
+		give_technology = {
+			tech = tech_mauler_growth_1
+		}
+		give_technology = {
+			tech = tech_weaver_growth_1
+		}
+	}
+	else = {
+		give_technology = {
+			tech = tech_corvettes
+		}
+		give_technology = {
+			tech = tech_corvette_build_speed
+		}
+		give_technology = {
+			tech = tech_corvette_hull_1
+		}
+	}
+	give_technology = {
+		tech = tech_fusion_power
+	}
+	give_technology = {
+		tech = tech_torpedoes_1
+	}
+	give_technology = {
+		tech = tech_lasers_1
+	}
+	give_technology = {
+		tech = tech_ship_armor_1
+	}
+	give_technology = {
+		tech = tech_shields_1
+	}
+	give_technology = {
+		tech = tech_mass_drivers_1
+	}
+	give_technology = {
+		tech = tech_pd_tracking_1
+	}
+	give_technology = {
+		tech = tech_strike_craft_1
+	}
+	give_technology = {
+		tech = tech_afterburners_1
+	}
+	give_technology = {
+		tech = tech_reactor_boosters_1
+	}
+	give_technology = {
+		tech = tech_administrative_ai
+	}
+	give_technology = {
+		tech = tech_cryostasis_1
+	}
+	give_technology = {
+		tech = tech_automated_exploration
 	}
 }

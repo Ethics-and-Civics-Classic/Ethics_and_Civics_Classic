@@ -1,3 +1,12 @@
+@distance = 50
+@jumps = 3
+@planet_min_size = 10
+@planet_max_size = 25
+@base_moon_distance = 10
+@moon_min_size = 6
+@moon_max_size = 10
+@homeworld_min_size = 18
+@homeworld_max_size = 21
 
 # Sol System (Pre-FTL Humans)
 pre_ftl_init_sol = {
@@ -12,7 +21,17 @@ pre_ftl_init_sol = {
 		radius = 290
 	}
 
-	flags = { primitive_sol sol ancient_wonders_system }
+	flags = { primitive_sol com_sol sol ancient_wonders_system empire_home_system crisis_spawn_exclude }
+
+	init_effect = {
+		every_neighbor_system = {
+			set_star_flag = empire_cluster
+			every_neighbor_system = {
+				set_star_flag = empire_cluster
+			}
+		}
+		generate_home_system_resources = yes
+	}
 
 	planet = {
 		name = "NAME_Sol"
@@ -91,7 +110,7 @@ pre_ftl_init_sol = {
 						name = "NAME_United_Nations_of_Earth"
 						adjective = "PRESCRIPTED_adjective_humans1"
 						authority = "auth_democratic"
-						day_zero_contact = yes
+						day_zero_contact = no
 						civics = {
 							civic = civic_increasing_urbanization
 							civic = civic_atmospheric_pollution
@@ -132,7 +151,7 @@ pre_ftl_init_sol = {
 					}
 					set_owner = last_created_country
 
-					create_pre_ftl_blockers = yes
+					generate_earth_deposits_and_blockers = yes
 
 					create_army = {
 						name = "NAME_US_Armed_Forces_West"
@@ -180,19 +199,27 @@ pre_ftl_init_sol = {
 						species = last_created_species
 						size = @early_space_age_pops
 					}
-					add_building = building_primitive_farm
-					#add_building = building_primitive_factory
-					#add_building = building_primitive_mine
-					#add_building = building_primitive_power_plant
+					add_primitive_farm_or_mine = yes
+					add_building = building_primitive_factory
+					add_building = building_primitive_mine
+					add_building = building_primitive_power_plant
 					add_building = building_primitive_capital
 					add_building = building_urban_dwellings
 
 					last_created_country = {
 						capital_scope = { set_name = "NAME_Earth" }
+						add_awareness = 100
+						add_tech_progress_situation = yes
+						random_situation = {
+							limit = { is_situation_type = pre_ftl_tech_progress_situation }
+							set_situation_progress = 1600
+						}
+						set_country_flag = physics_insight
 					}
+					spawn_pre_ftl_com_effect = yes
 				}
 				# Industrial Age
-				20 = {
+				0 = {
 					create_species = {
 						name = NAME_Human
 						plural = NAME_Human_plural
@@ -256,10 +283,10 @@ pre_ftl_init_sol = {
 						species = last_created_species
 						size = @industrial_age_pops
 					}
-					add_building = building_primitive_farm
-					#add_building = building_primitive_factory
-					#add_building = building_primitive_mine
-					#add_building = building_primitive_power_plant
+					add_primitive_farm_or_mine = yes
+					add_building = building_primitive_factory
+					add_building = building_primitive_mine
+					add_building = building_primitive_power_plant
 					add_building = building_primitive_capital
 					add_building = building_urban_dwellings
 
@@ -299,7 +326,7 @@ pre_ftl_init_sol = {
 					}
 				}
 				# Medieval
-				10 = {
+				0 = {
 					create_species = {
 						name = NAME_Human
 						plural = NAME_Human_plural
@@ -595,5 +622,210 @@ pre_ftl_init_sol = {
 		orbit_angle = -80
 		size = 5
 		has_ring = no
+	}
+
+	neighbor_system = {
+		hyperlane_jumps = { min = 1 max = @jumps }
+		initializer = "com_sol_neighbor_t1"
+	}
+	neighbor_system = {
+		hyperlane_jumps = { min = 1 max = @jumps }
+		initializer = "com_sol_neighbor_t1_first_colony"
+	}
+}
+
+### Deneb System
+pre_ftl_deneb_system = {
+	name = "NAME_Deneb"
+	class = "sc_a"
+	asteroid_belt = {
+		type = rocky_asteroid_belt
+		radius = 90
+	}
+
+	init_effect = {
+		every_neighbor_system = {
+			set_star_flag = empire_cluster
+			every_neighbor_system = {
+				set_star_flag = empire_cluster
+			}
+		}
+		generate_home_system_resources = yes
+	}
+
+	flags = { deneb_system primitive_system empire_home_system crisis_spawn_exclude }
+
+	max_instances = 1
+	usage = misc_system_init
+	usage_odds = {
+		base = 5
+		modifier = {
+			factor = 0
+			any_system = {
+				has_star_flag = deneb_system
+			}
+		}
+		modifier = {
+			factor = 0
+			any_country = {
+				has_country_flag = human_3
+			}
+		}
+		modifier = {
+			factor = 0
+			OR = {
+				has_star_flag = empire_cluster
+				is_fe_cluster = yes
+			}
+		}
+		modifier = {
+			factor = 0
+			has_first_contact_dlc = no
+		}
+	}
+	primitive_system = yes	# usage odds modified by primitives setup slider
+
+	planet = {
+		name = "NAME_Deneb"
+		class = "pc_a_star"
+		orbit_distance = 0
+		orbit_angle = 1
+		size = 32
+		has_ring = no
+	}
+
+	planet = {
+		class = "pc_molten"
+		orbit_distance = 60
+		orbit_angle = 45
+		size = 10
+		has_ring = no
+		flags = { planet_inferno }
+	}
+
+	planet = {
+		name = "NAME_DT4-298"
+		class = "pc_asteroid"
+		orbit_distance = 30
+		orbit_angle = 340
+		size = 5
+		has_ring = no
+	}
+
+	planet = {
+		name = "NAME_LR-2129"
+		class = "pc_asteroid"
+		orbit_distance = 0
+		orbit_angle = 160
+		size = 5
+		has_ring = no
+	}
+
+	planet = {
+		name = "NAME_GR-345"
+		class = "pc_asteroid"
+		orbit_distance = 0
+		orbit_angle = 270
+		size = 5
+		has_ring = no
+	}
+
+	planet = {
+		class = "pc_gas_giant"
+		orbit_distance = 30
+		orbit_angle = 200
+		size = 40
+		has_ring = no
+		entity = "gas_giant_02_entity"
+		flags = { planet_olympus }
+
+		moon = {
+			class = "pc_frozen"
+			size = 5
+			orbit_distance = 18
+			orbit_angle = 100
+			has_ring = no
+			flags = { moon_new_luna }
+		}
+		moon = {
+			class = "pc_continental"
+			orbit_distance = 5
+			orbit_angle = 340
+			size = 20
+			starting_planet = yes
+			has_ring = no
+			entity = "continental_planet_01_entity"
+			deposit_blockers = none
+			modifiers = none
+			flags = { planet_unity }
+
+			init_effect = {
+				prevent_anomaly = yes
+				generate_pre_ftls_on_planet = yes
+			}
+		}
+	}
+
+	planet = {
+		class = "pc_barren_cold"
+		orbit_distance = 20
+		orbit_angle = 325
+		size = 13
+		has_ring = no
+		flags = { planet_marble }
+		init_effect = {
+			add_modifier = {
+				modifier = "terraforming_candidate"
+				days = -1
+			}
+		}
+	}
+
+	planet = {
+		class = "pc_gas_giant"
+		orbit_distance = 20
+		orbit_angle = 110
+		size = 30
+		has_ring = no
+		entity = "gas_giant_05_entity"
+		flags = { planet_hyperion }
+
+		moon = {
+			class = "pc_frozen"
+			size = 8
+			orbit_distance = 14
+			orbit_angle = 14
+			has_ring = no
+			flags = { moon_helios }
+		}
+	}
+
+	planet = {
+		class = "pc_barren"
+		orbit_distance = 20
+		orbit_angle = 35
+		size = 15
+		has_ring = no
+		flags = { planet_tumbleweed }
+	}
+
+	planet = {
+		class = "pc_frozen"
+		orbit_distance = 20
+		orbit_angle = 150
+		size = 20
+		has_ring = no
+		flags = { planet_jacksons_planet }
+	}
+
+	neighbor_system = {
+		trigger = { num_guaranteed_colonies >= 2 }
+		hyperlane_jumps = { min = 1 max = @jumps }
+		initializer = "deneb_neighbor_t1"
+	}
+	neighbor_system = {
+		trigger = { num_guaranteed_colonies >= 1 }
+		hyperlane_jumps = { min = 1 max = @jumps }
+		initializer = "deneb_neighbor_t1_first_colony"
 	}
 }
