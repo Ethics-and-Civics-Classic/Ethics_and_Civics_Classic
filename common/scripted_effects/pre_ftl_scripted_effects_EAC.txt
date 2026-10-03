@@ -2327,6 +2327,7 @@ spawn_pre_ftl_com_effect = {
 			remove_all_buildings = yes
 			clear_blockers = yes
 			destroy_colony = yes
+			log = "Deneb random Pre-FTL's cleared"
 
 			random_country = {
 				limit = { has_country_flag = humans_early_space_age }
@@ -2343,7 +2344,7 @@ spawn_pre_ftl_com_effect = {
 				civics = {
 					civic = civic_increasing_urbanization
 					civic = civic_atmospheric_pollution
-					civic = civic_private_militaries
+					civic = civic_nationalistic_zeal
 				}
 				species = event_target:human_species
 				name_list = "HUMAN2"
@@ -2404,9 +2405,6 @@ spawn_pre_ftl_com_effect = {
 				species = event_target:human_species
 				size = @early_space_age_pops
 			}
-			event_target:npc_CoM = {
-				set_country_flag = special_intro_for@event_target:une
-			}
 			last_created_country = {
 				capital_scope = { 
 					set_name = "NAME_Unity" 
@@ -2421,8 +2419,12 @@ spawn_pre_ftl_com_effect = {
 					set_situation_progress = 1500
 				}
 				set_country_flag = physics_insight
+				set_country_flag = special_intro_for@event_target:une
+				set_country_flag = parent_system_spawned
 			}
 			pre_ftl_clean_up_effect = yes
+			log = "Pre-FTL CoM spawned in Deneb System"
+			set_une_as_parent = yes
 		}
 		random_system_planet = {
 			limit = {
@@ -2472,6 +2474,7 @@ spawn_pre_ftl_com_effect = {
 			}
 			set_name = "NAME_Jackson's_Planet"
 		}
+		log = "Deneb system bodies renamed"
 	}
 }
 
@@ -2544,4 +2547,22 @@ give_post_ftl_tech = {
 	give_technology = {
 		tech = tech_automated_exploration
 	}
+}
+
+set_une_as_parent = {
+	random_country = {
+		limit = {
+			has_country_flag = com_early_space_age
+		}
+		save_event_target_as = preftl_com
+	}
+	random_country = {
+		limit = {
+			has_country_flag = humans_early_space_age
+		}
+		set_country_flag = lost_colony_parent
+		set_country_flag = lost_colony_parent_of@event_target:preftl_com
+		set_country_flag = special_intro_for@event_target:preftl_com
+	}
+	log = "Pre-FTL UNE set as parent of Pre-FTL CoM"
 }
