@@ -13320,6 +13320,17 @@ country_event = {
 #Guided Sapience create pre-sapients	#This probably needs to be a hidden planet event --> then country event referencing FROM to work.
 carrier_event = {
 	id = EaC_civic_mechanic_events.7000
+	hide_window = yes
+	is_triggered_only = yes
+	trigger = { from.owner = { is_guided_sapience_empire = yes }  }
+
+	immediate = {
+		from.owner = { country_event = { id = EaC_civic_mechanic_events.7001 } }
+	}
+}
+
+country_event = {
+	id = EaC_civic_mechanic_events.7001
 	title = EaC_civic_mechanic_events.7000.name
 	desc = EaC_civic_mechanic_events.7000.desc
 	picture = GFX_evt_alien_nature
@@ -13327,7 +13338,6 @@ carrier_event = {
 	#location = ROOT
 	#trackable = yes
 	is_triggered_only = yes
-	#trigger = { from.owner = { is_guided_sapience_empire = yes }  }
 
 	option = {
 		name = EaC_civic_mechanic_events.7000.a
@@ -13338,102 +13348,80 @@ carrier_event = {
 	
 	option = {
 		name = EaC_civic_mechanic_events.7000.b
-		allow = { 
-			from.owner = { is_guided_sapience_empire = yes } 
+		trigger = { 
+			is_guided_sapience_empire = yes
 		}
 		ai_chance = {
 			factor = 90
 			modifier = {
 				factor = 0
-				owner = { is_homicidal = yes }
+				is_homicidal = yes
 			}
 		}
-		custom_tooltip = EaC_civic_mechanic_events.9.b.tooltip
-		owner = {
-			add_resource = {
-				unity = 1500
-				influence = 25
-				mult = value:presapients_guided_mult
-			}
+		custom_tooltip = EaC_civic_mechanic_events.7000.b.tooltip
+		add_resource = {
+			unity = 1500
+			influence = 25
+			#mult = value:presapients_guided_mult
 		}
-		root = {
+		from = {
+			#every_owned_pop_group = {
+			#	limit = { species = { is_archetype = PRESAPIENT } }
+			#	species = {
+			#		change_species_characteristics = {
+			#			sapient = yes
+			#			add_trait = trait_uplifted
+			#			add_traits_at_start_of_list = yes # optional, pushes out other traits if needed
+			#		}
+			#	}
+			#}
 			random_owned_pop_group = {
-				limit = { species = { is_archetype = PRESAPIENT } }
 				species = {
-					change_species_characteristics = {
-						sapient = yes
-						add_trait = trait_uplifted
-						add_traits_at_start_of_list = yes # optional, pushes out other traits if needed
-					}
+					save_event_target_as = presapients_guided_flag
 				}
-				set_pop_group_flag = presapients_guided_flag
-				root = { 
-					create_country = {
-						name = random
-						authority = random
-						day_zero_contact = no
-						species = prev
-						origin = origin_default
-						flag = random
-						type = primitive
-					}
-				}
+			}
+			create_country = {
+				name = random
+				authority = random
+				day_zero_contact = no
+				species = event_target:presapients_guided_flag
+				origin = origin_default
+				flag = random
+				type = primitive
 			}
 		}
 		hidden_effect = {
-			set_owner = last_created_country
-			last_created_country = { 
-				#add_tech_progress_situation = yes
-				set_pre_ftl_age_effect = { PRE_FTL_AGE = stone_age } 
-				every_owned_pop_group = {
-					limit = { 
-						NOR = { 
-							has_pop_group_flag = presapients_guided_flag
-							species = { is_archetype = PRESAPIENT } 
-						}
-					}
-					#kill_pop_group = {	#Cog Note - I don't think they need to die, but if they do this is how
-					#	pop_group = this
-					#	percentage = 1.00
-					#}
-				}
-				set_origin = origin_default_pre_ftl
-				if = {
-					limit = { root = { solar_system = { owner = { has_origin = origin_slavers } } } }
+			from = {
+				set_owner = last_created_country
+				last_created_country = { 
+					#add_tech_progress_situation = yes
+					set_pre_ftl_age_effect = { PRE_FTL_AGE = stone_age } 
+					set_origin = origin_default_pre_ftl
 					if = {
-						limit = { 
-							NOR = {
-								has_civic = PrimPlayer_civic_the_obelisk
-								has_civic = civic_the_obelisk
+						limit = { root = { solar_system = { owner = { has_origin = origin_slavers } } } }
+						if = {
+							limit = { 
+								NOR = {
+									has_civic = PrimPlayer_civic_the_obelisk
+									has_civic = civic_the_obelisk
+								}
 							}
-						}
-						if = { 
-							limit = { NOT = { has_modifier = origin_slavers_modifier } }
-							add_modifier = {
-								modifier = origin_slavers_modifier	#For Extra Civic Slot
+							if = { 
+								limit = { NOT = { has_modifier = origin_slavers_modifier } }
+								add_modifier = {
+									modifier = origin_slavers_modifier	#For Extra Civic Slot
+								}
 							}
+							force_add_civic = civic_the_obelisk	#Primitive Society gets obelisk
 						}
-						force_add_civic = civic_the_obelisk	#Primitive Society gets obelisk
 					}
 				}
-				every_owned_pop_group = {
-					limit = { 
-						has_pop_group_flag = presapients_guided_flag 
-					}
-					remove_pop_group_flag = presapients_guided_flag
-				}
+				#setup_pre_ftl_planet = yes	#Cog Note - I don't know if they should get many bonus pops. Probably just a bit like colony ship gives
 			}
-			#setup_pre_ftl_planet = yes	#Cog Note - I don't know if they should get many bonus pops. Probably just a bit like colony ship gives
 		}
-	}
-	after = {
-		if = {
-			limit = { has_modifier = d_genesis_preserve }
-			remove_deposit = d_genesis_preserve
-		}
-		if = {
-			limit = { solar_system = { owner = { has_origin = origin_slavers } } }	#MSI places obelisks instead
-			ROOT = { 
+		from = {
+			if = {
+				limit = { root = { has_origin = origin_slavers } }	#MSI places obelisks instead 
 				if = {
 					limit = { NOT = { has_modifier = PrimPlayer_the_obelisk } }
 					add_modifier = {
@@ -13442,9 +13430,11 @@ carrier_event = {
 					add_deposit = d_PrimPlayer_the_obelisk_deposit
 				}
 			}
-		}
-		else = {
-			ROOT = {
+			else_if = {
+				limit = { has_modifier = d_genesis_preserve }
+				remove_deposit = d_genesis_preserve
+			}
+			else = {
 				if = {
 					limit = { NOT = { has_deposit = d_genesis_monument } }
 					add_deposit = d_genesis_monument
