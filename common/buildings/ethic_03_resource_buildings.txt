@@ -80,15 +80,20 @@ building_food_processing_facility = {
 
 	potential = {
 		exists = owner
-		owner = { is_wilderness_empire = no } # See 'building_massive_growth_3'
+		owner = { is_wilderness_empire = no } # see 'building_massive_growth_3'
 		NOR = {
 			is_planet_class = pc_machine
 			has_modifier = resort_colony
 		}
-
 		OR = {
 			owner = { is_ai = no }
 			has_any_farming_district_or_building = yes
+		}
+		owner = {
+			OR = {
+				is_ai = no
+				country_uses_food = yes
+			}
 		}
 	}
 
@@ -428,17 +433,16 @@ building_mine_generic = {
 		"tech_primitive_alloy_quarry_foundry"
 	}
 
-	# Static jobs building
-	ai_weight_coefficient = 0.0
+	ai_weight_coefficient = @static_jobs_ai_weight_coefficient
 }
 
 building_mineral_purification_plant = {
-
 	desc = {
-		trigger = { NOT = { is_planet_class = pc_shattered_ring_habitable } }
+		trigger = {
+			NOT = { is_planet_class = pc_shattered_ring_habitable }
+		}
 		text = building_mineral_purification_plant_desc
 	}
-
 	desc = {
 		trigger = { is_planet_class = pc_shattered_ring_habitable }
 		text = building_scrap_processing_plant_desc
@@ -447,7 +451,7 @@ building_mineral_purification_plant = {
 	base_buildtime = @b1_time
 	planet_limit = 1
 	category = resource
-	
+
 	building_sets = {
 		mining
 		harvest
@@ -493,16 +497,6 @@ building_mineral_purification_plant = {
 		}
 	}
 
-	planet_modifier = {
-		# planet_miners_minerals_produces_add = 1	# Removed in Vanilla 4.0
-		planet_miners_produces_mult = 0.20
-	}
-
-	# inline_script = {				# Removed in Vanilla 4.0
-	#	script = jobs/miners_add
-	#	AMOUNT = 1
-	#}
-
 	resources = {
 		category = planet_buildings
 		inline_script = {
@@ -519,14 +513,14 @@ building_mineral_purification_plant = {
 
 	triggered_planet_modifier = {
 		potential = {
-			owner = { is_nomadic = no }
+			owner? = { is_nomadic = no }
 		}
 		planet_miners_minerals_produces_add = 0.5
 	}
 
 	triggered_planet_modifier = {
 		potential = {
-			owner = {
+			owner? = {
 				is_nomadic = yes
 				is_gestalt = no
 			}
@@ -536,7 +530,7 @@ building_mineral_purification_plant = {
 
 	triggered_planet_modifier = {
 		potential = {
-			owner = {
+			owner? = {
 				is_nomadic = yes
 				is_gestalt = yes
 			}
@@ -605,12 +599,10 @@ building_mineral_purification_hub = {
 			owner = { is_nomadic = yes }
 		}
 	}
-
 	allow = {
 		has_upgraded_capital = yes
 		NOT = { has_modifier = resort_colony }
 	}
-
 	destroy_trigger = {
 		OR = {
 			has_modifier = resort_colony
@@ -670,7 +662,7 @@ building_mineral_purification_hub = {
 
 	triggered_planet_modifier = {
 		potential = {
-			owner = { is_nomadic = no }
+			owner? = { is_nomadic = no }
 			NOT = { is_planet_class = pc_shattered_ring_habitable }
 		}
 		modifier = {
@@ -680,7 +672,7 @@ building_mineral_purification_hub = {
 
 	triggered_planet_modifier = {
 		potential = {
-			owner = { is_nomadic = no }
+			owner? = { is_nomadic = no }
 			is_planet_class = pc_shattered_ring_habitable
 		}
 		modifier = {
@@ -691,7 +683,7 @@ building_mineral_purification_hub = {
 
 	triggered_planet_modifier = {
 		potential = {
-			owner = { is_nomadic = no }
+			owner? = { is_nomadic = no }
 			has_ringworld_output_boost = yes
 		}
 		modifier = {
@@ -701,7 +693,7 @@ building_mineral_purification_hub = {
 
 	triggered_planet_modifier = {
 		potential = {
-			owner = {
+			owner? = {
 				is_nomadic = yes
 				is_gestalt = no
 			}
@@ -711,7 +703,7 @@ building_mineral_purification_hub = {
 
 	triggered_planet_modifier = {
 		potential = {
-			owner = {
+			owner? = {
 				is_nomadic = yes
 				is_gestalt = yes
 			}
@@ -738,7 +730,7 @@ building_mineral_purification_hub = {
 	}
 
 	ai_resource_production = {
-   		minerals = 15
+		minerals = 15
 
 		trigger = {
 			has_any_mining_zone = yes
@@ -746,7 +738,7 @@ building_mineral_purification_hub = {
 	}
 
 	ai_resource_production = {
-   		minerals = 7.5
+		minerals = 7.5
 		energy = 15
 
 		trigger = {
@@ -765,37 +757,32 @@ building_energy_grid = {
 	base_buildtime = @b1_time
 	planet_limit = 1
 	category = resource
-	
+
 	building_sets = {
 		generator
 	}
-	
+
 	potential = {
 		NOT = { has_modifier = resort_colony }
 		exists = owner
 		owner = {
 			is_wilderness_empire = no # see 'building_bioelectric_stimulator_3'
 		}
-        OR = {
-            NOT = {
-                is_planet_class = pc_habitat
-            }
-            AND = {
-                is_planet_class = pc_habitat
-                check_modifier_value = {
-                    modifier = district_hab_energy_max_add
-                    value > 0
-                }
-            }
-        }
-        OR = {
-            owner = {
-                is_ai = no
-            }
-            has_any_generator_district_or_building = yes
-        }
-    }
-
+		OR = {
+			NOT = { is_planet_class = pc_habitat }
+			AND = {
+				is_planet_class = pc_habitat
+				check_modifier_value = {
+					modifier = district_hab_energy_max_add
+					value > 0
+				}
+			}
+		}
+		OR = {
+			owner = { is_ai = no }
+			has_any_generator_district_or_building = yes
+		}
+	}
 	destroy_trigger = {
 		OR = {
 			has_modifier = resort_colony
@@ -810,7 +797,7 @@ building_energy_grid = {
 			}
 		}
 	}
-	
+
 	resources = {
 		category = planet_buildings
 		inline_script = {
@@ -826,7 +813,7 @@ building_energy_grid = {
 	}
 
 	planet_modifier = {
-		planet_technician_produces_mult = 0.5
+		planet_technician_energy_produces_add = 0.5
 	}
 
 	triggered_planet_modifier = {
@@ -849,7 +836,7 @@ building_energy_grid = {
 	}
 
 	ai_resource_production = {
-   		energy = 10
+		energy = 10
 
 		trigger = {
 			has_any_generator_zone = yes
@@ -906,8 +893,7 @@ building_generator_generic = {
 	
 	triggered_planet_modifier = {
 		potential = {
-			exists = owner
-			owner = { NOT = { has_technology = tech_power_plant_1_space_age } }
+			owner? = { NOT = { has_technology = tech_power_plant_1_space_age } }
 		}
 		planet_jobs_energy_produces_mult = 0.025
 		job_technician_add = @building_static_jobs
@@ -915,8 +901,7 @@ building_generator_generic = {
 
 	triggered_planet_modifier = {
 		potential = {
-			exists = owner
-			owner = { NOT = { has_technology = tech_fission_power } }
+			owner? = { NOT = { has_technology = tech_fission_power } }
 		}
 		custom_tooltip = building_generator_generic_primitive_effect
 	}
@@ -924,8 +909,7 @@ building_generator_generic = {
 	# Regular Empire
 	triggered_planet_modifier = {
 		potential = {
-			exists = owner
-			owner = { 
+			owner? = {
 				has_technology = tech_power_plant_1_space_age 
 				is_regular_empire = yes
 			}
@@ -937,8 +921,7 @@ building_generator_generic = {
 	# Gestalt Empire
 	triggered_planet_modifier = {
 		potential = {
-			exists = owner
-			owner = { 
+			owner? = {
 				has_technology = tech_power_plant_1_space_age 
 				is_gestalt = yes
 			}
@@ -950,19 +933,13 @@ building_generator_generic = {
 	# Spiritualist FEs
 	triggered_planet_modifier = {
 		potential = {
-			exists = owner
-			owner = { is_fallen_empire_spiritualist = yes }
+			owner? = { is_fallen_empire_spiritualist = yes }
 		}
 		modifier = {
 			planet_jobs_energy_produces_mult = 0.025
 			job_fe_acolyte_generator_add = 200
 		}
 	}
-
-	#inline_script = {
-	#	script = jobs/technicians_add
-	#	AMOUNT = @building_static_jobs
-	#}
 
 	resources = {
 		category = planet_buildings
@@ -975,8 +952,7 @@ building_generator_generic = {
 		}
 		upkeep = {
 			trigger = {
-				exists = owner
-				owner = { has_technology = tech_power_plant_1_space_age }
+				owner? = { has_technology = tech_power_plant_1_space_age }
 			}
 			energy = 2
 		}
@@ -984,8 +960,7 @@ building_generator_generic = {
 	
 	triggered_desc = {
 		trigger = {
-			exists = owner
-			owner = { NOT = { has_technology = tech_power_plant_1_space_age } }
+			owner? = { NOT = { has_technology = tech_power_plant_1_space_age } }
 		}
 		text =  building_generator_generic_primitive_desc
 	}
@@ -1095,8 +1070,7 @@ building_energy_nexus = {
 
 	triggered_planet_modifier = {
 		potential = {
-			exists = owner
-			owner = { has_policy_flag = economic_stance_market }
+			owner? = { has_policy_flag = economic_stance_market }
 		}
 		modifier = {
 			planet_jobs_trade_produces_add = 25
@@ -1153,6 +1127,12 @@ building_bio_reactor = {
 				is_ai = no
 			}
 			has_any_farming_district_or_building = yes
+		}
+		owner = {
+			OR = {
+				is_ai = no
+				country_uses_food = yes
+			}
 		}
 	}
 
@@ -1248,6 +1228,12 @@ building_bio_reactor_2 = {
 				is_ai = no
 			}
 			has_any_farming_district_or_building = yes
+		}
+		owner = {
+			OR = {
+				is_ai = no
+				country_uses_food = yes
+			}
 		}
 	}
 
