@@ -1,5 +1,4 @@
-# Workaround Linux crash
-#inline_script = patches/linux_crash_workaround		# Merging EaC through Irony first, then running it through Proton 10.0 or GE Proton 11-1 fixes this. -- Sage
+# All capital buildings... except the Synaptic Lathe
 
 triggered_planet_modifier = {
 	potential = {
@@ -27,8 +26,21 @@ triggered_planet_modifier = {
 		exists = owner
 		owner = { is_gestalt = no }
 		NOT = { has_modifier = slave_colony }
+		NOT = { has_knights_zone = yes }
 	}
 	job_soldier_add = 1
+	mult = modifier:job_soldier_or_warrior_add
+}
+
+# Knights colonies (habitat or nomad/arkship) get knight jobs instead of soldiers, at half the count
+triggered_planet_modifier = {
+	potential = {
+		exists = owner
+		owner = { is_gestalt = no }
+		NOT = { has_modifier = slave_colony }
+		has_knights_zone = yes
+	}
+	job_knight_add = 0.5
 	mult = modifier:job_soldier_or_warrior_add
 }
 
@@ -100,8 +112,8 @@ triggered_planet_modifier = {
 triggered_planet_modifier = {
 	potential = {
 		owner? = { has_active_tradition = tr_cybernetics_organ_harvesting }
-			carrier_is_type = planet
-			has_current_purge = yes
+		carrier_is_type = planet
+		has_current_purge = yes
 	}
 	logistic_growth_mult = 0.1
 }
@@ -128,12 +140,7 @@ triggered_planet_modifier = {
 		owner = { has_modifier = cyber_implant_taxes }
 		exists = growing_species
 		growing_species = {
-			species = { 
-				OR = {
-					has_trait = trait_cybernetic 
-					has_trait = trait_machine_cult_cybernetic
-				}
-			}
+			species = { has_trait = trait_cybernetic }
 		}
 	}
 	planet_augmentors_upkeep_mult = 0.10
@@ -227,7 +234,7 @@ triggered_planet_modifier = {
 		}
 	}
 	key = auth_synth_democratic_physical
-	planet_districts_energy_upkeep_mult = 0.01
+	planet_districts_upkeep_mult = 0.01
 	mult = value:count_any_districts
 }
 
@@ -289,7 +296,7 @@ triggered_planet_modifier = {
 triggered_planet_modifier = {
 	potential = {
 		exists = owner
-		owner = { is_megacorp = yes }
+		owner = { has_corporate_government = yes } # not is_megacorp: keep Traders after a Megacorp becomes Galactic Emperor (auth_imperial)
 		is_capital = yes
 	}
 	job_trader_add = 1
@@ -302,13 +309,21 @@ triggered_country_modifier = {
 		exists = owner
 		is_capital = yes
 		owner = {
-			is_megacorp = yes
+			has_corporate_government = yes # not is_megacorp: survives becoming Galactic Emperor (auth_imperial)
 			has_origin = origin_evolutionary_predators
 			is_mutation_authority = yes
 		}
 	}
 	commercial_pact_mult = 0.01
 	mult = owner.species.species_traits_evopred_count
+}
+
+triggered_country_modifier = {
+	potential = {
+		has_deposit = d_relic_arkship
+		has_ancrel = yes
+	}
+	category_archaeostudies_research_speed_mult = 0.25
 }
 
 #Storm Chasers get Storm Shelter effects for free
@@ -321,7 +336,7 @@ triggered_planet_modifier = { #basic shelter
 				has_technology = tech_industrial_storm_protection
 			}
 		}
-		solar_system = {
+		solar_system? = {
 			has_star_flag = storm_system
 		}
 	}
@@ -341,7 +356,7 @@ triggered_planet_modifier = { #add advanced shelter effect
 				has_technology = tech_advanced_industrial_storm_protection
 			}
 		}
-		solar_system = {
+		solar_system? = {
 			has_star_flag = storm_system
 		}
 	}
@@ -418,7 +433,7 @@ triggered_planet_modifier = {
 		owner = {
 			is_hive_empire = yes
 			is_wilderness_empire = no
-			has_active_tradition = tr_domination_synaptic_extensions
+			has_tradition = tr_domination_imperious_architecture
 		}
 	}
 	planet_housing_add = 150
@@ -432,9 +447,10 @@ triggered_planet_modifier = {
 		exists = owner
 		owner = {
 			is_gestalt = no
-			has_active_tradition = tr_aptitude_specialist_training
+			has_tradition = tr_aptitude_specialist_training
 		}
 	}
+	key = tr_aptitude_specialist_training
 	pop_cat_specialist_bonus_workforce_mult = 0.02
 	mult = leader.trigger:has_total_skill
 }
@@ -444,13 +460,69 @@ triggered_planet_modifier = {
 		exists = leader
 		exists = owner
 		owner = {
-			is_gestalt = yes
-			OR = {
-				has_active_tradition = tr_aptitude_specialist_training_hive
-				has_active_tradition = tr_aptitude_specialist_training_machine
-			}
+			is_hive_empire = yes
+			has_tradition = tr_aptitude_specialist_training
 		}
 	}
+	key = tr_aptitude_specialist_training_hive
 	pop_cat_complex_drone_bonus_workforce_mult = 0.02
 	mult = leader.trigger:has_total_skill
+}
+
+triggered_planet_modifier = {
+	potential = {
+		exists = leader
+		exists = owner
+		owner = {
+			is_machine_empire = yes
+			has_tradition = tr_aptitude_specialist_training
+		}
+	}
+	key = tr_aptitude_specialist_training_machine
+	pop_cat_complex_drone_bonus_workforce_mult = 0.02
+	mult = leader.trigger:has_total_skill
+}
+
+# Knights of the Toxic God: Lord Commander and Knights on the Keep world
+triggered_planet_modifier = {
+	potential = {
+		OR = {
+			has_carrier_flag = toxic_knights_arkship
+			has_planet_flag = toxic_knights_settled_world
+			has_planet_flag = toxic_knights_habitat
+		}
+		capital_tier >= 2
+		owner? = {
+			has_origin = origin_toxic_knights
+		}
+	}
+	job_knight_commander_add = 1
+	job_knight_add = 100
+}
+
+triggered_planet_modifier = {
+	potential = {
+		OR = {
+			has_carrier_flag = toxic_knights_arkship
+			has_planet_flag = toxic_knights_settled_world
+			has_planet_flag = toxic_knights_habitat
+		}
+		capital_tier >= 4
+		owner? = {
+			has_origin = origin_toxic_knights
+		}
+	}
+	job_knight_add = 100
+}
+
+# Matriarch's Flagella
+triggered_planet_pop_group_modifier_for_species = {
+	potential = {
+		planet = {
+			has_modifier = tiyanki_trophy
+		}
+		is_robotic_species = no
+	}
+	key = tiyanki_trophy
+	bonus_pop_growth = @tiyanki_trophy_pop_growth
 }
