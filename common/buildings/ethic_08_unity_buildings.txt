@@ -107,10 +107,7 @@ building_temple = {
 	show_tech_unlock_if = {
 		OR = {
 			is_spiritualist = yes
-			AND = {
-				is_gestalt = no
-				has_make_spiritualist_perk = yes
-			}
+			has_make_spiritualist_perk = yes
 		}
 	}
 }
@@ -141,11 +138,13 @@ building_holotemple = {
 	destroy_trigger = {
 		exists = owner
 		OR = {
-			has_modifier = slave_colony
-			AND = {
-				owner = { is_spiritualist = no }
-				owner = { has_make_spiritualist_perk = no}
+			owner = {
+				AND = {
+					is_spiritualist = no
+					has_make_spiritualist_perk = no
+				}
 			}
+			has_modifier = slave_colony
 		}
 	}
 
@@ -185,10 +184,7 @@ building_holotemple = {
 	show_tech_unlock_if = {
 		OR = {
 			is_spiritualist = yes
-			AND = {
-				is_gestalt = no
-				has_make_spiritualist_perk = yes
-			}
+			has_make_spiritualist_perk = yes
 		}
 	}
 }
@@ -219,9 +215,11 @@ building_sacred_nexus = {
 	destroy_trigger = {
 		exists = owner
 		OR = {
-			AND = {
-				owner = { is_spiritualist = no }
-				owner = { has_make_spiritualist_perk = no}
+			owner = {
+				AND = {
+					is_spiritualist = no
+					has_make_spiritualist_perk = no
+				}
 			}
 			has_modifier = slave_colony
 		}
@@ -256,34 +254,6 @@ building_sacred_nexus = {
 		pop_bureaucrat_bonus_workforce_mult = 0.10
 	}
 
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner.federation
-			owner = {
-				NOT = { has_origin = origin_cybernetic_creed }
-				federation = {
-					has_federation_perk = all_the_priests_2
-				}
-				is_non_hierarchical = no
-			}
-		}
-		job_politician_add = 100
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner.federation
-			owner = {
-				NOT = { has_origin = origin_cybernetic_creed }
-				federation = {
-					has_federation_perk = all_the_priests_2
-				}
-				is_non_hierarchical = yes
-			}
-		}
-		job_bureaucrat_add = 200
-	}
-
 	inline_script = {
 		script = "jobs/politician_add"
 		AMOUNT = @building_static_jobs_low
@@ -304,9 +274,6 @@ building_sacred_nexus = {
 
 building_citadel_of_faith = {
 	base_buildtime = @b2_time
-	#empire_limit = {	Steam: Why is this tagged? I'll leave it be for now but why change it to one per planet?
-		#base = 1
-	#}
 	planet_limit = 1
 
 	category = unity
@@ -317,31 +284,31 @@ building_citadel_of_faith = {
 
 	potential = {
 		exists = owner
-		NOR = { 
-			has_modifier = slave_colony 
-			has_modifier = penal_colony 
-		}
 		owner = {
 			OR = {
 				is_spiritualist = yes
 				has_make_spiritualist_perk = yes
 			}
 		}
+		NOR = { 
+			has_modifier = slave_colony 
+			has_modifier = penal_colony 
+		}
 	}
 
 	allow = {
-		has_major_upgraded_capital = yes
 	}
 
 	destroy_trigger = {
 		exists = owner
 		OR = {
-			has_modifier = slave_colony
-			has_modifier = penal_colony
-			AND = {
-				owner = { is_spiritualist = no }
-				owner = { has_make_spiritualist_perk = no}
+			owner = {
+				AND = {
+					is_spiritualist = no
+					has_make_spiritualist_perk = no
+				}
 			}
+			has_modifier = slave_colony
 		}
 	}
 
@@ -432,7 +399,8 @@ building_citadel_of_faith = {
 			exists = owner
 			owner = {
 				is_hive_empire = yes
-				is_lithoid_or_infernal_empire = no
+				is_lithoid_empire = no
+				is_infernal_empire = no
 			}
 		}
 		planet_bureaucrats_food_upkeep_add = 2
@@ -861,6 +829,17 @@ building_trophy_vault = {
 		planet_cruise_passengers_unity_produces_add = 0.5
 		planet_cruise_passengers_consumer_goods_upkeep_add = 0.5
 		pop_cat_cruise_passenger_happiness = 0.10
+	}
+
+	# The unity/consumer goods modifiers act on the planet_cruise_passengers category, which covers both passenger jobs, so spell out that Neglected Bio-Trophies also benefit
+	triggered_desc = {
+		trigger = {
+			owner? = {
+				has_origin = origin_forever_cruise
+				NOT = { has_country_flag = forever_cruise_over }
+			}
+		}
+		text = building_trophy_vault_forever_cruise_effect
 	}
 
 	prerequisites = {
