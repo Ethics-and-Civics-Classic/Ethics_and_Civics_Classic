@@ -1,0 +1,574 @@
+namespace = envoy_events
+
+#Deviation from own empire norms
+country_event = {
+	id = envoy_events.210
+	title = envoy_events.210.name
+	desc = {
+		trigger = {
+			switch = {
+				trigger = has_country_flag
+				envoy_event_authoritarian = { text = envoy_events.210.desc.authoritarian }
+				envoy_event_egalitarian = { text = envoy_events.210.desc.egalitarian }
+				envoy_event_xenophile = { text = envoy_events.210.desc.xenophile }
+				envoy_event_xenophobe = { text = envoy_events.210.desc.xenophobe }
+				envoy_event_materialist = { text = envoy_events.210.desc.materialist }
+				envoy_event_spiritualist = { text = envoy_events.210.desc.spiritualist }
+				envoy_event_pacifist = { text = envoy_events.210.desc.pacifist }
+				envoy_event_militarist = { text = envoy_events.210.desc.militarist }
+				envoy_event_green = { text = envoy_events.210.desc.green }
+				envoy_event_industrial = { text = envoy_events.210.desc.industrial }
+				envoy_event_socialism = { text = envoy_events.210.desc.socialism }
+				envoy_event_capitalism = { text = envoy_events.210.desc.capitalism }
+				default = { text = envoy_events.210.desc.xenophile }
+			}
+		}
+	}
+	picture = GFX_evt_acquire_asset
+	show_sound = event_default
+
+	is_triggered_only = yes
+
+	trigger = {
+		is_country_type = default
+		is_gestalt = no
+		count_pop_faction = {
+			count >= 3 #i.e. has ruling factions
+		}
+		any_envoy = {
+			NOT = {
+				has_envoy_task = { #just in case
+					task = first_contact
+				}
+			}
+			NOT = { has_leader_flag = respected_envoy }
+
+			exists = envoy_location_country
+			envoy_location_country = {
+				is_scope_type = country #future-proofing, just in case we do anything funky
+				has_opposing_ethics = {
+					COUNTRY1 = this
+					COUNTRY2 = root
+				}
+			}
+		}
+		NOT = { has_country_flag = recent_envoy_event }
+	}
+
+	immediate = {
+		set_timed_country_flag = {
+			flag = recent_envoy_event
+			days = 5400
+		}
+		random_envoy = {
+			limit = {
+				NOT = {
+					has_envoy_task = { #just in case
+						task = first_contact
+					}
+				}
+				NOT = { has_leader_flag = respected_envoy }
+
+				exists = envoy_location_country
+				envoy_location_country = {
+					is_scope_type = country #future-proofing, just in case we do anything funky
+					has_opposing_ethics = {
+						COUNTRY1 = this
+						COUNTRY2 = root
+					}
+					is_primitive = no # Blocks event from firing on pre-FTL planet
+				}
+			}
+			save_event_target_as = event_envoy
+			envoy_location_country = {
+				save_event_target_as = envoy_country
+			}
+		}
+		random_list = {
+			1 = {
+				set_country_flag = envoy_event_materialist
+				modifier = {
+					factor = 0
+					NAND = {
+						is_materialist = yes
+						event_target:envoy_country = {
+							is_spiritualist = yes
+						}
+					}
+				}
+				modifier = {
+					factor = 0.01
+					NOT = { has_faction = technologist }
+				}
+				modifier = {
+					factor = 3
+					OR = {
+						is_fanatic_materialist = yes
+						event_target:envoy_country = {
+							is_fanatic_spiritualist = yes
+						}
+					}
+				}
+			}
+			1 = {
+				set_country_flag = envoy_event_spiritualist
+				modifier = {
+					factor = 0
+					NAND = {
+						is_spiritualist = yes
+						event_target:envoy_country = {
+							is_materialist = yes
+						}
+					}
+				}
+				modifier = {
+					factor = 0.01
+					NOT = { has_faction = traditionalist }
+				}
+				modifier = {
+					factor = 3
+					OR = {
+						is_fanatic_spiritualist = yes
+						event_target:envoy_country = {
+							is_fanatic_materialist = yes
+						}
+					}
+				}
+			}
+			1 = {
+				set_country_flag = envoy_event_authoritarian
+				modifier = {
+					factor = 0
+					NAND = {
+						is_authoritarian = yes
+						event_target:envoy_country = {
+							is_egalitarian = yes
+						}
+					}
+				}
+				modifier = {
+					factor = 0.01
+					NOT = { has_faction = totalitarian }
+				}
+				modifier = {
+					factor = 3
+					OR = {
+						is_fanatic_authoritarian = yes
+						event_target:envoy_country = {
+							is_fanatic_egalitarian = yes
+						}
+					}
+				}
+			}
+			1 = {
+				set_country_flag = envoy_event_egalitarian
+				modifier = {
+					factor = 0
+					NAND = {
+						is_egalitarian = yes
+						event_target:envoy_country = {
+							is_authoritarian = yes
+						}
+					}
+				}
+				modifier = {
+					factor = 0.01
+					NOT = { has_faction = progressive }
+				}
+				modifier = {
+					factor = 3
+					OR = {
+						is_fanatic_egalitarian = yes
+						event_target:envoy_country = {
+							is_fanatic_authoritarian = yes
+						}
+					}
+				}
+			}
+			1 = {
+				set_country_flag = envoy_event_xenophile
+				modifier = {
+					factor = 0
+					NAND = {
+						is_xenophile = yes
+						event_target:envoy_country = {
+							is_xenophobe = yes
+						}
+					}
+				}
+				modifier = {
+					factor = 0.01
+					NOT = { has_faction = xenoist }
+				}
+				modifier = {
+					factor = 3
+					OR = {
+						is_fanatic_xenophile = yes
+						event_target:envoy_country = {
+							has_ethic = ethic_fanatic_xenophobe
+						}
+					}
+				}
+			}
+			1 = {
+				set_country_flag = envoy_event_xenophobe
+				modifier = {
+					factor = 0
+					NAND = {
+						is_xenophobe = yes
+						event_target:envoy_country = {
+							is_xenophile = yes
+						}
+					}
+				}
+				modifier = {
+					factor = 0.1
+					is_same_species = event_target:envoy_country
+				}
+				modifier = {
+					factor = 0.01
+					NOR = {
+						has_faction = supremacist
+						has_faction = isolationist
+					}
+				}
+				modifier = {
+					factor = 3
+					OR = {
+						has_ethic = ethic_fanatic_xenophobe
+						event_target:envoy_country = {
+							is_fanatic_xenophile = yes
+						}
+					}
+				}
+			}
+			1 = {
+				set_country_flag = envoy_event_militarist
+				modifier = {
+					factor = 0
+					NAND = {
+						is_militarist = yes
+						event_target:envoy_country = {
+							is_pacifist = yes
+						}
+					}
+				}
+				modifier = {
+					factor = 0.01
+					NOR = { 
+						has_faction = imperialist
+						has_faction = interventionists
+					}
+				}
+				modifier = {
+					factor = 3
+					OR = {
+						has_ethic = ethic_fanatic_militarist
+						event_target:envoy_country = {
+							is_fanatic_pacifist = yes
+						}
+					}
+				}
+			}
+			1 = {
+				set_country_flag = envoy_event_pacifist
+				modifier = {
+					factor = 0
+					NAND = {
+						is_pacifist = yes
+						event_target:envoy_country = {
+							is_militarist = yes
+						}
+					}
+				}
+				modifier = {
+					factor = 0.01
+					NOT = { has_faction = prosperity }
+				}
+				modifier = {
+					factor = 3
+					OR = {
+						is_fanatic_pacifist = yes
+						event_target:envoy_country = {
+							has_ethic = ethic_fanatic_militarist
+						}
+					}
+				}
+			}
+			1 = {
+				set_country_flag = envoy_event_green
+				modifier = {
+					factor = 0
+					NAND = {
+						is_green = yes
+						event_target:envoy_country = {
+							is_industrial = yes
+						}
+					}
+				}
+				modifier = {
+					factor = 0.01
+					NOR = {
+						has_faction = environmentalists
+						has_faction = environmentalists_nomads
+					}
+				}
+				modifier = {
+					factor = 3
+					OR = {
+						is_fanatic_green = yes
+						event_target:envoy_country = {
+							has_ethic = ethic_fanatic_industrial
+						}
+					}
+				}
+			}
+			1 = {
+				set_country_flag = envoy_event_industrial
+				modifier = {
+					factor = 0
+					NAND = {
+						is_industrial = yes
+						event_target:envoy_country = {
+							is_green = yes
+						}
+					}
+				}
+				modifier = {
+					factor = 0.01
+					NOR = {
+						has_faction = manufacturers
+						has_faction = manufacturers_nomads
+					}
+				}
+				modifier = {
+					factor = 3
+					OR = {
+						is_fanatic_industrial = yes
+						event_target:envoy_country = {
+							has_ethic = ethic_fanatic_green
+						}
+					}
+				}
+			}
+			1 = {
+				set_country_flag = envoy_event_socialism
+				modifier = {
+					factor = 0
+					NAND = {
+						is_socialism = yes
+						event_target:envoy_country = {
+							is_capitalism = yes
+						}
+					}
+				}
+				modifier = {
+					factor = 0.01
+					NOT = { has_faction = socialists }
+				}
+				modifier = {
+					factor = 3
+					OR = {
+						is_fanatic_socialism = yes
+						event_target:envoy_country = {
+							has_ethic = ethic_fanatic_capitalism
+						}
+					}
+				}
+			}
+			1 = {
+				set_country_flag = envoy_event_capitalism
+				modifier = {
+					factor = 0
+					NAND = {
+						is_capitalism = yes
+						event_target:envoy_country = {
+							is_socialism = yes
+						}
+					}
+				}
+				modifier = {
+					factor = 0.01
+					NOT = { has_faction = bankers }
+				}
+				modifier = {
+					factor = 3
+					OR = {
+						is_fanatic_capitalism = yes
+						event_target:envoy_country = {
+							has_ethic = ethic_fanatic_socialism
+						}
+					}
+				}
+			}
+		}
+
+		set_espionage_diplo_incident_success_flag = {
+			FLAG = wayward_envoy
+		}
+	}
+
+	option = {
+		name = envoy_events.210.A
+
+
+		switch = {
+			trigger = has_country_flag
+			envoy_event_authoritarian = {
+				random_pop_faction = {
+					limit = { is_pop_faction_type = totalitarian }
+					add_modifier = {
+						modifier = faction_upset
+						years = 10
+					}
+				}
+			}
+			envoy_event_egalitarian = {
+				random_pop_faction = {
+					limit = { is_pop_faction_type = progressive }
+					add_modifier = {
+						modifier = faction_upset
+						years = 10
+					}
+				}
+			}
+			envoy_event_xenophile = {
+				random_pop_faction = {
+					limit = { is_pop_faction_type = xenoist }
+					add_modifier = {
+						modifier = faction_upset
+						years = 10
+					}
+				}
+			}
+			envoy_event_xenophobe = {
+				random_pop_faction = {
+					limit = {
+						OR = {
+							is_pop_faction_type = supremacist
+							is_pop_faction_type = isolationist
+						}
+					}
+					add_modifier = {
+						modifier = faction_upset
+						years = 10
+					}
+				}
+			}
+			envoy_event_materialist = {
+				random_pop_faction = {
+					limit = { is_pop_faction_type = technologist }
+					add_modifier = {
+						modifier = faction_upset
+						years = 10
+					}
+				}
+			}
+			envoy_event_spiritualist = {
+				random_pop_faction = {
+					limit = { is_pop_faction_type = traditionalist }
+					add_modifier = {
+						modifier = faction_upset
+						years = 10
+					}
+				}
+			}
+			envoy_event_pacifist = {
+				random_pop_faction = {
+					limit = { is_pop_faction_type = prosperity }
+					add_modifier = {
+						modifier = faction_upset
+						years = 10
+					}
+				}
+			}
+			envoy_event_militarist = {
+				random_pop_faction = {
+					limit = {
+						OR = {
+							is_pop_faction_type = imperialist
+							is_pop_faction_type = interventionists
+						}
+					}
+					add_modifier = {
+						modifier = faction_upset
+						years = 10
+					}
+				}
+			}
+			envoy_event_green = {
+				random_pop_faction = {
+					limit = {
+						OR = {
+							is_pop_faction_type = environmentalists
+							is_pop_faction_type = environmentalists_nomads
+						}
+					}
+					add_modifier = {
+						modifier = faction_upset
+						years = 10
+					}
+				}
+			}
+			envoy_event_industrial = {
+				random_pop_faction = {
+					limit = {
+						OR = {
+							is_pop_faction_type = manufacturers
+							is_pop_faction_type = manufacturers_nomads
+						}
+					}
+					add_modifier = {
+						modifier = faction_upset
+						years = 10
+					}
+				}
+			}
+			envoy_event_socialism = {
+				random_pop_faction = {
+					limit = { is_pop_faction_type = socialists }
+					add_modifier = {
+						modifier = faction_upset
+						years = 10
+					}
+				}
+			}
+			envoy_event_capitalism = {
+				random_pop_faction = {
+					limit = { is_pop_faction_type = bankers }
+					add_modifier = {
+						modifier = faction_upset
+						years = 10
+					}
+				}
+			}
+		}
+
+		ai_chance = {
+			factor = 0
+		}
+	}
+
+	option = {
+		name = envoy_events.3.C1
+		event_target:event_envoy = {
+			unassign_leader = this
+			set_cooldown = @envoy_punishment_cooldown
+		}
+	}
+
+	after = {
+		remove_country_flag = envoy_event_authoritarian
+		remove_country_flag = envoy_event_egalitarian
+		remove_country_flag = envoy_event_xenophile
+		remove_country_flag = envoy_event_xenophobe
+		remove_country_flag = envoy_event_materialist
+		remove_country_flag = envoy_event_spiritualist
+		remove_country_flag = envoy_event_pacifist
+		remove_country_flag = envoy_event_militarist
+		remove_country_flag = envoy_event_green
+		remove_country_flag = envoy_event_industrial
+		remove_country_flag = envoy_event_socialism
+		remove_country_flag = envoy_event_capitalism
+	}
+}

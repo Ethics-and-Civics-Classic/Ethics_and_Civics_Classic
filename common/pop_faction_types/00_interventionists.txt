@@ -252,6 +252,35 @@ interventionists = {
 		}
 	}
 
+	demand = { # "INTERVENTIONIST_SAFE_NEIGHBORHOOD" - Negotiable Relations 
+		title = "INTERVENTIONIST_SAFE_NEIGHBORHOOD"
+		unfulfilled_title = "INTERVENTIONIST_DANGEROUS_NEIGHBORHOOD"
+		desc = "INTERVENTIONIST_DANGEROUS_NEIGHBORHOOD_DESC"
+
+		unfulfilled_effect = -15
+		fulfilled_effect = 0.001
+
+		potential = {
+			exists = owner
+			owner = {
+				num_communications > 2
+				NOT = { has_valid_civic = civic_fanatic_purifiers }
+				is_nomadic = no
+			}
+		}
+
+		trigger = {
+			owner = {
+				NOT = {
+					any_neighbor_country = {
+						is_country_type = default
+						is_homicidal = yes
+					}
+				}
+			}
+		}
+	}
+
 	demand = { # "IMPERIALIST_DEFENSIVE_PACTS"
 		title = "IMPERIALIST_DEFENSIVE_PACTS"
 		unfulfilled_title = "NO_IMPERIALIST_DEFENSIVE_PACTS"
@@ -280,10 +309,51 @@ interventionists = {
 		}
 	}
 
-	demand = { # "IMPERIALIST_CONQUEST"
-		title = "IMPERIALIST_CONQUEST"
-		unfulfilled_title = "IMPERIALIST_NO_CONQUEST"
-		desc = "IMPERIALIST_CONQUEST_DESC"
+	demand = { # "INTERVENTIONIST_REGIONAL_SECURITY" - Regional Security
+		title = "INTERVENTIONIST_REGIONAL_SECURITY"
+		unfulfilled_title = "INTERVENTIONIST_NOT_REGIONAL_SECURITY"
+		desc = "INTERVENTIONIST_REGIONAL_SECURITY_DESC"
+
+		fulfilled_effect = 10
+		unfulfilled_effect = -5
+
+		potential = {
+			exists = owner
+			owner = {
+				num_communications > 2
+				NOT = { has_valid_civic = civic_fanatic_purifiers }
+				is_nomadic = no
+			}
+		}
+
+		trigger = {
+			owner = {
+				any_neighbor_country = {
+					is_country_type = default
+					is_gestalt = no
+					is_nomadic = no
+					has_opposing_ethics = {
+						COUNTRY1 = prev
+						COUNTRY2 = this
+					}
+					#NOR = {
+					#	AND = {
+					#		exists = overlord
+					#		overlord = { is_same_value = root.owner }
+					#	}
+					#	is_in_federation_with = root.owner
+					#	has_defensive_pact = root.owner
+					#	is_overlord_to = root.owner
+					#}
+				}
+			}
+		}
+	}
+
+	demand = { # "INTERVENTIONIST_LIBERATION"
+		title = "INTERVENTIONIST_LIBERATION"
+		unfulfilled_title = "INTERVENTIONIST_NO_LIBERATION"
+		desc = "INTERVENTIONIST_LIBERATION_DESC"
 
 		fulfilled_effect = 10
 		unfulfilled_effect = -0.001
@@ -301,7 +371,7 @@ interventionists = {
 
 		trigger = {
 			owner = {
-				has_country_flag = imperialists_conquest_timed_flag
+				has_country_flag = imperialist_conquest_timed_flag
 			}
 		}
 	}
@@ -327,193 +397,6 @@ interventionists = {
 			}
 		}
 	}
-
-	demand = { # "IMPERIALIST_RIVALS1"
-		title = "IMPERIALIST_RIVALS1"
-		unfulfilled_title = "IMPERIALIST_FEW_RIVALS1"
-		desc = "IMPERIALIST_RIVALS_DESC1"
-
-		fulfilled_effect = 5
-		unfulfilled_effect = -5
-
-		potential = {
-			exists = owner
-			owner = {
-				num_communications > 2
-				NOT = { has_valid_civic = civic_fanatic_purifiers }
-				num_rivals < 2
-			}
-		}
-
-		trigger = {
-			owner = {
-				num_rivals > 0
-			}
-		}
-	}
-
-	demand = { # "IMPERIALIST_RIVALS2"
-		title = "IMPERIALIST_RIVALS2"
-		unfulfilled_title = "IMPERIALIST_FEW_RIVALS2"
-		desc = "IMPERIALIST_RIVALS_DESC2"
-
-		fulfilled_effect = 10
-		unfulfilled_effect = -0.001
-
-		potential = {
-			exists = owner
-			owner = {
-				num_communications > 2
-				NOT = {
-					has_valid_civic = civic_fanatic_purifiers
-				}
-				num_rivals = 2
-			}
-		}
-
-		trigger = {
-			owner = {
-				num_rivals > 1
-			}
-		}
-	}
-
-	demand = { # "IMPERIALIST_RIVALS3"
-		title = "IMPERIALIST_RIVALS3"
-		unfulfilled_title = "IMPERIALIST_FEW_RIVALS3"
-		desc = "IMPERIALIST_RIVALS_DESC3"
-
-		fulfilled_effect = 15
-		unfulfilled_effect = -0.001
-
-		potential = {
-			exists = owner
-			owner = {
-				num_communications > 2
-				NOT = {
-					has_valid_civic = civic_fanatic_purifiers
-				}
-				num_rivals > 2
-			}
-		}
-
-		trigger = {
-			owner = {
-				num_rivals > 2
-			}
-		}
-	}
-
-#	demand = { # "INTERVENTIONIST_REGIONAL_SECURITY" - Regional Security
-#		title = "INTERVENTIONIST_REGIONAL_SECURITY" # Imperial Hegemony
-#		unfulfilled_title = "INTERVENTIONIST_NOT_REGIONAL_SECURITY"
-#		desc = "INTERVENTIONIST_REGIONAL_SECURITY_DESC"
-#
-#		fulfilled_effect = 10
-#		unfulfilled_effect = -5
-#
-#		potential = {
-#			exists = owner
-#			owner = {
-#				is_nomadic = no
-#				NOT = { has_valid_civic = civic_fanatic_purifiers }
-#				has_communications > 2
-#				any_neighbor_country = {
-#					is_country_type = default
-#					is_gestalt = no
-#					is_nomadic = no
-#					root.owner = {
-#						is_neighbor_of = prev
-#						has_intel_level = {
-#							who = prev
-#							category = government
-#							level >= 2
-#						}
-#					}
-#				}
-#			}
-#		}
-#
-#		trigger = {
-#			owner = {
-#				any_neighbor_country = {
-#					is_country_type = default
-#					is_gestalt = no
-#					is_nomadic = no
-#					root.owner = {
-#						is_neighbor_of = prev
-#						has_intel_level = {
-#							who = prev
-#							category = government
-#							level >= 2
-#						}
-#					}
-#					has_opposing_ethics = {
-#						COUNTRY1 = root.owner
-#						COUNTRY2 = this
-#					}
-#					NOR = {
-#						AND = {
-#							exists = overlord
-#							overlord = { is_same_value = root.owner }
-#						}
-#						is_in_federation_with = root.owner
-#						has_defensive_pact = root.owner
-#					}
-#				}
-#			}
-#		}
-#	}
-#
-#	demand = { # "INTERVENTIONIST_SAFE_NEIGHBORHOOD" - Negotiable Relations 
-#		title = "INTERVENTIONIST_SAFE_NEIGHBORHOOD"
-#		unfulfilled_title = "INTERVENTIONIST_DANGEROUS_NEIGHBORHOOD"
-#		desc = "INTERVENTIONIST_DANGEROUS_NEIGHBORHOOD_DESC"
-#
-#		unfulfilled_effect = -15
-#		fulfilled_effect = 0.001
-#		
-#		potential = {
-#			exists = owner
-#			owner = {
-#				num_communications > 2
-#				NOT = { has_valid_civic = civic_fanatic_purifiers }
-#				is_nomadic = no
-#				any_neighbor_country = {
-#					is_country_type = default
-#					is_nomadic = no
-#					root.owner = {
-#						is_neighbor_of = prev
-#						has_intel_level = {
-#							who = prev
-#							category = government
-#							level >= 2
-#						}
-#					}
-#				}
-#			}
-#		}
-#
-#		trigger = {
-#			owner = {
-#				NOT = {
-#					any_neighbor_country = {
-#						is_country_type = default
-#						is_nomadic = no
-#						root.owner = {
-#							is_neighbor_of = prev
-#							has_intel_level = {
-#								who = prev
-#								category = government
-#								level >= 2
-#							}
-#						}
-#						is_homicidal = yes
-#					}
-#				}
-#			}
-#		}
-#	}
 
 	demand = { # IMPERIALIST_FEDERATION
 		title = IMPERIALIST_FEDERATION
