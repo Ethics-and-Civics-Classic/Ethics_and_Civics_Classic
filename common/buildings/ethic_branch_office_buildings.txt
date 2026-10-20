@@ -2913,6 +2913,206 @@ building_private_security = {
 	}
 }
 
+building_colosseum_branch = {
+	base_buildtime = @b1_time
+
+	owner_type = corporate
+
+	category = amenity
+
+	potential = {
+		has_branch_office = yes
+		branch_office_owner = {
+			is_legit_or_legal_criminal = yes
+			AND = {
+				has_policy_flag = slavery_allowed
+				is_militarist = yes
+			}
+		}
+	}
+
+	allow = {
+		OR = {
+			owner = { has_overlord = prev.branch_office_owner }
+			branch_office_owner = {
+				OR = {
+					has_commercial_pact = prev.OWNER
+					is_in_federation_with = prev.OWNER
+					is_criminal_syndicate = yes
+				}
+			}
+			custom_tooltip = {
+				fail_text = preftl_action_trade_pact
+				AND = {
+					has_observation_outpost = yes
+					observation_outpost = {
+						has_modifier = preftl_action_trade_pact
+					}
+				}
+			}
+		}
+	}
+
+	prerequisites = {
+		"tech_neural_implants"
+	}
+
+	show_tech_unlock_if = {
+		is_megacorp = yes
+		has_policy_flag = slavery_allowed
+		is_militarist = yes
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			always = yes
+		}
+		job_gladiator_add = 200
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			owner = {
+				OR = {
+					has_civic = civic_warrior_culture
+					has_origin = origin_clone_army
+					is_barbaric_despoiler = yes
+					has_khan_civic_or_origin = yes
+				}
+			}
+		}
+		job_gladiator_add = 100
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			always = yes
+		}
+		planet_gladiators_trade_produces_add = @med_trade_from_jobs
+	}
+
+	# Trade from civics
+	triggered_planet_modifier = {
+		potential = {
+			branch_office_owner = {
+				has_valid_civic = civic_indentured_assets
+			}
+		}
+		planet_gladiators_trade_produces_add = @med_trade_from_jobs
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			branch_office_owner = {
+				has_valid_civic = civic_media_conglomerate
+			}
+		}
+		planet_gladiators_trade_produces_add = @med_trade_from_jobs
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			branch_office_owner = {
+				is_barbaric_despoiler = yes
+			}
+		}
+		planet_gladiators_trade_produces_add = @med_trade_from_jobs
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			branch_office_owner = {
+				has_khan_civic_or_origin = yes
+			}
+		}
+		planet_gladiators_trade_produces_add = @med_trade_from_jobs
+	}
+
+	# Trader jobs from civics
+	triggered_country_modifier = {
+		potential = {
+			branch_office_owner = {
+				has_valid_civic = civic_indentured_assets
+			}
+		}
+		job_capital_trader_add = @traders_from_civic
+	}
+
+	triggered_country_modifier = {
+		potential = {
+			branch_office_owner = {
+				has_valid_civic = civic_media_conglomerate
+			}
+		}
+		job_capital_trader_add = @traders_from_civic
+	}
+
+	triggered_country_modifier = {
+		potential = {
+			branch_office_owner = {
+				is_barbaric_despoiler = yes
+			}
+		}
+		job_capital_trader_add = @traders_from_civic
+	}
+
+	triggered_country_modifier = {
+		potential = {
+			branch_office_owner = {
+				has_khan_civic_or_origin = yes
+			}
+		}
+		job_capital_trader_add = @traders_from_civic
+	}
+
+	resources = {
+		category = planet_branch_office_buildings
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = volatile_motes
+			COST = 500
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
+		}
+		cost = {
+			alloys = 20
+			influence = 20
+		}
+		cost = {
+			trigger = {
+				owner = {
+					is_megacorp = yes
+				}
+			}
+			influence = 20
+		}
+		upkeep = {
+			energy = 10
+		}
+	}
+
+	destroy_trigger = {
+		exists = owner
+		branch_office_owner = {
+			OR = {
+				is_illegal_criminal = yes
+				has_policy_flag = slavery_not_allowed
+				is_militarist = no
+			}
+		}
+	}
+
+	convert_to = {
+		building_amusement_megaplex
+		building_underground_clubs
+		building_fighting_pit
+	}
+
+	ai_weight = {
+		weight = 15
+	}
+}
+
 
 ## CRIME MEGACORP ##
 building_wildcat_miners = {
@@ -3663,206 +3863,6 @@ building_wrecking_yards = {
 
 	ai_weight = {
 		factor = 1
-	}
-}
-
-building_colosseum_branch = {
-	base_buildtime = @b1_time
-
-	owner_type = corporate
-
-	category = amenity
-
-	potential = {
-		has_branch_office = yes
-		branch_office_owner = {
-			is_legit_or_legal_criminal = yes
-			AND = {
-				has_policy_flag = slavery_allowed
-				is_militarist = yes
-			}
-		}
-	}
-
-	allow = {
-		OR = {
-			owner = { has_overlord = prev.branch_office_owner }
-			branch_office_owner = {
-				OR = {
-					has_commercial_pact = prev.OWNER
-					is_in_federation_with = prev.OWNER
-					is_criminal_syndicate = yes
-				}
-			}
-			custom_tooltip = {
-				fail_text = preftl_action_trade_pact
-				AND = {
-					has_observation_outpost = yes
-					observation_outpost = {
-						has_modifier = preftl_action_trade_pact
-					}
-				}
-			}
-		}
-	}
-
-	prerequisites = {
-		"tech_neural_implants"
-	}
-
-	show_tech_unlock_if = {
-		is_megacorp = yes
-		has_policy_flag = slavery_allowed
-		is_militarist = yes
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			always = yes
-		}
-		job_gladiator_add = 200
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner = {
-				OR = {
-					has_civic = civic_warrior_culture
-					has_origin = origin_clone_army
-					is_barbaric_despoiler = yes
-					has_khan_civic_or_origin = yes
-				}
-			}
-		}
-		job_gladiator_add = 100
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			always = yes
-		}
-		planet_gladiators_trade_produces_add = @med_trade_from_jobs
-	}
-
-	# Trade from civics
-	triggered_planet_modifier = {
-		potential = {
-			branch_office_owner = {
-				has_valid_civic = civic_indentured_assets
-			}
-		}
-		planet_gladiators_trade_produces_add = @med_trade_from_jobs
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			branch_office_owner = {
-				has_valid_civic = civic_media_conglomerate
-			}
-		}
-		planet_gladiators_trade_produces_add = @med_trade_from_jobs
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			branch_office_owner = {
-				is_barbaric_despoiler = yes
-			}
-		}
-		planet_gladiators_trade_produces_add = @med_trade_from_jobs
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			branch_office_owner = {
-				has_khan_civic_or_origin = yes
-			}
-		}
-		planet_gladiators_trade_produces_add = @med_trade_from_jobs
-	}
-
-	# Trader jobs from civics
-	triggered_country_modifier = {
-		potential = {
-			branch_office_owner = {
-				has_valid_civic = civic_indentured_assets
-			}
-		}
-		job_capital_trader_add = @traders_from_civic
-	}
-
-	triggered_country_modifier = {
-		potential = {
-			branch_office_owner = {
-				has_valid_civic = civic_media_conglomerate
-			}
-		}
-		job_capital_trader_add = @traders_from_civic
-	}
-
-	triggered_country_modifier = {
-		potential = {
-			branch_office_owner = {
-				is_barbaric_despoiler = yes
-			}
-		}
-		job_capital_trader_add = @traders_from_civic
-	}
-
-	triggered_country_modifier = {
-		potential = {
-			branch_office_owner = {
-				has_khan_civic_or_origin = yes
-			}
-		}
-		job_capital_trader_add = @traders_from_civic
-	}
-
-	resources = {
-		category = planet_branch_office_buildings
-		inline_script = {
-			script = buildings/nomadic_cost_switcher
-			REGULAR_RESOURCE = minerals
-			NOMADIC_RESOURCE = volatile_motes
-			COST = 500
-			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
-		}
-		cost = {
-			alloys = 20
-			influence = 20
-		}
-		cost = {
-			trigger = {
-				owner = {
-					is_megacorp = yes
-				}
-			}
-			influence = 20
-		}
-		upkeep = {
-			energy = 10
-		}
-	}
-
-	destroy_trigger = {
-		exists = owner
-		branch_office_owner = {
-			OR = {
-				is_illegal_criminal = yes
-				has_policy_flag = slavery_not_allowed
-				is_militarist = no
-			}
-		}
-	}
-
-	convert_to = {
-		building_amusement_megaplex
-		building_underground_clubs
-		building_fighting_pit
-	}
-
-	ai_weight = {
-		weight = 15
 	}
 }
 
