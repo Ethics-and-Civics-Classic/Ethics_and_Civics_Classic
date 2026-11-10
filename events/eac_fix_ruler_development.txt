@@ -1,0 +1,56 @@
+# Bug Fix: Ethics and Civics Classic
+# Source: Ethics and Civics Classic (1100284147) - common/ethics/EaC_ethics.txt; common/policies/ethic_rebuild_policies.txt.
+# Restore the existing ruler-only cap through the modern leader class.
+
+namespace = eac_fix_ruler_development
+
+country_event = {
+	id = eac_fix_ruler_development.1
+	hide_window = yes
+	is_triggered_only = yes
+	immediate = {
+		every_owned_leader = {
+			limit = {
+				has_trait = eac_fix_ruler_development
+				OR = {
+					is_ruler = no
+					owner = {
+						NOR = {
+							has_ethic = ethic_authoritarian
+							has_ethic = ethic_fanatic_authoritarian
+							has_policy_flag = centralized_state
+						}
+					}
+				}
+			}
+			remove_trait = eac_fix_ruler_development
+		}
+		if = {
+			limit = {
+				exists = ruler
+				OR = {
+					has_ethic = ethic_authoritarian
+					has_ethic = ethic_fanatic_authoritarian
+					has_policy_flag = centralized_state
+				}
+			}
+			ruler = {
+				if = {
+					limit = {
+						NOT = { has_trait = eac_fix_ruler_development }
+						OR = { leader_class = official leader_class = scientist leader_class = commander }
+					}
+					if = {
+						limit = { has_leader_flag = ignore_autocracy_ruler_trait_restriction }
+						add_trait = { trait = eac_fix_ruler_development show_message = no }
+					}
+					else = {
+						set_leader_flag = ignore_autocracy_ruler_trait_restriction
+						add_trait = { trait = eac_fix_ruler_development show_message = no }
+						remove_leader_flag = ignore_autocracy_ruler_trait_restriction
+					}
+				}
+			}
+		}
+	}
+}

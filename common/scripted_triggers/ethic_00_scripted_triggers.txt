@@ -578,3 +578,65 @@ can_build_hostile_waystation_module = { #scope = starbase
 		}
 	}
 }
+
+has_toxic_baths = {
+	is_toxic_baths_empire = yes
+}
+
+is_relentless_industrialists_empire = {
+	is_relentless_industrialist_empire = yes
+}
+
+can_form_federation_with_empire = {
+	this = { is_country_type = default } # The other country should be normal - we know that WE are
+	NOR = {
+		AND = { # We are a Determined Exterminator or Fanatic Purifiers and they are not the same species as us or a machine empire
+			prev = {
+				OR = {
+					has_valid_civic = civic_machine_terminator
+					has_valid_civic = civic_fanatic_purifiers
+				}
+			}
+			this = {
+				NOR = {
+					is_same_species = prev
+					OR = {
+						has_country_flag = synthetic_empire
+						is_machine_empire = yes
+						is_individual_machine = yes
+					}
+				}
+			}
+		}
+		AND = { # As above, but THEY are a Determined Exterminator or Fanatic Purifiers
+			prev = {
+				NOR = {
+					is_same_species = prev
+					OR = {
+						has_country_flag = synthetic_empire
+						is_machine_empire = yes
+						is_individual_machine = yes
+					}
+				}
+			}
+			this = {
+				OR = {
+					has_valid_civic = civic_machine_terminator
+					has_valid_civic = civic_fanatic_purifiers
+				}
+			}
+		}
+	}
+	NOR = { # Devouring Swarms are too hangry to form federations
+		prev = { has_valid_civic = civic_hive_devouring_swarm }
+		this = { has_valid_civic = civic_hive_devouring_swarm }
+	}
+	NOR = { # Inward Perfectionists would never consider joining
+		prev = { has_valid_civic = civic_inwards_perfection }
+		this = { has_valid_civic = civic_inwards_perfection }
+	}
+	NOR = { # Endbringers want to destroy everything
+		prev = { has_origin = origin_endbringers }
+		this = { has_origin = origin_endbringers }
+	}
+}

@@ -39,6 +39,7 @@ crew_quarters = {
 resource_silo = {
 	icon = "GFX_spaceport_module_resource_silo"
 	construction_days = 180
+	category = sm_economy_cat
 
 	potential = {
 		OR = {
@@ -57,8 +58,7 @@ resource_silo = {
 
 	triggered_country_modifier = {
 		potential = {
-			exists = owner
-			owner = {
+			owner? = {
 				NOT = { has_technology = tech_construction_templates }
 			}
 		}
@@ -67,8 +67,7 @@ resource_silo = {
 
 	triggered_country_modifier = {
 		potential = {
-			exists = owner
-			owner = {
+			owner? = {
 				has_technology = tech_construction_templates
 			}
 		}
@@ -88,8 +87,7 @@ communications_jammer = {
 	category = sm_aura_cat
 
 	potential = {
-		exists = owner
-		owner = { has_technology = tech_primitive_quantum_electronics_theory }
+		owner? = { has_technology = tech_primitive_quantum_electronics_theory }
 		OR = {
 			is_normal_starbase = yes
 			is_orbital_ring = yes
@@ -104,7 +102,7 @@ communications_jammer = {
 				is_orbital_ring = yes
 			}
 		}
-		solar_system = {
+		solar_system? = {
 			count_starbase_buildings = {
 				type = communications_jammer
 				count < 1
@@ -114,7 +112,7 @@ communications_jammer = {
 	}
 
 	abort_construction_trigger = {
-		solar_system = {
+		solar_system? = {
 			count_starbase_buildings = {
 				type = communications_jammer
 				count > 1
@@ -165,7 +163,7 @@ disruption_field = {
 				is_orbital_ring = yes
 			}
 		}
-		solar_system = {
+		solar_system? = {
 			count_starbase_buildings = {
 				type = disruption_field
 				count < 1
@@ -175,7 +173,7 @@ disruption_field = {
 	}
 
 	abort_construction_trigger = {
-		solar_system = {
+		solar_system? = {
 			count_starbase_buildings = {
 				type = disruption_field
 				count > 1
@@ -284,7 +282,7 @@ mercenary_garrison = {
 				has_country_flag = mercenary_enclave_bought_mercenary_garrison
 			}
 		}
-		solar_system = {
+		solar_system? = {
 			count_starbase_buildings = {
 				type = pirate_mercenary_garrison
 				count < 1
@@ -299,7 +297,7 @@ mercenary_garrison = {
 	}
 
 	abort_construction_trigger = {
-		solar_system = {
+		solar_system? = {
 			count_starbase_buildings = {
 				type = mercenary_garrison
 				count > 1
@@ -374,7 +372,7 @@ pirate_mercenary_garrison = { # See Z_EaC_civic_mechanic_events.205
 				has_country_flag = pirate_mercenary_enclave_bought_pirate_mercenary_garrison
 			}
 		}
-		solar_system = {
+		solar_system? = {
 			custom_tooltip = {
 				fail_text = "requires.EaC_civic_mechanic_events.pirate_enclave.star_flag"
 				has_star_flag = EaC_civic_mechanic_events.pirate_enclave.star_flag
@@ -393,7 +391,7 @@ pirate_mercenary_garrison = { # See Z_EaC_civic_mechanic_events.205
 	}
 
 	abort_construction_trigger = {
-		solar_system = {
+		solar_system? = {
 			count_starbase_buildings = {
 				type = pirate_mercenary_garrison
 				count > 1
@@ -434,16 +432,15 @@ pirate_mercenary_garrison = { # See Z_EaC_civic_mechanic_events.205
 	# Pirate Lord and Criminal Heritage
 	triggered_system_modifier = {
 		potential = {
-			exists = owner
-			owner = {
+			owner? = {
 				OR = {
-					has_valid_civic = civic_military_dictatorship_corporate 
+					has_valid_civic = civic_military_dictatorship_corporate
 					has_valid_civic = civic_criminal_heritage
 				}
-				solar_system = {
-					has_star_flag = EaC_civic_mechanic_events.pirate_enclave.star_flag
-				}
 				is_nomadic = no
+			}
+			solar_system? = {
+				has_star_flag = EaC_civic_mechanic_events.pirate_enclave.star_flag
 			}
 		}
 		planet_stability_add = 10
@@ -452,16 +449,15 @@ pirate_mercenary_garrison = { # See Z_EaC_civic_mechanic_events.205
 	# Not Pirate Lord or Criminal Heritage
 	triggered_system_modifier = {
 		potential = {
-			exists = owner
-			owner = {
+			owner? = {
 				NOR = {
 					has_valid_civic = civic_military_dictatorship_corporate 
 					has_valid_civic = civic_criminal_heritage
 				}
-				solar_system = {
-					NOT = { has_star_flag = EaC_civic_mechanic_events.pirate_enclave.star_flag }
-				}
 				is_nomadic = no
+			}
+			solar_system? = {
+				NOT = { has_star_flag = EaC_civic_mechanic_events.pirate_enclave.star_flag }
 			}
 		}
 		planet_stability_add = -5
@@ -483,7 +479,7 @@ pirate_mercenary_garrison = { # See Z_EaC_civic_mechanic_events.205
 			trigger = {
 				hidden_trigger = { exists = this }
 				has_starbase_module = trading_hub
-				is_nomadic = no
+				owner? = { is_nomadic = no }
 			}
 			trade = 2
 			mult = value:num_starbase_modules_of_type|TYPE|trading_hub|
@@ -563,9 +559,9 @@ offworld_trading_company = {
 					has_valid_civic = civic_military_dictatorship_corporate 
 					has_valid_civic = civic_criminal_heritage
 				}
-				solar_system = {
-					has_star_flag = EaC_civic_mechanic_events.pirate_enclave.star_flag
-				}
+			}
+			solar_system? = {
+				has_star_flag = EaC_civic_mechanic_events.pirate_enclave.star_flag
 			}
 		}
 		show_only_custom_tooltip = no
