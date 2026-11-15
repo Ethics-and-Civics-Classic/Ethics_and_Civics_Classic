@@ -125,11 +125,51 @@ zone_urban = {
 zone_industrial = {
 	icon = GFX_colony_type_industrial
 	base_buildtime = @zone_buildtime
-	
-	inline_script = {
-		script = zones/shared_industrial_zone
-		AMOUNT = @scaling_district_2_jobs
+
+	# Vanilla zones/shared_industrial_zone written out: this zone has exactly one potential and one unlock.
+	resources = {
+		category = planet_zones
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = alloys
+			COST = @zone_cost
+			NOMADIC_COST_MULT = 0.5
+		}
 	}
+
+	included_building_sets = {
+		industrial
+		urban_automation
+		origin
+	}
+
+	inline_script = {
+		script = jobs/zone_foundry_add
+		AMOUNT = @scaling_district_2_jobs
+		AMOUNT2 = @scaling_district_2_jobs
+	}
+
+	inline_script = {
+		script = jobs/zone_factory_add
+		AMOUNT = @scaling_district_2_jobs
+		AMOUNT2 = @scaling_district_2_jobs
+	}
+
+	planet_modifier = {
+		zone_building_slots_add = @BPV_ZONE_SLOT
+	}
+
+	ai_resource_production = {
+		alloys = 10
+		consumer_goods = 10
+
+		trigger = {
+			has_any_industrial_zone = yes
+		}
+	}
+
+	ai_priority = 8
 
 	zone_sets = {
 		urban
@@ -139,16 +179,25 @@ zone_industrial = {
 	inline_script = {
 		script = zones/shared_city_non_urban_zone_modifiers
 	}
-	
-	potential = { # planet scope
+
+	potential = {
 		exists = owner
+		owner = {
+			country_uses_consumer_goods = yes
+		}
 		owner = {
 			country_uses_consumer_goods = yes
 			has_technology = tech_basic_industry
 		}
 	}
 
-	unlock = { # planet scope
+	unlock = {
+		hidden_trigger = {
+			exists = owner
+			owner = {
+				country_uses_consumer_goods = yes
+			}
+		}
 		exists = owner
 		owner = {
 			country_uses_consumer_goods = yes
@@ -162,11 +211,44 @@ zone_industrial = {
 zone_foundry = {
 	icon = GFX_colony_type_foundry
 	base_buildtime = @zone_buildtime
-	
-	inline_script = {
-		script = zones/shared_industrial_foundry_zone
-		AMOUNT = @scaling_district_1_job
+
+	# Vanilla zones/shared_industrial_foundry_zone written out: this zone has exactly one potential and one unlock.
+	resources = {
+		category = planet_zones
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = alloys
+			COST = @zone_cost
+			NOMADIC_COST_MULT = 0.5
+		}
 	}
+
+	included_building_sets = {
+		foundry
+		urban_automation
+		origin
+	}
+
+	inline_script = {
+		script = jobs/zone_foundry_add
+		AMOUNT = @scaling_district_1_job
+		AMOUNT2 = @scaling_district_1_job
+	}
+
+	planet_modifier = {
+		zone_building_slots_add = @BPV_ZONE_SLOT
+	}
+
+	ai_resource_production = {
+		alloys = 20
+
+		trigger = {
+			has_any_foundry_zone = yes
+		}
+	}
+
+	ai_priority = 10
 
 	zone_sets = {
 		urban
@@ -176,8 +258,14 @@ zone_foundry = {
 	inline_script = {
 		script = zones/shared_city_non_urban_zone_modifiers
 	}
-	
-	potential = { # planet scope
+
+	potential = {
+		hidden_trigger = {
+			exists = owner
+			owner = {
+				is_wilderness_empire = no
+			}
+		}
 		hidden_trigger = { exists = owner }
 		owner = {
 			hidden_trigger = { is_wilderness_empire = no }
@@ -185,7 +273,13 @@ zone_foundry = {
 		}
 	}
 
-	unlock = { # planet scope
+	unlock = {
+		hidden_trigger = {
+			exists = owner
+			owner = {
+				is_wilderness_empire = no
+			}
+		}
 		hidden_trigger = { exists = owner }
 		owner = {
 			hidden_trigger = { is_wilderness_empire = no }
@@ -199,11 +293,43 @@ zone_foundry = {
 zone_factory = {
 	icon = GFX_colony_type_factory
 	base_buildtime = @zone_buildtime
-	
+
+	# Vanilla zones/shared_industrial_factory_zone written out: this zone has exactly one potential and one unlock.
+	resources = {
+		category = planet_zones
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = alloys
+			COST = @zone_cost
+			NOMADIC_COST_MULT = 0.5
+		}
+	}
+
+	included_building_sets = {
+		factory
+		urban_automation
+		origin
+	}
+
 	inline_script = {
-		script = zones/shared_industrial_factory_zone
+		script = jobs/zone_factory_add
 		AMOUNT = @scaling_district_1_job
 	}
+
+	planet_modifier = {
+		zone_building_slots_add = @BPV_ZONE_SLOT
+	}
+
+	ai_resource_production = {
+		consumer_goods = 15
+
+		trigger = {
+			has_any_factory_zone = yes
+		}
+	}
+
+	ai_priority = 10
 
 	zone_sets = {
 		urban
@@ -213,8 +339,14 @@ zone_factory = {
 	inline_script = {
 		script = zones/shared_city_non_urban_zone_modifiers
 	}
-	
-	potential = { # planet scope
+
+	potential = {
+		hidden_trigger ={
+			exists = owner
+			owner = {
+				country_uses_consumer_goods = yes
+			}
+		}
 		exists = owner
 		owner = {
 			country_uses_consumer_goods = yes
@@ -222,15 +354,104 @@ zone_factory = {
 		}
 	}
 
-	unlock = { # planet scope
+	unlock = {
+		hidden_trigger ={
+			exists = owner
+			owner = {
+				country_uses_consumer_goods = yes
+			}
+		}
 		exists = owner
 		owner = {
 			country_uses_consumer_goods = yes
 			has_technology = tech_basic_industry
 		}
 	}
-	
+
 	show_in_tech = tech_basic_industry
+}
+
+zone_research = {
+	icon = GFX_colony_type_research
+	base_buildtime = @zone_buildtime
+
+	# Vanilla zones/shared_research_zone written out: this zone has exactly one potential and one unlock.
+	resources = {
+		category = planet_zones
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = alloys
+			COST = @zone_cost
+			NOMADIC_COST_MULT = 0.5
+		}
+	}
+
+	included_building_sets = {
+		research
+		urban_automation
+		origin
+	}
+
+	inline_script = {
+		script = jobs/zone_researchers_add
+		AMOUNT = @scaling_district_3_jobs
+	}
+
+	planet_modifier = {
+		zone_building_slots_add = @BPV_ZONE_SLOT
+	}
+
+	ai_resource_production = {
+		physics_research = 5
+		society_research = 5
+		engineering_research = 5
+
+		trigger = {
+			has_any_research_zone = yes
+		}
+	}
+
+	ai_priority = 10
+
+	zone_sets = {
+		urban
+		polytechnic
+	}
+
+	inline_script = {
+		script = zones/shared_city_non_urban_zone_modifiers
+	}
+
+	potential = {
+		hidden_trigger = {
+			exists = owner
+			owner = {
+				is_wilderness_empire = no
+			}
+		}
+		hidden_trigger = { exists = owner }
+		owner = {
+			#hidden_trigger = { is_wilderness_empire = no }
+			has_technology = tech_basic_science_lab_1
+		}
+	}
+
+	unlock = {
+		hidden_trigger = {
+			exists = owner
+			owner = {
+				is_wilderness_empire = no
+			}
+		}
+		hidden_trigger = { exists = owner }
+		owner = {
+			#hidden_trigger = { is_wilderness_empire = no }
+			has_technology = tech_basic_science_lab_1
+		}
+	}
+	ai_weight_coefficient = 1.2
+	show_in_tech = tech_basic_science_lab_1
 }
 
 zone_research_unity = {
@@ -259,7 +480,7 @@ zone_research_unity = {
 			minerals = @zone_cost
 		}
 	}
-	
+
 	zone_sets = {
 		urban
 		polytechnic
@@ -297,7 +518,7 @@ zone_research_unity = {
 	#	}
 	#	text = zone_research_unity_triggered_desc
 	#}
-	
+
 	#potential = { # planet scope
 	#	hidden_trigger = { exists = owner }
 	#	owner = {
@@ -313,7 +534,7 @@ zone_research_unity = {
 	#		has_technology = tech_basic_science_lab_1
 	#	}
 	#}
-	
+
 	show_in_tech = tech_basic_science_lab_1
 
 	ai_priority = 8
@@ -322,11 +543,45 @@ zone_research_unity = {
 zone_research = {
 	icon = GFX_colony_type_research
 	base_buildtime = @zone_buildtime
-	
+
+	# Vanilla zones/shared_research_zone written out: this zone has exactly one potential and one unlock.
+	resources = {
+		category = planet_zones
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = alloys
+			COST = @zone_cost
+			NOMADIC_COST_MULT = 0.5
+		}
+	}
+
+	included_building_sets = {
+		research
+		urban_automation
+		origin
+	}
+
 	inline_script = {
-		script = zones/shared_research_zone
+		script = jobs/zone_researchers_add
 		AMOUNT = @scaling_district_3_jobs
 	}
+
+	planet_modifier = {
+		zone_building_slots_add = @BPV_ZONE_SLOT
+	}
+
+	ai_resource_production = {
+		physics_research = 5
+		society_research = 5
+		engineering_research = 5
+
+		trigger = {
+			has_any_research_zone = yes
+		}
+	}
+
+	ai_priority = 10
 
 	zone_sets = {
 		urban
@@ -336,8 +591,14 @@ zone_research = {
 	inline_script = {
 		script = zones/shared_city_non_urban_zone_modifiers
 	}
-	
-	potential = { # planet scope
+
+	potential = {
+		hidden_trigger = {
+			exists = owner
+			owner = {
+				is_wilderness_empire = no
+			}
+		}
 		hidden_trigger = { exists = owner }
 		owner = {
 			#hidden_trigger = { is_wilderness_empire = no }
@@ -345,7 +606,13 @@ zone_research = {
 		}
 	}
 
-	unlock = { # planet scope
+	unlock = {
+		hidden_trigger = {
+			exists = owner
+			owner = {
+				is_wilderness_empire = no
+			}
+		}
 		hidden_trigger = { exists = owner }
 		owner = {
 			#hidden_trigger = { is_wilderness_empire = no }
@@ -359,10 +626,33 @@ zone_research = {
 zone_research_physics = {
 	icon = GFX_job_physicist
 	base_buildtime = @zone_buildtime
-	
+
+	# Vanilla zones/shared_research_physics_zone written out: this zone has exactly one potential and one unlock.
+	resources = {
+		category = planet_zones
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = alloys
+			COST = @zone_cost
+			NOMADIC_COST_MULT = 0.5
+		}
+	}
+
+	included_building_sets = {
+		physics
+		research
+		urban_automation
+		origin
+	}
+
 	inline_script = {
-		script = zones/shared_research_physics_zone
-		AMOUNT = @scaling_district_1_job
+		script = jobs/zone_physicists_add
+		LARGE_AMOUNT = @scaling_district_1_job
+	}
+
+	planet_modifier = {
+		zone_building_slots_add = @BPV_ZONE_SLOT
 	}
 
 	zone_sets = {
@@ -374,8 +664,8 @@ zone_research_physics = {
 	inline_script = {
 		script = zones/shared_research_zone_modifiers
 	}
-	
-	potential = { # planet scope
+
+	potential = {
 		hidden_trigger = { exists = owner }
 		owner = {
 			#hidden_trigger = { is_wilderness_empire = no }
@@ -383,14 +673,20 @@ zone_research_physics = {
 		}
 	}
 
-	unlock = { # planet scope
+	unlock = {
+		hidden_trigger = {
+			exists = owner
+			owner = {
+				is_wilderness_empire = no
+			}
+		}
 		hidden_trigger = { exists = owner }
 		owner = {
 			#hidden_trigger = { is_wilderness_empire = no }
 			has_technology = tech_basic_science_lab_1
 		}
 	}
-	
+
 	#show_in_tech = tech_basic_science_lab_1
 	ai_weight_coefficient = 1.1
 	ai_priority = 15
@@ -399,10 +695,33 @@ zone_research_physics = {
 zone_research_society = {
 	icon = GFX_job_biologist
 	base_buildtime = @zone_buildtime
-	
+
+	# Vanilla zones/shared_research_society_zone written out: this zone has exactly one potential and one unlock.
+	resources = {
+		category = planet_zones
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = alloys
+			COST = @zone_cost
+			NOMADIC_COST_MULT = 0.5
+		}
+	}
+
+	included_building_sets = {
+		society
+		research
+		urban_automation
+		origin
+	}
+
 	inline_script = {
-		script = zones/shared_research_society_zone
-		AMOUNT = @scaling_district_1_job
+		script = jobs/zone_biologists_add
+		LARGE_AMOUNT = @scaling_district_1_job
+	}
+
+	planet_modifier = {
+		zone_building_slots_add = @BPV_ZONE_SLOT
 	}
 
 	zone_sets = {
@@ -414,8 +733,8 @@ zone_research_society = {
 	inline_script = {
 		script = zones/shared_research_zone_modifiers
 	}
-	
-	potential = { # planet scope
+
+	potential = {
 		hidden_trigger = { exists = owner }
 		owner = {
 			#hidden_trigger = { is_wilderness_empire = no }
@@ -423,14 +742,20 @@ zone_research_society = {
 		}
 	}
 
-	unlock = { # planet scope
+	unlock = {
+		hidden_trigger = {
+			exists = owner
+			owner = {
+				is_wilderness_empire = no
+			}
+		}
 		hidden_trigger = { exists = owner }
 		owner = {
 			#hidden_trigger = { is_wilderness_empire = no }
 			has_technology = tech_basic_science_lab_1
 		}
 	}
-	
+
 	#show_in_tech = tech_basic_science_lab_1
 	ai_weight_coefficient = 1.1
 	ai_priority = 15
@@ -439,10 +764,33 @@ zone_research_society = {
 zone_research_engineering = {
 	icon = GFX_job_engineer
 	base_buildtime = @zone_buildtime
-	
+
+	# Vanilla zones/shared_research_engineering_zone written out: this zone has exactly one potential and one unlock.
+	resources = {
+		category = planet_zones
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = alloys
+			COST = @zone_cost
+			NOMADIC_COST_MULT = 0.5
+		}
+	}
+
+	included_building_sets = {
+		engineering
+		research
+		urban_automation
+		origin
+	}
+
 	inline_script = {
-		script = zones/shared_research_engineering_zone
-		AMOUNT = @scaling_district_1_job
+		script = jobs/zone_engineers_add
+		LARGE_AMOUNT = @scaling_district_1_job
+	}
+
+	planet_modifier = {
+		zone_building_slots_add = @BPV_ZONE_SLOT
 	}
 
 	zone_sets = {
@@ -454,8 +802,8 @@ zone_research_engineering = {
 	inline_script = {
 		script = zones/shared_research_zone_modifiers
 	}
-	
-	potential = { # planet scope
+
+	potential = {
 		hidden_trigger = { exists = owner }
 		owner = {
 			#hidden_trigger = { is_wilderness_empire = no }
@@ -463,14 +811,20 @@ zone_research_engineering = {
 		}
 	}
 
-	unlock = { # planet scope
+	unlock = {
+		hidden_trigger = {
+			exists = owner
+			owner = {
+				is_wilderness_empire = no
+			}
+		}
 		hidden_trigger = { exists = owner }
 		owner = {
 			#hidden_trigger = { is_wilderness_empire = no }
 			has_technology = tech_basic_science_lab_1
 		}
 	}
-	
+
 	#show_in_tech = tech_basic_science_lab_1
 	ai_weight_coefficient = 1.1
 	ai_priority = 15
@@ -479,11 +833,42 @@ zone_research_engineering = {
 zone_unity = {
 	icon = GFX_colony_type_bureaucratic
 	base_buildtime = @zone_buildtime
-	
+
+	# Vanilla zones/shared_unity_zone written out: this zone has exactly one potential and one unlock.
+	resources = {
+		category = planet_zones
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = alloys
+			COST = @zone_cost
+			NOMADIC_COST_MULT = 0.5
+		}
+	}
+
+	included_building_sets = {
+		unity
+		urban_automation
+		origin
+	}
+
 	inline_script = {
-		script = zones/shared_unity_zone
+		script = jobs/zone_unity_jobs_add
 		AMOUNT = @scaling_district_1_job
 	}
+
+	planet_modifier = {
+		zone_building_slots_add = @BPV_ZONE_SLOT
+	}
+
+	ai_resource_production = {
+		unity = 15
+
+		trigger = {
+			has_any_unity_zone = yes
+		}
+	}
+	ai_priority = 10
 
 	zone_sets = {
 		urban
@@ -499,17 +884,15 @@ zone_unity = {
 		zone_unity_spiritualist
 		zone_unity_bio_trophy
 	}
-	
-	potential = { # planet scope
-		exists = owner
-		owner = {				
-			NOR = {
-				is_wilderness_empire = yes
-				is_spiritualist = yes	
-				has_valid_civic = civic_machine_servitor		
-				has_valid_civic = civic_machine_cult_machine
+
+	potential = {
+		hidden_trigger = { exists = owner }
+		owner = {
+			is_wilderness_empire = no
+			is_spiritualist = no
+			NOT = {
+				has_valid_civic = civic_machine_servitor
 			}
-			has_technology = tech_primitive_nation_state_government
 		}
 		OR = {
 			owner = {
@@ -520,30 +903,80 @@ zone_unity = {
 				has_any_industrial_zone = no
 			}
 		}
-	}	
-	unlock = { # planet scope
 		exists = owner
 		owner = {
 			NOR = {
 				is_wilderness_empire = yes
-				has_valid_civic = civic_machine_servitor		
+				is_spiritualist = yes
+				has_valid_civic = civic_machine_servitor
 				has_valid_civic = civic_machine_cult_machine
 			}
 			has_technology = tech_primitive_nation_state_government
 		}
 	}
-	
+	unlock = {
+		hidden_trigger = {
+			exists = owner
+			owner = {
+				OR = {
+					is_wilderness_empire = no
+					NOT = { has_valid_civic = civic_machine_servitor }
+				}
+			}
+		}
+		exists = owner
+		owner = {
+			NOR = {
+				is_wilderness_empire = yes
+				has_valid_civic = civic_machine_servitor
+				has_valid_civic = civic_machine_cult_machine
+			}
+			has_technology = tech_primitive_nation_state_government
+		}
+	}
+
 	show_in_tech = tech_primitive_nation_state_government
 }
 
 zone_unity_spiritualist = {
 	icon = GFX_job_priest
 	base_buildtime = @zone_buildtime
-	
+
+	# Vanilla zones/shared_unity_spiritualist_zone written out, so this zone has one potential and one unlock.
+	resources = {
+		category = planet_zones
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = alloys
+			COST = @zone_cost
+			NOMADIC_COST_MULT = 0.5
+		}
+	}
+
+	included_building_sets = {
+		unity
+		urban_automation
+		origin
+	}
+
 	inline_script = {
-		script = zones/shared_unity_spiritualist_zone
+		script = jobs/zone_unity_jobs_add
 		AMOUNT = @scaling_district_1_job
 	}
+
+	planet_modifier = {
+		zone_building_slots_add = @BPV_ZONE_SLOT
+	}
+
+	ai_resource_production = {
+		unity = 15
+
+		trigger = {
+			has_any_unity_zone = yes
+		}
+	}
+	ai_priority = 10
 
 	zone_sets = {
 		urban
@@ -559,11 +992,12 @@ zone_unity_spiritualist = {
 		zone_unity
 		zone_unity_bio_trophy
 	}
-	
+
 	potential = { # planet scope
 		hidden_trigger = { exists = owner }
 		owner = {
 			is_spiritualist = yes
+			NOT = { has_valid_civic = civic_machine_cult_machine }
 		}
 		OR = {
 			owner = {
@@ -577,19 +1011,305 @@ zone_unity_spiritualist = {
 	}
 
 	unlock = { # planet scope
-		OWNER = { has_technology = tech_primitive_nation_state_government }
+		OWNER = {
+			has_technology = tech_primitive_nation_state_government
+			NOT = { has_valid_civic = civic_machine_cult_machine }
+		}
 	}
 
+}
+
+zone_unity_spiritualist_arcology = {
+	# Vanilla zones/shared_unity_spiritualist_zone written out, so this zone has one potential and one unlock.
+	icon = GFX_district_specialization_priest
+	base_buildtime = @zone_buildtime
+
+	resources = {
+		category = planet_zones
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = alloys
+			COST = @zone_cost
+			NOMADIC_COST_MULT = 0.5
+		}
+	}
+
+	included_building_sets = {
+		unity
+		urban_automation
+		origin
+	}
+
+	inline_script = {
+		script = jobs/zone_unity_jobs_add
+		AMOUNT = @doubled_scaling_district_1_job
+	}
+
+	planet_modifier = {
+		zone_building_slots_add = @BPV_ZONE_SLOT
+	}
+
+	ai_resource_production = {
+		unity = 15
+
+		trigger = {
+			has_any_unity_zone = yes
+		}
+	}
+	ai_priority = 10
+
+	swap_type = district_arcology_spiritualist
+	swap_type_weight = 5
+
+	zone_sets = {
+		arcology
+	}
+
+	included_building_sets = {
+		urban_automation_arcology
+	}
+
+	excluded_building_sets = {
+		urban_automation
+	}
+
+	inline_script = {
+		script = zones/shared_arcology_zone_modifiers
+	}
+
+	convert_to = {
+		zone_unity_arcology
+		zone_unity_bio_trophy_arcology
+	}
+
+	potential = { # planet scope
+		hidden_trigger = { exists = owner }
+		owner = {
+			is_spiritualist = yes
+			NOT = { has_valid_civic = civic_machine_cult_machine }
+		}
+		OR = {
+			owner = {
+				is_ai = no
+			}
+			AND = {
+				has_any_research_zone = no
+				has_any_industrial_zone = no
+			}
+		}
+	}
+
+	unlock = { # planet scope
+		always = yes
+		OWNER = {
+			NOT = { has_valid_civic = civic_machine_cult_machine }
+		}
+	}
+}
+
+zone_unity_spiritualist_ring_world = {
+	# Vanilla zones/shared_unity_spiritualist_zone written out, so this zone has one potential and one unlock.
+	icon = GFX_district_specialization_priest
+	base_buildtime = @zone_buildtime
+
+	resources = {
+		category = planet_zones
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = alloys
+			COST = @zone_cost
+			NOMADIC_COST_MULT = 0.5
+		}
+	}
+
+	included_building_sets = {
+		unity
+		urban_automation
+		origin
+	}
+
+	inline_script = {
+		script = jobs/zone_unity_jobs_add
+		AMOUNT = @doubled_scaling_district_1_job
+	}
+
+	planet_modifier = {
+		zone_building_slots_add = @BPV_ZONE_SLOT
+	}
+
+	ai_resource_production = {
+		unity = 15
+
+		trigger = {
+			has_any_unity_zone = yes
+		}
+	}
+	ai_priority = 10
+
+	swap_type = district_ring_world_spiritualist
+	swap_type_weight = 5
+
+	zone_sets = {
+		ring_world
+	}
+
+	inline_script = {
+		script = zones/shared_ring_world_zone_modifiers
+	}
+
+	convert_to = {
+		zone_unity_ring_world
+		zone_unity_bio_trophy_ring_world
+	}
+
+	potential = { # planet scope
+		hidden_trigger = { exists = owner }
+		owner = {
+			is_spiritualist = yes
+			NOT = { has_valid_civic = civic_machine_cult_machine }
+		}
+		OR = {
+			owner = {
+				is_ai = no
+			}
+			AND = {
+				has_any_research_zone = no
+				has_any_industrial_zone = no
+			}
+		}
+	}
+
+	unlock = { # planet scope
+		always = yes
+		OWNER = {
+			NOT = { has_valid_civic = civic_machine_cult_machine }
+		}
+	}
+}
+
+zone_unity_spiritualist_nexus = {
+	# Vanilla zones/shared_unity_spiritualist_zone written out, so this zone has one potential and one unlock.
+	icon = GFX_district_specialization_priest
+	base_buildtime = @zone_buildtime
+
+	resources = {
+		category = planet_zones
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = alloys
+			COST = @zone_cost
+			NOMADIC_COST_MULT = 0.5
+		}
+	}
+
+	included_building_sets = {
+		unity
+		urban_automation
+		origin
+	}
+
+	inline_script = {
+		script = jobs/zone_unity_jobs_add
+		AMOUNT = @doubled_scaling_district_1_job
+	}
+
+	planet_modifier = {
+		zone_building_slots_add = @BPV_ZONE_SLOT
+	}
+
+	ai_resource_production = {
+		unity = 15
+
+		trigger = {
+			has_any_unity_zone = yes
+		}
+	}
+	ai_priority = 10
+
+	swap_type = district_nexus_spiritualist
+	swap_type_weight = 5
+
+	zone_sets = {
+		nexus
+	}
+
+	inline_script = {
+		script = zones/shared_arcology_zone_modifiers
+	}
+
+	convert_to = {
+		zone_unity_nexus
+		zone_unity_bio_trophy_nexus
+	}
+
+	potential = { # planet scope
+		hidden_trigger = { exists = owner }
+		owner = {
+			is_spiritualist = yes
+			NOT = { has_valid_civic = civic_machine_cult_machine }
+		}
+		OR = {
+			owner = {
+				is_ai = no
+			}
+			AND = {
+				has_any_research_zone = no
+				has_any_industrial_zone = no
+			}
+		}
+	}
+
+	unlock = { # planet scope
+		always = yes
+		OWNER = {
+			NOT = { has_valid_civic = civic_machine_cult_machine }
+		}
+	}
 }
 
 zone_unity_bio_trophy = {
 	icon = GFX_colony_type_urban
 	base_buildtime = @zone_buildtime
 
+	# Ethics and Civics Classic (1100284147) zones/shared_unity_bio_trophy_zone written out: this zone has exactly one potential and one unlock.
+	resources = {
+		category = planet_zones
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = alloys
+			COST = @zone_cost
+			NOMADIC_COST_MULT = 0.5
+		}
+	}
+
+	included_building_sets = {
+		unity
+		bio_trophy
+		urban_automation
+		origin
+	}
+
 	inline_script = {
-		script = zones/shared_unity_bio_trophy_zone
+		script = jobs/zone_unity_jobs_add
 		AMOUNT = @scaling_district_1_job
 	}
+
+	planet_modifier = {
+		zone_building_slots_add = @BPV_ZONE_SLOT
+	}
+
+	ai_resource_production = {
+		unity = 15
+
+		trigger = {
+			has_any_unity_zone = yes
+		}
+	}
+	ai_priority = 10
 
 	zone_sets = {
 		urban
@@ -605,8 +1325,17 @@ zone_unity_bio_trophy = {
 		zone_unity
 		zone_unity_spiritualist
 	}
-	
-	potential = { # planet scope
+
+	potential = {
+		hidden_trigger = {
+			exists = owner
+			owner = {
+				OR = {
+					has_valid_civic = civic_machine_servitor
+					has_valid_civic = civic_machine_cult_machine
+				}
+			}
+		}
 		hidden_trigger = { exists = owner }
 		owner = {
 			OR = {
@@ -617,7 +1346,17 @@ zone_unity_bio_trophy = {
 		}
 	}
 
-	unlock = { # planet scope
+	unlock = {
+		hidden_trigger = {
+			exists = owner
+			owner = {
+				OR = {
+					has_valid_civic = civic_machine_servitor
+					has_valid_civic = civic_machine_cult_machine
+				}
+
+			}
+		}
 		exists = owner
 		owner = {
 			OR = {
@@ -632,10 +1371,46 @@ zone_unity_bio_trophy = {
 zone_fortress = {
 	icon = GFX_colony_type_fortress
 	base_buildtime = @zone_buildtime
-	
+
+	# Ethics and Civics Classic (1100284147) zones/shared_fortress_zone written out: this zone has exactly one potential and one unlock.
+	resources = {
+		category = planet_zones
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = alloys
+			COST = @zone_cost
+			NOMADIC_COST_MULT = 0.5
+		}
+	}
+
+	included_building_sets = {
+		fortress
+		urban_automation
+		origin
+	}
+
 	inline_script = {
-		script = zones/shared_fortress_zone
+		script = jobs/zone_soldiers_add
+		AMOUNT = @scaling_district_1_job	#Steam: Vanilla uses this measure now for this zone (It does work better, to be fair)
+	}
+
+	inline_script = {
+		script = jobs/zone_duelists_add
 		AMOUNT = @scaling_district_1_job
+	}
+
+	planet_modifier = {
+		zone_building_slots_add = @BPV_ZONE_SLOT
+	}
+
+	ai_priority = 10
+
+	potential = {
+		exists = owner
+		owner = {
+			is_wilderness_empire = no
+		}
 	}
 
 	zone_sets = {
@@ -646,7 +1421,7 @@ zone_fortress = {
 	inline_script = {
 		script = zones/shared_city_non_urban_zone_modifiers
 	}
-	
+
 	#potential = { # planet scope
 	#	exists = owner
 	#	owner = {
@@ -654,24 +1429,66 @@ zone_fortress = {
 	#	}
 	#}
 
-	unlock = { # planet scope
+	unlock = {
 		exists = owner
+		owner = {
+			is_wilderness_empire = no
+		}
 		owner = {
 			#hidden_trigger = { is_wilderness_empire = no }
 			has_technology = tech_primitive_atomic_age_weapons
 		}
 	}
-	
+
 	show_in_tech = tech_primitive_atomic_age_weapons
 }
 
 zone_trade = {
 	icon = GFX_resource_trade_large
 	base_buildtime = @zone_buildtime
-	
+
+	# Vanilla zones/shared_trade_zone written out: this zone has exactly one potential and one unlock.
+	resources = {
+		category = planet_zones
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = alloys
+			COST = @zone_cost
+			NOMADIC_COST_MULT = 0.5
+		}
+	}
+
+	included_building_sets = {
+		urban
+		trade
+		urban_automation
+		origin
+	}
+
 	inline_script = {
-		script = zones/shared_trade_zone
+		script = jobs/zone_trader_add
 		AMOUNT = @scaling_district_1_job
+	}
+
+	planet_modifier = {
+		zone_building_slots_add = @BPV_ZONE_SLOT
+	}
+
+	ai_priority = 10
+
+	potential = {
+		exists = owner
+		owner = {
+			is_wilderness_empire = no
+		}
+		OR = {
+			owner = {
+				is_ai = no
+			}
+			has_any_research_zone = no
+			has_any_industrial_zone = no
+		}
 	}
 
 	zone_sets = {
@@ -683,7 +1500,7 @@ zone_trade = {
 	inline_script = {
 		script = zones/shared_city_non_urban_zone_modifiers
 	}
-	
+
 	#potential = { # planet scope
 	#	exists = owner
 	#	owner = {
@@ -691,8 +1508,9 @@ zone_trade = {
 	#	}
 	#}
 
-	unlock = { # planet scope
-		owner = { 
+	unlock = {
+		always = yes
+		owner = {
 			#hidden_trigger = { is_wilderness_empire = no }
 			if = {
 				limit = { is_gestalt = yes }
@@ -746,7 +1564,7 @@ zone_anglers = {
 		script = jobs/zone_factory_add
 		AMOUNT = @bonus_scaling_district_2_jobs
 	}
-	
+
 	# Ocean Paradise Resort World
 	triggered_district_planet_modifier = {
 		potential = {
@@ -760,7 +1578,7 @@ zone_anglers = {
 		job_resort_worker_add = 25
 		planet_housing_add = -200
 	}
-	
+
 	zone_sets = {
 		food
 		resort_attraction
@@ -783,7 +1601,7 @@ zone_anglers = {
 	#	}
 	#	text = zone_anglers_triggered_desc
 	#}
-	
+
 	#potential = { # planet scope
 	#	exists = owner
 	#	OR = {
@@ -801,14 +1619,14 @@ zone_anglers = {
 	#		has_modifier = ocean_paradise
 	#		hidden_trigger = { has_modifier = ocean_paradise_hive } #could be a custom_tooltip
 	#	}
-	#	owner = { 
+	#	owner = {
 	#		has_technology = tech_industrial_farming_2
 	#	}
 	#	is_wet = yes
 	#}
-	
+
 	ai_priority = 5
-	
+
 	#show_in_tech = tech_industrial_farming_2
 }
 
@@ -865,9 +1683,45 @@ zone_spawning = {
 	icon = GFX_job_overlord_breeder
 	base_buildtime = @zone_buildtime
 
-	inline_script = {
-		script = zones/shared_spawning_zone
-		AMOUNT = 50
+	# Vanilla zones/shared_spawning_zone written out: this zone has exactly one potential and one unlock.
+	resources = {
+		category = planet_zones
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = alloys
+			COST = @zone_cost
+			NOMADIC_COST_MULT = 0.5
+		}
+	}
+
+	included_building_sets = {
+		urban
+		urban_automation
+	}
+
+	triggered_district_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { is_hive_empire = yes }
+		}
+		job_spawning_drone_add = 50
+	}
+
+	max_buildings = 1
+
+	planet_modifier = {
+		zone_building_slots_add = @BPV_ZONE_SLOT
+	}
+
+	ai_priority = 12
+
+	potential = {
+		is_planet_class = pc_hive
+		owner = {
+			is_hive_empire = yes
+			has_ascension_perk = ap_hive_worlds
+		}
 	}
 
 	zone_sets = {
@@ -877,7 +1731,7 @@ zone_spawning = {
 	inline_script = {
 		script = zones/shared_city_non_urban_zone_modifiers
 	}
-	
+
 	#potential = { # planet scope
 	#	is_planet_class = pc_hive
 	#	owner = {
@@ -886,7 +1740,16 @@ zone_spawning = {
 	#	}
 	#}
 
-	unlock = { # planet scope
+	unlock = {
+		hidden_trigger = {
+			exists = owner
+			owner = {
+				is_hive_empire = yes
+			}
+		}
+		owner = {
+			has_ascension_perk = ap_hive_worlds
+		}
 		exists = owner
 		owner = {
 			#is_hive_empire = yes
@@ -926,7 +1789,7 @@ zone_machine_replication = {
 			minerals = @zone_cost
 		}
 	}
-	
+
 	zone_sets = {
 		urban
 	}
@@ -959,7 +1822,7 @@ zone_machine_replication = {
 	inline_script = {
 		script = zones/shared_city_non_urban_zone_modifiers
 	}
-	
+
 	#potential = { # planet scope
 	#	is_planet_class = pc_machine
 	#	exists = owner
@@ -977,9 +1840,9 @@ zone_machine_replication = {
 	#		has_technology = tech_pre_industrial_steel_construction
 	#	}
 	#}
-	
+
 	#show_in_tech = tech_pre_industrial_steel_construction
-	
+
 	ai_priority = 12
 }
 
@@ -1011,7 +1874,7 @@ zone_subterranean_urban = {
 	}
 
 	max_buildings = 3
-	
+
 	zone_sets = {
 		minerals
 	}
@@ -1036,7 +1899,7 @@ zone_subterranean_urban = {
 	planet_modifier = {
 		zone_building_slots_add = 3
 	}
-	
+
 	#potential = { # planet scope
 	#	exists = owner
 	#	owner = {
@@ -1053,9 +1916,9 @@ zone_subterranean_urban = {
 	#		}
 	#	}
 	#}
-	
+
 	#show_in_tech = tech_pre_industrial_steel_construction
-	
+
 	ai_priority = 1
 }
 
@@ -1103,7 +1966,7 @@ zone_agrarian_urban = {
 	}
 
 	max_buildings = 3
-	
+
 	zone_sets = {
 		food
 	}
@@ -1128,28 +1991,9 @@ zone_agrarian_urban = {
 	planet_modifier = {
 		zone_building_slots_add = 3
 	}
-	
+
 	ai_priority = 1
-	
-	#potential = { # planet scope
-	#	exists = owner
-	#	owner = {
-	#		has_valid_civic = civic_agrarian_idyll
-	#		has_technology = tech_industrial_farming_2
-	#	}
-	#}
-	#	Steam:See top of zone
-	#unlock = { # planet scope
-	#	hidden_trigger = {
-	#		exists = owner
-	#		owner = {
-	#			has_valid_civic = civic_agrarian_idyll
-	#			has_technology = tech_industrial_farming_2
-	#		}
-	#	}
-	#}
-	
-	#show_in_tech = tech_industrial_farming_2
+
 }
 
 zone_agrarian_anglers = {
@@ -1197,7 +2041,7 @@ zone_agrarian_anglers = {
 		job_resort_worker_add = 25
 		planet_housing_add = -200
 	}
-	
+
 	zone_sets = {
 		food
 		resort_attraction
@@ -1239,314 +2083,3 @@ zone_agrarian_anglers = {
 	ai_priority = 1
 }
 
-#zone_urban_energy = {
-#	#icon = GFX_resource_energy_large
-#	icon = GFX_district_specialization_energy
-#	base_buildtime = @zone_buildtime
-#	potential = { # planet scope
-#		hidden_trigger = { exists = owner }
-#		owner = {
-#			is_wilderness_empire = no
-#			is_ai = no						# AI isn't great at handling these
-#			has_technology = tech_power_plant_1_space_age
-#		}
-#		NOT = {
-#			is_planet_class = pc_city
-#		}
-#	}
-#
-#	unlock = { # planet scope
-#		hidden_trigger = { exists = owner }
-#		owner = {
-#			is_wilderness_empire = no
-#			has_technology = tech_power_plant_1_space_age
-#		}
-#	}
-#
-#	resources = {
-#		category = planet_zones
-#		cost = {
-#			minerals = @zone_cost
-#		}
-#	}
-#
-#	inline_script = {
-#		script = jobs/zone_trader_add
-#		AMOUNT = @scaling_district_2_jobs
-#	}
-#
-#	max_buildings = 0
-#	
-#	zone_sets = {
-#		urban
-#	}
-#
-#	included_building_sets = {
-#		generator
-#		urban
-#		fallen_empire_generator
-#		#automation		#Steam: Vanilla doesn't have this, don't see a reason to change it
-#	}
-#
-#	planet_modifier = {
-#	}
-#
-#	triggered_district_planet_modifier = {
-#		potential = {
-#			NOT = {
-#				is_planet_class = pc_ringworld_habitable
-#			}
-#		}
-#		planet_technician_produces_mult = @zone_urban_rural_worker_produces_mult
-#		planet_technician_trade_upkeep_add = @zone_urban_rural_worker_trade_upkeep_add
-#	}
-#
-#	triggered_district_planet_modifier = {
-#		potential = {
-#			is_planet_class = pc_ringworld_habitable
-#		}
-#		planet_technician_produces_mult = @zone_urban_rural_worker_produces_mult
-#		planet_technician_trade_upkeep_add = @zone_urban_rural_worker_trade_upkeep_add
-#		mult = 5
-#	}
-#
-#	#triggered_desc = {
-#	#	trigger = {
-#	#		always = yes
-#	#	}
-#	#	text = zone_urban_triggered_desc
-#	#}
-#	
-#	#potential = { # planet scope
-#	#	hidden_trigger = { exists = owner }
-#	#	owner = {
-#	#		hidden_trigger = { is_wilderness_empire = no }
-#	#		is_ai = no						# AI isn't great at handling these
-#	#		has_technology = tech_power_plant_1_space_age
-#	#	}
-#	#	NOT = {
-#	#		is_planet_class = pc_city
-#	#	}
-#	#}
-#	#
-#	#unlock = { # planet scope
-#	#	hidden_trigger = { exists = owner }
-#	#	owner = {
-#	#		hidden_trigger = { is_wilderness_empire = no }
-#	#		has_technology = tech_power_plant_1_space_age
-#	#	}
-#	#}
-#	
-#	show_in_tech = tech_power_plant_1_space_age
-#	
-#	ai_priority = 13
-#}
-#
-#zone_urban_minerals = {
-#	#icon = GFX_resource_minerals_large
-#	icon = GFX_district_specialization_minerals
-#	base_buildtime = @zone_buildtime
-#	potential = { # planet scope
-#		hidden_trigger = { exists = owner }
-#		owner = {
-#			is_wilderness_empire = no
-#			is_ai = no						# AI isn't great at handling these
-#			has_technology = tech_mechanized_mining_2
-#		}
-#		NOR = {
-#			is_planet_class = pc_ringworld_habitable
-#			is_planet_class = pc_city
-#		}
-#	}
-#
-#	unlock = { # planet scope
-#		hidden_trigger = { exists = owner }
-#		owner = {
-#			is_wilderness_empire = no
-#			has_technology = tech_mechanized_mining_2
-#		}
-#	}
-#
-#	resources = {
-#		category = planet_zones
-#		cost = {
-#			minerals = @zone_cost
-#		}
-#	}
-#	
-#	zone_sets = {
-#		urban
-#	}
-#
-#	inline_script = {
-#		script = jobs/zone_trader_add
-#		AMOUNT = @scaling_district_2_jobs
-#	}
-#
-#	max_buildings = 0
-#
-#	included_building_sets = {
-#		mining
-#		urban
-#		fallen_empire_mining
-#		#automation		#Steam: Vanilla doesn't have this, don't see a reason to change it
-#	}
-#
-#	planet_modifier = {
-#	}
-#
-#	triggered_district_planet_modifier = {
-#		potential = {
-#			NOT = {
-#				is_planet_class = pc_ringworld_habitable
-#			}
-#		}
-#		planet_miners_produces_mult = @zone_urban_rural_worker_produces_mult
-#		planet_miners_trade_upkeep_add = @zone_urban_rural_worker_trade_upkeep_add
-#	}
-#
-#	triggered_district_planet_modifier = {
-#		potential = {
-#			is_planet_class = pc_ringworld_habitable
-#		}
-#		planet_miners_produces_mult = @zone_urban_rural_worker_produces_mult
-#		planet_miners_trade_upkeep_add = @zone_urban_rural_worker_trade_upkeep_add
-#		mult = 5
-#	}
-#
-#	#triggered_desc = {
-#	#	trigger = {
-#	#		always = yes
-#	#	}
-#	#	text = zone_urban_triggered_desc
-#	#}
-#	
-#	#potential = { # planet scope
-#	#	hidden_trigger = { exists = owner }
-#	#	owner = {
-#	#		hidden_trigger = { is_wilderness_empire = no }
-#	#		is_ai = no						# AI isn't great at handling these
-#	#		has_technology = tech_mechanized_mining_2
-#	#	}
-#	#	NOR = {
-#	#		is_planet_class = pc_ringworld_habitable
-#	#		is_planet_class = pc_city
-#	#	}
-#	#}
-#	#
-#	#unlock = { # planet scope
-#	#	hidden_trigger = { exists = owner }
-#	#	owner = {
-#	#		hidden_trigger = { is_wilderness_empire = no }
-#	#		has_technology = tech_mechanized_mining_2
-#	#	}
-#	#}
-#	
-#	show_in_tech = tech_mechanized_mining_2
-#	
-#	ai_priority = 13
-#}
-#
-#zone_urban_food = {
-#	#icon = GFX_resource_food_large
-#	icon = GFX_district_specialization_food
-#	base_buildtime = @zone_buildtime
-#	potential = { # planet scope
-#		hidden_trigger = { exists = owner }
-#		owner = {
-#			is_wilderness_empire = no
-#			is_ai = no						# AI isn't great at handling these
-#			has_technology = tech_industrial_farming_2
-#		}
-#		NOT = {
-#			is_planet_class = pc_city
-#		}
-#	}
-#
-#	unlock = { # planet scope
-#		hidden_trigger = { exists = owner }
-#		owner = {
-#			is_wilderness_empire = no
-#			has_technology = tech_industrial_farming_2
-#		}
-#	}
-#
-#	resources = {
-#		category = planet_zones
-#		cost = {
-#			minerals = @zone_cost
-#		}
-#	}
-#
-#	inline_script = {
-#		script = jobs/zone_trader_add
-#		AMOUNT = @scaling_district_2_jobs
-#	}
-#
-#	max_buildings = 0
-#	
-#	zone_sets = {
-#		urban
-#	}
-#
-#	included_building_sets = {
-#		farming
-#		hydroponics
-#		urban
-#		#automation		#Steam: Vanilla doesn't have this, don't see a reason to change it
-#	}
-#
-#	planet_modifier = {
-#	}
-#
-#	triggered_district_planet_modifier = {
-#		potential = {
-#			NOT = {
-#				is_planet_class = pc_ringworld_habitable
-#			}
-#		}
-#		planet_farmers_produces_mult = @zone_urban_rural_worker_produces_mult
-#		planet_farmers_trade_upkeep_add = @zone_urban_rural_worker_trade_upkeep_add
-#	}
-#
-#	triggered_district_planet_modifier = {
-#		potential = {
-#			is_planet_class = pc_ringworld_habitable
-#		}
-#		planet_farmers_produces_mult = @zone_urban_rural_worker_produces_mult
-#		planet_farmers_trade_upkeep_add = @zone_urban_rural_worker_trade_upkeep_add
-#		mult = 5
-#	}
-#
-#	#triggered_desc = {
-#	#	trigger = {
-#	#		always = yes
-#	#	}
-#	#	text = zone_urban_triggered_desc
-#	#}
-#	
-#	#potential = { # planet scope
-#	#	hidden_trigger = { exists = owner }
-#	#	owner = {
-#	#		hidden_trigger = { is_wilderness_empire = no }
-#	#		is_ai = no						# AI isn't great at handling these
-#	#		has_technology = tech_industrial_farming_2
-#	#	}
-#	#	NOT = {
-#	#		is_planet_class = pc_city
-#	#	}
-#	#}
-#	#
-#	#unlock = { # planet scope
-#	#	hidden_trigger = { exists = owner }
-#	#	owner = {
-#	#		hidden_trigger = { is_wilderness_empire = no }
-#	#		has_technology = tech_industrial_farming_2
-#	#	}
-#	#}
-#	
-#	show_in_tech = tech_industrial_farming_2
-#	
-#	ai_priority = 13
-#}
-#

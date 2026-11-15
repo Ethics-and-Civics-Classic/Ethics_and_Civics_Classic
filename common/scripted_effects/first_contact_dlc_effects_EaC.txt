@@ -625,8 +625,8 @@ create_MSI_effect = {
 				save_global_event_target_as = MSI_country
 				set_country_flag = MSI
 				if = {
-					limit = { 
-						has_machine_age_dlc = yes 
+					limit = {
+						has_machine_age_dlc = yes
 						is_guided_sapience_empire = no
 					}
 					give_technology = { tech = tech_epigenetic_triggers message = no }
@@ -707,8 +707,8 @@ create_MSI_effect = {
 				save_global_event_target_as = MSI_country
 				set_country_flag = MSI
 				if = {
-					limit = { 
-						has_machine_age_dlc = yes 
+					limit = {
+						has_machine_age_dlc = yes
 						is_guided_sapience_empire = no
 					}
 					give_technology = { tech = tech_epigenetic_triggers message = no }
@@ -804,60 +804,68 @@ generate_slaver_bonus = {
 
 	# Checking if there are any other pre-ftls to abduct
 	while = {
-		limit = { pop_amount < 5200 }
-		if = {
+		limit = {
+			pop_amount < 5200
+			any_country = {
+				species = {
+					ideal_planet_is_special = no
+					NOT = { has_trait = trait_hive_mind }
+				}
+				is_preftl_but_not_special = yes
+			}
+
+		}
+		random_country = {
 			limit = {
-				any_country = {
-					species = {
-						ideal_planet_is_special = no
-						NOT = { has_trait = trait_hive_mind }
-					}
-					is_preftl_but_not_special = yes
+				species = {
+					ideal_planet_is_special = no
+					NOT = { has_trait = trait_hive_mind }
 				}
+				is_preftl_but_not_special = yes
 			}
-			random_country = {
-				limit = {
-					species = {
-						ideal_planet_is_special = no
-						NOT = { has_trait = trait_hive_mind }
-					}
-					is_preftl_but_not_special = yes
-				}
-				owner_species = {
-					# first species to get kidnapped becomes the species of the debt collectors
-					save_event_target_as = random_primitive_species
-					if = {
-						limit = {
-							NOT = {
-								exists = event_target:debt_collectors_species
-							}
+			owner_species = {
+				# first species to get kidnapped becomes the species of the debt collectors
+				save_event_target_as = random_primitive_species
+				if = {
+					limit = {
+						NOT = {
+							exists = event_target:debt_collectors_species
 						}
-						save_global_event_target_as = debt_collectors_species
 					}
-				}
-
-				prev.owner = {
-					set_visited = prev.capital_scope.solar_system
+					save_global_event_target_as = debt_collectors_species
 				}
 			}
 
-			create_pop_group = {
-				species = event_target:random_primitive_species
-				effect = {
-					save_event_target_as = last_created_pop_group
-				}
+			prev.owner = {
+				set_visited = prev.capital_scope.solar_system
 			}
+		}
 
-			event_target:last_created_pop_group = {
-				set_citizenship_type = {
-					type = citizenship_slavery
-				}
+		create_pop_group = {
+			species = event_target:random_primitive_species
+			effect = {
+				save_event_target_as = last_created_pop_group
+			}
+		}
+
+		event_target:last_created_pop_group = {
+			set_citizenship_type = {
+				type = citizenship_slavery
 			}
 		}
 	}
 
 	while = {
-		limit = { pop_amount < 8100 }
+		limit = {
+			pop_amount < 8100
+			any_country = {
+				OR = {
+					has_origin = origin_broken_shackles
+					has_origin = origin_payback
+				}
+
+			}
+		}
 
 		random_country = {
 			limit = {
@@ -1308,9 +1316,9 @@ add_unity_tech = {
 				fail_effects = {
 					add_monthly_resource_mult = {
 						resource = society_research
-						value = @tier0researchreward
-						min = @tier0researchmin
-						max = @tier0researchmax
+						value = @tier1researchreward
+						min = @tier1researchmin
+						max = @tier1researchmax
 					}
 				}
 			}
@@ -1402,9 +1410,9 @@ add_laser_tech = {
 				fail_effects = {
 					add_monthly_resource_mult = {
 						resource = physics_research
-						value = @tier0researchreward
-						min = @tier0researchmin
-						max = @tier0researchmax
+						value = @tier1researchreward
+						min = @tier1researchmin
+						max = @tier1researchmax
 					}
 				}
 			}
@@ -1475,9 +1483,9 @@ add_mining_tech = {
 				fail_effects = {
 					add_monthly_resource_mult = {
 						resource = engineering_research
-						value = @tier0researchreward
-						min = @tier0researchmin
-						max = @tier0researchmax
+						value = @tier1researchreward
+						min = @tier1researchmin
+						max = @tier1researchmax
 					}
 				}
 			}
@@ -1515,9 +1523,9 @@ add_building_tech = {
 				fail_effects = {
 					add_monthly_resource_mult = {
 						resource = engineering_research
-						value = @tier0researchreward
-						min = @tier0researchmin
-						max = @tier0researchmax
+						value = @tier1researchreward
+						min = @tier1researchmin
+						max = @tier1researchmax
 					}
 				}
 			}
@@ -1687,9 +1695,9 @@ add_unity_tech_progress = {
 				fail_effects = {
 					add_monthly_resource_mult = {
 						resource = society_research
-						value = @tier0researchreward
-						min = @tier0researchmin
-						max = @tier0researchmax
+						value = @tier1researchreward
+						min = @tier1researchmin
+						max = @tier1researchmax
 					}
 				}
 			}
@@ -1781,9 +1789,9 @@ add_laser_tech_progress = {
 				fail_effects = {
 					add_monthly_resource_mult = {
 						resource = physics_research
-						value = @tier0researchreward
-						min = @tier0researchmin
-						max = @tier0researchmax
+						value = @tier1researchreward
+						min = @tier1researchmin
+						max = @tier1researchmax
 					}
 				}
 			}
@@ -1854,9 +1862,9 @@ add_mining_tech_progress = {
 				fail_effects = {
 					add_monthly_resource_mult = {
 						resource = engineering_research
-						value = @tier0researchreward
-						min = @tier0researchmin
-						max = @tier0researchmax
+						value = @tier1researchreward
+						min = @tier1researchmin
+						max = @tier1researchmax
 					}
 				}
 			}
@@ -1894,9 +1902,9 @@ add_building_tech_progress = {
 				fail_effects = {
 					add_monthly_resource_mult = {
 						resource = engineering_research
-						value = @tier0researchreward
-						min = @tier0researchmin
-						max = @tier0researchmax
+						value = @tier1researchreward
+						min = @tier1researchmin
+						max = @tier1researchmax
 					}
 				}
 			}

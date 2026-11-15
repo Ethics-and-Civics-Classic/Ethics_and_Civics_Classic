@@ -565,124 +565,837 @@ country_event = { # Create Full Ratling Empire # Root = Global Event Country
 	}
 }
 
-country_event = { #Death of the Matriarch
-	id = distar.212
-	title = "distar.212.name"
-	desc = "distar.212.desc"
-	picture = GFX_evt_ancient_tiyanki
-	show_sound = event_space_whale
-	location = event_target:dead_matriarch
+# They are freed - Prikki have random ethic/civic to match E&CC standards
+country_event = {
+	id = distar.2033
+	title = "distar.2033.name"
+	desc = "distar.2033.desc"
+	picture = GFX_evt_metropolis
+	show_sound = event_mystic_reveal
+	location = event_target:time_loop_world
+
+	is_triggered_only = yes
+
+	immediate = {
+		event_target:time_loop_world = {
+			change_pc = pc_desert
+			set_name = "NAME_Gish"
+			clear_planet_modifiers = yes
+			if = {
+				limit = {
+					root = { NOT = { species_portrait = rep16 } }
+				}
+				log = "limit passed"
+				create_species = {
+					name = "NAME_Prikki"
+					plural = "NAME_Prikki"
+					class = REP
+					portrait = rep16
+					namelist = REP4
+					traits = {
+						ideal_planet_class = pc_desert
+						trait = trait_industrious
+						trait = trait_solitary
+						trait = trait_decadent
+					}
+					homeworld = this
+					effect = {
+						save_event_target_as = prikki_species
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					root = { species_portrait = rep16 }
+				}
+				create_species = {
+					name = "NAME_Prikki"
+					plural = "NAME_Prikki"
+					class = REP
+					portrait = rep12
+					namelist = REP4
+					traits = {
+						ideal_planet_class = pc_desert
+						trait = trait_industrious
+						trait = trait_solitary
+						trait = trait_decadent
+					}
+					homeworld = this
+					effect = {
+						save_event_target_as = prikki_species
+					}
+				}
+			}
+			create_country = {
+				name = "NAME_Prikkiki_Ti"
+				adjective = "NAME_Prikki"
+				authority = random
+				civics = {
+					civic = civic_fanatic_purifiers
+					civic = civic_cutthroat_politics
+					civic = random
+				}
+				species = last_created_species
+				ethos = {
+					ethic = ethic_fanatic_xenophobe
+					ethic = ethic_militarist
+					ethic = random
+				}
+				flag = {
+					icon = {
+						category = "domination"
+						file = "domination_1.dds"
+					}
+					background= {
+						category = backgrounds
+						file = "v.dds"
+					}
+					colors = {
+						"teal"
+						"orange"
+						"null"
+						"null"
+					}
+				}
+				type = default
+				effect = {
+					save_global_event_target_as = time_loop_country
+					species = {
+						save_global_event_target_as = time_loop_species
+					}
+					establish_communications_no_message = root
+
+					##Copy technology
+					IF = {
+						LIMIT = {
+							any_neighbor_country = {
+								exists = this
+								is_country_type = default
+							}
+						}
+						random_neighbor_country = {
+							limit = { is_country_type = default }
+							save_event_target_as = tech_country
+						}
+						copy_techs_from = {
+							target = event_target:tech_country
+							except = {
+								# Horizon Signal
+								tech_akx_worm_1
+								tech_akx_worm_2
+								tech_akx_worm_3
+							}
+						}
+					}
+					ELSE_IF = {
+						LIMIT = {
+							any_country = {
+								is_ai = no
+							}
+						}
+						random_country = {
+							limit = { is_ai = no }
+							save_event_target_as = tech_country
+						}
+						copy_techs_from = {
+							target = event_target:tech_country
+							except = {
+								# Horizon Signal
+								tech_akx_worm_1
+								tech_akx_worm_2
+								tech_akx_worm_3
+							}
+						}
+					}
+					ELSE = {
+						random_country = {
+							limit = { is_country_type = default	}
+							save_event_target_as = tech_country
+						}
+						copy_techs_from = {
+							target = event_target:tech_country
+							except = {
+								# Horizon Signal
+								tech_akx_worm_1
+								tech_akx_worm_2
+								tech_akx_worm_3
+							}
+						}
+					}
+					IF = {
+						limit = {
+							event_target:tech_country = {
+								has_technology = tech_maulers
+							}
+						}
+						give_technology = { tech = tech_corvettes }
+						give_technology = { tech = tech_torpedoes_1 }
+
+					}
+					IF = {
+						limit = {
+							event_target:tech_country = {
+								has_technology = tech_weavers
+							}
+						}
+						give_technology = { tech = tech_destroyers }
+					}
+					IF = {
+						limit = {
+							event_target:tech_country = {
+								has_technology = tech_stingers
+							}
+						}
+						give_technology = { tech = tech_battleships }
+					}
+					IF = {
+						limit = {
+							event_target:tech_country = {
+								has_technology = tech_harbingers
+							}
+						}
+						give_technology = { tech = tech_cruisers }
+					}
+					##Add some new technologies
+					inverted_switch = {
+						trigger = has_technology
+						tech_starbase_2 = { give_technology = { tech = tech_starbase_2 } }
+						tech_starbase_3 = { give_technology = { tech = tech_starbase_3 } }
+						tech_starbase_4 = { give_technology = { tech = tech_starbase_4 } }
+						tech_starbase_5 = { give_technology = { tech = tech_starbase_5 } }
+						tech_power_plant_4 = { give_technology = { tech = tech_power_plant_4 } }
+						tech_mining_3 = { give_technology = { tech = tech_mining_3 } }
+						tech_power_hub_1 = { give_technology = { tech = tech_power_hub_1 } }
+					}
+
+					##Add resources
+					add_resource = { minerals = 10000 }
+					add_resource = { energy = 10000 }
+					add_resource = { food = 3000 }
+					add_resource = { consumer_goods = 3000 }
+					add_resource = { alloys = 7000 }
+					add_resource = { influence = 1000 }
+					add_resource = { unity = 27000 }
+
+					##Create fleets
+					if = {
+						limit = {
+							has_technology = tech_destroyers
+						}
+						create_fleet = {
+							effect = {
+								set_owner = event_target:time_loop_country
+								while = {
+									count = 8
+									create_ship = {
+										name = random
+										random_existing_design = destroyer
+										graphical_culture = "reptilian_01"
+									}
+								}
+								set_location = {
+									target = event_target:time_loop_world
+									distance = 10
+									angle = random
+								}
+							}
+						}
+					}
+					if = {
+						limit = {
+							has_technology = tech_cruisers
+						}
+						create_fleet = {
+							effect = {
+								set_owner = event_target:time_loop_country
+								while = {
+									count = 6
+									create_ship = {
+										name = random
+										random_existing_design = cruiser
+										graphical_culture = "reptilian_01"
+									}
+								}
+								set_location = {
+									target = event_target:time_loop_world
+									distance = 10
+									angle = random
+								}
+							}
+						}
+					}
+					if = {
+						limit = {
+							has_technology = tech_battleships
+						}
+						create_fleet = {
+							effect = {
+								set_owner = event_target:time_loop_country
+								while = {
+									count = 2
+									create_ship = {
+										name = random
+										random_existing_design = battleship
+										graphical_culture = "reptilian_01"
+									}
+								}
+								set_location = {
+									target = event_target:time_loop_world
+									distance = 10
+									angle = random
+								}
+							}
+						}
+					}
+					create_fleet = {
+						effect = {
+							set_owner = event_target:time_loop_country
+							while = {
+								count = 10
+								create_ship = {
+									name = random
+									random_existing_design = corvette
+									graphical_culture = "reptilian_01"
+								}
+							}
+						}
+					}
+				}
+			}
+			set_owner = event_target:time_loop_country
+			set_timed_carrier_flag = {
+				flag = ignore_ai_building_limitations
+				days = 1
+			}
+			set_capital = yes
+			while = {
+				count = 52
+				create_pop_group = {
+					species = event_target:time_loop_species
+				}
+			}
+			while = {
+				count = 3
+				add_district_and_planet_size_if_needed_effect = {
+					district = district_city
+				}
+			}
+			while = {
+				count = 4
+				add_district_and_planet_size_if_needed_effect = {
+					district = district_farming
+				}
+			}
+			while = {
+				count = 4
+				add_district_and_planet_size_if_needed_effect = {
+					district = district_mining
+				}
+			}
+			while = {
+				count = 5
+				add_district_and_planet_size_if_needed_effect = {
+					district = district_generator
+				}
+			}
+			add_building = building_system_capital
+			add_building = building_research_lab_1
+			add_building = building_foundry_1
+			add_building = building_food_processing_facility
+			add_building = building_energy_grid
+			add_building = building_mineral_purification_plant
+			add_building = building_bureaucratic_1
+			add_building = building_bureaucratic_1
+
+			while = {
+				count = 10
+				create_army = {
+					name = random
+					owner = event_target:time_loop_country
+					species = event_target:time_loop_species
+					type = defense_army
+				}
+			}
+
+			solar_system = {
+				event_target:time_loop_country = {
+					inverted_switch = { # If you don't have the technology for it build the simpler starbase.
+						trigger = has_technology
+						tech_starbase_3 = {
+							prev = {
+								create_starbase = {
+									size = starbase_starport
+									module = shipyard
+									module = shipyard
+									owner = event_target:time_loop_country
+								}
+							}
+						}
+						tech_starbase_4 = {
+							prev = {
+								create_starbase = {
+									size = starbase_starhold
+									module = shipyard
+									module = shipyard
+									module = shipyard
+									module = shipyard
+									owner = event_target:time_loop_country
+								}
+							}
+						}
+						tech_starbase_5 = {
+							prev = {
+								create_starbase = {
+									size = starbase_starfortress
+									module = shipyard
+									module = shipyard
+									module = shipyard
+									module = shipyard
+									module = shipyard
+									module = shipyard
+									owner = event_target:time_loop_country
+								}
+							}
+						}
+						default = {
+							prev = {
+								create_starbase = {
+									size = starbase_citadel
+									module = shipyard
+									module = shipyard
+									module = shipyard
+									module = shipyard
+									module = shipyard
+									module = shipyard
+									owner = event_target:time_loop_country
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		establish_communications_no_message = last_created_country
+	}
+
+	option = {
+		name = distar.2033.a
+		add_monthly_resource_mult = {
+			resource = physics_research
+			value = @tier2researchreward
+			min = @tier2researchmin
+			max = @tier2researchmax
+		}
+	}
+
+	option = {
+		name = distar.2033.b
+		add_monthly_resource_mult = {
+			resource = physics_research
+			value = @tier2researchreward
+			min = @tier2researchmin
+			max = @tier2researchmax
+		}
+	}
+}
+
+#### If shielded planet is left alone
+
+# Lizards break free - Prikki have random ethic/civic to match E&CC standards
+country_event = {
+	id = distar.2038
+	title = "distar.2038.name"
+	desc = "distar.2038.desc"
+	picture = GFX_evt_metropolis
+	show_sound = event_mystic_reveal
+	location = event_target:time_loop_world
 
 	is_triggered_only = yes
 
 	trigger = {
-		exists = event_target:elderly_tiyanki_fleet
-		FromFromFrom.fleet = {
-			is_same_value = event_target:elderly_tiyanki_fleet
+		event_target:time_loop_world = {
+			solar_system = {
+				NOT = { exists = space_owner }
+			}
 		}
 	}
 
 	immediate = {
-		set_country_flag = tiyanki_killed # Achievement flag
-		create_ambient_object = {
-			type = "elderly_tiyanki_dead_object"
-			location = fromfromfrom
-			effect = {
-				save_event_target_as = dead_matriarch
+		event_target:time_loop_world = {
+			change_pc = pc_desert
+			set_name = "NAME_Gish"
+			clear_planet_modifiers = yes
+			create_species = {
+				name = "NAME_Prikki"
+				plural = "NAME_Prikki"
+				class = REP
+				portrait = rep16
+				namelist = REP4
+				traits = {
+					ideal_planet_class = pc_desert
+					trait = trait_industrious
+					trait = trait_solitary
+					trait = trait_decadent
+				}
+				homeworld = this
 			}
-		}
-		every_playable_country = {
-			limit = {
-				has_event_chain = curator_poi_chain
-				fromfrom.solar_system = {
-					is_point_of_interest = {
-						id = curator_poi_tiyanki
-						event_chain = curator_poi_chain
-						owner = prev
+			create_country = {
+				name = "NAME_Prikkiki_Ti"
+				authority = random
+				civics = {
+					civic = civic_fanatic_purifiers
+					civic = civic_cutthroat_politics
+					civic = random
+				}
+				species = last_created_species
+				ethos = {
+					ethic = ethic_fanatic_xenophobe
+					ethic = ethic_militarist
+					ethic = random
+				}
+				flag = {
+					icon = {
+						category = "domination"
+						file = "domination_1.dds"
+					}
+					background= {
+						category = backgrounds
+						file = "v.dds"
+					}
+					colors = {
+						"teal"
+						"orange"
+						"null"
+						"null"
+					}
+				}
+				type = default
+				exclude_day_zero_contact = root #will not establish contact with this country or its federation allies
+				effect = {
+					establish_communications_no_message = root
+					save_global_event_target_as = time_loop_country
+					species = {
+						save_global_event_target_as = time_loop_species
+					}
+					root = {
+						every_federation_ally = {
+							establish_communications = event_target:time_loop_country
+						}
+					}
+					##Copy technology
+					IF = {
+						LIMIT = {
+							any_neighbor_country = {
+								exists = this
+								is_country_type = default
+							}
+						}
+						random_neighbor_country = {
+							limit = { is_country_type = default }
+							save_event_target_as = tech_country
+						}
+						copy_techs_from = {
+							target = event_target:tech_country
+							except = {
+								# Horizon Signal
+								tech_akx_worm_1
+								tech_akx_worm_2
+								tech_akx_worm_3
+							}
+						}
+					}
+					ELSE_IF = {
+						LIMIT = {
+							any_country = {
+								is_ai = no
+							}
+						}
+						random_country = {
+							limit = { is_ai = no }
+							save_event_target_as = tech_country
+						}
+						copy_techs_from = {
+							target = event_target:tech_country
+							except = {
+								# Horizon Signal
+								tech_akx_worm_1
+								tech_akx_worm_2
+								tech_akx_worm_3
+							}
+						}
+					}
+					ELSE = {
+						random_country = {
+							limit = { is_country_type = default	}
+							save_event_target_as = tech_country
+						}
+						copy_techs_from = {
+							target = event_target:tech_country
+							except = {
+								# Horizon Signal
+								tech_akx_worm_1
+								tech_akx_worm_2
+								tech_akx_worm_3
+							}
+						}
+					}
+					IF = {
+						limit = {
+							from = {
+								has_technology = tech_maulers
+							}
+						}
+						give_technology = { tech = tech_corvettes }
+						give_technology = { tech = tech_torpedoes_1 }
+
+					}
+					IF = {
+						limit = {
+							event_target:tech_country = {
+								has_technology = tech_weavers
+							}
+						}
+						give_technology = { tech = tech_destroyers }
+					}
+					IF = {
+						limit = {
+							event_target:tech_country = {
+								has_technology = tech_stingers
+							}
+						}
+						give_technology = { tech = tech_battleships }
+					}
+					IF = {
+						limit = {
+							event_target:tech_country = {
+								has_technology = tech_harbingers
+							}
+						}
+						give_technology = { tech = tech_cruisers }
+					}
+					##Add some new technologies
+					inverted_switch = {
+						trigger = has_technology
+						tech_starbase_2 = { give_technology = { tech = tech_starbase_2 } }
+						tech_starbase_3 = { give_technology = { tech = tech_starbase_3 } }
+						tech_starbase_4 = { give_technology = { tech = tech_starbase_4 } }
+						tech_starbase_5 = { give_technology = { tech = tech_starbase_5 } }
+						tech_power_plant_4 = { give_technology = { tech = tech_power_plant_4 } }
+						tech_mining_3 = { give_technology = { tech = tech_mining_3 } }
+						tech_power_hub_1 = { give_technology = { tech = tech_power_hub_1 } }
+					}
+
+					##Add resources
+					add_resource = { minerals = 10000 }
+					add_resource = { energy = 10000 }
+					add_resource = { food = 3000 }
+					add_resource = { consumer_goods = 3000 }
+					add_resource = { alloys = 7000 }
+					add_resource = { influence = 1000 }
+					add_resource = { unity = 27000 }
+
+					##Create fleets
+					if = {
+						limit = {
+							has_technology = tech_destroyers
+						}
+						create_fleet = {
+							effect = {
+								set_owner = event_target:time_loop_country
+								while = {
+									count = 8
+									create_ship = {
+										name = random
+										random_existing_design = destroyer
+										graphical_culture = "reptilian_01"
+									}
+								}
+								set_location = {
+									target = event_target:time_loop_world
+									distance = 10
+									angle = random
+								}
+							}
+						}
+					}
+					if = {
+						limit = {
+							has_technology = tech_cruisers
+						}
+						create_fleet = {
+							effect = {
+								set_owner = event_target:time_loop_country
+								while = {
+									count = 6
+									create_ship = {
+										name = random
+										random_existing_design = cruiser
+										graphical_culture = "reptilian_01"
+									}
+								}
+								set_location = {
+									target = event_target:time_loop_world
+									distance = 10
+									angle = random
+								}
+							}
+						}
+					}
+					if = {
+						limit = {
+							has_technology = tech_battleships
+						}
+						create_fleet = {
+							effect = {
+								set_owner = event_target:time_loop_country
+								while = {
+									count = 2
+									create_ship = {
+										name = random
+										random_existing_design = battleship
+										graphical_culture = "reptilian_01"
+									}
+								}
+								set_location = {
+									target = event_target:time_loop_world
+									distance = 10
+									angle = random
+								}
+							}
+						}
+					}
+					create_fleet = {
+						effect = {
+							set_owner = event_target:time_loop_country
+							while = {
+								count = 10
+								create_ship = {
+									name = random
+									random_existing_design = corvette
+									graphical_culture = "reptilian_01"
+								}
+							}
+						}
 					}
 				}
 			}
-			remove_point_of_interest = curator_poi_tiyanki
-			end_curator_chain = yes
-		}
-		set_global_flag = tiyanki_matriarch_killed
-	}
 
-	option = {
-		name = "distar.212.a"
-		trigger = { NOT = { has_valid_civic = civic_memorialist } }
-		hidden_effect = {
-			if = {
-				limit = { is_country_type = default }
-				country_event = { id = distar.213 }
-				country_event = { id = galcom.110 days = 60 }
+			set_owner = event_target:time_loop_country
+			set_timed_carrier_flag = {
+				flag = ignore_ai_building_limitations
+				days = 1
 			}
-		}
-	}
-
-	option = {
-		name = UNDERSTOOD
-		trigger = { has_valid_civic = civic_memorialist }
-		hidden_effect = {
-			if = {
-				limit = { is_country_type = default }
-				country_event = { id = distar.213 }
-				country_event = { id = galcom.110 days = 60 }
+			set_capital = yes
+			while = {
+				count = 52
+				create_pop_group = {
+					species = event_target:time_loop_species
+				}
 			}
-		}
-	}
 
-	option = {
-		name = galactic_features.385.reanimated
-
-		trigger = {
-			is_reanimator = yes
-		}
-
-		event_target:dead_matriarch = {
-			enable_special_project = {
-				name = "REANIMATE_TIYANKI_MATRIARCH"
-				location = this
-				owner = root.owner
+			while = {
+				count = 3
+				add_district_and_planet_size_if_needed_effect = {
+					district = district_city
+				}
 			}
-		}
-
-		hidden_effect = {
-			country_event = { id = distar.213 }
-			country_event = { id = galcom.110 days = 60 }
-		}
-	}
-
-	option = {
-		name = distar.212.b
-		trigger = {
-			can_harvest_dna = yes
-		}
-		set_country_flag = harvested_tiyanki_dna
-		custom_tooltip = distar.212.b.tooltip
-		hidden_effect = {
-			if = {
-				limit = { is_country_type = default }
-				country_event = { id = distar.213 }
-				country_event = { id = galcom.110 days = 60 }
+			while = {
+				count = 4
+				add_district_and_planet_size_if_needed_effect = {
+					district = district_farming
+				}
 			}
-		}
-	}
-	after = {
-		if = {
-			limit = {
-				is_robot_empire = no
-				num_owned_planets > 0
+			while = {
+				count = 4
+				add_district_and_planet_size_if_needed_effect = {
+					district = district_mining
+				}
 			}
-			generate_parade_city = yes
-			start_situation = {
-				type = leviathan_celebration_opportunity
-				target = event_target:parade_city
-				effect = {
-					set_situation_flag = celebration_tiyanki_matriarch
-					set_situation_flag = standard_unity_reward
+			while = {
+				count = 6
+				add_district_and_planet_size_if_needed_effect = {
+					district = district_generator
+				}
+			}
+			add_building = building_system_capital
+			add_building = building_research_lab_1
+			add_building = building_foundry_1
+			add_building = building_food_processing_facility
+			add_building = building_energy_grid
+			add_building = building_mineral_purification_plant
+			add_building = building_bureaucratic_1
+			add_building = building_bureaucratic_1
+
+			while = {
+				count = 10
+				create_army = {
+					name = random
+					owner = event_target:time_loop_country
+					species = event_target:time_loop_species
+					type = defense_army
+				}
+			}
+			solar_system = {
+				event_target:time_loop_country = {
+					inverted_switch = {
+						trigger = has_technology
+						tech_starbase_3 = {
+							prev = {
+								create_starbase = {
+									size = starbase_starport
+									module = shipyard
+									module = shipyard
+									owner = event_target:time_loop_country
+								}
+							}
+						}
+						tech_starbase_4 = {
+							prev = {
+								create_starbase = {
+									size = starbase_starhold
+									module = shipyard
+									module = shipyard
+									module = shipyard
+									module = shipyard
+									owner = event_target:time_loop_country
+								}
+							}
+						}
+						tech_starbase_5 = {
+							prev = {
+								create_starbase = {
+									size = starbase_starfortress
+									module = shipyard
+									module = shipyard
+									module = shipyard
+									module = shipyard
+									module = shipyard
+									module = shipyard
+									owner = event_target:time_loop_country
+								}
+							}
+						}
+						default = {
+							prev = {
+								create_starbase = {
+									size = starbase_citadel
+									module = shipyard
+									module = shipyard
+									module = shipyard
+									module = shipyard
+									module = shipyard
+									module = shipyard
+									owner = event_target:time_loop_country
+								}
+							}
+						}
+					}
 				}
 			}
 		}
+	}
+
+	option = {
+		name = distar.2038.a
 	}
 }
