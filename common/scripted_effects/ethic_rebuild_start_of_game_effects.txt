@@ -1,4 +1,219 @@
 
+generate_home_planet_final_pass = {
+	optimize_memory
+	# Adjust life-seeded colonies
+	if = {
+		limit = {
+			owner = {
+				has_origin = origin_life_seeded
+			}
+		}
+
+		owner = {
+			# Nuke other colonies gained from advanced empire, etc
+			every_owned_planet = {
+				limit = { is_capital = no }
+				remove_all_buildings = yes
+				destroy_colony = yes
+			}
+			if = {
+				limit = {
+					NOR = {
+						has_valid_civic = civic_permanent_employment
+						has_valid_civic = civic_machine_servitor
+						has_valid_civic = civic_machine_assimilator
+						has_valid_civic = civic_hive_bodysnatcher
+						species = { has_trait = trait_nascent_stage }
+					}
+				}
+				change_dominant_species = { species = last_created_species change_all = yes }
+			}
+		}
+	}
+	if = {
+		limit = {
+			owner = {
+				OR = {
+					has_origin = origin_shattered_ring
+					has_origin = origin_machine
+				}
+			}
+		}
+		owner = {
+			capital_scope = {
+				system_star = {
+					set_deposit = d_energy_10
+				}
+			}
+		}
+	}
+	if = {
+		limit = {
+			owner = {
+				has_origin = origin_tree_of_life
+			}
+		}
+		owner = {
+			capital_scope = {
+				add_deposit = d_tree_of_life_home
+			}
+		}
+	}
+	if = {
+		limit = {
+			owner = {
+				has_origin = origin_lithoid
+			}
+		}
+		owner = {
+			capital_scope = {
+				add_deposit = d_lithoid_crater
+				add_deposit = d_buried_lithoids
+				add_deposit = d_buried_lithoids
+				add_deposit = d_buried_lithoids
+				add_deposit = d_buried_lithoids
+			}
+		}
+	}
+	if = {
+		limit = {
+			owner = {
+				OR = { 
+					has_origin = origin_lost_colony
+					has_civic = civic_lost_colony
+					has_civic = PrimPlayer_civic_lost_colony
+				}
+				is_gestalt = no
+			}
+		}
+		owner = {
+			capital_scope = {
+				add_modifier = { modifier = colonial_spirit_mod }
+			}
+		}
+	}
+	else_if = {
+		limit = {
+			owner = {
+				OR = { 
+					has_origin = origin_lost_colony
+					has_civic = civic_lost_colony
+					has_civic = PrimPlayer_civic_lost_colony
+				}
+				is_gestalt = yes
+			}
+		}
+		owner = {
+			capital_scope = {
+				add_modifier = { modifier = colonial_spirit_gestalt_mod }
+			}
+		}
+	}
+	if = {
+		limit = {
+			owner = {
+				has_origin = origin_progenitor_hive
+			}
+		}
+		owner = {
+			capital_scope = {
+				add_deposit = d_progenitor
+			}
+		}
+	}
+	if = {
+		limit = {
+			owner = {
+				has_origin = origin_default
+			}
+		}
+		owner = {
+			if = {
+				limit = {
+					is_gestalt = no
+				}
+				capital_scope = {
+					add_modifier = { modifier = prosp_uni_mod days = 7200 }
+				}
+			}
+			else = {
+				capital_scope = {
+					add_modifier = { modifier = prosp_uni_mod_gestalt days = 7200 }
+				}
+			}
+		}
+	}
+	if = {
+		limit = {
+			owner = {
+				has_origin = origin_machine
+			}
+		}
+		owner = {
+			capital_scope = {
+				add_deposit = d_machine_minerals
+				solar_system = {
+					every_system_planet = {
+						limit = {
+							colonizable_planet = no
+							is_star = no
+						}
+						clear_deposits = yes
+					}
+					every_system_planet = {
+						limit = {
+							is_asteroid = yes
+						}
+						remove_planet = yes
+					}
+					every_system_planet = {
+						limit = {
+							colonizable_planet = no
+							is_star = no
+							is_asteroid = no
+							NOT = { is_planet_class = pc_gas_giant }
+						}
+						change_pc = pc_broken
+					}
+					every_system_planet = {
+						limit = {
+							colonizable_planet = no
+							is_star = no
+							is_planet_class = pc_gas_giant
+						}
+						change_pc = pc_molten
+						add_modifier = { modifier = chthonian_planet }
+						every_moon = {
+							limit = {
+								colonizable_planet = no
+							}
+							remove_planet = yes
+						}
+						while = {
+							limit = {
+								planet_size >= 20
+							}
+							change_planet_size = -6
+						}
+					}
+				}
+			}
+		}
+	}
+	if = {
+		limit = {
+			owner = {
+				any_owned_pop_group = {
+					has_trait = trait_exotic_metabolism
+				}
+			}
+		}
+
+		add_deposit = d_exotic_mountain
+	}
+
+}
+
 generate_start_buildings_and_districts = {
 	optimize_memory
 	set_timed_carrier_flag = {
@@ -1059,6 +1274,224 @@ generate_civic_secondary_pops = {
 					species = last_created_species
 				}
 			}
+		}
+	}
+}
+
+lost_colony_generate_parent_effect = {
+	event_target:lost_colony_child = {	
+		if = {
+			limit = {
+				is_nomadic = yes
+			}
+			random_list = {
+				1 = {
+					modify_species = {
+						species = species
+						ideal_planet_class = pc_desert
+						change_scoped_species = no
+						effect = { save_event_target_as = lost_colony_parent_species }
+					}
+					modifier = {
+						mult = 0
+						species = { has_trait = trait_aquatic }
+					}
+				}
+				1 = {
+					modify_species = {
+						species = species
+						ideal_planet_class = pc_arid
+						change_scoped_species = no
+						effect = { save_event_target_as = lost_colony_parent_species }
+					}
+					modifier = {
+						mult = 0
+						species = { has_trait = trait_aquatic }
+					}
+				}
+				1 = {
+					modify_species = {
+						species = species
+						ideal_planet_class = pc_savannah
+						change_scoped_species = no
+						effect = { save_event_target_as = lost_colony_parent_species }
+					}
+					modifier = {
+						mult = 0
+						species = { has_trait = trait_aquatic }
+					}
+				}
+				1 = {
+					modify_species = {
+						species = species
+						ideal_planet_class = pc_tropical
+						change_scoped_species = no
+						effect = { save_event_target_as = lost_colony_parent_species }
+					}
+				}
+				1 = {
+					modify_species = {
+						species = species
+						ideal_planet_class = pc_continental
+						change_scoped_species = no
+						effect = { save_event_target_as = lost_colony_parent_species }
+					}
+				}
+				1 = {
+					modify_species = {
+						species = species
+						ideal_planet_class = pc_ocean
+						change_scoped_species = no
+						effect = { save_event_target_as = lost_colony_parent_species }
+					}
+					modifier = {
+						mult = 10
+						species = { has_trait = trait_aquatic }
+					}
+				}
+				1 = {
+					modify_species = {
+						species = species
+						ideal_planet_class = pc_arctic
+						change_scoped_species = no
+						effect = { save_event_target_as = lost_colony_parent_species }
+					}
+				}
+				1 = {
+					modify_species = {
+						species = species
+						ideal_planet_class = pc_tundra
+						change_scoped_species = no
+						effect = { save_event_target_as = lost_colony_parent_species }
+					}
+				}
+				1 = {
+					modify_species = {
+						species = species
+						ideal_planet_class = pc_alpine
+						change_scoped_species = no
+						effect = { save_event_target_as = lost_colony_parent_species }
+					}
+				}
+				0 = {
+					modify_species = {
+						species = species
+						ideal_planet_class = pc_volcanic
+						change_scoped_species = no
+						effect = { save_event_target_as = lost_colony_parent_species }
+					}
+					modifier = {
+						add = 50
+						species = { has_trait = trait_infernal }
+					}
+				}
+			}
+		}
+		else = {
+			species = { save_event_target_as = lost_colony_parent_species }
+		}
+	}
+	if = { # hive parent
+		limit = {
+			event_target:lost_colony_child = {
+				is_hive_empire = yes
+			}
+		}
+		if = { # Parent hive has Progenitor hive if you own the Overlord DLC
+			limit = {
+				has_overlord_dlc = yes
+			}
+			create_country = {
+				species = event_target:lost_colony_parent_species
+				name_list = event_target:lost_colony_child
+				type = default
+				origin = "origin_progenitor_hive"
+				government_restrictions = {
+					civics = {
+						NOT = {
+							value = civic_hive_bodysnatcher
+						}
+					}
+				}
+				authority = auth_hive_mind
+				civics = {
+					civic = civic_hive_divided_attention
+					civic = random
+				}
+			}
+		}
+		else = {
+			create_country = {
+				species = event_target:lost_colony_parent_species
+				name_list = event_target:lost_colony_child
+				type = default
+				origin = "origin_default"
+				government_restrictions = {
+					civics = {
+						NOT = {
+							value = civic_hive_bodysnatcher
+						}
+					}
+				}
+				authority = auth_hive_mind
+				civics = {
+					civic = civic_hive_divided_attention
+					civic = random
+				}
+			}
+		}
+	}
+	else_if = { # machine parent
+		limit = {
+			event_target:lost_colony_child = {
+				is_machine_empire = yes
+			}
+		}
+		create_country = {
+			species = event_target:lost_colony_parent_species
+			name_list = event_target:lost_colony_child
+			type = default
+			origin = "origin_default"
+			government_restrictions = {
+				civics = {
+					NOR = {
+						value = civic_machine_servitor
+						value = civic_machine_assimilator
+					}
+				}
+			}
+			authority = auth_machine_intelligence
+			civics = {
+				civic = civic_machine_delegated_functions
+				civic = random
+			}
+		}
+	}
+	else = { # default parent
+		create_country = {
+			species = event_target:lost_colony_parent_species
+			name_list = event_target:lost_colony_child
+			type = default
+			origin = "origin_default"
+			government_restrictions = {
+				authority = {
+					NOR = {
+						value = auth_machine_intelligence
+						value = auth_hive_mind
+					}
+				}
+			}
+		}
+	}
+	last_created_country = {
+		save_event_target_as = lost_colony_parent
+		add_resource = {
+			minerals = 2400
+			energy = 2400
+			food = 2400
+			alloys = 800
+			consumer_goods = 1200
+			influence = 600
 		}
 	}
 }
