@@ -10,6 +10,114 @@ namespace = distar
 # root = ship scope
 # from = planet scope
 
+###### EAT OR BE EATEN ######
+ship_event = {
+	id = distar.1050
+	title = "distar.1050.name"
+	picture = GFX_evt_space_debris
+	show_sound = event_alien_nature
+	location = FROM
+
+	is_triggered_only = yes
+
+	desc = {
+		trigger = { owner = { is_lithoid_empire = no } }
+		text = distar.1050.desc
+	}
+	desc = {
+		trigger = { owner = { is_lithoid_empire = yes } }
+		text = distar.1050.desc_lithoid
+	}
+
+	trigger = {
+		any_playable_country = {
+			is_country_type = default
+			NOR = {
+				is_same_value = root.owner
+				has_country_flag = lost_colony_parent
+				has_country_flag = chosen_empire
+				is_machine_empire = yes
+				is_synthetic_empire = yes
+				owner_species = {
+					NOT = { is_archetype = BIOLOGICAL }
+				}
+			}
+		}
+	}
+	immediate = {
+		owner = {
+			country_event = { id = story.5 days = 30 }
+			set_country_flag = eat_or_be_eaten
+		}
+		random_playable_country = {
+			limit = {
+				NOR = {
+					is_same_value = root.owner
+					has_country_flag = lost_colony_parent
+					has_country_flag = chosen_empire
+					is_machine_empire = yes
+					is_synthetic_empire = yes
+					owner_species = {
+						NOT = { is_archetype = BIOLOGICAL }
+					}
+				}
+			}
+			weights = {
+				base = 1
+				modifier = {
+					factor = 10
+					has_communications = root.owner
+				}
+			}
+			establish_communications = root.owner
+			save_event_target_as = delicious_aliens
+			root.owner = { set_country_flag = establishing_delicious_comms }
+		}
+	}
+
+	option = {
+		name = distar.1050.a
+		hidden_effect = {
+			if = {
+				limit = {
+					root.owner = { has_country_flag = establishing_delicious_comms }
+				}
+				custom_tooltip = distar.1050.a.tooltip
+			}
+		}
+		owner = {
+			add_monthly_resource_mult = {
+				resource = society_research
+				value = @tier2researchreward
+				min = @tier2researchmin
+				max = @tier2researchmax
+			}
+		}
+	}
+
+	option = {
+		exclusive_trigger = { owner = { has_origin = origin_evolutionary_predators } }
+		name = distar.1050.b.evopred
+		hidden_effect = {
+			if = {
+				limit = {
+					root.owner = { has_country_flag = establishing_delicious_comms }
+				}
+				custom_tooltip = distar.1050.a.tooltip
+			}
+		}
+		owner = {
+			give_evolutionary_predator_situation_progress_and_dna = { AMOUNT = large }
+			add_monthly_resource_mult = {
+				resource = society_research
+				value = @tier2researchreward
+				min = @tier2researchmin
+				max = @tier2researchmax
+			}
+		}
+	}
+}
+
 country_event = { # Spawn Ratlings # Root = Global Event Country
 	id = distar.232
 	hide_window = yes

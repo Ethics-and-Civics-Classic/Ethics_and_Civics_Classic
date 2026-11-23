@@ -44,6 +44,26 @@
 ###################################################################################################
 										# NPC Nation CIVICS#
 ###################################################################################################
+####
+# Pre-FTL origin exclusively for Pre-FTL CoM
+####
+origin_lost_colony_ai_only = {
+	is_origin = yes
+	icon = "gfx/interface/icons/origins/origins_lost_colony.dds"
+
+	playable = {
+		always = no # Non-player origin
+	}
+
+	possible = {
+	}
+
+	description = origin_no_effect
+
+	random_weight = {
+		base = 0
+	}
+}
 
 ########################	Every nation gets this		########################
 PrimPlayer_civic_nation_state = {	
@@ -292,10 +312,12 @@ PrimPlayer_civic_the_obelisk = {
 	possible = {
 		civics = {
 			NOR = { 
+				value = PrimPlayer_civic_lost_colony
+				#value = civic_lost_colony
 				value = PrimPlayer_civic_scion_materialist
 				value = PrimPlayer_civic_scion_spiritualist
-				value = civic_scion_materialist
-				value = civic_scion_spiritualist
+				#value = civic_scion_materialist
+				#value = civic_scion_spiritualist
 			}
 		}
 	}
@@ -362,6 +384,95 @@ civic_the_obelisk = {
 	}
 }
 
+PrimPlayer_civic_lost_colony = {
+	#is_origin = yes
+	icon = "gfx/interface/icons/origins/origins_lost_colony.dds"
+	picture = GFX_origin_lost_colony
+	#max_once_global = no
+
+	playable = {
+		always = yes
+	}
+	modification = no
+
+	potential = {
+		origin = { 
+			OR = {
+				value = origin_primitive_player_pre_industrial_age
+				value = origin_primitive_player_industrial_age
+				value = origin_primitive_player_machine_age
+				value = origin_primitive_player_atomic_age
+				value = origin_primitive_player_early_space_age
+				#value = origin_default_pre_ftl
+			}
+		}
+	}
+	
+	possible = {
+		is_nomadic = no
+		civics = {
+			NOR = { 
+				value = PrimPlayer_civic_the_obelisk
+				#value = civic_the_obelisk
+				value = PrimPlayer_civic_scion_materialist
+				value = PrimPlayer_civic_scion_spiritualist
+				#value = civic_scion_materialist
+				#value = civic_scion_spiritualist
+				value = PrimPlayer_civic_void_dwellers 
+				value = PrimPlayer_civic_void_machines 
+				value = PrimPlayer_civic_shattered_ring
+			}
+		}
+	}
+
+	description = "PrimPlayer_civic_tooltip_lost_colony_effects"
+	negative_description = "PrimPlayer_civic_tooltip_lost_colony_negative_effects"
+	#flags = { custom_start_screen }
+	
+	swap_type = {
+		trigger = {
+			has_origin = origin_primitive_player_early_space_age
+		}
+		description = "PrimPlayer_civic_tooltip_lost_colony_effects_early_space_age"
+	}
+
+	traits = {
+	}
+
+	random_weight = {
+		base = 5
+	}
+}
+
+civic_lost_colony = {
+	#is_origin = yes
+	icon = "gfx/interface/icons/origins/origins_lost_colony.dds"
+	picture = GFX_origin_lost_colony
+	#max_once_global = no
+
+	playable = {
+		always = yes
+	}
+	modification = no
+
+	potential = {
+		civics = {
+			value = civic_lost_colony # Added via event - this trigger prevents the civic from being picked by others
+		}
+	}
+
+	description = "PrimPlayer_civic_tooltip_lost_colony_effects"
+	negative_description = "PrimPlayer_civic_tooltip_lost_colony_negative_effects"
+	#flags = { custom_start_screen }
+
+	traits = {
+	}
+
+	random_weight = {
+		base = 5
+	}
+}
+
 PrimPlayer_civic_scion_materialist = {
 	icon = "gfx/interface/icons/origins/origins_scion_1.dds"
 	#max_once_global = yes	#Cog Note - If this works, maybe we enable it?
@@ -398,12 +509,14 @@ PrimPlayer_civic_scion_materialist = {
 		civics = {
 			NOR = { 
 				value = civic_pompous_purists 
+				value = PrimPlayer_civic_lost_colony
+				#value = civic_lost_colony
 				value = PrimPlayer_civic_the_obelisk
-				value = civic_the_obelisk
+				#value = civic_the_obelisk
 				value = PrimPlayer_civic_scion_spiritualist
-				value = civic_scion_spiritualist
+				#value = civic_scion_spiritualist
 				value = PrimPlayer_civic_barbaric_despoilers_khan
-				value = civic_barbaric_despoilers_khan
+				#value = civic_barbaric_despoilers_khan
 			}
 		}
 		#species_archetype = { NOT = { value = MACHINE } }	#Cog Note - Why would materialist scions care?
@@ -512,12 +625,14 @@ PrimPlayer_civic_scion_spiritualist = {
 		civics = {
 			NOR = { 
 				value = civic_pompous_purists 
+				value = PrimPlayer_civic_lost_colony
+				#value = civic_lost_colony
 				value = PrimPlayer_civic_the_obelisk
-				value = civic_the_obelisk
+				#value = civic_the_obelisk
 				value = PrimPlayer_civic_scion_materialist
-				value = civic_scion_materialist
+				#value = civic_scion_materialist
 				value = PrimPlayer_civic_barbaric_despoilers_khan
-				value = civic_barbaric_despoilers_khan
+				#value = civic_barbaric_despoilers_khan
 				#value = civic_anglers
 				#value = civic_corporate_anglers
 				#value = civic_corporate_machine_anglers
@@ -705,6 +820,135 @@ civic_here_be_dragons = {
 	}
 }
 
+PrimPlayer_civic_life_seeded = {
+	#is_origin = no
+	icon = "gfx/interface/icons/origins/origins_life_seeded.dds"
+	picture = GFX_origin_life_seeded
+
+	starting_colony = pc_gaia
+	habitability_preference = pc_gaia
+	preferred_planet_class_neighbor = no
+
+	playable = {
+		has_apocalypse_dlc = yes
+	}
+	
+	modification = no
+	potential = {
+		origin = { 
+			OR = {
+				value = origin_primitive_player_pre_industrial_age
+				value = origin_primitive_player_industrial_age
+				value = origin_primitive_player_machine_age
+				value = origin_primitive_player_atomic_age
+				value = origin_primitive_player_early_space_age
+				#value = origin_default_pre_ftl
+			}
+		}
+	}
+
+	possible = {
+		is_nomadic = no
+		authority = { NOT = { value = auth_machine_intelligence } }		# Modded
+		ethics = {
+			NOR = {
+				text = civic_tooltip_not_industrial
+				value = ethic_industrial
+				value = ethic_fanatic_industrial
+			}
+		}
+		civics = {
+			NOR = {
+				text = civic_tooltip_not_mutagenic
+				value = civic_toxic_baths
+				value = civic_toxic_baths_individual_machine
+				value = civic_corporate_toxic_baths
+				value = civic_corporate_toxic_baths_individual_machine
+				value = civic_hive_toxic_baths
+				value = civic_machine_toxic_baths
+			}
+			NOR = {
+				value = civic_machine_cult								# Modded
+				value = civic_machine_cult_machine						# Modded
+				value = civic_slave_race								# Modded
+				value = civic_symbiotic_race							# Modded
+			}
+			NOR = {
+				text = civic_tooltip_not_guided
+				value = civic_guided_sapience
+				value = civic_corporate_guided_sapience
+				value = civic_hive_guided_sapience
+				value = civic_machine_guided_sapience
+			}
+			NOR = { 
+				value = PrimPlayer_civic_void_dwellers 
+				value = PrimPlayer_civic_void_machines 
+				value = PrimPlayer_civic_shattered_ring
+			}
+		}
+	}
+
+	description = "origin_tooltip_life_seeded_effects"
+	negative_description = "origin_tooltip_life_seeded_negative_effects"
+	random_weight = {
+		base = 5
+	}
+
+	swap_type = {
+		description = "origin_tooltip_life_seeded_effects"
+		negative_description = "origin_tooltip_life_seeded_machine_negative_effects"
+
+		trigger = {
+			OR = {
+				is_individual_machine = yes
+				is_machine_empire = yes
+			}
+		}
+	}
+}
+
+civic_life_seeded = {
+	#is_origin = no
+	icon = "gfx/interface/icons/origins/origins_life_seeded.dds"
+	picture = GFX_origin_life_seeded
+
+	starting_colony = pc_gaia
+	habitability_preference = pc_gaia
+	preferred_planet_class_neighbor = no
+
+	playable = {
+		has_apocalypse_dlc = yes
+	}
+
+	modification = no
+	potential = {
+		civics = {
+			value = civic_life_seeded # Added via event - this trigger prevents the civic from being picked by others
+		}
+	}
+
+	description = "origin_tooltip_life_seeded_effects"
+	negative_description = "origin_tooltip_life_seeded_negative_effects"
+
+	swap_type = {
+		description = "origin_tooltip_life_seeded_effects"
+		negative_description = "origin_tooltip_life_seeded_machine_negative_effects"
+
+		trigger = {
+			OR = {
+				is_individual_machine = yes
+				is_machine_empire = yes
+			}
+		}
+	}
+
+	#advanced_start = yes
+
+	random_weight = {
+		base = 0
+	}
+}
+
 PrimPlayer_civic_shattered_ring = {
 	is_origin = no
 	icon = "gfx/interface/icons/origins/origins_shattered_ring.dds"
@@ -737,7 +981,10 @@ PrimPlayer_civic_shattered_ring = {
 	
 	possible = {
 		civics = {
-			NOT = { value = civic_agrarian_idyll }
+			NOR = { 
+				value = civic_agrarian_idyll
+				value = PrimPlayer_civic_lost_colony
+			}
 			NOR = {
 				text = civic_tooltip_not_anglers
 				value = civic_anglers
@@ -841,7 +1088,10 @@ PrimPlayer_civic_void_dwellers = {
 				value = civic_idyllic_bloom
 				value = civic_hive_idyllic_bloom
 			}
-			NOT = { value = civic_agrarian_idyll }
+			NOR = { 
+				value = civic_agrarian_idyll
+				value = PrimPlayer_civic_lost_colony
+			}
 			NOR = {
 				text = civic_tooltip_not_anglers
 				value = civic_anglers
@@ -957,7 +1207,10 @@ PrimPlayer_civic_void_machines = {
 	possible = {
 		species_archetype = { value = MACHINE }
 		civics = {
-			NOT = { value = civic_agrarian_idyll }
+			NOR = { 
+				value = civic_agrarian_idyll
+				value = PrimPlayer_civic_lost_colony
+			}
 			NOR = {
 				text = civic_tooltip_not_anglers
 				value = civic_anglers

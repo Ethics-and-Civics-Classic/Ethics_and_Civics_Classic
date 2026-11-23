@@ -220,6 +220,10 @@ com_sol_system = {
 			}
 			event_target:npc_UNoE = {
 				set_country_flag = human_1
+				if = {
+					limit = { event_target:lost_colony_child = { has_origin = origin_lost_colony } }
+					set_country_flag = lost_colony_parent_origin	#Enables advanced empire start for parent
+				}
 				set_country_flag = lost_colony_parent
 				create_starting_leaders = yes
 				country_event = { id = game_start.9 }
@@ -483,6 +487,723 @@ com_sol_system = {
 	neighbor_system = {
 		hyperlane_jumps = { min = 1 max = @jumps }
 		initializer = "com_sol_neighbor_t1_first_colony"
+	}
+}
+
+# Sol System (Human Lost Colony SP)
+lost_colony_sol_system = {
+	name = "NAME_Sol"
+	class = "sc_g"
+
+	asteroid_belt = {
+		type = rocky_asteroid_belt
+		radius = 145
+	}
+	asteroid_belt = {
+		type = icy_asteroid_belt
+		radius = 290
+	}
+	flags = { sol_system lost_colony_sol sol empire_home_system }
+
+	usage = misc_system_init
+
+	usage_odds = {
+		base = 0
+		modifier = {
+			any_playable_country = {
+				has_origin = origin_lost_colony
+				is_human_species = yes
+				NOR = {
+					has_country_flag = human_2
+					has_country_flag = human_3
+				}
+			}
+			NOT = { any_system = { has_star_flag = sol } }
+			NOT = { has_star_flag = empire_cluster }
+			is_fe_cluster = no
+			is_marauder_cluster = no
+			add = 99999
+		}
+	}
+
+	max_instances = 1
+
+	init_effect = {
+		every_neighbor_system = {
+			set_star_flag = empire_cluster
+			every_neighbor_system = {
+				set_star_flag = empire_cluster
+			}
+		}
+		generate_home_system_resources = yes
+	}
+
+	planet = {
+		name = "NAME_Sol"
+		class = "pc_g_star"
+		orbit_distance = 0
+		orbit_angle = 1
+		size = 30
+		has_ring = no
+	}
+
+	planet = {
+		name = "NAME_Mercury"
+		class = "pc_molten"
+		orbit_distance = 40
+		orbit_angle = 15
+		size = 10
+		has_ring = no
+		init_effect = {
+			set_planet_entity = {
+				entity = molten_planet_mercury_entity
+				atmosphere_color = hsv { 0.8 0.1 0.2 }
+				atmosphere_intensity = 0.1
+				atmosphere_width = 1.0
+			}
+		}
+	}
+
+	planet = {
+		name = "NAME_Venus"
+		class = "pc_toxic"
+		orbit_distance = 25
+		orbit_angle = 125
+		size = 17
+		has_ring = no
+		init_effect = {
+			set_planet_entity = {
+				entity = toxic_planet_venus_entity
+				atmosphere_color = hsv { 0.854 0.072 0.7 }
+				atmosphere_intensity = 0.2
+				atmosphere_width = 1.0
+			}
+		}
+	}
+
+	planet = {
+		class = "pc_continental"
+		orbit_distance = 25
+		orbit_angle = 120
+		size = 18
+		starting_planet = yes
+		has_ring = no
+		entity = "continental_planet_earth_entity"
+		deposit_blockers = none
+		modifiers = none
+		flags = { planet_earth }
+
+		init_effect = {
+			prevent_anomaly = yes
+		}
+
+		init_effect = {
+			save_global_event_target_as = sol_system_earth
+
+			random_playable_country = {
+				limit = {
+					is_human_species = yes
+					has_origin = origin_lost_colony
+				}
+				set_country_flag = parent_system_spawned
+				set_country_flag = human_lost_colony
+				save_event_target_as = human_lost_colony
+				owner_species = {
+					save_event_target_as = human_species
+					set_species_homeworld = prevprev
+				}
+			}
+			lost_colony_generate_parent_human_effect = yes
+			create_colony = {
+				owner = event_target:lost_colony_parent
+			}
+			set_planet_size = 18
+			generate_earth_deposits_and_blockers = yes
+			set_earth_entity = yes
+			clear_blockers = yes
+			colony = {
+				generate_start_buildings_and_districts = yes
+				generate_start_pops = yes
+				generate_lost_colony_parent_bonus = yes
+			}
+			event_target:lost_colony_parent = {
+				if = {
+					limit = { event_target:lost_colony_child = { has_origin = origin_lost_colony } }
+					set_country_flag = lost_colony_parent_origin	#Enables advanced empire start for parent
+				}
+				set_country_flag = lost_colony_parent
+				set_country_flag = special_intro_for@event_target:human_lost_colony
+				set_country_flag = lost_colony_parent_of@event_target:human_lost_colony
+				create_starting_leaders = yes
+				country_event = { id = game_start.9 }
+				country_event = { id = game_start.33 days = 1 } # needs delay for system ownership to settle
+				owner_species = { set_species_homeworld = prevprev }
+			}
+			set_name = "NAME_Earth"
+		}
+
+		moon = {
+			name = "NAME_Luna"
+			class = "pc_barren_cold"
+			size = 5
+			orbit_distance = 12
+			orbit_angle = 40
+			has_ring = no
+			entity = "cold_barren_planet_luna_entity"
+		}
+	}
+
+	planet = {
+		name = "NAME_Mars"
+		class = "pc_barren"
+		orbit_distance = 25
+		orbit_angle = 60
+		size = 13
+		has_ring = no
+		entity = "barren_planet_mars_entity"
+		flags = { planet_mars }
+
+		init_effect = {
+			add_modifier = {
+				modifier = "terraforming_candidate"
+				days = -1
+			}
+		}
+	}
+
+	planet = {
+		name = "NAME_1_Ceres"
+		class = "pc_asteroid"
+		orbit_distance = 30
+		orbit_angle = -210
+		size = 5
+		has_ring = no
+	}
+
+	planet = {
+		name = "NAME_2_Pallas"
+		class = "pc_asteroid"
+		orbit_distance = 0
+		orbit_angle = -95
+		size = 5
+		has_ring = no
+	}
+
+	planet = {
+		name = "NAME_3_Juno"
+		class = "pc_asteroid"
+		orbit_distance = 0
+		orbit_angle = 285
+		size = 5
+		has_ring = no
+	}
+
+	planet = {
+		name = "NAME_4_Vesta"
+		class = "pc_asteroid"
+		orbit_distance = 0
+		orbit_angle = -80
+		size = 5
+		has_ring = no
+	}
+
+	planet = {
+		name = "NAME_Jupiter"
+		class = "pc_gas_giant"
+		orbit_distance = 40
+		orbit_angle = -160
+		size = 35
+		has_ring = no
+		flags = { planet_jupiter }
+		entity = "gas_giant_jupiter_entity"
+		change_orbit = 6
+
+		moon = {
+			name = "NAME_Io"
+			class = "pc_molten"
+			size = 6
+			orbit_distance = 10
+			orbit_angle = 110
+			has_ring = no
+			flags = { moon_io }
+		}
+		moon = {
+			name = "NAME_Europa"
+			class = "pc_frozen"
+			size = 6
+			orbit_distance = 2.5
+			orbit_angle = 190
+			has_ring = no
+			flags = { moon_europa }
+		}
+		moon = {
+			name = "NAME_Ganymede"
+			class = "pc_frozen"
+			size = 9
+			orbit_distance = 2.5
+			orbit_angle = 80
+			has_ring = no
+			flags = { moon_ganymede }
+		}
+		moon = {
+			name = "NAME_Callisto"
+			class = "pc_frozen"
+			size = 7
+			orbit_distance = 2.5
+			orbit_angle = -155
+			has_ring = no
+			flags = { moon_callisto }
+		}
+	}
+
+	planet = {
+		name = "NAME_Saturn"
+		class = "pc_gas_giant"
+		orbit_distance = 25
+		orbit_angle = 170
+		size = 30
+		has_ring = yes
+		entity = "gas_giant_05_entity"
+		change_orbit = 7
+
+		moon = {
+			name = "NAME_Titan"
+			class = "pc_frozen"
+			size = 8
+			orbit_distance = 12
+			orbit_angle = 320
+			has_ring = no
+		}
+	}
+
+	planet = {
+		name = "NAME_Uranus"
+		class = "pc_gas_giant"
+		orbit_distance = 25
+		orbit_angle = 125
+		size = 20
+		has_ring = no
+		init_effect = {
+			set_planet_entity = {
+				entity = gas_giant_uranus_entity
+				atmosphere_color = hsv { 0.548 0.519 0.9 }
+				atmosphere_intensity = 0.1
+				atmosphere_width = 1.0
+			}
+		}
+	}
+
+	planet = {
+		name = "NAME_Neptune"
+		class = "pc_gas_giant"
+		orbit_distance = 25
+		orbit_angle = -195
+		size = 20
+		has_ring = no
+		change_orbit = 4
+
+		moon = {
+			name = "NAME_Triton"
+			class = "pc_frozen"
+			size = 6
+			orbit_distance = 7
+			orbit_angle = 115
+			has_ring = no
+		}
+
+		init_effect = {
+			set_planet_entity = {
+				entity = gas_giant_neptune_entity
+				atmosphere_color = hsv { 0.626 0.782 0.9 }
+				atmosphere_intensity = 0.1
+				atmosphere_width = 1.0
+			}
+		}
+	}
+
+	planet = {
+		name = "NAME_134340_Pluto"
+		class = "pc_asteroid"
+		orbit_distance = 30
+		orbit_angle = -210
+		size = 5
+		has_ring = no
+	}
+
+	planet = {
+		name = "NAME_136472_Makemake"
+		class = "pc_ice_asteroid"
+		orbit_distance = 0
+		orbit_angle = -95
+		size = 5
+		has_ring = no
+	}
+
+	planet = {
+		name = "NAME_136108_Haumea"
+		class = "pc_ice_asteroid"
+		orbit_distance = 0
+		orbit_angle = 285
+		size = 5
+		has_ring = no
+	}
+
+	planet = {
+		name = "NAME_20000_Varuna"
+		class = "pc_ice_asteroid"
+		orbit_distance = 0
+		orbit_angle = -80
+		size = 5
+		has_ring = no
+	}
+
+	init_effect = {
+		create_starbase = {
+			size = starbase_starport
+			module = shipyard
+			building = crew_quarters
+			owner = event_target:lost_colony_parent
+			effect = {
+				if = {
+					limit = {
+						event_target:lost_colony_parent = {
+							is_gestalt = yes
+						}
+					}
+					if = {
+						limit = {
+							event_target:lost_colony_parent = {
+								has_valid_civic = civic_machine_astromining_drones
+							}
+						}
+						set_starbase_module = {
+							slot = 1
+							module = astromining_bay
+						}
+					}
+					else = {
+						set_starbase_module = {
+							slot = 1
+							module = solar_panel_network
+						}
+					}
+				}
+				else = {
+					set_starbase_module = {
+						slot = 1
+						module = trading_hub
+					}
+				}
+			}
+		}
+	}
+
+	neighbor_system = {
+		hyperlane_jumps = { min = 1 max = @jumps }
+		initializer = "lost_colony_sol_neighbor_t1"
+	}
+	neighbor_system = {
+		hyperlane_jumps = { min = 1 max = @jumps }
+		initializer = "lost_colony_sol_neighbor_t1_first_colony"
+	}
+}
+
+# Human Lost Colony Neighbor Tier 1 First Colony
+lost_colony_sol_neighbor_t1_first_colony = {
+	name = "NAME_Alpha_Centauri"
+	class = sc_trinary_1
+	flags = { neighbor_t1_first_colony }
+
+	init_effect = {
+		every_neighbor_system = { set_star_flag = empire_cluster }
+	}
+
+	planet = {
+		name = "NAME_Alpha_Centauri_A"
+		count = 1
+		class = pc_g_star
+		orbit_distance = 15
+		orbit_angle = 350
+		size = 32
+		has_ring = no
+	}
+
+	planet = {
+		name = "NAME_Alpha_Centauri_B"
+		count = 1
+		class = pc_k_star
+		orbit_distance = -35
+		orbit_angle = 10
+		size = 27
+		has_ring = no
+	}
+
+	planet = {
+		name = "NAME_Proxima_Centauri"
+		count = 1
+		class = pc_m_star
+		orbit_distance = 260
+		orbit_angle = 130
+		size = 15
+		has_ring = no
+
+		planet = {
+			name = "NAME_Proxima_Centauri_b"
+			class = pc_barren_cold
+			size = 20
+			orbit_distance = 35
+			init_effect = {
+				prevent_anomaly = yes
+				add_anomaly = {
+					category = ALPHA_CENTAURI_CAT
+				}
+				add_modifier = {
+					modifier = "tidal_locked"
+					days = -1
+				}
+			}
+		}
+
+		planet = {
+			name = "NAME_Proxima_Centauri_c"
+			class = pc_gas_giant
+			size = 18
+			orbit_distance = 25
+		}
+	}
+
+	change_orbit = -220
+
+	planet = {
+		count = 2
+		orbit_distance = 25
+
+		change_orbit = @base_moon_distance
+
+		moon = {
+			count = { min = 0 max = 1 }
+			orbit_distance = 5
+		}
+	}
+
+	planet = {
+		count = 1
+		orbit_distance = 30
+		class = "pc_continental"
+		orbit_angle = { min = 90 max = 270 }
+		size = { min = 12 max = 18 }
+
+		init_effect = {
+			create_colony = {
+				owner = event_target:lost_colony_parent
+			}
+			colony = {
+				generate_lost_colony_parent_colony_1 = yes
+			}
+		}
+	}
+
+	planet = {
+		count = 2
+		orbit_distance = 25
+
+		change_orbit = @base_moon_distance
+
+		moon = {
+			count = { min = 0 max = 1 }
+			orbit_distance = 5
+		}
+	}
+
+	init_effect = {
+		random_system = {
+			limit = { has_star_flag = lost_colony_sol }
+			save_event_target_as = lost_colony_sol
+		}
+		if = {
+			limit = {
+				NOT = { has_hyperlane_to = event_target:lost_colony_sol }
+			}
+			add_hyperlane = { from = this to = event_target:lost_colony_sol }
+		}
+		create_starbase = {
+			size = starbase_outpost
+			owner = event_target:lost_colony_parent
+		}
+	}
+
+	neighbor_system = {
+		hyperlane_jumps = { min = 1 max = @jumps }
+		initializer = "sol_neighbor_t2"
+	}
+}
+
+# Human Lost Colony Sol Neighbor Tier 1
+lost_colony_sol_neighbor_t1 = {
+	name = "NAME_Barnards_Star"
+	class = sc_m
+	flags = { lost_colony_barnards_star }
+
+	init_effect = {
+		every_neighbor_system = { set_star_flag = empire_cluster }
+	}
+
+	planet = {
+		count = 1
+		class = star
+		orbit_distance = 0
+		orbit_angle = 1
+		size = { min = 20 max = 30 }
+		has_ring = no
+	}
+
+	change_orbit = 45
+
+	planet = {
+		count = { min = 0 max = 2 }
+		orbit_distance = 20
+		change_orbit = @base_moon_distance
+
+		moon = {
+			count = { min = 0 max = 1 }
+			orbit_distance = 5
+		}
+	}
+
+	planet = {
+		count = { min = 2 max = 5 }
+		orbit_distance = 20
+	}
+
+	init_effect = {
+		random_system = {
+			limit = { has_star_flag = lost_colony_sol }
+			save_event_target_as = lost_colony_sol
+		}
+		if = {
+			limit = {
+				NOT = { has_hyperlane_to = event_target:lost_colony_sol }
+			}
+			add_hyperlane = { from = this to = event_target:lost_colony_sol }
+		}
+		create_starbase = {
+			size = starbase_outpost
+			owner = event_target:lost_colony_parent
+		}
+	}
+
+	neighbor_system = {
+		trigger = { num_guaranteed_colonies >= 2 }
+		hyperlane_jumps = { min = 1 max = @jumps }
+		initializer = "lost_colony_sol_neighbor_t2_second_colony"
+	}
+	neighbor_system = {
+		trigger = { num_guaranteed_colonies < 2 }
+		hyperlane_jumps = { min = 1 max = @jumps }
+		initializer = "sol_neighbor_t2_no_guaranteed_colony"
+	}
+}
+
+# Human Lost Colony Sol Neighbor Tier 2 Second Colony
+lost_colony_sol_neighbor_t2_second_colony = {
+	name = "NAME_Sirius"
+	class = sc_binary_9
+	flags = { neighbor_t2_second_colony }
+
+	init_effect = {
+		every_neighbor_system = { set_star_flag = empire_cluster }
+	}
+
+	planet = {
+		name = "NAME_Sirius_A"
+		count = 1
+		class = pc_a_star
+		orbit_distance = 30
+		orbit_angle = 1
+		size = 35
+		has_ring = no
+	}
+
+	planet = {
+		name = "NAME_Sirius_B"
+		count = 1
+		class = pc_f_star
+		orbit_distance = 0
+		orbit_angle = 120
+		size = 15
+		has_ring = no
+	}
+
+	change_orbit = 45
+
+	planet = {
+		count = 2
+		orbit_angle = { min = 90 max = 270 }
+		orbit_distance = 20
+	}
+
+	planet = {
+		count = 1
+		orbit_distance = 25
+		class = "pc_continental"
+		orbit_angle = { min = 90 max = 270 }
+		size = { min = 14 max = 24 }
+
+		init_effect = {
+			create_colony = {
+				owner = event_target:lost_colony_parent
+			}
+			colony = {
+				generate_lost_colony_parent_colony_2 = yes
+			}
+		}
+
+		change_orbit = @base_moon_distance
+
+		moon = {
+			count = { min = 0 max = 1 }
+			class = random_non_colonizable
+			orbit_angle = { min = 90 max = 270 }
+			orbit_distance = 5
+		}
+	}
+
+	planet = {
+		count = 2
+		orbit_angle = { min = 90 max = 270 }
+		orbit_distance = 20
+
+		change_orbit = @base_moon_distance
+
+		moon = {
+			count = { min = 0 max = 1 }
+			class = random_non_colonizable
+			orbit_angle = { min = 90 max = 270 }
+			orbit_distance = 5
+		}
+	}
+
+	planet = {
+		count = { min = 0 max = 2 }
+		orbit_angle = { min = 90 max = 270 }
+		orbit_distance = 20
+	}
+
+	init_effect = {
+		random_system = {
+			limit = { has_star_flag = lost_colony_barnards_star }
+			save_event_target_as = lost_colony_barnards_star
+		}
+		if = {
+			limit = {
+				NOT = { has_hyperlane_to = event_target:lost_colony_barnards_star }
+			}
+			add_hyperlane = { from = this to = event_target:lost_colony_barnards_star }
+		}
+		create_starbase = {
+			size = starbase_outpost
+			owner = event_target:lost_colony_parent
+		}
 	}
 }
 

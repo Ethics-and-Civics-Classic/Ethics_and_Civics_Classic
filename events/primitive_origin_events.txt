@@ -14,6 +14,7 @@ namespace = primitive_origin
 # 60-99:		"Doomsday"
 # 100-109:		"Lost Colony"
 # 110-150:		"Broken Shackles" & "Payback"
+# 151:		"Lost Colony (Civic)"
 # 2:			"Through the Ages Situation Conclusion"
 
 ## Space Critters Behaviour
@@ -1840,6 +1841,149 @@ country_event = {
 				}
 			}
 		}
+	}
+}
+
+# Spawn Lost Colony Homeworld
+country_event = {
+	id = primitive_origin.151
+	title = primitive_origin.151.name
+	desc = primitive_origin.151.desc.early_space_age
+	picture = GFX_evt_landing_ship
+	show_sound = event_scanner
+	is_triggered_only = yes
+
+	immediate = {
+		add_resource = {
+			influence = 250
+		}
+		random_situation = { 
+			limit = { is_situation_type = PrimPlayer_awareness_situation } 
+			set_situation_flag = is_eager_explorer_lost_colony
+		}
+		FROM = {	#MSI Planet scope
+			spawn_system = {
+				min_jumps = 1
+				max_jumps = 10 
+				hyperlane = yes
+				initializer = lost_colony_1_primitive
+				is_discovered = no
+			}
+		}
+	}
+	
+	option = {
+		name = "primitive_origin.151.likes_home"	
+		trigger = { 
+			OR = {
+				is_xenophile = yes
+				is_socialism = yes
+				always = yes
+			}
+		}
+		if = {
+			limit = { any_situation = { is_situation_type = PrimPlayer_awareness_situation } }
+			random_situation = { 
+				limit = { is_situation_type = PrimPlayer_awareness_situation } 
+				add_situation_progress = 20 
+				set_situation_approach = PrimPlayer_eager_explorer_approach
+			}
+		}
+		give_specimen = {
+			key = origin_lost_colony_specimen
+			origin = civic_lost_colony
+			targets = { root.capital_scope }
+		}
+		#country_event = { id = PrimPlay_situation_event.3 }
+		#give_technology = { tech = tech_federation_code message = yes }
+	}
+	
+	option = {
+		name = "primitive_origin.151.neutral"	
+		trigger = { 
+			OR = { 
+				has_civic = civic_lost_colony
+				has_civic = PrimPlayer_civic_lost_colony
+			}
+		}
+		if = {
+			limit = { any_situation = { is_situation_type = PrimPlayer_awareness_situation } }
+			random_situation = { 
+				limit = { is_situation_type = PrimPlayer_awareness_situation } 
+				hidden_effect = { 
+					remove_situation_flag = is_eager_explorer_lost_colony
+				}
+				add_situation_progress = 20 
+				set_situation_approach = into_the_unknown
+			}
+		}
+		give_specimen = {
+			key = origin_lost_colony_specimen
+			origin = civic_lost_colony
+			targets = { root.capital_scope }
+		}
+		#country_event = { id = PrimPlay_situation_event.3 }
+		#give_technology = { tech = tech_federation_code message = yes }
+	}
+	
+	option = {
+		name = "primitive_origin.151.hates_home"	
+		trigger = { 
+			OR = {
+				is_xenophobe = yes
+				is_capitalism = yes
+				always = yes
+			}
+		}
+		if = {
+			limit = { any_situation = { is_situation_type = PrimPlayer_awareness_situation } }
+			random_situation = { 
+				limit = { is_situation_type = PrimPlayer_awareness_situation } 
+				hidden_effect = { 
+					remove_situation_flag = is_eager_explorer_lost_colony
+				}
+				add_situation_progress = 20 
+				set_situation_approach = PrimPlayer_awareness_situation_suppress
+			}
+		}
+		give_specimen = {
+			key = origin_lost_colony_specimen
+			origin = civic_lost_colony
+			targets = { root.capital_scope }
+		}
+		#country_event = { id = PrimPlay_situation_event.3 }
+		#give_technology = { tech = tech_federation_code message = yes }
+	}
+	
+	option = {
+		name = "primitive_origin.151.cooperative"	
+		trigger = { 
+			always = no
+		}
+		#allow = {
+		#	any_playable_country = { 
+		#		is_ai = no
+		#		has_civic = #TBD - will allow a player to be the other side to play cooperatively
+		#	}
+		#}
+		if = {
+			limit = { any_situation = { is_situation_type = PrimPlayer_awareness_situation } }
+			random_situation = { 
+				limit = { is_situation_type = PrimPlayer_awareness_situation } 
+				hidden_effect = { 
+					add_situation_progress = 20 
+					set_situation_flag = is_eager_explorer_lost_colony
+				}
+				set_situation_approach = PrimPlayer_eager_explorer_approach
+			}
+		}
+		give_specimen = {
+			key = origin_lost_colony_specimen
+			origin = civic_lost_colony
+			targets = { root.capital_scope }
+		}
+		#country_event = { id = PrimPlay_situation_event.3 }
+		#give_technology = { tech = tech_federation_code message = yes }
 	}
 }
 
