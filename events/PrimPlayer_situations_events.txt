@@ -778,6 +778,27 @@ situation_event = {
 				situation_event = { id = PrimPlay_situation_event.1003 }
 			}
 		}
+		if = {
+			limit = {
+				NOT = { has_situation_flag = PrimPlay_situation_event_1007_finished }
+				owner = { any_situation = { is_situation_type = PrimPlayer_terraform_situation	} }
+			}
+			situation_event = { id = PrimPlay_situation_event.1007 }
+		}
+		else_if = {
+			limit = {
+				NOT = { has_situation_flag = PrimPlay_situation_event_1008_finished }
+				owner = { any_situation = { is_situation_type = PrimPlayer_terraform_frozen_situation	} }
+			}
+			situation_event = { id = PrimPlay_situation_event.1008 }
+		}
+		else_if = {
+			limit = {
+				NOT = { has_situation_flag = PrimPlay_situation_event_1009_finished }
+				owner = { any_situation = { is_situation_type = PrimPlayer_terraform_toxic_situation	} }
+			}
+			situation_event = { id = PrimPlay_situation_event.1009 }
+		}
 		if = { 
 			limit = { 
 				owner = { NOT = { has_country_flag = PrimPlayer_ethic_fanatic_nation_chain_event } }
@@ -1834,34 +1855,31 @@ situation_event = {
 	
 	option = {
 		name = "PrimPlay_situation_event.1005.yes"
+		OWNER = {
+			add_resource = { influence = 200 }
+			add_research_option = tech_terrestrial_sculpting
+		}
 		every_country = { 
 			limit = {  
-				OR = {
-					is_same_value = root
-					AND = { 
-						has_communications = root
-						OR = { is_country_type = PrimPlayer_ethic_fanatic_nation is_country_type = PrimPlayer_ethic_fanatic_nation_nomadic }
-					}
-				}
+				has_communications = root
+				OR = { is_country_type = PrimPlayer_ethic_fanatic_nation is_country_type = PrimPlayer_ethic_fanatic_nation_nomadic }
 			}
 			add_resource = { influence = 200 }
 			add_research_option = tech_terrestrial_sculpting
+			custom_tooltip = PrimPlay_situation_event.1006.tooltip
 			hidden_effect = {
-				if = { 
-					limit = { NOT = { is_same_value = root } }
-					random_list = {
-						25 = {
-							country_event = { id = PrimPlay_situation_event.1006 days = 100 }
-						}
-						25 = {
-							country_event = { id = PrimPlay_situation_event.1006 days = 200 }
-						}
-						25 = {
-							country_event = { id = PrimPlay_situation_event.1006 days = 300 }
-						}
-						25 = {
-							country_event = { id = PrimPlay_situation_event.1006 days = 400 }
-						}
+				random_list = {
+					25 = {
+						country_event = { id = PrimPlay_situation_event.1006 days = 1920 }
+					}
+					25 = {
+						country_event = { id = PrimPlay_situation_event.1006 days = 2100 }
+					}
+					25 = {
+						country_event = { id = PrimPlay_situation_event.1006 days = 2400 }
+					}
+					25 = {
+						country_event = { id = PrimPlay_situation_event.1006 days = 2800 }
 					}
 				}
 			}
@@ -1871,18 +1889,123 @@ situation_event = {
 	option = {
 		name = "PrimPlay_situation_event.1005.no"
 		add_resource = { influence = -100 }
+		every_country = { 
+			limit = {  
+				has_communications = root
+				OR = { is_country_type = PrimPlayer_ethic_fanatic_nation is_country_type = PrimPlayer_ethic_fanatic_nation_nomadic }
+			}
+			custom_tooltip = PrimPlay_situation_event.1006.tooltip.long
+			hidden_effect = {
+				random_list = {
+					25 = {
+						country_event = { id = PrimPlay_situation_event.1006 days = 4000 }
+					}
+					25 = {
+						country_event = { id = PrimPlay_situation_event.1006 days = 4500 }
+					}
+					25 = {
+						country_event = { id = PrimPlay_situation_event.1006 days = 5000 }
+					}
+					25 = {
+						country_event = { id = PrimPlay_situation_event.1006 days = 5500 }
+					}
+				}
+			}
+		}
 	}
 	
 }
 
 country_event = {
 	id = PrimPlay_situation_event.1006
-	hide_window = yes
+	title = "PrimPlay_situation_event.1006.title"
+	desc = {
+		text = "PrimPlay_situation_event.1006.desc"
+	}
 	is_triggered_only = yes
+	picture = GFX_evt_fear_of_the_dark
 
 	immediate = {
-		add_research_option = tech_terrestrial_sculpting
+		give_technology = { tech = tech_terrestrial_sculpting message = yes }
 	}
+	option = {
+		name = "OK"
+	}
+}
+
+situation_event = {
+	id = PrimPlay_situation_event.1007
+	title = "PrimPlay_situation_event.1007.title"
+	desc = {
+		text = "PrimPlay_situation_event.1007.desc"
+	}
+	is_triggered_only = yes
+	picture = GFX_evt_landing_ship
+	
+	trigger = { owner = { any_situation = { PrimPlayer_terraform_situation } }
+
+	immediate = { set_situation_flag = PrimPlay_situation_event_1007_finished }
+	
+	option = {
+		name = "OK"
+		owner = { random_situation = { limit = { is_situation_type = PrimPlayer_terraform_situation } set_situation_approach = PrimPlayer_terraform_situation_approach_terraform } }
+	}
+	
+	option = {
+		name = "NO"
+	}
+	
+	after = { set_situation_flag = PrimPlay_situation_event_1007_finished }
+}
+
+situation_event = {
+	id = PrimPlay_situation_event.1008
+	title = "PrimPlay_situation_event.1008.title"
+	desc = {
+		text = "PrimPlay_situation_event.1008.desc"
+	}
+	is_triggered_only = yes
+	picture = GFX_evt_weather_manipulators
+	
+	trigger = { owner = { any_situation = { PrimPlayer_terraform_frozen_situation } }
+
+	immediate = { set_situation_flag = PrimPlay_situation_event_1008_finished }
+	
+	option = {
+		name = "OK"
+		owner = { random_situation = { limit = { is_situation_type = PrimPlayer_terraform_frozen_situation } set_situation_approach = PrimPlayer_terraform_situation_approach_terraform } }
+	}
+	
+	option = {
+		name = "NO"
+	}
+	
+	after = { set_situation_flag = PrimPlay_situation_event_1008_finished }
+}
+
+situation_event = {
+	id = PrimPlay_situation_event.1009
+	title = "PrimPlay_situation_event.1009.title"
+	desc = {
+		text = "PrimPlay_situation_event.1009.desc"
+	}
+	is_triggered_only = yes
+	picture = GFX_evt_toxic_planet
+	
+	trigger = { owner = { any_situation = { PrimPlayer_terraform_toxic_situation } }
+
+	immediate = { set_situation_flag = PrimPlay_situation_event_1009_finished }
+	
+	option = {
+		name = "OK"
+		owner = { random_situation = { limit = { is_situation_type = PrimPlayer_terraform_toxic_situation } set_situation_approach = PrimPlayer_terraform_situation_approach_terraform } }
+	}
+	
+	option = {
+		name = "NO"
+	}
+	
+	after = { set_situation_flag = PrimPlay_situation_event_1009_finished }
 }
 
 ######################
@@ -1890,6 +2013,7 @@ country_event = {
 ######################
 situation_event = {
 	id = PrimPlay_situation_event.2001
+	PrimPlay_situation_event.1005.title
 	hide_window = yes
 	is_triggered_only = yes
 
