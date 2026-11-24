@@ -786,6 +786,26 @@ situation_event = {
 					has_communications = root.owner
 				}
 			}
+			if = {
+				limit = {
+					owner = {
+						any_situation = {
+							OR = {
+								is_situation_type = PrimPlayer_terraform_situation_race
+								is_situation_type = PrimPlayer_terraform_frozen_situation_race
+								is_situation_type = PrimPlayer_terraform_toxic_situation_race
+							}
+						}
+					}
+					NOR = { 
+						has_tech_option = tech_terrestrial_sculpting
+						has_technology = tech_terrestrial_sculpting
+						has_situation_flag = PrimPlay_situation_event_1005_finished 
+						has_situation_flag = PrimPlay_situation_event_1005_pause
+					}
+				}
+				situation_event = { id = PrimPlay_situation_event.1005 }
+			}
 			random_list = {
 				0 = {
 					random_country = { 
@@ -1791,6 +1811,78 @@ situation_event = {
 	}
 	
 	after = { remove_situation_flag = PrimPlay_situation_event_1004_pause }
+}
+
+#Joint Terraforming Research Pact
+situation_event = {
+	id = PrimPlay_situation_event.1005
+	title = "PrimPlay_situation_event.1005.title"
+	is_triggered_only = yes
+	location = root.owner.capital_scope
+	picture = GFX_evt_fear_of_the_dark
+	show_sound = event_pre_ftl_civilization
+	desc = {
+		text = "PrimPlay_situation_event.1005.desc"
+	}
+	
+	trigger = {
+		OWNER = { NOT = { has_technology = tech_terrestrial_sculpting } }
+		NOT = { has_situation_flag = PrimPlay_situation_event_1005_finished }
+	}
+	
+	immediate = { set_situation_flag = PrimPlay_situation_event_1005_finished }
+	
+	option = {
+		name = "PrimPlay_situation_event.1005.yes"
+		every_country = { 
+			limit = {  
+				OR = {
+					is_same_value = root
+					AND = { 
+						has_communications = root
+						OR = { is_country_type = PrimPlayer_ethic_fanatic_nation is_country_type = PrimPlayer_ethic_fanatic_nation_nomadic }
+					}
+				}
+			}
+			add_resource = { influence = 200 }
+			add_research_option = tech_terrestrial_sculpting
+			hidden_effect = {
+				if = { 
+					limit = { NOT = { is_same_value = root } }
+					random_list = {
+						25 = {
+							country_event = { id = PrimPlay_situation_event.1006 days = 100 }
+						}
+						25 = {
+							country_event = { id = PrimPlay_situation_event.1006 days = 200 }
+						}
+						25 = {
+							country_event = { id = PrimPlay_situation_event.1006 days = 300 }
+						}
+						25 = {
+							country_event = { id = PrimPlay_situation_event.1006 days = 400 }
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = "PrimPlay_situation_event.1005.no"
+		add_resource = { influence = -100 }
+	}
+	
+}
+
+country_event = {
+	id = PrimPlay_situation_event.1006
+	hide_window = yes
+	is_triggered_only = yes
+
+	immediate = {
+		add_research_option = tech_terrestrial_sculpting
+	}
 }
 
 ######################

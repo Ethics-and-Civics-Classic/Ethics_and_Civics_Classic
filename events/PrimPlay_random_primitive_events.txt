@@ -2642,141 +2642,292 @@ country_event = {
 		from = { 
 			remove_modifier = toxic_terraforming_candidate
 		}
-		random_country = {
-			limit = {  
-				has_communications = root
-				OR = { is_country_type = PrimPlayer_ethic_fanatic_nation is_country_type = PrimPlayer_ethic_fanatic_nation_nomadic }
+		if = {
+			limit = { 
+				any_country = {
+					has_communications = root
+					OR = { is_country_type = PrimPlayer_ethic_fanatic_nation is_country_type = PrimPlayer_ethic_fanatic_nation_nomadic }
+					has_ascension_perk = ap_detox
+				}
 			}
-			add_opinion_modifier = {
-				who = root
-				modifier = opinion_bold_explorers
-			}
-			custom_tooltip = random_primitive_events.217.b.tooltip
-			hidden_effect = { 
-				set_origin = origin_default_pre_ftl
-				set_country_type = primitive
-				set_country_flag = PrimPlayer_ethic_fanatic_nation_colony@root	#To avoid flag changing
-				set_pre_ftl_age_effect = { PRE_FTL_AGE = early_space_age }
-				add_awareness = 100
-				set_country_flag = first_contact_completed@root
-				root = { set_country_flag = first_contact_completed@prev }
-				every_situation = { 
-					limit = { is_situation_type = pre_ftl_tech_progress_situation } 
-					#set_situation_progress = 0
-					set_situation_locked = yes
+			random_country = {
+				limit = {  
+					has_communications = root
+					OR = { is_country_type = PrimPlayer_ethic_fanatic_nation is_country_type = PrimPlayer_ethic_fanatic_nation_nomadic }
+					has_ascension_perk = ap_detox
 				}
-				copy_techs_from = {
-					target = root
-					#except = { }
+				add_opinion_modifier = {
+					who = root
+					modifier = opinion_bold_explorers
 				}
-				set_faction_hostility = { target = root set_hostile = no set_neutral = no set_friendly = yes }
-				ROOT = {
-					add_intel = {
-						amount = 100
-						who = PREV
+				custom_tooltip = random_primitive_events.217.b.tooltip
+				hidden_effect = { 
+					set_origin = origin_default_pre_ftl
+					set_country_type = primitive
+					set_country_flag = PrimPlayer_ethic_fanatic_nation_colony@root	#To avoid flag changing
+					set_pre_ftl_age_effect = { PRE_FTL_AGE = early_space_age }
+					add_awareness = 100
+					set_country_flag = first_contact_completed@root
+					root = { set_country_flag = first_contact_completed@prev }
+					every_situation = { 
+						limit = { is_situation_type = pre_ftl_tech_progress_situation } 
+						#set_situation_progress = 0
+						set_situation_locked = yes
 					}
-				}
-				from = {
-					create_colony = {
-						owner = PREV
+					copy_techs_from = {
+						target = root
+						#except = { }
 					}
-					create_pop_group = {
-						size = 1000
-						species = prev.owner_main_species
-					}
-					set_carrier_flag = PrimPlayer_ethic_fanatic_nation_colony@root
-					#add_building = building_colony_shelter
-					carrier_event = { id = random_primitive_events.215 days = 360 }
-				}
-				create_fleet = {
-					name = "NAME_Pre_FTL_Chemical_Ship"
-					effect = {
-						set_owner = prev
-						create_ship = {
-							name = "NAME_Pre_FTL_Chemical_Ship"
-							design = "NAME_Early_Engineer_Vessel_NoDrive"
-						}
-						set_fleet_flag = inteplanetary_flight_fleet
-						set_location = from
-						set_fleet_stance = passive
-						last_created_ship = { set_ship_flag = inteplanetary_flight_fleet }
-					}
-				}
-				add_resource = {
-					minerals = 5000
-					food = 5000
-					energy = 5000
-				}
-				if = { 
-					limit = { 
-						OR = {
-							has_ethic = ethic_fanatic_authoritarian
-							has_ethic = ethic_fanatic_militarist
-							has_ethic = ethic_fanatic_xenophobe
+					set_faction_hostility = { target = root set_hostile = no set_neutral = no set_friendly = yes }
+					ROOT = {
+						add_intel = {
+							amount = 100
+							who = PREV
 						}
 					}
-					set_policy = { policy = diplomatic_stance option = diplo_stance_fearful cooldown = yes }
-				}
-				else_if = { 
-					limit = { 
-						OR = {
-							has_ethic = ethic_fanatic_egalitarian
-							has_ethic = ethic_fanatic_pacifist
-							has_ethic = ethic_fanatic_xenophile
-							has_ethic = ethic_fanatic_socialism
+					from = {
+						create_colony = {
+							owner = PREV
+						}
+						create_pop_group = {
+							size = 1000
+							species = prev.owner_main_species
+						}
+						set_carrier_flag = PrimPlayer_ethic_fanatic_nation_colony@root
+						#add_building = building_colony_shelter
+						carrier_event = { id = random_primitive_events.215 days = 360 }
+					}
+					create_fleet = {
+						name = "NAME_Pre_FTL_Chemical_Ship"
+						effect = {
+							set_owner = prev
+							create_ship = {
+								name = "NAME_Pre_FTL_Chemical_Ship"
+								design = "NAME_Early_Engineer_Vessel_NoDrive"
+							}
+							set_fleet_flag = inteplanetary_flight_fleet
+							set_location = from
+							set_fleet_stance = passive
+							last_created_ship = { set_ship_flag = inteplanetary_flight_fleet }
 						}
 					}
-					set_policy = { policy = diplomatic_stance option = diplo_stance_eager cooldown = yes }
-				}
-				else = { set_policy = { policy = diplomatic_stance option = diplo_stance_uncertain cooldown = yes } }
-				root = {
+					add_resource = {
+						minerals = 5000
+						food = 5000
+						energy = 5000
+					}
 					if = { 
-						limit = { prev = { has_ethic = ethic_fanatic_authoritarian } }
-						capital_scope = { remove_deposit = d_ethic_fanatic_authoritarian_nation_blocker }
+						limit = { 
+							OR = {
+								has_ethic = ethic_fanatic_authoritarian
+								has_ethic = ethic_fanatic_militarist
+								has_ethic = ethic_fanatic_xenophobe
+							}
+						}
+						set_policy = { policy = diplomatic_stance option = diplo_stance_fearful cooldown = yes }
 					}
 					else_if = { 
-						limit = { prev = { has_ethic = ethic_fanatic_egalitarian } }
-						capital_scope = { remove_deposit = d_ethic_fanatic_egalitarian_nation_blocker }
+						limit = { 
+							OR = {
+								has_ethic = ethic_fanatic_egalitarian
+								has_ethic = ethic_fanatic_pacifist
+								has_ethic = ethic_fanatic_xenophile
+								has_ethic = ethic_fanatic_socialism
+							}
+						}
+						set_policy = { policy = diplomatic_stance option = diplo_stance_eager cooldown = yes }
+					}
+					else = { set_policy = { policy = diplomatic_stance option = diplo_stance_uncertain cooldown = yes } }
+					root = {
+						if = { 
+							limit = { prev = { has_ethic = ethic_fanatic_authoritarian } }
+							capital_scope = { remove_deposit = d_ethic_fanatic_authoritarian_nation_blocker }
+						}
+						else_if = { 
+							limit = { prev = { has_ethic = ethic_fanatic_egalitarian } }
+							capital_scope = { remove_deposit = d_ethic_fanatic_egalitarian_nation_blocker }
+						}
+						else_if = { 
+							limit = { prev = { has_ethic = ethic_fanatic_xenophobe } }
+							capital_scope = { remove_deposit = d_ethic_fanatic_xenophobe_nation_blocker }
+						}
+						else_if = { 
+							limit = { prev = { has_ethic = ethic_fanatic_xenophile } }
+							capital_scope = { remove_deposit = d_ethic_fanatic_xenophile_nation_blocker }
+						}
+						else_if = { 
+							limit = { prev = { has_ethic = ethic_fanatic_militarist } }
+							capital_scope = { remove_deposit = d_ethic_fanatic_militarist_nation_blocker }
+						}
+						else_if = { 
+							limit = { prev = { has_ethic = ethic_fanatic_pacifist } }
+							capital_scope = { remove_deposit = d_ethic_fanatic_pacifist_nation_blocker }
+						}
+						else_if = { 
+							limit = { prev = { has_ethic = ethic_fanatic_spiritualist } }
+							capital_scope = { remove_deposit = d_ethic_fanatic_spiritualist_nation_blocker }
+						}
+						else_if = { 
+							limit = { prev = { has_ethic = ethic_fanatic_materialist } }
+							capital_scope = { remove_deposit = d_ethic_fanatic_materialist_nation_blocker }
+						}
+						else_if = { 
+							limit = { prev = { has_ethic = ethic_fanatic_green } }
+							capital_scope = { remove_deposit = d_ethic_fanatic_green_nation_blocker }
+						}
+						else_if = { 
+							limit = { prev = { has_ethic = ethic_fanatic_industrial } }
+							capital_scope = { remove_deposit = d_ethic_fanatic_industrial_nation_blocker }
+						}
+						else_if = { 
+							limit = { prev = { has_ethic = ethic_fanatic_socialism } }
+							capital_scope = { remove_deposit = d_ethic_fanatic_socialism_nation_blocker }
+						}
+						else_if = { 
+							limit = { prev = { has_ethic = ethic_fanatic_capitalism } }
+							capital_scope = { remove_deposit = d_ethic_fanatic_capitalism_nation_blocker }
+						}
+					}
+				}
+			}
+		}
+		else = {
+			random_country = {
+				limit = {  
+					has_communications = root
+					OR = { is_country_type = PrimPlayer_ethic_fanatic_nation is_country_type = PrimPlayer_ethic_fanatic_nation_nomadic }
+				}
+				add_opinion_modifier = {
+					who = root
+					modifier = opinion_bold_explorers
+				}
+				custom_tooltip = random_primitive_events.217.b.tooltip
+				hidden_effect = { 
+					set_origin = origin_default_pre_ftl
+					set_country_type = primitive
+					set_country_flag = PrimPlayer_ethic_fanatic_nation_colony@root	#To avoid flag changing
+					set_pre_ftl_age_effect = { PRE_FTL_AGE = early_space_age }
+					add_awareness = 100
+					set_country_flag = first_contact_completed@root
+					root = { set_country_flag = first_contact_completed@prev }
+					every_situation = { 
+						limit = { is_situation_type = pre_ftl_tech_progress_situation } 
+						#set_situation_progress = 0
+						set_situation_locked = yes
+					}
+					copy_techs_from = {
+						target = root
+						#except = { }
+					}
+					set_faction_hostility = { target = root set_hostile = no set_neutral = no set_friendly = yes }
+					ROOT = {
+						add_intel = {
+							amount = 100
+							who = PREV
+						}
+					}
+					from = {
+						create_colony = {
+							owner = PREV
+						}
+						create_pop_group = {
+							size = 1000
+							species = prev.owner_main_species
+						}
+						set_carrier_flag = PrimPlayer_ethic_fanatic_nation_colony@root
+						#add_building = building_colony_shelter
+						carrier_event = { id = random_primitive_events.215 days = 360 }
+					}
+					create_fleet = {
+						name = "NAME_Pre_FTL_Chemical_Ship"
+						effect = {
+							set_owner = prev
+							create_ship = {
+								name = "NAME_Pre_FTL_Chemical_Ship"
+								design = "NAME_Early_Engineer_Vessel_NoDrive"
+							}
+							set_fleet_flag = inteplanetary_flight_fleet
+							set_location = from
+							set_fleet_stance = passive
+							last_created_ship = { set_ship_flag = inteplanetary_flight_fleet }
+						}
+					}
+					add_resource = {
+						minerals = 5000
+						food = 5000
+						energy = 5000
+					}
+					if = { 
+						limit = { 
+							OR = {
+								has_ethic = ethic_fanatic_authoritarian
+								has_ethic = ethic_fanatic_militarist
+								has_ethic = ethic_fanatic_xenophobe
+							}
+						}
+						set_policy = { policy = diplomatic_stance option = diplo_stance_fearful cooldown = yes }
 					}
 					else_if = { 
-						limit = { prev = { has_ethic = ethic_fanatic_xenophobe } }
-						capital_scope = { remove_deposit = d_ethic_fanatic_xenophobe_nation_blocker }
+						limit = { 
+							OR = {
+								has_ethic = ethic_fanatic_egalitarian
+								has_ethic = ethic_fanatic_pacifist
+								has_ethic = ethic_fanatic_xenophile
+								has_ethic = ethic_fanatic_socialism
+							}
+						}
+						set_policy = { policy = diplomatic_stance option = diplo_stance_eager cooldown = yes }
 					}
-					else_if = { 
-						limit = { prev = { has_ethic = ethic_fanatic_xenophile } }
-						capital_scope = { remove_deposit = d_ethic_fanatic_xenophile_nation_blocker }
-					}
-					else_if = { 
-						limit = { prev = { has_ethic = ethic_fanatic_militarist } }
-						capital_scope = { remove_deposit = d_ethic_fanatic_militarist_nation_blocker }
-					}
-					else_if = { 
-						limit = { prev = { has_ethic = ethic_fanatic_pacifist } }
-						capital_scope = { remove_deposit = d_ethic_fanatic_pacifist_nation_blocker }
-					}
-					else_if = { 
-						limit = { prev = { has_ethic = ethic_fanatic_spiritualist } }
-						capital_scope = { remove_deposit = d_ethic_fanatic_spiritualist_nation_blocker }
-					}
-					else_if = { 
-						limit = { prev = { has_ethic = ethic_fanatic_materialist } }
-						capital_scope = { remove_deposit = d_ethic_fanatic_materialist_nation_blocker }
-					}
-					else_if = { 
-						limit = { prev = { has_ethic = ethic_fanatic_green } }
-						capital_scope = { remove_deposit = d_ethic_fanatic_green_nation_blocker }
-					}
-					else_if = { 
-						limit = { prev = { has_ethic = ethic_fanatic_industrial } }
-						capital_scope = { remove_deposit = d_ethic_fanatic_industrial_nation_blocker }
-					}
-					else_if = { 
-						limit = { prev = { has_ethic = ethic_fanatic_socialism } }
-						capital_scope = { remove_deposit = d_ethic_fanatic_socialism_nation_blocker }
-					}
-					else_if = { 
-						limit = { prev = { has_ethic = ethic_fanatic_capitalism } }
-						capital_scope = { remove_deposit = d_ethic_fanatic_capitalism_nation_blocker }
+					else = { set_policy = { policy = diplomatic_stance option = diplo_stance_uncertain cooldown = yes } }
+					root = {
+						if = { 
+							limit = { prev = { has_ethic = ethic_fanatic_authoritarian } }
+							capital_scope = { remove_deposit = d_ethic_fanatic_authoritarian_nation_blocker }
+						}
+						else_if = { 
+							limit = { prev = { has_ethic = ethic_fanatic_egalitarian } }
+							capital_scope = { remove_deposit = d_ethic_fanatic_egalitarian_nation_blocker }
+						}
+						else_if = { 
+							limit = { prev = { has_ethic = ethic_fanatic_xenophobe } }
+							capital_scope = { remove_deposit = d_ethic_fanatic_xenophobe_nation_blocker }
+						}
+						else_if = { 
+							limit = { prev = { has_ethic = ethic_fanatic_xenophile } }
+							capital_scope = { remove_deposit = d_ethic_fanatic_xenophile_nation_blocker }
+						}
+						else_if = { 
+							limit = { prev = { has_ethic = ethic_fanatic_militarist } }
+							capital_scope = { remove_deposit = d_ethic_fanatic_militarist_nation_blocker }
+						}
+						else_if = { 
+							limit = { prev = { has_ethic = ethic_fanatic_pacifist } }
+							capital_scope = { remove_deposit = d_ethic_fanatic_pacifist_nation_blocker }
+						}
+						else_if = { 
+							limit = { prev = { has_ethic = ethic_fanatic_spiritualist } }
+							capital_scope = { remove_deposit = d_ethic_fanatic_spiritualist_nation_blocker }
+						}
+						else_if = { 
+							limit = { prev = { has_ethic = ethic_fanatic_materialist } }
+							capital_scope = { remove_deposit = d_ethic_fanatic_materialist_nation_blocker }
+						}
+						else_if = { 
+							limit = { prev = { has_ethic = ethic_fanatic_green } }
+							capital_scope = { remove_deposit = d_ethic_fanatic_green_nation_blocker }
+						}
+						else_if = { 
+							limit = { prev = { has_ethic = ethic_fanatic_industrial } }
+							capital_scope = { remove_deposit = d_ethic_fanatic_industrial_nation_blocker }
+						}
+						else_if = { 
+							limit = { prev = { has_ethic = ethic_fanatic_socialism } }
+							capital_scope = { remove_deposit = d_ethic_fanatic_socialism_nation_blocker }
+						}
+						else_if = { 
+							limit = { prev = { has_ethic = ethic_fanatic_capitalism } }
+							capital_scope = { remove_deposit = d_ethic_fanatic_capitalism_nation_blocker }
+						}
 					}
 				}
 			}
@@ -2799,141 +2950,292 @@ country_event = {
 		from = { 
 			remove_modifier = toxic_terraforming_candidate
 		}
-		random_country = {
-			limit = {  
-				has_communications = root
-				OR = { is_country_type = PrimPlayer_ethic_fanatic_nation is_country_type = PrimPlayer_ethic_fanatic_nation_nomadic }
+		if = {
+			limit = { 
+				any_country = {
+					has_communications = root
+					OR = { is_country_type = PrimPlayer_ethic_fanatic_nation is_country_type = PrimPlayer_ethic_fanatic_nation_nomadic }
+					has_ascension_perk = ap_detox
+				}
 			}
-			#add_opinion_modifier = {
-			#	who = root
-			#	modifier = opinion_bold_explorers	#Planet wasn't donated
-			#}
-			custom_tooltip = random_primitive_events.217.b.tooltip
-			hidden_effect = { 
-				set_origin = origin_default_pre_ftl
-				set_country_type = primitive
-				set_country_flag = PrimPlayer_ethic_fanatic_nation_colony@root	#To avoid flag changing
-				set_pre_ftl_age_effect = { PRE_FTL_AGE = early_space_age }
-				add_awareness = 100
-				set_country_flag = first_contact_completed@root
-				root = { set_country_flag = first_contact_completed@prev }
-				every_situation = { 
-					limit = { is_situation_type = pre_ftl_tech_progress_situation } 
-					#set_situation_progress = 0
-					set_situation_locked = yes
+			random_country = {
+				limit = {  
+					has_communications = root
+					OR = { is_country_type = PrimPlayer_ethic_fanatic_nation is_country_type = PrimPlayer_ethic_fanatic_nation_nomadic }
+					has_ascension_perk = ap_detox
 				}
-				copy_techs_from = {
-					target = root
-					#except = { }
-				}
-				set_faction_hostility = { target = root set_hostile = no set_neutral = no set_friendly = yes }
-				ROOT = {
-					add_intel = {
-						amount = 100
-						who = PREV
+				#add_opinion_modifier = {
+				#	who = root
+				#	modifier = opinion_bold_explorers
+				#}
+				custom_tooltip = random_primitive_events.217.b.tooltip
+				hidden_effect = { 
+					set_origin = origin_default_pre_ftl
+					set_country_type = primitive
+					set_country_flag = PrimPlayer_ethic_fanatic_nation_colony@root	#To avoid flag changing
+					set_pre_ftl_age_effect = { PRE_FTL_AGE = early_space_age }
+					add_awareness = 100
+					set_country_flag = first_contact_completed@root
+					root = { set_country_flag = first_contact_completed@prev }
+					every_situation = { 
+						limit = { is_situation_type = pre_ftl_tech_progress_situation } 
+						#set_situation_progress = 0
+						set_situation_locked = yes
 					}
-				}
-				from = {
-					create_colony = {
-						owner = PREV
+					copy_techs_from = {
+						target = root
+						#except = { }
 					}
-					create_pop_group = {
-						size = 1000
-						species = prev.owner_main_species
-					}
-					set_carrier_flag = PrimPlayer_ethic_fanatic_nation_colony@root
-					#add_building = building_colony_shelter
-					carrier_event = { id = random_primitive_events.215 days = 360 }
-				}
-				create_fleet = {
-					name = "NAME_Pre_FTL_Chemical_Ship"
-					effect = {
-						set_owner = prev
-						create_ship = {
-							name = "NAME_Pre_FTL_Chemical_Ship"
-							design = "NAME_Early_Engineer_Vessel_NoDrive"
-						}
-						set_fleet_flag = inteplanetary_flight_fleet
-						set_location = from
-						set_fleet_stance = passive
-						last_created_ship = { set_ship_flag = inteplanetary_flight_fleet }
-					}
-				}
-				add_resource = {
-					minerals = 5000
-					food = 5000
-					energy = 5000
-				}
-				if = { 
-					limit = { 
-						OR = {
-							has_ethic = ethic_fanatic_authoritarian
-							has_ethic = ethic_fanatic_militarist
-							has_ethic = ethic_fanatic_xenophobe
+					set_faction_hostility = { target = root set_hostile = no set_neutral = no set_friendly = yes }
+					ROOT = {
+						add_intel = {
+							amount = 100
+							who = PREV
 						}
 					}
-					set_policy = { policy = diplomatic_stance option = diplo_stance_fearful cooldown = yes }
-				}
-				else_if = { 
-					limit = { 
-						OR = {
-							has_ethic = ethic_fanatic_egalitarian
-							has_ethic = ethic_fanatic_pacifist
-							has_ethic = ethic_fanatic_xenophile
-							has_ethic = ethic_fanatic_socialism
+					from = {
+						create_colony = {
+							owner = PREV
+						}
+						create_pop_group = {
+							size = 1000
+							species = prev.owner_main_species
+						}
+						set_carrier_flag = PrimPlayer_ethic_fanatic_nation_colony@root
+						#add_building = building_colony_shelter
+						carrier_event = { id = random_primitive_events.215 days = 360 }
+					}
+					create_fleet = {
+						name = "NAME_Pre_FTL_Chemical_Ship"
+						effect = {
+							set_owner = prev
+							create_ship = {
+								name = "NAME_Pre_FTL_Chemical_Ship"
+								design = "NAME_Early_Engineer_Vessel_NoDrive"
+							}
+							set_fleet_flag = inteplanetary_flight_fleet
+							set_location = from
+							set_fleet_stance = passive
+							last_created_ship = { set_ship_flag = inteplanetary_flight_fleet }
 						}
 					}
-					set_policy = { policy = diplomatic_stance option = diplo_stance_eager cooldown = yes }
-				}
-				else = { set_policy = { policy = diplomatic_stance option = diplo_stance_uncertain cooldown = yes } }
-				root = {
+					add_resource = {
+						minerals = 5000
+						food = 5000
+						energy = 5000
+					}
 					if = { 
-						limit = { prev = { has_ethic = ethic_fanatic_authoritarian } }
-						capital_scope = { remove_deposit = d_ethic_fanatic_authoritarian_nation_blocker }
+						limit = { 
+							OR = {
+								has_ethic = ethic_fanatic_authoritarian
+								has_ethic = ethic_fanatic_militarist
+								has_ethic = ethic_fanatic_xenophobe
+							}
+						}
+						set_policy = { policy = diplomatic_stance option = diplo_stance_fearful cooldown = yes }
 					}
 					else_if = { 
-						limit = { prev = { has_ethic = ethic_fanatic_egalitarian } }
-						capital_scope = { remove_deposit = d_ethic_fanatic_egalitarian_nation_blocker }
+						limit = { 
+							OR = {
+								has_ethic = ethic_fanatic_egalitarian
+								has_ethic = ethic_fanatic_pacifist
+								has_ethic = ethic_fanatic_xenophile
+								has_ethic = ethic_fanatic_socialism
+							}
+						}
+						set_policy = { policy = diplomatic_stance option = diplo_stance_eager cooldown = yes }
+					}
+					else = { set_policy = { policy = diplomatic_stance option = diplo_stance_uncertain cooldown = yes } }
+					root = {
+						if = { 
+							limit = { prev = { has_ethic = ethic_fanatic_authoritarian } }
+							capital_scope = { remove_deposit = d_ethic_fanatic_authoritarian_nation_blocker }
+						}
+						else_if = { 
+							limit = { prev = { has_ethic = ethic_fanatic_egalitarian } }
+							capital_scope = { remove_deposit = d_ethic_fanatic_egalitarian_nation_blocker }
+						}
+						else_if = { 
+							limit = { prev = { has_ethic = ethic_fanatic_xenophobe } }
+							capital_scope = { remove_deposit = d_ethic_fanatic_xenophobe_nation_blocker }
+						}
+						else_if = { 
+							limit = { prev = { has_ethic = ethic_fanatic_xenophile } }
+							capital_scope = { remove_deposit = d_ethic_fanatic_xenophile_nation_blocker }
+						}
+						else_if = { 
+							limit = { prev = { has_ethic = ethic_fanatic_militarist } }
+							capital_scope = { remove_deposit = d_ethic_fanatic_militarist_nation_blocker }
+						}
+						else_if = { 
+							limit = { prev = { has_ethic = ethic_fanatic_pacifist } }
+							capital_scope = { remove_deposit = d_ethic_fanatic_pacifist_nation_blocker }
+						}
+						else_if = { 
+							limit = { prev = { has_ethic = ethic_fanatic_spiritualist } }
+							capital_scope = { remove_deposit = d_ethic_fanatic_spiritualist_nation_blocker }
+						}
+						else_if = { 
+							limit = { prev = { has_ethic = ethic_fanatic_materialist } }
+							capital_scope = { remove_deposit = d_ethic_fanatic_materialist_nation_blocker }
+						}
+						else_if = { 
+							limit = { prev = { has_ethic = ethic_fanatic_green } }
+							capital_scope = { remove_deposit = d_ethic_fanatic_green_nation_blocker }
+						}
+						else_if = { 
+							limit = { prev = { has_ethic = ethic_fanatic_industrial } }
+							capital_scope = { remove_deposit = d_ethic_fanatic_industrial_nation_blocker }
+						}
+						else_if = { 
+							limit = { prev = { has_ethic = ethic_fanatic_socialism } }
+							capital_scope = { remove_deposit = d_ethic_fanatic_socialism_nation_blocker }
+						}
+						else_if = { 
+							limit = { prev = { has_ethic = ethic_fanatic_capitalism } }
+							capital_scope = { remove_deposit = d_ethic_fanatic_capitalism_nation_blocker }
+						}
+					}
+				}
+			}
+		}
+		else = {
+			random_country = {
+				limit = {  
+					has_communications = root
+					OR = { is_country_type = PrimPlayer_ethic_fanatic_nation is_country_type = PrimPlayer_ethic_fanatic_nation_nomadic }
+				}
+				#add_opinion_modifier = {
+				#	who = root
+				#	modifier = opinion_bold_explorers
+				#}
+				custom_tooltip = random_primitive_events.217.b.tooltip
+				hidden_effect = { 
+					set_origin = origin_default_pre_ftl
+					set_country_type = primitive
+					set_country_flag = PrimPlayer_ethic_fanatic_nation_colony@root	#To avoid flag changing
+					set_pre_ftl_age_effect = { PRE_FTL_AGE = early_space_age }
+					add_awareness = 100
+					set_country_flag = first_contact_completed@root
+					root = { set_country_flag = first_contact_completed@prev }
+					every_situation = { 
+						limit = { is_situation_type = pre_ftl_tech_progress_situation } 
+						#set_situation_progress = 0
+						set_situation_locked = yes
+					}
+					copy_techs_from = {
+						target = root
+						#except = { }
+					}
+					set_faction_hostility = { target = root set_hostile = no set_neutral = no set_friendly = yes }
+					ROOT = {
+						add_intel = {
+							amount = 100
+							who = PREV
+						}
+					}
+					from = {
+						create_colony = {
+							owner = PREV
+						}
+						create_pop_group = {
+							size = 1000
+							species = prev.owner_main_species
+						}
+						set_carrier_flag = PrimPlayer_ethic_fanatic_nation_colony@root
+						#add_building = building_colony_shelter
+						carrier_event = { id = random_primitive_events.215 days = 360 }
+					}
+					create_fleet = {
+						name = "NAME_Pre_FTL_Chemical_Ship"
+						effect = {
+							set_owner = prev
+							create_ship = {
+								name = "NAME_Pre_FTL_Chemical_Ship"
+								design = "NAME_Early_Engineer_Vessel_NoDrive"
+							}
+							set_fleet_flag = inteplanetary_flight_fleet
+							set_location = from
+							set_fleet_stance = passive
+							last_created_ship = { set_ship_flag = inteplanetary_flight_fleet }
+						}
+					}
+					add_resource = {
+						minerals = 5000
+						food = 5000
+						energy = 5000
+					}
+					if = { 
+						limit = { 
+							OR = {
+								has_ethic = ethic_fanatic_authoritarian
+								has_ethic = ethic_fanatic_militarist
+								has_ethic = ethic_fanatic_xenophobe
+							}
+						}
+						set_policy = { policy = diplomatic_stance option = diplo_stance_fearful cooldown = yes }
 					}
 					else_if = { 
-						limit = { prev = { has_ethic = ethic_fanatic_xenophobe } }
-						capital_scope = { remove_deposit = d_ethic_fanatic_xenophobe_nation_blocker }
+						limit = { 
+							OR = {
+								has_ethic = ethic_fanatic_egalitarian
+								has_ethic = ethic_fanatic_pacifist
+								has_ethic = ethic_fanatic_xenophile
+								has_ethic = ethic_fanatic_socialism
+							}
+						}
+						set_policy = { policy = diplomatic_stance option = diplo_stance_eager cooldown = yes }
 					}
-					else_if = { 
-						limit = { prev = { has_ethic = ethic_fanatic_xenophile } }
-						capital_scope = { remove_deposit = d_ethic_fanatic_xenophile_nation_blocker }
-					}
-					else_if = { 
-						limit = { prev = { has_ethic = ethic_fanatic_militarist } }
-						capital_scope = { remove_deposit = d_ethic_fanatic_militarist_nation_blocker }
-					}
-					else_if = { 
-						limit = { prev = { has_ethic = ethic_fanatic_pacifist } }
-						capital_scope = { remove_deposit = d_ethic_fanatic_pacifist_nation_blocker }
-					}
-					else_if = { 
-						limit = { prev = { has_ethic = ethic_fanatic_spiritualist } }
-						capital_scope = { remove_deposit = d_ethic_fanatic_spiritualist_nation_blocker }
-					}
-					else_if = { 
-						limit = { prev = { has_ethic = ethic_fanatic_materialist } }
-						capital_scope = { remove_deposit = d_ethic_fanatic_materialist_nation_blocker }
-					}
-					else_if = { 
-						limit = { prev = { has_ethic = ethic_fanatic_green } }
-						capital_scope = { remove_deposit = d_ethic_fanatic_green_nation_blocker }
-					}
-					else_if = { 
-						limit = { prev = { has_ethic = ethic_fanatic_industrial } }
-						capital_scope = { remove_deposit = d_ethic_fanatic_industrial_nation_blocker }
-					}
-					else_if = { 
-						limit = { prev = { has_ethic = ethic_fanatic_socialism } }
-						capital_scope = { remove_deposit = d_ethic_fanatic_socialism_nation_blocker }
-					}
-					else_if = { 
-						limit = { prev = { has_ethic = ethic_fanatic_capitalism } }
-						capital_scope = { remove_deposit = d_ethic_fanatic_capitalism_nation_blocker }
+					else = { set_policy = { policy = diplomatic_stance option = diplo_stance_uncertain cooldown = yes } }
+					root = {
+						if = { 
+							limit = { prev = { has_ethic = ethic_fanatic_authoritarian } }
+							capital_scope = { remove_deposit = d_ethic_fanatic_authoritarian_nation_blocker }
+						}
+						else_if = { 
+							limit = { prev = { has_ethic = ethic_fanatic_egalitarian } }
+							capital_scope = { remove_deposit = d_ethic_fanatic_egalitarian_nation_blocker }
+						}
+						else_if = { 
+							limit = { prev = { has_ethic = ethic_fanatic_xenophobe } }
+							capital_scope = { remove_deposit = d_ethic_fanatic_xenophobe_nation_blocker }
+						}
+						else_if = { 
+							limit = { prev = { has_ethic = ethic_fanatic_xenophile } }
+							capital_scope = { remove_deposit = d_ethic_fanatic_xenophile_nation_blocker }
+						}
+						else_if = { 
+							limit = { prev = { has_ethic = ethic_fanatic_militarist } }
+							capital_scope = { remove_deposit = d_ethic_fanatic_militarist_nation_blocker }
+						}
+						else_if = { 
+							limit = { prev = { has_ethic = ethic_fanatic_pacifist } }
+							capital_scope = { remove_deposit = d_ethic_fanatic_pacifist_nation_blocker }
+						}
+						else_if = { 
+							limit = { prev = { has_ethic = ethic_fanatic_spiritualist } }
+							capital_scope = { remove_deposit = d_ethic_fanatic_spiritualist_nation_blocker }
+						}
+						else_if = { 
+							limit = { prev = { has_ethic = ethic_fanatic_materialist } }
+							capital_scope = { remove_deposit = d_ethic_fanatic_materialist_nation_blocker }
+						}
+						else_if = { 
+							limit = { prev = { has_ethic = ethic_fanatic_green } }
+							capital_scope = { remove_deposit = d_ethic_fanatic_green_nation_blocker }
+						}
+						else_if = { 
+							limit = { prev = { has_ethic = ethic_fanatic_industrial } }
+							capital_scope = { remove_deposit = d_ethic_fanatic_industrial_nation_blocker }
+						}
+						else_if = { 
+							limit = { prev = { has_ethic = ethic_fanatic_socialism } }
+							capital_scope = { remove_deposit = d_ethic_fanatic_socialism_nation_blocker }
+						}
+						else_if = { 
+							limit = { prev = { has_ethic = ethic_fanatic_capitalism } }
+							capital_scope = { remove_deposit = d_ethic_fanatic_capitalism_nation_blocker }
+						}
 					}
 				}
 			}
@@ -2950,6 +3252,7 @@ country_event = {
 		}
 	}
 }
+	
 ################################
 #Fear of the Dark Civilization #
 ################################
