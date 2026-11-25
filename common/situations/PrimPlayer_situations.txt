@@ -1265,7 +1265,7 @@ PrimPlayer_terraform_situation = {
 	#complete_icon_frame = GFX_situation_outcome_frame_blue
 	#complete_icon = GFX_situation_outcome_positive
 	abort_trigger = {
-		#TARGET = { is_colonizable = yes }
+		target = { is_colony = yes }
 	}
 	modifier = {
 		
@@ -1275,15 +1275,15 @@ PrimPlayer_terraform_situation = {
 		PrimPlayer_terraform_situation_stage_1 = {
 			icon = GFX_situation_stage_1
 			icon_background = GFX_situation_stage_frame_blue
+			end = 50
+			#custom_tooltip = awareness_unaware_tt
+		}
+		PrimPlayer_terraform_situation_stage_2 = {
+			icon = GFX_situation_stage_2
+			icon_background = GFX_situation_stage_frame_blue
 			end = 100
 			#custom_tooltip = awareness_unaware_tt
 		}
-		#PrimPlayer_terraform_situation_stage_2 = {
-		#	icon = GFX_situation_stage_2
-		#	icon_background = GFX_situation_stage_frame_blue
-		#	end = 100
-		#	#custom_tooltip = awareness_unaware_tt
-		#}
 	}
 	on_progress_complete = {
 		if = {
@@ -1305,6 +1305,23 @@ PrimPlayer_terraform_situation = {
 			current_situation_approach = PrimPlayer_terraform_situation_approach_halt
 		}
 		modifier = {
+			add = 0.5
+			#add = 2	#Test Speed
+			situation_progress <= 50
+			owner = { has_technology = tech_terrestrial_sculpting }
+			desc = PrimPlayer_terraform_situation_approach_passive
+			current_situation_approach = PrimPlayer_terraform_situation_approach_passive
+		}
+		modifier = {
+			add = 0.5
+			#add = 2	#Test Speed
+			situation_progress > 50
+			situation_progress <= 100
+			owner = { has_technology = tech_colonization_1 }
+			desc = PrimPlayer_terraform_situation_approach_passive
+			current_situation_approach = PrimPlayer_terraform_situation_approach_passive
+		}
+		modifier = {
 			add = 1.5
 			#add = 2	#Test Speed
 			desc = PrimPlayer_terraform_situation_approach_terraform
@@ -1322,6 +1339,21 @@ PrimPlayer_terraform_situation = {
 		}
 	}
 	approach = {
+		name = PrimPlayer_terraform_situation_approach_passive
+		icon = GFX_situation_approach_unity
+		icon_background = GFX_situation_approach_bg_green
+		default = no
+		allow = { 
+			owner = { has_technology = tech_terrestrial_sculpting }
+			#any_fleet_in_orbit = { is_ship_class = shipclass_science_ship }
+			#TARGET = { any_fleet_in_orbit = { is_ship_class = shipclass_constructor } }	#Disabled requirement for ease - can be back if done by popular demand
+		} 
+		on_select = {
+			#set_situation_locked = yes
+			#custom_tooltip = 
+		}
+	}
+	approach = {
 		name = PrimPlayer_terraform_situation_approach_terraform
 		icon = GFX_situation_approach_research
 		icon_background = GFX_situation_approach_bg_green
@@ -1331,7 +1363,10 @@ PrimPlayer_terraform_situation = {
 			#custom_tooltip = 
 		}
 		allow = { 
-			owner = { has_technology = tech_terrestrial_sculpting }
+			owner = { 
+				has_technology = tech_terrestrial_sculpting 
+				has_technology = tech_colonization_1 
+			}
 			#any_fleet_in_orbit = { is_ship_class = shipclass_science_ship }
 			#TARGET = { any_fleet_in_orbit = { is_ship_class = shipclass_constructor } }	#Disabled requirement for ease - can be back if done by popular demand
 		} 
@@ -1354,7 +1389,8 @@ PrimPlayer_terraform_situation_race = {
 	#complete_icon_frame = GFX_situation_outcome_frame_blue
 	#complete_icon = GFX_situation_outcome_positive
 	abort_trigger = {
-		#TARGET = { is_colonizable = yes }
+		#owner = { count_situation = { count = 0 limit = { is_situation_type = PrimPlayer_terraform_situation } } }
+		target = { is_colony = yes }
 	}
 	modifier = {
 		
@@ -1375,7 +1411,6 @@ PrimPlayer_terraform_situation_race = {
 		#}
 	}
 	on_progress_complete = {
-		OWNER = { set_country_flag = PrimPlayer_terraform_situation_lost }
 		if = {
 			limit = { 
 				OWNER = { owner_main_species = { has_trait = trait_aquatic } }
@@ -1384,6 +1419,7 @@ PrimPlayer_terraform_situation_race = {
 			target = { carrier_event = { id = random_primitive_events.213 } }	#Ocean World
 		}
 		else = { target = { carrier_event = { id = random_primitive_events.211 } } }
+		hidden_effect = { owner = { set_country_flag = PrimPlayer_terraform_situation_lost } }
 	}
 	monthly_progress = {
 		base = -0.50 # total: 100
@@ -1444,7 +1480,7 @@ PrimPlayer_terraform_frozen_situation = {
 	#complete_icon_frame = GFX_situation_outcome_frame_blue
 	#complete_icon = GFX_situation_outcome_positive
 	abort_trigger = {
-		#target = { is_colonizable = yes }
+		target = { is_colony = yes }
 	}
 	modifier = {
 		
@@ -1454,15 +1490,15 @@ PrimPlayer_terraform_frozen_situation = {
 		PrimPlayer_terraform_situation_stage_1 = {
 			icon = GFX_situation_stage_1
 			icon_background = GFX_situation_stage_frame_blue
+			end = 50
+			#custom_tooltip = awareness_unaware_tt
+		}
+		PrimPlayer_terraform_situation_stage_2 = {
+			icon = GFX_situation_stage_2
+			icon_background = GFX_situation_stage_frame_blue
 			end = 100
 			#custom_tooltip = awareness_unaware_tt
 		}
-		#PrimPlayer_terraform_situation_stage_2 = {
-		#	icon = GFX_situation_stage_2
-		#	icon_background = GFX_situation_stage_frame_blue
-		#	end = 100
-		#	#custom_tooltip = awareness_unaware_tt
-		#}
 	}
 	on_progress_complete = {
 		target = { carrier_event = { id = random_primitive_events.213 } }
@@ -1474,6 +1510,23 @@ PrimPlayer_terraform_frozen_situation = {
 			desc = PrimPlayer_terraform_situation_approach_halt
 			situation_progress > 1
 			current_situation_approach = PrimPlayer_terraform_situation_approach_halt
+		}
+		modifier = {
+			add = 0.5
+			#add = 2	#Test Speed
+			situation_progress <= 50
+			owner = { has_technology = tech_terrestrial_sculpting }
+			desc = PrimPlayer_terraform_situation_approach_passive
+			current_situation_approach = PrimPlayer_terraform_situation_approach_passive
+		}
+		modifier = {
+			add = 0.5
+			#add = 2	#Test Speed
+			situation_progress > 50
+			situation_progress <= 100
+			owner = { has_technology = tech_colonization_1 }
+			desc = PrimPlayer_terraform_situation_approach_passive
+			current_situation_approach = PrimPlayer_terraform_situation_approach_passive
 		}
 		modifier = {
 			add = 1.5
@@ -1493,6 +1546,21 @@ PrimPlayer_terraform_frozen_situation = {
 		}
 	}
 	approach = {
+		name = PrimPlayer_terraform_situation_approach_passive
+		icon = GFX_situation_approach_unity
+		icon_background = GFX_situation_approach_bg_green
+		default = no
+		allow = { 
+			owner = { has_technology = tech_terrestrial_sculpting }
+			#any_fleet_in_orbit = { is_ship_class = shipclass_science_ship }
+			#TARGET = { any_fleet_in_orbit = { is_ship_class = shipclass_constructor } }	#Disabled requirement for ease - can be back if done by popular demand
+		} 
+		on_select = {
+			#set_situation_locked = yes
+			#custom_tooltip = 
+		}
+	}
+	approach = {
 		name = PrimPlayer_terraform_situation_approach_terraform
 		icon = GFX_situation_approach_research
 		icon_background = GFX_situation_approach_bg_green
@@ -1502,7 +1570,10 @@ PrimPlayer_terraform_frozen_situation = {
 			#custom_tooltip = 
 		}
 		allow = { 
-			owner = { has_technology = tech_terrestrial_sculpting }
+			owner = { 
+				has_technology = tech_terrestrial_sculpting 
+				has_technology = tech_colonization_1 
+			}
 			#any_fleet_in_orbit = { is_ship_class = shipclass_science_ship }
 			#TARGET = { any_fleet_in_orbit = { is_ship_class = shipclass_constructor } }	#Disabled requirement for ease - can be back if done by popular demand
 		} 
@@ -1525,7 +1596,8 @@ PrimPlayer_terraform_frozen_situation_race = {
 	#complete_icon_frame = GFX_situation_outcome_frame_blue
 	#complete_icon = GFX_situation_outcome_positive
 	abort_trigger = {
-		#target = { is_colonizable = yes }
+		#owner = { count_situation = { count = 0 limit = { is_situation_type = PrimPlayer_terraform_frozen_situation } } }
+		target = { is_colony = yes }
 	}
 	modifier = {
 		
@@ -1547,7 +1619,7 @@ PrimPlayer_terraform_frozen_situation_race = {
 	}
 	on_progress_complete = {
 		target = { carrier_event = { id = random_primitive_events.213 } }
-		OWNER = { set_country_flag = PrimPlayer_terraform_frozen_situation_lost }
+		hidden_effect = { owner = { set_country_flag = PrimPlayer_terraform_situation_lost } }
 	}
 	monthly_progress = {
 		base = -0.50 # total: 100
@@ -1608,7 +1680,7 @@ PrimPlayer_terraform_toxic_situation = {
 	#complete_icon_frame = GFX_situation_outcome_frame_blue
 	#complete_icon = GFX_situation_outcome_positive
 	abort_trigger = {
-		#target = { is_colonizable = yes }
+		target = { is_colony = yes }
 	}
 	modifier = {
 		
@@ -1618,15 +1690,15 @@ PrimPlayer_terraform_toxic_situation = {
 		PrimPlayer_terraform_situation_stage_1 = {
 			icon = GFX_situation_stage_1
 			icon_background = GFX_situation_stage_frame_blue
+			end = 50
+			#custom_tooltip = awareness_unaware_tt
+		}
+		PrimPlayer_terraform_situation_stage_2 = {
+			icon = GFX_situation_stage_2
+			icon_background = GFX_situation_stage_frame_blue
 			end = 100
 			#custom_tooltip = awareness_unaware_tt
 		}
-		#PrimPlayer_terraform_situation_stage_2 = {
-		#	icon = GFX_situation_stage_2
-		#	icon_background = GFX_situation_stage_frame_blue
-		#	end = 100
-		#	#custom_tooltip = awareness_unaware_tt
-		#}
 	}
 	on_progress_complete = {
 		target = { carrier_event = { id = random_primitive_events.216 } }
@@ -1638,6 +1710,23 @@ PrimPlayer_terraform_toxic_situation = {
 			desc = PrimPlayer_terraform_situation_approach_halt
 			situation_progress > 1
 			current_situation_approach = PrimPlayer_terraform_situation_approach_halt
+		}
+		modifier = {
+			add = 0.5
+			#add = 2	#Test Speed
+			situation_progress <= 50
+			owner = { has_technology = tech_terrestrial_sculpting }
+			desc = PrimPlayer_terraform_situation_approach_passive
+			current_situation_approach = PrimPlayer_terraform_situation_approach_passive
+		}
+		modifier = {
+			add = 0.5
+			#add = 2	#Test Speed
+			situation_progress > 50
+			situation_progress <= 100
+			owner = { has_technology = tech_colonization_1 }
+			desc = PrimPlayer_terraform_situation_approach_passive
+			current_situation_approach = PrimPlayer_terraform_situation_approach_passive
 		}
 		modifier = {
 			add = 1.5
@@ -1657,6 +1746,24 @@ PrimPlayer_terraform_toxic_situation = {
 		}
 	}
 	approach = {
+		name = PrimPlayer_terraform_situation_approach_passive
+		icon = GFX_situation_approach_unity
+		icon_background = GFX_situation_approach_bg_green
+		default = no
+		allow = { 
+			owner = { 
+				has_technology = tech_terrestrial_sculpting 
+				has_ascension_perk = ap_detox
+			}
+			#any_fleet_in_orbit = { is_ship_class = shipclass_science_ship }
+			#TARGET = { any_fleet_in_orbit = { is_ship_class = shipclass_constructor } }	#Disabled requirement for ease - can be back if done by popular demand
+		} 
+		on_select = {
+			#set_situation_locked = yes
+			#custom_tooltip = 
+		}
+	}
+	approach = {
 		name = PrimPlayer_terraform_situation_approach_terraform
 		icon = GFX_situation_approach_research
 		icon_background = GFX_situation_approach_bg_green
@@ -1668,6 +1775,7 @@ PrimPlayer_terraform_toxic_situation = {
 		allow = { 
 			owner = { 
 				has_technology = tech_terrestrial_sculpting 
+				has_technology = tech_colonization_1 
 				has_ascension_perk = ap_detox
 			}
 			#any_fleet_in_orbit = { is_ship_class = shipclass_science_ship }
@@ -1692,7 +1800,8 @@ PrimPlayer_terraform_toxic_situation_race = {
 	#complete_icon_frame = GFX_situation_outcome_frame_blue
 	#complete_icon = GFX_situation_outcome_positive
 	abort_trigger = {
-		#target = { is_colonizable = yes }
+		#owner = { count_situation = { count = 0 limit = { is_situation_type = PrimPlayer_terraform_toxic_situation } } }
+		target = { is_colony = yes }
 	}
 	modifier = {
 		
@@ -1714,7 +1823,7 @@ PrimPlayer_terraform_toxic_situation_race = {
 	}
 	on_progress_complete = {
 		target = { carrier_event = { id = random_primitive_events.216 } }
-		OWNER = { set_country_flag = PrimPlayer_terraform_toxic_situation_lost }
+		hidden_effect = { owner = { set_country_flag = PrimPlayer_terraform_situation_lost } }
 	}
 	monthly_progress = {
 		base = -0.50 # total: 100
@@ -1735,8 +1844,8 @@ PrimPlayer_terraform_toxic_situation_race = {
 			any_country = {
 				has_communications = root
 				OR = { is_country_type = PrimPlayer_ethic_fanatic_nation is_country_type = PrimPlayer_ethic_fanatic_nation_nomadic }
-				has_technology = tech_terrestrial_sculpting
 				has_ascension_perk = ap_detox
+				has_technology = tech_terrestrial_sculpting
 			}
 		}
 	}

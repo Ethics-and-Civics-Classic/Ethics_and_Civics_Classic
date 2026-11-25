@@ -3263,26 +3263,29 @@ country_event = {
 		}
 		if = {
 			limit = { 
-				has_origin = origin_primitive_player_early_space_age 
 				is_nomadic = no
 			}
-			set_country_flag = PrimPlayer_first_orbital_station_is_free
-			create_fleet = {
-				name = "NAME_Pre_FTL_Chemical_Ship"
-				effect = {
-					set_owner = prev
-					create_ship = {
-						name = "NAME_Pre_FTL_Chemical_Ship"
-						design = "NAME_Early_Engineer_Vessel_NoDrive"
+			country_event = { id = nations.1001 }	#Universal System Set Up for all ages
+			if = { 
+				limit = { has_origin = origin_primitive_player_early_space_age }
+				set_country_flag = PrimPlayer_first_orbital_station_is_free
+				create_fleet = {
+					name = "NAME_Pre_FTL_Chemical_Ship"
+					effect = {
+						set_owner = prev
+						create_ship = {
+							name = "NAME_Pre_FTL_Chemical_Ship"
+							design = "NAME_Early_Engineer_Vessel_NoDrive"
+						}
+						set_fleet_flag = inteplanetary_flight_fleet
+						set_location = prev.capital_scope
+						set_fleet_stance = passive
+						last_created_ship = { set_ship_flag = inteplanetary_flight_fleet }
 					}
-					set_fleet_flag = inteplanetary_flight_fleet
-					set_location = prev.capital_scope
-					set_fleet_stance = passive
-					last_created_ship = { set_ship_flag = inteplanetary_flight_fleet }
 				}
-			}
-			last_created_fleet = { 
-				fleet_event = { id = random_primitive_events.3 }	#First Launch to Space!
+				last_created_fleet = { 
+					fleet_event = { id = random_primitive_events.3 }	#First Launch to Space!
+				}
 			}
 		}
 		if = {
@@ -4371,6 +4374,90 @@ country_event = {
 
 	option = {
 		name = nations.5.a
+	}
+}
+
+# System Set up
+country_event = {
+	id = nations.1001
+	hide_window = yes
+
+	is_triggered_only = yes
+	
+	immediate = {
+		random_owned_planet = {
+			limit = { has_deposit = d_PrimPlayer_nation_deposit }
+			solar_system = { 
+				set_star_flag = PrimPlayer_system@ROOT
+				every_neighbor_system = { 
+					limit = { has_hyperlane_to = prev }
+					set_star_flag = PrimPlayer_system_neighbor@ROOT
+					remove_hyperlane = { from = this to = prev }	#Remove Hyperlanes... they come back later
+				}
+			}
+		}
+	}
+}
+
+# Return System Hyperlanes
+country_event = {
+	id =  nations.1002
+	hide_window = yes
+	
+	trigger = { last_increased_tech = tech_hyper_drive_theory }
+
+	is_triggered_only = yes
+	
+	immediate = { 
+		random_owned_planet = {
+			limit = { 
+				has_deposit = d_PrimPlayer_nation_deposit 
+				solar_system = { has_star_flag = PrimPlayer_system@ROOT }
+			}
+			solar_system = {
+				every_system = { 
+					limit = { has_star_flag = PrimPlayer_system_neighbor@ROOT }
+					add_hyperlane = { from = this to = prev }
+					remove_star_flag = PrimPlayer_system_neighbor@ROOT
+				}
+			}
+		}
+	}
+}
+
+# Space Critters Discover Hyperlane Path
+country_event = {
+	id =  nations.1003
+	title = "nations.1003.title"
+	desc = {
+		text = "nations.1003.desc"
+	}
+	location = from
+	picture = GFX_evt_ship_travel
+	show_sound = event_space_amoeba
+
+	is_triggered_only = yes
+	
+	option = {
+		name = "nations.1003.reveal"	
+		random_owned_planet = {
+			limit = { 
+				has_deposit = d_PrimPlayer_nation_deposit 
+				solar_system = { has_star_flag = PrimPlayer_system@ROOT }
+			}
+			solar_system = {
+				random_system = { 
+					limit = { has_star_flag = PrimPlayer_system_neighbor@ROOT }
+					add_hyperlane = { from = this to = prev }
+					remove_star_flag = PrimPlayer_system_neighbor@ROOT
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = "nations.1003.hide"	
+		
 	}
 }
 
