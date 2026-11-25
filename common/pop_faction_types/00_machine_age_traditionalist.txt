@@ -14,38 +14,14 @@ cyber_creed_labor = {
 
 	resources = {
 		category = pop_factions
-		inline_script = pop_faction_types/shared_unity_production
+		inline_script = pop_faction_types/resources/unity_trade
 		produces = {
-			trigger = {
-				owner = {
-					NOT = { has_edict = civic_crowdsourcing_edict }
-				}
-			}
 			minerals = @faction_base_output
 		}
-		#Crowdsourcing
-		produces = {
-			trigger = {
-				owner = {
-					has_edict = civic_crowdsourcing_edict
-					NOT = { has_civic = civic_anarchy_utopia }
-				}
-			}
-			engineering_research = @faction_major_output
-			society_research = @faction_minor_output
-			mult = @crowdsourcing_multiplier
-		}
-		#Anarchy Ideals
-		produces = {
-			trigger = {
-				owner = {
-					has_edict = civic_crowdsourcing_edict
-					has_civic = civic_anarchy_utopia
-				}
-			}
-			engineering_research = @faction_major_output
-			society_research = @faction_minor_output
-			mult = @crowdsourcing_anarchy_multiplier
+		inline_script = {
+			script = pop_faction_types/resources/research
+			MAJOR_TECH = engineering
+			MINOR_TECH = society
 		}
 	}
 
@@ -72,13 +48,13 @@ cyber_creed_labor = {
 		inline_script = pop_faction_types/can_join_faction/base_shackled
 	}
 
-	inline_script = pop_faction_types/attraction/promote_suppress_tags
+	inline_script = pop_faction_types/attraction/ideological_tags
 
 	attraction = {
 		base = 100
 
-		inline_script = pop_faction_types/attraction/promote_suppress_attraction
 		inline_script = pop_faction_types/attraction/leader_attraction
+		inline_script = pop_faction_types/attraction/ideological_attraction
 	}
 
 	leader = {
@@ -101,18 +77,18 @@ cyber_creed_labor = {
 
 	# DEMAND: Faction Outraged (by a GalCom Resolution)
 	inline_script = {
-		script = pop_faction_types/demand_faction_outraged
+		script = pop_faction_types/demands/outraged
 		FLAG = galcom_resolution_passed_anti_traditionalist
 	}
 
 	# DEMAND: Faction Pleased (by a GalCom Resolution)
 	inline_script = {
-		script = pop_faction_types/demand_faction_pleased
+		script = pop_faction_types/demands/pleased
 		FLAG = galcom_resolution_passed_pro_traditionalist
 	}
 
 	inline_script = {
-		script = pop_faction_types/demand_cybernetic_creed_faction_shared
+		script = pop_faction_types/demands/cybernetic_creed
 	}
 
 	demand = { # "TRADITIONALIST_SPIRITUALIST_POPS"
@@ -235,7 +211,7 @@ cyber_creed_labor = {
 		}
 	}
 
-	#Research Creed Politcal Demand - Bad
+	#Resaerch Creed Politcal Demand - Bad
 	demand = {
 		title = "CYBER_CREED_CHOIRMASTERS_PLOY_BAD"
 		unfulfilled_title = "CYBER_CREED_CHOIRMASTERS_PLOY_BAD_NO"
@@ -263,7 +239,7 @@ cyber_creed_labor = {
 		}
 	}
 
-	#Construction Jubilee Demand - Bad
+	#Constrcution Jubilee Demand - Bad
 	demand = {
 		title = "CYBER_CREED_HAMMER_JUBILEE_BAD"
 		unfulfilled_title = "CYBER_CREED_HAMMER_JUBILEE_BAD_NO"
@@ -293,10 +269,16 @@ cyber_creed_labor = {
 
 	# Faction Demands for Ruler and Council positions.
 	inline_script = {
-		script = "pop_faction_types/global_faction_demands"
+		script = pop_faction_types/demands/global
 		ETHIC = ethic_spiritualist
-		ETHIC_FANATIC = ethic_fanatic_spiritualist
 		ETHIC_OPPOSED = ethic_materialist
+	}
+
+	# Fanatic Faction demands
+	inline_script = pop_faction_types/demands/custodian
+
+	on_create = {
+		set_pop_faction_flag = cyber_creed_faction
 	}
 
 	on_destroy = {
@@ -305,99 +287,18 @@ cyber_creed_labor = {
 			ETHIC = spiritualist
 		}
 		inline_script = {
-			script = pop_faction_types/effect/suppress_on_destroy
+			script = pop_faction_types/effect/suppress_on_destroy_all
 			ETHIC = spiritualist
 		}
 	}
 
-	actions = {
-		embrace_faction = {
-			title = "EMBRACE_FACTION"
-			description = "EMBRACE_FACTION_DESC"
-
-			cost = {
-				unity = 5000
-			}
-
-			potential = {
-				exists = owner
-				owner = {
-					OR = {
-						is_subject = no
-						NOT = { any_agreement = { agreement_preset = preset_dominion } }
-					}
-				}
-			}
-
-			valid = {
-				custom_tooltip = {
-					fail_text = EMBRACE_FACTION_COOLDOWN
-					owner = {
-						NOT = { has_modifier = embraced_faction_timer }
-					}
-				}
-				support > 0.20
-				owner = {
-					NOT = { has_ethic = "ethic_fanatic_spiritualist" }
-				}
-			}
-
-			effect = {
-				add_modifier = { modifier = embraced_faction days = 3600 }
-				owner = {
-					set_country_flag = has_embraced_faction
-					shift_ethic = ethic_spiritualist
-					hidden_effect = {
-						add_modifier = { modifier = embraced_faction_timer days = 3600 }
-						every_pop_faction = {
-							limit = { NOT = { is_same_value = root } }
-							add_modifier = { modifier = embraced_another_faction days = 3600 }
-						}
-					}
-				}
-				hidden_effect = {
-					save_event_target_as = TargetFaction
-					owner = {
-						every_relation = {
-							limit = {
-								is_ai = no
-								is_country_type = default
-								has_communications = prev
-								has_intel_level = {
-									who = prev
-									category = government
-									level >= 1
-								}
-							}
-							country_event = { id = factions.2000 }
-						}
-					}
-				}
-			}
-
-			ai_weight = {
-				base = 1
-				modifier = {
-					factor = 0
-					support < 0.50
-					owner = {
-						has_ethic = ethic_spiritualist
-					}
-				}
-				modifier = {
-					factor = 0
-					owner = { has_valid_civic = civic_fanatic_purifiers }
-				}
-				modifier = {
-					factor = 0
-					owner = {
-						count_pop_faction = {
-							count < 4
-						}
-					}
-				}
-			}
-		}
+	# Actions
+	inline_script = {
+		script = pop_faction_types/actions/advocate_faction
+	}
+	inline_script = {
+		script = pop_faction_types/actions/embrace_faction
+		ETHIC = spiritualist
 	}
 	inline_script = {
 		script = pop_faction_types/actions/promote_faction
@@ -407,52 +308,9 @@ cyber_creed_labor = {
 		script = pop_faction_types/actions/suppress_faction
 		ETHIC = spiritualist
 	}
-	actions = {
-		# Faction Extortion Buttons
-		extort_faction = {
-			title = "EXTORT_FACTION"
-			description = "EXTORT_FACTION_DESC"
-
-			potential = {
-				exists = owner
-				owner = {
-					is_oligarchic_authority = yes
-					has_country_flag = cyber_collectivist
-				}
-				is_faction_extorted = no
-			}
-
-			effect = {
-				set_faction_extorted = yes
-				custom_tooltip = engineering_research_extortion_tt
-				custom_tooltip = ONLY_ONE_EXTORTED_FACTION_TT
-			}
-
-			ai_weight = {
-				base = 0
-			}
-		}
-		cancel_extort_faction = {
-			title = "CANCEL_EXTORT_FACTION"
-			description = "CANCEL_EXTORT_FACTION_DESC"
-
-			potential = {
-				exists = owner
-				owner = {
-					is_oligarchic_authority = yes
-					has_country_flag = cyber_collectivist
-				}
-				is_faction_extorted = yes
-			}
-
-			effect = {
-				set_faction_extorted = no
-			}
-
-			ai_weight = {
-				base = 0
-			}
-		}
+	inline_script = {
+		script = pop_faction_types/actions/extort_faction
+		RESOURCE = engineering_research
 	}
 }
 
@@ -468,33 +326,14 @@ cyber_creed_war = {
 
 	resources = {
 		category = pop_factions
-		inline_script = pop_faction_types/shared_unity_production
+		inline_script = pop_faction_types/resources/unity_trade
 		produces = {
 			alloys = @faction_minor_output
 		}
-		#Crowdsourcing
-		produces = {
-			trigger = {
-				owner = {
-					has_edict = civic_crowdsourcing_edict
-					NOT = { has_civic = civic_anarchy_utopia }
-				}
-			}
-			engineering_research = @faction_major_output
-			physics_research = @faction_minor_output
-			mult = @crowdsourcing_multiplier
-		}
-		#Anarchy Ideals
-		produces = {
-			trigger = {
-				owner = {
-					has_edict = civic_crowdsourcing_edict
-					has_civic = civic_anarchy_utopia
-				}
-			}
-			engineering_research = @faction_major_output
-			physics_research = @faction_minor_output
-			mult = @crowdsourcing_anarchy_multiplier
+		inline_script = {
+			script = pop_faction_types/resources/research
+			MAJOR_TECH = engineering
+			MINOR_TECH = physics
 		}
 	}
 
@@ -521,13 +360,13 @@ cyber_creed_war = {
 		inline_script = pop_faction_types/can_join_faction/base_shackled
 	}
 
-	inline_script = pop_faction_types/attraction/promote_suppress_tags
+	inline_script = pop_faction_types/attraction/ideological_tags
 
 	attraction = {
 		base = 100
 
-		inline_script = pop_faction_types/attraction/promote_suppress_attraction
 		inline_script = pop_faction_types/attraction/leader_attraction
+		inline_script = pop_faction_types/attraction/ideological_attraction
 	}
 
 	leader = {
@@ -550,18 +389,18 @@ cyber_creed_war = {
 
 	# DEMAND: Faction Outraged (by a GalCom Resolution)
 	inline_script = {
-		script = pop_faction_types/demand_faction_outraged
+		script = pop_faction_types/demands/outraged
 		FLAG = galcom_resolution_passed_anti_traditionalist
 	}
 
 	# DEMAND: Faction Pleased (by a GalCom Resolution)
 	inline_script = {
-		script = pop_faction_types/demand_faction_pleased
+		script = pop_faction_types/demands/pleased
 		FLAG = galcom_resolution_passed_pro_traditionalist
 	}
 
 	inline_script = {
-		script = pop_faction_types/demand_cybernetic_creed_faction_shared
+		script = pop_faction_types/demands/cybernetic_creed
 	}
 
 	demand = { # "TRADITIONALIST_SPIRITUALIST_POPS"
@@ -687,7 +526,7 @@ cyber_creed_war = {
 		}
 	}
 
-	#Research Creed Politcal Demand - Bad
+	#Resaerch Creed Politcal Demand - Bad
 	demand = {
 		title = "CYBER_CREED_CHOIRMASTERS_PLOY_BAD"
 		unfulfilled_title = "CYBER_CREED_CHOIRMASTERS_PLOY_BAD_NO"
@@ -716,7 +555,7 @@ cyber_creed_war = {
 		}
 	}
 
-	#Construction Jubilee Demand - Bad
+	#Constrcution Jubilee Demand - Bad
 	demand = {
 		title = "CYBER_CREED_HAMMER_JUBILEE_BAD"
 		unfulfilled_title = "CYBER_CREED_HAMMER_JUBILEE_BAD_NO"
@@ -746,10 +585,16 @@ cyber_creed_war = {
 
 	# Faction Demands for Ruler and Council positions.
 	inline_script = {
-		script = "pop_faction_types/global_faction_demands"
+		script = pop_faction_types/demands/global
 		ETHIC = ethic_spiritualist
-		ETHIC_FANATIC = ethic_fanatic_spiritualist
 		ETHIC_OPPOSED = ethic_materialist
+	}
+
+	# Fanatic Faction demands
+	inline_script = pop_faction_types/demands/custodian
+
+	on_create = {
+		set_pop_faction_flag = cyber_creed_faction
 	}
 
 	on_destroy = {
@@ -758,99 +603,18 @@ cyber_creed_war = {
 			ETHIC = spiritualist
 		}
 		inline_script = {
-			script = pop_faction_types/effect/suppress_on_destroy
+			script = pop_faction_types/effect/suppress_on_destroy_all
 			ETHIC = spiritualist
 		}
 	}
 
-	actions = {
-		embrace_faction = {
-			title = "EMBRACE_FACTION"
-			description = "EMBRACE_FACTION_DESC"
-
-			cost = {
-				unity = 5000
-			}
-
-			potential = {
-				exists = owner
-				owner = {
-					OR = {
-						is_subject = no
-						NOT = { any_agreement = { agreement_preset = preset_dominion } }
-					}
-				}
-			}
-
-			valid = {
-				custom_tooltip = {
-					fail_text = EMBRACE_FACTION_COOLDOWN
-					owner = {
-						NOT = { has_modifier = embraced_faction_timer }
-					}
-				}
-				support > 0.20
-				owner = {
-					NOT = { has_ethic = "ethic_fanatic_spiritualist" }
-				}
-			}
-
-			effect = {
-				add_modifier = { modifier = embraced_faction days = 3600 }
-				owner = {
-					set_country_flag = has_embraced_faction
-					shift_ethic = ethic_spiritualist
-					hidden_effect = {
-						add_modifier = { modifier = embraced_faction_timer days = 3600 }
-						every_pop_faction = {
-							limit = { NOT = { is_same_value = root } }
-							add_modifier = { modifier = embraced_another_faction days = 3600 }
-						}
-					}
-				}
-				hidden_effect = {
-					save_event_target_as = TargetFaction
-					owner = {
-						every_relation = {
-							limit = {
-								is_ai = no
-								is_country_type = default
-								has_communications = prev
-								has_intel_level = {
-									who = prev
-									category = government
-									level >= 1
-								}
-							}
-							country_event = { id = factions.2000 }
-						}
-					}
-				}
-			}
-
-			ai_weight = {
-				base = 1
-				modifier = {
-					factor = 0
-					support < 0.50
-					owner = {
-						has_ethic = ethic_spiritualist
-					}
-				}
-				modifier = {
-					factor = 0
-					owner = { has_valid_civic = civic_fanatic_purifiers }
-				}
-				modifier = {
-					factor = 0
-					owner = {
-						count_pop_faction = {
-							count < 4
-						}
-					}
-				}
-			}
-		}
+	# Actions
+	inline_script = {
+		script = pop_faction_types/actions/advocate_faction
+	}
+	inline_script = {
+		script = pop_faction_types/actions/embrace_faction
+		ETHIC = spiritualist
 	}
 	inline_script = {
 		script = pop_faction_types/actions/promote_faction
@@ -860,52 +624,9 @@ cyber_creed_war = {
 		script = pop_faction_types/actions/suppress_faction
 		ETHIC = spiritualist
 	}
-	actions = {
-		# Faction Extortion Buttons
-		extort_faction = {
-			title = "EXTORT_FACTION"
-			description = "EXTORT_FACTION_DESC"
-
-			potential = {
-				exists = owner
-				owner = {
-					is_oligarchic_authority = yes
-					has_country_flag = cyber_collectivist
-				}
-				is_faction_extorted = no
-			}
-
-			effect = {
-				set_faction_extorted = yes
-				custom_tooltip = engineering_research_extortion_tt
-				custom_tooltip = ONLY_ONE_EXTORTED_FACTION_TT
-			}
-
-			ai_weight = {
-				base = 0
-			}
-		}
-		cancel_extort_faction = {
-			title = "CANCEL_EXTORT_FACTION"
-			description = "CANCEL_EXTORT_FACTION_DESC"
-
-			potential = {
-				exists = owner
-				owner = {
-					is_oligarchic_authority = yes
-					has_country_flag = cyber_collectivist
-				}
-				is_faction_extorted = yes
-			}
-
-			effect = {
-				set_faction_extorted = no
-			}
-
-			ai_weight = {
-				base = 0
-			}
-		}
+	inline_script = {
+		script = pop_faction_types/actions/extort_faction
+		RESOURCE = engineering_research
 	}
 }
 
@@ -921,33 +642,14 @@ cyber_creed_construction = {
 
 	resources = {
 		category = pop_factions
-		inline_script = pop_faction_types/shared_unity_production
+		inline_script = pop_faction_types/resources/unity_trade
 		produces = {
 			consumer_goods = @faction_major_output
 		}
-		#Crowdsourcing
-		produces = {
-			trigger = {
-				owner = {
-					has_edict = civic_crowdsourcing_edict
-					NOT = { has_civic = civic_anarchy_utopia }
-				}
-			}
-			engineering_research = @faction_major_output
-			society_research = @faction_minor_output
-			mult = @crowdsourcing_multiplier
-		}
-		#Anarchy Ideals
-		produces = {
-			trigger = {
-				owner = {
-					has_edict = civic_crowdsourcing_edict
-					has_civic = civic_anarchy_utopia
-				}
-			}
-			engineering_research = @faction_major_output
-			society_research = @faction_minor_output
-			mult = @crowdsourcing_anarchy_multiplier
+		inline_script = {
+			script = pop_faction_types/resources/research
+			MAJOR_TECH = engineering
+			MINOR_TECH = society
 		}
 	}
 
@@ -974,13 +676,13 @@ cyber_creed_construction = {
 		inline_script = pop_faction_types/can_join_faction/base_shackled
 	}
 
-	inline_script = pop_faction_types/attraction/promote_suppress_tags
+	inline_script = pop_faction_types/attraction/ideological_tags
 
 	attraction = {
 		base = 100
 
-		inline_script = pop_faction_types/attraction/promote_suppress_attraction
 		inline_script = pop_faction_types/attraction/leader_attraction
+		inline_script = pop_faction_types/attraction/ideological_attraction
 	}
 
 	leader = {
@@ -1003,18 +705,18 @@ cyber_creed_construction = {
 
 	# DEMAND: Faction Outraged (by a GalCom Resolution)
 	inline_script = {
-		script = pop_faction_types/demand_faction_outraged
+		script = pop_faction_types/demands/outraged
 		FLAG = galcom_resolution_passed_anti_traditionalist
 	}
 
 	# DEMAND: Faction Pleased (by a GalCom Resolution)
 	inline_script = {
-		script = pop_faction_types/demand_faction_pleased
+		script = pop_faction_types/demands/pleased
 		FLAG = galcom_resolution_passed_pro_traditionalist
 	}
 
 	inline_script = {
-		script = pop_faction_types/demand_cybernetic_creed_faction_shared
+		script = pop_faction_types/demands/cybernetic_creed
 	}
 
 	demand = { # "TRADITIONALIST_SPIRITUALIST_POPS"
@@ -1140,7 +842,7 @@ cyber_creed_construction = {
 		}
 	}
 
-	#Research Creed Politcal Demand - Bad
+	#Resaerch Creed Politcal Demand - Bad
 	demand = {
 		title = "CYBER_CREED_CHOIRMASTERS_PLOY_BAD"
 		unfulfilled_title = "CYBER_CREED_CHOIRMASTERS_PLOY_BAD_NO"
@@ -1199,10 +901,16 @@ cyber_creed_construction = {
 
 	# Faction Demands for Ruler and Council positions.
 	inline_script = {
-		script = "pop_faction_types/global_faction_demands"
+		script = pop_faction_types/demands/global
 		ETHIC = ethic_spiritualist
-		ETHIC_FANATIC = ethic_fanatic_spiritualist
 		ETHIC_OPPOSED = ethic_materialist
+	}
+
+	# Fanatic Faction demands
+	inline_script = pop_faction_types/demands/custodian
+
+	on_create = {
+		set_pop_faction_flag = cyber_creed_faction
 	}
 
 	on_destroy = {
@@ -1211,99 +919,18 @@ cyber_creed_construction = {
 			ETHIC = spiritualist
 		}
 		inline_script = {
-			script = pop_faction_types/effect/suppress_on_destroy
+			script = pop_faction_types/effect/suppress_on_destroy_all
 			ETHIC = spiritualist
 		}
 	}
 
-	actions = {
-		embrace_faction = {
-			title = "EMBRACE_FACTION"
-			description = "EMBRACE_FACTION_DESC"
-
-			cost = {
-				unity = 5000
-			}
-
-			potential = {
-				exists = owner
-				owner = {
-					OR = {
-						is_subject = no
-						NOT = { any_agreement = { agreement_preset = preset_dominion } }
-					}
-				}
-			}
-
-			valid = {
-				custom_tooltip = {
-					fail_text = EMBRACE_FACTION_COOLDOWN
-					owner = {
-						NOT = { has_modifier = embraced_faction_timer }
-					}
-				}
-				support > 0.20
-				owner = {
-					NOT = { has_ethic = "ethic_fanatic_spiritualist" }
-				}
-			}
-
-			effect = {
-				add_modifier = { modifier = embraced_faction days = 3600 }
-				owner = {
-					set_country_flag = has_embraced_faction
-					shift_ethic = ethic_spiritualist
-					hidden_effect = {
-						add_modifier = { modifier = embraced_faction_timer days = 3600 }
-						every_pop_faction = {
-							limit = { NOT = { is_same_value = root } }
-							add_modifier = { modifier = embraced_another_faction days = 3600 }
-						}
-					}
-				}
-				hidden_effect = {
-					save_event_target_as = TargetFaction
-					owner = {
-						every_relation = {
-							limit = {
-								is_ai = no
-								is_country_type = default
-								has_communications = prev
-								has_intel_level = {
-									who = prev
-									category = government
-									level >= 1
-								}
-							}
-							country_event = { id = factions.2000 }
-						}
-					}
-				}
-			}
-
-			ai_weight = {
-				base = 1
-				modifier = {
-					factor = 0
-					support < 0.50
-					owner = {
-						has_ethic = ethic_spiritualist
-					}
-				}
-				modifier = {
-					factor = 0
-					owner = { has_valid_civic = civic_fanatic_purifiers }
-				}
-				modifier = {
-					factor = 0
-					owner = {
-						count_pop_faction = {
-							count < 4
-						}
-					}
-				}
-			}
-		}
+	# Actions
+	inline_script = {
+		script = pop_faction_types/actions/advocate_faction
+	}
+	inline_script = {
+		script = pop_faction_types/actions/embrace_faction
+		ETHIC = spiritualist
 	}
 	inline_script = {
 		script = pop_faction_types/actions/promote_faction
@@ -1313,52 +940,9 @@ cyber_creed_construction = {
 		script = pop_faction_types/actions/suppress_faction
 		ETHIC = spiritualist
 	}
-	actions = {
-		# Faction Extortion Buttons
-		extort_faction = {
-			title = "EXTORT_FACTION"
-			description = "EXTORT_FACTION_DESC"
-
-			potential = {
-				exists = owner
-				owner = {
-					is_oligarchic_authority = yes
-					has_country_flag = cyber_collectivist
-				}
-				is_faction_extorted = no
-			}
-
-			effect = {
-				set_faction_extorted = yes
-				custom_tooltip = engineering_research_extortion_tt
-				custom_tooltip = ONLY_ONE_EXTORTED_FACTION_TT
-			}
-
-			ai_weight = {
-				base = 0
-			}
-		}
-		cancel_extort_faction = {
-			title = "CANCEL_EXTORT_FACTION"
-			description = "CANCEL_EXTORT_FACTION_DESC"
-
-			potential = {
-				exists = owner
-				owner = {
-					is_oligarchic_authority = yes
-					has_country_flag = cyber_collectivist
-				}
-				is_faction_extorted = yes
-			}
-
-			effect = {
-				set_faction_extorted = no
-			}
-
-			ai_weight = {
-				base = 0
-			}
-		}
+	inline_script = {
+		script = pop_faction_types/actions/extort_faction
+		RESOURCE = engineering_research
 	}
 }
 
@@ -1374,33 +958,14 @@ cyber_creed_research = {
 
 	resources = {
 		category = pop_factions
-		inline_script = pop_faction_types/shared_unity_production
+		inline_script = pop_faction_types/resources/unity_trade
 		produces = {
 			engineering_research = @faction_major_output
 		}
-		#Crowdsourcing
-		produces = {
-			trigger = {
-				owner = {
-					has_edict = civic_crowdsourcing_edict
-					NOT = { has_civic = civic_anarchy_utopia }
-				}
-			}
-			engineering_research = @faction_major_output
-			physics_research = @faction_minor_output
-			mult = @crowdsourcing_multiplier
-		}
-		#Anarchy Ideals
-		produces = {
-			trigger = {
-				owner = {
-					has_edict = civic_crowdsourcing_edict
-					has_civic = civic_anarchy_utopia
-				}
-			}
-			engineering_research = @faction_major_output
-			physics_research = @faction_minor_output
-			mult = @crowdsourcing_anarchy_multiplier
+		inline_script = {
+			script = pop_faction_types/resources/research
+			MAJOR_TECH = engineering
+			MINOR_TECH = physics
 		}
 	}
 
@@ -1427,13 +992,13 @@ cyber_creed_research = {
 		inline_script = pop_faction_types/can_join_faction/base_shackled
 	}
 
-	inline_script = pop_faction_types/attraction/promote_suppress_tags
+	inline_script = pop_faction_types/attraction/ideological_tags
 
 	attraction = {
 		base = 100
 
-		inline_script = pop_faction_types/attraction/promote_suppress_attraction
 		inline_script = pop_faction_types/attraction/leader_attraction
+		inline_script = pop_faction_types/attraction/ideological_attraction
 	}
 
 	leader = {
@@ -1456,18 +1021,18 @@ cyber_creed_research = {
 
 	# DEMAND: Faction Outraged (by a GalCom Resolution)
 	inline_script = {
-		script = pop_faction_types/demand_faction_outraged
+		script = pop_faction_types/demands/outraged
 		FLAG = galcom_resolution_passed_anti_traditionalist
 	}
 
 	# DEMAND: Faction Pleased (by a GalCom Resolution)
 	inline_script = {
-		script = pop_faction_types/demand_faction_pleased
+		script = pop_faction_types/demands/pleased
 		FLAG = galcom_resolution_passed_pro_traditionalist
 	}
 
 	inline_script = {
-		script = pop_faction_types/demand_cybernetic_creed_faction_shared
+		script = pop_faction_types/demands/cybernetic_creed
 	}
 
 	demand = { # "TRADITIONALIST_SPIRITUALIST_POPS"
@@ -1593,7 +1158,7 @@ cyber_creed_research = {
 		}
 	}
 
-	#Research Creed Politcal Demand - Good
+	#Resaerch Creed Politcal Demand - Good
 	demand = {
 		title = "CYBER_CREED_CHOIRMASTERS_PLOY"
 		unfulfilled_title = "CYBER_CREED_CHOIRMASTERS_PLOY_NO"
@@ -1625,7 +1190,7 @@ cyber_creed_research = {
 		}
 	}
 
-	#Construction Jubilee Demand - Bad
+	#Constrcution Jubilee Demand - Bad
 	demand = {
 		title = "CYBER_CREED_HAMMER_JUBILEE_BAD"
 		unfulfilled_title = "CYBER_CREED_HAMMER_JUBILEE_BAD_NO"
@@ -1655,115 +1220,36 @@ cyber_creed_research = {
 
 	# Faction Demands for Ruler and Council positions.
 	inline_script = {
-		script = "pop_faction_types/global_faction_demands"
+		script = pop_faction_types/demands/global
 		ETHIC = ethic_spiritualist
-		ETHIC_FANATIC = ethic_fanatic_spiritualist
 		ETHIC_OPPOSED = ethic_materialist
 	}
 
+	# Fanatic Faction demands
+	inline_script = pop_faction_types/demands/custodian
+
+	on_create = {
+		set_pop_faction_flag = cyber_creed_faction
+	}
+
 	on_destroy = {
-		if = {
-			limit = {
-				has_modifier = promoted_spiritualist
-			}
-			remove_modifier = promoted_spiritualist
+		inline_script = {
+			script = pop_faction_types/effect/promote_on_destroy
+			ETHIC = spiritualist
 		}
-		if = {
-			limit = {
-				has_modifier = suppressed_spiritualist
-			}
-			remove_modifier = suppressed_spiritualist
+		inline_script = {
+			script = pop_faction_types/effect/suppress_on_destroy_all
+			ETHIC = spiritualist
 		}
 	}
 
-	actions = {
-		embrace_faction = {
-			title = "EMBRACE_FACTION"
-			description = "EMBRACE_FACTION_DESC"
-
-			cost = {
-				unity = 5000
-			}
-
-			potential = {
-				exists = owner
-				owner = {
-					OR = {
-						is_subject = no
-						NOT = { any_agreement = { agreement_preset = preset_dominion } }
-					}
-				}
-			}
-
-			valid = {
-				custom_tooltip = {
-					fail_text = EMBRACE_FACTION_COOLDOWN
-					owner = {
-						NOT = { has_modifier = embraced_faction_timer }
-					}
-				}
-				support > 0.20
-				owner = {
-					NOT = { has_ethic = "ethic_fanatic_spiritualist" }
-				}
-			}
-
-			effect = {
-				add_modifier = { modifier = embraced_faction days = 3600 }
-				owner = {
-					set_country_flag = has_embraced_faction
-					shift_ethic = ethic_spiritualist
-					hidden_effect = {
-						add_modifier = { modifier = embraced_faction_timer days = 3600 }
-						every_pop_faction = {
-							limit = { NOT = { is_same_value = root } }
-							add_modifier = { modifier = embraced_another_faction days = 3600 }
-						}
-					}
-				}
-				hidden_effect = {
-					save_event_target_as = TargetFaction
-					owner = {
-						every_relation = {
-							limit = {
-								is_ai = no
-								is_country_type = default
-								has_communications = prev
-								has_intel_level = {
-									who = prev
-									category = government
-									level >= 1
-								}
-							}
-							country_event = { id = factions.2000 }
-						}
-					}
-				}
-			}
-
-			ai_weight = {
-				base = 1
-				modifier = {
-					factor = 0
-					support < 0.50
-					owner = {
-						has_ethic = ethic_spiritualist
-					}
-				}
-				modifier = {
-					factor = 0
-					owner = { has_valid_civic = civic_fanatic_purifiers }
-				}
-				modifier = {
-					factor = 0
-					owner = {
-						count_pop_faction = {
-							count < 4
-						}
-					}
-				}
-			}
-		}
+	# Actions
+	inline_script = {
+		script = pop_faction_types/actions/advocate_faction
+	}
+	inline_script = {
+		script = pop_faction_types/actions/embrace_faction
+		ETHIC = spiritualist
 	}
 	inline_script = {
 		script = pop_faction_types/actions/promote_faction
@@ -1773,58 +1259,15 @@ cyber_creed_research = {
 		script = pop_faction_types/actions/suppress_faction
 		ETHIC = spiritualist
 	}
-	actions = {
-		# Faction Extortion Buttons
-		extort_faction = {
-			title = "EXTORT_FACTION"
-			description = "EXTORT_FACTION_DESC"
-
-			potential = {
-				exists = owner
-				owner = {
-					is_oligarchic_authority = yes
-					has_country_flag = cyber_collectivist
-				}
-				is_faction_extorted = no
-			}
-
-			effect = {
-				set_faction_extorted = yes
-				custom_tooltip = engineering_research_extortion_tt
-				custom_tooltip = ONLY_ONE_EXTORTED_FACTION_TT
-			}
-
-			ai_weight = {
-				base = 0
-			}
-		}
-		cancel_extort_faction = {
-			title = "CANCEL_EXTORT_FACTION"
-			description = "CANCEL_EXTORT_FACTION_DESC"
-
-			potential = {
-				exists = owner
-				owner = {
-					is_oligarchic_authority = yes
-					has_country_flag = cyber_collectivist
-				}
-				is_faction_extorted = yes
-			}
-
-			effect = {
-				set_faction_extorted = no
-			}
-
-			ai_weight = {
-				base = 0
-			}
-		}
+	inline_script = {
+		script = pop_faction_types/actions/extort_faction
+		RESOURCE = engineering_research
 	}
 }
 
 cyber_creed_general = {
 	guiding_ethic = ethic_spiritualist
-	
+
 	persistent_faction = yes
 	can_rename = no
 	unique = yes
@@ -1835,45 +1278,20 @@ cyber_creed_general = {
 		produces = {
 			trigger = {
 				owner = {
-					NOT = { has_edict = civic_crowdsourcing_edict }
+					is_crowdsourcing_empire = no
 				}
 			}
-			unity = @faction_base_output
+			unity = @faction_improved_output
 		}
-		#Anarchy Ideals
 		produces = {
 			trigger = {
 				owner = {
-					has_edict = civic_crowdsourcing_edict
-					has_civic = civic_anarchy_utopia
+					is_crowdsourcing_empire = yes
 				}
 			}
-			unity = @faction_base_output
-			mult = @faction_anarchy_unity_ratio
-		}
-		#Crowdsourcing
-		produces = {
-			trigger = {
-				owner = {
-					has_edict = civic_crowdsourcing_edict
-					NOT = { has_civic = civic_anarchy_utopia }
-				}
-			}
-			engineering_research = @faction_major_output
-			society_research = @faction_minor_output
+			engineering_research = @faction_base_output
+			society_research = @faction_major_output
 			mult = @crowdsourcing_multiplier
-		}
-		#Anarchy Ideals
-		produces = {
-			trigger = {
-				owner = {
-					has_edict = civic_crowdsourcing_edict
-					has_civic = civic_anarchy_utopia
-				}
-			}
-			engineering_research = @faction_major_output
-			society_research = @faction_minor_output
-			mult = @crowdsourcing_anarchy_multiplier
 		}
 	}
 
@@ -1900,13 +1318,13 @@ cyber_creed_general = {
 		inline_script = pop_faction_types/can_join_faction/base_shackled
 	}
 
-	inline_script = pop_faction_types/attraction/promote_suppress_tags
+	inline_script = pop_faction_types/attraction/ideological_tags
 
 	attraction = {
 		base = 100
 
-		inline_script = pop_faction_types/attraction/promote_suppress_attraction
 		inline_script = pop_faction_types/attraction/leader_attraction
+		inline_script = pop_faction_types/attraction/ideological_attraction
 	}
 
 	leader = {
@@ -1929,18 +1347,18 @@ cyber_creed_general = {
 
 	# DEMAND: Faction Outraged (by a GalCom Resolution)
 	inline_script = {
-		script = pop_faction_types/demand_faction_outraged
+		script = pop_faction_types/demands/outraged
 		FLAG = galcom_resolution_passed_anti_traditionalist
 	}
 
 	# DEMAND: Faction Pleased (by a GalCom Resolution)
 	inline_script = {
-		script = pop_faction_types/demand_faction_pleased
+		script = pop_faction_types/demands/pleased
 		FLAG = galcom_resolution_passed_pro_traditionalist
 	}
 
 	inline_script = {
-		script = pop_faction_types/demand_cybernetic_creed_faction_shared
+		script = pop_faction_types/demands/cybernetic_creed
 	}
 
 	demand = { # "TRADITIONALIST_SPIRITUALIST_POPS"
@@ -1985,18 +1403,16 @@ cyber_creed_general = {
 
 	# Faction Demands for Ruler and Council positions.
 	inline_script = {
-		script = "pop_faction_types/global_faction_demands"
+		script = pop_faction_types/demands/global
 		ETHIC = ethic_spiritualist
-		ETHIC_FANATIC = ethic_fanatic_spiritualist
 		ETHIC_OPPOSED = ethic_materialist
 	}
 
-	# Faction Demands for Ruler and Council positions.
-	inline_script = {
-		script = "pop_faction_types/global_faction_demands"
-		ETHIC = ethic_spiritualist
-		ETHIC_FANATIC = ethic_fanatic_spiritualist
-		ETHIC_OPPOSED = ethic_materialist
+	# Fanatic Faction demands
+	inline_script = pop_faction_types/demands/custodian
+
+	on_create = {
+		set_pop_faction_flag = cyber_creed_faction
 	}
 
 	on_destroy = {
@@ -2005,99 +1421,18 @@ cyber_creed_general = {
 			ETHIC = spiritualist
 		}
 		inline_script = {
-			script = pop_faction_types/effect/suppress_on_destroy
+			script = pop_faction_types/effect/suppress_on_destroy_all
 			ETHIC = spiritualist
 		}
 	}
 
-	actions = {
-		embrace_faction = {
-			title = "EMBRACE_FACTION"
-			description = "EMBRACE_FACTION_DESC"
-
-			cost = {
-				unity = 5000
-			}
-
-			potential = {
-				exists = owner
-				owner = {
-					OR = {
-						is_subject = no
-						NOT = { any_agreement = { agreement_preset = preset_dominion } }
-					}
-				}
-			}
-
-			valid = {
-				custom_tooltip = {
-					fail_text = EMBRACE_FACTION_COOLDOWN
-					owner = {
-						NOT = { has_modifier = embraced_faction_timer }
-					}
-				}
-				support > 0.20
-				owner = {
-					NOT = { has_ethic = "ethic_fanatic_spiritualist" }
-				}
-			}
-
-			effect = {
-				add_modifier = { modifier = embraced_faction days = 3600 }
-				owner = {
-					set_country_flag = has_embraced_faction
-					shift_ethic = ethic_spiritualist
-					hidden_effect = {
-						add_modifier = { modifier = embraced_faction_timer days = 3600 }
-						every_pop_faction = {
-							limit = { NOT = { is_same_value = root } }
-							add_modifier = { modifier = embraced_another_faction days = 3600 }
-						}
-					}
-				}
-				hidden_effect = {
-					save_event_target_as = TargetFaction
-					owner = {
-						every_relation = {
-							limit = {
-								is_ai = no
-								is_country_type = default
-								has_communications = prev
-								has_intel_level = {
-									who = prev
-									category = government
-									level >= 1
-								}
-							}
-							country_event = { id = factions.2000 }
-						}
-					}
-				}
-			}
-
-			ai_weight = {
-				base = 1
-				modifier = {
-					factor = 0
-					support < 0.50
-					owner = {
-						has_ethic = ethic_spiritualist
-					}
-				}
-				modifier = {
-					factor = 0
-					owner = { has_valid_civic = civic_fanatic_purifiers }
-				}
-				modifier = {
-					factor = 0
-					owner = {
-						count_pop_faction = {
-							count < 4
-						}
-					}
-				}
-			}
-		}
+	# Actions
+	inline_script = {
+		script = pop_faction_types/actions/advocate_faction
+	}
+	inline_script = {
+		script = pop_faction_types/actions/embrace_faction
+		ETHIC = spiritualist
 	}
 	inline_script = {
 		script = pop_faction_types/actions/promote_faction
@@ -2107,52 +1442,9 @@ cyber_creed_general = {
 		script = pop_faction_types/actions/suppress_faction
 		ETHIC = spiritualist
 	}
-	actions = {
-		# Faction Extortion Buttons
-		extort_faction = {
-			title = "EXTORT_FACTION"
-			description = "EXTORT_FACTION_DESC"
-
-			potential = {
-				exists = owner
-				owner = {
-					is_oligarchic_authority = yes
-					has_country_flag = cyber_collectivist
-				}
-				is_faction_extorted = no
-			}
-
-			effect = {
-				set_faction_extorted = yes
-				custom_tooltip = engineering_research_extortion_tt
-				custom_tooltip = ONLY_ONE_EXTORTED_FACTION_TT
-			}
-
-			ai_weight = {
-				base = 0
-			}
-		}
-		cancel_extort_faction = {
-			title = "CANCEL_EXTORT_FACTION"
-			description = "CANCEL_EXTORT_FACTION_DESC"
-
-			potential = {
-				exists = owner
-				owner = {
-					is_oligarchic_authority = yes
-					has_country_flag = cyber_collectivist
-				}
-				is_faction_extorted = yes
-			}
-
-			effect = {
-				set_faction_extorted = no
-			}
-
-			ai_weight = {
-				base = 0
-			}
-		}
+	inline_script = {
+		script = pop_faction_types/actions/extort_faction
+		RESOURCE = engineering_research
 	}
 }
 
@@ -2164,33 +1456,14 @@ cyber_creed_labor_2 = {
 
 	resources = {
 		category = pop_factions
-		inline_script = pop_faction_types/shared_unity_production
+		inline_script = pop_faction_types/resources/unity_trade
 		produces = {
 			minerals = @faction_base_output
 		}
-		#Crowdsourcing
-		produces = {
-			trigger = {
-				owner = {
-					has_edict = civic_crowdsourcing_edict
-					NOT = { has_civic = civic_anarchy_utopia }
-				}
-			}
-			engineering_research = @faction_major_output
-			society_research = @faction_minor_output
-			mult = @crowdsourcing_multiplier
-		}
-		#Anarchy Ideals
-		produces = {
-			trigger = {
-				owner = {
-					has_edict = civic_crowdsourcing_edict
-					has_civic = civic_anarchy_utopia
-				}
-			}
-			engineering_research = @faction_major_output
-			society_research = @faction_minor_output
-			mult = @crowdsourcing_anarchy_multiplier
+		inline_script = {
+			script = pop_faction_types/resources/research
+			MAJOR_TECH = engineering
+			MINOR_TECH = society
 		}
 	}
 
@@ -2208,6 +1481,10 @@ cyber_creed_labor_2 = {
 		has_country_flag = cybernetic_creed_labor
 	}
 
+	valid = {
+		is_faction_valid = yes
+	}
+
 	can_join_pre_triggers = {
 		is_enslaved = no
 		is_being_purged = no
@@ -2217,13 +1494,13 @@ cyber_creed_labor_2 = {
 		inline_script = pop_faction_types/can_join_faction/base_shackled
 	}
 
-	inline_script = pop_faction_types/attraction/promote_suppress_tags
+	inline_script = pop_faction_types/attraction/ideological_tags
 
 	attraction = {
 		base = 100
 
-		inline_script = pop_faction_types/attraction/promote_suppress_attraction
 		inline_script = pop_faction_types/attraction/leader_attraction
+		inline_script = pop_faction_types/attraction/ideological_attraction
 	}
 
 	leader = {
@@ -2246,18 +1523,18 @@ cyber_creed_labor_2 = {
 
 	# DEMAND: Faction Outraged (by a GalCom Resolution)
 	inline_script = {
-		script = pop_faction_types/demand_faction_outraged
+		script = pop_faction_types/demands/outraged
 		FLAG = galcom_resolution_passed_anti_traditionalist
 	}
 
 	# DEMAND: Faction Pleased (by a GalCom Resolution)
 	inline_script = {
-		script = pop_faction_types/demand_faction_pleased
+		script = pop_faction_types/demands/pleased
 		FLAG = galcom_resolution_passed_pro_traditionalist
 	}
 
 	inline_script = {
-		script = pop_faction_types/demand_cybernetic_creed_faction_shared
+		script = pop_faction_types/demands/cybernetic_creed
 	}
 
 	demand = { # "TRADITIONALIST_SPIRITUALIST_POPS"
@@ -2380,7 +1657,7 @@ cyber_creed_labor_2 = {
 		}
 	}
 
-	#Research Creed Politcal Demand - Bad
+	#Resaerch Creed Politcal Demand - Bad
 	demand = {
 		title = "CYBER_CREED_CHOIRMASTERS_PLOY_BAD"
 		unfulfilled_title = "CYBER_CREED_CHOIRMASTERS_PLOY_BAD_NO"
@@ -2408,7 +1685,7 @@ cyber_creed_labor_2 = {
 		}
 	}
 
-	#Construction Jubilee Demand - Bad
+	#Constrcution Jubilee Demand - Bad
 	demand = {
 		title = "CYBER_CREED_HAMMER_JUBILEE_BAD"
 		unfulfilled_title = "CYBER_CREED_HAMMER_JUBILEE_BAD_NO"
@@ -2438,10 +1715,16 @@ cyber_creed_labor_2 = {
 
 	# Faction Demands for Ruler and Council positions.
 	inline_script = {
-		script = "pop_faction_types/global_faction_demands"
+		script = pop_faction_types/demands/global
 		ETHIC = ethic_spiritualist
-		ETHIC_FANATIC = ethic_fanatic_spiritualist
 		ETHIC_OPPOSED = ethic_materialist
+	}
+
+	# Fanatic Faction demands
+	inline_script = pop_faction_types/demands/custodian
+
+	on_create = {
+		set_pop_faction_flag = cyber_creed_faction
 	}
 
 	on_destroy = {
@@ -2450,99 +1733,18 @@ cyber_creed_labor_2 = {
 			ETHIC = spiritualist
 		}
 		inline_script = {
-			script = pop_faction_types/effect/suppress_on_destroy
+			script = pop_faction_types/effect/suppress_on_destroy_all
 			ETHIC = spiritualist
 		}
 	}
 
-	actions = {
-		embrace_faction = {
-			title = "EMBRACE_FACTION"
-			description = "EMBRACE_FACTION_DESC"
-
-			cost = {
-				unity = 5000
-			}
-
-			potential = {
-				exists = owner
-				owner = {
-					OR = {
-						is_subject = no
-						NOT = { any_agreement = { agreement_preset = preset_dominion } }
-					}
-				}
-			}
-
-			valid = {
-				custom_tooltip = {
-					fail_text = EMBRACE_FACTION_COOLDOWN
-					owner = {
-						NOT = { has_modifier = embraced_faction_timer }
-					}
-				}
-				support > 0.20
-				owner = {
-					NOT = { has_ethic = "ethic_fanatic_spiritualist" }
-				}
-			}
-
-			effect = {
-				add_modifier = { modifier = embraced_faction days = 3600 }
-				owner = {
-					set_country_flag = has_embraced_faction
-					shift_ethic = ethic_spiritualist
-					hidden_effect = {
-						add_modifier = { modifier = embraced_faction_timer days = 3600 }
-						every_pop_faction = {
-							limit = { NOT = { is_same_value = root } }
-							add_modifier = { modifier = embraced_another_faction days = 3600 }
-						}
-					}
-				}
-				hidden_effect = {
-					save_event_target_as = TargetFaction
-					owner = {
-						every_relation = {
-							limit = {
-								is_ai = no
-								is_country_type = default
-								has_communications = prev
-								has_intel_level = {
-									who = prev
-									category = government
-									level >= 1
-								}
-							}
-							country_event = { id = factions.2000 }
-						}
-					}
-				}
-			}
-
-			ai_weight = {
-				base = 1
-				modifier = {
-					factor = 0
-					support < 0.50
-					owner = {
-						has_ethic = ethic_spiritualist
-					}
-				}
-				modifier = {
-					factor = 0
-					owner = { has_valid_civic = civic_fanatic_purifiers }
-				}
-				modifier = {
-					factor = 0
-					owner = {
-						count_pop_faction = {
-							count < 4
-						}
-					}
-				}
-			}
-		}
+	# Actions
+	inline_script = {
+		script = pop_faction_types/actions/advocate_faction
+	}
+	inline_script = {
+		script = pop_faction_types/actions/embrace_faction
+		ETHIC = spiritualist
 	}
 	inline_script = {
 		script = pop_faction_types/actions/promote_faction
@@ -2552,52 +1754,9 @@ cyber_creed_labor_2 = {
 		script = pop_faction_types/actions/suppress_faction
 		ETHIC = spiritualist
 	}
-	actions = {
-		# Faction Extortion Buttons
-		extort_faction = {
-			title = "EXTORT_FACTION"
-			description = "EXTORT_FACTION_DESC"
-
-			potential = {
-				exists = owner
-				owner = {
-					is_oligarchic_authority = yes
-					has_country_flag = cyber_collectivist
-				}
-				is_faction_extorted = no
-			}
-
-			effect = {
-				set_faction_extorted = yes
-				custom_tooltip = engineering_research_extortion_tt
-				custom_tooltip = ONLY_ONE_EXTORTED_FACTION_TT
-			}
-
-			ai_weight = {
-				base = 0
-			}
-		}
-		cancel_extort_faction = {
-			title = "CANCEL_EXTORT_FACTION"
-			description = "CANCEL_EXTORT_FACTION_DESC"
-
-			potential = {
-				exists = owner
-				owner = {
-					is_oligarchic_authority = yes
-					has_country_flag = cyber_collectivist
-				}
-				is_faction_extorted = yes
-			}
-
-			effect = {
-				set_faction_extorted = no
-			}
-
-			ai_weight = {
-				base = 0
-			}
-		}
+	inline_script = {
+		script = pop_faction_types/actions/extort_faction
+		RESOURCE = engineering_research
 	}
 }
 
@@ -2609,33 +1768,14 @@ cyber_creed_war_2 = {
 
 	resources = {
 		category = pop_factions
-		inline_script = pop_faction_types/shared_unity_production
+		inline_script = pop_faction_types/resources/unity_trade
 		produces = {
 			alloys = @faction_minor_output
 		}
-		#Crowdsourcing
-		produces = {
-			trigger = {
-				owner = {
-					has_edict = civic_crowdsourcing_edict
-					NOT = { has_civic = civic_anarchy_utopia }
-				}
-			}
-			engineering_research = @faction_major_output
-			physics_research = @faction_minor_output
-			mult = @crowdsourcing_multiplier
-		}
-		#Anarchy Ideals
-		produces = {
-			trigger = {
-				owner = {
-					has_edict = civic_crowdsourcing_edict
-					has_civic = civic_anarchy_utopia
-				}
-			}
-			engineering_research = @faction_major_output
-			physics_research = @faction_minor_output
-			mult = @crowdsourcing_anarchy_multiplier
+		inline_script = {
+			script = pop_faction_types/resources/research
+			MAJOR_TECH = engineering
+			MINOR_TECH = physics
 		}
 	}
 
@@ -2653,6 +1793,10 @@ cyber_creed_war_2 = {
 		has_country_flag = cybernetic_creed_war
 	}
 
+	valid = {
+		is_faction_valid = yes
+	}
+
 	can_join_pre_triggers = {
 		is_enslaved = no
 		is_being_purged = no
@@ -2662,13 +1806,13 @@ cyber_creed_war_2 = {
 		inline_script = pop_faction_types/can_join_faction/base_shackled
 	}
 
-	inline_script = pop_faction_types/attraction/promote_suppress_tags
+	inline_script = pop_faction_types/attraction/ideological_tags
 
 	attraction = {
 		base = 100
 
-		inline_script = pop_faction_types/attraction/promote_suppress_attraction
 		inline_script = pop_faction_types/attraction/leader_attraction
+		inline_script = pop_faction_types/attraction/ideological_attraction
 	}
 
 	leader = {
@@ -2691,18 +1835,18 @@ cyber_creed_war_2 = {
 
 	# DEMAND: Faction Outraged (by a GalCom Resolution)
 	inline_script = {
-		script = pop_faction_types/demand_faction_outraged
+		script = pop_faction_types/demands/outraged
 		FLAG = galcom_resolution_passed_anti_traditionalist
 	}
 
 	# DEMAND: Faction Pleased (by a GalCom Resolution)
 	inline_script = {
-		script = pop_faction_types/demand_faction_pleased
+		script = pop_faction_types/demands/pleased
 		FLAG = galcom_resolution_passed_pro_traditionalist
 	}
 
 	inline_script = {
-		script = pop_faction_types/demand_cybernetic_creed_faction_shared
+		script = pop_faction_types/demands/cybernetic_creed
 	}
 
 	demand = { # "TRADITIONALIST_SPIRITUALIST_POPS"
@@ -2828,7 +1972,7 @@ cyber_creed_war_2 = {
 		}
 	}
 
-	#Research Creed Politcal Demand - Bad
+	#Resaerch Creed Politcal Demand - Bad
 	demand = {
 		title = "CYBER_CREED_CHOIRMASTERS_PLOY_BAD"
 		unfulfilled_title = "CYBER_CREED_CHOIRMASTERS_PLOY_BAD_NO"
@@ -2857,7 +2001,7 @@ cyber_creed_war_2 = {
 		}
 	}
 
-	#Construction Jubilee Demand - Bad
+	#Constrcution Jubilee Demand - Bad
 	demand = {
 		title = "CYBER_CREED_HAMMER_JUBILEE_BAD"
 		unfulfilled_title = "CYBER_CREED_HAMMER_JUBILEE_BAD_NO"
@@ -2887,10 +2031,16 @@ cyber_creed_war_2 = {
 
 	# Faction Demands for Ruler and Council positions.
 	inline_script = {
-		script = "pop_faction_types/global_faction_demands"
+		script = pop_faction_types/demands/global
 		ETHIC = ethic_spiritualist
-		ETHIC_FANATIC = ethic_fanatic_spiritualist
 		ETHIC_OPPOSED = ethic_materialist
+	}
+
+	# Fanatic Faction demands
+	inline_script = pop_faction_types/demands/custodian
+
+	on_create = {
+		set_pop_faction_flag = cyber_creed_faction
 	}
 
 	on_destroy = {
@@ -2899,99 +2049,18 @@ cyber_creed_war_2 = {
 			ETHIC = spiritualist
 		}
 		inline_script = {
-			script = pop_faction_types/effect/suppress_on_destroy
+			script = pop_faction_types/effect/suppress_on_destroy_all
 			ETHIC = spiritualist
 		}
 	}
 
-	actions = {
-		embrace_faction = {
-			title = "EMBRACE_FACTION"
-			description = "EMBRACE_FACTION_DESC"
-
-			cost = {
-				unity = 5000
-			}
-
-			potential = {
-				exists = owner
-				owner = {
-					OR = {
-						is_subject = no
-						NOT = { any_agreement = { agreement_preset = preset_dominion } }
-					}
-				}
-			}
-
-			valid = {
-				custom_tooltip = {
-					fail_text = EMBRACE_FACTION_COOLDOWN
-					owner = {
-						NOT = { has_modifier = embraced_faction_timer }
-					}
-				}
-				support > 0.20
-				owner = {
-					NOT = { has_ethic = "ethic_fanatic_spiritualist" }
-				}
-			}
-
-			effect = {
-				add_modifier = { modifier = embraced_faction days = 3600 }
-				owner = {
-					set_country_flag = has_embraced_faction
-					shift_ethic = ethic_spiritualist
-					hidden_effect = {
-						add_modifier = { modifier = embraced_faction_timer days = 3600 }
-						every_pop_faction = {
-							limit = { NOT = { is_same_value = root } }
-							add_modifier = { modifier = embraced_another_faction days = 3600 }
-						}
-					}
-				}
-				hidden_effect = {
-					save_event_target_as = TargetFaction
-					owner = {
-						every_relation = {
-							limit = {
-								is_ai = no
-								is_country_type = default
-								has_communications = prev
-								has_intel_level = {
-									who = prev
-									category = government
-									level >= 1
-								}
-							}
-							country_event = { id = factions.2000 }
-						}
-					}
-				}
-			}
-
-			ai_weight = {
-				base = 1
-				modifier = {
-					factor = 0
-					support < 0.50
-					owner = {
-						has_ethic = ethic_spiritualist
-					}
-				}
-				modifier = {
-					factor = 0
-					owner = { has_valid_civic = civic_fanatic_purifiers }
-				}
-				modifier = {
-					factor = 0
-					owner = {
-						count_pop_faction = {
-							count < 4
-						}
-					}
-				}
-			}
-		}
+	# Actions
+	inline_script = {
+		script = pop_faction_types/actions/advocate_faction
+	}
+	inline_script = {
+		script = pop_faction_types/actions/embrace_faction
+		ETHIC = spiritualist
 	}
 	inline_script = {
 		script = pop_faction_types/actions/promote_faction
@@ -3001,52 +2070,9 @@ cyber_creed_war_2 = {
 		script = pop_faction_types/actions/suppress_faction
 		ETHIC = spiritualist
 	}
-	actions = {
-		# Faction Extortion Buttons
-		extort_faction = {
-			title = "EXTORT_FACTION"
-			description = "EXTORT_FACTION_DESC"
-
-			potential = {
-				exists = owner
-				owner = {
-					is_oligarchic_authority = yes
-					has_country_flag = cyber_collectivist
-				}
-				is_faction_extorted = no
-			}
-
-			effect = {
-				set_faction_extorted = yes
-				custom_tooltip = engineering_research_extortion_tt
-				custom_tooltip = ONLY_ONE_EXTORTED_FACTION_TT
-			}
-
-			ai_weight = {
-				base = 0
-			}
-		}
-		cancel_extort_faction = {
-			title = "CANCEL_EXTORT_FACTION"
-			description = "CANCEL_EXTORT_FACTION_DESC"
-
-			potential = {
-				exists = owner
-				owner = {
-					is_oligarchic_authority = yes
-					has_country_flag = cyber_collectivist
-				}
-				is_faction_extorted = yes
-			}
-
-			effect = {
-				set_faction_extorted = no
-			}
-
-			ai_weight = {
-				base = 0
-			}
-		}
+	inline_script = {
+		script = pop_faction_types/actions/extort_faction
+		RESOURCE = engineering_research
 	}
 }
 
@@ -3058,33 +2084,14 @@ cyber_creed_construction_2 = {
 
 	resources = {
 		category = pop_factions
-		inline_script = pop_faction_types/shared_unity_production
+		inline_script = pop_faction_types/resources/unity_trade
 		produces = {
 			consumer_goods = @faction_major_output
 		}
-		#Crowdsourcing
-		produces = {
-			trigger = {
-				owner = {
-					has_edict = civic_crowdsourcing_edict
-					NOT = { has_civic = civic_anarchy_utopia }
-				}
-			}
-			engineering_research = @faction_major_output
-			society_research = @faction_minor_output
-			mult = @crowdsourcing_multiplier
-		}
-		#Anarchy Ideals
-		produces = {
-			trigger = {
-				owner = {
-					has_edict = civic_crowdsourcing_edict
-					has_civic = civic_anarchy_utopia
-				}
-			}
-			engineering_research = @faction_major_output
-			society_research = @faction_minor_output
-			mult = @crowdsourcing_anarchy_multiplier
+		inline_script = {
+			script = pop_faction_types/resources/research
+			MAJOR_TECH = engineering
+			MINOR_TECH = society
 		}
 	}
 
@@ -3102,6 +2109,10 @@ cyber_creed_construction_2 = {
 		has_country_flag = cybernetic_creed_construction
 	}
 
+	valid = {
+		is_faction_valid = yes
+	}
+
 	can_join_pre_triggers = {
 		is_enslaved = no
 		is_being_purged = no
@@ -3111,13 +2122,13 @@ cyber_creed_construction_2 = {
 		inline_script = pop_faction_types/can_join_faction/base_shackled
 	}
 
-	inline_script = pop_faction_types/attraction/promote_suppress_tags
+	inline_script = pop_faction_types/attraction/ideological_tags
 
 	attraction = {
 		base = 100
 
-		inline_script = pop_faction_types/attraction/promote_suppress_attraction
 		inline_script = pop_faction_types/attraction/leader_attraction
+		inline_script = pop_faction_types/attraction/ideological_attraction
 	}
 
 	leader = {
@@ -3140,18 +2151,18 @@ cyber_creed_construction_2 = {
 
 	# DEMAND: Faction Outraged (by a GalCom Resolution)
 	inline_script = {
-		script = pop_faction_types/demand_faction_outraged
+		script = pop_faction_types/demands/outraged
 		FLAG = galcom_resolution_passed_anti_traditionalist
 	}
 
 	# DEMAND: Faction Pleased (by a GalCom Resolution)
 	inline_script = {
-		script = pop_faction_types/demand_faction_pleased
+		script = pop_faction_types/demands/pleased
 		FLAG = galcom_resolution_passed_pro_traditionalist
 	}
 
 	inline_script = {
-		script = pop_faction_types/demand_cybernetic_creed_faction_shared
+		script = pop_faction_types/demands/cybernetic_creed
 	}
 
 	demand = { # "TRADITIONALIST_SPIRITUALIST_POPS"
@@ -3277,7 +2288,7 @@ cyber_creed_construction_2 = {
 		}
 	}
 
-	#Research Creed Politcal Demand - Bad
+	#Resaerch Creed Politcal Demand - Bad
 	demand = {
 		title = "CYBER_CREED_CHOIRMASTERS_PLOY_BAD"
 		unfulfilled_title = "CYBER_CREED_CHOIRMASTERS_PLOY_BAD_NO"
@@ -3336,10 +2347,16 @@ cyber_creed_construction_2 = {
 
 	# Faction Demands for Ruler and Council positions.
 	inline_script = {
-		script = "pop_faction_types/global_faction_demands"
+		script = pop_faction_types/demands/global
 		ETHIC = ethic_spiritualist
-		ETHIC_FANATIC = ethic_fanatic_spiritualist
 		ETHIC_OPPOSED = ethic_materialist
+	}
+
+	# Fanatic Faction demands
+	inline_script = pop_faction_types/demands/custodian
+
+	on_create = {
+		set_pop_faction_flag = cyber_creed_faction
 	}
 
 	on_destroy = {
@@ -3348,99 +2365,18 @@ cyber_creed_construction_2 = {
 			ETHIC = spiritualist
 		}
 		inline_script = {
-			script = pop_faction_types/effect/suppress_on_destroy
+			script = pop_faction_types/effect/suppress_on_destroy_all
 			ETHIC = spiritualist
 		}
 	}
 
-	actions = {
-		embrace_faction = {
-			title = "EMBRACE_FACTION"
-			description = "EMBRACE_FACTION_DESC"
-
-			cost = {
-				unity = 5000
-			}
-
-			potential = {
-				exists = owner
-				owner = {
-					OR = {
-						is_subject = no
-						NOT = { any_agreement = { agreement_preset = preset_dominion } }
-					}
-				}
-			}
-
-			valid = {
-				custom_tooltip = {
-					fail_text = EMBRACE_FACTION_COOLDOWN
-					owner = {
-						NOT = { has_modifier = embraced_faction_timer }
-					}
-				}
-				support > 0.20
-				owner = {
-					NOT = { has_ethic = "ethic_fanatic_spiritualist" }
-				}
-			}
-
-			effect = {
-				add_modifier = { modifier = embraced_faction days = 3600 }
-				owner = {
-					set_country_flag = has_embraced_faction
-					shift_ethic = ethic_spiritualist
-					hidden_effect = {
-						add_modifier = { modifier = embraced_faction_timer days = 3600 }
-						every_pop_faction = {
-							limit = { NOT = { is_same_value = root } }
-							add_modifier = { modifier = embraced_another_faction days = 3600 }
-						}
-					}
-				}
-				hidden_effect = {
-					save_event_target_as = TargetFaction
-					owner = {
-						every_relation = {
-							limit = {
-								is_ai = no
-								is_country_type = default
-								has_communications = prev
-								has_intel_level = {
-									who = prev
-									category = government
-									level >= 1
-								}
-							}
-							country_event = { id = factions.2000 }
-						}
-					}
-				}
-			}
-
-			ai_weight = {
-				base = 1
-				modifier = {
-					factor = 0
-					support < 0.50
-					owner = {
-						has_ethic = ethic_spiritualist
-					}
-				}
-				modifier = {
-					factor = 0
-					owner = { has_valid_civic = civic_fanatic_purifiers }
-				}
-				modifier = {
-					factor = 0
-					owner = {
-						count_pop_faction = {
-							count < 4
-						}
-					}
-				}
-			}
-		}
+	# Actions
+	inline_script = {
+		script = pop_faction_types/actions/advocate_faction
+	}
+	inline_script = {
+		script = pop_faction_types/actions/embrace_faction
+		ETHIC = spiritualist
 	}
 	inline_script = {
 		script = pop_faction_types/actions/promote_faction
@@ -3450,52 +2386,9 @@ cyber_creed_construction_2 = {
 		script = pop_faction_types/actions/suppress_faction
 		ETHIC = spiritualist
 	}
-	actions = {
-		# Faction Extortion Buttons
-		extort_faction = {
-			title = "EXTORT_FACTION"
-			description = "EXTORT_FACTION_DESC"
-
-			potential = {
-				exists = owner
-				owner = {
-					is_oligarchic_authority = yes
-					has_country_flag = cyber_collectivist
-				}
-				is_faction_extorted = no
-			}
-
-			effect = {
-				set_faction_extorted = yes
-				custom_tooltip = engineering_research_extortion_tt
-				custom_tooltip = ONLY_ONE_EXTORTED_FACTION_TT
-			}
-
-			ai_weight = {
-				base = 0
-			}
-		}
-		cancel_extort_faction = {
-			title = "CANCEL_EXTORT_FACTION"
-			description = "CANCEL_EXTORT_FACTION_DESC"
-
-			potential = {
-				exists = owner
-				owner = {
-					is_oligarchic_authority = yes
-					has_country_flag = cyber_collectivist
-				}
-				is_faction_extorted = yes
-			}
-
-			effect = {
-				set_faction_extorted = no
-			}
-
-			ai_weight = {
-				base = 0
-			}
-		}
+	inline_script = {
+		script = pop_faction_types/actions/extort_faction
+		RESOURCE = engineering_research
 	}
 }
 
@@ -3507,33 +2400,14 @@ cyber_creed_research_2 = {
 
 	resources = {
 		category = pop_factions
-		inline_script = pop_faction_types/shared_unity_production
+		inline_script = pop_faction_types/resources/unity_trade
 		produces = {
 			engineering_research = @faction_major_output
 		}
-		#Crowdsourcing
-		produces = {
-			trigger = {
-				owner = {
-					has_edict = civic_crowdsourcing_edict
-					NOT = { has_civic = civic_anarchy_utopia }
-				}
-			}
-			engineering_research = @faction_major_output
-			physics_research = @faction_minor_output
-			mult = @crowdsourcing_multiplier
-		}
-		#Anarchy Ideals
-		produces = {
-			trigger = {
-				owner = {
-					has_edict = civic_crowdsourcing_edict
-					has_civic = civic_anarchy_utopia
-				}
-			}
-			engineering_research = @faction_major_output
-			physics_research = @faction_minor_output
-			mult = @crowdsourcing_anarchy_multiplier
+		inline_script = {
+			script = pop_faction_types/resources/research
+			MAJOR_TECH = engineering
+			MINOR_TECH = physics
 		}
 	}
 
@@ -3551,6 +2425,10 @@ cyber_creed_research_2 = {
 		has_country_flag = cybernetic_creed_research
 	}
 
+	valid = {
+		is_faction_valid = yes
+	}
+
 	can_join_pre_triggers = {
 		is_enslaved = no
 		is_being_purged = no
@@ -3560,13 +2438,13 @@ cyber_creed_research_2 = {
 		inline_script = pop_faction_types/can_join_faction/base_shackled
 	}
 
-	inline_script = pop_faction_types/attraction/promote_suppress_tags
+	inline_script = pop_faction_types/attraction/ideological_tags
 
 	attraction = {
 		base = 100
 
-		inline_script = pop_faction_types/attraction/promote_suppress_attraction
 		inline_script = pop_faction_types/attraction/leader_attraction
+		inline_script = pop_faction_types/attraction/ideological_attraction
 	}
 
 	leader = {
@@ -3589,18 +2467,18 @@ cyber_creed_research_2 = {
 
 	# DEMAND: Faction Outraged (by a GalCom Resolution)
 	inline_script = {
-		script = pop_faction_types/demand_faction_outraged
+		script = pop_faction_types/demands/outraged
 		FLAG = galcom_resolution_passed_anti_traditionalist
 	}
 
 	# DEMAND: Faction Pleased (by a GalCom Resolution)
 	inline_script = {
-		script = pop_faction_types/demand_faction_pleased
+		script = pop_faction_types/demands/pleased
 		FLAG = galcom_resolution_passed_pro_traditionalist
 	}
 
 	inline_script = {
-		script = pop_faction_types/demand_cybernetic_creed_faction_shared
+		script = pop_faction_types/demands/cybernetic_creed
 	}
 
 	demand = { # "TRADITIONALIST_SPIRITUALIST_POPS"
@@ -3726,7 +2604,7 @@ cyber_creed_research_2 = {
 		}
 	}
 
-	#Research Creed Politcal Demand - Good
+	#Resaerch Creed Politcal Demand - Good
 	demand = {
 		title = "CYBER_CREED_CHOIRMASTERS_PLOY"
 		unfulfilled_title = "CYBER_CREED_CHOIRMASTERS_PLOY_NO"
@@ -3758,7 +2636,7 @@ cyber_creed_research_2 = {
 		}
 	}
 
-	#Construction Jubilee Demand - Bad
+	#Constrcution Jubilee Demand - Bad
 	demand = {
 		title = "CYBER_CREED_HAMMER_JUBILEE_BAD"
 		unfulfilled_title = "CYBER_CREED_HAMMER_JUBILEE_BAD_NO"
@@ -3788,10 +2666,16 @@ cyber_creed_research_2 = {
 
 	# Faction Demands for Ruler and Council positions.
 	inline_script = {
-		script = "pop_faction_types/global_faction_demands"
+		script = pop_faction_types/demands/global
 		ETHIC = ethic_spiritualist
-		ETHIC_FANATIC = ethic_fanatic_spiritualist
 		ETHIC_OPPOSED = ethic_materialist
+	}
+
+	# Fanatic Faction demands
+	inline_script = pop_faction_types/demands/custodian
+
+	on_create = {
+		set_pop_faction_flag = cyber_creed_faction
 	}
 
 	on_destroy = {
@@ -3800,99 +2684,18 @@ cyber_creed_research_2 = {
 			ETHIC = spiritualist
 		}
 		inline_script = {
-			script = pop_faction_types/effect/suppress_on_destroy
+			script = pop_faction_types/effect/suppress_on_destroy_all
 			ETHIC = spiritualist
 		}
 	}
 
-	actions = {
-		embrace_faction = {
-			title = "EMBRACE_FACTION"
-			description = "EMBRACE_FACTION_DESC"
-
-			cost = {
-				unity = 5000
-			}
-
-			potential = {
-				exists = owner
-				owner = {
-					OR = {
-						is_subject = no
-						NOT = { any_agreement = { agreement_preset = preset_dominion } }
-					}
-				}
-			}
-
-			valid = {
-				custom_tooltip = {
-					fail_text = EMBRACE_FACTION_COOLDOWN
-					owner = {
-						NOT = { has_modifier = embraced_faction_timer }
-					}
-				}
-				support > 0.20
-				owner = {
-					NOT = { has_ethic = "ethic_fanatic_spiritualist" }
-				}
-			}
-
-			effect = {
-				add_modifier = { modifier = embraced_faction days = 3600 }
-				owner = {
-					set_country_flag = has_embraced_faction
-					shift_ethic = ethic_spiritualist
-					hidden_effect = {
-						add_modifier = { modifier = embraced_faction_timer days = 3600 }
-						every_pop_faction = {
-							limit = { NOT = { is_same_value = root } }
-							add_modifier = { modifier = embraced_another_faction days = 3600 }
-						}
-					}
-				}
-				hidden_effect = {
-					save_event_target_as = TargetFaction
-					owner = {
-						every_relation = {
-							limit = {
-								is_ai = no
-								is_country_type = default
-								has_communications = prev
-								has_intel_level = {
-									who = prev
-									category = government
-									level >= 1
-								}
-							}
-							country_event = { id = factions.2000 }
-						}
-					}
-				}
-			}
-
-			ai_weight = {
-				base = 1
-				modifier = {
-					factor = 0
-					support < 0.50
-					owner = {
-						has_ethic = ethic_spiritualist
-					}
-				}
-				modifier = {
-					factor = 0
-					owner = { has_valid_civic = civic_fanatic_purifiers }
-				}
-				modifier = {
-					factor = 0
-					owner = {
-						count_pop_faction = {
-							count < 4
-						}
-					}
-				}
-			}
-		}
+	# Actions
+	inline_script = {
+		script = pop_faction_types/actions/advocate_faction
+	}
+	inline_script = {
+		script = pop_faction_types/actions/embrace_faction
+		ETHIC = spiritualist
 	}
 	inline_script = {
 		script = pop_faction_types/actions/promote_faction
@@ -3902,51 +2705,8 @@ cyber_creed_research_2 = {
 		script = pop_faction_types/actions/suppress_faction
 		ETHIC = spiritualist
 	}
-	actions = {
-		# Faction Extortion Buttons
-		extort_faction = {
-			title = "EXTORT_FACTION"
-			description = "EXTORT_FACTION_DESC"
-
-			potential = {
-				exists = owner
-				owner = {
-					is_oligarchic_authority = yes
-					has_country_flag = cyber_collectivist
-				}
-				is_faction_extorted = no
-			}
-
-			effect = {
-				set_faction_extorted = yes
-				custom_tooltip = engineering_research_extortion_tt
-				custom_tooltip = ONLY_ONE_EXTORTED_FACTION_TT
-			}
-
-			ai_weight = {
-				base = 0
-			}
-		}
-		cancel_extort_faction = {
-			title = "CANCEL_EXTORT_FACTION"
-			description = "CANCEL_EXTORT_FACTION_DESC"
-
-			potential = {
-				exists = owner
-				owner = {
-					is_oligarchic_authority = yes
-					has_country_flag = cyber_collectivist
-				}
-				is_faction_extorted = yes
-			}
-
-			effect = {
-				set_faction_extorted = no
-			}
-
-			ai_weight = {
-				base = 0
-			}
-		}
+	inline_script = {
+		script = pop_faction_types/actions/extort_faction
+		RESOURCE = engineering_research
 	}
 }
