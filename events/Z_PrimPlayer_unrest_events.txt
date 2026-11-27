@@ -443,67 +443,84 @@ situation_event = {
 			NOT = { exists = event_target:new_owner_empire }
 		}
 		event_target:rebel_empire = {
-			declare_war = {
-				target = root.owner
-				attacker_war_goal = wg_independence
-				name = {
-					key = NAME_WAR_OF_REVOLT
-					variable_string = "[Root.Target.GetName]"
+			hidden_effect = { set_country_flag = planetary_revolt_situation_war@root.owner }
+			if = {
+				limit = { root.owner = { is_nomadic = no } }
+				declare_war = {
+					target = root.owner
+					attacker_war_goal = wg_independence
+					name = {
+						key = NAME_WAR_OF_REVOLT
+						variable_string = "[Root.Target.GetName]"
+					}
+				}
+				event_target:rebel_planet = {
+					if = {
+						limit = {
+							#PREV = { has_technology = tech_primitive_space_age_weapons }
+						}
+						while = { 
+							limit = { event_target:rebel_empire = { num_armies < 8 } }
+							create_army = {
+								name = random
+								owner = PREV
+								species = PREV.owner_species
+								type = "assault_army"
+							}
+						}
+					}
+					else_if = {
+						limit = {
+							PREV = { has_technology = tech_primitive_atomic_age_weapons }
+						}
+						while = { 
+							limit = { event_target:rebel_empire = { num_armies < 8 } }
+							create_army = {
+								name = random
+								owner = PREV
+								species = PREV.owner_species
+								type = "postatomic_assault_army"
+							}
+						}
+					}
+					else_if = {
+						limit = {
+							PREV = { has_technology = tech_primitive_industrial_age_weapons }
+						}
+						while = { 
+							limit = { event_target:rebel_empire = { num_armies < 8 } }
+							create_army = {
+								name = random
+								owner = PREV
+								species = PREV.owner_species
+								type = "industrial_assault_army"
+							}
+						}
+					}
+					else = {
+						while = { 
+							limit = { event_target:rebel_empire = { num_armies < 8 } }
+							create_army = {
+								name = random
+								owner = PREV
+								species = PREV.owner_species
+								type = "primitive_assault_army"
+							}
+						}
+					}
 				}
 			}
-			hidden_effect = { set_country_flag = planetary_revolt_situation_war@root.owner }
-			event_target:rebel_planet = {
-				if = {
-					limit = {
-						#PREV = { has_technology = tech_primitive_space_age_weapons }
+			else = { 
+				custom_tooltip = nations.7.tooltip.nomad.mutiny
+				if = { 
+					limit = { 
+						is_ai = yes 
+						root.owner = { is_ai = no }
 					}
-					while = { 
-						limit = { event_target:rebel_empire = { num_armies < 8 } }
-						create_army = {
-							name = random
-							owner = PREV
-							species = PREV.owner_species
-							type = "assault_army"
-						}
-					}
-				}
-				else_if = {
-					limit = {
-						PREV = { has_technology = tech_primitive_atomic_age_weapons }
-					}
-					while = { 
-						limit = { event_target:rebel_empire = { num_armies < 8 } }
-						create_army = {
-							name = random
-							owner = PREV
-							species = PREV.owner_species
-							type = "postatomic_assault_army"
-						}
-					}
-				}
-				else_if = {
-					limit = {
-						PREV = { has_technology = tech_primitive_industrial_age_weapons }
-					}
-					while = { 
-						limit = { event_target:rebel_empire = { num_armies < 8 } }
-						create_army = {
-							name = random
-							owner = PREV
-							species = PREV.owner_species
-							type = "industrial_assault_army"
-						}
-					}
-				}
-				else = {
-					while = { 
-						limit = { event_target:rebel_empire = { num_armies < 8 } }
-						create_army = {
-							name = random
-							owner = PREV
-							species = PREV.owner_species
-							type = "primitive_assault_army"
-						}
+					EaC_nomadic_mutiny_rebellion_effect = yes
+					set_player = root.owner
+					event_target:rebel_planet = {
+						set_owner = PREV
 					}
 				}
 			}
@@ -574,69 +591,82 @@ situation_event = {
 
 		custom_tooltip = unrest.4200.joiner_tooltip
 		event_target:new_owner_empire = {
-			declare_war = {
-				target = root.owner
-				attacker_war_goal = wg_humiliation
-				name = {
-					key = NAME_WAR_OF_REVOLT
-					variable_string = "[Root.Target.GetName]"
+			hidden_effect = { set_country_flag = planetary_revolt_situation_war@root.owner }
+			if = {
+				limit = { root.owner = { is_nomadic = no } }
+				declare_war = {
+					target = root.owner
+					attacker_war_goal = wg_humiliation
+					name = {
+						key = NAME_WAR_OF_REVOLT
+						variable_string = "[Root.Target.GetName]"
+					}
+				}
+				event_target:rebel_planet = {
+					if = {
+						limit = {
+							PREV = { has_technology = tech_primitive_space_age_weapons }
+							always = yes
+						}
+						while = { 
+							limit = { event_target:rebel_empire = { num_armies < 8 } }
+							create_army = {
+								name = random
+								owner = PREV
+								species = PREV.owner_species
+								type = "assault_army"
+							}
+						}
+					}
+					else_if = {
+						limit = {
+							PREV = { has_technology = tech_primitive_atomic_age_weapons }
+						}
+						while = { 
+							limit = { event_target:rebel_empire = { num_armies < 8 } }
+							create_army = {
+								name = random
+								owner = PREV
+								species = PREV.owner_species
+								type = "postatomic_assault_army"
+							}
+						}
+					}
+					else_if = {
+						limit = {
+							PREV = { has_technology = tech_primitive_industrial_age_weapons }
+						}
+						while = { 
+							limit = { event_target:rebel_empire = { num_armies < 8 } }
+							create_army = {
+								name = random
+								owner = PREV
+								species = PREV.owner_species
+								type = "industrial_assault_army"
+							}
+						}
+					}
+					else = {
+						while = { 
+							limit = { event_target:rebel_empire = { num_armies < 8 } }
+							create_army = {
+								name = random
+								owner = PREV
+								species = PREV.owner_species
+								type = "primitive_assault_army"
+							}
+						}
+					}
 				}
 			}
-			hidden_effect = { set_country_flag = planetary_revolt_situation_war@root.owner }
-			event_target:rebel_planet = {
-				if = {
-					limit = {
-						PREV = { has_technology = tech_primitive_space_age_weapons }
-						always = yes
+			else = { 
+				custom_tooltip = nations.7.tooltip.nomad.mutiny
+				if = { 
+					limit = { 
+						is_ai = yes 
+						root.owner = { is_ai = no }
 					}
-					while = { 
-						limit = { event_target:rebel_empire = { num_armies < 8 } }
-						create_army = {
-							name = random
-							owner = PREV
-							species = PREV.owner_species
-							type = "assault_army"
-						}
-					}
-				}
-				else_if = {
-					limit = {
-						PREV = { has_technology = tech_primitive_atomic_age_weapons }
-					}
-					while = { 
-						limit = { event_target:rebel_empire = { num_armies < 8 } }
-						create_army = {
-							name = random
-							owner = PREV
-							species = PREV.owner_species
-							type = "postatomic_assault_army"
-						}
-					}
-				}
-				else_if = {
-					limit = {
-						PREV = { has_technology = tech_primitive_industrial_age_weapons }
-					}
-					while = { 
-						limit = { event_target:rebel_empire = { num_armies < 8 } }
-						create_army = {
-							name = random
-							owner = PREV
-							species = PREV.owner_species
-							type = "industrial_assault_army"
-						}
-					}
-				}
-				else = {
-					while = { 
-						limit = { event_target:rebel_empire = { num_armies < 8 } }
-						create_army = {
-							name = random
-							owner = PREV
-							species = PREV.owner_species
-							type = "primitive_assault_army"
-						}
-					}
+					EaC_nomadic_mutiny_rebellion_effect = yes
 				}
 			}
 		}
