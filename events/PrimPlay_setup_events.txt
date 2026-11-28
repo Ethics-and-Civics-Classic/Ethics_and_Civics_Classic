@@ -70,7 +70,301 @@ country_event = {
 			}
 			country_event = { id = origin.5 days = 1 }	# Set Up
 		}
-		
+		# Shattered Ring
+		if = {
+			limit = { 
+				OR = {
+					has_civic = PrimPlayer_civic_shattered_ring
+					has_civic = civic_shattered_ring
+				}
+			}
+			capital_scope = {
+				solar_system = {
+					set_asteroid_belt = {
+						radius = 0
+					}
+					#spawn_megastructure = {
+					#	name = "NAME_Ring_Section_A"
+					#	type = "ring_world_ruined"
+					#	orbit_angle = 0
+					#	orbit_distance = 45
+					#	owner = root
+					#	graphical_culture = root
+					#	planet = this
+					#}
+					spawn_planet = {
+						class = "pc_ringworld_tech"
+						name = "NAME_Ring_Section"
+						orbit_angle_offset = 300
+						orbit_distance_offset = 45
+						location = this
+					}
+					spawn_planet = {
+						class = "pc_shattered_ring_habitable"
+						orbit_angle_offset = 270
+						orbit_distance_offset = 45
+						location = this
+						init_effect = {
+							set_planet_flag = megastructure
+							set_name = random
+							add_modifier = { modifier = primitive_ring_world_planet_modifier }
+							add_modifier = { modifier = irradiated_wasteland }
+							
+							create_country = {
+								name = random
+								authority = random
+								day_zero_contact = no
+								species = random
+								origin = origin_default
+								flag = random
+								type = default
+							}
+							hidden_effect = {
+								create_colony = {
+									owner = last_created_country
+									species = last_created_country
+								}
+								create_pop_group = {
+									species = owner.species
+									category = civilian
+									size = 2500
+								}
+								last_created_country = { 
+									#add_tech_progress_situation = yes
+									set_country_type = primitive
+									set_origin = origin_default_pre_ftl
+									set_pre_ftl_age_effect = { PRE_FTL_AGE = stone_age } 
+									if = {
+										limit = { 
+											ROOT = {
+												OR = {
+													has_civic = PrimPlayer_civic_the_obelisk
+													has_civic = civic_the_obelisk
+												}
+											}
+										}
+										add_modifier = {
+											modifier = origin_slavers_modifier	#For Extra Civic Slot
+										}
+										force_add_civic = civic_the_obelisk	#Primitive Society gets obelisk
+										PREV = {
+											add_modifier = {
+												modifier = PrimPlayer_the_obelisk
+											}
+											add_deposit = d_PrimPlayer_the_obelisk_deposit
+										}
+									}
+								}
+							}
+						}
+					}
+					spawn_planet = {
+						class = "pc_ringworld_seam"
+						name = "NAME_Ring_Section"
+						orbit_angle_offset = 240
+						orbit_distance_offset = 45
+						location = this
+					}
+					
+					spawn_planet = {
+						class = "pc_ringworld_tech"
+						name = "NAME_Ring_Section"
+						orbit_angle_offset = 30
+						orbit_distance_offset = 45
+						location = this
+					}
+					spawn_planet = {
+						class = "pc_shattered_ring_habitable"
+						orbit_angle_offset = 0
+						orbit_distance_offset = 45
+						location = this
+						init_effect = {
+							set_planet_flag = megastructure
+							create_colony = {
+								owner = ROOT
+								species = ROOT
+							}
+							create_pop_group = {
+								species = owner.species
+								category = civilian
+								size = 3
+								effect = {
+									save_event_target_as = shattered_ring_pop_group
+								}
+							}
+							#Transfer Capital Stuff/Pops
+							ROOT = { 
+								random_owned_planet = { 
+									limit = { is_capital = yes }
+									#Add any checks to copy over content/planet stuff
+									every_owned_pop_group = {
+										transfer_pop_amount = {
+											source = this
+											target = event_target:shattered_ring_pop_group
+											percentage = 1
+										}
+									}
+									destroy_colony = yes
+									change_pc = pc_toxic
+									set_planet_size = 9
+								}
+							}
+							set_capital = yes
+							set_name = random
+							add_district = district_generator
+							add_district = district_mining
+							add_district = district_farming
+						}
+					}
+					spawn_planet = {
+						class = "pc_ringworld_seam"
+						name = "NAME_Ring_Section"
+						orbit_angle_offset = 330
+						orbit_distance_offset = 45
+						location = this
+					}
+					
+					spawn_planet = {
+						class = "pc_ringworld_tech_damaged"
+						name = "NAME_Ring_Section"
+						orbit_angle_offset = 210
+						orbit_distance_offset = 45
+						location = this
+					}
+
+					spawn_planet = {
+						class = "pc_ringworld_seam_damaged"
+						name = "NAME_Irreparable_Damage"
+						orbit_angle_offset = 180
+						orbit_distance_offset = 45
+						location = this
+						init_effect = {
+							set_planet_flag = catastrophic_damage
+							create_ambient_object = {
+								type = "medium_debris_01_object"
+								entity_offset_height = -15
+								location = this
+							}
+							last_created_ambient_object = {
+								set_location = {
+									target = prev
+									distance = 0
+									angle = 0
+								}
+								set_ambient_object_flag = interloper_damage
+							}
+							set_deposit = d_engineering_5
+							set_planet_flag = starting_research_target
+							set_planet_flag = starting_deposit
+						}
+					}
+
+					spawn_planet = {
+						class = "pc_shattered_2"
+						name = "NAME_The_Interloper"
+						orbit_distance_offset = 40
+						orbit_angle_offset = 180
+						location = this
+						size = 5
+						has_ring = no
+						flags = { ignore_startup_effect starting_mining_target starting_deposit interloper }
+						init_effect = {
+							set_deposit = d_minerals_10
+						}
+					}
+
+					spawn_planet = {
+						class = "pc_ringworld_seam_damaged"
+						name = "NAME_Ring_Section"
+						orbit_angle_offset = 150
+						orbit_distance_offset = 45
+						location = this
+					}
+					#spawn_megastructure = {	#Making it habitable
+					#	name = "NAME_Ring_Section_D"
+					#	type = "ring_world_ruined"
+					#	orbit_angle = 180
+					#	orbit_distance = 45
+					#	owner = root
+					#	graphical_culture = root
+					#	planet = this
+					#}
+					spawn_planet = {
+						class = "pc_ringworld_tech"
+						name = "NAME_Ring_Section"
+						orbit_angle_offset = 60
+						orbit_distance_offset = 45
+						location = this
+					}
+					spawn_planet = {
+						class = "pc_shattered_ring_habitable"
+						orbit_angle_offset = 90
+						orbit_distance_offset = 45
+						location = this
+						init_effect = {
+							set_planet_flag = megastructure
+							set_name = random
+							add_modifier = { modifier = primitive_ring_world_planet_modifier }
+							add_modifier = { modifier = irradiated_wasteland }
+							
+							create_country = {
+								name = random
+								authority = random
+								day_zero_contact = no
+								species = random
+								origin = origin_default
+								flag = random
+								type = default
+							}
+							hidden_effect = {
+								create_colony = {
+									owner = last_created_country
+									species = last_created_country
+								}
+								create_pop_group = {
+									species = owner.species
+									category = civilian
+									size = 2500
+								}
+								last_created_country = { 
+									#add_tech_progress_situation = yes
+									set_country_type = primitive
+									set_origin = origin_default_pre_ftl
+									set_pre_ftl_age_effect = { PRE_FTL_AGE = stone_age } 
+									if = {
+										limit = { 
+											ROOT = {
+												OR = {
+													has_civic = PrimPlayer_civic_the_obelisk
+													has_civic = civic_the_obelisk
+												}
+											}
+										}
+										add_modifier = {
+											modifier = origin_slavers_modifier	#For Extra Civic Slot
+										}
+										force_add_civic = civic_the_obelisk	#Primitive Society gets obelisk
+										PREV = {
+											add_modifier = {
+												modifier = PrimPlayer_the_obelisk
+											}
+											add_deposit = d_PrimPlayer_the_obelisk_deposit
+										}
+									}
+								}
+							}
+						}
+					}
+					spawn_planet = {
+						class = "pc_ringworld_seam"
+						name = "NAME_Ring_Section"
+						orbit_angle_offset = 120
+						orbit_distance_offset = 45
+						location = this
+					}
+				}
+			}
+		}
 	### Set Up Fanatic Nations###
 		if = {
 			limit = {
