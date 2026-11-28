@@ -1,0 +1,122 @@
+dark_matter_technician = {
+	category = worker
+	swappable_data = {
+		default = {
+			condition_string = WORKER_JOB_TRIGGER
+			building_icon = building_energy_grid
+		}
+	}
+
+	tags = { energy }
+
+	possible_pre_triggers = {
+		has_owner = yes
+		is_being_purged = no
+		is_being_assimilated = no
+		is_sapient = yes
+	}
+
+	possible_precalc = can_fill_worker_job
+	possible = {
+		hidden_trigger = { exists = owner }
+		owner = {
+			is_gestalt = no
+		}
+	}
+
+	resources = {
+		category = planet_technician
+		produces = {
+			energy = 8
+		}
+		produces = {
+			trigger = {
+				owner? = { is_robot_empire = yes }
+			}
+			energy = 2
+		}
+		produces = {
+			trigger = {
+				has_carrier_flag = has_energy_requisitorium
+			}
+			energy = @requisitorium_energy_reduction
+		}
+		upkeep = {
+			sr_dark_matter = 0.1
+		}
+		# Placeholder script for compatibility with other mods
+		inline_script = "overwrites/jobs/technician_job_output"
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			technician_is_fuel_chemist_trigger = yes
+		}
+		ship_speed_mult = 0.05
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			technician_is_shield_tuner_trigger = yes
+		}
+		ship_shield_mult = 0.02 #move ship bonuses on technician jobs, add a custom tooltip here
+		ship_shield_regen_mult = 0.02
+	}
+	
+	# Placeholder script for compatibility with other mods
+	inline_script = "overwrites/jobs/technician_job_modifiers"
+
+	overlord_resources = {
+		category = planet_requisitioned_energy
+		produces = {
+			trigger = {
+				colony = {
+					has_carrier_flag = has_energy_requisitorium
+				}
+			}
+			energy = @requisitorium_energy_overlord
+		}
+	}
+
+	weight = {
+		weight = @worker_job_weight
+		modifier = {
+			factor = 100
+			OR = {
+				is_non_sapient_robot = yes
+				is_shackled_robot = yes
+			}
+			can_take_servant_job = no
+			can_fill_specialist_job_trigger = no
+		}
+		modifier = {
+			factor = 8
+			is_enslaved = yes
+			can_take_servant_job = no
+			OR = {
+				has_trait = trait_syncretic_proles
+				has_trait = trait_robot_superconductive
+				has_trait = trait_ingenious
+			}
+		}
+		modifier = {
+			factor = 2
+			OR = {
+				is_non_sapient_robot = yes
+				is_shackled_robot = yes
+			}
+			can_take_servant_job = no
+		}
+		modifier = {
+			factor = 0.25
+			can_take_servant_job = yes
+		}
+		modifier = {
+			factor = 5
+			has_trait = trait_cyborg_creed_of_labor
+		}
+	}
+
+	inline_script = "jobs/automodding_priority_energy"
+
+}
